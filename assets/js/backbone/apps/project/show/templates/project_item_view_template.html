@@ -1,41 +1,53 @@
 <% if (data.isOwner) { %>
-<div class="row">
-  <div class="col-lg-12">
-    <div class="well well-sm" id="project-admin-bar">
-      <div class="project-admin-title">
-        Project Administration Tools
-      </div>
-      <div class="row">
-        <div class="col-lg-9 project-admin nopadding">
-            <button id="editProject" class="btn btn-c4">Edit</button>
-            <span id="fileupload" class="btn btn-c4"><i class="icon-camera icon-large" title="Change Cover Photo"></i></span>
-        </div>
-        <div class="col-lg-2 nopadding">
-        <form class="form-inline" role="form">
-          <div class="form-group project-admin-select">
-            <select class="form-control" id="project-state">
-              <option value="draft" <% if (data.state == 'draft') { %>selected<% } %>>Draft</option>
-              <option value="public" <% if (data.state == 'public') { %>selected<% } %>>Public</option>
-              <option value="closed" <% if (data.state == 'closed') { %>selected<% } %>>Closed</option>
-            </select>
-          </div>
-        </form>
-        </div>
-        <div class="col-lg-1 project-admin-state">
-          <button id="project-admin-state" class="btn btn-link" data-loading-text="<i class='icon-spinner icon-spin'></i>">
-            <span class="glyphicon glyphicon-ok green" ></span>
-          </button>
-        </div>
-      </div>
-      <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-        <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
-      </div>
-    </div>
-  </div>
-</div>
-<% } else { %><div id="fileupload" style="display: none;"></div><% } %>
+  <section id="admin-bar-section" class="row">
 
-<div class="row">
+    <article class="col-lg-12">
+
+      <div class="well well-sm" id="project-admin-bar">
+        <div class="project-admin-title">
+          Project Administration Tools
+        </div>
+
+        <section class="row">
+          <article class="col-lg-9 project-admin nopadding">
+              <button id="editProject" class="btn btn-c4">Edit</button>
+              <span id="fileupload" class="btn btn-c4"><i class="icon-camera icon-large" title="Change Cover Photo"></i></span>
+          </article>
+          <article class="col-lg-2 nopadding">
+            <form class="form-inline" role="form">
+              <div class="form-group project-admin-select">
+                <select class="form-control" id="project-state">
+                  <option value="draft" <% if (data.state == 'draft') { %>selected<% } %>>Draft</option>
+                  <option value="public" <% if (data.state == 'public') { %>selected<% } %>>Public</option>
+                  <option value="closed" <% if (data.state == 'closed') { %>selected<% } %>>Closed</option>
+                </select>
+              </div>
+            </form>
+          </article>
+
+          <article class="col-lg-1 project-admin-state">
+            <button id="project-admin-state" class="btn btn-link" data-loading-text="<i class='icon-spinner icon-spin'></i>">
+              <span class="glyphicon glyphicon-ok green" ></span>
+            </button>
+          </article>
+
+        </section> <!-- /row -->
+
+        <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+          <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+        </div>
+      </div>
+
+    </article>
+
+  </section>
+<% } else { %>
+  <div id="fileupload" style="display: none;"></div>
+<% } %>
+
+<!-- Begin Main Content on Page -->
+<section id="top-content-section" style="margin-bottom: 20px;">
+
   <div class="col-lg-4 project-sidebar">
     <!-- LEFT SIDEBAR -->
     <div class="row like-content">
@@ -62,20 +74,22 @@
       </div>
     </div>
 
+    <article class="col-lg-12">
     <% if (data.isOwner) { %>
-    <div class="row">
-      <div class="col-lg-12 select-tags">
-        <input type="hidden" id="input-tags" style="width: 100%"/>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-12 select-tags-buttons">
-        <div class="pull-right">
-          <a href="#createTag" id="tag-create" class="btn btn-sm btn-c0" data-toggle="modal">Create Tag</a>
-          <button id="tag-save" class="btn btn-sm btn-c3">Save Tags</button>
+      <div class="row tag-actions">
+        <div class="col-lg-12 select-tags-buttons">
+          <div class="pull-right">
+            <a href="#createTag" id="tag-create" class="btn btn-sm btn-c0" data-toggle="modal">Create Tag</a>
+            <button id="tag-save" class="btn btn-sm btn-c3">Save Tags</button>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="row">
+        <div class="col-lg-12 select-tags">
+          <input type="hidden" id="input-tags" style="width: 100%"/>
+        </div>
+      </div>
     <% } %>
 
     <% for (var i = 0; i < tags.length; i++) { %>
@@ -86,6 +100,9 @@
       </ul>
     </div>
     <% } %>
+  </article>
+  <hr />
+  <div class="clearfix"></div>
 
     <!-- BEGIN EVENTS -->
     <div class="list-box" id="event-list-wrapper">
@@ -135,6 +152,7 @@
     <h4>Attachments
       <button class="btn btn-c3 btn-sm file-add">Add File</button>
     </h4>
+
     <div class="file-list">
       <table class="table table-hover table-condensed">
         <tbody>
@@ -173,6 +191,56 @@
           </tr>
         </tbody>
       </table>
+    </div> <!-- /file-list -->
+
+  </article>
+  <div class="clearfix"></div>
+</div> <!-- /project-header-wrapper -->
+
+  <div class="main-section">
+    <div class="col-lg-8">
+
+      <h1><%= data.title %></h1>
+
+      <div class="project-description">
+        <%= data.description %>
+      </div>
+
+      <h4>Project Participants</h4>
+      <div class="project-contributors">
+        <% if (data.owners) { %>
+          <% for (var i = 0; i < data.owners.length; i++) { %>
+          <div class="project-people-div" data-userid="<%= data.owners[i].userId %>">
+            <img src="/user/photo/<%= data.owners[i].userId %>" class="project-people"/>
+          </div>
+          <% } %>
+        <% } %>
+      </div> <!-- /project-contributors -->
+
+    </div> <!-- /col-lg-8 -->
+  </div> <!-- /main-section -->
+
+</div> <!-- /project-sidebar -->
+
+</section> <!-- /top-section -->
+
+<!-- Row for Tasks and Discussions -->
+<section class="tasks-and-discussions row">
+
+  <!-- Tasks Column -->
+  <div class="list-box col-lg-4" id="task-list-wrapper"></div>
+
+  <!-- Events column -->
+  <div class="list-box col-lg-3" id="event-list-wrapper"></div>
+
+</section> <!-- /tasks-and-discussions.row -->
+
+<section class="row">
+    <!-- Discussion Column -->
+  <article class="col-lg-12">
+    <div class="project-comments">
+      <div class="comment-list-wrapper"></div>
+      <div class="comment-form-wrapper"></div>
     </div>
-  </div>
-</div>
+  </article>
+</section>

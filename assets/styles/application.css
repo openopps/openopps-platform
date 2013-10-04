@@ -1,27 +1,21 @@
 /*****************
-=  GLOBAL 
+=  GLOBAL
 ******************/
-/*
-#container {
-    width: 960px;
-    margin: 0 auto;
-}
-*/
 
 .search-result-row:hover {
-	background: #ccc;
+  background: #ccc;
 }
 
 
 .seperator {
-	margin: 10px 0 10px 0;
+  margin: 10px 0 10px 0;
 }
 
 .search-result-row {
-	min-width: 200px; 
-	height: 40px; 
-	background: #eee; 
-	border-bottom: 1px #000 solid;
+  min-width: 200px;
+  height: 40px;
+  background: #eee;
+  border-bottom: 1px #000 solid;
 }
 
 /*****************
@@ -29,12 +23,12 @@
 ******************/
 
 .navbar .nav .navbar-title-small {
-	font-size: 14px;
-	font-weight: bold;
+  font-size: 24px;
+  font-family: Helvetica;
 }
 
 .navbar .nav .navbar-title-big {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .navbar .nav .divider-vertical {
@@ -44,87 +38,87 @@
 }
 
 .navbar-people {
-	max-height: 40px;
-	border-radius: 25px;
+  max-height: 40px;
+  border-radius: 25px;
 }
 
 /*****************
 =  TEXT COLORS
 ******************/
 .green {
-	color: #a0d468;
+  color: #a0d468;
 }
 
 .gold {
-	color: #FFD700;
+  color: #FFD700;
 }
 
 .white {
-	color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 .white a {
-	color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 .white .comment-created-at {
-	color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 /*****************
-=  HOMEPAGE 
+=  HOMEPAGE
 ******************/
 #home .hreo-title {
     text-align: center;
 }
 
 /*****************
-=  PROJECTS 
+=  PROJECTS
 ******************/
 
 #projects {
-	display: inline-block !important;
+  display: inline-block !important;
 }
 
 .add-project {
-	float: right;
+  float: right;
 }
 
 .project-background-image {
-	width: 100%;
-	height: 40%;
-	background-repeat: no-repeat;
-	background-size: cover;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
+  width: 100%;
+  height: 40%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
 }
 
 .project-background-image-default {
-	background: url('http://placehold.it/180x180');
+  background: url('http://placehold.it/180x180');
 }
 
 .project-list-description {
-	height: 110px;
-	padding-left: 10px;
-	padding-right: 10px;
-	font-size: 13px;
-	overflow: hidden;
-	word-wrap: break-word;
+  height: 110px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 13px;
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 div.project-title {
-	padding: 10px;
+  padding: 10px;
   font-weight: bold;
   font-size: 14px;
 }
 
 .nopadding {
-	padding-left: 0;
-	padding-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 #project-form input {
-	margin: 5px 0 5px 0;
+  margin: 5px 0 5px 0;
 }
 
 #project-form > input[type='submit'] {
@@ -132,26 +126,26 @@ div.project-title {
 }
 
 .project-image {
-	margin: 5px 0 0 8px;
+  margin: 5px 0 0 8px;
 }
 
 #project-list li {
-	list-style: none;
+  list-style: none;
 }
 
 .project-box {
-	width: 200px;
-	height: 250px;
-	overflow: hidden;
-	border: 1px #aaa solid;
-	float: left;
+  width: 200px;
+  height: 250px;
+  overflow: hidden;
+  border: 1px #aaa solid;
+  float: left;
 
-	-webkit-box-shadow: 0 0 4 0 #eee;
-				 -box-shadow: 0 0 0 4p 0 #eee;
+  -webkit-box-shadow: 0 0 4 0 #eee;
+         -box-shadow: 0 0 0 4p 0 #eee;
 
-	border-radius: 5px;
-	margin-right: 20px;
-	margin-bottom: 10px;
+  border-radius: 5px;
+  margin-right: 20px;
+  margin-bottom: 10px;
 }
 
 /*****************
@@ -159,10 +153,10 @@ div.project-title {
 ******************/
 
 .project-header-wrapper {
-	width: 100%;
-	padding: 17px;
-	background-color: #E5E5E5;
-	margin-bottom: 25px;
+  width: 100%;
+  padding: 17px;
+  background-color: #E5E5E5;
+  margin-bottom: 25px;
 }
 
 #project-header {
@@ -177,245 +171,252 @@ div.project-title {
 }
 
 .project-description {
-	font-size: 16px;
-	column-count: 2;
-	column-fill: balance;
-	-moz-column-count: 2;
-	-moz-column-fill: balance;
-	-webkit-column-count: 2;
-	-webkit-column-fill: balance;
-	margin-bottom: 20px;
-	line-height: 1.5em;
+  font-size: 16px;
+  column-count: 2;
+  column-fill: balance;
+  -moz-column-count: 2;
+  -moz-column-fill: balance;
+  -webkit-column-count: 2;
+  -webkit-column-fill: balance;
+  margin-bottom: 20px;
+  line-height: 1.5em;
 }
 
 .project-status {
-	padding-left: 10px;
-	padding-bottom: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
 }
 
 .project-participants {
 }
 
 .project-people {
-	height: 40px;
-	width: 40px;
-	max-height: 40px;
-	border-radius: 25px;
+  height: 40px;
+  width: 40px;
+  max-height: 40px;
+  border-radius: 25px;
 }
 
 .project-comments {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .project-people-div {
-	display: inline-block;
+  display: inline-block;
 }
 
 .project-people-popover {
-	max-height: 60px;
-	border-radius: 35px;
-	margin-right: 10px;
+  max-height: 60px;
+  border-radius: 35px;
+  margin-right: 10px;
 }
 
 .project-contributors {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .project-contributors > .popover > .popover-content > .popover-spinner {
-	font-size: 30px;
-	text-align: center;
+  font-size: 30px;
+  text-align: center;
 }
 
 .project-contributors > .popover > .popover-content > .popover-spinner > .loading {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 body > .popover {
-	width: 350px;
-	max-width: 350px;
-	height: 80px;
+  width: 350px;
+  max-width: 350px;
+  height: 80px;
 }
 
 .popover-person {
-	font-size: 12px;
+  font-size: 12px;
 }
 .popover-person > .title {
-	font-size: 16px;
-	font-weight: bold;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .project-admin {
-	text-align: right;
-	padding-left: 15px;
+  text-align: right;
+  padding-left: 15px;
 }
 
 .project-admin-title {
-	position: absolute;
-	top: 5px;
-	font-size: 15px;
+  position: absolute;
+  top: 5px;
+  font-size: 15px;
 }
 
 .project-admin-select {
-	width: 100%;
-	padding-left: 4px;
+  width: 100%;
+  padding-left: 4px;
 }
 
 .project-admin-state {
-	text-align: center;
-	font-size: 24px;
+  text-align: center;
+  font-size: 24px;
 }
 
 #project-admin-bar {
-	position: relative;
+  position: relative;
+}
+
+.specialized-project-show {
+  margin-bottom: 20px;
 }
 
 #project-admin-bar #file-upload-progress-container {
-	margin-top: 10px;
-	margin-bottom: 0;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 .tag-delete {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .select-tags-buttons {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 ul.tags {
-	list-style: none;
-	padding: 0;
-	margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 ul.tags > li {
-	font-size: 12px;
-	padding-right: 6px;
-	padding-left: 6px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	margin-bottom: 5px;
-	margin-right: 5px;
-	display: inline-block;
+  font-size: 12px;
+  padding-right: 6px;
+  padding-left: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  display: inline-block;
 }
 
 .project-sidebar > .locations {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 /*****************
 =  LISTS
 ******************/
 .list-box {
-	margin: 0;
+  margin: 0;
 }
 
 .list-box > h2 {
-	margin-top: 0;
-	margin-bottom: 1px;
   padding-top: 10px;
   padding-bottom: 10px;
-	padding-left: 15px;
-	font-weight: normal;
-	font-size: 14px;
-	text-transform: uppercase;
+  margin-top: -7px;
+  padding-left: 15px;
+  font-weight: normal;
+  font-size: 18px;
+  background: #fff;
+  color: #818991;
+  margin-bottom: 15px;
 }
 
 .list-add {
-	float: right;
-	margin-right: 10px;
-	margin-top: -3px;
-	text-transform: none;
+  float: right;
+  margin-right: 10px;
+  margin-top: -3px;
+  text-transform: none;
 }
 
 .list-title {
-	padding-top: 10px;
-	background: #eee;
-	padding-left: 10px;
-	margin: 0;
-	padding-bottom: 5px;
+  padding-top: 10px;
+  background: #eee;
+  padding-left: 10px;
+  margin: 0;
+  padding-bottom: 5px;
 }
 
 .list-wrapper > ul > li {
-	list-style: none;
-	margin-top: 10px;
+  list-style: none;
+  margin-top: 10px;
 }
 
 .list-page {
-	width: 100%;
-	border: 1px #ccc solid;
-	min-height: 435px;
-	max-height: 435px;
-	margin-right: 15px;
-	float: left;
-	-webkit-box-shadow: 0 0 15px #eee;
-					box-shadow: 0px 0px 15px #eee;
+  width: 100%;
+  border: 1px #ccc solid;
+  min-height: 435px;
+  max-height: 435px;
+  margin-right: 15px;
+  float: left;
+  -webkit-box-shadow: 0 0 15px #eee;
+          box-shadow: 0px 0px 15px #eee;
 }
 
 .list-ul {
-	padding-right: 5px;
-	padding-left: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 .list-wrapper {
-	float: left;
-	overflow-x: hidden;
-	width: 100%;
-	height: 100%;
+  float: left;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .list-wrapper > ul > li {
-	list-style: none;
+  list-style: none;
 }
 
 .like-content {
-	margin-top: 25px;
-	margin-bottom: 15px;
-	font-size: 18px;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 18px;
 }
 
 .like-buttons {
-	padding-top: 5px;
+  padding-top: 5px;
 }
 
 .like-number {
-	font-size: 32px;
-	font-weight: bold;
+  font-size: 32px;
+  font-weight: bold;
 }
 
 #like-button {
-	font-size: 22px;
-	vertical-align: text-bottom;
-	text-decoration: none;
+  font-size: 22px;
+  vertical-align: text-bottom;
+  text-decoration: none;
 }
 
 /*****************
 =  TASKS
 ******************/
 .task {
-	font-size: 13px;
+  font-size: 13px;
+  margin-top: 22px;
 }
+
 .task-title {
-	font-size: 16px;
-	font-weight: bold;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .task-description {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .task-heading {
-	margin-top: 10px;
-	font-weight: bold;
-	font-size: 15px;
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 15px;
 }
 
 .task-view {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 #task-list-wrapper {
-	margin-top: 20px;
+  margin-top: -4px;
 }
 
 
@@ -423,94 +424,100 @@ ul.tags > li {
 =  EVENTS
 ******************/
 
+#event-list-wrapper {
+  /* Modifier */
+  width: 30%;
+}
+
 .event, .task {
-	width: 100%;
-	padding: 15px;
-	padding-left: 11px;
-	font-size: 11px;
-	border-left: 4px solid;
-	margin-bottom: 1px;
+  width: 100%;
+  padding: 15px;
+  padding-left: 11px;
+  font-size: 11px;
+  border-left: 4px solid;
+  margin-bottom: 1px;
+  border-radius: 10px;
 }
 
 .event-icon {
-	font-size: 18px;
-	width: 37px;
-	padding-right: 10px;
-	padding-left: 10px;
-	display: inline-table;
+  font-size: 18px;
+  width: 37px;
+  padding-right: 10px;
+  padding-left: 10px;
+  display: inline-table;
 }
 
 .event > .event-title {
-	font-size: 14px;
-	font-weight: bold;
-	line-height: 1.1em;
-	margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.1em;
+  margin-bottom: 10px;
 }
 
 .event-wrapper {
-	display: table-cell;
-	vertical-align: top
+  display: table-cell;
+  vertical-align: top
 }
 
 .event-item {
-	display: inline-table;
-	margin-top: 10px;
+  display: inline-table;
+  margin-top: 10px;
 }
 
 .event-people {
-	vertical-align: middle;
+  vertical-align: middle;
 }
 
 .first {
-	font-size: 14px;
-	padding: 15px;
-	border-style: none;
-	margin-bottom: 0;
+  font-size: 14px;
+  padding: 15px;
+  border-style: none;
+  margin-bottom: 0;
 }
 
 .first > .event-title {
-	font-size: 16px;
+  font-size: 16px;
 }
 
 .first > .event-item {
-	margin-top: 15px;
-	display: block;
+  margin-top: 15px;
+  display: block;
 }
 
 .first > .event-item > .event-icon {
-	font-size: 24px;
-	padding-right: 12px;
-	padding-left: 12px;
-	display: inline-table;
+  font-size: 24px;
+  padding-right: 12px;
+  padding-left: 12px;
+  display: inline-table;
 }
 
 .first > .event-item > .event-wrapper {
-	display: inline-table;
+  display: inline-table;
 }
 
 .first > .event-item > .event-wrapper > .event-day {
-	font-size: 15px;
-	font-weight: bold;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .first > .event-item > .event-wrapper > .event-time {
-	font-size: 10px;
-	padding: 0;
+  font-size: 10px;
+  padding: 0;
 }
 
 .first > .event-item > .event-wrapper > .event-location {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .first > .event-item > .event-people {
-	margin-top: 10px;
-	margin-right: 5px;
-	vertical-align: bottom;
+  margin-top: 10px;
+  margin-right: 5px;
+  vertical-align: bottom;
 }
 
 .event-people-bar {
-	margin-top: 15px;
-	margin-bottom: 5px;
+  margin-top: 15px;
+  margin-bottom: 5px;
 }
 
 /*****************
@@ -518,20 +525,20 @@ ul.tags > li {
 ******************/
 
 .file-tag {
-	padding: 3px;
-	font-size: 10px;
+  padding: 3px;
+  font-size: 10px;
 }
 
 .file-uploader {
-	font-size: 11px;
-	text-align: right;
+  font-size: 11px;
+  text-align: right;
 }
 
 .file-add {
-	float: right;
-	margin-right: 10px;
-	margin-top: -6px;
-	text-transform: none;
+  float: right;
+  margin-right: 10px;
+  margin-top: -6px;
+  text-transform: none;
 }
 
 /*****************
@@ -539,64 +546,79 @@ ul.tags > li {
 ******************/
 
 ul.comment-list > li {
-	list-style: none;
-	position: relative;
+  list-style: none;
+  position: relative;
+  border-radius: 6px;
 }
 
 .comment-list-wrapper {
 }
 
 ul.comment-list {
-	width: 100%;
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-	font-size: 13px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  font-size: 13px;
 }
 
 .comment-form-wrapper {
-	margin-top: 10px;
+  margin-top: 10px;
 }
 
 .add-comment-button {
-	float: right;
+  float: right;
 }
-
+.add-task {
+  margin-top: -35px;
+}
 .user-username {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .comment-created-at {
-	color: #858585;
+  color: #858585;
 }
 
 .comment-content {
 }
 
 .comment-item {
-	overflow: hidden;
-	display: inline-table;
-	background: #eee;
-	margin-top: 10px;
+  overflow: hidden;
+  display: inline-table;
+  background: #eee;
+  margin-top: 10px;
+}
+
+.sub-comment {
+  margin-left: 20px;
 }
 
 .comment-image {
-	float: left;
-	margin: 2px;
-	display: table-cell;
-	vertical-align: top;
-}
-
-.comment-image {
-	max-height: 40px;
-	max-width: 40px;
-	height: 40px;
-	width: 40px;
+  float: left;
+  margin: 2px;
+  display: table-cell;
+  vertical-align: top;
+  max-height: 40px;
+  max-width: 40px;
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
 }
 
 .comment-inner {
-	padding: 5px;
-	display: table-cell;
-	width: 100%;
-	vertical-align: top;
+  padding: 5px;
+  display: table-cell;
+  width: 100%;
+  vertical-align: top;
+}
+
+/* Tags */
+
+.tag-actions {
+  margin-top: -30px;
+}
+
+.tag-type-text {
+  font-size: 14px;
 }
