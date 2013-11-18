@@ -1,9 +1,4 @@
 <div class="row">
-  <div class="col-lg-12">
-  </div>
-</div>
-
-<div class="row">
   <div class="col-lg-4 project-sidebar">
     <!-- LEFT SIDEBAR -->
     <div class="row like-content">
@@ -15,24 +10,24 @@
         <div class="pull-right like-buttons">
           <button class="btn btn-c4"><i class="icon icon-envelope-alt"></i> Email</button>
           <button class="btn btn-c3"><i class="icon icon-twitter"></i> Tweet</button>
+          <button class="btn btn-c3 edit-task"><i class="icon icon-edit"> <strong>Edit</strong></i></button>
         </div>
       </div>
     </div>
 
-<!--     <div class="project-header-wrapper">
-    </div>
- -->
     <div class="tag-wrapper">
       <strong>Tags:</strong>
-      <% _.each(model.tags, function (tag) { %>
-        <div class="task-tag"><%= tag.tag.name %></div>
-      <% }) %>
+
+      <ul></ul>
     </div>
   </div>
+
+
 
   <div class="col-lg-8">
     <!-- RIGHT MAIN BAR -->
     <div class="main-section">
+      <div class="edit-task-section">
 
       <h1><%= model.title %></h1>
 
@@ -41,21 +36,72 @@
       </div>
 
       <div class="task-show-description">
-        I need <strong>2-5 people</strong> to work on an opportunity about these topics:
-        <strong>Topic 1, Topic 2, Topic 3</strong>.
+        I need <strong><%= people %></strong> to work on an opportunity about these topics:
+        <strong><%= topic %></strong>.
 
-        <br />
+      <br />
 
-        The following skills are <strong>required</strong> to complete this opportunity:
-        <strong>skills 1, skills 2</strong>.
+        The following skills are <strong><%= skillsRequired %></strong> to complete this opportunity:
+        <strong><%= skill %></strong>.
 
 
-        It will require <strong>time-required</strong> hours of <strong>part time, full time</strong> work, and must be completed within <strong>length</strong>.
+        It will require <strong><%= timeEstimates %></strong> hours of <strong><%= timeRequired %></strong> work, and must be completed within <strong><%= length %></strong>.
 
-        The volunteer(s) must be located at <strong>location</strong> to complete this task.
+        The volunteer(s) must be located at <strong><%= location %></strong> to complete this task.
       </div>
 
+      <div class="comment-list-wrapper" style="clear: both;">
+        <h4>Discussions
+        <button class="btn btn-c3 btn-sm file-add new-topic" id="project-topic-new">New Topic</button>
+        </h4>
+        <div class="topic-form-wrapper"></div>
+        <ul id="comment-list-null"></ul>
+      </div>
 
+      <hr class="clear" />
+
+      <h4 class="clearfix">Attachments
+        <button class="btn btn-c3 btn-sm file-add">Add File</button>
+      </h4>
+      <div class="file-list">
+        <table class="table table-hover table-condensed">
+          <tbody>
+            <tr>
+              <td>
+                <span class="file-tag c3-bg white">wikipedia</span>
+              </td>
+              <td>
+                <a href="http://en.wikipedia.org/wiki/Presidential_Innovation_Fellows">Presidential Innovation Fellows</a>
+              </td>
+              <td class="file-uploader">
+                added by <a href="#">Joe Polastre</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="file-tag c1-bg white">project</span>
+              </td>
+              <td>
+                <a href="#">GSA Open Opportunities</a>
+              </td>
+              <td class="file-uploader">
+                added by <a href="#">Dain Miller</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="file-tag c0-bg white">file</span>
+              </td>
+              <td>
+                <a href="#">innovation_styleguide.v1.1.ai</a>
+              </td>
+              <td class="file-uploader">
+                added by <a href="#">Joe Polastre</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div> <!-- /file-list -->
     </div> <!-- /main-section -->
   </div>
 </div>
