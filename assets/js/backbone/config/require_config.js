@@ -98,6 +98,8 @@ require.config({
     'task_item_view'            : '../apps/tasks/show/views/task_item_view',
     'task_show_template'        : '../apps/tasks/show/templates/task_show_item_template.html',
     'task_show_controller'      : '../apps/tasks/show/controllers/task_show_controller',
+    'task_edit_form_view'       : '../apps/tasks/edit/views/task_edit_form_view',
+    'task_edit_form_template'   : '../apps/tasks/edit/templates/task_edit_form_template.html',
 
     // ----------
     //= Events

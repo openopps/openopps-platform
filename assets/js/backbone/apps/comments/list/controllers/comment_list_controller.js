@@ -43,13 +43,23 @@ define([
       if (this.commentCollection) { this.renderView() }
       else { this.commentCollection = new CommentCollection(); }
 
-      this.commentCollection.fetch({
-        url: '/api/comment/findAllByProjectId/' + this.options.projectId,
-        success: function (collection) {
-          self.collection = collection;
-          self.renderView(collection);
-        }
-      });
+      if (this.options.task) {
+        this.commentCollection.fetch({
+          url: '/api/comment/findAllByTaskId/' + this.options.taskId,
+          success: function (collection) {
+            self.collection = collection;
+            self.renderView(collection);
+          }
+        });
+      } else {
+        this.commentCollection.fetch({
+          url: '/api/comment/findAllByProjectId/' + this.options.projectId,
+          success: function (collection) {
+            self.collection = collection;
+            self.renderView(collection);
+          }
+        });
+      }
     },
 
     initializeListeners: function() {
@@ -118,6 +128,7 @@ define([
     },
 
     renderComment: function (self, comment, collection) {
+      var self = this;
       // Render the topic view and then in that view spew out all of its children.
       // console.log("Comment's with children:");
       var commentIV = new CommentItemView({
@@ -132,6 +143,7 @@ define([
         var commentFV = new CommentFormView({
           el: '#comment-form-' + comment.id,
           projectId: comment.projectId,
+          taskId: comment.taskId,
           parentId: comment.id,
           collection: collection,
           depth: comment['depth']
@@ -170,13 +182,12 @@ define([
       var self = this;
       if (e.preventDefault) e.preventDefault();
 
-      if (self.topicForm) {
-        self.topicForm.cleanup();
-      }
-      self.topicForm = new CommentFormView({
+      if (this.topicForm) this.topicForm.cleanup();
+      this.topicForm = new CommentFormView({
         el: '.topic-form-wrapper',
-        projectId: this.options.projectId,
-        collection: this.collection,
+        projectId: self.options.projectId,
+        taskId: self.options.taskId,
+        collection: self.collection,
         topic: true,
         depth: -1
       });

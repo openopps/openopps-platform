@@ -1,0 +1,111 @@
+<form action="/api/task">
+  <div class="edit-task-section">
+
+  <h1><input type="text" placeholder="title"></h1>
+
+  <div class="task-show-description">
+    <textarea name="" id="task-description" placeholder="description"></textarea>
+  </div>
+
+  <hr />
+
+  <div class="task-show-description">
+    I need
+      <strong>
+          <input type="hidden"
+            <% if (madlibTags['people']) { %>
+              placeholder="<%= madlibTags['people'] %>"
+            <% } else { %>
+              placeholder="to set a team size"
+            <% } %>
+          class="task-people" id="people" />
+      </strong>
+
+    to work on an opportunity about these topics:
+    <strong>
+        <input type="text"
+          <% if (madlibTags['topic']) { %>
+            placeholder="<%= madlibTags['topic'] %>"
+          <% } else { %>
+            placeholder="topic 1, topic 2, etc..."
+          <% } %>
+        id="topics" class="task-topics" />
+    </strong>
+
+    <hr />
+
+    The following skills are
+      <strong>
+          <input type="text"
+            <% if (madlibTags['skills-required']) { %>
+              placeholder="<%= madlibTags['skills-required'] %>"
+            <% } else { %>
+              placeholder="required/not required"
+            <% } %>
+          class="task-skills-required" id="skills-required" />
+      </strong>
+
+    to complete this opportunity:
+      <strong>
+          <input type="text"
+            <% if (madlibTags['skill']) { %>
+              placeholder="<%= madlibTags['skill'] %>"
+            <% } else { %>
+              placeholder="skill 1, skill 2, etc"
+            <% } %>
+          id="skills" class="task-skills" />
+      </strong>
+
+    <hr />
+
+    It will require
+      <strong>
+        <input type="text"
+          <% if (madlibTags['time-estimate']) { %>
+            placeholder="<%= madlibTags['time-estimate'] %>"
+          <% } else { %>
+            placeholder="estimated"
+          <% } %>
+        class="task-estimated-time" id="time-estimate" />
+      </strong>
+
+    hours of
+      <strong>
+        <input type="text"
+          <% if (madlibTags['time-required']) { %>
+            placeholder="<%= madlibTags['time-required'] %>"
+          <% } else { %>
+            placeholder="required"
+          <% } %>
+        class="task-time-required" id="time-required" />
+      </strong>
+
+    work, and must be completed within
+      <strong>
+        <input type="text"
+          <% if (madlibTags['length']) { %>
+            placeholder="<%= madlibTags['length'] %>"
+          <% } else { %>
+            placeholder="this time frame"
+          <% } %>
+        class="task-length" id="length" />
+      </strong>
+
+    <hr />
+
+    The volunteer(s) must be located at
+      <strong>
+        <input type="text"
+          <% if (madlibTags['location']) { %>
+            placeholder="<%= madlibTags['location'] %>"
+          <% } else { %>
+            placeholder="this city/state"
+          <% } %>
+        id="location" class="task-location" />
+      </strong>
+
+    to complete this task.
+  </div>
+
+  <input type="submit" class="btn btn-primary btn-lg task-edit-form-button">
+</form>

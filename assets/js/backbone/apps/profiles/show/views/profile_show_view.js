@@ -146,7 +146,7 @@ define([
 
     initializeForm: function() {
       var self = this;
-      
+
       this.listenTo(self.model, "profile:save:success", function (data) {
         $("#submit").button('success');
         // Bootstrap .button() has execution order issue since it

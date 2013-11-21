@@ -4,17 +4,18 @@ define([
     'underscore',
     'backbone',
     'async',
+    'utilities',
     'tasks_collection',
     'text!task_form_template',
     'tag_show_view'
-], function ($, Bootstrap, _, Backbone, async, TasksCollection, TaskFormTemplate, TagShowView) {
+], function ($, Bootstrap, _, Backbone, async, utilities, TasksCollection, TaskFormTemplate, TagShowView) {
 
 	var TaskFormView = Backbone.View.extend({
 
 		el: "#task-list-wrapper",
 
 		events: {
-      "submit #task-form"     : "post",
+      "click .wizard-submit"  : "post",
       "change #task-location" : "locationChange"
 		},
 
@@ -87,8 +88,6 @@ define([
         // $("#task-location").select2('data'),
         $("#input-specific-location").val(),
       ];
-
-      this.tasks.trigger("task:save", taskData);
 
       this.listenTo(this.tasks, "task:save:success", function (taskId) {
 
@@ -200,7 +199,7 @@ define([
 
       $("#time-estimate").select2({
         placeholder: 'time-estimate',
-        width: '130px'
+        width: '200px'
       });
 
       $("#task-location").select2({
@@ -235,6 +234,8 @@ define([
     locationChange: function (e) {
       if (_.isEqual(e.currentTarget.value, "a specific location")) {
         $(".el-specific-location").show();
+      } else if (!_.isEqual(e.currentTarget.value, "a specific location")) {
+        $(".el-specific-location").hide();
       }
     },
 

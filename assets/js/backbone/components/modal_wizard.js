@@ -19,9 +19,10 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'utilities',
   'base_component',
   'text!modal_wizard_template'
-], function ($, _, Backbone, BaseComponent, ModalWizardTemplate) {
+], function ($, _, Backbone, utilities, BaseComponent, ModalWizardTemplate) {
 
   Application.Component.ModalWizard = BaseComponent.extend({
 
@@ -29,7 +30,8 @@ define([
 
     events: {
       "click .wizard-forward" : "moveWizardForward",
-      "click .wizard-backward": "moveWizardBackward"
+      "click .wizard-backward": "moveWizardBackward",
+      "click .wizard-submit"  : "submit"
     },
 
     intialize: function (options) {
@@ -65,21 +67,36 @@ define([
           next      = current.next(),
           nextHtml  = next.html();
 
-      if (_.isEqual(current.next().children("input[type='submit']").length, 0)) {
+      var nextWizardStep = {
+        exists: function () {
+          return !_.isUndefined(nextHtml)
+        },
+        doesNotExist: function () {
+          return _.isUndefined(nextHtml)
+        }
+      }
+
+      var child = current.next().children()[1]
+      var nextChild = $(child).next().children("input[type='data']")
+      if (_.isEqual(nextChild.length, 0)) {
         // no-op
       } else {
         $("button.wizard-forward").hide();
-        current.next().children("input[type='submit']").css("float", "right").css("margin-top", "10px");
+        $("button.wizard-submit").show();
       };
 
-      if (!_.isUndefined(nextHtml)) {
-        current.children().hide();
+      if (nextWizardStep.exists()) {
+        hideCurrentAndInitializeNextWizardStep();
+      } else if (nextWizardStep.doesNotExist()) {
+        console.log("And here we switch the the button logic to now ready for submit.")
+      };
+
+      function hideCurrentAndInitializeNextWizardStep () {
+        current.hide();
         current.removeClass("current");
         next.addClass("current");
         next.show();
-      } else if (_.isUndefined(nextHtml)) {
-        console.log("And here we switch the the button logic to now ready for submit.")
-      };
+      }
 
     },
 
@@ -102,6 +119,20 @@ define([
       } else {
         return;
       }
+    },
+
+    // Dumb submit.  Everything is expected via a promise from
+    // from the instantiation of this modal wizard.
+    submit: function (e) {
+      if (e.preventDefault) e.preventDefault();
+      var self = this;
+
+      this.collection.trigger(this.modelName + ":save", this.data);
+
+    },
+
+    cleanup: function () {
+      $(this.el).children(".modal").remove();
     }
   });
 

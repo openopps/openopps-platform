@@ -80,15 +80,23 @@ define([
       if (e.preventDefault) e.preventDefault();
       var self = this;
 
-      if (this.modalWizardComponent) this.modalWizardComponent;
+      if (this.modalWizardComponent) this.modalWizardComponent.cleanup();
       this.modalWizardComponent = new ModalWizardComponent({
         el: "#task-list-wrapper",
         id: "addTask",
-        modalTitle: 'New Opportunity'
+        modalTitle: 'New Opportunity',
+        model: self.taskModel,
+        collection: self.tasks,
+        modelName: 'task',
+        data: {
+          title: $("#task-title").val(),
+          description: $("#task-description").val(),
+          projectId: self.options.projectId
+        }
       }).render();
 
       if (!_.isUndefined(this.modalWizardComponent)) {
-        if (this.taskFormView) this.taskFormView;
+        if (this.taskFormView) this.taskFormView.cleanup();
         this.taskFormView = new TaskFormView({
           el: ".modal-body",
           projectId: this.options.projectId,
