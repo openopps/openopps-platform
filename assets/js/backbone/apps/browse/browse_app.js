@@ -35,6 +35,9 @@ define([
       this.navView = new NavView({
         el: '.navigation'
       }).render();
+      this.homeView = new HomeView({
+        el: '#container'
+      }).render();
       this.footerView = new FooterView({
         el: '#footer'
       }).render();
@@ -49,21 +52,10 @@ define([
     },
 
     redirectHome: function () {
-        var self = this;
-        this.options = options;
-        this.initializeHomeView();
-    },
-	
-    initializeHomeView: function () {
-      var self = this;
-      if (this.homeView) {
-        this.homeView.cleanup();
-      }
-
-      this.homeView = new HomeView({
-        el: "#container",
-        message: this.options.message
-      }).render();
+		this.cleanupChildren();
+        this.homeView = new HomeView({
+          el: '#container'
+        }).render();
     },
 
     listProjects: function () {
