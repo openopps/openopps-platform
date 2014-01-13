@@ -7,7 +7,7 @@ define([
   'text!home_template'
 ], function ($, async, dropzone, _, Backbone, utils, HomeTemplate) {
 
-  var HomwView = Backbone.View.extend({
+  var HomeView = Backbone.View.extend({
 
     initialize: function (options) {
       this.options = options;
