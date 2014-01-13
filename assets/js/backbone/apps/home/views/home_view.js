@@ -19,7 +19,7 @@ define([
 
     cleanup: function () {
       removeView(this);
-	  Backbone.history.loadUrl();
+	  // Backbone.history.loadUrl();
     }
 
   });
