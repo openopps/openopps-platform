@@ -63,21 +63,22 @@ define([
     },
 
     listProjects: function () {
+	  this.homeView = "";
       this.cleanupChildren();
       this.browseListController = new BrowseListController({
         target: 'projects',
         data: this.data
       });
-	  Backbone.history.loadUrl();
+	 
     },
 
     listTasks: function () {
+	  this.homeView = "";
       this.cleanupChildren();
       this.browseListController = new BrowseListController({
         target: 'tasks',
         data: this.data,
       })
-	  Backbone.history.loadUrl();
     },
 
     showProject: function (id, action) {
