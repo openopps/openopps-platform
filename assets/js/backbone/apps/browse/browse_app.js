@@ -36,14 +36,13 @@ define([
       this.navView = new NavView({
         el: '.navigation'
       }).render();
+      this.homeView = new HomeView({
+        el: '#container'
+      }).render();
       this.footerView = new FooterView({
         el: '#footer'
       }).render();
-      this.cleanupChildren();
-      this.browseListController = new BrowseListController({
-        target: 'projects',
-        data: this.data
-      });
+      
     },
 
     cleanupChildren: function () {
@@ -55,10 +54,10 @@ define([
     },
 
     redirectHome: function () {
-        this.cleanupChildren();
-        var template = _.template(HomeTemplate);
-        this.$el.html(template);
-        return this;
+        // this.cleanupChildren();
+        // var template = _.template(HomeTemplate);
+        // this.$el.html(template);
+        // return this;
     },
 
     listProjects: function () {
