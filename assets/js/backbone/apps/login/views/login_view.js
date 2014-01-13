@@ -49,15 +49,7 @@ define([
 
       this.loginView = new RegistrationView({
         el: ".modal-template"
-        //id: "login-register",
-        //modalTitle: "Register FROM Login Controller!!!!"
       }).render();
-
-     //alert('showregister from Login VIEW!!!!!.');
-     // var template = _.template(LoginTemplate, data);
-     // this.$el.html(template);
-
-
     },
 
     submit: function (e) {

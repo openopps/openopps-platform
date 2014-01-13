@@ -49,8 +49,9 @@ define([
     },
 
     redirectHome: function () {
+		this.cleanupChildren();
         this.homeView = new HomeView({
-          el: '#container'
+          el: '.container'
         }).render();
     },
 
