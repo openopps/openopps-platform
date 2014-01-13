@@ -44,7 +44,8 @@ define([
     },
 
     cleanupChildren: function () {
-	  if (this.homeView) { this.homeView.cleanup(); this.$el.html();}
+	  if (this.homeView) { this.homeView.cleanup();}
+	  this.data = { saved: true };
       if (this.browseListController) { this.browseListController.cleanup(); }
       if (this.projectShowController) { this.projectShowController.cleanup(); }
       if (this.profileShowController) { this.profileShowController.cleanup(); }
