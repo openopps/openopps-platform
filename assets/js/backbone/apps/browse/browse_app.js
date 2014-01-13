@@ -37,9 +37,6 @@ define([
       this.navView = new NavView({
         el: '.navigation'
       }).render();
-      this.homeView = new HomeView({
-        el: '#home'
-      }).render();
       this.footerView = new FooterView({
         el: '#footer'
       }).render();
@@ -55,8 +52,9 @@ define([
     },
 
     showHome: function () {
-        // this.cleanupChildren();
-        // this.homeController = new HomeController();
+        this.homeView = new HomeView({
+          el: '#home'
+        }).render();
     },
 
     listProjects: function () {
