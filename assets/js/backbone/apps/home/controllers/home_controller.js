@@ -21,7 +21,6 @@ define([
       this.data = options.data;
       this.action = options.action;
 	  self.initializeHomeView();
-      });
 
     },
 
