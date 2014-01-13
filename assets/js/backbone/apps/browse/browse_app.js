@@ -44,7 +44,7 @@ define([
     },
 
     cleanupChildren: function () {
-	  if (this.homeView) { this.homeView.cleanup(); removeView(this); }
+	  if (this.homeView) { this.homeView.cleanup(); }
       if (this.browseListController) { this.browseListController.cleanup(); }
       if (this.projectShowController) { this.projectShowController.cleanup(); }
       if (this.profileShowController) { this.profileShowController.cleanup(); }
@@ -64,22 +64,28 @@ define([
 
     listProjects: function () {
       this.cleanupChildren();
-	  removeView(this);
       this.browseListController = new BrowseListController({
         target: 'projects',
         data: this.data
       });
-	 
+		for (var i=0;i<1;i++)
+		{ 
+		Backbone.history.loadUrl();
+		}	
     },
 
     listTasks: function () {
       this.cleanupChildren();
-	  removeView(this);
       this.browseListController = new BrowseListController({
         target: 'tasks',
-        data: this.data,
-      })
+        data: this.data
+      });
+		for (var i=0;i<1;i++)
+		{ 
+		Backbone.history.loadUrl();
+		}
     },
+
 
     showProject: function (id, action) {
       this.cleanupChildren();
