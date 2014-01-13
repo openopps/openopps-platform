@@ -1,11 +1,19 @@
 define([
   'jquery',
   'async',
+  'dropzone',
   'underscore',
   'backbone',
   'utilities',
-  'text!home_template'
-], function ($, async, dropzone, _, Backbone, utils, HomeTemplate) {
+  'tag_show_view',
+  'text!profile_show_template',
+  'text!profile_email_template',
+  'text!home_template',
+  'modal_component',
+  'profile_activity_view',
+  'profile_email_view'
+], function ($, async, dropzone, _, Backbone, utils,
+  TagShowView, ProfileTemplate, EmailTemplate, ModalComponent, PAView, EmailFormView, HomeTemplate) {
 
   var HomeView = Backbone.View.extend({
 
@@ -17,7 +25,6 @@ define([
     render: function () {
       var template = _.template(HomeTemplate);
       this.$el.html(template);
-
       return this;
     },
 
