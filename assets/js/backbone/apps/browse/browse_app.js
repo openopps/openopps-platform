@@ -44,7 +44,7 @@ define([
     },
 
     cleanupChildren: function () {
-	  if (this.homeView) { this.homeView.remove(); }
+	  if (this.homeView) { this.homeView.cleanup(); removeView(this); }
       if (this.browseListController) { this.browseListController.cleanup(); }
       if (this.projectShowController) { this.projectShowController.cleanup(); }
       if (this.profileShowController) { this.profileShowController.cleanup(); }
@@ -64,6 +64,7 @@ define([
 
     listProjects: function () {
       this.cleanupChildren();
+	  removeView(this);
       this.browseListController = new BrowseListController({
         target: 'projects',
         data: this.data
@@ -73,6 +74,7 @@ define([
 
     listTasks: function () {
       this.cleanupChildren();
+	  removeView(this);
       this.browseListController = new BrowseListController({
         target: 'tasks',
         data: this.data,
