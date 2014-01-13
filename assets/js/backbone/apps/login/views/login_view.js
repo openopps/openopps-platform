@@ -3,8 +3,10 @@ define([
   'underscore',
   'backbone',
   'utilities',
-  'text!login_template'
-], function ($, _, Backbone, utils, LoginTemplate) {
+  'text!login_template',
+  'modal_component',
+  'registration_view'
+], function ($, _, Backbone, utils, LoginTemplate, ModalComponent, RegistrationView) {
 
   var LoginView = Backbone.View.extend({
 
@@ -42,7 +44,20 @@ define([
 
     showRegister: function (e) {
       if (e.preventDefault) e.preventDefault();
-      alert('Register not yet implemented.');
+      if (this.loginView) this.loginView.cleanup();
+      if (this.modalComponent) this.modalComponent.cleanup();
+
+      this.loginView = new RegistrationView({
+        el: ".modal-template"
+        //id: "login-register",
+        //modalTitle: "Register FROM Login Controller!!!!"
+      }).render();
+
+     //alert('showregister from Login VIEW!!!!!.');
+     // var template = _.template(LoginTemplate, data);
+     // this.$el.html(template);
+
+
     },
 
     submit: function (e) {
