@@ -61,8 +61,7 @@ require.config({
     //= Home
     // ----------
     'home_view'               : '../apps/home/views/home_view',
-    'home_template'           : '../apps/home/templates/home_template.html',
-    'home_controller'          : '../apps/home/controllers/home_controller',
+    'home_template'           : '../apps/home/templates/home_template.html'
 	
     // ----------
     //= Login

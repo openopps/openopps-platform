@@ -9,19 +9,18 @@ define([
   'project_model',
   'project_show_controller',
   'profile_show_controller',
-  'home_controller',
   'task_model',
   'task_show_controller',
   'task_edit_form_view',
-  'text!home_template',
   'home_view',
+  'home_controller'
   
-], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView, HomeTemplate, HomeView) {
+], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView, HomeView, HomeController) {
 
   var BrowseRouter = Backbone.Router.extend({
 
     routes: {
-      ''                          : 'redirectHome',
+      ''                          : 'showHome',
       'projects(/)'               : 'listProjects',
       'projects/:id(/)'           : 'showProject',
       'projects/:id/:action(/)'   : 'showProject',
@@ -39,7 +38,7 @@ define([
         el: '.navigation'
       }).render();
       this.homeView = new HomeView({
-        el: '#container'
+        el: '#home'
       }).render();
       this.footerView = new FooterView({
         el: '#footer'
@@ -55,11 +54,9 @@ define([
       this.data = { saved: false };
     },
 
-    redirectHome: function () {
+    showHome: function () {
         // this.cleanupChildren();
-        // var template = _.template(HomeTemplate);
-        // this.$el.html(template);
-        // return this;
+        // this.homeController = new HomeController();
     },
 
     listProjects: function () {
