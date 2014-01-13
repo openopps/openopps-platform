@@ -1,56 +1,156 @@
-<div id="myCarousel" class="carousel slide">
-   <!-- Indicators -->
-     <ol class="carousel-indicators">
-       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-       <li data-target="#myCarousel" data-slide-to="1"></li>
-       <li data-target="#myCarousel" data-slide-to="2"></li>
-     </ol>
+<!-- ALERTS -->
+<div class="alert alert-danger" id="alert-closed" style="<% if (data.state != 'closed') { %>display: none;<% } %>">This project is <strong>closed</strong>.  It is no longer active, and no more modifications may be made.</div>
 
-     <!-- Wrapper for slides -->
-     <div class="carousel-inner">
-       <div class="item active">
-         <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Slide One');"></div>
-         <div class="carousel-caption">
-           <h1>A Full-Width Image Slider Template</h1>
-         </div>
-       </div>
-       <div class="item">
-         <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Slide Two');"></div>
-         <div class="carousel-caption">
-           <h1>Caption 2</h1>
-         </div>
-       </div>
-       <div class="item">
-         <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Slide Three');"></div>
-         <div class="carousel-caption">
-           <h1>Caption 3</h1>
-         </div>
-       </div>
-     </div>
+<div class="row">
+  <div class="col-sm-4 col-md-4 col-lg-4 project-sidebar md-nopadding-right sm-nopadding">
+    <!-- LEFT SIDEBAR -->
 
-     <!-- Controls -->
-     <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-       <span class="icon-prev"></span>
-     </a>
-     <a class="right carousel-control" href="#myCarousel" data-slide="next">
-       <span class="icon-next"></span>
-     </a>
- </div>
+    <div class="row">
+      <div class="col-md-12 box project-header-wrapper">
+        <% if (data.coverId) { %>
+        <div id="project-header" style="background-image:url('/api/file/get/<%= data.coverId %>');">
+        <% } else { %>
+        <div id="project-header" style="background-image:url('/images/project_default.png');">
+        <% } %>
+          <div id="fileupload" class="btn btn-c2" <% if (!data.isOwner || !edit) { %>style="display:none;"<% } %>>
+            <i class="icon-camera icon-large" title="Change Cover Photo" id="fileupload-icon"></i>
+          </div>
+        </div>
+        <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+          <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+        </div>
+      </div>
+    </div>
 
- <div class="container">
+  </div>
 
-   <div class="row section">
-     <div class="col-lg-12">
-       <h1>A Full Width Image Slider Template</h1>
-       <p>This is a great starting point for yet another modern and stylish website. Here are some things to consider when working with this template:</p>
-       <ul>
-       	<li>Unique Fonts</li>
-       	<li>Attractive Colors</li>
-       	<li>Content Spacing for Legibility and Design</li>
-       	<li>Decent Pictures that Still Load Quickly (less than 400KB for example)</li>
-       	<li>Make the Pictures INFORMATIVE</li>
-       	<li>Custom Styling for the Captions</li>
-       </ul>
-     </div>
-   </div>
- </div><!-- /.container -->
+  <div class="col-sm-8 col-md-8 col-lg-8 md-nopadding sm-nopadding">
+
+    <!-- RIGHT MAIN BAR -->
+    <div class="row">
+      <div class="col-sm-8 col-md-9 sm-nopadding">
+        <div class="main-section">
+          <div class="box box-main" id="project-coremeta-wrapper">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4 col-md-3 padding-left-none sm-nopadding">
+        <div class="box padding-none">
+
+          <div class="navbar-side like-row border-bottom">
+            <% if (user) { %>
+            <a href="#" id="like-button" class="like-button">
+            <% } else { %>
+            <span class="like-button">
+            <% } %>
+              <i id="like-button-icon" class="icon icon-star-empty icon-large gold"></i>
+            <% if (user) { %>
+            </a>
+            <% } else { %>
+            </span>
+            <% } %>
+            <span class="like-number" id="like-number"><%- data.likeCount %></span>
+            <span class="like-plural" id="like-text" data-plural="likes" data-singular="like">likes</span>
+          </div>
+          <div class="navbar-side <% if (data.isOwner) { %>border-bottom<% } %>">
+            <ul class="nav nav-pills nav-stacked">
+              <li>
+                <a href="#" id="email"><i class="icon icon-envelope-alt"></i> <span class="box-icon-text">Email</span></a>
+              </li>
+              <li>
+                <a href="webcal://<%- hostname %>/api/event/ical/<%- data.id %>"><span class="glyphicon glyphicon-calendar"></span> <span class="box-icon-text">Calendar</span></a>
+              </li>
+            </ul>
+          </div>
+          <% if (data.isOwner) { %>
+          <div class="navbar-side">
+            <ul class="nav nav-pills nav-stacked">
+              <li>
+                <a href="#" id="editProject"><i class="icon-pencil"></i> <span class="box-icon-text">Edit Project</span></a>
+              </li>
+              <li id="li-project-close" style="<% if (data.state == 'closed') { %>display: none;<% } %>">
+                <a href="#" id="project-close"><i class="icon-remove-sign"></i> <span class="box-icon-text">Close Project</span></a>
+              </li>
+              <li id="li-project-reopen" style="<% if (data.state != 'closed') { %>display: none;<% } %>">
+                <a href="#" id="project-reopen"><i class="icon-share-alt"></i> <span class="box-icon-text">Reopen Project</span></a>
+              </li>
+              <!--
+              <li>
+                <a href="#" id="project-delete"><i class="icon-trash"></i> <span class="box-icon-text">Delete Project</span></a>
+              </li>
+              -->
+            </ul>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="row">
+
+  <div class="col-sm-5 col-md-4 md-nopadding-right sm-nopadding">
+
+    <div class="row">
+      <div class="col-md-12 box">
+        <div class="box-main tag-wrapper">
+        </div>
+      </div>
+    </div>
+
+    <% if (!data.isOwner || !edit) { %>
+    <div class="row">
+      <div class="col-md-12 box">
+        <div class="attachment-wrapper">
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+  </div>
+  <div class="col-sm-7 col-md-8 md-nopadding-right sm-nopadding">
+
+    <div class="row">
+      <div class="col-md-12 sm-nopadding md-nopadding">
+        <div class="box" id="projectowner-wrapper">
+        </div>
+      </div>
+    </div>
+
+    <% if (!data.isOwner || !edit) { %>
+    <div class="row">
+      <div class="col-md-12 sm-nopadding md-nopadding">
+        <!-- BEGIN EVENTS -->
+        <div class="box" id="event-list-wrapper">
+        </div>
+        <!-- END EVENTS -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 sm-nopadding md-nopadding">
+        <!-- BEGIN TASKS -->
+        <div class="modal fade" id="addTask"></div>
+        <div class="box" id="task-list-wrapper" data-project-id="<%= data.id %>">
+        </div>
+        <!-- END TASKS -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 sm-nopadding md-nopadding">
+
+        <div class="box comment-list-wrapper" style="clear: both;">
+        </div>
+      </div>
+    </div>
+
+    <% } %> <!-- end of check for edit mode -->
+
+    <!-- add a space at the bottom of the page until we figure out what goes here -->
+    <div style="height: 50px;">
+    </div>
+
+  </div>
+</div>

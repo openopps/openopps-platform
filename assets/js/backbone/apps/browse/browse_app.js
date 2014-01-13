@@ -50,8 +50,8 @@ define([
 
     redirectHome: function () {
         this.cleanupChildren();
-        this.browseListController = new HomeController({
-          target: '/',
+        this.browseListController = new BrowseListController({
+          target: '/home',
           data: this.data
         });
     },
