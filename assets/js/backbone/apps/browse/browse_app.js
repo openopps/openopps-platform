@@ -44,7 +44,7 @@ define([
     },
 
     cleanupChildren: function () {
-	  if (this.homeView) { this.homeView.cleanup(); }
+	  if (this.homeView) { this.homeView.cleanup(); Backbone.history.loadUrl();}
       if (this.browseListController) { this.browseListController.cleanup(); }
       if (this.projectShowController) { this.projectShowController.cleanup(); }
       if (this.profileShowController) { this.profileShowController.cleanup(); }
@@ -68,10 +68,6 @@ define([
         target: 'projects',
         data: this.data
       });
-		for (var i=0;i<1;i++)
-		{ 
-		Backbone.history.loadUrl();
-		}	
     },
 
     listTasks: function () {
@@ -80,10 +76,6 @@ define([
         target: 'tasks',
         data: this.data
       });
-		for (var i=0;i<1;i++)
-		{ 
-		Backbone.history.loadUrl();
-		}
     },
 
 
