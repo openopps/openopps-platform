@@ -17,8 +17,9 @@ define([
       this.$el.html(compiledTemplate);
     },
 
-    cleanup: function () {
+    cleanup: function () {	  
       removeView(this);
+	  this.$el.html();
     }
 
   });
