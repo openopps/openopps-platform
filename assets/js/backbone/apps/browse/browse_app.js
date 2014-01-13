@@ -53,12 +53,13 @@ define([
     },
 
     showHome: function () {
-        // var model = new ProjectModel();
-        // model.set({ id: id });
-        // this.projectShowController = new ProjectShowController({ model: model, router: this, id: id, action: action, data: this.data });
         this.homeView = new HomeView({
           el: '#home'
         }).render();
+        this.browseListController = new BrowseListController({
+          target: 'projects',
+          data: this.data
+        });
     },
 
     listProjects: function () {
