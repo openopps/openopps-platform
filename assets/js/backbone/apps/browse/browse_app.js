@@ -13,8 +13,10 @@ define([
   'task_model',
   'task_show_controller',
   'task_edit_form_view',
-  'text!home_template'
-], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView, HomeTemplate) {
+  'text!home_template',
+  'home_view',
+  
+], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView, HomeTemplate, HomeView) {
 
   var BrowseRouter = Backbone.Router.extend({
 
