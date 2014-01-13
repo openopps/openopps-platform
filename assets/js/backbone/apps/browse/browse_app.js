@@ -68,6 +68,7 @@ define([
         target: 'projects',
         data: this.data
       });
+	  Backbone.history.loadUrl();
     },
 
     listTasks: function () {
@@ -75,7 +76,8 @@ define([
       this.browseListController = new BrowseListController({
         target: 'tasks',
         data: this.data,
-      });
+      })
+	  Backbone.history.loadUrl();
     },
 
     showProject: function (id, action) {
