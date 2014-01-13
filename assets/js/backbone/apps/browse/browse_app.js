@@ -74,7 +74,7 @@ define([
       this.cleanupChildren();
       this.browseListController = new BrowseListController({
         target: 'tasks',
-        data: this.data
+        data: this.data,
       });
     },
 
