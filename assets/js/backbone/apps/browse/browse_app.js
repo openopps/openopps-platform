@@ -39,6 +39,11 @@ define([
       this.footerView = new FooterView({
         el: '#footer'
       }).render();
+      this.cleanupChildren();
+      this.browseListController = new BrowseListController({
+        target: 'projects',
+        data: this.data
+      });
     },
 
     cleanupChildren: function () {
