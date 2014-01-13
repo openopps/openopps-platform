@@ -49,10 +49,21 @@ define([
     },
 
     redirectHome: function () {
-		this.cleanupChildren();
-        this.homeView = new HomeView({
-          el: '.container'
-        }).render();
+        var self = this;
+        this.options = options;
+        this.initializeHomeView();
+    },
+	
+    initializeHomeView: function () {
+      var self = this;
+      if (this.homeView) {
+        this.homeView.cleanup();
+      }
+
+      this.homeView = new HomeView({
+        el: "#container",
+        message: this.options.message
+      }).render();
     },
 
     listProjects: function () {
