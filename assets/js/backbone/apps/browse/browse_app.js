@@ -9,10 +9,11 @@ define([
   'project_model',
   'project_show_controller',
   'profile_show_controller',
+  'home_view',
   'task_model',
   'task_show_controller',
   'task_edit_form_view'
-], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView) {
+], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController, ProjectModel, ProjectShowController, ProfileShowController, TaskModel, TaskShowController, TaskEditFormView, HomeView) {
 
   var BrowseRouter = Backbone.Router.extend({
 
@@ -48,7 +49,9 @@ define([
     },
 
     redirectHome: function () {
-      Backbone.history.navigate('/projects', { trigger: true });
+        this.homeView = new HomeView({
+          el: '#container'
+        }).render();
     },
 
     listProjects: function () {
