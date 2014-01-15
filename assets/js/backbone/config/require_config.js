@@ -66,6 +66,13 @@ require.config({
     'login_controller'          : '../apps/login/controllers/login_controller',
 
     // ----------
+    //= Registration
+    // ----------
+    'registration_view'                : '../apps/registration/views/registration_view',
+    'registration_template'            : '../apps/registration/templates/registration_template.html',
+    'registration_controller'          : '../apps/registration/controllers/registration_controller',
+
+    // ----------
     //= Browse
     // ----------
     'browse_app'                : '../apps/browse/browse_app',
