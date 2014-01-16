@@ -7,12 +7,14 @@ define([
   'base_controller',
   'login_view',
   'login_config',
-  'modal_component'
-], function ($, _, Backbone, Bootstrap, utils, BaseController, LoginView, Login, ModalComponent) {
+  'modal_component',
+  'registration_view'
+], function ($, _, Backbone, Bootstrap, utils, BaseController, LoginView, Login, ModalComponent, RegistrationView) {
 
   Application.Login = BaseController.extend({
 
     events: {
+      "click .login-register"    : "showRegister"
     },
 
     initialize: function ( options ) {
@@ -52,6 +54,26 @@ define([
           self.cleanup();
         }).modal('hide');
       });
+    },
+
+
+    showRegister: function (e) {
+      if (e.preventDefault) e.preventDefault();
+
+      if (this.loginView) this.loginView.cleanup();
+      if (this.modalComponent) this.modalComponent.cleanup();
+
+      this.modalComponent = new ModalComponent({
+        el: "#container",
+        id: "login-register",
+        modalTitle: "REGISTER FINALLY! From Login Controller!!!"
+      }).render();
+
+      this.loginView = new RegistrationView({
+        el: ".modal-template",
+        message: this.options.message
+      }).render();
+
     },
 
     // ---------------------

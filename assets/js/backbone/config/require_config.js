@@ -56,7 +56,14 @@ require.config({
     // ----------
     'footer_view'               : '../apps/footer/views/footer_view',
     'footer_template'           : '../apps/footer/templates/footer_template.html',
-
+	
+    // ----------
+    //= Home
+    // ----------
+    'home_view'               : '../apps/home/views/home_view',
+    'home_template'           : '../apps/home/templates/home_template.html',
+    'home_controller'          : '../apps/home/controllers/home_controller',
+	
     // ----------
     //= Login
     // ----------
@@ -64,6 +71,13 @@ require.config({
     'login_view'                : '../apps/login/views/login_view',
     'login_template'            : '../apps/login/templates/login_template.html',
     'login_controller'          : '../apps/login/controllers/login_controller',
+
+    // ----------
+    //= Registration
+    // ----------
+    'registration_view'                : '../apps/registration/views/registration_view',
+    'registration_template'            : '../apps/registration/templates/registration_template.html',
+    'registration_controller'          : '../apps/registration/controllers/registration_controller',
 
     // ----------
     //= Browse
