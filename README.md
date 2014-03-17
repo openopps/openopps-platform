@@ -3,9 +3,23 @@ midas [![Build Status](https://travis-ci.org/Innovation-Toolkit/midas.png?branch
 
 Innovation platform providing collaboration and crowdsourcing tools, developed in Node.js.
 
-## Installation
+## Running MIDAS
+The easiest way to get started with MIDAS is to use [Vagrant](http://vagrantup.com/) to setup a local development environment.
 
-For installation instructions, read [INSTALL.md](INSTALL.md).
+First install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](http://vagrantup.com/) on your computer. Then follow these steps:
+
+```
+# Get the code
+$ git clone https://github.com/Innovation-Toolkit/midas.git
+$ cd midas
+$ git submodule update --init --recursive
+
+# Bootstrap a local VM environment (this will take a while)
+$ vagrant up
+```
+Assuming all that goes smoothly, you should be able see the homepage at http://192.168.33.10:1337/
+
+Alternately, for manual installation, see [INSTALL.md](INSTALL.md).
 
 ## Development
 

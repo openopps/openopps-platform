@@ -39,3 +39,4 @@ assets/prod/fonts
 .DS_STORE
 .tmp
 *.idea
+.vagrant*
