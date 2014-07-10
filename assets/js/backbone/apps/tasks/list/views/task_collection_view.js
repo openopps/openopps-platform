@@ -29,7 +29,7 @@ define([
 					url: '/api/tag/findAllByTaskId/' + task.id,
 					async: false,
 					success: function (tags) {
-						task['tags'] = tags;
+						task['tags'] = _.sortBy(tags, function (tag) { return tag.updateAt; }).reverse();
 						done();
 					},
 					error: function () {
