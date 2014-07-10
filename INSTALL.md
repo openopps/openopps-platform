@@ -1,6 +1,40 @@
 Installation
 =====
 
+## Mac OSX
+The instructions have been tested on 10.9.2, but earlier versions likely work.  Also, to follow these steps you will need:
+* the popular [brew](http://brew.sh/) package manager
+* XCode (free via Mac AppStore)
+
+In the Terminal:
+
+    brew install postgresql
+
+Note instructions to start postgres manually or st startup, if desired
+
+    initdb /usr/local/var/postgresql
+    createdb midas
+
+Start the postgres console acting on the midas database with: `psql midas`
+
+    CREATE USER midas WITH PASSWORD 'midas’
+    GRANT ALL PRIVILEGES ON DATABASE midas to midas;
+    ALTER SCHEMA public OWNER TO midas;
+    \q
+
+Then back to the command-line:
+
+    brew install nodejs
+
+    git clone https://github.com/Innovation-Toolkit/sails-postgresql.git
+    cd sails-postgresql
+    git checkout bytea
+    npm install
+    npm link
+
+Then follow platform-independent steps below starting at [clone the git repository](#clone-the-git-repository)
+
+
 ## Linux (Ubuntu 12.04 LTS)
 
 ### Set your system's timezone to UTC
@@ -75,8 +109,10 @@ need to `npm link` in order for everything to function properly.
 
 ### Clone the git repository.
 
-     git clone https://github.com/Innovation-Toolkit/midas.git
+     git clone https://github.com/18f/midas.git
      cd midas
+     git submodule init
+     git submodule update
 
 ### Install global node packages
 
@@ -182,28 +218,28 @@ Reboot server once finished
 Establish admin user account during the wizard and verify that PostgreSQL is running as a service
 
 Open pgAdmin
-     
+
      Create database 'midas', user account 'midas' with password 'midas', and assign user 'midas' full rights to administer DB 'midas'
-     
+
 ### Install Node.js via Windows MSI, select all available add-ons
 
 [Node.js](http://nodejs.org/download/`)
-     
+
 ### Install GraphicsMagick
 
 [GraphicsMagick](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/`)
-     
+
 Select Q8 version along with latest corresponding to 32 bit vs. 64 bit OS
-     
+
 ### Set System Path Variables
 
 Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
 Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
-	
+
 	DRIVE:\program files\graphicsmagick-1.3.18-q8;
 	(or similar, depending on your graphicsmagick version)
 	DRIVE:\Program Files\nodejs\;
-     	
+
 Save.
 
 ### Host and Configure Application
@@ -216,7 +252,7 @@ Install NPM Modules as directed above.
 
 #### If hosting on an off-line server
 
-Retrieve Midas from GitHub as above on an online pc. Install NPM modules as directed. Copy to offline server your local npm_modules directory (in project home) as well as the contents of the directory found in Users/YOUR_USER_NAME/AppData/Roaming/npm to corresponding locations on offline-server. 
+Retrieve Midas from GitHub as above on an online pc. Install NPM modules as directed. Copy to offline server your local npm_modules directory (in project home) as well as the contents of the directory found in Users/YOUR_USER_NAME/AppData/Roaming/npm to corresponding locations on offline-server.
 
 #### Starting Midas
 
@@ -228,10 +264,10 @@ Enter the following commands
 	npm install
 	npm link sails-postgresql
 	grunt requirejs
-     
+
 Raise sails with
 
      sails lift
-     
+
 You can now access the server at `http://localhost:1337`
 
