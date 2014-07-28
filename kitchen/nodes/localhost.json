@@ -1,0 +1,24 @@
+{ 
+  "run_list": ["postgresql", "postgresql::server", "postgresql::pg_user", "nginx", "nodejs" ],
+  "postgresql": {
+    "database": [ 
+            {
+              "name": "midas",
+              "encoding": "unicode"
+            }
+    ],
+    "users": [
+            {
+              "username": "midas",
+              "password": "midas",
+              "superuser": false,
+              "createdb": true,
+              "login": true
+            }
+    ],
+    "password": {
+      "postgres": ""
+    },
+    "version": "9.3"
+  }
+}

@@ -1,0 +1,34 @@
+DEPENDENCIES
+  nginx
+  nodejs
+  postgresql
+    git: https://github.com/phlipper/chef-postgresql.git
+    revision: 8438360775ce239627878dddded9cfde72e2d3ff
+
+GRAPH
+  apt (2.4.0)
+  bluepill (2.3.1)
+    rsyslog (>= 0.0.0)
+  build-essential (2.0.4)
+  nginx (2.7.4)
+    apt (~> 2.2)
+    bluepill (~> 2.3)
+    build-essential (~> 2.0)
+    ohai (~> 2.0)
+    runit (~> 1.2)
+    yum-epel (~> 0.3)
+  nodejs (1.3.0)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    yum (>= 0.0.0)
+  ohai (2.0.1)
+  postgresql (0.14.1)
+    apt (>= 1.9.0)
+  rsyslog (1.12.2)
+  runit (1.5.10)
+    build-essential (>= 0.0.0)
+    yum (~> 3.0)
+    yum-epel (>= 0.0.0)
+  yum (3.2.2)
+  yum-epel (0.4.0)
+    yum (~> 3.0)
