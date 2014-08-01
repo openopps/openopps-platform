@@ -1,4 +1,5 @@
 { 
   "run_list": ["midas"],
-  "postgresql": { "version": "9.3" }
+  "postgresql": { "version": "9.3" },
+  "nodejs": { "npm": "1.4.23" }
 }
