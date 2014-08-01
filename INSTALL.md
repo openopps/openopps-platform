@@ -76,7 +76,7 @@ AND modify `pg_hba.conf`:
 
      # IPv4 local connections:
      -host    all             all             127.0.0.1/32            md5
-     +host    all             all             0.0.0.0/0               md5
+     +hostssl    all             all             0.0.0.0/0               md5
 
 ### Create the database
 
