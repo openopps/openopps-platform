@@ -1,4 +1,6 @@
 DEPENDENCIES
+  midas
+    path: kitchen/cookbooks/midas
   nginx
   nodejs
   postgresql
@@ -10,6 +12,10 @@ GRAPH
   bluepill (2.3.1)
     rsyslog (>= 0.0.0)
   build-essential (2.0.4)
+  midas (0.0.1)
+    nginx (>= 0.0.0)
+    nodejs (>= 0.0.0)
+    postgresql (>= 0.0.0)
   nginx (2.7.4)
     apt (~> 2.2)
     bluepill (~> 2.3)

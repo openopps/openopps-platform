@@ -62,14 +62,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.berkshelf.enabled = true
 
   config.vm.provision "chef_solo" do |chef|
-  # chef.cookbooks_path = "../my-recipes/cookbooks"
-     chef.roles_path = "../my-recipes/roles"
-     chef.data_bags_path = "../my-recipes/data_bags"
-  #   chef.add_recipe "mysql"
-  #   chef.add_role "web"
-  #
-  #   # You may also specify custom JSON attributes:
-  #   chef.json = { mysql_password: "foo" }
+    chef.cookbooks_path = "kitchen/cookbooks"
+    chef.roles_path = "kitchen/roles"
+    chef.data_bags_path = "kitchen/data_bags"
     chef.json = JSON.parse(Pathname(__FILE__).dirname.join('kitchen', 'nodes', 'localhost.json').read)
   end
 
