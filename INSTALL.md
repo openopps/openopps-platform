@@ -1,6 +1,29 @@
 Installation
 =====
 
+## Vagrant
+
+Install:
+* [Vagrant](https://www.vagrantup.com/downloads)
+* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+* [Chef Development Kit](http://downloads.getchef.com/chef-dk)
+
+Clone the git repository:
+
+     git clone https://github.com/18F/midas.git
+     cd midas
+     git submodule update --init
+
+Additonal plugins:
+
+     vagrant plugin install vagrant-berkshelf
+     vagrant plugin install vagrant-omnibus
+
+Startup the virtual machine:
+
+     vagrant up
+
+
 ## Mac OSX
 The instructions have been tested on 10.9.2, but earlier versions likely work.  Also, to follow these steps you will need:
 * the popular [brew](http://brew.sh/) package manager
@@ -9,7 +32,7 @@ The instructions have been tested on 10.9.2, but earlier versions likely work.  
 In the Terminal:
 
     brew install postgresql
-    brew install graphicsmagick 
+    brew install graphicsmagick
 
 Note instructions to start postgres manually or st startup, if desired
 
