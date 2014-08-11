@@ -1,5 +1,5 @@
 { 
-  "run_list": ["midas"],
+  "run_list": ["recipe[apt]", "midas"],
   "postgresql": { "version": "9.3" },
   "nodejs": { "npm": "1.4.23" }
 }

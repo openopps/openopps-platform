@@ -1,4 +1,7 @@
 DEPENDENCIES
+  apt
+    git: git@github.com:opscode-cookbooks/apt.git
+    revision: ac1917c66a9d67fb4a0afeffaa92195b7385887e
   midas
     path: kitchen/cookbooks/midas
   nginx
@@ -8,7 +11,7 @@ DEPENDENCIES
     revision: 8438360775ce239627878dddded9cfde72e2d3ff
 
 GRAPH
-  apt (2.4.0)
+  apt (2.4.1)
   bluepill (2.3.1)
     rsyslog (>= 0.0.0)
   build-essential (2.0.4)
