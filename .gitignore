@@ -39,3 +39,6 @@ assets/prod/fonts
 .DS_STORE
 .tmp
 *.idea
+
+# Ignore cw stuff for midas
+assets/images

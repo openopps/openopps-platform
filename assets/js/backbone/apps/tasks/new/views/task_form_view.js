@@ -7,8 +7,9 @@ define([
     'utilities',
     'markdown_editor',
     'tasks_collection',
-    'text!task_form_template'
-], function ($, Bootstrap, _, Backbone, async, utilities, MarkdownEditor, TasksCollection, TaskFormTemplate) {
+    'text!task_form_template',
+    'tag_factory'
+], function ($, Bootstrap, _, Backbone, async, utilities, MarkdownEditor, TasksCollection, TaskFormTemplate, TagFactory) {
 
   var TaskFormView = Backbone.View.extend({
 
@@ -22,6 +23,7 @@ define([
     initialize: function (options) {
       this.options = _.extend(options, this.defaults);
       this.tasks = this.options.tasks;
+      this.tagFactory = new TagFactory();
       this.initializeSelect2Data();
       this.initializeListeners();
     },
@@ -49,35 +51,10 @@ define([
     },
     initializeListeners: function() {
       var self = this;
+      //var tagFactory = new TagFactory();
 
       this.bind('afterTagEntitySave',function (){
 
-        var addTag = function (tag, done) {
-
-          if (!tag || !tag.id) return done();
-          // if (tag.tagId) return done();
-
-          var tagMap = {
-            taskId: self.tempTaskId,
-            tagId: tag.id
-          }
-
-          console.log("after 1 or 2",tag);
-
-          $.ajax({
-            url: '/api/tag',
-            type: 'POST',
-            data: tagMap,
-            success: function (data) {
-              done();
-            },
-            error: function (err) {
-              done(err);
-            }
-          });
-
-        }
-        
         // Gather tags for submission after the task is created
         tags = [];
         tags.push.apply(tags, self.$("#topics").select2('data'));
@@ -92,7 +69,9 @@ define([
           tags.push.apply(tags, self.$("#location").select2('data'));
         }
 
-        async.each(tags, addTag, function (err) {
+        console.log("TEST ",self);
+
+        async.each(tags, self.tagFactory.addTag.bind(null,self), function (err) {
           self.model.trigger("task:modal:hide");
           self.model.trigger("task:tags:save:success", err);
         });
@@ -100,27 +79,6 @@ define([
 
 
       this.listenTo(this.tasks,"task:save:success", function (taskId){
-
-          var addTagEntities = function (tag,done) {
-
-            if ( typeof tag.unmatched == 'undefined' || !tag.unmatched ){
-              return done();
-            }
-
-            $.ajax({
-              url: '/api/tagEntity',
-              type: 'POST',
-              data: {
-                type: tag.tagType,
-                name: tag.id
-              },
-              success: function (data){
-                tag.id = data.id;
-                done();
-              }
-            });
-            
-          }
 
           // Gather tags for submission after the task is created
         tags = [];
@@ -136,7 +94,7 @@ define([
           tags.push.apply(tags, self.$("#location").select2('data'));
         }
 
-          async.each(tags, addTagEntities, function (err) {
+          async.each(tags, self.tagFactory.addTagEntities, function (err) {
           self.tempTaskId = taskId;
           return self.trigger("afterTagEntitySave", err);
         });
@@ -174,102 +132,55 @@ define([
     initializeSelect2: function () {
       var self = this;
 
+
+      /*
+
       var formatResult = function (obj, container, query) {
 
          return obj.name;
       };
 
-      // ------------------------------ //
-      //  DROP DOWNS REQUIRING A FETCH  //
-      // ------------------------------ //
-      self.$("#skills").select2({
-        placeholder: "Start typing to select a skill.",
-        multiple: true,
-        minimumInputLength: 2,
-        // this width setting is a hack to prevent placeholder from getting cut off
-        width: "556px",
-        formatResult: formatResult,
-        formatSelection: formatResult,
-        createSearchChoice: function (term) {
-          //unmatched = true is the flag for saving these "new" tags to tagEntity when the opp is saved
-          return { unmatched: true,tagType: "skill",id: term, value: term, name: "<b>"+term+"</b> <i>click to create a new tag with this name</i>" };
-        },
-        ajax: {
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: function (term) {
-            return {
-              type: 'skill',
-              q: term
-            };
+      var createTagDropDown = function(options) {
+        self.$(options.selector).select2({
+          placeholder: "Start typing to select a "+options.type,
+          minimumInputLength: 2,
+          multiple: true,
+          // this width setting is a hack to prevent placeholder from getting cut off
+          width: "556px",
+          formatResult: formatResult,
+          formatSelection: formatResult,
+          createSearchChoice: function (term) {
+            //unmatched = true is the flag for saving these "new" tags to tagEntity when the opp is saved
+            return { unmatched: true,tagType: options.type,id: term, value: term, name: "<b>"+term+"</b> <i>click to create a new tag with this value</i>" };
           },
-          results: function (data) {
-            return { results: data }
+          ajax: {
+            url: '/api/ac/tag',
+            dataType: 'json',
+            data: function (term) {
+              return {
+                type: options.type,
+                q: term
+              };
+            },
+            results: function (data) {
+              return { results: data }
+            }
           }
-        }
-      }).on("select2-selecting", function (e){
-        if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
-          //remove the hint before adding it to the list
-          e.choice.name = e.val; 
-        } 
-      });
+        }).on("select2-selecting", function (e){
+          if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
+            //remove the hint before adding it to the list
+            e.choice.name = e.val; 
+          } 
+        });
 
-      // Topics select 2
-      self.$("#topics").select2({
-        placeholder: "Start typing to select a topic.",
-        multiple: true,
-        minimumInputLength: 2,
-        // this width setting is a hack to prevent placeholder from getting cut off
-        width: "556px",
-        formatResult: formatResult,
-        formatSelection: formatResult,
-        createSearchChoice: function (term) {
-          //unmatched = true is the flag for saving these "new" tags to tagEntity when the opp is saved
-          return { unmatched: true,tagType: "topic",id: term, value: term, name: "<b>"+term+"</b> <i>click to create a new tag with this name</i>" };
-        },
-        ajax: {
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: function (term) {
-            return {
-              type: 'topic',
-              q: term
-            };
-          },
-          results: function (data) {
-            return { results: data }
-          }
-        }
-      })
-      .on("select2-selecting", function (e){
-        if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
-          //remove the hint before adding it to the list
-          e.choice.name = e.val; 
-        } 
-      });
+      }
+      */
 
-      // Topics select 2
-      self.$("#location").select2({
-        placeholder: "Start typing to select a location.",
-        multiple: true,
-        // this width setting is a hack to prevent placeholder from getting cut off
-        width: "556px",
-        formatResult: formatResult,
-        formatSelection: formatResult,
-        ajax: {
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: function (term) {
-            return {
-              type: 'location',
-              q: term
-            };
-          },
-          results: function (data) {
-            return { results: data }
-          }
-        }
-      });
+
+      self.tagFactory.createTagDropDown({type:"skill",selector:"#skills"});
+      self.tagFactory.createTagDropDown({type:"topic",selector:"#topics"});
+      self.tagFactory.createTagDropDown({type:"location",selector:"#location"});
+      
       self.$(".el-specific-location").hide();
 
       // ------------------------------ //

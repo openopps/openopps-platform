@@ -208,7 +208,8 @@ require.config({
     'alert_template'            : '../components/alert_template.html',
     'markdown_editor'           : '../components/markdown_editor',
     'markdown_editor_template'  : '../components/markdown_editor_template.html',
-    'autocomplete'              : '../mixins/autocomplete'
+    'autocomplete'              : '../mixins/autocomplete',
+    'tag_factory'               : '../components/tag_factory'
   },
 
   shim: {
