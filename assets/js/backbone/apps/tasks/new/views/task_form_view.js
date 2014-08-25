@@ -24,6 +24,8 @@ define([
       this.options = _.extend(options, this.defaults);
       this.tasks = this.options.tasks;
       this.tagFactory = new TagFactory();
+      this.data = {};
+      this.data.newTags = [];
       this.initializeSelect2Data();
       this.initializeListeners();
     },
@@ -51,11 +53,11 @@ define([
     },
     initializeListeners: function() {
       var self = this;
-      //var tagFactory = new TagFactory();
+      
+      _.extend(this, Backbone.Events);
 
-      this.bind('afterTagEntitySave',function (){
+      self.on('newTagSaveDone',function (){
 
-        // Gather tags for submission after the task is created
         tags = [];
         tags.push.apply(tags, self.$("#topics").select2('data'));
         tags.push.apply(tags, self.$("#skills").select2('data'));
@@ -69,7 +71,7 @@ define([
           tags.push.apply(tags, self.$("#location").select2('data'));
         }
 
-        console.log("TEST ",self);
+        console.log("tags ",tags);
 
         async.each(tags, self.tagFactory.addTag.bind(null,self), function (err) {
           self.model.trigger("task:modal:hide");
@@ -80,6 +82,8 @@ define([
 
       this.listenTo(this.tasks,"task:save:success", function (taskId){
 
+        self.tempTaskId = taskId;
+        console.log("here");
           // Gather tags for submission after the task is created
         tags = [];
         tags.push.apply(tags, self.$("#topics").select2('data'));
@@ -94,11 +98,26 @@ define([
           tags.push.apply(tags, self.$("#location").select2('data'));
         }
 
-          async.each(tags, self.tagFactory.addTagEntities, function (err) {
-          self.tempTaskId = taskId;
-          return self.trigger("afterTagEntitySave", err);
-        });
+        this.tagFactory.saveNewTags(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'),this);
+        self.trigger("afterTagEntitySave");
       });
+    },
+
+    getTagsFromPage: function () {
+
+      // Gather tags for submission after the task is created
+      tags = {
+        topic: this.$("#topics").select2('data'),
+        skill: this.$("#skills").select2('data'),
+        location: this.$("#location").select2('data'),
+        'task-skills-required': [ this.$("#skills-required").select2('data') ],
+        'task-people': [ this.$("#people").select2('data') ],
+        'task-time-required': [ this.$("#time-required").select2('data') ],
+        'task-time-estimate': [ this.$("#time-estimate").select2('data') ],
+        'task-length': [ this.$("#length").select2('data') ]
+      };
+
+      return tags;
     },
 
     render: function () {
@@ -131,51 +150,6 @@ define([
 
     initializeSelect2: function () {
       var self = this;
-
-
-      /*
-
-      var formatResult = function (obj, container, query) {
-
-         return obj.name;
-      };
-
-      var createTagDropDown = function(options) {
-        self.$(options.selector).select2({
-          placeholder: "Start typing to select a "+options.type,
-          minimumInputLength: 2,
-          multiple: true,
-          // this width setting is a hack to prevent placeholder from getting cut off
-          width: "556px",
-          formatResult: formatResult,
-          formatSelection: formatResult,
-          createSearchChoice: function (term) {
-            //unmatched = true is the flag for saving these "new" tags to tagEntity when the opp is saved
-            return { unmatched: true,tagType: options.type,id: term, value: term, name: "<b>"+term+"</b> <i>click to create a new tag with this value</i>" };
-          },
-          ajax: {
-            url: '/api/ac/tag',
-            dataType: 'json',
-            data: function (term) {
-              return {
-                type: options.type,
-                q: term
-              };
-            },
-            results: function (data) {
-              return { results: data }
-            }
-          }
-        }).on("select2-selecting", function (e){
-          if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
-            //remove the hint before adding it to the list
-            e.choice.name = e.val; 
-          } 
-        });
-
-      }
-      */
-
 
       self.tagFactory.createTagDropDown({type:"skill",selector:"#skills"});
       self.tagFactory.createTagDropDown({type:"topic",selector:"#topics"});

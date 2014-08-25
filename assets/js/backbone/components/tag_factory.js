@@ -23,33 +23,36 @@ define([
       return this;
     },
 
-    addTagEntities: function (tag,done) {
+    addTagEntities: function (context, tag, done) {
     	//assumes
     	//  tag -- array of tag objects to add
     	//  tagType -- string specifying type for tagEntity table
 
-        
     	//this is current solution to mark a tag object as on the fly added
         if ( typeof tag.unmatched == 'undefined' || !tag.unmatched ){
-          return done();
+          return;
         }
 
-        $.ajax({
-          url: '/api/tagEntity',
-          type: 'POST',
-          data: {
-            type: tag.tagType,
-            name: tag.id
-          },
-          success: function (data){
-            //is this required? let's test at some point
-            console.log("data dump", data);
-            //tag.id = data.id;
-            tag = data;
-            done();
-          }
-        });
+      //remove the flag that marks them as new
+      delete tag.unmatched;
 
+      var promise = $.ajax({
+        url: '/api/tagEntity',
+        type: 'POST',
+        data: {
+          type: tag.tagType,
+          name: tag.id
+        },
+        success: function (data){
+          context.data.newTags[0] = data;
+          context.data.lastAdded  = data;
+        }
+      });
+
+      $.when(promise)
+      .done(function() {
+        context.trigger("bjh");
+      });
     },
 
     removeTag: function (id, done) {
@@ -68,20 +71,32 @@ define([
     	//  --- NYI ---
     	//  projet or task id - string
 
-
     	 //if (!tag || !tag.id) return done();
        // if (tag.tagId) return done();
+       //console.log("add tag dump ", tag);
 
           if ( _.isObject(tag) ) {
-             var tagMap = {
-              // --- NYI ---
-              // or proecjt id
-              taskId: contextObj.tempTaskId,
-              tagId: tag.id
+
+            if ( _.isFinite(tag.id) ){
+              console.log("tags ssss passed isnumber ", tag.id);
+              var tagMap = {
+                // --- NYI ---
+                // or proecjt id
+                taskId: contextObj.tempTaskId,
+                tagId: tag.id
+              }
+            } else {
+              console.log(contextObj.data.lastAdded);
+              var tagMap = {
+                // --- NYI ---
+                // or proecjt id
+                taskId: contextObj.tempTaskId,
+                tagId: contextObj.data.lastAdded.id
+              }
             }
               
           } else {
-            console.log("tag ", tag);
+
             var tagMap = {
               taskId: contextObj.model.id,
               tagId: tag
@@ -103,6 +118,7 @@ define([
     },
 
     createTagDropDown: function(options) {
+
         self.$(options.selector).select2({
           placeholder: "Start typing to select a "+options.type,
           minimumInputLength: 2,
@@ -141,25 +157,26 @@ define([
 
       },
 
-      createDiff: function (oldTags, newTags, types) {
+      createDiff: function (oldTags, newTags, types, context) {
         var out = {
           remove: [],
           add: [],
           none: []
         };
-
+        
         // find if a new tag selected already exists
         // if it does, remove it from the array
         // if it doesn't, add to the new list
 
         var findTag = function (tag, oldTags) {
-
+          
           if(!tag) return;
 
           var none = null;
           for (var j in oldTags) {
             // if the tag is in both lists, do nothing
             if (oldTags[j].tagId == parseInt(tag.id)) {
+              //console.log("test 1 ", oldTags[j].tagId, tag.id);
               out.none.push(oldTags.id);
               none = j;
               break;
@@ -185,31 +202,35 @@ define([
         };
 
         for (var t in types) {
-          // check if
 
           _.each(newTags[types[t]], function (newTag) {
-            findTag(newTag, oldTags);
+            if ( newTag.id != newTag.name )  {
+              findTag(newTag, oldTags);
+            } 
           });
           
           // if there's any tags left in oldTags, they need to be deleted
           findDel(oldTags, types[t]);
         }
+        console.log("out--", out);
         return out;
       },
 
-      saveNewTags: function (topics,skills,locations) {
+      saveNewTags: function (topics, skills, locations, context) {
         var self = this;
 
-        var tags = [];
-        tags.push.apply(tags, topics);
-        tags.push.apply(tags, skills);
-        tags.push.apply(tags, locations);
+        var newTags = [];
 
-        async.eachSeries(tags, this.addTagEntities, function (err){
+        newTags = newTags.concat(topics, skills, locations);
+        
+        var promise = _.each(newTags, this.addTagEntities.bind(null,context));
 
+
+        $.when(promise)
+        .done(function(){
+          context.trigger("newTagSaveDone");
         });
-
-        return tags;
+        
       }
 
   });

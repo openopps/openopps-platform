@@ -15,7 +15,7 @@ define([
     events: {
       'blur .validate'        : 'v',
       'click #task-view'      : 'view',
-      'submit #task-edit-form': 'submit'
+      'submit #task-edit-form': 'new_submit'
     },
 
     initialize: function (options) {
@@ -42,6 +42,7 @@ define([
       this.data = {
         data: this.model.toJSON(),
         tagTypes: this.options.tagTypes,
+        newTags: [],
         tags: this.options.tags,
         madlibTags: this.options.madlibTags
       };
@@ -151,9 +152,16 @@ define([
       }).render();
     },
 
-    submit: function (e) {
+    new_submit: function (e) {
+
       if (e.preventDefault) e.preventDefault();
       var self = this;
+
+      var tags = [];
+      var oldTags = [];
+      var diff = [];
+
+      _.extend(this, Backbone.Events);
 
       // check all of the field validation before submitting
       var children = this.$el.find('.validate');
@@ -165,8 +173,54 @@ define([
       if (abort === true) {
         return;
       }
-
+      
       var types = ["task-skills-required", "task-time-required", "task-people", "task-length", "task-time-estimate", "skill", "topic", "location"];
+      tags = this.getTagsFromPage();
+      oldTags = this.getOldTags();
+      var modelData = {
+        title: this.$("#task-title").val(),
+        description: this.$("#task-description").val()
+      };
+
+      var projectId = this.$("#projectId").select2('data');
+      if (projectId) {
+        modelData.projectId = projectId.id;
+      }
+
+      this.tagFactory.saveNewTags(tags.topic,tags.skill,tags.location,this);
+      diff = this.tagFactory.createDiff(oldTags, tags, types,this);
+
+      console.log("diff dump ",diff);
+
+      if ( diff.remove.length > 0 ) { 
+        async.each(diff.remove, self.tagFactory.removeTag, function (err) {
+          //console.log("delete check ", diff.remove);
+        });
+      }
+
+      this.on("bjh", function (){
+        oldTags = this.getOldTags();
+        diff = this.tagFactory.createDiff(oldTags, tags, types,this);
+        diff.add.push(this.data.lastAdded.id);
+        // Add new tags
+        this.addTagsToTask(diff.add, modelData, this);
+      });
+
+      self.options.model.trigger("task:update", modelData);
+
+    },
+    
+    addTagsToTask: function (addTags, modelData, context) {
+
+      async.each(addTags, context.tagFactory.addTag.bind(null,context), function (err) {
+          // Update model metadata
+          
+      }, context);
+    
+      context.options.model.trigger("task:update", modelData);
+    },
+
+    getTagsFromPage: function () {
 
       // Gather tags for submission after the task is created
       tags = {
@@ -180,38 +234,21 @@ define([
         'task-length': [ this.$("#length").select2('data') ]
       };
 
-     var savedTags = this.tagFactory.saveNewTags(tags.topic,tags.skill,tags.location);
+      return tags;
+    },
+
+    getOldTags: function () {
 
       var oldTags = [];
-      for (var i in this.options.tags) {
-        oldTags.push({
-          id: parseInt(this.options.tags[i].id),
-          tagId: parseInt(this.options.tags[i].tag.id),
-          type: this.options.tags[i].tag.type
-        });
-      }
+        for (var i in this.options.tags) {
+          oldTags.push({
+            id: parseInt(this.options.tags[i].id),
+            tagId: parseInt(this.options.tags[i].tag.id),
+            type: this.options.tags[i].tag.type
+          });
+        }
 
-      var diff = this.tagFactory.createDiff(oldTags, tags, types);
-
-      var modelData = {
-        title: this.$("#task-title").val(),
-        description: this.$("#task-description").val()
-      };
-
-      var projectId = this.$("#projectId").select2('data');
-      if (projectId) {
-        modelData.projectId = projectId.id;
-      }
-
-      // Add new tags
-      async.each(diff.add, self.tagFactory.addTag.bind(null,self), function (err) {
-        // Delete old tags
-        async.each(diff.remove, self.tagFactory.removeTag, function (err) {
-          // Update model metadata
-          self.options.model.trigger("task:update", modelData);
-        });
-      });
-
+      return oldTags;
     },
 
     cleanup: function () {
