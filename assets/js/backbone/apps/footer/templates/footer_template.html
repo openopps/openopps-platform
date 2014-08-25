@@ -1,6 +1,21 @@
-<footer class="container">
+<footer class="container" style='background: gray;padding: 20px; color: white'>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-3">
+      <!-- COLUMN 1 -->
+      <a href=''>Crowdwork Community</a><br/>
+      <a href=''>Feedback</a><br/>
+      <a href=''>Help</a><br/>
+    </div>
+
+    <div class="col-md-6">
+      <!-- COLUMN 2 -->
+      <a href=''>FAQ</a><br/>
+      <a href=''>Terms of Service</a><br/>
+      <a href=''>Privacy Impact Statement</a><br/> 
+    </div>
+    
+    <div class="col-md-3">
+      <!-- COLUMN 3 -->
       <a href="https://github.com/Innovation-Toolkit/midas"><i class="icon icon-github"></i> powered by midas</a>
       |
       version <%- version.version %> (<a href="https://github.com/Innovation-Toolkit/midas/commit/<%- version.gitLong %>"><%- version.gitShort %></a>)
@@ -8,6 +23,8 @@
       |
       <a href="<%= login.terms.link %>"><%= login.terms.name %></a>
       <% } %>
+      <br/>
+      <span>Special thanks to Robert Foundation for Government</span>
     </div>
   </div>
 </footer>
