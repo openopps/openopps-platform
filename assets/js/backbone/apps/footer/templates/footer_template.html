@@ -1,13 +1,33 @@
-<footer class="container">
+<footer class="container" style='background: gray;padding: 30px; color: white'>
+
+  <style>
+    a:link,a:visited,a:hover,a:active{
+      color: white;
+    }
+
+  </style>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-3">
+      <!-- COLUMN 1 -->
+      <a href='http://cas.state.gov/crowdwork'>Crowdwork Community</a><br/>
+      <a href='mailto:crowdwork@state.gov?subject=Crowdwork%20Feedback'>Feedback</a><br/>
+      <a href='mailto:crowdwork@state.gov?subject=Crowdwork%20Help%20Needed'>Help</a><br/>
+    </div>
+
+    <div class="col-md-6">
+      <!-- COLUMN 2 -->
+      <a href='http://diplopedia.state.gov/index.php?title=CrowdWork'>FAQ</a><br/>
+      <a href='http://diplopedia.state.gov/index.php?title=CrowdWork Terms of Service'>Terms of Service</a><br/>
+      <a href='/images/pia.docx'>Privacy Impact Statement</a><br/> 
+    </div>
+    
+    <div class="col-md-3">
+      <!-- COLUMN 3 -->
       <a href="https://github.com/Innovation-Toolkit/midas"><i class="icon icon-github"></i> powered by midas</a>
       |
       version <%- version.version %> (<a href="https://github.com/Innovation-Toolkit/midas/commit/<%- version.gitLong %>"><%- version.gitShort %></a>)
-      <% if (login.terms.enabled === true) { %>
-      |
-      <a href="<%= login.terms.link %>"><%= login.terms.name %></a>
-      <% } %>
+      <br/>
+      <span>Supported by the Robertson Foundation for Government</span>
     </div>
   </div>
 </footer>
