@@ -31,6 +31,9 @@ assets/prod/css
 assets/prod/font
 assets/prod/fonts
 
+# Ignore vagrant tmp files
+.vagrant/*
+
 # Ignore editor temp files
 *~
 *#
