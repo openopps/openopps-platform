@@ -23,20 +23,21 @@ define([
       return this;
     },
 
-    addTagEntities: function (context, tag, done) {
+    addTagEntities: function (tag, context, done) {
     	//assumes
     	//  tag -- array of tag objects to add
     	//  tagType -- string specifying type for tagEntity table
 
     	//this is current solution to mark a tag object as on the fly added
         if ( typeof tag.unmatched == 'undefined' || !tag.unmatched ){
-          return;
+          return done();
         }
-
       //remove the flag that marks them as new
       delete tag.unmatched;
 
-      var promise = $.ajax({
+      console.log("debug - 1 ",context.data);
+
+      $.ajax({
         url: '/api/tagEntity',
         type: 'POST',
         data: {
@@ -44,14 +45,10 @@ define([
           name: tag.id
         },
         success: function (data){
-          context.data.newTags[0] = data;
-          context.data.lastAdded  = data;
+          context.data.newTag     = data;
+          context.data.newItemTags.push(data);
+          return done();
         }
-      });
-
-      $.when(promise)
-      .done(function() {
-        context.trigger("bjh");
       });
     },
 
@@ -65,7 +62,7 @@ define([
       });
     },
 
-    addTag: function (contextObj,tag, done) {
+    addTag: function (tag, contextObj, done) {
     	//assumes
     	//  tag -- array of tag objects to add
     	//  --- NYI ---
@@ -73,47 +70,38 @@ define([
 
     	 //if (!tag || !tag.id) return done();
        // if (tag.tagId) return done();
-       //console.log("add tag dump ", tag);
+       
+      console.log("tag check ", tag);
 
-          if ( _.isObject(tag) ) {
 
-            if ( _.isFinite(tag.id) ){
-              console.log("tags ssss passed isnumber ", tag.id);
-              var tagMap = {
-                // --- NYI ---
-                // or proecjt id
-                taskId: contextObj.tempTaskId,
-                tagId: tag.id
-              }
-            } else {
-              console.log(contextObj.data.lastAdded);
-              var tagMap = {
-                // --- NYI ---
-                // or proecjt id
-                taskId: contextObj.tempTaskId,
-                tagId: contextObj.data.lastAdded.id
-              }
-            }
-              
-          } else {
-
-            var tagMap = {
-              taskId: contextObj.model.id,
-              tagId: tag
-            }
-          }
-
-          $.ajax({
-            url: '/api/tag',
-            type: 'POST',
-            data: tagMap,
-            success: function (data) {
-              done();
-            },
-            error: function (err) {
-              done(err);
-            }
-          });
+      if ( _.isFinite(tag) ){
+        var tagMap = {
+          // --- NYI ---
+          // or proecjt id
+          
+          taskId: contextObj.model.attributes.id,
+          tagId: tag
+        }
+      } else {
+        var tagMap = {
+          // --- NYI ---
+          // or proecjt id
+          
+          taskId: contextObj.tempTaskId,
+          tagId: tag.id
+        }
+      }
+      $.ajax({
+        url: '/api/tag',
+        type: 'POST',
+        data: tagMap,
+        success: function (data) {
+          return done();
+        },
+        error: function (err) {
+          return done(err);
+        }
+      });
 
     },
 
@@ -223,13 +211,21 @@ define([
 
         newTags = newTags.concat(topics, skills, locations);
         
-        var promise = _.each(newTags, this.addTagEntities.bind(null,context));
-
-
-        $.when(promise)
-        .done(function(){
-          context.trigger("newTagSaveDone");
-        });
+        //var promise = _.each(newTags, this.addTagEntities.bind(null,context));
+        console.log("------", newTags);
+        
+        async.forEach(
+          newTags, 
+          function(newTag, callback) { 
+            context.tagFactory.addTagEntities(newTag,context,callback);
+            callback();
+          }, 
+          function(err) {
+            if (err) return next(err);
+            context.trigger("newTagSaveDone");
+          }
+        );
+        
         
       }
 

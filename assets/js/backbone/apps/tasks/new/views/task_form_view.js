@@ -25,7 +25,8 @@ define([
       this.tasks = this.options.tasks;
       this.tagFactory = new TagFactory();
       this.data = {};
-      this.data.newTags = [];
+      this.data.newTag = {};
+      this.data.newItemTags = [];
       this.initializeSelect2Data();
       this.initializeListeners();
     },
@@ -51,6 +52,7 @@ define([
         self.render();
       });
     },
+
     initializeListeners: function() {
       var self = this;
       
@@ -58,48 +60,73 @@ define([
 
       self.on('newTagSaveDone',function (){
 
-        tags = [];
-        tags.push.apply(tags, self.$("#topics").select2('data'));
-        tags.push.apply(tags, self.$("#skills").select2('data'));
+        tags         = [];
+        var tempTags = [];
+
+        //get newly created tags from big three types
+        _.each(self.data.newItemTags, function(newItemTag){
+          tags.push(newItemTag);
+        });
+
+        tempTags.push(self.$("#topics").select2('data'));
+        tempTags.push(self.$("#skills").select2('data'));
+        if (self.$("#task-location").select2('data').id == 'true') {
+          tempTags.push(self.$("#location").select2('data'));
+        }
+        
+        //see if there are any previously created big three tags and add them to the tag array
+        _.each(tempTags,function(tempTag){
+          if ( tempTag.id !== tempTag.name ){
+            tags.push(tempTag);
+          }
+        });
+
+        //existing tags not part of big three
         tags.push(self.$("#skills-required").select2('data'));
         tags.push(self.$("#people").select2('data'));
         tags.push(self.$("#time-required").select2('data'));
         tags.push(self.$("#time-estimate").select2('data'));
         tags.push(self.$("#length").select2('data'));
-
-        if (self.$("#task-location").select2('data').id == 'true') {
-          tags.push.apply(tags, self.$("#location").select2('data'));
-        }
-
-        console.log("tags ",tags);
-
-        async.each(tags, self.tagFactory.addTag.bind(null,self), function (err) {
-          self.model.trigger("task:modal:hide");
-          self.model.trigger("task:tags:save:success", err);
-        });
+        
+        console.log("tags dump", tags);
+        
+        async.forEach(
+          tags,
+          function(tag, callback){
+            return self.tagFactory.addTag(tag,self,callback);
+          },
+          function(err){
+            self.model.trigger("task:modal:hide");
+            self.model.trigger("task:tags:save:success", err);
+          }
+        );
       });
 
 
       this.listenTo(this.tasks,"task:save:success", function (taskId){
+        //the only concern here is to add newly created tags which is only available in the three items below
+        //
 
         self.tempTaskId = taskId;
-        console.log("here");
-          // Gather tags for submission after the task is created
-        tags = [];
-        tags.push.apply(tags, self.$("#topics").select2('data'));
-        tags.push.apply(tags, self.$("#skills").select2('data'));
-        tags.push(self.$("#skills-required").select2('data'));
-        tags.push(self.$("#people").select2('data'));
-        tags.push(self.$("#time-required").select2('data'));
-        tags.push(self.$("#time-estimate").select2('data'));
-        tags.push(self.$("#length").select2('data'));
 
-        if (self.$("#task-location").select2('data').id == 'true') {
-          tags.push.apply(tags, self.$("#location").select2('data'));
-        }
+        var newTags = [];
 
-        this.tagFactory.saveNewTags(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'),this);
-        self.trigger("afterTagEntitySave");
+        newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'));
+        
+        //var promise = _.each(newTags, this.addTagEntities.bind(null,context));
+        //console.log("------", newTags);
+        
+        async.forEach(
+          newTags, 
+          function(newTag, callback) { 
+            return self.tagFactory.addTagEntities(newTag,self,callback);
+          }, 
+          function(err) {
+            if (err) return next(err);
+            self.trigger("newTagSaveDone");
+          }
+        );
+
       });
     },
 

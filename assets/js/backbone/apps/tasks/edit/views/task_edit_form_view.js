@@ -21,6 +21,8 @@ define([
     initialize: function (options) {
       this.options = options;
       this.tagFactory = new TagFactory();
+      this.data = {};
+      this.data.newTag = {};
       // Register listener to task update, the last step of saving
       this.listenTo(this.options.model, "task:update:success", function (data) {
         Backbone.history.navigate('tasks/' + data.attributes.id, { trigger: true });
@@ -43,6 +45,7 @@ define([
         data: this.model.toJSON(),
         tagTypes: this.options.tagTypes,
         newTags: [],
+        newItemTags: [],
         tags: this.options.tags,
         madlibTags: this.options.madlibTags
       };
@@ -153,9 +156,9 @@ define([
     },
 
     new_submit: function (e) {
-
-      if (e.preventDefault) e.preventDefault();
       var self = this;
+      if (e.preventDefault) e.preventDefault();
+      //var self = this;
 
       var tags = [];
       var oldTags = [];
@@ -187,10 +190,25 @@ define([
         modelData.projectId = projectId.id;
       }
 
-      this.tagFactory.saveNewTags(tags.topic,tags.skill,tags.location,this);
+      newTags = [];
+       newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'));
+
+
+      console.log("tttttttt",self.data);
+        async.forEach(
+          newTags, 
+          function(newTag, callback) { 
+            return self.tagFactory.addTagEntities(newTag,self,callback);
+          }, 
+          function(err) {
+            if (err) return next(err);
+            self.trigger("newTaskTagSaveDone");
+          }
+        );
+
       diff = this.tagFactory.createDiff(oldTags, tags, types,this);
 
-      console.log("diff dump ",diff);
+      console.log("modelData dump ",modelData);
 
       if ( diff.remove.length > 0 ) { 
         async.each(diff.remove, self.tagFactory.removeTag, function (err) {
@@ -198,12 +216,28 @@ define([
         });
       }
 
-      this.on("bjh", function (){
+      self.on("newTaskTagSaveDone", function (){
+
         oldTags = this.getOldTags();
-        diff = this.tagFactory.createDiff(oldTags, tags, types,this);
-        diff.add.push(this.data.lastAdded.id);
+        diff = this.tagFactory.createDiff(oldTags, self.data.newItemTags, types,this);
+
+        _.each(self.data.newItemTags, function(newItemTag){
+          diff.add.push(newItemTag.id);
+        });
+        
+        async.forEach(
+          diff.add,
+          function(diffAdd, callback){
+            return self.tagFactory.addTag(diffAdd,self,callback);
+          },
+          function(err){
+            self.model.trigger("task:modal:hide");
+            self.model.trigger("task:tags:save:success", err);
+          }
+        );
+
         // Add new tags
-        this.addTagsToTask(diff.add, modelData, this);
+        //this.addTagsToTask(diff.add, modelData, this);
       });
 
       self.options.model.trigger("task:update", modelData);
