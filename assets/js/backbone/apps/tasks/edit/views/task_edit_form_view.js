@@ -23,6 +23,7 @@ define([
       this.tagFactory = new TagFactory();
       this.data = {};
       this.data.newTag = {};
+      this.initializeListeners();
       // Register listener to task update, the last step of saving
       this.listenTo(this.options.model, "task:update:success", function (data) {
         Backbone.history.navigate('tasks/' + data.attributes.id, { trigger: true });
@@ -155,6 +156,45 @@ define([
       }).render();
     },
 
+    initializeListeners: function() {
+      var self = this;
+
+      self.on("newTaskTagSaveDone", function (){
+
+        var modelData = {
+          title: this.$("#task-title").val(),
+          description: this.$("#task-description").val()
+        };
+
+        var projectId = this.$("#projectId").select2('data');
+        if (projectId) {
+          modelData.projectId = projectId.id;
+        }
+
+        oldTags = this.getOldTags();
+        tags    = this.getTagsFromPage();
+        diff    = this.tagFactory.createDiff_new(oldTags, tags);
+
+        _.each(self.data.newItemTags, function(newItemTag){
+          diff.add.push(newItemTag.id);
+        });
+
+        async.forEach(
+          diff.add,
+          function(diffAdd, callback){
+            if ( !_.isFinite(diffAdd) && diffAdd.name == diffAdd.id ) { return true; }
+            return self.tagFactory.addTag(diffAdd,self.model.attributes.id,"taskId",callback);
+          },
+          function(err){
+            self.model.trigger("task:modal:hide");
+            self.model.trigger("task:tags:save:success", err);
+            self.options.model.trigger("task:update", modelData);
+          }
+        );
+
+      });
+    },
+
     new_submit: function (e) {
       var self = this;
       if (e.preventDefault) e.preventDefault();
@@ -177,70 +217,32 @@ define([
         return;
       }
       
-      var types = ["task-skills-required", "task-time-required", "task-people", "task-length", "task-time-estimate", "skill", "topic", "location"];
+      //var types = ["task-skills-required", "task-time-required", "task-people", "task-length", "task-time-estimate", "skill", "topic", "location"];
       tags = this.getTagsFromPage();
       oldTags = this.getOldTags();
-      var modelData = {
-        title: this.$("#task-title").val(),
-        description: this.$("#task-description").val()
-      };
-
-      var projectId = this.$("#projectId").select2('data');
-      if (projectId) {
-        modelData.projectId = projectId.id;
-      }
-
+    
       newTags = [];
-       newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'));
+      newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'));
 
-
-      console.log("tttttttt",self.data);
         async.forEach(
           newTags, 
           function(newTag, callback) { 
             return self.tagFactory.addTagEntities(newTag,self,callback);
           }, 
           function(err) {
-            if (err) return next(err);
+          if (err) return next(err);
             self.trigger("newTaskTagSaveDone");
           }
         );
-
-      diff = this.tagFactory.createDiff(oldTags, tags, types,this);
-
-      console.log("modelData dump ",modelData);
+      diff = this.tagFactory.createDiff_new(oldTags, tags);
 
       if ( diff.remove.length > 0 ) { 
         async.each(diff.remove, self.tagFactory.removeTag, function (err) {
-          //console.log("delete check ", diff.remove);
+          // do nothing for now
         });
       }
 
-      self.on("newTaskTagSaveDone", function (){
-
-        oldTags = this.getOldTags();
-        diff = this.tagFactory.createDiff(oldTags, self.data.newItemTags, types,this);
-
-        _.each(self.data.newItemTags, function(newItemTag){
-          diff.add.push(newItemTag.id);
-        });
-        
-        async.forEach(
-          diff.add,
-          function(diffAdd, callback){
-            return self.tagFactory.addTag(diffAdd,self,callback);
-          },
-          function(err){
-            self.model.trigger("task:modal:hide");
-            self.model.trigger("task:tags:save:success", err);
-          }
-        );
-
-        // Add new tags
-        //this.addTagsToTask(diff.add, modelData, this);
-      });
-
-      self.options.model.trigger("task:update", modelData);
+      //self.trigger("newTaskTagSaveDone");
 
     },
     
@@ -257,16 +259,15 @@ define([
     getTagsFromPage: function () {
 
       // Gather tags for submission after the task is created
-      tags = {
-        topic: this.$("#topics").select2('data'),
-        skill: this.$("#skills").select2('data'),
-        location: this.$("#location").select2('data'),
-        'task-skills-required': [ this.$("#skills-required").select2('data') ],
-        'task-people': [ this.$("#people").select2('data') ],
-        'task-time-required': [ this.$("#time-required").select2('data') ],
-        'task-time-estimate': [ this.$("#time-estimate").select2('data') ],
-        'task-length': [ this.$("#length").select2('data') ]
-      };
+      var tags = [];
+      tags.push.apply(tags,this.$("#topics").select2('data'));
+      tags.push.apply(tags,this.$("#skills").select2('data'));
+      tags.push.apply(tags,this.$("#location").select2('data'));
+      tags.push.apply(tags,[this.$("#skills-required").select2('data')]);
+      tags.push.apply(tags,[this.$("#people").select2('data')]);
+      tags.push.apply(tags,[this.$("#time-required").select2('data')]);
+      tags.push.apply(tags,[this.$("#time-estimate").select2('data')]);
+      tags.push.apply(tags,[this.$("#length").select2('data')]);
 
       return tags;
     },

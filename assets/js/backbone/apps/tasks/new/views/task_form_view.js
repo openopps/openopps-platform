@@ -68,14 +68,15 @@ define([
           tags.push(newItemTag);
         });
 
-        tempTags.push(self.$("#topics").select2('data'));
-        tempTags.push(self.$("#skills").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#topics").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#skills").select2('data'));
         if (self.$("#task-location").select2('data').id == 'true') {
-          tempTags.push(self.$("#location").select2('data'));
+          tempTags.push.apply(tempTags,self.$("#location").select2('data'));
         }
         
         //see if there are any previously created big three tags and add them to the tag array
         _.each(tempTags,function(tempTag){
+          console.log(" xxx ", tempTag);
           if ( tempTag.id !== tempTag.name ){
             tags.push(tempTag);
           }
@@ -88,12 +89,13 @@ define([
         tags.push(self.$("#time-estimate").select2('data'));
         tags.push(self.$("#length").select2('data'));
         
-        console.log("tags dump", tags);
+        console.log("tags dump", tags,tempTags);
         
         async.forEach(
           tags,
           function(tag, callback){
-            return self.tagFactory.addTag(tag,self,callback);
+            //diffAdd,self.model.attributes.id,"taskId",callback
+            return self.tagFactory.addTag(tag,self.tempTaskId,"taskId",callback);
           },
           function(err){
             self.model.trigger("task:modal:hide");
@@ -112,9 +114,6 @@ define([
         var newTags = [];
 
         newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'),self.$("#location").select2('data'));
-        
-        //var promise = _.each(newTags, this.addTagEntities.bind(null,context));
-        //console.log("------", newTags);
         
         async.forEach(
           newTags, 

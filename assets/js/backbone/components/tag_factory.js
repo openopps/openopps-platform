@@ -35,8 +35,6 @@ define([
       //remove the flag that marks them as new
       delete tag.unmatched;
 
-      console.log("debug - 1 ",context.data);
-
       $.ajax({
         url: '/api/tagEntity',
         type: 'POST',
@@ -62,35 +60,27 @@ define([
       });
     },
 
-    addTag: function (tag, contextObj, done) {
+    addTag: function (tag, modelId, modelType, done) {
     	//assumes
     	//  tag -- array of tag objects to add
     	//  --- NYI ---
     	//  projet or task id - string
 
-    	 //if (!tag || !tag.id) return done();
-       // if (tag.tagId) return done();
-       
-      console.log("tag check ", tag);
+      var tagMap = {};
+      tagMap[modelType] = modelId;
 
-
-      if ( _.isFinite(tag) ){
-        var tagMap = {
+      if ( _.isFinite(tag) ){  
           // --- NYI ---
           // or proecjt id
-          
-          taskId: contextObj.model.attributes.id,
-          tagId: tag
-        }
+        
+          tagMap.tagId = tag;
       } else {
-        var tagMap = {
           // --- NYI ---
           // or proecjt id
-          
-          taskId: contextObj.tempTaskId,
-          tagId: tag.id
-        }
+
+          tagMap.tagId = tag.id;
       }
+
       $.ajax({
         url: '/api/tag',
         type: 'POST',
@@ -112,7 +102,8 @@ define([
           minimumInputLength: 2,
           multiple: true,
           // this width setting is a hack to prevent placeholder from getting cut off
-          width: "556px",
+          //width: "556px",
+          width: "500px",
           formatResult: function (obj, container, query) {
             return obj.name;
           },
@@ -145,13 +136,47 @@ define([
 
       },
 
-      createDiff: function (oldTags, newTags, types, context) {
+      createDiff_new: function ( oldTags, currentTags){
+
         var out = {
           remove: [],
           add: [],
           none: []
         };
+
+        var none = null;
         
+        _.each(oldTags, function (oTag,oi){  
+
+          none = null;
+
+          _.each(currentTags, function (cTag, ci){
+              if ( parseInt(cTag.id) == oTag.tagId ){
+                currentTags.splice(ci,1);
+                none = oi;
+              }
+            });
+
+          if( _.isFinite(none) ){
+            out.none.push(parseInt(oldTags[none].tagId));
+          } else {
+            out.remove.push(parseInt(oTag.id));
+          }
+        });
+
+        out.add = currentTags;
+
+        return out; 
+      },
+
+      createDiff: function (oldTags, newTags, types, context) {
+
+        var out = {
+          remove: [],
+          add: [],
+          none: []
+        };
+        return out;        
         // find if a new tag selected already exists
         // if it does, remove it from the array
         // if it doesn't, add to the new list
@@ -164,7 +189,7 @@ define([
           for (var j in oldTags) {
             // if the tag is in both lists, do nothing
             if (oldTags[j].tagId == parseInt(tag.id)) {
-              //console.log("test 1 ", oldTags[j].tagId, tag.id);
+              
               out.none.push(oldTags.id);
               none = j;
               break;
@@ -189,44 +214,24 @@ define([
           }
         };
 
-        for (var t in types) {
 
-          _.each(newTags[types[t]], function (newTag) {
-            if ( newTag.id != newTag.name )  {
-              findTag(newTag, oldTags);
-            } 
-          });
+
+      _.each(newTags, function (newTag) {
+        
+        _.each(newTag, function ( nTag ) {
+          
+          if ( nTag.id != nTag.name )  {
+            findTag(nTag, oldTags);
+          }
+
+        });
+        
+      });
           
           // if there's any tags left in oldTags, they need to be deleted
-          findDel(oldTags, types[t]);
-        }
-        console.log("out--", out);
+      findDel(oldTags, types[t]);
+        
         return out;
-      },
-
-      saveNewTags: function (topics, skills, locations, context) {
-        var self = this;
-
-        var newTags = [];
-
-        newTags = newTags.concat(topics, skills, locations);
-        
-        //var promise = _.each(newTags, this.addTagEntities.bind(null,context));
-        console.log("------", newTags);
-        
-        async.forEach(
-          newTags, 
-          function(newTag, callback) { 
-            context.tagFactory.addTagEntities(newTag,context,callback);
-            callback();
-          }, 
-          function(err) {
-            if (err) return next(err);
-            context.trigger("newTagSaveDone");
-          }
-        );
-        
-        
       }
 
   });
