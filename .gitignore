@@ -40,5 +40,5 @@ assets/prod/fonts
 .tmp
 *.idea
 
-# Ignore cw stuff for midas
-
+# Ignore vagrabt stuff for midas
+.vagrant/
