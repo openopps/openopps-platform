@@ -76,8 +76,7 @@ define([
         
         //see if there are any previously created big three tags and add them to the tag array
         _.each(tempTags,function(tempTag){
-          console.log(" xxx ", tempTag);
-          if ( tempTag.id !== tempTag.name ){
+            if ( tempTag.id !== tempTag.name ){
             tags.push(tempTag);
           }
         });
@@ -88,8 +87,6 @@ define([
         tags.push(self.$("#time-required").select2('data'));
         tags.push(self.$("#time-estimate").select2('data'));
         tags.push(self.$("#length").select2('data'));
-        
-        console.log("tags dump", tags,tempTags);
         
         async.forEach(
           tags,

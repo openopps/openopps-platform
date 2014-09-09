@@ -15,7 +15,7 @@ define([
     events: {
       'blur .validate'        : 'v',
       'click #task-view'      : 'view',
-      'submit #task-edit-form': 'new_submit'
+      'submit #task-edit-form': 'submit'
     },
 
     initialize: function (options) {
@@ -173,7 +173,7 @@ define([
 
         oldTags = this.getOldTags();
         tags    = this.getTagsFromPage();
-        diff    = this.tagFactory.createDiff_new(oldTags, tags);
+        diff    = this.tagFactory.createDiff(oldTags, tags);
 
         _.each(self.data.newItemTags, function(newItemTag){
           diff.add.push(newItemTag.id);
@@ -182,12 +182,10 @@ define([
         async.forEach(
           diff.add,
           function(diffAdd, callback){
-            if ( !_.isFinite(diffAdd) && diffAdd.name == diffAdd.id ) { return true; }
-            return self.tagFactory.addTag(diffAdd,self.model.attributes.id,"taskId",callback);
+            if ( !_.isFinite(diffAdd) && diffAdd.name == diffAdd.id ) { return callback(); }
+            self.tagFactory.addTag(diffAdd,self.model.attributes.id,"taskId",callback);
           },
           function(err){
-            self.model.trigger("task:modal:hide");
-            self.model.trigger("task:tags:save:success", err);
             self.options.model.trigger("task:update", modelData);
           }
         );
@@ -195,7 +193,7 @@ define([
       });
     },
 
-    new_submit: function (e) {
+    submit: function (e) {
       var self = this;
       if (e.preventDefault) e.preventDefault();
       //var self = this;
@@ -227,33 +225,20 @@ define([
         async.forEach(
           newTags, 
           function(newTag, callback) { 
-            return self.tagFactory.addTagEntities(newTag,self,callback);
+            self.tagFactory.addTagEntities(newTag,self,callback);
           }, 
           function(err) {
           if (err) return next(err);
             self.trigger("newTaskTagSaveDone");
           }
         );
-      diff = this.tagFactory.createDiff_new(oldTags, tags);
+      diff = this.tagFactory.createDiff(oldTags, tags);
 
       if ( diff.remove.length > 0 ) { 
         async.each(diff.remove, self.tagFactory.removeTag, function (err) {
           // do nothing for now
         });
       }
-
-      //self.trigger("newTaskTagSaveDone");
-
-    },
-    
-    addTagsToTask: function (addTags, modelData, context) {
-
-      async.each(addTags, context.tagFactory.addTag.bind(null,context), function (err) {
-          // Update model metadata
-          
-      }, context);
-    
-      context.options.model.trigger("task:update", modelData);
     },
 
     getTagsFromPage: function () {

@@ -27,6 +27,7 @@ define([
     	//assumes
     	//  tag -- array of tag objects to add
     	//  tagType -- string specifying type for tagEntity table
+      var self = this;
 
     	//this is current solution to mark a tag object as on the fly added
         if ( typeof tag.unmatched == 'undefined' || !tag.unmatched ){
@@ -136,7 +137,9 @@ define([
 
       },
 
-      createDiff_new: function ( oldTags, currentTags){
+      createDiff: function ( oldTags, currentTags){
+        //sort tags into their needed actions
+        //
 
         var out = {
           remove: [],
@@ -167,71 +170,6 @@ define([
         out.add = currentTags;
 
         return out; 
-      },
-
-      createDiff: function (oldTags, newTags, types, context) {
-
-        var out = {
-          remove: [],
-          add: [],
-          none: []
-        };
-        return out;        
-        // find if a new tag selected already exists
-        // if it does, remove it from the array
-        // if it doesn't, add to the new list
-
-        var findTag = function (tag, oldTags) {
-          
-          if(!tag) return;
-
-          var none = null;
-          for (var j in oldTags) {
-            // if the tag is in both lists, do nothing
-            if (oldTags[j].tagId == parseInt(tag.id)) {
-              
-              out.none.push(oldTags.id);
-              none = j;
-              break;
-            }
-          }
-
-          // if in both lists, splice out of the old list
-          if (none) {
-            oldTags.splice(none, 1);
-          } else {
-            // the new tag was not found, so we have to add it
-            out.add.push(parseInt(tag.id));
-          }
-        };
-
-        var findDel = function (oldTags, type) {
-          for (var j in oldTags) {
-            // anything left of this type should be deleted
-            if (oldTags[j].type == type) {
-              out.remove.push(oldTags[j].id);
-            }
-          }
-        };
-
-
-
-      _.each(newTags, function (newTag) {
-        
-        _.each(newTag, function ( nTag ) {
-          
-          if ( nTag.id != nTag.name )  {
-            findTag(nTag, oldTags);
-          }
-
-        });
-        
-      });
-          
-          // if there's any tags left in oldTags, they need to be deleted
-      findDel(oldTags, types[t]);
-        
-        return out;
       }
 
   });
