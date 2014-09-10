@@ -234,15 +234,3 @@ passport.use('linkedin', new LinkedInStrategy({
   }
 ));
 
-module.exports = {
- // Register Express middleware extensions
-  express: {
-    customMiddleware: function(app)
-    {
-      // Passport for authentication
-      // See http://www.passportjs.org
-      app.use(passport.initialize());
-      app.use(passport.session());
-    }
-  }
-}

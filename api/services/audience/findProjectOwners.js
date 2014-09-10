@@ -9,7 +9,7 @@ var utils = require('./utils');
 
 module.exports = {
   execute: function (fields, settings, cb) {
-    ProjectOwner.find({projectId: fields.projectId}).done(function(err, owners){
+    ProjectOwner.find({projectId: fields.projectId}).exec(function(err, owners){
       utils.convertToUsers(err, owners, cb);
     });
   }

@@ -9,7 +9,7 @@ var utils = require('./utils');
 
 module.exports = {
   execute: function (fields, settings, cb) {
-    Comment.findOneById(fields.commentId).done(function (err, comment) {
+    Comment.findOneById(fields.commentId).exec(function (err, comment) {
       if(!err && comment){
         // get all parent comments
         sails.services.utils['comment'].commentParentThreadAssemble(comment, {}, function (err, comments){

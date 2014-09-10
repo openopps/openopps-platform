@@ -25,7 +25,7 @@ module.exports = {
     if (uIds.length > 0) {
       User.find({
         where: { id: uIds }
-      }).done(cb);
+      }).exec(cb);
     }
     else {
       cb(null, []);

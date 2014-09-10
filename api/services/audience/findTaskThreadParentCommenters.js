@@ -9,7 +9,7 @@ var utils = require('./utils');
 
 module.exports = {
   execute: function (fields, settings, cb) {
-    Comment.find({id : fields.commentId }).done(function(err, comments){
+    Comment.find({id : fields.commentId }).exec(function(err, comments){
       if(!err && comments.length > 0){
         var comment = comments.pop();
         // get all parent comments

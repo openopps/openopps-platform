@@ -125,6 +125,10 @@ module.exports = {
     });
   },
 
+  findOne: function(req, res) {
+    module.exports.find(req, res);
+  },
+
   update: function (req, res) {
     return update(req, res);
   },
@@ -292,7 +296,7 @@ module.exports = {
           password: hash
         };
         // Store the user's password with the bcrypt hash
-        UserPassword.create(pwObj).done(function (err, pwObj) {
+        UserPassword.create(pwObj).exec(function (err, pwObj) {
           if (err) { return res.send(400, { message: 'Unable to store password.'}); }
           return res.send(true);
         });

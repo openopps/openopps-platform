@@ -20,6 +20,10 @@ module.exports = {
     });
   },
 
+  findOne: function(req, res) {
+    module.exports.find(req, res);
+  },
+
   // Namespace the find() method that returns the array of objects into
   // a familiar findAll method.
   findAll: function (req, res) {
@@ -32,7 +36,7 @@ module.exports = {
       if (!req.user) {
         return res.send({ projects: projects });
       }
-      ProjectOwner.find({ where: { userId: req.user[0].id }}).done(function (err, myprojects) {
+      ProjectOwner.find({ where: { userId: req.user[0].id }}).exec(function (err, myprojects) {
         if (err) return res.send(400, { message: 'Error looking up projects.'});
         var projIds = [];
         var myprojIds = [];
@@ -50,7 +54,7 @@ module.exports = {
           return res.send({ projects: projects });
         }
         // Get the projects that I have access to but are draft
-        Project.find({ 'where': { 'id': myprojIds, 'state': 'draft' }}).done(function (err, myprojects) {
+        Project.find({ 'where': { 'id': myprojIds, 'state': 'draft' }}).exec(function (err, myprojects) {
           if (err) return res.send(400, { message: 'Error looking up projects.'});
           var finalprojects = projects.concat(myprojects);
           async.each(myprojects, util.addCounts, function (err) {
@@ -66,7 +70,7 @@ module.exports = {
       processProjects( null, [] );
     }
     else {
-      Project.find({ where: { 'state': state }}).done( function (err, projects) {
+      Project.find({ where: { 'state': state }}).exec( function (err, projects) {
         if (err) return res.send(400, { message: 'Error looking up projects.'});
         async.each(projects, util.addCounts, function (err) {
           return processProjects(err, projects);

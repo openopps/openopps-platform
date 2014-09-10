@@ -15,7 +15,7 @@ describe('admin:', function () {
     });
 
     it('set admin', function (done) {
-      request.get({ url: conf.url + '/admin/admin/1?action=true'
+      request.get({ url: conf.url + '/admin/admin/' + conf.defaultUser.obj.id + '?action=true'
                    }, function (err, response, body) {
         assert.equal(response.statusCode, 403);
         done(err);
@@ -49,22 +49,22 @@ describe('admin:', function () {
     });
 
     it('set admin', function (done) {
-      request.get({ url: conf.url + '/admin/admin/1?action=true'
+      request.get({ url: conf.url + '/admin/admin/' + conf.defaultUser.obj.id + '?action=true'
                    }, function (err, response, body) {
         assert.equal(response.statusCode, 200);
         var b = JSON.parse(body);
-        assert.equal(b.id, 1);
+        assert.equal(b.id, conf.defaultUser.obj.id);
         assert.isTrue(b.isAdmin);
         done(err);
       });
     });
 
     it('remove admin', function (done) {
-      request.get({ url: conf.url + '/admin/admin/1?action=false'
+      request.get({ url: conf.url + '/admin/admin/' + conf.defaultUser.obj.id + '?action=false'
                    }, function (err, response, body) {
         assert.equal(response.statusCode, 200);
         var b = JSON.parse(body);
-        assert.equal(b.id, 1);
+        assert.equal(b.id, conf.defaultUser.obj.id);
         assert.equal(b.isAdmin, false);
         done(err);
       });

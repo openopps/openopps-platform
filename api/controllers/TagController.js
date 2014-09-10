@@ -47,6 +47,9 @@ module.exports = {
   add: function (req, res) {
     if (req.route.method != 'post') { return res.send(400, { message: 'Unsupported operation.' } ); }
     var tag = _.extend(req.body || {}, req.params);
+    if (_.isUndefined(tag.id)) {
+      delete tag.id;
+    } 
     // Trim whitespace
     if (_.isUndefined(tag.name) || (_.isUndefined(tag.type))) {
       return res.send(400, { message: 'Must specify tag name and type.' });

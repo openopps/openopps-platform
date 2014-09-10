@@ -13,10 +13,7 @@
  * http://sailsjs.org/#documentation
  */
 
-module.exports.controllers = {
-
-
-  blueprints: {
+module.exports.blueprints = {
 
     // Optional mount path prefix for blueprints
     // (the automatically bound routes in your controllers)
@@ -57,6 +54,5 @@ module.exports.controllers = {
     // instead of:
     //		get /user/a8j4g9jsd9ga4ghjasdha
     expectIntegerId: false
-  }
 
 };

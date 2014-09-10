@@ -60,9 +60,19 @@ module.exports = {
   // POSTGRES
   // Set your postgres database settings here, including the username, password
   // and database name
-  adapters: {
+  connections : {
     'default': process.env.ADAPTER_DEFAULT || 'postgresql',
+    memory: {
+      adapter: 'sails-disk',
+      inMemory: true
+    },
+    disk: {
+      adapter: 'sails-disk',
+      filePath: './.tmp/dirty.db',
+      inMemory: false
+    },
     postgresql: {
+      adapter     : 'sails-postgresql',
       host        : 'localhost',
       user        : 'midas',
       password    : 'midas',

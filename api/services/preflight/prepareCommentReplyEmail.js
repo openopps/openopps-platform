@@ -27,17 +27,17 @@ module.exports = {
       // store userEmail object as metadata
       content.fields.metadata.userEmail = userEmail;
       // Get the comment object
-      Comment.findOneById(fields.callerId).done(function (err, callComment) {
+      Comment.findOneById(fields.callerId).exec(function (err, callComment) {
         if (err) { sails.log.debug(err); cb(null, content); return false; }
         content.fields.metadata.comment = callComment;
         // Get the initiator userId
         content.fields.initiatorId = callComment.userId;
         // Get the parent comment object
-        Comment.findOneById(callComment.parentId).done(function (err, parComment) {
+        Comment.findOneById(callComment.parentId).exec(function (err, parComment) {
           if (err) { sails.log.debug(err); cb(null, content); return false; }
           content.fields.metadata.parentComment = parComment;
           // Get information about the user who created the comment
-          User.findOneById(callComment.userId).done(function (err, user) {
+          User.findOneById(callComment.userId).exec(function (err, user) {
             if (err) { sails.log.debug(err); cb(null, content); return false; }
             content.fields.metadata.commentUser = user;
             // Get information about the project or task
@@ -49,7 +49,7 @@ module.exports = {
               modelName = 'task';
               modelId = callComment.taskId;
             }
-            model.findOneById(modelId).done(function (err, obj) {
+            model.findOneById(modelId).exec(function (err, obj) {
               if (err) { sails.log.debug(err); cb(null, content); return false; }
               content.fields.metadata[modelName] = obj;
               if (obj) {

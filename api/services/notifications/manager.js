@@ -145,7 +145,7 @@ function NotificationBuilder () {
         createdDate: createdDate,
         localParams: JSON.stringify(params.data.audience[audience]),
         globalParams: JSON.stringify(sails.config.notifications.triggerRoutes[params.trigger.action].audience[audience])
-      }).done(function (err, newNotification){
+      }).exec(function (err, newNotification){
         if (err) {
           sails.log.debug(err);
           done(null, newNotification, audience, user);
@@ -294,7 +294,7 @@ function NotificationBuilder () {
           notificationId: notification.id,
           deliveryType: deliveryType,
           content: JSON.stringify(content)
-        }).done(function (err, delivery){
+        }).exec(function (err, delivery){
           if (err) { sails.log.debug(err); done(null, delivery); return false; }
           done(err, delivery);
         });
@@ -331,6 +331,9 @@ function NotificationBuilder () {
       var settings, localSettings, globalSettings;
       // ensure both parameter objects have proper form
       hostObject.settings = hostObject.settings || {};
+      if (_.isUndefined(globalObject)) {
+        globalObject = {};
+      }
       globalObject.settings = globalObject.settings || {};
       settings = {};
       localSettings = _.extend({}, hostObject.settings);
@@ -347,7 +350,7 @@ function NotificationBuilder () {
         UserSetting.find({
           userId: userSettingTemplate.userId,
           context: JSON.stringify({ action: userSettingTemplate.action, audience: userSettingTemplate.audience, delivery: userSettingTemplate.delivery })
-        }).done(function (err, settings) {
+        }).exec(function (err, settings) {
           if (err) { sails.log.debug(err); done(null, settings); return false;}
           userSettingObject = {};
           userSettingObject[userSettingTemplate.actionType] = {};

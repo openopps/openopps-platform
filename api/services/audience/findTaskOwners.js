@@ -9,7 +9,7 @@ var utils = require('./utils');
 
 module.exports = {
   execute: function (fields, settings, cb) {
-    Task.find({id: fields.taskId}).done(function(err, owners){
+    Task.find({id: fields.taskId}).exec(function(err, owners){
       utils.convertToUsers(err, owners, cb);
     });
   }

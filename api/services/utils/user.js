@@ -47,7 +47,7 @@ module.exports = {
     .where({ userId: id })
     .where({ isPrimary: true })
     .sort({ updatedAt: -1 })
-    .done(function (err, userEmail) {
+    .exec(function (err, userEmail) {
       if (err) { return done(err, null); }
       // if there's no results from `isPrimary`, get the
       // last email address added
@@ -56,7 +56,7 @@ module.exports = {
         UserEmail.findOne()
         .where({ userId: id })
         .sort({ createdAt: -1 })
-        .done(function (err, userEmail) {
+        .exec(function (err, userEmail) {
           if (err) { return done(err, null); }
           return done(null, userEmail);
         });
@@ -157,7 +157,7 @@ module.exports = {
           if (updateAction) {
             userCreateParam = userData;
           }
-          User.create(userCreateParam).done(function (err, user) {
+          User.create(userCreateParam).exec(function (err, user) {
             if (err) {
               sails.log.debug('User creation error:', err);
               return done(null, false, { message: 'Unable to create new user. Please try again.'});
@@ -168,7 +168,7 @@ module.exports = {
               password: hash
             };
             // Store the user's password with the bcrypt hash
-            UserPassword.create(pwObj).done(function (err, pwObj) {
+            UserPassword.create(pwObj).exec(function (err, pwObj) {
               if (err) { return done(null, false, { message: 'Unable to store password.'}); }
               // if the username is an email address, store it
               if (validator.isEmail(userData.username) !== true) {
@@ -181,7 +181,7 @@ module.exports = {
               };
               // Store the email address
               var tags = create_tag_obj(providerUser);
-              UserEmail.create(email).done(function (err, email) {
+              UserEmail.create(email).exec(function (err, email) {
                 if (err) { return done(null, false, { message: 'Unable to store user email address.', err: err }); }
                 tagUtils.findOrCreateTags(user.id, tags, function (err, newTags) {
                   if (err) { return done(null, false, { message: 'Unabled to create tags', err: err }); }
@@ -442,7 +442,7 @@ module.exports = {
         '>': expiry
       }
     })
-    .done(function (err, tokens) {
+    .exec(function (err, tokens) {
       if (err) { return cb(err, false, null); }
       var valid = false;
       var validToken = null;
@@ -537,7 +537,7 @@ module.exports = {
             refreshToken: tokens.refreshToken,
           };
           // store login credentials
-          UserAuth.create(creds).done(function (err, creds) {
+          UserAuth.create(creds).exec(function (err, creds) {
             if (err) { return done(null, false, { message: 'Unable to store user credentials.' }); }
             sails.log.debug('Created Credentials:', creds);
             // Store emails if they're available
@@ -548,7 +548,7 @@ module.exports = {
               };
               UserEmail.findOne(email, function (err, storedEmail) {
                 if (storedEmail) { return done(null, user); }
-                UserEmail.create(email).done(function (err, email) {
+                UserEmail.create(email).exec(function (err, email) {
                   if (err) { return done(null, false, { message: 'Unable to store user email address.' }); }
                   sails.log.debug('Created Email:', email);
                   return done(null, user);
@@ -599,7 +599,7 @@ module.exports = {
         }
         // create user because the user is not logged in
         else {
-          User.create(user).done(function (err, user) {
+          User.create(user).exec(function (err, user) {
             sails.log.debug('Created User: ', user);
             if (err) { return done(null, false, { message: 'Unable to create user.' }); }
             var tags = create_tag_obj(providerUser);

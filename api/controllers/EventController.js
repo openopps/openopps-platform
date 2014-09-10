@@ -39,6 +39,10 @@ module.exports = {
     });
   },
 
+  findOne: function (req, res) {
+    module.exports.find(req, res);
+  },
+
   findAllByProjectId: function (req, res) {
     userId = null;
     if (req.user) { userId = req.user[0].id; }

@@ -26,7 +26,7 @@ module.exports = {
       // store userEmail object as metadata
       content.fields.metadata.userEmail = userEmail;
       // Get the reset token
-      UserPasswordReset.findOneById(fields.callerId).done(function (err, token) {
+      UserPasswordReset.findOneById(fields.callerId).exec(function (err, token) {
         if (err) { sails.log.debug(err); cb(null, content); return false; }
         content.fields.metadata.token = token;
         content.fields.from = sails.config['systemEmail'];

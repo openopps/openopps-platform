@@ -31,7 +31,8 @@ describe('like:', function() {
                      body: JSON.stringify(like)
                    }, function(err, response, body) {
         if (err) { return done(err); }
-        assert.equal(response.statusCode, 201);
+        // should be 201, Sails .10 currently returns 200. https://github.com/balderdashy/sails/issues/1840
+        assert.equal(response.statusCode, 200);
         var b = JSON.parse(body);
         // check that the values passed in are the same as those passed back
         assert.equal(b.projectId, publicProject.id);

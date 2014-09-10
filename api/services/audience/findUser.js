@@ -7,6 +7,6 @@
 
 module.exports = {
   execute: function (fields, settings, cb) {
-    User.find({ id: fields.userId }).done(cb);
+    User.find({ id: fields.userId }).exec(cb);
   }
 };
