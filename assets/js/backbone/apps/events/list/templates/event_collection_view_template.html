@@ -23,6 +23,7 @@
 
   <% _.each(events, function (event, iterator) { %>
   <div class="event border-left" data-id="<%= event.id %>">
+    <div id="event-delete" data-id="<%= event.id %>">X</div>
     <% if (user) { %>
     <div class="event-button pull-right">
       <button class="btn btn-c2 btn-sm rsvp data-event-flag-<%= event.rsvp %>" data-going-text="<i class='icon-ok'></i> I'm going" data-rsvp-text="RSVP" data-hover-text="Cancel RSVP"><% if (event.rsvp) { %><i class='icon-ok'></i> I'm going<% } else { %>RSVP<% } %></button>

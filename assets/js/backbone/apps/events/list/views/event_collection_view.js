@@ -8,6 +8,10 @@ define([
 
   var EventCollectionView = Backbone.View.extend({
 
+    events: {
+      'click #event-delete'      : 'remove'
+    },
+
     el: "#event-list-wrapper",
 
     initialize: function (options) {
@@ -27,7 +31,23 @@ define([
 
       return this;
     },
+    remove: function(e){
 
+      this.removeEvent(e);
+          
+    },
+    removeEvent: function (e,done) {
+      var self = this;
+
+      var id = $(e.currentTarget).data('id');
+      $.ajax({
+        url: '/api/event/' + id,
+        type: 'DELETE',
+        success: function () {
+          //
+        }
+      });
+    },
     cleanup: function () {
       removeView(this);
     }
