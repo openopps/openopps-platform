@@ -957,6 +957,11 @@ button.like-button:hover {
   text-align: center;
 }
 
+.event-delete-wrapper {
+  text-align: right;
+  font-size: 85%;
+  margin-top: 0px;
+}
 /*****************
 =  FILES
 ******************/

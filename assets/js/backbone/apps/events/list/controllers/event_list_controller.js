@@ -21,6 +21,7 @@ define([
       'click .rsvp'                     : 'toggleRSVP',
       'mouseenter .data-event-flag-true': 'buttonRSVPOn',
       'mouseleave .data-event-flag-true': 'buttonRSVPOff',
+      'click .event-delete'             : 'remove',
       "mouseenter .project-people-div"  : popovers.popoverPeopleOn,
       "click .project-people-div"       : popovers.popoverClick
     },
@@ -145,7 +146,18 @@ define([
         })
       }
     },
+    remove: function(e){
 
+      var id = $(e.currentTarget).data('id');
+      $.ajax({
+        url: '/api/event/' + id,
+        type: 'DELETE',
+        success: function () {
+          $(e.currentTarget).parents(".event").remove();
+        }
+      });
+          
+    },
     cleanup: function () {
       if (this.eventCollectionView) this.eventCollectionView.cleanup();
       if (this.eventFormView) this.eventFormView.cleanup();
