@@ -147,13 +147,14 @@ define([
       }
     },
     remove: function(e){
-
+      var self = this;
       var id = $(e.currentTarget).data('id');
       $.ajax({
         url: '/api/event/' + id,
         type: 'DELETE',
         success: function () {
-          $(e.currentTarget).parents(".event").remove();
+          //refresh the collection list
+          self.requestEventsCollectionData();
         }
       });
           

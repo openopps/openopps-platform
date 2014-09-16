@@ -110,7 +110,7 @@ module.exports.policies = {
     'cancel': ['authenticated', 'requireUserId', 'addUserId', 'requireId'],
     'rsvp': ['authenticated', 'requireUserId', 'addUserId'],
     'ical': ['authenticated', 'addUserId', 'project'],
-    'destroy': ['authenticated', 'requireUserId', 'ownerOrAdmin_new']
+    'destroy': ['authenticated', 'requireUserId', 'eventCreator','admin']
   },
 
   TagController : {

@@ -6,7 +6,8 @@ var _ = require('underscore');
 
 module.exports = function addUserId (req, res, next) {
   //todo actual isOwner checks for comments,discussions & events
-
+  console.log(" is user id filled? ",req.userId);
+  console.log(" req ",req);
   if (req.isOwner || req.user[0].isAdmin) {
     return next();
   }
