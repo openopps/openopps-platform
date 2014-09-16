@@ -21,7 +21,7 @@ define([
         projectId: this.options.projectId,
         user: window.cache.currentUser
       }
-  
+      console.log("current user", eventsJSON.user);
       this.compiledTemplate = _.template(EventListTemplate, eventsJSON);
       this.$el.html(this.compiledTemplate);
 
