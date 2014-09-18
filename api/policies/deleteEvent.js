@@ -8,31 +8,39 @@
 var async     = require('async');
 var userUtil  = require('./user');
 var projUtil  = require('../services/utils/project');
-var eventUtil = require('../services/utils/event');
-
 
 module.exports = function deleteEvent (req, res, next) {
+	var user = req.user[0];
 
 	if (req.route.params.id) {
-	    var eventId = req.route.params.id;
-	    var userId = null;
-	    data = {};
-
 		Event.findOneById(eventId,function(err, event){ 
-			if (req.user) {
-		      userId = req.user[0].id;
-		      if ( req.user && req.user[0].isAdmin ){
-				//is admin ?
-				next();
-			  } else if ( projUtil.authorized(event.projectId,userId,projectCb) ) {
-				//is project owner ?
-				next();
-			  } else if ( eventUtil.isCreator(eventId,userId) ) {
-				//is event creator ?
-				next();
-			  } else {
-			  	return res.send(403, { message: 'Not authorized.'});
-			  }
+
+			if (user) {	
+			
+			ProjectOwner.findOne()
+				.where({ "projectId": event.projectId })
+				.exec(function(err,projOwners) {
+				console.log("proj owners", projOwners.userId,user);
+
+				if ( user.isAdmin ){
+			      	console.log("passed as admin");
+					//is admin ?
+					next();
+				  } else if ( projOwners && projOwners.userId == user.id ) {
+				  	console.log("passed as project owner");
+					//is project owner ?
+					next();
+				  } else if ( event.userId == userId ) {
+				  	console.log("passed as event creator");
+					//is event creator ?
+					next();
+				  } else {
+					console.log("failed");
+				  	return res.send(403, { message: 'Not authorized.'});
+				  }
+				});	      
+			} else {
+				console.log("user is undefined",user);
 			}
 		});
 	  
