@@ -131,6 +131,9 @@ passport.use('myusa', new MyUSAStrategy({
     //profileURL: 'http://172.23.195.136:3000/api/profile'
   },
   function (req, accessToken, refreshToken, profile, done) {
+    if (profile.displayName === undefined) {
+      profile.displayName = profile._json.first_name + ' ' + profile._json.last_name;
+    }
     if (sails.config.auth.auth.myusa.overwrite === true) {
       profile.overwrite = true;
     }
