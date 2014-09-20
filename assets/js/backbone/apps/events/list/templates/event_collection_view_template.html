@@ -23,7 +23,7 @@
 
   <% _.each(events, function (event, iterator) { %>
   <div class="event border-left" data-id="<%= event.id %>">
-    <% if (user.isAdmin || (event.userId == user.id) || true ) { %>
+    <% if (user.isAdmin || (event.userId == user.id) || ( _.indexOf(projectOwners,user.id) != -1 ) ) { %>
     <div class="event-delete-wrapper align-right"><span class="event-delete glyphicon glyphicon-remove" data-id="<%= event.id %>"></span></div>
     <% } %>
     <% if (user) { %>

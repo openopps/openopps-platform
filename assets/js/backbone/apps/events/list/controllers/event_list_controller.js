@@ -29,7 +29,23 @@ define([
     initialize: function (settings) {
       var self = this;
       this.options = _.extend(settings, this.defaults);
+      this.findProjectOwners(this.options.projectId);
       this.requestEventsCollectionData();
+    },    
+
+    findProjectOwners: function (projId) {
+
+     var self = this;
+      $.ajax({
+          url: '/api/projectOwner/findAllByProjectId/' + projId,
+          success: function (data) {
+            self.projectOwners = [];
+            _.each(data,function(owner){
+              self.projectOwners.push(owner.userId);
+            });
+          }
+        });
+
     },
 
     requestEventsCollectionData: function () {
@@ -62,6 +78,7 @@ define([
         el: "#event-list-wrapper",
         onRender: true,
         collection: collection,
+        projectOwners: self.projectOwners,
         projectId: this.options.projectId
       });
 

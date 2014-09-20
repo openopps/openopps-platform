@@ -16,32 +16,31 @@ module.exports = function deleteEvent (req, res, next) {
 		Event.findOneById(req.route.params.id,function(err, event){ 
 
 			if (user) {	
-				console.log("dump ",event);
-			
-			ProjectOwner.findOne()
+			ProjectOwner.find()
 				.where({ "projectId": event.projectId })
 				.exec(function(err,projOwners) {
-				console.log("proj owners", projOwners.userId,user);
-
+				
+				var poList = [];	
+				
+				_.each(projOwners,function(projO){
+					poList.push(projO.userId);
+				});
+				
 				if ( user.isAdmin ){
-			      	console.log("passed as admin");
 					//is admin ?
 					next();
-				  } else if ( projOwners && projOwners.userId == user.id ) {
-				  	console.log("passed as project owner");
+				  } else if ( projOwners && (_.indexOf(poList,user.id) != -1) ) {
 					//is project owner ?
 					next();
 				  } else if ( event.userId == userId ) {
-				  	console.log("passed as event creator");
 					//is event creator ?
 					next();
 				  } else {
-					console.log("failed");
 				  	return res.send(403, { message: 'Not authorized.'});
 				  }
 				});	      
 			} else {
-				console.log("user is undefined",user);
+				return res.send(403, { message: 'Not authorized.'});
 			}
 		});
 	  
