@@ -77,7 +77,7 @@ module.exports.policies = {
     '*': false,
     'create': ['authenticated', 'requireUserId', 'projectId'],
     'destroy': ['authenticated', 'requireUserId', 'requireId'],
-    'findAllByProjectId': true
+    'findAllByProjectId': ['authenticated', 'addUserId', 'requireId']
   },
 
   LikeController : {
