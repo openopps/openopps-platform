@@ -13,9 +13,10 @@ module.exports = function deleteEvent (req, res, next) {
 	var user = req.user[0];
 
 	if (req.route.params.id) {
-		Event.findOneById(eventId,function(err, event){ 
+		Event.findOneById(req.route.params.id,function(err, event){ 
 
 			if (user) {	
+				console.log("dump ",event);
 			
 			ProjectOwner.findOne()
 				.where({ "projectId": event.projectId })
