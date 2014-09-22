@@ -23,6 +23,9 @@
 
   <% _.each(events, function (event, iterator) { %>
   <div class="event border-left" data-id="<%= event.id %>">
+    <% if (user.isAdmin || (event.userId == user.id) || ( _.indexOf(projectOwners,user.id) != -1 ) ) { %>
+    <div class="event-delete-wrapper align-right"><span class="event-delete glyphicon glyphicon-remove" data-id="<%= event.id %>"></span></div>
+    <% } %>
     <% if (user) { %>
     <div class="event-button pull-right">
       <button class="btn btn-c2 btn-sm rsvp data-event-flag-<%= event.rsvp %>" data-going-text="<i class='icon-ok'></i> I'm going" data-rsvp-text="RSVP" data-hover-text="Cancel RSVP"><% if (event.rsvp) { %><i class='icon-ok'></i> I'm going<% } else { %>RSVP<% } %></button>

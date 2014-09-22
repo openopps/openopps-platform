@@ -45,6 +45,13 @@ module.exports = {
         });
       });
     });
+  },
+
+  findAllByProjectId: function (req, res) {
+    ProjectOwner.findByProjectId(req.route.params.id, function (err, proj) {
+      if (err) { return res.send(400, { message: 'Error finding project owners.' } ); }
+      return res.send(proj);
+    });
   }
 
 };

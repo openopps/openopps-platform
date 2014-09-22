@@ -21,6 +21,7 @@ define([
       'click .rsvp'                     : 'toggleRSVP',
       'mouseenter .data-event-flag-true': 'buttonRSVPOn',
       'mouseleave .data-event-flag-true': 'buttonRSVPOff',
+      'click .event-delete'             : 'remove',
       "mouseenter .project-people-div"  : popovers.popoverPeopleOn,
       "click .project-people-div"       : popovers.popoverClick
     },
@@ -28,7 +29,23 @@ define([
     initialize: function (settings) {
       var self = this;
       this.options = _.extend(settings, this.defaults);
+      this.findProjectOwners(this.options.projectId);
       this.requestEventsCollectionData();
+    },    
+
+    findProjectOwners: function (projId) {
+
+     var self = this;
+      $.ajax({
+          url: '/api/projectOwner/findAllByProjectId/' + projId,
+          success: function (data) {
+            self.projectOwners = [];
+            _.each(data,function(owner){
+              self.projectOwners.push(owner.userId);
+            });
+          }
+        });
+
     },
 
     requestEventsCollectionData: function () {
@@ -61,6 +78,7 @@ define([
         el: "#event-list-wrapper",
         onRender: true,
         collection: collection,
+        projectOwners: self.projectOwners,
         projectId: this.options.projectId
       });
 
@@ -145,7 +163,19 @@ define([
         })
       }
     },
-
+    remove: function(e){
+      var self = this;
+      var id = $(e.currentTarget).data('id');
+      $.ajax({
+        url: '/api/event/' + id,
+        type: 'DELETE',
+        success: function () {
+          //refresh the collection list
+          self.requestEventsCollectionData();
+        }
+      });
+          
+    },
     cleanup: function () {
       if (this.eventCollectionView) this.eventCollectionView.cleanup();
       if (this.eventFormView) this.eventFormView.cleanup();

@@ -76,7 +76,8 @@ module.exports.policies = {
   ProjectOwnerController : {
     '*': false,
     'create': ['authenticated', 'requireUserId', 'projectId'],
-    'destroy': ['authenticated', 'requireUserId', 'requireId']
+    'destroy': ['authenticated', 'requireUserId', 'requireId'],
+    'findAllByProjectId': ['authenticated', 'addUserId', 'requireId']
   },
 
   LikeController : {
@@ -109,7 +110,8 @@ module.exports.policies = {
     'attend': ['authenticated', 'requireUserId', 'addUserId', 'requireId'],
     'cancel': ['authenticated', 'requireUserId', 'addUserId', 'requireId'],
     'rsvp': ['authenticated', 'requireUserId', 'addUserId'],
-    'ical': ['authenticated', 'addUserId', 'project']
+    'ical': ['authenticated', 'addUserId', 'project'],
+    'destroy': ['authenticated', 'requireUserId', 'deleteEvent']
   },
 
   TagController : {

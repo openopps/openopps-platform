@@ -18,10 +18,10 @@ define([
     render: function () {
       var eventsJSON = {
         events: this.options.collection.toJSON(),
+        projectOwners: this.options.projectOwners,
         projectId: this.options.projectId,
         user: window.cache.currentUser
       }
-
       this.compiledTemplate = _.template(EventListTemplate, eventsJSON);
       this.$el.html(this.compiledTemplate);
 
