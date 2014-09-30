@@ -5,10 +5,12 @@ define([
   'jquery_select2',
   'underscore',
   'backbone',
+  'async',
   'utilities',
   'text!project_show_template',
-  'tag_show_view'
-], function ($, jqIframe, jqFU, select2, _, Backbone, utils, ProjectShowTemplate, TagShowView) {
+  'tag_show_view',
+  'tag_factory'
+], function ($, jqIframe, jqFU, select2, _, Backbone, async, utils, ProjectShowTemplate, TagShowView,TagFactory) {
 
   var ProjectShowView = Backbone.View.extend({
 
@@ -27,6 +29,8 @@ define([
           this.edit = true;
         }
       }
+      this.tagFactory = new TagFactory();
+      this.data.newItemTags = [];
     },
 
     render: function () {
@@ -42,6 +46,7 @@ define([
       this.$el.html(compiledTemplate);
 
       this.initializeToggle();
+      this.initializeTagFactory();
       this.initializeFileUpload();
       this.initializeTags();
       this.updatePhoto();
@@ -74,6 +79,63 @@ define([
         self.$('#email').attr('href', data);
       });
 
+    },
+
+    initializeTagFactory: function() {
+      var self = this;
+
+      this.listenTo(self.model, "project:tag:update:start", function (tags) {
+
+        var newTags = [];
+        newTags = newTags.concat(self.$("#tag_topic").select2('data'),self.$("#tag_skill").select2('data'),self.$("#tag_location").select2('data'),self.$("#tag_agency").select2('data'));
+
+        async.forEach(
+          newTags,
+          function(newTag, callback) {
+            return self.tagFactory.addTagEntities(newTag,self,callback);
+          },
+          function(err) {
+            if (err) return next(err);
+            self.trigger("newTagSaveDone");
+          }
+        );
+      });
+
+      self.on('newTagSaveDone',function (){
+
+        tags         = [];
+        var tempTags = [];
+
+        //get newly created tags from big three types
+        _.each(self.data.newItemTags, function(newItemTag){
+          tags.push(newItemTag);
+        });
+
+        tempTags.push.apply(tempTags,self.$("#tag_topic").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_skill").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_location").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_agency").select2('data'));
+
+        //see if there are any previously created big three tags and add them to the tag array
+        _.each(tempTags,function(tempTag){
+            if ( tempTag.id !== tempTag.name ){
+            tags.push(tempTag);
+          }
+        });
+
+        var tagMap = {};
+        var projectId = self.model.attributes.id;
+
+        async.forEach(
+          tags,
+          function(tag, callback){
+            return self.tagFactory.addTag(tag,projectId,"projectId",callback);
+          },
+          function(err){
+            self.model.trigger("project:tags:save:success", err);
+          }
+        );
+      });
     },
 
     initializeToggle: function () {

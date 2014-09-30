@@ -9,9 +9,10 @@ define([
   'tag_config',
   'tag_form_view',
   'text!tag_item_template',
-  'text!tag_show_template'
+  'text!tag_show_template',
+  'tag_factory'
 ], function ($, Bootstrap, _, Backbone, utils, async, ModalComponent,
-  TagConfig, TagFormView, TagTemplate, TagShowTemplate) {
+  TagConfig, TagFormView, TagTemplate, TagShowTemplate,TagFactory) {
 
   var TagShowView = Backbone.View.extend({
 
@@ -27,11 +28,36 @@ define([
       this.target = options.target;
       this.targetId = options.targetId;
       this.edit = options.edit;
+      this.tagFactory = new TagFactory();
       this.tags = [];
       // Figure out which tags apply
       for (var i = 0; i < TagConfig[this.target].length; i++) {
         this.tags.push(TagConfig.tags[TagConfig[this.target][i]]);
       }
+    },
+
+    render: function () {
+      var data = {
+        data: this.model.toJSON(),
+        tags: this.tags,
+        edit: this.edit,
+        user: window.cache.currentUser || {}
+      };
+      var template = _.template(TagShowTemplate, data);
+      this.$el.html(template);
+      this.initializeSelect2();
+      this.initializeTags();
+      return this;
+    },
+
+    initializeSelect2: function () {
+      var self = this;
+
+      self.tagFactory.createTagDropDown({type:"skill",selector:"#tag_skill",width:"350px"});
+      self.tagFactory.createTagDropDown({type:"topic",selector:"#tag_topic",width:"350px"});
+      self.tagFactory.createTagDropDown({type:"location",selector:"#tag_location",width:"350px"});
+      self.tagFactory.createTagDropDown({type:"agency",selector:"#tag_agency",width:"350px"});
+      self.model.trigger("profile:input:changed");
     },
 
     initializeTags: function() {
@@ -119,19 +145,6 @@ define([
         }
         $(e.currentTarget).parent('li').remove();
       });
-    },
-
-    render: function () {
-      var data = {
-        data: this.model.toJSON(),
-        tags: this.tags,
-        edit: this.edit,
-        user: window.cache.currentUser || {}
-      };
-      var template = _.template(TagShowTemplate, data);
-      this.$el.html(template);
-      this.initializeTags();
-      return this;
     },
 
     createTag: function (e) {

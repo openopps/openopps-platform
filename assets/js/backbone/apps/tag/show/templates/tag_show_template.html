@@ -1,26 +1,11 @@
-<% if ((data.isOwner || user.isAdmin) && edit) { %>
-<div class="row">
-  <div class="col-lg-12 select-tags">
-    <input type="hidden" id="input-tags" style="width: 100%"/>
-  </div>
-</div>
-<div class="row">
-  <div class="col-lg-12 select-tags-buttons">
-    <div class="pull-right">
-      <a href="#createTag" id="tag-create" class="btn btn-sm btn-c0" data-toggle="modal">Create Tag</a>
-      <button id="tag-save" class="btn btn-sm btn-c2">Save Tags</button>
-    </div>
-  </div>
-</div>
-<% } else { %><!-- hidden div so controller doesn't break -->
-<div style="display: none;">
-  <input type="hidden" id="input-tags" style="width: 100%"/>
-</div>
-<% } %>
-
 <% for (var i = 0; i < tags.length; i++) { %>
 <div class="tag-title <%- tags[i]['class'] %>" id="<%- tags[i].id %>">
   <h2><i class="<%- tags[i].icon %>"></i> <span class="box-icon-text"><%- tags[i].plural %></span></h2>
+  <% if ((data.isOwner || user.isAdmin) && edit) { %>
+  <div style='margin-bottom: 5px'>
+    <input type="text" id="tag_<%- tags[i].id.toLowerCase() %>" class="fullwidth" name="tag_<%- tags[i].name.toLowerCase() %>"/>
+  </div>
+  <% } %>
   <ul class="tags">
     <li class="tag-empty" id="<%- tags[i]['class'] %>-empty">None</li>
   </ul>

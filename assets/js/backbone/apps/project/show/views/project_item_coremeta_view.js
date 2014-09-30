@@ -55,6 +55,12 @@ define([
         self.viewProject({});
       });
 
+      this.model.on("project:tags:save:success", function (data) {
+        self.render();
+        $('#project-coremeta-success').show();
+        self.viewProject({});
+      });
+
     },
 
     render: function () {
@@ -65,7 +71,6 @@ define([
       data.data.descriptionHtml = marked(data.data.description || '');
       var compiledTemplate = _.template(ProjectItemCoreMetaTemplate, data);
       this.$el.html(compiledTemplate);
-
       this.model.trigger("project:coremeta:show:rendered", data);
 
       return this;
@@ -120,6 +125,7 @@ define([
       var description = self.$('#project-edit-form-description').val();
       var params = { title :title, description: description };
 
+      self.model.trigger("project:tag:update:start");
       self.model.trigger("project:model:update", params);
     },
 

@@ -14,9 +14,10 @@ define([
   'json!login_config',
   'modal_component',
   'profile_activity_view',
-  'profile_email_view'
+  'profile_email_view',
+  'tag_factory'
 ], function ($, async, jqIframe, jqFU, _, Backbone, utils, MarkdownEditor, marked,
-  TagShowView, ProfileTemplate, EmailTemplate, Login, ModalComponent, PAView, EmailFormView) {
+  TagShowView, ProfileTemplate, EmailTemplate, Login, ModalComponent, PAView, EmailFormView, TagFactory) {
 
   var ProfileShowView = Backbone.View.extend({
 
@@ -35,6 +36,8 @@ define([
     initialize: function (options) {
       this.options = options;
       this.data = options.data;
+      this.tagFactory = new TagFactory();
+      this.data.newItemTags = [];
       this.edit = false;
       if (this.options.action == 'edit') {
         this.edit = true;
@@ -194,6 +197,14 @@ define([
     initializeForm: function() {
       var self = this;
 
+      $("#topics").on('change', function (e) {
+        self.model.trigger("profile:input:changed", e);
+      });
+
+      $("#skills").on('change', function (e) {
+        self.model.trigger("profile:input:changed", e);
+      });
+
       this.listenTo(self.model, "profile:save:success", function (data) {
         // Bootstrap .button() has execution order issue since it
         // uses setTimeout to change the text of buttons.
@@ -210,7 +221,64 @@ define([
         ];
         self.model.trigger("profile:tags:save", tags);
       });
-      this.listenTo(self.model, "profile:tags:save", function (tags) {
+
+      self.on('newTagSaveDone',function (){
+
+        tags         = [];
+        var tempTags = [];
+
+        //get newly created tags from big three types
+        _.each(self.data.newItemTags, function(newItemTag){
+          tags.push(newItemTag);
+        });
+
+        tempTags.push.apply(tempTags,self.$("#topics").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#skills").select2('data'));
+
+        //see if there are any previously created big three tags and add them to the tag array
+        _.each(tempTags,function(tempTag){
+            if ( tempTag.id !== tempTag.name ){
+            tags.push(tempTag);
+          }
+        });
+
+        var tagMap = {};
+
+          // if a different profile is being edited, add its userId
+          if (self.model.toJSON().id !== window.cache.currentUser.id) {
+            tagMap.userId = self.model.toJSON().id;
+          }
+
+        async.forEach(
+          tags,
+          function(tag, callback){
+            //diffAdd,self.model.attributes.id,"taskId",callback
+            return self.tagFactory.addTag(tag,tagMap.userId,"userId",callback);
+          },
+          function(err){
+            self.model.trigger("profile:tags:save:success", err);
+          }
+        );
+      });
+
+        this.listenTo(self.model, "profile:tags:save", function (tags) {
+
+        var newTags = [];
+
+        newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'));
+
+        async.forEach(
+          newTags,
+          function(newTag, callback) {
+            return self.tagFactory.addTagEntities(newTag,self,callback);
+          },
+          function(err) {
+            if (err) return next(err);
+            self.trigger("newTagSaveDone");
+          }
+        );
+
+
         var removeTag = function(type, done) {
           if (self.model[type]) {
             // delete the existing tag
@@ -292,6 +360,10 @@ define([
 
     initializeSelect2: function () {
       var self = this;
+
+      self.tagFactory.createTagDropDown({type:"skill",selector:"#skills"});
+      self.tagFactory.createTagDropDown({type:"topic",selector:"#topics"});
+
       var formatResult = function (object, container, query) {
         return object.name;
       };
@@ -319,6 +391,15 @@ define([
       if (modelJson.agency) {
         $("#company").select2('data', modelJson.agency.tag);
       }
+
+      $("#topics").on('change', function (e) {
+        self.model.trigger("profile:input:changed", e);
+      });
+
+      $("#skills").on('change', function (e) {
+        self.model.trigger("profile:input:changed", e);
+      });
+
       $("#company").on('change', function (e) {
         self.model.trigger("profile:input:changed", e);
       });

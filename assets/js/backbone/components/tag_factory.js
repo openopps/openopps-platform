@@ -103,7 +103,7 @@ define([
           placeholder: "Start typing to select a "+options.type,
           minimumInputLength: 2,
           multiple: true,
-          width: "500px",
+          width: options.width || "500px",
           formatResult: function (obj, container, query) {
             return obj.name;
           },
