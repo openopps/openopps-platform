@@ -286,7 +286,6 @@ define([
               url: '/api/tag/' + self.model[type].tagId,
               type: 'DELETE',
             }).done(function (data) {
-              console.log("rem tag stamp",Date.now());
               return done();
             });
             return;
@@ -315,7 +314,6 @@ define([
             type: 'POST',
             data: tagMap
           }).done(function (data) {
-            console.log("ad tag stamp",Date.now());
             done();
           });
         }
