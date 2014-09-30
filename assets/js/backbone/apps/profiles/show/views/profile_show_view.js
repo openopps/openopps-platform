@@ -286,6 +286,7 @@ define([
               url: '/api/tag/' + self.model[type].tagId,
               type: 'DELETE',
             }).done(function (data) {
+              console.log("rem tag stamp",Date.now());
               return done();
             });
             return;
@@ -314,23 +315,29 @@ define([
             type: 'POST',
             data: tagMap
           }).done(function (data) {
+            console.log("ad tag stamp",Date.now());
             done();
           });
         }
 
         async.each(['agency','location'], removeTag, function (err) {
-          async.each(tags, addTag, function (err) {
-            return self.model.trigger("profile:tags:save:success", err);
+          async.forEach(tags, addTag, function (err) {
+            return self.model.trigger("profile:tags:save:success", err);  
           });
         });
       });
+
       this.listenTo(self.model, "profile:tags:save:success", function (err) {
-        setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") }, 0);
+        setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") }, 10);
         $("#profile-save, #submit").removeClass("btn-primary");
         $("#profile-save, #submit").addClass("btn-success");
         self.data.saved = true;
-        Backbone.history.navigate('profile/' + self.model.toJSON().id, { trigger: true });
+        setTimeout(function(){
+          Backbone.history.navigate('profile/' + self.model.toJSON().id, { trigger: true });
+        },100);
+        
       });
+
       this.listenTo(self.model, "profile:save:fail", function (data) {
         $("#submit").button('fail');
       });
@@ -360,9 +367,6 @@ define([
 
     initializeSelect2: function () {
       var self = this;
-
-      self.tagFactory.createTagDropDown({type:"skill",selector:"#skills"});
-      self.tagFactory.createTagDropDown({type:"topic",selector:"#topics"});
 
       var formatResult = function (object, container, query) {
         return object.name;
@@ -493,6 +497,7 @@ define([
         bio: $("#bio").val()
       };
       this.model.trigger("profile:save", data);
+      //this.render();
     },
 
     removeAuth: function (e) {
