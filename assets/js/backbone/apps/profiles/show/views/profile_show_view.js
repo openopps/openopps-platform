@@ -232,8 +232,10 @@ define([
           tags.push(newItemTag);
         });
 
-        tempTags.push.apply(tempTags,self.$("#topics").select2('data'));
-        tempTags.push.apply(tempTags,self.$("#skills").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_topic").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_skill").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_location").select2('data'));
+        tempTags.push.apply(tempTags,self.$("#tag_agency").select2('data'));
 
         //see if there are any previously created big three tags and add them to the tag array
         _.each(tempTags,function(tempTag){
@@ -265,7 +267,7 @@ define([
 
         var newTags = [];
 
-        newTags = newTags.concat(self.$("#topics").select2('data'),self.$("#skills").select2('data'));
+        newTags = newTags.concat(self.$("#tag_topic").select2('data'),self.$("#tag_skill").select2('data'),self.$("#tag_location").select2('data'),self.$("#tag_agency").select2('data'));
 
         async.forEach(
           newTags,
