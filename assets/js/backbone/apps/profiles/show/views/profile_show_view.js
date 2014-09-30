@@ -328,13 +328,15 @@ define([
       });
 
       this.listenTo(self.model, "profile:tags:save:success", function (err) {
-        setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") }, 10);
+        setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") },0);
         $("#profile-save, #submit").removeClass("btn-primary");
         $("#profile-save, #submit").addClass("btn-success");
         self.data.saved = true;
+
+        //despite being wrapped in a event listener, this only "refresh" only seems to reflect the update data with the delay
         setTimeout(function(){
           Backbone.history.navigate('profile/' + self.model.toJSON().id, { trigger: true });
-        },100);
+        },50);
         
       });
 
