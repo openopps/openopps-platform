@@ -71,10 +71,10 @@ define([
       var tagMap = {};
       tagMap[modelType] = modelId;
 
-      if ( _.isFinite(tag) ){  
+      if ( _.isFinite(tag) ){
           // --- NYI ---
           // or project id
-        
+
           tagMap.tagId = tag;
       } else {
           // --- NYI ---
@@ -104,6 +104,7 @@ define([
           minimumInputLength: 2,
           multiple: true,
           width: options.width || "500px",
+          tokenSeparators: options.tokenSeparators || [],
           formatResult: function (obj, container, query) {
             return obj.name;
           },
@@ -130,8 +131,8 @@ define([
         }).on("select2-selecting", function (e){
           if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
             //remove the hint before adding it to the list
-            e.choice.name = e.val; 
-          } 
+            e.choice.name = e.val;
+          }
         });
 
       },
@@ -147,8 +148,8 @@ define([
         };
 
         var none = null;
-        
-        _.each(oldTags, function (oTag,oi){  
+
+        _.each(oldTags, function (oTag,oi){
 
           none = null;
 
@@ -168,7 +169,7 @@ define([
 
         out.add = currentTags;
 
-        return out; 
+        return out;
       }
 
   });
