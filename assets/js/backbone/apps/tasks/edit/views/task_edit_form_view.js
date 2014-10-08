@@ -96,17 +96,17 @@ define([
         this.$("#projectId").select2('data', this.data.data.project);
       }
 
-      this.tagFactory.createTagDropDown({type:"skill",selector:"#skills"});
+      this.tagFactory.createTagDropDown({type:"skill",selector:"#skills",width: "100%"});
       if (this.data['madlibTags'].skill) {
         this.$("#skills").select2('data', this.data['madlibTags'].skill);
       }
 
-      this.tagFactory.createTagDropDown({type:"topic",selector:"#topics"});
+      this.tagFactory.createTagDropDown({type:"topic",selector:"#topics",width: "100%"});
       if (this.data['madlibTags'].topic) {
         this.$("#topics").select2('data', this.data['madlibTags'].topic);
       }
 
-      this.tagFactory.createTagDropDown({type:"location",selector:"#location"});
+      this.tagFactory.createTagDropDown({type:"location",selector:"#location",width: "100%"});
       if (this.data['madlibTags'].location) {
         this.$("#location").select2('data', this.data['madlibTags'].location);
       }
