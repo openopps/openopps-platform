@@ -1,5 +1,5 @@
 {
-  "resGetPath"      : "locales/__lng__/__ns__.json",
+  "resGetPath"      : "/locales/__lng__/__ns__.json",
 
   "lng"             : "en-US",
 
