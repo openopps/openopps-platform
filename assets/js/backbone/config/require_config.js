@@ -88,6 +88,13 @@ require.config({
     'login_controller'          : '../apps/login/controllers/login_controller',
 
     // ----------
+    //= Home
+    // ----------
+    'home_controller'           : '../apps/home/controllers/home_controller',
+    'home_view'                 : '../apps/home/views/home_view',
+    'home_template'             : '../apps/home/templates/home_view_template.html',
+
+    // ----------
     //= Browse
     // ----------
     'browse_app'                : '../apps/browse/browse_app',

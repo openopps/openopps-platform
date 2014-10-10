@@ -12,15 +12,16 @@ define([
   'task_model',
   'task_show_controller',
   'task_edit_form_view',
-  'admin_main_controller'
+  'admin_main_controller',
+  'home_controller'
 ], function ($, _, Backbone, utils, NavView, FooterView, BrowseListController,
   ProjectModel, ProjectShowController, ProfileShowController, TaskModel,
-  TaskShowController, TaskEditFormView, AdminMainController) {
+  TaskShowController, TaskEditFormView, AdminMainController, HomeController) {
 
   var BrowseRouter = Backbone.Router.extend({
 
     routes: {
-      ''                          : 'redirectHome',
+      ''                   : 'showHome',
       'projects(/)'               : 'listProjects',
       'projects/:id(/)'           : 'showProject',
       'projects/:id/:action(/)'   : 'showProject',
@@ -50,11 +51,13 @@ define([
       if (this.projectShowController) { this.projectShowController.cleanup(); }
       if (this.profileShowController) { this.profileShowController.cleanup(); }
       if (this.taskShowController) { this.taskShowController.cleanup(); }
+      if (this.homeController) { this.homeController.cleanup(); }
       this.data = { saved: false };
     },
 
-    redirectHome: function () {
-      Backbone.history.navigate('/projects', { trigger: true });
+    showHome: function () {
+      this.cleanupChildren();
+      this.homeController = new HomeController({target: 'home', el: '#container', router: this, data: this.data });
     },
 
     listProjects: function () {
