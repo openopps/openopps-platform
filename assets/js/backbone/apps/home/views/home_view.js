@@ -26,6 +26,7 @@ define([
         user: window.cache.currentUser || {},
       };
 
+      this.$el.addClass('home');
       compiledTemplate = _.template(HomeTemplate, data);
       this.$el.html(compiledTemplate);
       this.$el.i18n();

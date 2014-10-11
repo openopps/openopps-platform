@@ -264,6 +264,17 @@ h1, h2, h3, h4, h5, h6 {
 /*****************
 =  NAVBAR
 ******************/
+/* -----------------
+ * make it so the space below navbar is actually space above container
+ * so we can make the container flush with navbar on some pages */
+.navbar {
+  margin-bottom: 0px;
+}
+#container {
+  margin-top: 20px;
+}
+/*-----------------*/
+
 .navbar .nav .navbar-title-small {
   font-size: 14px;
   font-weight: bold;
@@ -1437,4 +1448,39 @@ ul.task-tags > li {
 
 .markdown-edit textarea.form-control {
   width: 100%;
+}
+
+/*****************
+=  Home
+******************/
+
+#container.home {
+  padding:0px;
+  margin:0px;
+  width:100%;
+}
+
+#container.home #splash1 {
+  background-image: url('/images/home/hp-rotunda-looking-down.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+
+}
+
+.splash-wrap {
+  position: relative;
+  height: 400px;
+}
+
+#home .splash-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px 20px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
