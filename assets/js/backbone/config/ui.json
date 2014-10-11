@@ -1,5 +1,8 @@
 {
   "project": {
     "show": true
+  },
+  "home": {
+    "logged_in_path": "/projects"
   }
 }
