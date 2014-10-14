@@ -1,5 +1,9 @@
 {
   "project": {
     "show": true
+  },
+  "browse": {
+    "pageSize" : 27,
+    "useInfiniteScroll" : false
   }
 }
