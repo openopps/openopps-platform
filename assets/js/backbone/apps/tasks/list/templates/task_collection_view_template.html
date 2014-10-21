@@ -17,6 +17,9 @@
   <% } %>
   <% _.each(tasks, function(task) { %>
   <div class="task border-left" data-projectid="<%= task.projectId %>" data-id="<%= task.id %>">
+    <div class="pull-right">
+      <strong><%= task.state %></strong>
+    </div>
     <div class="task-title">
       <a href="/tasks/<%- task.id %>" class="show-task" data-projectid="<%= task.projectId %>" data-id="<%= task.id %>"><%- task.title %></a>
     </div>
