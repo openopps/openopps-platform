@@ -1,19 +1,20 @@
 {
-  "Project": "Project",
-  "ProjectPlural": "Projects",
-  "ProjectIndefinite": "a Project",
-  "ProjectPluralIndefinite": "some Projects",
-  "ProjectOwnerIndefinite" : "A Project Owner",
-  "project" : "project",
-  "projectPlural" : "projects",
+  "Project": "Working Group",
+  "ProjectPlural": "Working Groups",
+  "ProjectIndefinite": "a Working Group",
+  "ProjectPluralIndefinite": "some Working Groups",
+  "ProjectOwnerIndefinite" : "A Working Group Owner",
+  "ProjectOwnerPlural" : "Working Group Owners",
+  "project" : "working group",
+  "projectPlural" : "working groups",
 
-  "Task" : "Task",
-  "TaskPlural" : "Tasks",
-  "TaskIndefinite" : "a Task",
-  "TaskPluralIndefinite": "some Tasks",
-  "TaskOwnerIndefinite" : "A Task Owner",
-  "task" : "task",
-  "taskPlural" : "tasks",
+  "Task" : "Opportunity",
+  "TaskPlural" : "Opportunities",
+  "TaskIndefinite" : "an Opportunity",
+  "TaskPluralIndefinite": "some Opportunities",
+  "TaskOwnerIndefinite" : "An Opportunity Owner",
+  "task" : "opportunity",
+  "taskPlural" : "opportunities",
 
   "like" : "like",
   "likePlural" : "likes",
@@ -41,7 +42,7 @@
   "commonAPI" : {
     "unsupported" : "Unsupported operation."
   },
- 
+
   "projectAPI" : {
     "errMsg" : {
       "lookup" : "'Error looking up $t(project).",
