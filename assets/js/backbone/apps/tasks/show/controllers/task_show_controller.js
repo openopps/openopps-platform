@@ -2,6 +2,7 @@ define([
   'bootstrap',
   'underscore',
   'backbone',
+  'i18n',
   'popovers',
   'utilities',
   'base_view',
@@ -16,7 +17,7 @@ define([
   'text!volunteer_supervisor_notify_template',
   'text!volunteer_text_template',
   'text!change_state_template'
-], function (Bootstrap, _, Backbone, Popovers, utils, BaseView, CommentListController, AttachmentView, TaskItemView, TagShowView, ModalComponent, ModalAlert, TaskEditFormView, UIConfig, VolunteerSupervisorNotifyTemplate, VolunteerTextTemplate, ChangeStateTemplate) {
+], function (Bootstrap, _, Backbone, i18n, Popovers, utils, BaseView, CommentListController, AttachmentView, TaskItemView, TagShowView, ModalComponent, ModalAlert, TaskEditFormView, UIConfig, VolunteerSupervisorNotifyTemplate, VolunteerTextTemplate, ChangeStateTemplate) {
 
   var popovers = new Popovers();
 
@@ -378,7 +379,7 @@ define([
       this.modalComponent = new ModalComponent({
         el: "#modal-close",
         id: "check-close",
-        modalTitle: "Change Opportunity State"
+        modalTitle: "Change "+i18n.t("Task")+" State"
       }).render();
 
       this.modalAlert = new ModalAlert({
@@ -386,7 +387,7 @@ define([
         modalDiv: '#check-close',
         content: modalContent,
         cancel: 'Cancel',
-        submit: 'Change Opportunity State',
+        submit: 'Change '+i18n.t("Task")+' State',
         callback: function (e) {
           // user clicked the submit button
           console.log("radio test ",$('input[name=opportunityState]:checked').val());
