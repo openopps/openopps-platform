@@ -1,23 +1,23 @@
 <form action="" id="task-edit-form">
   <div class="form-group">
     <h2 class="box-pad-t">
-      Opportunity Title
+      <span data-i18n="Task">Opportunity</span> Title
     </h2>
     <input id="task-title" type="text" placeholder="A short description of the problem." value="<%= data.title %>" class="form-control input-lg validate" data-validate="empty,count100"/>
-    <span class="help-block error-empty" style="display:none;">You must enter a title for this opportunity</span>
+    <span class="help-block error-empty" style="display:none;">You must enter a title for this <span data-i18n="task">opportunity</span></span>
     <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
   </div>
   <div class="form-group">
     <h2 class="box-pad-t">
-      Opportunity Description
+      <span data-i18n="Task">Opportunity</span> Description
     </h2>
     <div class="markdown-edit"></div>
-    <span class="help-block error-empty" style="display:none;">You must enter a description for this opportunity</span>
+    <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
   </div>
   <hr />
 
   <% if (ui.project.show) { %>
-  This opportunity belongs to the project:
+  This <span data-i18n="task">opportunity</span> belongs to the project:
   <div class="row">
     <div class="col-md-12">
       <input type="hidden" id="projectId" class="task-skills fullwidth" />
@@ -35,7 +35,7 @@
       <% }); %>
     </select>
 
-    to work on an opportunity about:
+    to work on an <span data-i18n="task">opportunity</span> about:
     <div class="row">
       <div class="col-md-12">
         <input type="hidden" id="task_tag_topics" class="task-skills fullwidth" />
@@ -51,7 +51,7 @@
       <% }); %>
     </select>
 
-    to complete this opportunity you should
+    to complete this <span data-i18n="task">opportunity</span> you should
     <div class="row">
       <div class="col-md-12">
         <input type="hidden" id="task_tag_skills" class="task-skills fullwidth"/>
@@ -60,7 +60,7 @@
 
     <hr />
 
-    The opportunity will require
+    The <span data-i18n="task">opportunity</span> will require
     <select id="time-estimate" class="dropdown">
       <% _.each(tagTypes['task-time-estimate'], function (t) { %>
       <option value=<%= t.id %> <% if (madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id)) { %>selected<% } %>><%= t.name %></option>
@@ -98,7 +98,7 @@
     <div class="col-lg-12">
       <div class="pull-right box-pad-b">
         <button class="btn btn-c0" id="task-view">Discard Changes</button>
-        <input type="submit" class="btn btn-c2" value="Save Opportunity"/>
+        <input type="submit" class="btn btn-c2" data-i18n="[value]SaveTask" value="Save Opportunity"/>
       </div>
     </div>
   </div>

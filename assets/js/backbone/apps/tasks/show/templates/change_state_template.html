@@ -1,0 +1,13 @@
+<div class="form-group">
+	<p>Please select the new state for the opportunity. The current state is checked and the available states are:
+		<ul style='list-style-type:none'>
+			<% _.each(states, function (t) { %>
+				<li><input type='radio' name='opportunityState' value='<%- t.value %>'
+					<% if ( t.value == model.attributes.state ) {%>
+						<%- checked="checked" %>
+					<% } %>
+						> <%- t.state %> </li>
+					<% }); %>
+		</ul>
+	</p>
+</div>

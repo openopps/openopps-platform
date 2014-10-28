@@ -14,8 +14,9 @@ define([
   'task_edit_form_view',
   'json!ui_config',
   'text!volunteer_supervisor_notify_template',
-  'text!volunteer_text_template'
-], function (Bootstrap, _, Backbone, Popovers, utils, BaseView, CommentListController, AttachmentView, TaskItemView, TagShowView, ModalComponent, ModalAlert, TaskEditFormView, UIConfig, VolunteerSupervisorNotifyTemplate, VolunteerTextTemplate) {
+  'text!volunteer_text_template',
+  'text!change_state_template'
+], function (Bootstrap, _, Backbone, Popovers, utils, BaseView, CommentListController, AttachmentView, TaskItemView, TagShowView, ModalComponent, ModalAlert, TaskEditFormView, UIConfig, VolunteerSupervisorNotifyTemplate, VolunteerTextTemplate, ChangeStateTemplate) {
 
   var popovers = new Popovers();
 
@@ -372,21 +373,24 @@ define([
 
       if (this.modalAlert) { this.modalAlert.cleanup(); }
       if (this.modalComponent) { this.modalComponent.cleanup(); }
+      var states = [{value:"public",state:"Open"},{value:"closed",state:"Closed"},{value:"archived",state:"Archived"},{value:"assigned",state:"Assigned"},{value:"completed",state:"Completed"}];
+      var modalContent = _.template(ChangeStateTemplate,{model:self.model,states: states});
       this.modalComponent = new ModalComponent({
         el: "#modal-close",
         id: "check-close",
-        modalTitle: "Close Opportunity"
+        modalTitle: "Change Opportunity State"
       }).render();
 
       this.modalAlert = new ModalAlert({
         el: "#check-close .modal-template",
         modalDiv: '#check-close',
-        content: '<p>Are you sure you want to close this opportunity?  Once the opportunity is closed, volunteers will no longer be able to contribute.</p>',
+        content: modalContent,
         cancel: 'Cancel',
-        submit: 'Close Opportunity',
+        submit: 'Change Opportunity State',
         callback: function (e) {
           // user clicked the submit button
-          self.model.trigger("task:update:state", 'closed');
+          console.log("radio test ",$('input[name=opportunityState]:checked').val());
+          self.model.trigger("task:update:state", $('input[name=opportunityState]:checked').val());
         }
       }).render();
     },

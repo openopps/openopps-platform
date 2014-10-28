@@ -15,6 +15,8 @@
   "task" : "task",
   "taskPlural" : "tasks",
 
+  "SaveTask"  : "Save Task",
+
   "like" : "like",
   "likePlural" : "likes",
 

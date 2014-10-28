@@ -150,6 +150,7 @@ require.config({
     'task_edit_form_template'   : '../apps/tasks/edit/templates/task_edit_form_template.html',
     'volunteer_supervisor_notify_template' : '../apps/tasks/show/templates/volunteer_supervisor_notify_template.html',
     'volunteer_text_template'   : '../apps/tasks/show/templates/volunteer_text_template.html',
+    'change_state_template'     : '../apps/tasks/show/templates/change_state_template.html',
 
     // ----------
     //= Events

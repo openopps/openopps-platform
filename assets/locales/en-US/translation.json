@@ -16,6 +16,8 @@
   "task" : "opportunity",
   "taskPlural" : "opportunities",
 
+  "SaveTask"  : "Save Opportunity",
+
   "like" : "like",
   "likePlural" : "likes",
 
