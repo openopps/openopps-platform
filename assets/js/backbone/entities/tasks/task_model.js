@@ -29,6 +29,10 @@ define([
       this.listenTo(this, "task:update:state", function (state) {
         this.updateState(state);
       });
+
+      this.listenTo(this, "task:update:orphan", function (data) {
+        this.orphanTask(data);
+      });
     },
 
     update: function (data) {
@@ -51,6 +55,20 @@ define([
           self.trigger("task:update:state:success", data);
         }
       });
+    },
+
+    orphanTask: function(data) {
+      var self = this;
+
+      this.save({
+        projectId: null,
+        description: data.description
+      }, {
+        success: function(data) {
+          self.trigger("task:update:orphan:success", data);
+        }
+      });
+
     },
 
     remoteGet: function (id) {
