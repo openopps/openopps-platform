@@ -97,6 +97,29 @@ define([
         this.$("#projectId").select2('data', this.data.data.project);
       }
 
+      this.$("#owner").select2({
+        placeholder: "task owner",
+        multiple: false,
+        formatResult: formatResult,
+        formatSelection: formatResult,
+        allowClear: false,
+        ajax: {
+          url: '/api/ac/user',
+          dataType: 'json',
+          data: function (term) {
+            return {
+              q: term
+            };
+          },
+          results: function (data) {
+            return { results: data };
+          }
+        }
+      });
+      if (this.data.data.owner) {
+        this.$("#owner").select2('data', this.data.data.owner);
+      }
+
       this.tagFactory.createTagDropDown({
         type:"skill",selector:"#task_tag_skills",width: "100%", tokenSeparators: [","]
       });
@@ -171,9 +194,16 @@ define([
           description: this.$("#task-description").val()
         };
 
-        var projectId = this.$("#projectId").select2('data');
-        if (projectId) {
-          modelData.projectId = projectId.id;
+        var project = this.$("#projectId").select2('data');
+        if (project) {
+          modelData.project = projectId.id;
+        } else {
+          modelData.project = null;
+        }
+
+        var owner = this.$("#owner").select2('data');
+        if (owner) {
+          modelData.userId = owner.id;
         }
 
         oldTags = this.getOldTags();

@@ -12,6 +12,7 @@
   "TaskPlural" : "Opportunities",
   "TaskIndefinite" : "an Opportunity",
   "TaskPluralIndefinite": "some Opportunities",
+  "TaskOwner" : "Task Owner",
   "TaskOwnerIndefinite" : "An Opportunity Owner",
   "task" : "opportunity",
   "taskPlural" : "opportunities",

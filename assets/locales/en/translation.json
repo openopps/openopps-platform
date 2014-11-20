@@ -11,6 +11,7 @@
   "TaskPlural" : "Tasks",
   "TaskIndefinite" : "a Task",
   "TaskPluralIndefinite": "some Tasks",
+  "TaskOwner" : "Task Owner",
   "TaskOwnerIndefinite" : "A Task Owner",
   "task" : "task",
   "taskPlural" : "tasks",
