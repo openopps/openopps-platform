@@ -86,11 +86,11 @@ define([
         multiple: true,
         formatResult: formatResult,
         formatSelection: function(object,container,query) {
-            object.type = object.name;
-            object.id   = object.name;
-            object.value = object.name;
+            object.type = object.name || object.title;
+            object.id   = object.name || object.title;
+            object.value = object.name || object.title;
             object.unmatched = true;
-            return object.name;
+            return object.name || object.title;
         },
         createSearchChoice: function (term) {
             return { unmatched: true,id: term, value: term, name: "<b>"+term+"</b> <i>click to text search for this value.</i>" };

@@ -50,6 +50,7 @@ function search(target, req, res){
     });
 
     modelProxy.query("select distinct id from "+modelWord+" where "+titleSqlFrag+" or "+descSqlFrag+" order by id asc",function(err,data){
+      if ( _.isNull(data) ) { cb(); }
       var temp = _.map(data.rows,function(item,key){
         return item.id;
       });
@@ -74,6 +75,7 @@ function search(target, req, res){
     });
 
     TagEntity.query("select distinct id from TagEntity where "+sqlOrFrag+" order by id asc",function(err,data){
+      if ( _.isNull(data) ) { cb(); }
       var temp = _.map(data.rows,function(item,key){
         return item.id;
       });
