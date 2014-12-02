@@ -86,7 +86,8 @@ define([
         multiple: true,
         formatResult: formatResult,
         formatSelection: function(object,container,query) {
-            //null object.target to remove the task / project icons that get readded when terms go to the search box on the right
+            //null object.target to remove the task / project icons that get readded when terms go
+            //     to the search box on the right
             object.target = null;
             object.type   = object.name || object.title;
             object.id     = object.name || object.title;
