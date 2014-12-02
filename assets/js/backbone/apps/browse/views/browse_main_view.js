@@ -86,9 +86,11 @@ define([
         multiple: true,
         formatResult: formatResult,
         formatSelection: function(object,container,query) {
-            object.type = object.name || object.title;
-            object.id   = object.name || object.title;
-            object.value = object.name || object.title;
+            //null object.target to remove the task / project icons that get readded when terms go to the search box on the right
+            object.target = null;
+            object.type   = object.name || object.title;
+            object.id     = object.name || object.title;
+            object.value  = object.name || object.title;
             object.unmatched = true;
             return object.name || object.title;
         },
