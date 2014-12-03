@@ -248,6 +248,7 @@ define([
           // user clicked the submit button
           if ( self.hasOpenChildTasks(this.id ) ) { self.orphanTasksFromProject(this.id); }
           self.model.trigger("project:update:state", 'closed');
+          self.initializeItemView();
         }
       }).render();
     },
