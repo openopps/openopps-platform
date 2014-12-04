@@ -31,7 +31,7 @@ define([
       });
 
       this.listenTo(this, "task:update:orphan", function (data) {
-        this.orphanTask(data);
+        this.orphan(data);
       });
     },
 
@@ -57,12 +57,11 @@ define([
       });
     },
 
-    orphanTask: function(data) {
+    orphan: function(data) {
       var self = this;
 
       this.save({
-        projectId: null,
-        description: data.description
+        projectId: null
       }, {
         success: function(data) {
           self.trigger("task:update:orphan:success", data);
