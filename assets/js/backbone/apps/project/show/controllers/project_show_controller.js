@@ -3,6 +3,7 @@ define([
   'underscore',
   'async',
   'backbone',
+  'i18n',
   'utilities',
   'popovers',
   'base_controller',
@@ -15,10 +16,12 @@ define([
   'comment_list_controller',
   'comment_form_view',
   'modal_component',
-  'modal_alert'
-], function ($, _, async, Backbone, utils, Popovers, BaseController, ProjectItemView, ProjectItemCoreMetaView, ProjectownerShowView, AttachmentView,
+  'modal_alert',
+  'task_model',
+  'text!project_open_tasks_warning_template'
+], function ($, _, async, Backbone, i18n, utils, Popovers, BaseController, ProjectItemView, ProjectItemCoreMetaView, ProjectownerShowView, AttachmentView,
   TaskListController, EventListController, CommentListController, CommentFormView,
-  ModalComponent, ModalAlert) {
+  ModalComponent, ModalAlert, TaskModel, ProjectOpenTasksWarningTemplate) {
 
   var popovers = new Popovers();
 
@@ -127,6 +130,7 @@ define([
         this.taskListController = new TaskListController({
           projectId: this.model.id
         });
+
         // Events
         if (this.eventListController) this.eventListController.cleanup();
         this.eventListController = new EventListController({
@@ -191,27 +195,54 @@ define([
       Backbone.history.navigate('projects/' + this.id + action, { trigger: true });
     },
 
+    hasOpenTasks_old: function(projectId, count) {
+      var hasOpenTasks = false;
+      var self = this;
+      self.openTasks = 0;
+
+      _.each(this.taskListController.collection.models,function(task){
+        if ( _.indexOf(['open','assigned'],task.attributes.state) != -1 ){
+          hasOpenTasks = true;
+          self.openTasks++;
+        }
+      });
+
+      return hasOpenTasks;
+    },
+
     stateClose: function (e) {
       if (e.preventDefault) e.preventDefault();
       var self = this;
 
+      var projectTasks = self.model.hasOpenTasks(self.taskListController.collection);
       if (this.modalAlert) { this.modalAlert.cleanup(); }
       if (this.modalComponent) { this.modalComponent.cleanup(); }
       this.modalComponent = new ModalComponent({
         el: "#modal-close",
         id: "check-close",
-        modalTitle: "Close Project"
+        modalTitle: "Close "+i18n.t("Project")
       }).render();
+
+      var count = 0;
+      if ( projectTasks.hasOpenTasks ){
+        var modalContent = _.template(ProjectOpenTasksWarningTemplate,{count: projectTasks.count});
+        var submitLabel = "I Understand and Want to Close This "+i18n.t("Project");
+      } else {
+        var modalContent = '<p>Are you sure you want to close this '+i18n.t("project")+'?  Once the '+i18n.t("project")+' is closed, participants will no longer be able to contribute.</p>';
+        var submitLabel = "Close "+i18n.t("Project");
+      }
 
       this.modalAlert = new ModalAlert({
         el: "#check-close .modal-template",
         modalDiv: '#check-close',
-        content: '<p>Are you sure you want to close this project?  Once the project is closed, participants will no longer be able to contribute.</p>',
+        content: modalContent,
         cancel: 'Cancel',
-        submit: 'Close Project',
+        submit: submitLabel,
         callback: function (e) {
           // user clicked the submit button
+          if ( projectTasks.hasOpenTasks ) { self.model.trigger("project:update:tasks:orphan",self.taskListController.collection); }
           self.model.trigger("project:update:state", 'closed');
+          self.initializeItemView();
         }
       }).render();
     },

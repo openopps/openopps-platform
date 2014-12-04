@@ -19,6 +19,19 @@ module.exports = {
     // description of the task
     description: 'STRING',
 
+    isOpen: function(){
+        if ( _.indexOf(['open','public','assigned'],this.state) != -1 ){
+            return true;
+        }
+        return false;
+    },
+
+    isClosed: function(){
+        if ( _.indexOf(['closed','archived','completed'],this.state) != -1 ){
+            return true;
+        }
+        return false;
+    }
   }
 
 };

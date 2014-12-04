@@ -253,7 +253,7 @@ define([
     },
     getUserSettings: function (userId) {
       //does this belong somewhere else?
-
+      if ( _.isNull(userId) ){ return null; }
       $.ajax({
         url: '/api/usersetting/'+userId,
         type: 'GET',
