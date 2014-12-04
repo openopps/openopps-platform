@@ -84,6 +84,8 @@ define([
         }
         if (this.options.collection[i].tags) {
           item.tags = this.organizeTags(this.options.collection[i].tags);
+        } else {
+          item.tags =[];
         }
         if (this.options.collection[i].description) {
           item.item.descriptionHtml = marked(this.options.collection[i].description);

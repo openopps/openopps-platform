@@ -11,81 +11,139 @@ var projUtil = require('../services/utils/project');
 var taskUtil = require('../services/utils/task');
 var tagUtil = require('../services/utils/tag');
 
-function search (target, req, res) {
-  // Store the userid for use later
-  var userId = null;
-  if (req.user) {
-    userId = req.user[0].id;
+function search(target, req, res){
+  //builds an array of task/project ids where search terms were found
+  //   returns task / project(+counts) objects which are rendered by the calling page as cards
+  //   search terms are ANDed
+  //      if you put in foo and bar, only results with BOTH will return
+
+  var results   = [];
+
+  var modelProxy = null;
+  if ( target == 'tasks' ){
+    modelProxy=Task;
+    modelWord = 'task';
+  } else {
+    modelProxy=Project;
+    modelWord='project';
   }
+
   // make the query well formed
   var q = req.body;
-  q.items = q.items || [];
-  q.tags = q.tags || [];
+  q.freeText = q.freeText || [];
 
-  // store the result data
-  var items = [];
-  var itemIds = q.items;
-  var itemIdsAuthorized = [];
+  var freeTextSearch = function (search,cb) {
+    //this is a temp solution
+    // should be revisited once we are on sails 10
+    // we are waiting for support of contains in an or-pair fragment in waterline
 
-  // For each tag, find items associated with it
-  var processTag = function (tagId, cb) {
-    var where = {};
-    var t = target.substr(0, target.length - 1);
-    where[t + 'Id'] = { not: null };
-    Tag.find()
-    .where({ tagId: tagId })
-    .where(where)
-    .exec(function (err, tags) {
-      for (var i in tags) {
-        if (_.indexOf(itemIds, tags[i][t + 'Id']) == -1) {
-          itemIds.push(tags[i][t + 'Id']);
-        }
+    var titleSqlFrag = descSqlFrag = "";
+
+    _.each(search,function(term){
+      if ( titleSqlFrag == "" ){
+        titleSqlFrag = " title ilike '%"+term+"%'";
+        descSqlFrag  = " description ilike '%"+term+"%'";
+      } else {
+        titleSqlFrag = titleSqlFrag+" and title ilike '%"+term+"%'";
+        descSqlFrag = descSqlFrag+" and description ilike '%"+term+"%'";
       }
-      cb(err);
+    });
+
+    modelProxy.query("select distinct id from "+modelWord+" where "+titleSqlFrag+" or "+descSqlFrag+" order by id asc",function(err,data){
+      if ( _.isNull(data) ) { cb(); }
+      var temp = _.map(data.rows,function(item,key){
+        return item.id;
+      });
+      results.push.apply(results,temp);
+      cb();
     });
   };
 
-  var checkFn = projUtil.authorized;
-  if (target == 'tasks') {
-    checkFn = taskUtil.authorized;
-  }
-  // Get the item by checking if we're authorized to view it
-  var check = function (id, cb) {
-    checkFn(id, userId, function (err, item) {
-      if (!err && item) {
-        items.push(item);
-        itemIdsAuthorized.push(item.id);
-      }
-      cb(err);
-    });
-  };
+  var tagSearch = function (search, cb) {
+    //this is a temp solution
+    // should be revisited once we are on sails 10
+    // we are waiting for support of contains in an or-pair fragment in waterline
 
-  // Get each of the items with given tags
-  async.each(q.tags, processTag, function (err) {
-    if (err) { return res.send(400, { message: 'Error performing query.'}); }
-    // Get the details of each item
-    async.each(itemIds, check, function (err) {
-      if (err) { return res.send(400, { message: 'Error performing query.'}); }
-      // if there's no matching items (task or project), return an empty array
-      if (itemIdsAuthorized.length === 0) {
-        return res.send([]);
+    var sqlFrag = "";
+
+    _.each(search,function(term){
+      if ( sqlFrag == "" ){
+        sqlOrFrag  = " name ilike '%"+term+"%'";
+      } else {
+        sqlOrFrag  = sqlOrFrag+" or name ilike '%"+term+"%'";
       }
-      // Perform item specific processing
-      // Get task metadata
-      if (target == 'tasks') {
-        // Look up task metadata
-        taskUtil.findTasks({ id: itemIdsAuthorized }, function (err, items) {
-          if (err) { return res.send(400, { message: 'Error performing query.', error: err }); }
-          return res.send(items);
-        });
-        return;
-      }
-      // Get project metadata
-      async.each(items, projUtil.addCounts, function (err) {
-        if (err) { return res.send(400, { message: 'Error performing query.'}); }
-        res.send(items);
+    });
+
+    TagEntity.query("select distinct id from TagEntity where "+sqlOrFrag+" order by id asc",function(err,data){
+      if ( _.isNull(data) ) { cb(); }
+      var temp = _.map(data.rows,function(item,key){
+        return item.id;
+      });
+      Tag.find({tagId: temp})
+        .exec(function(err,foundTags){
+          _.each(foundTags,function(tag,key){
+            if ( target == 'tasks'){
+              if ( !_.isNull(tag.taskId) ){
+                results.push(tag.taskId);
+              }
+            } else {
+              if ( !_.isNull(tag.projectId) ){
+                results.push(tag.projectId);
+              }
+            }
+          });;
+        cb();
       });
     });
+  };
+
+  async.series([
+    function(callback){
+      freeTextSearch(q.freeText,function(err){
+        //we're don't care about the callback behavior here, so discard it
+        callback(null,null);
+      });
+    },
+    function(callback){
+      tagSearch(q.freeText,function(err){
+        //we're don't care about the callback behavior here, so discard it
+        callback(null,null);
+      });
+    }],
+    function(err,trash){
+    var items = [];
+
+    //de-dupe
+    results = _.uniq(results);
+
+    if ( target == 'tasks' ){
+      taskUtil.findTasks({id:results}, function (err, items) {
+        if ( _.isNull(items) ){
+          res.send([]);
+        } else {
+          res.send(items);
+        }
+      });
+    } else {
+      var items = [];
+      //this each is required so we can add the counts which are need for project cards only
+      async.each(results,
+        function(id,fcb){
+          Project.findOneById(id,function(err,proj){
+            projUtil.addCounts(proj, function (err) {
+              items.push(proj);
+              fcb();
+            });
+          });
+        },
+        function(err){
+          if ( _.isNull(items) ){
+            res.send([]);
+          } else {
+            res.send(items);
+          }
+        });
+    }
   });
 };
 
