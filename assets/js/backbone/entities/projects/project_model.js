@@ -36,6 +36,10 @@ define([
         self.updateOwners(data);
       });
 
+      this.listenTo(this, "project:update:tasks:orphan", function (data) {
+        self.orphan(data);
+      });
+
     },
 
     urlRoot: '/api/project',
@@ -96,6 +100,29 @@ define([
         success: function(data) {
           self.trigger("project:update:owners:success", data);
         }
+      });
+    },
+
+    hasOpenTasks: function(tasks){
+      //takes a task collection object
+      var hasOpenTasks = false;
+      var self = this;
+      var count = 0;
+
+      _.each(tasks.models,function(task){
+        if ( _.indexOf(['open','assigned'],task.attributes.state) != -1 ){
+          hasOpenTasks = true;
+          count++;
+        }
+      });
+
+      return {hasOpenTasks:hasOpenTasks,count:count};
+    },
+
+    orphan: function(tasks) {
+      //orphans associated tasks for a state change
+      tasks.each(function(model){
+        model.trigger("task:update:orphan",{});
       });
     }
 

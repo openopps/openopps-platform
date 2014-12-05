@@ -122,6 +122,7 @@ require.config({
     'project_item_coremeta_template': '../apps/project/show/templates/project_item_coremeta_template.html',
     'project_edit_form_template'    : '../apps/project/edit/templates/project_edit_form_template.html',
     'project_edit_form_view'        : '../apps/project/edit/views/project_edit_form_view',
+    'project_open_tasks_warning_template' : '../apps/project/show/templates/project_open_tasks_warning_template.html',
 
     // ----------
     //= Tags
