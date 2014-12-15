@@ -35,6 +35,7 @@ define([
 
     render: function () {
       var options = {
+        target: this.options.target,
         user: window.cache.currentUser,
         ui: UIConfig
       };
@@ -221,7 +222,8 @@ define([
     },
 
     applyStateFilters: function (data) {
-      if ( !_.isObject(data) ){ return data; }
+
+      if ( !_.isObject(data) || !$("#stateFilters").length ){ return data; }
       var keepers = [];
       //get check stateFilter inputs
       var inputs = $(".stateFilter:checked");
