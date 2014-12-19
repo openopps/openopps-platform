@@ -30,6 +30,7 @@
       <h2>Filters</h2>
     </div>
     <div class="box-pad-t">
+      <% if ( target == "tasks" ) {%>
       <div class="box-pad-lr" id="stateFilters">
         <% _.each(ui.states, function (t) { %>
           <input type='checkbox' name='state<%- t.label %>' class='stateFilter' value='<%- t.value %>'
@@ -39,6 +40,7 @@
             > <%- t.label %> <br/>
         <% }); %>
       </div>
+      <% } %>
       <div id="search-projs-wrapper" class="box-pad-lr">
         <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
         </ul>
