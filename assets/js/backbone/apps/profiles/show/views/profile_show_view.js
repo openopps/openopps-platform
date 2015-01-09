@@ -161,6 +161,7 @@ define([
           model: this.model,
           el: '.project-activity-wrapper',
           target: 'project',
+          handle: 'project',
           data: data.projects
         });
         this.projectView.render();
@@ -168,6 +169,7 @@ define([
           model: this.model,
           el: '.task-createdactivity-wrapper',
           target: 'task',
+          handle: 'task',
           data: data.tasks
         });
         this.taskView.render();
@@ -175,6 +177,7 @@ define([
           model: this.model,
           el: '.task-activity-wrapper',
           target: 'task',
+          handle: 'volTask',
           data: data.volTasks
         });
         this.volView.render();

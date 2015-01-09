@@ -31,6 +31,7 @@ define([
         targetFriendly: i18n.t(this.options.target),
         targetsFriendly: i18n.t(this.options.target + 'Plural'),
         targetCapitalized: this.options.target.charAt(0).toUpperCase() + this.options.target.slice(1),
+        handle: this.options.handle,
         data: results,
         count: {}
       };
