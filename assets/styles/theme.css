@@ -340,10 +340,10 @@ footer a {
 .navigation .navbar-brand {
   background-image: url(/images/logo.png);
   background-repeat: no-repeat;
-  background-size: 256px 40px;
+  background-position: left center;
   width: 256px;
-  height: 40px;
-  margin-top: 15px;
+  height: 60px;
+  margin-top: 6px;
 }
 
 @media only screen and (-moz-min-device-pixel-ratio: 1.5),
