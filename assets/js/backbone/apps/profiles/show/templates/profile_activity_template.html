@@ -42,7 +42,7 @@
   </div>
   <div class="tab-pane" id="<%= handle %>-tab-closed">
     <table class="table table-condensed table-hover">
-      <% if ((count.completed > 0)) { %>
+      <% if (count.completed > 0 || count.archived > 0) { %>
         <thead>
           <tr>
             <th data-i18n="<%= targetCapitalized %>">Project</th>
@@ -55,9 +55,6 @@
           <% if (data[i].state !== 'completed' && data[i].state !== 'archived') { continue; } %>
           <tr>
             <td>
-              <% if (data[i].state == 'draft') { %>
-              <span class="label label-warning">draft</span>
-              <% } %>
               <a href="<%= target %>s/<%= data[i].id %>" class="activity-link" data-id="<%= data[i].id %>"><%= data[i].title %></a>
             </td>
             <td><%= data[i].createdAt %></td>
