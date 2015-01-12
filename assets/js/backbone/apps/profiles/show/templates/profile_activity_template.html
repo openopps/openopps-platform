@@ -1,12 +1,12 @@
 <ul class="nav nav-tabs">
-  <li class="active"><a href="#<%= target %>-tab-open" data-toggle="tab">Open</a></li>
-  <li><a href="#<%= target %>-tab-closed" data-toggle="tab">Closed</a></li>
+  <li class="active"><a href="#<%= handle %>-tab-open" data-toggle="tab">Open</a></li>
+  <li><a href="#<%= handle %>-tab-closed" data-toggle="tab">Closed</a></li>
 </ul>
 
 <div class="tab-content">
-  <div class="tab-pane active" id="<%= target %>-tab-open">
+  <div class="tab-pane active" id="<%= handle %>-tab-open">
     <table class="table table-condensed table-hover">
-      <% if ( count.open > 0 ) { %>
+      <% if ( count.open > 0 || count.assigned > 0 || count.draft > 0) { %>
         <thead>
           <tr>
             <th data-i18n="<%= targetCapitalized %>">Project</th>
@@ -16,7 +16,7 @@
         </thead>
         <tbody>
         <% for (var i in data) { %>
-          <% if (data[i].state == 'closed') { continue; } %>
+          <% if (data[i].state == 'completed' || data[i].state == 'archived') { continue; } %>
           <tr>
             <td>
               <% if (data[i].state == 'draft') { %>
@@ -40,9 +40,9 @@
       <% } %>
     </table>
   </div>
-  <div class="tab-pane" id="<%= target %>-tab-closed">
+  <div class="tab-pane" id="<%= handle %>-tab-closed">
     <table class="table table-condensed table-hover">
-      <% if ((count.closed > 0)) { %>
+      <% if (count.completed > 0 || count.archived > 0) { %>
         <thead>
           <tr>
             <th data-i18n="<%= targetCapitalized %>">Project</th>
@@ -52,12 +52,9 @@
         </thead>
         <tbody>
         <% for (var i in data) { %>
-          <% if (data[i].state != 'closed') { continue; } %>
+          <% if (data[i].state !== 'completed' && data[i].state !== 'archived') { continue; } %>
           <tr>
             <td>
-              <% if (data[i].state == 'draft') { %>
-              <span class="label label-warning">draft</span>
-              <% } %>
               <a href="<%= target %>s/<%= data[i].id %>" class="activity-link" data-id="<%= data[i].id %>"><%= data[i].title %></a>
             </td>
             <td><%= data[i].createdAt %></td>

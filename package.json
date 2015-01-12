@@ -5,6 +5,7 @@
     "description": "Innovation platform providing collaboration and crowdsourcing tools",
     "dependencies": {
         "sails": "0.10.5",
+        "waterline": "0.10.13",
         "async": "0.2.9",
         "grunt": "0.4.5",
         "ejs": "0.8.5",
