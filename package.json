@@ -29,16 +29,16 @@
         "sails-postgresql": "~0.10.9",
         "sails-build-dictionary": "0.10.1",
         "i18next": "~1.7.4"
-    },
+        "grunt-contrib-requirejs": "~0.4.1",
+        "grunt-contrib-cssmin": "*",
+        "grunt-jsonlint" : "*",
+      },
     "devDependencies": {
         "mocha": "*",
         "chai": "*",
         "mocha-casperjs": "^0.5.3",
         "casper-chai": "^0.2.1",
         "request": "2.x",
-        "grunt-contrib-requirejs": "~0.4.1",
-        "grunt-contrib-cssmin": "*",
-        "grunt-jsonlint" : "*",
         "pg" : "~3.6.0"
     },
     "scripts": {
