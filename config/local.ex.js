@@ -120,6 +120,11 @@ local = {
     // maxMessages         :
   },
 
+  // System-wide email notification settings
+  // Set as a comma-separated list of email addresses
+  notificationsCC  : '',
+  notificationsBCC : '',
+
   // SES Mail settings -- uses Nodemailer
   ses: {
     // AWSAccessKeyID: 'AWSACCESSKEY',
