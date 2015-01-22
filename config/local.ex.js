@@ -21,9 +21,13 @@
  * For more information, check out:
  * http://sailsjs.org/#documentation
  */
-var fs = require('fs');
+var fs = require('fs'),
+    pgSession = require('connect-pg-simple'),
+    express = require('sails/node_modules/express'),
+    pg = require('sails-postgresql/node_modules/pg'),
+    local;
 
-module.exports = {
+local = {
   // The name of the system, as should appear in emails and the <html> <title> tag
   systemName: 'midas',
   // 'http' or 'https'
@@ -154,3 +158,13 @@ module.exports = {
     }
   }
 };
+
+// Use main postgres database for sessions
+local.session = {
+  store: new (pgSession(express.session))({
+    conString: local.connections.postgresql,
+    pg: pg
+  })
+};
+
+module.exports = local;
