@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "0.2.9",
     "bcrypt": "0.7.7",
+    "connect-pg-simple": "^2.2.1",
     "ejs": "0.8.5",
     "email-templates": "~0.1.5",
     "git-rev": "0.2.x",
