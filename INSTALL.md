@@ -220,6 +220,12 @@ If you'd like to include a sample project, also run:
 
 In ```config/models.js```,  set ```migrate: 'safe'```
 
+#### Set up the session table in the database
+
+From the root of the midas directory:
+
+    psql midas < node_modules/connect-pg-simple/table.sql
+    psql midas -c "GRANT ALL PRIVILEGES ON TABLE session TO midas"
 
 Now you are ready to rock!
 
