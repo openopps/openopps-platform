@@ -1,58 +1,55 @@
 {
-    "name": "midas",
-    "private": true,
-    "version": "0.0.28",
-    "description": "Innovation platform providing collaboration and crowdsourcing tools",
-    "dependencies": {
-        "sails": "0.10.5",
-        "async": "0.2.9",
-        "grunt": "0.4.5",
-        "ejs": "0.8.5",
-        "underscore": "1.x",
-        "lodash": "~2.4.1",
-        "optimist": "0.4.0",
-        "validator": "3.4.0",
-        "passport": "0.2.x",
-        "passport-local": "1.0.x",
-        "passport-myusa": "1.0.x",
-        "passport-linkedin": "0.1.x",
-        "passport-oauth": "1.0.x",
-        "icalendar": "0.6.5",
-        "node-uuid": "1.4.x",
-        "bcrypt": "0.7.7",
-        "string": "~1.8.1",
-        "gm": "~1.14.2",
-        "nodemailer": "0.6.x",
-        "email-templates": "~0.1.5",
-        "git-rev": "0.2.x",
-        "sails-disk": "~0.10.0",
-        "sails-postgresql": "~0.10.9",
-        "sails-build-dictionary": "0.10.1",
-        "i18next": "~1.7.4",
-        "request": "2.x",
-        "grunt-contrib-requirejs": "~0.4.1",
-        "grunt-contrib-cssmin": "*",
-        "grunt-jsonlint" : "*"
-      },
-    "devDependencies": {
-        "mocha": "*",
-        "chai": "*",
-        "mocha-casperjs": "^0.5.3",
-        "casper-chai": "^0.2.1",
-        "pg" : "~3.6.0"
-    },
-    "scripts": {
-        "start": "node app.js",
-        "debug": "node debug app.js"
-    },
-    "main": "app.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/18F/midas.git"
-    },
-    "scripts": {
-        "test": "make test"
-    },
-    "bugs": "https://github.com/18F/midas/issues",
-    "license": "MIT"
+  "name": "midas",
+  "private": true,
+  "version": "0.0.28",
+  "description": "Innovation platform providing collaboration and crowdsourcing tools",
+  "dependencies": {
+    "async": "0.2.9",
+    "bcrypt": "0.7.7",
+    "connect-pg-simple": "^2.2.1",
+    "ejs": "0.8.5",
+    "email-templates": "~0.1.5",
+    "git-rev": "0.2.x",
+    "gm": "~1.14.2",
+    "grunt": "0.4.5",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-jsonlint": "*",
+    "i18next": "~1.7.4",
+    "icalendar": "0.6.5",
+    "lodash": "~2.4.1",
+    "node-uuid": "1.4.x",
+    "nodemailer": "0.6.x",
+    "optimist": "0.4.0",
+    "passport": "0.2.x",
+    "passport-linkedin": "0.1.x",
+    "passport-local": "1.0.x",
+    "passport-myusa": "1.0.x",
+    "passport-oauth": "1.0.x",
+    "request": "2.x",
+    "sails": "0.10.5",
+    "sails-build-dictionary": "0.10.1",
+    "sails-disk": "~0.10.0",
+    "sails-postgresql": "~0.10.9",
+    "string": "~1.8.1",
+    "underscore": "1.x",
+    "validator": "3.4.0"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "mocha-casperjs": "^0.5.3",
+    "casper-chai": "^0.2.1",
+    "pg": "~3.6.0"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/18F/midas.git"
+  },
+  "bugs": "https://github.com/18F/midas/issues",
+  "license": "MIT"
 }
