@@ -1,0 +1,39 @@
+box: wercker/nodejs
+steps:
+  - dlapiduz/github-create-deployment
+build:
+  steps:
+    - npm-install
+    - script:
+        name: run tests
+        code: make test
+deploy:
+  steps:
+    - script:
+        name: Build Open Opps Package
+        code: |
+          mkdir skins
+          git clone https://github.com/dlapiduz/midas-open-opportunities.git skins/open-opps
+          make import DIR=./skins/open-opps
+          npm install grunt-cli
+          export PATH=./node_modules/.bin:$PATH
+          make build
+    - script:
+        name: Push code to Open Opps branch
+        code: |
+          git config --global user.email "devops+deploy@gsa.gov"
+          git config --global user.name "deploying"
+          find . -name ".git" | xargs rm -rf
+          rm .gitignore
+          git init
+          git add .
+          git commit -m "deploy commit from $WERCKER_STARTED_BY"
+          git push -f $GIT_REMOTE master:$GIT_BRANCH -q
+
+    - dlapiduz/github-create-deployment:
+        token: $GITHUB_TOKEN
+        environment: $GITHUB_DEPLOY_ENV
+        repository: midas-open-opportunities
+        ref: $GIT_BRANCH
+        owner: dlapiduz
+        auto_merge: false
