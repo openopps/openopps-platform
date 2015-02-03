@@ -8,6 +8,7 @@ var request;
 describe('init:', function() {
 
   before(function(done) {
+    console.log('hello');
     request = utils.init();
     done();
   });
