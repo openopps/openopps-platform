@@ -3,10 +3,19 @@
  *
  * See lib/config.defaults.js in the agent distribution for a more complete
  * description of configuration variables and their potential values.
- *
- * For Midas, these configuration values were moved to local.js.
  */
 
-var local = require('./config/settings/newrelic');
+// To enable, set environment variables for NEW_RELIC_APP_NAME and NEW_RELIC_LICENSE_KEY
+// See: https://github.com/newrelic/node-newrelic#configuring-the-module
+// Loaded in /config/bootstrap.js
 
-exports.config = local.newrelic;
+exports.config = {
+  logging : {
+    /**
+     * Level at which to log. 'trace' is most useful to New Relic when diagnosing
+     * issues with the agent, 'info' and higher will impose the least overhead on
+     * production applications.
+     */
+    level : 'info'
+  }
+};
