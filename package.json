@@ -33,7 +33,8 @@
         "request": "2.x",
         "grunt-contrib-requirejs": "~0.4.1",
         "grunt-contrib-cssmin": "0.11.0",
-        "grunt-jsonlint" : "1.0.4"
+        "grunt-jsonlint" : "1.0.4",
+        "newrelic" : "1.16.1"
       },
     "devDependencies": {
         "mocha": "*",
