@@ -6,7 +6,9 @@ build:
     - npm-install
     - script:
         name: run tests
-        code: make test
+        code: |
+          export PATH=$PATH:./node_modules/.bin
+          make test
 deploy:
   steps:
     - script:
