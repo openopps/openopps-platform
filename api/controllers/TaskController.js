@@ -28,13 +28,13 @@ module.exports = {
     // Only show drafts for current user
     if (user) {
       where = { or: [{
-        state: {'!': 'draft'}
+        state: 'open'
       }, {
         state: 'draft',
         userId: user.id
       }]};
     } else {
-      where.state = {'!': 'draft'};
+      where.state = 'open';
     }
 
     // run the common task find query
