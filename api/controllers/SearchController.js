@@ -17,7 +17,8 @@ function search(target, req, res){
   //   search terms are ANDed
   //      if you put in foo and bar, only results with BOTH will return
 
-  var results   = [];
+  var results    = [];
+  var masterList = [];
 
   var modelProxy = null;
   if ( target == 'tasks' ){
@@ -32,6 +33,36 @@ function search(target, req, res){
   var q = req.body;
   q.freeText = q.freeText || [];
 
+  var stateSearch = function (search,cb) {
+    //this is a temp solution
+    // should be revisited once we are on sails 10
+    // we are waiting for support of contains in an or-pair fragment in waterline
+
+    var stateFrag= "";
+
+    if ( search.length > 0 ) {
+      _.each(search,function(term){
+        if ( stateFrag == "" ){
+          stateFrag = "'"+term+"'";
+        } else {
+          stateFrag = stateFrag+",'"+term+"'";
+        }
+      });
+
+      modelProxy.query("select distinct id from "+modelWord+" where state in ("+stateFrag+") order by id asc",function(err,data){
+        if ( _.isNull(data) ) { cb(); }
+        var temp = _.map(data.rows,function(item,key){
+          return item.id;
+        });
+        masterList.push.apply(masterList,temp);
+        cb();
+      });
+    } else {
+      cb();
+    }
+  };
+
+
   var freeTextSearch = function (search,cb) {
     //this is a temp solution
     // should be revisited once we are on sails 10
@@ -39,24 +70,28 @@ function search(target, req, res){
 
     var titleSqlFrag = descSqlFrag = "";
 
-    _.each(search,function(term){
-      if ( titleSqlFrag == "" ){
-        titleSqlFrag = " title ilike '%"+term+"%'";
-        descSqlFrag  = " description ilike '%"+term+"%'";
-      } else {
-        titleSqlFrag = titleSqlFrag+" and title ilike '%"+term+"%'";
-        descSqlFrag = descSqlFrag+" and description ilike '%"+term+"%'";
-      }
-    });
-
-    modelProxy.query("select distinct id from "+modelWord+" where "+titleSqlFrag+" or "+descSqlFrag+" order by id asc",function(err,data){
-      if ( _.isNull(data) ) { cb(); }
-      var temp = _.map(data.rows,function(item,key){
-        return item.id;
+    if ( search.length > 0 ) {
+      _.each(search,function(term){
+        if ( titleSqlFrag == "" ){
+          titleSqlFrag = " title ilike '%"+term+"%'";
+          descSqlFrag  = " description ilike '%"+term+"%'";
+        } else {
+          titleSqlFrag = titleSqlFrag+" and title ilike '%"+term+"%'";
+          descSqlFrag = descSqlFrag+" and description ilike '%"+term+"%'";
+        }
       });
-      results.push.apply(results,temp);
+
+      modelProxy.query("select distinct id from "+modelWord+" where "+titleSqlFrag+" or "+descSqlFrag+" order by id asc",function(err,data){
+        if ( _.isNull(data) ) { cb(); }
+        var temp = _.map(data.rows,function(item,key){
+          return item.id;
+        });
+        results.push.apply(results,temp);
+        cb();
+      });
+    } else {
       cb();
-    });
+    }
   };
 
   var tagSearch = function (search, cb) {
@@ -66,58 +101,83 @@ function search(target, req, res){
 
     var sqlFrag = "";
 
-    _.each(search,function(term){
-      if ( sqlFrag == "" ){
-        sqlOrFrag  = " name ilike '%"+term+"%'";
-      } else {
-        sqlOrFrag  = sqlOrFrag+" or name ilike '%"+term+"%'";
-      }
-    });
+    if ( search.length > 0 ) {
+      _.each(search,function(term){
+        if ( sqlFrag == "" ){
+          sqlOrFrag  = " name ilike '%"+term+"%'";
+        } else {
+          sqlOrFrag  = sqlOrFrag+" or name ilike '%"+term+"%'";
+        }
+      });
 
-    TagEntity.query("select distinct id from TagEntity where "+sqlOrFrag+" order by id asc",function(err,data){
-      if ( _.isNull(data) ) { cb(); }
-      var temp = _.map(data.rows,function(item,key){
-        return item.id;
-      });
-      Tag.find({tagId: temp})
-        .exec(function(err,foundTags){
-          _.each(foundTags,function(tag,key){
-            if ( target == 'tasks'){
-              if ( !_.isNull(tag.taskId) ){
-                results.push(tag.taskId);
+      TagEntity.query("select distinct id from TagEntity where "+sqlOrFrag+" order by id asc",function(err,data){
+        if ( _.isNull(data) ) { cb(); }
+        var temp = _.map(data.rows,function(item,key){
+          return item.id;
+        });
+        Tag.find({tagId: temp})
+          .exec(function(err,foundTags){
+            _.each(foundTags,function(tag,key){
+              if ( target == 'tasks'){
+                if ( !_.isNull(tag.taskId) ){
+                  results.push(tag.taskId);
+                }
+              } else {
+                if ( !_.isNull(tag.projectId) ){
+                  results.push(tag.projectId);
+                }
               }
-            } else {
-              if ( !_.isNull(tag.projectId) ){
-                results.push(tag.projectId);
-              }
-            }
-          });;
-        cb();
+            });
+          cb();
+        });
       });
-    });
+    } else {
+      cb();
+    }
   };
 
   async.series([
     function(callback){
+      stateSearch(q.state,function(err){
+        //we're don't care about the callback behavior here, so discard it
+        callback(null,'one');
+      });
+    },
+    function(callback){
       freeTextSearch(q.freeText,function(err){
         //we're don't care about the callback behavior here, so discard it
-        callback(null,null);
+        callback(null,'two');
       });
     },
     function(callback){
       tagSearch(q.freeText,function(err){
         //we're don't care about the callback behavior here, so discard it
-        callback(null,null);
+        callback(null,'three');
       });
     }],
     function(err,trash){
-    var items = [];
+    var items,finalResults = [];
 
     //de-dupe
     results = _.uniq(results);
+    masterList = _.uniq(masterList);
+
+    if ( (q.freeText.length > 0 && q.state.length > 0) && (masterList.length > 0 && results.length > 0) ){
+      //user attempted a search of both text/tag & states, need results in both to display anything
+      //   use the intersection of the two sets
+      finalResults = _.intersection(results,masterList);
+    } else if ( (q.freeText.length == 0 && q.state.length > 0) && masterList.length > 0 ) {
+      //user attempted a state search with no text/tag search, results in masterList to display anything
+      //    just use the masterList
+      finalResults = masterList;
+    } else if ( (q.freeText.length > 0 && q.state.length == 0) && results.length > 0 ) {
+      //user attempted a text/tag search with no state filter, results in results to display anything
+      //    just use results
+      finalResults = results;
+    }
 
     if ( target == 'tasks' ){
-      taskUtil.findTasks({id:results}, function (err, items) {
+      taskUtil.findTasks({id:finalResults}, function (err, items) {
         if ( _.isNull(items) ){
           res.send([]);
         } else {
@@ -127,7 +187,7 @@ function search(target, req, res){
     } else {
       var items = [];
       //this each is required so we can add the counts which are need for project cards only
-      async.each(results,
+      async.each(finalResults,
         function(id,fcb){
           Project.findOneById(id,function(err,proj){
             projUtil.addCounts(proj, function (err) {

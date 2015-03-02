@@ -72,7 +72,7 @@ module.exports = {
       processProjects( null, [] );
     }
     else {
-      Project.find({ where: { 'state': state }, sort: {'updatedAt': -1}}).exec( function (err, projects) {
+      Project.find({ where: { 'state': 'open' }, sort: {'updatedAt': -1}}).exec( function (err, projects) {
         if (err) return res.send(400, { message: i18n.t('projectAPI.errMsg.lookupPlural')});
         async.each(projects, util.addCounts, function (err) {
           return processProjects(err, projects);

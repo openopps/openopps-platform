@@ -130,13 +130,15 @@ define([
     search: function (e) {
       var self = this;
       if (e.preventDefault) e.preventDefault();
+
       // get values from select2
       var data = $("#search").select2("data");
       if (data.length > 0) {
         $("#search-none").hide();
         $(".search-clear").show();
       }
-      _.each(data, function (d) {
+
+    _.each(data, function (d) {
         var found = false;
         // check if this search term already is chosen
         for (var i in self.searchTerms) {
@@ -164,21 +166,20 @@ define([
         } else {
           $("#search-projs").append(templ);
         }
-      });
+    });
+
       $("#search").select2("data","");
-      self.searchExec(self.searchTerms);
+      self.searchExec(self.searchTerms,e);
     },
 
     renderList: function (collection) {
       // create a new view for the returned data
       if (this.browseListView) { this.browseListView.cleanup(); }
 
-      var filteredCollection = this.applyStateFilters(collection);
-
       this.browseListView = new BrowseListView({
         el: '#browse-list',
         target: this.options.target,
-        collection: filteredCollection,
+        collection: collection,
       });
       // Show draft filter
       var draft = _(collection).chain()
@@ -191,19 +192,14 @@ define([
       popovers.popoverPeopleInit(".project-people-div");
     },
 
-    searchExec: function (terms) {
+    searchExec: function (terms,e) {
       var self = this;
-
-      if (!terms || (terms.length == 0)) {
-        // re-render the collection
-        self.renderList(this.options.collection.toJSON());
-        return;
-      }
 
       // create a search object
       var data = {
         items: [],
         tags: [],
+        state: [],
         freeText: [],
         target: self.options.target
       };
@@ -214,6 +210,9 @@ define([
           data.items.push(t.id);
         }
       });
+
+    _.each($(".stateFilter:checked"),function(test){ data.state.push(test.value)});
+
       $.ajax({
         url: '/api/search',
         type: 'POST',
@@ -224,24 +223,6 @@ define([
         // render the search results
         self.renderList(data);
       });
-    },
-
-    applyStateFilters: function (data) {
-
-      if ( !_.isObject(data) || !$("#stateFilters").length ){ return data; }
-      var keepers = [];
-      //get check stateFilter inputs
-      var inputs = $(".stateFilter:checked");
-
-      _.each(data,function(item){
-        _.each(inputs,function(test){
-           if ( item.state == test.value ){
-             keepers.push(item);
-           }
-        });
-      });
-
-      return keepers;
     },
 
     searchTagRemove: function (e) {
@@ -266,7 +247,7 @@ define([
         }
       }
 
-      for (i in self.searchTerms) {
+    for (i in self.searchTerms) {
         if (self.searchTerms[i].id == id) {
           if (project && self.searchTerms[i].title) {
             self.searchTerms.splice(i, 1);
@@ -285,7 +266,7 @@ define([
         $("#search-none").show();
         $(".search-clear").hide();
       }
-      self.searchExec(self.searchTerms);
+      self.searchExec(self.searchTerms,e);
     },
 
     searchClear: function (e) {
@@ -295,7 +276,7 @@ define([
       $("#search-tags").children().remove();
       $("#search-none").show();
       $(".search-clear").hide();
-      this.searchExec(self.searchTerms);
+      this.searchExec(self.searchTerms,e);
     },
 
     cleanup: function() {
