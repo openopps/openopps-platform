@@ -32,26 +32,28 @@ function search(target, req, res){
   // make the query well formed
   var q = req.body;
   q.freeText = q.freeText || [];
+  q.user = q.user || [];
 
   var stateSearch = function (search,cb) {
-    //this is a temp solution
-    // should be revisited once we are on sails 10
-    // we are waiting for support of contains in an or-pair fragment in waterline
-
-    var stateFrag= "";
 
     if ( search.length > 0 ) {
+
+      var states = [];
+
       _.each(search,function(term){
-        if ( stateFrag == "" ){
-          stateFrag = "'"+term+"'";
+        if ( term == 'draft' ){
+          states.push({ state: 'draft',userId: q.user });
         } else {
-          stateFrag = stateFrag+",'"+term+"'";
+          states.push({ state: term});
         }
       });
 
-      modelProxy.query("select distinct id from "+modelWord+" where state in ("+stateFrag+") order by id asc",function(err,data){
+      modelProxy.find({
+        or: states
+      })
+      .exec(function (err,data){
         if ( _.isNull(data) ) { cb(); }
-        var temp = _.map(data.rows,function(item,key){
+          var temp = _.map(data,function(item,key){
           return item.id;
         });
         masterList.push.apply(masterList,temp);
@@ -62,28 +64,18 @@ function search(target, req, res){
     }
   };
 
-
   var freeTextSearch = function (search,cb) {
-    //this is a temp solution
-    // should be revisited once we are on sails 10
-    // we are waiting for support of contains in an or-pair fragment in waterline
-
-    var titleSqlFrag = descSqlFrag = "";
 
     if ( search.length > 0 ) {
-      _.each(search,function(term){
-        if ( titleSqlFrag == "" ){
-          titleSqlFrag = " title ilike '%"+term+"%'";
-          descSqlFrag  = " description ilike '%"+term+"%'";
-        } else {
-          titleSqlFrag = titleSqlFrag+" and title ilike '%"+term+"%'";
-          descSqlFrag = descSqlFrag+" and description ilike '%"+term+"%'";
-        }
-      });
-
-      modelProxy.query("select distinct id from "+modelWord+" where "+titleSqlFrag+" or "+descSqlFrag+" order by id asc",function(err,data){
+      modelProxy.find({
+        or :[
+          { title: { 'contains': search}},
+          { description: { 'contains': search}}
+        ]
+      })
+      .exec(function(err,data){
         if ( _.isNull(data) ) { cb(); }
-        var temp = _.map(data.rows,function(item,key){
+        var temp = _.map(data,function(item,key){
           return item.id;
         });
         results.push.apply(results,temp);
@@ -95,24 +87,21 @@ function search(target, req, res){
   };
 
   var tagSearch = function (search, cb) {
-    //this is a temp solution
-    // should be revisited once we are on sails 10
-    // we are waiting for support of contains in an or-pair fragment in waterline
 
-    var sqlFrag = "";
+    var tags = [];
 
     if ( search.length > 0 ) {
+
       _.each(search,function(term){
-        if ( sqlFrag == "" ){
-          sqlOrFrag  = " name ilike '%"+term+"%'";
-        } else {
-          sqlOrFrag  = sqlOrFrag+" or name ilike '%"+term+"%'";
-        }
+        tags.push({ name: {'contains': term}});
       });
 
-      TagEntity.query("select distinct id from TagEntity where "+sqlOrFrag+" order by id asc",function(err,data){
+      TagEntity.find({
+        or: tags
+      })
+      .exec(function(err,data){
         if ( _.isNull(data) ) { cb(); }
-        var temp = _.map(data.rows,function(item,key){
+        var temp = _.map(data,function(item,key){
           return item.id;
         });
         Tag.find({tagId: temp})

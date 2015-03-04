@@ -169,31 +169,53 @@ define([
     });
 
       $("#search").select2("data","");
-      self.searchExec(self.searchTerms,e);
+      self.searchPrep(self.searchTerms,e);
     },
 
     renderList: function (collection) {
       // create a new view for the returned data
       if (this.browseListView) { this.browseListView.cleanup(); }
 
+      this.checkForDrafts();
+
       this.browseListView = new BrowseListView({
         el: '#browse-list',
         target: this.options.target,
         collection: collection,
       });
+
       // Show draft filter
       var draft = _(collection).chain()
             .pluck('state')
             .indexOf('draft').value() >= 0;
-      $(".draft-filter").toggleClass('hidden', !draft);
+      //$(".draft-filter").toggleClass('hidden', !draft);
+      if ( draft ) {
+        $("[name='stateDraft']").prop("checked",true);
+      }
       $("#browse-search-spinner").hide();
       $("#browse-list").show();
       this.browseListView.render();
       popovers.popoverPeopleInit(".project-people-div");
     },
 
-    searchExec: function (terms,e) {
+    checkForDrafts: function () {
       var self = this;
+
+      $.ajax({
+        url: '/api/search',
+        type: 'POST',
+        data: JSON.stringify({state: ['draft'],freeText: [],items: [], tags: [], target: self.options.target,user: window.cache.currentUser.id}),
+        dataType: 'json',
+        contentType: 'application/json'
+      }).done(function (data) {
+          if ( data.length > 0 ) {
+            $(".draft-filter").toggleClass('hidden', false);
+          }
+      });
+
+    },
+
+    searchPrep: function (terms,e) {
 
       // create a search object
       var data = {
@@ -201,7 +223,8 @@ define([
         tags: [],
         state: [],
         freeText: [],
-        target: self.options.target
+        target: this.options.target,
+        user: window.cache.currentUser.id
       };
       _.each(terms, function (t) {
         if ( t.unmatched ) {
@@ -213,6 +236,13 @@ define([
 
     _.each($(".stateFilter:checked"),function(test){ data.state.push(test.value)});
 
+      this.searchExec(data);
+    },
+
+    searchExec: function (data) {
+
+      var self = this;
+
       $.ajax({
         url: '/api/search',
         type: 'POST',
@@ -220,8 +250,8 @@ define([
         dataType: 'json',
         contentType: 'application/json'
       }).done(function (data) {
-        // render the search results
-        self.renderList(data);
+          // render the search results
+          self.renderList(data);
       });
     },
 
@@ -266,7 +296,7 @@ define([
         $("#search-none").show();
         $(".search-clear").hide();
       }
-      self.searchExec(self.searchTerms,e);
+      self.searchPrep(self.searchTerms,e);
     },
 
     searchClear: function (e) {
@@ -276,7 +306,7 @@ define([
       $("#search-tags").children().remove();
       $("#search-none").show();
       $(".search-clear").hide();
-      this.searchExec(self.searchTerms,e);
+      this.searchPrep(self.searchTerms,e);
     },
 
     cleanup: function() {
