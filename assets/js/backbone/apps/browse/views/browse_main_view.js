@@ -248,7 +248,10 @@ define([
         type: 'POST',
         data: JSON.stringify(data),
         dataType: 'json',
-        contentType: 'application/json'
+        contentType: 'application/json',
+        beforeSend: function(){
+          $("#browse-search-spinner").show();
+        }
       }).done(function (data) {
           // render the search results
           self.renderList(data);
