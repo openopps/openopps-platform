@@ -204,7 +204,14 @@ define([
       $.ajax({
         url: '/api/search',
         type: 'POST',
-        data: JSON.stringify({state: ['draft'],freeText: [],items: [], tags: [], target: self.options.target,user: window.cache.currentUser.id}),
+        data: JSON.stringify({
+          state: ['draft'],
+          freeText: [],
+          items: [],
+          tags: [],
+          target: self.options.target,
+          user: (window.cache.currentUser || {}).id
+        }),
         dataType: 'json',
         contentType: 'application/json'
       }).done(function (data) {
@@ -224,7 +231,7 @@ define([
         state: [],
         freeText: [],
         target: this.options.target,
-        user: window.cache.currentUser.id
+        user: (window.cache.currentUser || {}).id
       };
       _.each(terms, function (t) {
         if ( t.unmatched ) {
