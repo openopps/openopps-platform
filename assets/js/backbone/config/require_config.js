@@ -93,6 +93,7 @@ require.config({
     'home_controller'           : '../apps/home/controllers/home_controller',
     'home_view'                 : '../apps/home/views/home_view',
     'home_template'             : '../apps/home/templates/home_view_template.html',
+    'empty_modal_view'          : '../apps/home/views/empty_modal_view',
 
     // ----------
     //= Browse
@@ -240,7 +241,9 @@ require.config({
     'markdown_editor'           : '../components/markdown_editor',
     'markdown_editor_template'  : '../components/markdown_editor_template.html',
     'autocomplete'              : '../mixins/autocomplete',
-    'tag_factory'               : '../components/tag_factory'
+    'tag_factory'               : '../components/tag_factory',
+    'modal_pages'               : '../components/modal_pages',
+    'modal_pages_template'      : '../components/modal_pages_template.html'
   },
 
   shim: {
