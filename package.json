@@ -40,6 +40,7 @@
   "devDependencies": {
     "casper-chai": "^0.2.1",
     "chai": "2.1.2",
+    "grunt-cli": "^0.1.13",
     "mocha": "2.2.1",
     "mocha-casperjs": "^0.5.3",
     "pg": "~3.6.0",
