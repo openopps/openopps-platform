@@ -130,13 +130,15 @@ define([
     search: function (e) {
       var self = this;
       if (e.preventDefault) e.preventDefault();
+
       // get values from select2
       var data = $("#search").select2("data");
       if (data.length > 0) {
         $("#search-none").hide();
         $(".search-clear").show();
       }
-      _.each(data, function (d) {
+
+    _.each(data, function (d) {
         var found = false;
         // check if this search term already is chosen
         for (var i in self.searchTerms) {
@@ -164,48 +166,72 @@ define([
         } else {
           $("#search-projs").append(templ);
         }
-      });
+    });
+
       $("#search").select2("data","");
-      self.searchExec(self.searchTerms);
+      self.searchPrep(self.searchTerms,e);
     },
 
     renderList: function (collection) {
       // create a new view for the returned data
       if (this.browseListView) { this.browseListView.cleanup(); }
 
-      var filteredCollection = this.applyStateFilters(collection);
+      this.checkForDrafts();
 
       this.browseListView = new BrowseListView({
         el: '#browse-list',
         target: this.options.target,
-        collection: filteredCollection,
+        collection: collection,
       });
+
       // Show draft filter
       var draft = _(collection).chain()
             .pluck('state')
             .indexOf('draft').value() >= 0;
-      $(".draft-filter").toggleClass('hidden', !draft);
+      //$(".draft-filter").toggleClass('hidden', !draft);
+      if ( draft ) {
+        $("[name='stateDraft']").prop("checked",true);
+      }
       $("#browse-search-spinner").hide();
       $("#browse-list").show();
       this.browseListView.render();
       popovers.popoverPeopleInit(".project-people-div");
     },
 
-    searchExec: function (terms) {
+    checkForDrafts: function () {
       var self = this;
 
-      if (!terms || (terms.length == 0)) {
-        // re-render the collection
-        self.renderList(this.options.collection.toJSON());
-        return;
-      }
+      $.ajax({
+        url: '/api/search',
+        type: 'POST',
+        data: JSON.stringify({
+          state: ['draft'],
+          freeText: [],
+          items: [],
+          tags: [],
+          target: self.options.target,
+          user: (window.cache.currentUser || {}).id
+        }),
+        dataType: 'json',
+        contentType: 'application/json'
+      }).done(function (data) {
+          if ( data.length > 0 ) {
+            $(".draft-filter").toggleClass('hidden', false);
+          }
+      });
+
+    },
+
+    searchPrep: function (terms,e) {
 
       // create a search object
       var data = {
         items: [],
         tags: [],
+        state: [],
         freeText: [],
-        target: self.options.target
+        target: this.options.target,
+        user: (window.cache.currentUser || {}).id
       };
       _.each(terms, function (t) {
         if ( t.unmatched ) {
@@ -214,34 +240,29 @@ define([
           data.items.push(t.id);
         }
       });
+
+    _.each($(".stateFilter:checked"),function(test){ data.state.push(test.value)});
+
+      this.searchExec(data);
+    },
+
+    searchExec: function (data) {
+
+      var self = this;
+
       $.ajax({
         url: '/api/search',
         type: 'POST',
         data: JSON.stringify(data),
         dataType: 'json',
-        contentType: 'application/json'
+        contentType: 'application/json',
+        beforeSend: function(){
+          $("#browse-search-spinner").show();
+        }
       }).done(function (data) {
-        // render the search results
-        self.renderList(data);
+          // render the search results
+          self.renderList(data);
       });
-    },
-
-    applyStateFilters: function (data) {
-
-      if ( !_.isObject(data) || !$("#stateFilters").length ){ return data; }
-      var keepers = [];
-      //get check stateFilter inputs
-      var inputs = $(".stateFilter:checked");
-
-      _.each(data,function(item){
-        _.each(inputs,function(test){
-           if ( item.state == test.value ){
-             keepers.push(item);
-           }
-        });
-      });
-
-      return keepers;
     },
 
     searchTagRemove: function (e) {
@@ -266,7 +287,7 @@ define([
         }
       }
 
-      for (i in self.searchTerms) {
+    for (i in self.searchTerms) {
         if (self.searchTerms[i].id == id) {
           if (project && self.searchTerms[i].title) {
             self.searchTerms.splice(i, 1);
@@ -285,7 +306,7 @@ define([
         $("#search-none").show();
         $(".search-clear").hide();
       }
-      self.searchExec(self.searchTerms);
+      self.searchPrep(self.searchTerms,e);
     },
 
     searchClear: function (e) {
@@ -295,7 +316,7 @@ define([
       $("#search-tags").children().remove();
       $("#search-none").show();
       $(".search-clear").hide();
-      this.searchExec(self.searchTerms);
+      this.searchPrep(self.searchTerms,e);
     },
 
     cleanup: function() {
