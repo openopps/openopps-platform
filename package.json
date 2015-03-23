@@ -38,14 +38,24 @@
     "validator": "3.4.0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "mocha-casperjs": "^0.5.3",
     "casper-chai": "^0.2.1",
-    "pg": "~3.6.0"
+    "chai": "2.1.2",
+    "grunt-cli": "^0.1.13",
+    "mocha": "2.2.1",
+    "mocha-casperjs": "^0.5.3",
+    "pg": "~3.6.0",
+    "phantomjs": "^1.9.16"
   },
   "scripts": {
-    "test": "make test"
+    "test:api": "(export NODE_ENV=test; mocha test/test.upstart.js --recursive test/api)",
+    "test:browser": "(export NODE_ENV=test; export TEST_ROOT=\"http://localhost:1337\"; npm run build:dev && mkdir -p .tmp && cp test/data/disk.db .tmp/disk.db && node test/browser/upstart.js)",
+    "test": "npm run test:api && npm run test:browser",
+    "build": "grunt build",
+    "build:dev": "grunt compileAssets && grunt linkAssets",
+    "migrate": "./tools/postgres/init.sh",
+    "init": "(export NODE_ENV=development; mocha test/test.upstart.js --recursive test/init)",
+    "demo": "(export NODE_ENV=development; mocha test/test.upstart.js --recursive test/demo)",
+    "import": "-cp -v ./exclude.txt exclude.txt rsync -av --exclude-from=exclude.txt ./* ."
   },
   "main": "app.js",
   "repository": {
