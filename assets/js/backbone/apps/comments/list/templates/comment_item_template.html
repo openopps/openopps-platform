@@ -1,14 +1,6 @@
-<li class="comment-item clearfix <% if (topic) { %>border-left box-pad-lr<% } else { %>border-top<% } %>">
+<li class="comment-item clearfix">
 
   <div class="comment-content">
-    <% if (topic) { %>
-    <div class="comment-expand">
-      <span class="content">expand</span> <i class="fa fa-angle-double-down"></i>
-    </div>
-    <div class="comment-contract">
-      <span class="content">contract</span> <i class="fa fa-angle-double-up"></i>
-    </div>
-    <% } %>
     <div class="comment-image">
       <div class="project-people-div" data-userid="<%- userId %>">
         <img src="/api/user/photo/<%= userId %>" alt="<%- user.name %>" class="project-people" />
@@ -30,16 +22,6 @@
 
       <div class="comment-metadata">
         <time class="timeago comment-created-at" datetime="<%- createdAt %>"><%- createdAt %></time>
-        <% if (topic) { %>
-        &bull;&nbsp;
-        <span class="comment-count"><i class="fa fa-comments"></i> <span class="comment-count-num"><%- numChildren %></span> comments</span>
-        <% } %>
-        <% if (depth == 1)  { %>
-        <% if (currentUser) { %>
-        &bull;
-        <a href="#reply-to-comment" class="reply-to-<%= id %>" data-depth="<%= depth %>">Reply</a>
-        <% } %>
-        <% } %>
       </div>
     </div>
   </div>
@@ -48,7 +30,4 @@
 
     <ul id="comment-list-<%= id %>"></ul>
   </div>
-
-  <div class="comment-form" <% if ((depth >= 1) || (!currentUser)) { %>style="display: none;"<% } %> id="comment-form-<%= id %>"></div>
-
 </li>

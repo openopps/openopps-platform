@@ -206,31 +206,6 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12 sm-nopadding md-nopadding">
-        <div class="box task-both">
-          <div class="box-pad-lr border-bottom">
-            <h2>Requestor and Participants
-            </h2>
-          </div>
-          <div class="box-main" id="task-volunteers">
-            <div class="project-people-div" data-userid="<%= model.userId %>">
-              <img src="/api/user/photo/<%= model.userId %>" class="project-people" alt="<%= model.owner.name %>"/>
-            </div>
-            <div class="project-people-space">
-              <div class="bar">
-              </div>
-            </div>
-            <% _.each(model.volunteers, function (v) { %>
-            <div class="project-people-div" data-userid="<%= v.userId %>" data-voluserid="<%= v.userId %>">
-              <img src="/api/user/photo/<%= v.userId %>" class="project-people" alt="<%= v.name %>"/>
-            </div>
-            <% }); %>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="col-md-12 task-view sm-nopadding md-nopadding">
 
         <div class="box comment-list-wrapper" style="clear: both;">
@@ -257,6 +232,31 @@
     <div class="row">
       <div class="col-md-12 box sm-nopadding">
         <div class="box-main tag-wrapper">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 box sm-nopadding">
+        <div class="box task-both">
+          <div class="box-pad-lr border-bottom">
+            <h2>Requestor and Participants
+            </h2>
+          </div>
+          <div class="box-main" id="task-volunteers">
+            <div class="project-people-div" data-userid="<%= model.userId %>">
+              <img src="/api/user/photo/<%= model.userId %>" class="project-people" alt="<%= model.owner.name %>"/>
+            </div>
+            <div class="project-people-space">
+              <div class="bar">
+              </div>
+            </div>
+            <% _.each(model.volunteers, function (v) { %>
+            <div class="project-people-div" data-userid="<%= v.userId %>" data-voluserid="<%= v.userId %>">
+              <img src="/api/user/photo/<%= v.userId %>" class="project-people" alt="<%= v.name %>"/>
+            </div>
+            <% }); %>
+          </div>
         </div>
       </div>
     </div>

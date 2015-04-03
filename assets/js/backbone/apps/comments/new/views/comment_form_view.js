@@ -19,7 +19,8 @@ var CommentInlineTemplate = require('../templates/comment_inline_template.html')
 var CommentFormView = Backbone.View.extend({
 
   events: {
-    "submit .comment-submit": "post"
+    "submit .comment-submit": "post",
+    "keypress .comment-input": "submitOnEnter"
   },
 
   initialize: function (options) {
@@ -160,6 +161,18 @@ var CommentFormView = Backbone.View.extend({
 
     var currentTarget = e.currentTarget;
     this.collection.trigger("comment:save", data, currentTarget);
+  },
+
+  submitOnEnter: function (e) {
+    var enterKey = 13;
+    var shiftPressed = e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey;
+    if (e.which == enterKey && shiftPressed) {
+      this.post(e);
+    }
+  },
+
+  empty: function () {
+    this.$(".comment-input").empty();
   },
 
   cleanup: function () {
