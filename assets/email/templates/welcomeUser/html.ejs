@@ -1,11 +1,15 @@
-<p>Welcome to <a href="<%= globals.urlPrefix %>"><%= globals.systemName %></a>!</p>
+<p>Hello<% if (metadata.recipient.name) { %> <%= metadata.recipient.name %><% } %>,</p>
 
-<p> Please take a moment to ensure that your <a href="<%= globals.urlPrefix %>/profile">profile</a> is complete and accurate.</p>
+<p>Welcome to <%= globals.systemName %>! As a participant, you’ll be able to collaborate with users across different agencies and complete projects that reflect your interests.</p>
 
-<p> We are happy to have you involved!</p>
+<p>Before you start expressing interest in <%= globals.systemName %>, please complete your <a href="<%= globals.urlPrefix %>/profile">profile</a>:<p>
+
+<p>Write your bio: Share a bit of background information to help other participants get to know you.<p>
+<p>Add a photo: Upload a profile picture to help other participants put a face to your name.<p>
+<p>List skills and topics: List your strongest skills and topics that interest you - this helps task creators match you with your ideal Opportunities.<p>
 
 <p>
-  Thanks!
+  We’re happy to have you involved!
   <br/>
   - The <%= globals.systemName %> Team
 </p>
