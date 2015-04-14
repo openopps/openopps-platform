@@ -46,6 +46,13 @@ module.exports = {
       templateLocals: { },
       layoutLocals: { }
     },
+    'taskVolunteerRemoved': {
+      layout: 'default',
+      template: 'taskVolunteerRemoved',
+      subject: 'An update on <%= task.title %>',
+      templateLocals: { },
+      layoutLocals: { }
+    },
     'taskCreated': {
       layout: 'default',
       template: 'taskCreated',

@@ -83,9 +83,10 @@ function NotificationBuilder () {
         sails.log.warning("Notification Error:", err);
       }
     });
-
     function startNotify (audience, done) {
+
       // get subscriber list for action
+
       populateRecipients(audience, function (err, recipients, audience){
         // begin the delivery process, will fork execution into a fan of callbacks for each Notification and again for each delivery
         function finishNotify (recipient, fin) {
@@ -275,6 +276,7 @@ function NotificationBuilder () {
             sails.log.debug('audience:', audience);
             sails.log.debug('notification:', notification)
             generateDelivery(audience, notification, deliveryStrategy, content, function(err, delivery){
+
               if (err) { sails.log.debug(err); done(null, null); return false;}
               // makes use of master fields/settings in scope and dispatches the delivery
               registerDeliveryAsSent(delivery, { settings: settings, fields: fields }, done);
