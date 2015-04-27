@@ -1190,6 +1190,14 @@ ALTER TABLE ONLY midas_user
 
 
 --
+-- Name: midas_user_username_key; Type: CONSTRAINT; Schema: public; Owner: midas; ablespace:
+--
+
+ALTER TABLE ONLY midas_user
+    ADD CONSTRAINT midas_user_username_key UNIQUE (username);
+
+
+--
 -- Name: notification_pkey; Type: CONSTRAINT; Schema: public; Owner: midas; Tablespace:
 --
 
