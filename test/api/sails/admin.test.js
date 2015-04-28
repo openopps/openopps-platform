@@ -139,7 +139,7 @@ describe('admin:', function () {
           var adminEmail = obj.emails[0];
           request.put({
             url: conf.url + '/useremail/' + emailBefore.id,
-            form: { email: emailAfter },
+            form: { email: emailAfter }
           }, function(err, response, body) {
             if (err) { return done(err); }
             // Logged in users should get a 200 with the user object
@@ -158,10 +158,10 @@ describe('admin:', function () {
         url: conf.url + '/user/export'
       }, function (err, response, body) {
         assert.equal(response.statusCode, 200);
-        var testBody = '"user_id","name","username","title","bio","isAdmin","disabled"\n' +
-            '1,"","tester1@midascrowd.com","","",false,false\n' +
-            '2,"","admin@midascrowd.com","","",true,false\n' +
-            '3,"","testreset@midascrowd.com","","",false,false\n'
+        var testBody = '"user_id","name","username","title","agency","location","bio","admin","disabled"\n' +
+            '1,"","tester1@midascrowd.com","","","","",false,false\n' +
+            '2,"","admin@midascrowd.com","","","","",true,false\n' +
+            '3,"","testreset@midascrowd.com","","","","",false,false\n';
         assert.equal(body, testBody);
         done(err);
       });

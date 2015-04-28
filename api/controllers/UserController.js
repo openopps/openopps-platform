@@ -343,7 +343,7 @@ module.exports = {
   },
 
   export: function (req, resp) {
-    User.find().exec(function (err, users) {
+    User.find().populate('tags').exec(function (err, users) {
       if (err) {
         sails.log.error("user query error. " + err);
         resp.send(400, {message: 'An error occurred while looking up users.', error: err});

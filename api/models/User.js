@@ -56,14 +56,15 @@ module.exports = {
     }
   },
 
-  // TODO: add more fields, likely driven off subqueries
   exportFormat: {
     'user_id': 'id',
     'name': {field: 'name', filter: exportUtils.nullToEmptyString},
     'username': {field: 'username', filter: exportUtils.nullToEmptyString},
     'title': {field: 'title', filter: exportUtils.nullToEmptyString},
+    'agency': {field: 'agency', src: 'tags', filter: exportUtils.getAgency},
+    'location': {field: 'location', src: 'tags', filter: exportUtils.getLocation},
     'bio': {field: 'bio', filter: exportUtils.nullToEmptyString},
-    'isAdmin': 'isAdmin',
+    'admin': 'isAdmin',
     'disabled': 'disabled'
   }
 

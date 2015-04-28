@@ -24,9 +24,11 @@ module.exports = {
 
     // clean up records
     fields.forEach(function (field, fIndex, fields) {
+      // if the "field" is a string, deref it, else use field.filter(field.field)
       if (typeof(field) === "object") {
         records.forEach(function (rec, rIndex, records) {
-          records[rIndex][field.field] = field.filter.call(this, rec[field.field]);
+          var sourceField = ('src' in field) ? field.src : field.field;
+          records[rIndex][field.field] = field.filter.call(this, rec[sourceField]);
         });
         fields[fIndex] = field.field;
       }
@@ -59,6 +61,18 @@ module.exports = {
    */
   nullToEmptyString: function (str) {
     return str ? str : "";
-  }
+  },
 
+  /**
+   * Find and extract the right tag
+   */
+  getAgency: function(tags) {
+    var tag = _.findWhere(tags, { type: 'agency' });
+    return (tag) ? tag.name : "";
+  },
+
+  getLocation: function(tags) {
+    var tag = _.findWhere(tags, { type: 'location' });
+    return (tag) ? tag.name : "";
+  }
 };
