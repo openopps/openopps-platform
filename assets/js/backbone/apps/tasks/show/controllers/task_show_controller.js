@@ -429,8 +429,7 @@ var TaskShowController = BaseView.extend({
         type: 'DELETE',
         data: {
           taskId: this.model.attributes,
-          vId: vId,
-          steve: "thingy"
+          vId: vId
         },
       }).done(function (data) {
           // done();
