@@ -73,6 +73,12 @@ module.exports = {
         emailName: 'taskVolunteerAdded'
       }
     },
+    'preflightTaskVolunteerRemoved': {
+      method: 'prepareTaskVolunteerRemoved',
+      settings: {
+        emailName: 'taskVolunteerRemoved'
+      }
+    },
     'preflightTaskCreated': {
       method: 'prepareWelcomeUserEmail',
       settings: {
@@ -210,6 +216,18 @@ module.exports = {
           strategy: {
             'contactTaskOwnersOnVolunteerEmail': {
               preflight: ['preflightTaskVolunteer'],
+              delivery: 'sendSimpleEmail'
+            }
+          }
+        }
+      }
+    },
+    'taskVolunteerRemoved': {
+      audience:{
+        'taskVolunteer': {
+          strategy: {
+            'contactTaskOwnersOnVolunteerRemovedEmail': {
+              preflight: ['preflightTaskVolunteerRemoved'],
               delivery: 'sendSimpleEmail'
             }
           }
