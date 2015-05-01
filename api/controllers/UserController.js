@@ -80,6 +80,28 @@ module.exports = {
     module.exports.find(req, res);
   },
 
+  // TODO: make more efficient, currently does one query per user
+  all: function (req, res) {
+    User.find().exec(function (err, users) {
+      if (err) return res.serverError(err);
+      var fullUsers = [];
+      var goodUsers = _.reject(users, 'disabled');
+      async.each(goodUsers, function(user, cb) {
+        var reqId = req.user[0].id;
+        sails.services.utils.user['getUser'](user.id, reqId, req.user, function (err, fullUser) {
+          if (err) cb(err);
+          delete fullUser.auths;
+          delete fullUser.passwordAttempts;
+          fullUsers.push(fullUser);
+          cb(null);
+        });
+      }, function (err) {
+        if (err) return res.serverError(err);
+        res.send(fullUsers);
+      });
+    });
+  },
+
   // Use default Blueprint template with filtered data to return full profiles
   profile: function(req, res) {
     if (!req.user) return res.forbidden();

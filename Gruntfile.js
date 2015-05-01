@@ -95,7 +95,7 @@ module.exports = function (grunt) {
         {
           expand: true,
           cwd: './assets',
-          src: ['build/**/*', 'js/vendor/**/*', 'images/**/*','locales/**/*'],
+          src: ['build/**/*', 'js/vendor/**/*', 'images/**/*', 'locales/**/*', 'data/**/*'],
           dest: '.tmp/public'
         }
         ]

@@ -76,6 +76,10 @@ module.exports.routes = {
     controller: 'main',
     action: 'index'
   },
+  '/map': {
+    controller: 'main',
+    action: 'index'
+  },
   '/admin': {
     controller: 'main',
     action: 'index'
