@@ -12,7 +12,10 @@ module.exports = {
   tableName: 'midas_user',
   attributes: {
     // Login information
-    username: 'STRING',
+    username: {
+      type: 'STRING',
+      unique: true
+    },
 
     // Core attributes about a user
     name: 'STRING',

@@ -85,7 +85,9 @@ var LoginView = Backbone.View.extend({
         $submitButton = self.$('#registration-form [type="submit"]');
     if (e.preventDefault) e.preventDefault();
 
+    if ($submitButton.prop('disabled')) return;
     $submitButton.prop('disabled', true);
+
     // validate input fields
     var validateIds = ['#rname', '#rusername', '#rpassword'];
     // Only validate terms & conditions if it is enabled
@@ -93,7 +95,7 @@ var LoginView = Backbone.View.extend({
       validateIds.push('#rterms');
     }
     var abort = false;
-    for (i in validateIds) {
+    for (var i in validateIds) {
       var iAbort = validate({ currentTarget: validateIds[i] });
       abort = abort || iAbort;
     }
@@ -127,7 +129,7 @@ var LoginView = Backbone.View.extend({
     };
     // Add in additional, optional fields
     if (this.options.login.terms.enabled === true) {
-      data['terms'] = (this.$("#rterms").val() == "on");
+      data.terms = (this.$("#rterms").val() == "on");
     }
     // Post the registration request to the server
     $.ajax({
@@ -227,7 +229,7 @@ var LoginView = Backbone.View.extend({
   checkPasswordConfirm: function (e) {
     var success = true;
     var password = this.$("#rpassword").val();
-    var confirm = this.$("#rpassword-confirm").val()
+    var confirm = this.$("#rpassword-confirm").val();
     if (password === confirm) {
       $("#rpassword-confirm").closest(".form-group").find(".help-block").hide();
     } else {

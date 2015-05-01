@@ -203,9 +203,21 @@ module.exports = {
             userCreateParam = userData;
           }
           User.create(userCreateParam).exec(function (err, user) {
+            var errorMessage = '';
             if (err) {
               sails.log.debug('User creation error:', err);
-              return done(null, false, { message: 'Unable to create new user. Please try again.'});
+              if (err.invalidAttributes) {
+                _.each(err.invalidAttributes, function(error) {
+                  errorMessage = errorMessage + ' ' + error.map(function(msg) {
+                    return msg.message;
+                  }).join(' ');
+                });
+              }
+              return done(null, false, {
+                message: (errorMessage) ?
+                  'Unable to create new user.' + errorMessage :
+                  'Unable to create new user. Please try again.'
+              });
             }
             sails.log.debug('User Created:', user);
             var pwObj = {
