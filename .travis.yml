@@ -4,14 +4,13 @@ node_js:
   - "0.10"
 before_install:
   - "npm install npm@2.1.x -g"
-before_deploy: npm install -g https://github.com/18F/cf-blue-green/tarball/env-var-domain
+before_deploy: npm install -g cf-blue-green
 env:
   global:
     - CF_APP=openopps
     - CF_API=https://api.cloud.gov
     - CF_USERNAME=deploy-open-opportunities
     - CF_ORGANIZATION=open-opportunities
-    - B_DOMAIN=18f.gov
     - secure: "DTYvUyBEyP2RIk4n2KNRKhcrGo6R+KbmF/x+GUVgeVUQTL8r4jYOwjynovYmECrU4aWed68wgtA5l9KZ3tyBRZf1qJLhJBp+XD/XOLyXRvXao8HFDJD3LyQjassW9FtwXaJr8PpFGdJ45Ccn0cstEiUw9OAehMhSv26q08+gYPc="
 deploy:
   - provider: script
