@@ -1,5 +1,5 @@
 ![midas](assets/images/logo.png) [![Build Status](https://travis-ci.org/18F/midas.png?branch=master)](https://travis-ci.org/18F/midas) [![Dependency Status](https://gemnasium.com/18F/midas.png)](https://gemnasium.com/18F/midas)
-[![Code Issues](https://www.quantifiedcode.com/api/v1/project/f0e67cabee2e4f8780a8b032abee3201/badge.svg)](https://www.quantifiedcode.com/app/project/f0e67cabee2e4f8780a8b032abee3201)
+<a href="https://codeclimate.com/github/18F/midas"><img src="https://codeclimate.com/github/18F/midas/badges/gpa.svg" /></a>
 =====
 
 ### Midas is a “Kickstarter for people’s time.”
