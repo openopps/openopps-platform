@@ -9,6 +9,8 @@ var json2csv = require('json2csv');
  */
 var async = require('async');
 
+var addUserMetrics = require(__dirname + '/../services/utils/userMetrics').add;
+
 module.exports = {
 
   /**
@@ -33,150 +35,29 @@ module.exports = {
       };
     }
 
-    var addUserMetrics = function(user, callback) {
-      // check for lockouts
-      user.locked = false;
-      if (user.passwordAttempts >= sails.config.auth.auth.local.passwordAttempts) {
-        user.locked = true;
-      }
-      async.parallel([
-        // add project counts
-        function(done) {
-          // add created projects
-          user.projectsCreatedOpen = 0;
-          user.projectsCreatedClosed = 0;
-          ProjectOwner.find().where({id:user.id}).exec(function(err, owners) {
-            if (err) { done('Failed to retrieve ProjectOwners ' +  err);}
-            if (owners.length !== 0) {
-              var projIds = [];
-              for (var j in owners) {
-                projIds.push(owners[j].projectId);
-              }
-              Project.find().where({id: projIds}).exec(function(err, projects) {
-                if (err) { done('Failed to retrieve projects ' +  err);}
-                async.each(projects, function(project, cb) {
-                  if (project.state === "open") {
-                    user.projectsCreatedOpen++;
-                    cb();
-                  }
-                  else {
-                    user.projectsCreatedClosed++;
-                    cb();
-                  }
-                }, function(err) {
-                  done(null);
-                });
-              });
-            } else {
-              done(null);
-            }
-          });
-        },
-        // add task counts
-        function(done) {
-          user.tasksCreatedOpen = 0;
-          user.tasksCreatedAssigned = 0;
-          user.tasksCreatedCompleted = 0;
-          user.tasksCreatedArchived = 0;
-          async.parallel([
-            function(cb) {
-              Task.countByState("open").where({userId:user.id}).exec(function(err, openCount) {
-                user.tasksCreatedOpen = openCount;
-                cb();
-              });
-            },
-            function(cb) {
-              Task.countByState("assigned").where({userId:user.id}).exec(function(err, assignedCount) {
-                user.tasksCreatedAssigned = assignedCount;
-                cb();
-              });
-            },
-            function(cb) {
-              Task.countByState("completed").where({userId:user.id}).exec(function(err, completedCount) {
-                user.tasksCreatedCompleted = completedCount;
-                cb();
-              });
-            },
-            function(cb) {
-              Task.countByState("archived").where({userId:user.id}).exec(function(err, archivedCount) {
-                user.tasksCreatedArchived = archivedCount;
-                cb();
-              });
-            }], function(err) {
-              done(null);
-            });
-        },
-        // add volunteer counts
-        function(done) {
-          user.volCountOpen = 0;
-          user.volCountAssigned= 0;
-          user.volCountCompleted = 0;
-          user.volCountArchived = 0;
-          Volunteer.find().where({userId:user.id}).exec(function(err, volunteers) {
-            if (err) { done('Failed to retrieve volunteers ' +  err);}
-            if (volunteers.length !== 0) {
-              var taskIds = [];
-              for (var i in volunteers) {
-                taskIds.push(volunteers[i].taskId);
-              }
-              Task.find().where({id: taskIds}).exec(function(err, tasks) {
-                if (err) { done('Failed to retrieve tasks for volunteers ' +  err);}
-                async.each(tasks, function(task, cb) {
-                  if (task.state === "open") {
-                    user.volCountOpen++;
-                    cb();
-                  }
-                  else if (task.state === "assigned") {
-                    user.volCountAssigned++;
-                    cb();
-                  }
-                  else if (task.state === "completed") {
-                    user.volCountCompleted++;
-                    cb();
-                  }
-                  else if (task.state === "archived") {
-                    user.volCountArchived++;
-                    cb();
-                  }
-                  else {
-                    cb();
-                  }
-                }, function(err) {
-                  done(null);
-                });
-              });
-            } else {
-              done(null);
-            }
-          });
-        }], function(err) {
-          callback(null);
-        });
-    };
-
     // find users that meet this criteria
     User.find()
-    .where(where)
-    .sort({ createdAt: 'desc' })
-    .paginate({ page: page, limit: limit})
-    .exec(function (err, users) {
-      if (err) { return res.send(400, { message: 'Error looking up users', err: err}); }
-      // count the total number of users
-      User.count(function (err, count) {
-        if (err) { return res.send(400, { message: 'Error counting users', err: err}); }
-        async.each(users, addUserMetrics, function(err) {
-          if (err) { res.send(400, { message: 'Error retrieving metrics for users.', err: err}); }
-          // return a paginated object
-          return res.send({
-            page: page,
-            limit: Math.min(users.length, limit),
-            count: count,
-            users: users,
-            q: query
+      .where(where)
+      .sort({ createdAt: 'desc' })
+      .paginate({ page: page, limit: limit})
+      .exec(function (err, users) {
+        if (err) { return res.send(400, { message: 'Error looking up users', err: err}); }
+        // count the total number of users
+        User.count(function (err, count) {
+          if (err) { return res.send(400, { message: 'Error counting users', err: err}); }
+          async.each(users, addUserMetrics, function(err) {
+            if (err) { res.send(400, { message: 'Error retrieving metrics for users.', err: err}); }
+            // return a paginated object
+            return res.send({
+              page: page,
+              limit: Math.min(users.length, limit),
+              count: count,
+              users: users,
+              q: query
+            });
           });
         });
       });
-    });
   },
 
   /**

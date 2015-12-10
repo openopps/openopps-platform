@@ -8,7 +8,7 @@ Badges are awarded for specific tasks completed or created.  They appear on the 
 ###  Newcomer
 First task completed by user
 
-![rocket ship with number three on it](../assets/images/badges/maker.png)
+![rocket ship with number one on it](../assets/images/badges/newcomer.png)
 
 
 ### Maker

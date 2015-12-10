@@ -100,7 +100,7 @@ module.exports = {
         case 'completed':
           values.completedAt = new Date();
           action = 'task.update.completed';
-          task.volunteersCompleted();
+          task && task.volunteersCompleted();
           break;
       }
 

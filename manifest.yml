@@ -8,3 +8,4 @@ services:
 - psql-openopps
 - redis-openopps
 - s3-midas-assets
+- elk-openopps

@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.1-rc1",
   "description": "Innovation platform providing collaboration and crowdsourcing tools",
   "dependencies": {
     "async": "^0.2.9",

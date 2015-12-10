@@ -32,14 +32,40 @@ var ProfileShowView = Backbone.View.extend({
 
   initialize: function (options) {
     var self = this;
+    var model = this.model.toJSON();
+    var currentUser = window.cache.currentUser || {};
+    var isAdmin = currentUser.isAdmin;
+
     this.options = options;
     this.data = options.data;
     this.tagFactory = new TagFactory();
     this.data.newItemTags = [];
     this.edit = false;
-    if (this.options.action == 'edit') {
+
+    if ( this.options.action === 'edit' ) {
+
       this.edit = true;
+
+      // Check if the user is not an admin and editing another profile other than
+      // the current user.
+      if ( model.id !== currentUser.id && ! isAdmin ) {
+
+        this.edit = false;
+
+        // Navigate to the proper route replacing the `/edit` route in the user's
+        // history.
+        Backbone.history.navigate(
+          'profile/' + model.id,
+          {
+            trigger: false,
+            replace: true,
+          }
+        );
+
+      }
+
     }
+
     if (this.data.saved) {
       this.saved = true;
       this.data.saved = false;

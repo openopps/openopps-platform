@@ -22,8 +22,11 @@ moment = require('moment');
 
 // Set markdown defaults
 var marked = require('marked');
+var rendererWithExternalLinkSupport = require('../utils/rendererWithExternalLinkSupport')
+
 marked.setOptions({
-  sanitize: true
+  sanitize: true,
+  renderer: rendererWithExternalLinkSupport.renderer
 });
 
 // App
