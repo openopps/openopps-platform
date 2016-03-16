@@ -213,6 +213,27 @@ module.exports = {
   },
 
   /**
+   * Add or remove agency admin privileges from a user account
+   * @param id the user id to make an agency admin or remove
+   * @param action true to make agency admin, false to revoke
+   * eg: /api/admin/agencyAdmin/:id?action=true
+   */
+  agencyAdmin: function (req, res) {
+    if (!req.route.params.id) {
+      return res.send(400, { message: 'Must specify a user id for this action.' });
+    }
+    User.findOneById(req.route.params.id, function (err, user) {
+      if (err) { return res.send(400, { message: 'An error occurred looking up this user.', error: err }); }
+      user.isAgencyAdmin = (req.param('action') === 'true');
+      user.save(function (err) {
+        if (err) { return res.send(400, { message: 'An error occurred changing admin status for this user.', error: err }); }
+        return res.send(user);
+      });
+    });
+  },
+
+
+  /**
    * Unlock a user's account by resetting their password attempts
    * @param id the user id to clear password attempts
    */
@@ -701,6 +722,13 @@ module.exports = {
 
     } );
 
+  },
+
+  // Get an agency
+  agency: function (req, res) {
+    var requestedAgencyId = req.route.params.id;
+    // Future work: Figure out requirements
+    res.send({ requestedAgency: requestedAgencyId });
   },
 
   /**

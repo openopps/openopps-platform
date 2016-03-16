@@ -11,16 +11,18 @@ var LoginConfig = require('../../../config/login.json');
 
 var AdminUserView = Backbone.View.extend({
 
-  events: {
-    "click a.page"              : "clickPage",
-    "click .link-backbone"      : linkBackbone,
-    "click .admin-user-mkadmin" : "adminCreate",
-    "click .admin-user-rmadmin" : "adminRemove",
-    "click .admin-user-enable"  : "adminEnable",
-    "click .admin-user-disable" : "adminDisable",
-    "click .admin-user-unlock"  : "adminUnlock",
-    "click .admin-user-resetpw" : "resetPassword",
-    "keyup #user-filter"        : "filter"
+  events                               : {
+    "click a.page"                     : "clickPage",
+    "click .link-backbone"             : linkBackbone,
+    "click .admin-user-mkadmin"        : "adminCreate",
+    "click .admin-user-rmadmin"        : "adminRemove",
+    "click .admin-user-mk-agencyadmin" : "agencyAdminCreate",
+    "click .admin-user-rm-agencyadmin" : "agencyAdminRemove",
+    "click .admin-user-enable"         : "adminEnable",
+    "click .admin-user-disable"        : "adminDisable",
+    "click .admin-user-unlock"         : "adminUnlock",
+    "click .admin-user-resetpw"        : "resetPassword",
+    "keyup #user-filter"               : "filter"
   },
 
   initialize: function (options) {
@@ -144,6 +146,28 @@ var AdminUserView = Backbone.View.extend({
     });
   },
 
+  agencyAdminCreate: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    var id = $(t.parents('tr')[0]).data('id');
+    this.updateUser(t, {
+      id: id,
+      isAgencyAdmin: true,
+      url: '/api/admin/agencyAdmin/' + id + '?action=true'
+    });
+  },
+
+  agencyAdminRemove: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    var id = $(t.parents('tr')[0]).data('id');
+    this.updateUser(t, {
+      id: id,
+      isAgencyAdmin: false,
+      url: '/api/admin/agencyAdmin/' + id + '?action=false'
+    });
+  },
+
   adminEnable: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
@@ -202,6 +226,12 @@ var AdminUserView = Backbone.View.extend({
           }
           if (data.isAdmin === false) {
             $(t.siblings(".admin-user-mkadmin")[0]).show();
+          }
+          if (data.isAgencyAdmin === true) {
+            $(t.siblings(".admin-user-rm-agencyadmin")[0]).show();
+          }
+          if (data.isAgencyAdmin === false) {
+            $(t.siblings(".admin-user-mk-agencyadmin")[0]).show();
           }
         }
       });

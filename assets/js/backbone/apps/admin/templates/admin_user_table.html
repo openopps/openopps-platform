@@ -13,6 +13,7 @@
       <th class="admin-user-checkbox">Password</th>
       <% } %>
       <th class="admin-user-checkbox">Admin</th>
+      <th class="admin-user-checkbox">Agency Admin</th>
     </tr>
   </thead>
   <tbody>
@@ -71,6 +72,11 @@
       <td>
         <button type="button" class="btn btn-default btn-xs admin-user-rmadmin" data-toggle="tooltip" data-placement="top" title="Remove Admin Privileges" <% if (u.isAdmin !== true) { %>style="display:none;"<% } %>><i class="fa fa-check icon-green icon-center"></i></button>
         <button type="button" class="btn btn-default btn-xs admin-user-mkadmin" data-toggle="tooltip" data-placement="top" title="Make Admin" <% if (u.isAdmin === true) { %>style="display:none;"<% } %>><i class="fa fa-times-circle icon-red icon-center"></i></button>
+        <button type="button" class="btn btn-default btn-xs btn-spin" style="display:none;"><i class="fa fa-spin fa-spinner icon-center"></i></button>
+      </td>
+      <td>
+        <button type="button" class="btn btn-default btn-xs admin-user-rm-agencyadmin" data-toggle="tooltip" data-placement="top" title="Remove Agency Admin Privileges" <% if (u.isAgencyAdmin !== true) { %>style="display:none;"<% } %>><i class="fa fa-check icon-green icon-center"></i></button>
+        <button type="button" class="btn btn-default btn-xs admin-user-mk-agencyadmin" data-toggle="tooltip" data-placement="top" title="Make Agency Admin" <% if (u.isAgencyAdmin === true) { %>style="display:none;"<% } %>><i class="fa fa-times-circle icon-red icon-center"></i></button>
         <button type="button" class="btn btn-default btn-xs btn-spin" style="display:none;"><i class="fa fa-spin fa-spinner icon-center"></i></button>
       </td>
     </tr>
