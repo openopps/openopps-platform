@@ -7,17 +7,19 @@ var MarkdownEditor = require('../../../../components/markdown_editor');
 var TaskModel = require('../../../../entities/tasks/task_model');
 var TaskFormTemplate = require('../templates/task_form_template.html');
 var TagFactory = require('../../../../components/tag_factory');
+var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
 
 var TaskFormView = Backbone.View.extend({
 
   el: '#container',
 
   events: {
-    'change .validate'                :  'v',
-    'click [name=task-time-required]' :  'toggleTimeOptions',
-    'change #task-location'           :  'locationChange',
-    'click #js-task-draft'            :  'saveDraft',
-    'click #js-task-create'           :  'submit',
+    'change .validate'                : 'v',
+    'click [name=task-time-required]' : 'toggleTimeOptions',
+    'change #task-location'           : 'locationChange',
+    'click #js-task-draft'            : 'saveDraft',
+    'click #js-task-create'           : 'submit',
+    'change [name=task-time-required]': 'timeRequiredChanged',
   },
 
   /*
@@ -75,7 +77,7 @@ var TaskFormView = Backbone.View.extend({
             data = _.sortBy(data, 'updatedAt');
           }
           else if (type === 'task-time-required') {
-            data = _.chain(data).filter(function(item) {
+            data = _.chain(data).filter(function (item) {
               // if an agency is included in the data of a tag
               // then restrict it to users who are also
               // in that agency
@@ -85,20 +87,20 @@ var TaskFormView = Backbone.View.extend({
               return false;
             }).map(function (item) {
               if (item.name == 'One time') {
-                item.description = 'A one time task with a defined timeline'
+                item.description = 'A one time task with a defined timeline';
               }
               else if (item.name == 'Ongoing') {
-                item.description = 'Requires a portion of participant’s time until a goal is reached'
+                item.description = 'Requires a portion of participant’s time until a goal is reached';
               }
               return item;
             }).value();
           }
           self.tagSources[type] = data;
-        }
+        },
       });
     };
 
-    async.each(types, requestAllTagsByType, function (err) {
+    async.each(types, requestAllTagsByType, function () {
       self.render();
     });
   },
@@ -139,6 +141,12 @@ var TaskFormView = Backbone.View.extend({
     this.$el.html( template );
     this.initializeSelect2();
     this.initializeTextArea();
+    this.initializeShowMarkdown({
+      el               : '.show-markdown',
+      id               : 'show-default-description',
+      displayCondition : 'Full Time Detail',
+      textAreaId       : 'task-description',
+    });
 
     this.$( '#time-options' ).css( 'display', 'none' );
 
@@ -427,5 +435,7 @@ var TaskFormView = Backbone.View.extend({
   },
 
 });
+
+_.extend(TaskFormView.prototype, ShowMarkdownMixin);
 
 module.exports = TaskFormView;

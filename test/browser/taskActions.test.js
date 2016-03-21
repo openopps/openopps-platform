@@ -69,6 +69,49 @@ describe('Task actions', function () {
       casper.click('.add-opportunity');
     });
 
+    // Check steps.
+    casper.then(function () {
+      var step1 = casper.fetchText('#step-1 legend span'),
+        step2 = casper.fetchText('#step-2 legend span'),
+        step3 = casper.fetchText('#step-3 legend span').substr(0, 33);
+      assert.equal('Step 1 - Define Who, When, and Where', step1);
+      assert.equal('Step 2 - Create a Headline', step2);
+      assert.equal('Step 3 - Describe the Opportunity', step3);
+    });
+
+    // Check Full Time Details radio button.
+    var selFullTimeDetail = 'input[type=radio][name=task-time-required][data-descr="Full Time Detail"]';
+    casper.then(function () {
+      if (casper.exists(selFullTimeDetail)) {
+        assert.ok(true);
+      } else {
+        assert.ok(false);
+      }
+    });
+
+    // Click "Full Time Detail"
+    casper.then(function () {
+      casper.click(selFullTimeDetail);
+      casper.waitForSelector('a[id=show-default-description]');
+    });
+
+    // Click "Show Default Description"
+    casper.then(function () {
+      casper.click('a[id=show-default-description]');
+      var preview = casper.getHTML('.preview-description').substr(0,60);
+      assert.equal('<p>Default description for <strong>Full Time Detail</strong>', preview);
+    });
+
+    // Click "Part Time", link should not be visible.
+    casper.then(function () {
+      casper.click('input[type=radio][name=task-time-required][data-descr="Part Time"]');
+      if (casper.visible('a[id=show-default-description]')) {
+        assert.ok(false);
+      } else {
+        assert.ok(true);
+      }
+    });
+
     // Fill out the form
     casper.then(function () {
       casper.fillSelectors('#task-form', {
@@ -94,12 +137,46 @@ describe('Task actions', function () {
     });
   });
 
+
   it('should edit task', function () {
 
     // Click the edit task button
     casper.then(function () {
       casper.click('#task-edit');
       casper.waitForSelector('#task-edit-form');
+    });
+
+    // Check Full Time Details radio button.
+    var selFullTimeDetail = 'input[type=radio][name=task-time-required][data-descr="Full Time Detail"]';
+    casper.then(function () {
+      if (casper.exists(selFullTimeDetail)) {
+        assert.ok(true);
+      } else {
+        assert.ok(false);
+      }
+    });
+
+    // Click "Full Time Detail"
+    casper.then(function () {
+      casper.click(selFullTimeDetail);
+      casper.waitForSelector('a[id=show-default-description]');
+    });
+
+    // Click "Show Default Description"
+    casper.then(function () {
+      casper.click('a[id=show-default-description]');
+      var preview = casper.getHTML('.preview-description').substr(0,60);
+      assert.equal('<p>Default description for <strong>Full Time Detail</strong>', preview);
+    });
+
+    // Click "Part Time", link should not be visible.
+    casper.then(function () {
+      casper.click('input[type=radio][name=task-time-required][data-descr="Part Time"]');
+      if (casper.visible('a[id=show-default-description]')) {
+        assert.ok(false);
+      } else {
+        assert.ok(true);
+      }
     });
 
     // Change the title and description
@@ -122,6 +199,8 @@ describe('Task actions', function () {
     });
 
   });
+
+
 
   it('should change opportunity state', function () {
 

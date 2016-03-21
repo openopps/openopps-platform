@@ -33,30 +33,6 @@
 <div class="col-md-9 tight-box">
 
   <div class="form-group">
-    <h3>Headline</h3>
-    <p>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</p>
-    <p><em>(Maximum of 100 characters)</em></p>
-    <input id="task-title" type="text" placeholder="A short description of the problem." value="<%- data.title %>" class="form-control input-lg validate" data-validate="empty,count100"/>
-    <span class="help-block error-empty" style="display:none;">You must enter a title for this <span data-i18n="task">opportunity</span></span>
-    <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
-  </div>
-
-  <div class="form-group">
-    <h3>Description</h3>
-    <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed.</p>
-    <p><em>(There is no limit on length, but we recommend 200 words or less.)</em></p>
-    <div class="markdown-edit"></div>
-    <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
-  </div>
-
-  <div class="form-group">
-    <h3>Tags</h3>
-    <p>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</p>
-    <p><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></p>
-    <input type="hidden" id="task_tag_skills" class="task-skills fullwidth"/>
-  </div>
-
-  <div class="form-group">
     <label for="time-required">
       <h3>What type of effort is needed?</h3>
     </label>
@@ -64,7 +40,7 @@
       <div class="radio">
         <label>
           <% var selected = madlibTags['task-time-required'] && (madlibTags['task-time-required'][0].id == t.id); %>
-          <input type="radio" name="task-time-required" value="<%- t.id %>"
+          <input type="radio" name="task-time-required" value="<%- t.id %>" data-descr="<%- t.name %>"
             <% if (selected) { %>checked<%}%> >
           <%- t.name %><% if (t.description) { %> &mdash; <%= t.description %> <% } %>
         </label>
@@ -125,6 +101,30 @@
     </select>
   </div>
 
+  <div class="form-group">
+    <h3>Headline</h3>
+    <p>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</p>
+    <p><em>(Maximum of 100 characters)</em></p>
+    <input id="task-title" type="text" placeholder="A short description of the problem." value="<%- data.title %>" class="form-control input-lg validate" data-validate="empty,count100"/>
+    <span class="help-block error-empty" style="display:none;">You must enter a title for this <span data-i18n="task">opportunity</span></span>
+    <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
+  </div>
+
+  <div class="form-group">
+    <h3>Description</h3>
+    <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span>
+    </p>
+    <p><em>(There is no limit on length, but we recommend 200 words or less.)</em></p>
+    <div class="markdown-edit"></div>
+    <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
+  </div>
+
+  <div class="form-group">
+    <h3>Tags</h3>
+    <p>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</p>
+    <p><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></p>
+    <input type="hidden" id="task_tag_skills" class="task-skills fullwidth"/>
+  </div>
 </div>
 <div class="col-md-3">
   <div class="box equal-box">

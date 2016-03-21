@@ -45,5 +45,8 @@
   ],
   "modalHome" : {
     "show" : false
+  },
+  "fullTimeDetail": {
+    "description": "Default description for **Full Time Detail**.... \n\n_Awesome!_\n\nLinks are also supported: [i18next](http://i18next.com/)."
   }
 }

@@ -16,7 +16,11 @@ See [i18next](http://i18next.com/) for more information on configuration and use
 
 ## Customizing UI
 
-edit ```assets/js/backbone/config/ui.json``` which allows customization of UI features, currently the only feature that can be configured is the ability to turn off the ability to have Projects (which serve as a way to group Opportunities/tasks).  To hide the project UI, simply change "show" to ```false```.
+edit ```assets/js/backbone/config/ui.json``` which allows customization of UI features. Currently you can configure the following features:
+
+### Hide Projects
+
+It is possible to turn off the ability to have Projects (which serve as a way to group Opportunities/tasks).  To hide the project UI, simply change "show" to ```false```.
 
 ```
 {
@@ -25,6 +29,21 @@ edit ```assets/js/backbone/config/ui.json``` which allows customization of UI fe
   }
 }
 ```
+
+### Full Time Detail Sample Text
+
+When the user creates or edits a task and selects "Full Time Detail" in Step 1 (What type of effort is needed?), the sample text will be added to the task description, if there was no previous description text. There is also an extra link available (Show Default Description) that shows the sample text once it is clicked. The link is not available if the 'Full Time Detail' sample text is not setup.
+
+The value of the description field supports markdown with links and formatting. The description field in the ui.json config file does not support a multiline string; newlines should be escaped as \n.
+
+```
+{
+  "fullTimeDetail": {
+    "description": "Default description **Full Time Detail**.... \n\n_Awesome!_\n\nLinks are also supported: [i18next](http://i18next.com/)."
+  }
+}
+```
+
 
 ## Bulk Import of Tag Data
 
@@ -51,10 +70,10 @@ The state of a Project or Opportunity controls it's visibility in certain views 
 These states are listed in ```assets/js/backbone/config/ui.json```.
 ```
 "states" :
-		{
-		 "value": "open",
-		 "label": "Open"
-		},...
+    {
+     "value": "open",
+     "label": "Open"
+    },...
 ```
 
 Changing the value of label is largely cosmetic as it is used to drive drop downs and other display information. If you change the value of value and do not change code to support it midas will behave in an inconsitent manner.

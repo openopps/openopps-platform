@@ -766,7 +766,15 @@
         "createdAt": "2015-05-08T21:45:52.593Z",
         "updatedAt": "2015-05-08T21:45:52.593Z",
         "id": 34
+      },
+      {
+        "type": "task-time-required",
+        "name": "Full Time Detail",
+        "createdAt": "2016-03-16T21:45:35.901Z",
+        "updatedAt": "2016-03-16T21:45:35.901Z",
+        "id": 35
       }
+
     ],
     "task": [
       {

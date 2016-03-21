@@ -7,90 +7,10 @@
 </div>
 <p>Optional fields are indicated.</p>
 <form id="task-form" class="create--task" action="/api/task">
+
   <fieldset id="step-1">
     <legend>
-      <span>Step 1 - Create a Headline</span>
-    </legend>
-    <div class="form-group fullwidth">
-      <div class="row">
-        <div class="col-md-8">
-          <label for="task-title">
-            <span class="create__label">Headline</span>
-            <span>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</span>
-            <span><em>(Maximum of 100 characters)</em></span>
-          </label>
-          <span class="help-block error-empty" style="display:none;">You must enter headline for this <span
-              data-i18n="task">opportunity</span></span>
-          <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
-          <input type="text"
-                 id="task-title"
-                 class="fullwidth form-control validate"
-                 data-validate="empty,count100"/>
-
-        </div>
-        <div class="col-md-4">
-          <aside>
-            <h4>Headline examples:</h4>
-            <p>Team up to Produce a Set of Videos About the Nat'l Networking for Manufacturing Innovation</p>
-            <p>Let your inner "Data Detective" Out and Get to Know Arizona</p>
-          </aside>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset id="step-2">
-    <legend>
-      <span>Step 2 - Describe the <span data-i18n="Task">opportunity</span></span>
-    </legend>
-    <div class="form-group fullwidth">
-      <div class="row">
-        <div class="col-md-8">
-          <label for="task-description">
-            <span class="create__label">Description</span>
-            <span>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed.</span>
-            <span><em>(There is no limit on length, but we recommend 200 words or less.)</em></span>
-          </label>
-          <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
-          <div class="markdown-edit"></div>
-        </div>
-        <div class="col-md-4">
-          <aside>
-              <h4>Make an inspiring <span data-i18n="task">opportunity</span> by including:</h4>
-              <ul>
-                <li>Why is this important?</li>
-                <li>What does success look like?</li>
-                <li>Who will benefit?</li>
-                <li>How does this fit into the bigger picture?</li>
-              </ul>
-          </aside>
-        </div>
-      </div>
-      <div class="row tag-row">
-        <div class="col-md-8">
-          <label for="skills">
-            <span class="create__label">Tags</span>
-            <span>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</span>
-            <span><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></span>
-          </label>
-          <div>
-            <input type="hidden" id="js-task-tag" name="skills" class="fullwidth" />
-          </div>
-        </div>
-        <div class="col-md-4">
-          <aside>
-            <h4>What are tags?</h4>
-            <p>Tags are helpful data we add to <span data-i18n="tasks">opportunities</span>. Users can quickly find what interests them by looking at the tags.</p>
-            <p>They can also use them to search for matching opportunities.</p>
-          </aside>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-
-  <fieldset id="step-3">
-    <legend>
-      <span>Step 3 - Define Who, When, and Where</span>
+      <span>Step 1 - Define Who, When, and Where</span>
     </legend>
     <div class="form-group fullwidth">
       <div class="row">
@@ -101,7 +21,7 @@
           <% _.each(tags['task-time-required'], function (time) { %>
             <div class="radio">
               <label>
-                <input type="radio" name="task-time-required" value="<%- time.id %>">
+                <input type="radio" name="task-time-required" value="<%- time.id %>" data-descr="<%- time.name %>">
                 <%- time.name %><% if (time.description) { %> &mdash; <%= time.description %> <% } %>
               </label>
             </div>
@@ -187,6 +107,88 @@
           </select>
         </div>
         <div class="col-md-4"></div>
+      </div>
+    </div>
+  </fieldset>
+
+
+  <fieldset id="step-2">
+    <legend>
+      <span>Step 2 - Create a Headline</span>
+    </legend>
+    <div class="form-group fullwidth">
+      <div class="row">
+        <div class="col-md-8">
+          <label for="task-title">
+            <span class="create__label">Headline</span>
+            <span>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</span>
+            <span><em>(Maximum of 100 characters)</em></span>
+          </label>
+          <span class="help-block error-empty" style="display:none;">You must enter headline for this <span
+              data-i18n="task">opportunity</span></span>
+          <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
+          <input type="text"
+                 id="task-title"
+                 class="fullwidth form-control validate"
+                 data-validate="empty,count100"/>
+
+        </div>
+        <div class="col-md-4">
+          <aside>
+            <h4>Headline examples:</h4>
+            <p>Team up to Produce a Set of Videos About the Nat'l Networking for Manufacturing Innovation</p>
+            <p>Let your inner "Data Detective" Out and Get to Know Arizona</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset id="step-3">
+    <legend>
+      <span>Step 3 - Describe the <span data-i18n="Task">opportunity</span></span>
+    </legend>
+    <div class="form-group fullwidth">
+      <div class="row">
+        <div class="col-md-8">
+          <label for="task-description">
+            <span class="create__label">Description</span>
+            <span>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span></span>
+            <span><em>(There is no limit on length, but we recommend 200 words or less.)</em></span>
+          </label>
+          <div class="markdown-edit"></div>
+          <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
+        </div>
+        <div class="col-md-4">
+          <aside>
+              <h4>Make an inspiring <span data-i18n="task">opportunity</span> by including:</h4>
+              <ul>
+                <li>Why is this important?</li>
+                <li>What does success look like?</li>
+                <li>Who will benefit?</li>
+                <li>How does this fit into the bigger picture?</li>
+              </ul>
+          </aside>
+        </div>
+      </div>
+      <div class="row tag-row">
+        <div class="col-md-8">
+          <label for="skills">
+            <span class="create__label">Tags</span>
+            <span>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</span>
+            <span><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></span>
+          </label>
+          <div>
+            <input type="hidden" id="js-task-tag" name="skills" class="fullwidth" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <aside>
+            <h4>What are tags?</h4>
+            <p>Tags are helpful data we add to <span data-i18n="tasks">opportunities</span>. Users can quickly find what interests them by looking at the tags.</p>
+            <p>They can also use them to search for matching opportunities.</p>
+          </aside>
+        </div>
       </div>
     </div>
   </fieldset>

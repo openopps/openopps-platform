@@ -1,23 +1,23 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utilities = require('../../../../mixins/utilities');
 var UIConfig = require('../../../../config/ui.json');
-var async = require('async');
 var marked = require('marked');
 var MarkdownEditor = require('../../../../components/markdown_editor');
 var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TagFactory = require('../../../../components/tag_factory');
+var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
 
 
 var TaskEditFormView = Backbone.View.extend({
 
   events: {
-    'blur .validate'         : 'v',
-    'click #change-owner'    : 'displayChangeOwner',
-    'click #add-participant' : 'displayAddParticipant',
-    'click #task-view'       : 'view',
-    'submit #task-edit-form' : 'submit',
-    'click .js-task-draft'   : 'saveDraft',
+    'blur .validate'                   : 'v',
+    'click #change-owner'              : 'displayChangeOwner',
+    'click #add-participant'           : 'displayAddParticipant',
+    'click #task-view'                 : 'view',
+    'submit #task-edit-form'           : 'submit',
+    'click .js-task-draft'             : 'saveDraft',
+    'change [name=task-time-required]' : 'timeRequiredChanged',
   },
 
   initialize: function (options) {
@@ -64,9 +64,9 @@ var TaskEditFormView = Backbone.View.extend({
 
     $modal.slideDown( 'slow' );
 
-    $modal.one( 'mouseout', function ( e ) {
+    $modal.one('mouseout', function () {
       _.delay( _.bind( $modal.slideUp, $modal, 'slow' ), 4200 );
-    } );
+    });
 
 
   },
@@ -85,7 +85,7 @@ var TaskEditFormView = Backbone.View.extend({
       newItemTags: [],
       tags: this.options.tags,
       madlibTags: this.options.madlibTags,
-      ui: UIConfig
+      ui: UIConfig,
     };
 
     compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
@@ -95,6 +95,12 @@ var TaskEditFormView = Backbone.View.extend({
     // DOM now exists, begin select2 init
     this.initializeSelect2();
     this.initializeTextArea();
+    this.initializeShowMarkdown({
+      el               : '.show-markdown',
+      id               : 'show-default-description',
+      displayCondition : 'Full Time Detail',
+      textAreaId       : 'task-description',
+    });
 
     // Set up time pickers
     this.$( '#js-edit-date-submitted' ).datetimepicker( {
@@ -102,18 +108,18 @@ var TaskEditFormView = Backbone.View.extend({
     } );
 
     $('#publishedAt').datetimepicker({
-      defaultDate: this.data.data.publishedAt
+      defaultDate: this.data.data.publishedAt,
     });
 
     if (this.data.data.assignedAt) {
       $('#assignedAt').datetimepicker({
-        defaultDate: this.data.data.assignedAt
+        defaultDate: this.data.data.assignedAt,
       });
     }
 
     if (this.data.data.completedAt) {
       $('#completedAt').datetimepicker({
-        defaultDate: this.data.data.completedAt
+        defaultDate: this.data.data.completedAt,
       });
     }
 
@@ -123,7 +129,7 @@ var TaskEditFormView = Backbone.View.extend({
 
   initializeSelect2: function () {
 
-    var formatResult = function (object, container, query) {
+    var formatResult = function (object) {
       var formatted = '<div class="select2-result-title">';
       formatted += _.escape(object.name || object.title);
       formatted += '</div>';
@@ -133,8 +139,8 @@ var TaskEditFormView = Backbone.View.extend({
       return formatted;
     };
 
-    this.$("#owner").select2({
-      placeholder: "task owner",
+    this.$('#owner').select2({
+      placeholder: 'task owner',
       multiple: false,
       formatResult: formatResult,
       formatSelection: formatResult,
@@ -143,21 +149,19 @@ var TaskEditFormView = Backbone.View.extend({
         url: '/api/ac/user',
         dataType: 'json',
         data: function (term) {
-          return {
-            q: term
-          };
+          return { q: term };
         },
         results: function (data) {
           return { results: data };
-        }
-      }
+        },
+      },
     });
     if (this.data.data.owner) {
-      this.$("#owner").select2('data', this.data.data.owner);
+      this.$('#owner').select2('data', this.data.data.owner);
     }
 
-    this.$("#participant").select2({
-      placeholder: "Add participant",
+    this.$('#participant').select2({
+      placeholder: 'Add participant',
       multiple: false,
       formatResult: formatResult,
       formatSelection: formatResult,
@@ -166,59 +170,57 @@ var TaskEditFormView = Backbone.View.extend({
         url: '/api/ac/user',
         dataType: 'json',
         data: function (term) {
-          return {
-            q: term
-          };
+          return { q: term };
         },
         results: function (data) {
           return { results: data };
-        }
-      }
+        },
+      },
     });
 
     this.tagFactory.createTagDropDown({
-      type: "skill",
-      selector: "#task_tag_skills",
-      width: "100%",
-      tokenSeparators: [","],
-      data: this.data['madlibTags'].skill
+      type: 'skill',
+      selector: '#task_tag_skills',
+      width: '100%',
+      tokenSeparators: [','],
+      data: this.data['madlibTags'].skill,
     });
 
     this.tagFactory.createTagDropDown({
-      type: "location",
-      selector: "#task_tag_location",
-      width: "40%",
-      data: this.data['madlibTags'].location
+      type: 'location',
+      selector: '#task_tag_location',
+      width: '40%',
+      data: this.data['madlibTags'].location,
     });
 
-    $("#skills-required").select2({
-      placeholder: "required/not-required",
-      width: '200px'
+    $('#skills-required').select2({
+      placeholder: 'required/not-required',
+      width: '200px',
     });
 
-    $("#time-required").select2({
+    $('#time-required').select2({
       placeholder: 'time-required',
-      width: '130px'
+      width: '130px',
     });
 
-    $("#people").select2({
+    $('#people').select2({
       placeholder: 'people',
-      width: '150px'
+      width: '150px',
     });
 
-    $("#length").select2({
+    $('#length').select2({
       placeholder: 'length',
-      width: '130px'
+      width: '130px',
     });
 
-    $("#time-estimate").select2({
+    $('#time-estimate').select2({
       placeholder: 'time-estimate',
-      width: '200px'
+      width: '200px',
     });
 
-    $("#task-location").select2({
+    $('#task-location').select2({
       placeholder: 'location',
-      width: '130px'
+      width: '130px',
     });
 
   },
@@ -227,12 +229,12 @@ var TaskEditFormView = Backbone.View.extend({
     if (this.md) { this.md.cleanup(); }
     this.md = new MarkdownEditor({
       data: this.model.toJSON().description,
-      el: ".markdown-edit",
+      el: '.markdown-edit',
       id: 'task-description',
       placeholder: 'Description of opportunity including goals, expected outcomes and deliverables.',
       title: 'Opportunity Description',
       rows: 6,
-      validate: ['empty']
+      validate: ['empty'],
     }).render();
   },
 
@@ -316,10 +318,8 @@ var TaskEditFormView = Backbone.View.extend({
 
   },
 
-  saveDraft: function ( event ) {
-
+  saveDraft: function () {
     this.trigger( 'task:tags:save:done', { draft: true } );
-
   },
 
   submit: function ( e ) {
@@ -371,21 +371,21 @@ var TaskEditFormView = Backbone.View.extend({
 
     // Gather tags for submission after the task is created
     var tags = [],
-        taskTimeTag = this.$("[name=task-time-required]:checked").val();
+      taskTimeTag = this.$('[name=task-time-required]:checked').val();
 
     if (taskTimeTag) {
-        tags.push.apply(tags,[{
-          id: parseInt(taskTimeTag),
-          type: 'task-time-required'
-        }]);
+      tags.push.apply(tags,[{
+        id: parseInt(taskTimeTag),
+        type: 'task-time-required',
+      }]);
     }
 
-    tags.push.apply(tags,this.$("#task_tag_skills").select2('data'));
-    tags.push.apply(tags,this.$("#task_tag_location").select2('data'));
-    tags.push.apply(tags,[this.$("#people").select2('data')]);
-    tags.push.apply(tags,[this.$("#time-required").select2('data')]);
-    tags.push.apply(tags,[this.$("#time-estimate").select2('data')]);
-    tags.push.apply(tags,[this.$("#length").select2('data')]);
+    tags.push.apply(tags,this.$('#task_tag_skills').select2('data'));
+    tags.push.apply(tags,this.$('#task_tag_location').select2('data'));
+    tags.push.apply(tags,[this.$('#people').select2('data')]);
+    tags.push.apply(tags,[this.$('#time-required').select2('data')]);
+    tags.push.apply(tags,[this.$('#time-estimate').select2('data')]);
+    tags.push.apply(tags,[this.$('#length').select2('data')]);
 
     return tags;
   },
@@ -393,13 +393,13 @@ var TaskEditFormView = Backbone.View.extend({
   getOldTags: function () {
 
     var oldTags = [];
-      for (var i in this.options.tags) {
-        oldTags.push({
-          id: parseInt(this.options.tags[i].id),
-          tagId: parseInt(this.options.tags[i].tag.id),
-          type: this.options.tags[i].tag.type
-        });
-      }
+    for (var i in this.options.tags) {
+      oldTags.push({
+        id: parseInt(this.options.tags[i].id),
+        tagId: parseInt(this.options.tags[i].tag.id),
+        type: this.options.tags[i].tag.type,
+      });
+    }
 
     return oldTags;
   },
@@ -407,8 +407,10 @@ var TaskEditFormView = Backbone.View.extend({
   cleanup: function () {
     if (this.md) { this.md.cleanup(); }
     removeView(this);
-  }
+  },
 
 });
+
+_.extend(TaskEditFormView.prototype, ShowMarkdownMixin);
 
 module.exports = TaskEditFormView;
