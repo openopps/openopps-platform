@@ -110,6 +110,17 @@
       ]
     }
   },
+  "browser": {
+    "jquery": "./assets/js/vendor/jquery.min.js",
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "browserify-shim": {
+    "bootstrap": {
+      "depends": [
+        "jquery:jQuery"
+      ]
+    }
+  },
   "main": "app.js",
   "repository": {
     "type": "git",
