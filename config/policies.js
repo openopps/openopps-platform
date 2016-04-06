@@ -28,7 +28,8 @@ module.exports.policies = {
 
   // Only admins can access the AdminController API
   AdminController : {
-    '*': ['passport', 'authenticated', 'admin']
+    '*': ['passport', 'authenticated', 'admin'],
+    'agency': ['passport', 'authenticated', 'agencyAdmin']
   },
 
   // Auth controller can be accessed by anyone

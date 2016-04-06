@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Innovation platform providing collaboration and crowdsourcing tools",
   "dependencies": {
     "async": "^0.2.9",
@@ -67,12 +67,16 @@
     "sails-db-migrate": "1.3.1"
   },
   "devDependencies": {
+    "browserify-shim": "3.8.12",
     "casper-chai": "^0.2.1",
     "casperjs": "1.1.0-beta3",
+    "jquery": "2.2.2",
     "mocha-casperjs": "0.5.3",
+    "mochify": "2.17.0",
     "nodemon": "^1.3.7",
     "pg": "~3.6.0",
-    "phantomjs": "^1.9.16"
+    "phantomjs": "^1.9.16",
+    "sinon": "1.17.3"
   },
   "config": {
     "grunt": "./node_modules/sails/node_modules/.bin/grunt",
@@ -84,7 +88,8 @@
     "test:api": "mocha test/test.upstart.js --recursive test/api",
     "test:browser": "npm run build && node test/browser/upstart.js",
     "test:unit": "mocha test/test.upstart.js --recursive test/unit",
-    "test": "npm run test:unit && npm run test:api && npm run test:browser",
+    "test:client": "mochify --recursive --transform browserify-shim --transform stringify -r jquery ./test/client",
+    "test": "npm run test:unit && npm run test:api && npm run test:browser && npm run test:client",
     "build": "$npm_package_config_grunt build",
     "start": "npm run check-migrate && node app.js",
     "migrate": "$npm_package_config_grunt db:migrate:up",
@@ -93,6 +98,17 @@
     "demo": "npm run migrate && mocha test/test.upstart.js --development --recursive test/demo",
     "import": "cp -v $npm_package_config_dir/exclude.txt exclude.txt | true && rsync -av --exclude-from=exclude.txt $npm_package_config_dir/* .",
     "watch": "npm run check-migrate && source .env | true && nodemon --watch assets --watch api --watch config --watch views -i assets/build -e js,html,css"
+  },
+  "browser": {
+    "jquery": "./assets/js/vendor/jquery.min.js",
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "browserify-shim": {
+    "bootstrap": {
+      "depends": [
+        "jquery:jQuery"
+      ]
+    }
   },
   "main": "app.js",
   "repository": {

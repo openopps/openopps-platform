@@ -5,6 +5,7 @@ var utils = require('../../../mixins/utilities');
 var AdminUserView = require('./admin_user_view');
 var AdminTagView = require('./admin_tag_view');
 var AdminTaskView = require('./admin_task_view');
+var AdminAgenciesView = require('./admin_agencies_view');
 var AdminParticipantsView = require('./admin_participants_view');
 var AdminDashboardView = require('./admin_dashboard_view');
 var AdminMainTemplate = require('../templates/admin_main_template.html');
@@ -28,9 +29,21 @@ var AdminMainView = Backbone.View.extend({
     return this;
   },
 
+  isAdmin: function () {
+    return !!(window.cache.currentUser && window.cache.currentUser.isAdmin);
+  },
+
+  isAgencyAdmin: function () {
+    return !!(window.cache.currentUser && window.cache.currentUser.isAgencyAdmin);
+  },
+
   routeTarget: function (target) {
     if (!target) {
       target = 'dashboard';
+    }
+    // If agency admin, display My Agency page
+    if (!this.isAdmin() && this.isAgencyAdmin()) {
+      target = 'agencies';
     }
     var t = $((this.$("[data-target=" + target + "]"))[0]);
     // remove active classes
@@ -55,6 +68,12 @@ var AdminMainView = Backbone.View.extend({
       }
       this.hideOthers();
       this.adminTaskView.render();
+    } else if (target == 'agencies') {
+      if (!this.adminAgenciesView) {
+        this.initializeAdminAgenciesView();
+      }
+      this.hideOthers();
+      this.adminAgenciesView.render();
     } else if (target == 'participants') {
       if (!this.adminParticipantsView) {
         this.initializeAdminParticipantsView();
@@ -104,6 +123,15 @@ var AdminMainView = Backbone.View.extend({
     }
     this.adminTaskView = new AdminTaskView({
       el: "#admin-task"
+    });
+  },
+
+  initializeAdminAgenciesView: function () {
+    if (this.adminAgenciesView) {
+      this.adminAgenciesView.cleanup();
+    }
+    this.adminAgenciesView = new AdminAgenciesView({
+      el: "#admin-agencies"
     });
   },
 

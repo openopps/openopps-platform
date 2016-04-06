@@ -34,6 +34,26 @@ describe('admin:', function () {
       );
     });
 
+    it('set agency admin', function (done) {
+      request.get(
+        { url: conf.url + '/admin/agencyAdmin/1?action=true' },
+        function (err, response, body) {
+          assert.equal(response.statusCode, 403);
+          done(err);
+        }
+      );
+    });
+
+    it('remove agency admin', function (done) {
+      request.get(
+        { url: conf.url + '/admin/agencyAdmin/1?action=false' },
+        function (err, response, body) {
+          assert.equal(response.statusCode, 403);
+          done(err);
+        }
+      );
+    });
+
     it('get users', function (done) {
       request.get(
         { url: conf.url + '/admin/users' },
@@ -75,6 +95,47 @@ describe('admin:', function () {
           var b = JSON.parse(body);
           assert.equal(b.id, 2);
           assert.equal(b.isAdmin, false);
+          done(err);
+        }
+      );
+    });
+
+    it('set agency admin', function (done) {
+      request.get(
+        { url: conf.url + '/admin/agencyAdmin/2?action=true' },
+        function (err, response, body) {
+          assert.equal(response.statusCode, 200);
+          var b = JSON.parse(body);
+          assert.equal(b.id, 2);
+          assert.isTrue(b.isAgencyAdmin);
+          done(err);
+        }
+      );
+    });
+
+    it('remove agency admin', function (done) {
+      request.get(
+        { url: conf.url + '/admin/agencyAdmin/2?action=false' },
+        function (err, response, body) {
+          assert.equal(response.statusCode, 200);
+          var b = JSON.parse(body);
+          assert.equal(b.id, 2);
+          assert.equal(b.isAgencyAdmin, false);
+          done(err);
+        }
+      );
+    });
+
+    it('get agency', function (done) {
+      request.get(
+        { url: conf.url + '/admin/agency/1' },
+        function (err, response, body) {
+          assert.equal(response.statusCode, 200);
+          var b = JSON.parse(body);
+          // This endpoint is currently just a placeholder that echoes back the
+          // agency id
+          assert.isDefined(b.requestedAgency);
+          assert.equal(b.requestedAgency, '1');
           done(err);
         }
       );

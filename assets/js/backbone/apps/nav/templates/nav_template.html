@@ -53,7 +53,7 @@
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="navbar-profile">
               <li role="presentation"><a id="profileLink" role="menuitem" class="nav-link" tabindex="-1" href="/profile/<%- user.id %>">Profile</a></li>
-              <% if (user.isAdmin === true) { %>
+              <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
               <li role="presentation" class="divider"></li>
               <li role="presentation"><a role="menuitem"
                  tabindex="-1" href="/admin" class="nav-link">Administration</a></li>

@@ -61,7 +61,7 @@ var AdminTaskView = Backbone.View.extend({
 
       success: function ( model, response, options ) {
 
-        var userConfirmed = window.confirm( 'Are you sure you want to open "' + model.attributes.title + '"?' );
+        var userConfirmed = window.confirm( 'Are you sure you want to publish "' + model.attributes.title + '"?' );
 
         if ( userConfirmed ) {
 

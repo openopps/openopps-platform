@@ -39,6 +39,12 @@ module.exports = {
       defaultsTo: false
     },
 
+    // User is an admin for their agency
+    isAgencyAdmin: {
+      type: 'BOOLEAN',
+      defaultsTo: false
+    },
+
     // is the user's login disabled
     disabled: {
       type: 'BOOLEAN',
