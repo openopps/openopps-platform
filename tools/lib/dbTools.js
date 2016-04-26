@@ -1,5 +1,7 @@
+var _ = require('lodash');
 var fs = require('fs');
 var pgp = require('pg-promise')();
+var parse = require('csv-parse/lib/sync');
 
 // load db config file
 try {
@@ -26,8 +28,11 @@ module.exports = {
     pgp.end();
   },
   checkTagTableSetup: function() {
+    return this.checkTableSetup('tagentity');
+  },
+  checkTableSetup: function(tableName) {
     // check that the tag table is set up, fail and close db connection if not
-    promise = this.hasTable('tagentity')
+    promise = this.hasTable(tableName)
     .catch(function(err) {
       console.log("\n",err.message);
       if (err.message == 'database "midas" does not exist') {
@@ -51,6 +56,33 @@ module.exports = {
       .then(function (data) {
         return data[0].exists
       })
+  },
+  importUsersFromFile: function(userFile) {
+    console.log("importing:", userFile);
+    if (fs.existsSync(userFile)) {
+      input = fs.readFileSync(userFile);
+      console.log(input);
+      var attrList = parse(input, {columns: true});
+      var date = new Date();
+      console.log("attrList", attrList);
+
+      // returns a promise
+      return db.tx(function (t) {
+        var queries = [];
+        var query_text = 'INSERT INTO midas_user ("name","username","title","createdAt","updatedAt") SELECT $1, $2, $3, $4, $5 WHERE NOT EXISTS (SELECT username FROM midas_user WHERE "username" = $2)';
+        for (i in attrList) {
+          console.log('>', attrList[i]);
+          var attr = attrList[i];
+          var query_data = [attr.name, attr.username, attr.title, date, date];
+          var query = t.none(query_text, query_data);
+          console.log('>', query);
+          queries.push(query);
+        }
+        return t.batch(queries);
+      });
+    } else {
+      throw new Error("File Not Found: '" + tagFile + "'");
+    }
   },
   importTagsFromFile: function(tagFile, tagType) {
     console.log("importing:", tagFile)
