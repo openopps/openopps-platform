@@ -4,148 +4,150 @@
 
 <div class="edit-task-container edit-task-section"></div>
 
-<div class="clearfix mxn2">
-  <div class="col col-12 md-col-9 px2">
-    <div class="p2 mb3 bg-white">
-      <div class="clearfix mxn2">
-        <div class="col col-12 md-col-10 px2">
-          <h1><%- model.title %></h1>
-          <span class="task__label--<%- state.value %>"><%- state.humanReadable %></span>
-          <% if (madlibTags['skill']) { %>
-          <div class="py1">
-            <% _.each(madlibTags['skill'], function (t) { %>
-              <a class="px2 bg-yellow black rounded" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
-            <% }) %>
-          </div>
-          <% } %>
-          <div class="py2">
-            <% /* Escaped with marked() */ %>
-            <%= model.descriptionHtml %>
-          </div>
-        </div>
-        <div class="col col-12 md-col-2 px2">
-          <div class="center" data-userid="<%- model.userId %>">
-            <img class="circle" width="50" src="/api/user/photo/<%- model.userId %>" alt="<%- model.owner.name %>"/>
-            <h4 class="mt1 mb0">Requestor</h4>
-            <div class="mb2"><%- model.owner.name %></div>
-          </div>
-        </div>
-      </div>
-      <div class="clearfix mxn2">
-        <div class="col col-12 md-col-8 px2">
-          <h4 class="mb0">Personnel Needed</h4>
-          <div class="mb2">
-            <% if (madlibTags['task-people']) { %>
-              <%= madlibTags['task-people'][0].name %>
-            <% } else { %>
-              None
-            <% } %>
-          </div>
-          <h4 class="mb0">Time Committment</h4>
-          <div class="mb2">
-            <% if (madlibTags['task-time-required']) { %>   <!-- One-time, On-going, Full-Time Detail -->
-              <%= madlibTags['task-time-required'][0].name %>
-            <% } %>
-            <% if (madlibTags['task-time-estimate']) { %>  <!-- 2-4 hours, etc. -->
-              &mdash;
-               <%= madlibTags['task-time-estimate'][0].name %> per week
-            <% } %>
-          </div>
-          <% if (model.completedBy) { %>  <!-- estimated completion date -->
-          <h4 class="mb0">Target Date</h4>
-          <div class="mb2">
-               <%= moment(model.completedBy).format('ddd, MMM D, YYYY') %>
-          </div>
-          <% } %>
-          <h4 class="mb0">Work Location</h4>
-          <div class="mb2">
-            <% if (madlibTags.location) { %>
-              <% _.each(madlibTags.location, function (s, i) { %>
-                <% if (i > 0) { %>, <% } %><%- s.name %>
+<div class="task-container">
+  <div class="clearfix mxn2">
+    <div class="col col-12 md-col-9 px2">
+      <div class="p2 mb3 bg-white">
+        <div class="clearfix mxn2">
+          <div class="col col-12 md-col-10 px2">
+            <h1><%- model.title %></h1>
+            <span class="task__label--<%- state.value %>"><%- state.humanReadable %></span>
+            <% if (madlibTags['skill']) { %>
+            <div class="py1">
+              <% _.each(madlibTags['skill'], function (t) { %>
+                <a class="px2 bg-yellow black rounded" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
               <% }) %>
-            <% } else { %>
-              Anywhere
+            </div>
             <% } %>
+            <div class="py2">
+              <% /* Escaped with marked() */ %>
+              <%= model.descriptionHtml %>
+            </div>
+          </div>
+          <div class="col col-12 md-col-2 px2">
+            <div class="center" data-userid="<%- model.userId %>">
+              <img class="circle" width="50" src="/api/user/photo/<%- model.userId %>" alt="<%- model.owner.name %>"/>
+              <h4 class="mt1 mb0">Requestor</h4>
+              <div class="mb2"><%- model.owner.name %></div>
+            </div>
           </div>
         </div>
-        <!-- TODO: Attachments - hide temporarily
-        <div class="col col-12 md-col-4 px2">
-          <div class="attachment-wrapper"></div>
+        <div class="clearfix mxn2">
+          <div class="col col-12 md-col-8 px2">
+            <h4 class="mb0">Personnel Needed</h4>
+            <div class="mb2">
+              <% if (madlibTags['task-people']) { %>
+                <%= madlibTags['task-people'][0].name %>
+              <% } else { %>
+                None
+              <% } %>
+            </div>
+            <h4 class="mb0">Time Committment</h4>
+            <div class="mb2">
+              <% if (madlibTags['task-time-required']) { %>   <!-- One-time, On-going, Full-Time Detail -->
+                <%= madlibTags['task-time-required'][0].name %>
+              <% } %>
+              <% if (madlibTags['task-time-estimate']) { %>  <!-- 2-4 hours, etc. -->
+                &mdash;
+                 <%= madlibTags['task-time-estimate'][0].name %> per week
+              <% } %>
+            </div>
+            <% if (model.completedBy) { %>  <!-- estimated completion date -->
+            <h4 class="mb0">Target Date</h4>
+            <div class="mb2">
+                 <%= moment(model.completedBy).format('ddd, MMM D, YYYY') %>
+            </div>
+            <% } %>
+            <h4 class="mb0">Work Location</h4>
+            <div class="mb2">
+              <% if (madlibTags.location) { %>
+                <% _.each(madlibTags.location, function (s, i) { %>
+                  <% if (i > 0) { %>, <% } %><%- s.name %>
+                <% }) %>
+              <% } else { %>
+                Anywhere
+              <% } %>
+            </div>
+          </div>
+          <!-- TODO: Attachments - hide temporarily
+          <div class="col col-12 md-col-4 px2">
+            <div class="attachment-wrapper"></div>
+          </div>
+           -->
         </div>
-         -->
       </div>
     </div>
-  </div>
-  <div class="col col-12 md-col-3 px2">
-    <div class="p2 mb3 bg-white">
-      <div <% if (!vol) {%>style="display: none;"<%}%>>
-        <div id="modal-volunteer"></div>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="volunteer-true" style="display: none;">
-            <a href="#" id="volunteered" class="btn btn-c1"><i class="fa fa-thumbs-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteeredButton">Participated</span></a>
+    <div class="col col-12 md-col-3 px2">
+      <div class="p2 mb3 bg-white">
+        <div <% if (!vol) {%>style="display: none;"<%}%>>
+          <div id="modal-volunteer"></div>
+          <ul class="nav nav-pills nav-stacked">
+            <li class="volunteer-true" style="display: none;">
+              <a href="#" id="volunteered" class="btn btn-c1"><i class="fa fa-thumbs-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteeredButton">Participated</span></a>
 
-          </li>
-          <li class="volunteer-false">
-            <a href="#" id="volunteer" class="btn btn-c2"><i class="fa fa-thumbs-o-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteerButton">Participate</span></a>
-          </li>
-          <li>
-            <a href="#" id="email"><i class="fa fa-envelope-o"></i> <span class="box-icon-text">Share</span></a>
-          </li>
-        </ul>
-      </div>
-
-      <% if (model.isOwner || (user && user.isAdmin)) { %>
-      <div>
-        <div id="modal-close"></div>
-        <div id="modal-copy"></div>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="li-task-edit">
-            <a href="#" id="task-edit"><i class="fa fa-pencil"></i> <span class="box-icon-text">Edit <span data-i18n="Task">Opportunity</span></span></a>
-          </li>
-          <li class="li-task-view" style="display: none;">
-            <a href="#" id="task-view"><i class="fa fa-pencil"></i> <span class="box-icon-text">View <span data-i18n="Task">Opportunity</span></span></a>
-          </li>
-          <% if (!draftAdminOnly || model.state !== 'draft' || (user && user.isAdmin)) { %>
-          <li id="li-task-close" style="<% if (model.state == 'closed') { %>display: none;<% } %>">
-            <a href="#" id="task-close"><i class="fa fa-times-circle"></i> <span class="box-icon-text">Change <span data-i18n="Task">Opportunity</span> State</span></a>
-          </li>
-          <% } else {%>
-            <li><span class="no-link">This draft <span data-i18n="task">opportunity</span> is awaiting approval from an administrator.</span></li>
-          <% } %>
-          <li id="li-task-reopen" style="<% if (model.state != 'closed') { %>display: none;<% } %>">
-            <a href="#" id="task-reopen"><i class="fa fa-share"></i> <span class="box-icon-text">Reopen</span></a>
-          </li>
-          <% if (user) { %>
-          <li class="li-task-copy">
-            <a href="#" id="task-copy"><i class="fa fa-files-o"></i><span class="box-icon-text">Copy Opportunity</span></a>
-          </li>
-          <% } %>
-        </ul>
-      </div>
-      <% } %>
-    </div>
-
-    <div class="p2 mb3 bg-white">
-      <h4>Participants</h4>
-      <div class="mb2">
-      <% if (model.volunteers.length > 0) { %>
-        <% _.each(model.volunteers, function (v) { %>
-        <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
-          <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>"/>
-          <label class="project-people-show-label"><%- v.name %></label>
+            </li>
+            <li class="volunteer-false">
+              <a href="#" id="volunteer" class="btn btn-c2"><i class="fa fa-thumbs-o-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteerButton">Participate</span></a>
+            </li>
+            <li>
+              <a href="#" id="email"><i class="fa fa-envelope-o"></i> <span class="box-icon-text">Share</span></a>
+            </li>
+          </ul>
         </div>
-        <% }); %>
-      <% } else { %>
-        None assigned
-      <% } %>
+
+        <% if (model.isOwner || (user && user.isAdmin)) { %>
+        <div>
+          <div id="modal-close"></div>
+          <div id="modal-copy"></div>
+          <ul class="nav nav-pills nav-stacked">
+            <li class="li-task-edit">
+              <a href="#" id="task-edit"><i class="fa fa-pencil"></i> <span class="box-icon-text">Edit <span data-i18n="Task">Opportunity</span></span></a>
+            </li>
+            <li class="li-task-view" style="display: none;">
+              <a href="#" id="task-view"><i class="fa fa-pencil"></i> <span class="box-icon-text">View <span data-i18n="Task">Opportunity</span></span></a>
+            </li>
+            <% if (!draftAdminOnly || model.state !== 'draft' || (user && user.isAdmin)) { %>
+            <li id="li-task-close" style="<% if (model.state == 'closed') { %>display: none;<% } %>">
+              <a href="#" id="task-close"><i class="fa fa-times-circle"></i> <span class="box-icon-text">Change <span data-i18n="Task">Opportunity</span> State</span></a>
+            </li>
+            <% } else {%>
+              <li><span class="no-link">This draft <span data-i18n="task">opportunity</span> is awaiting approval from an administrator.</span></li>
+            <% } %>
+            <li id="li-task-reopen" style="<% if (model.state != 'closed') { %>display: none;<% } %>">
+              <a href="#" id="task-reopen"><i class="fa fa-share"></i> <span class="box-icon-text">Reopen</span></a>
+            </li>
+            <% if (user) { %>
+            <li class="li-task-copy">
+              <a href="#" id="task-copy"><i class="fa fa-files-o"></i><span class="box-icon-text">Copy Opportunity</span></a>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+        <% } %>
       </div>
-      <h4>Progress</h4>
-      <ul class="list-unstyled mb1">
-        <li id="task-length-empty" style="display: none;">None</li>
-        <li>Published: <%- model.publishedAt ? moment(model.publishedAt).format('ddd, MMM D, YYYY') : '--' %></li>
-        <li>Assigned: <%- model.assignedAt ? moment(model.assignedAt).format('ddd, MMM D, YYYY') : '--' %></li>
-        <li>Completed: <%- model.completedAt ? moment(model.completedAt).format('ddd, MMM D, YYYY') : '--' %></li>
-      </ul>
+
+      <div class="p2 mb3 bg-white">
+        <h4>Participants</h4>
+        <div class="mb2">
+        <% if (model.volunteers.length > 0) { %>
+          <% _.each(model.volunteers, function (v) { %>
+          <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+            <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>"/>
+            <label class="project-people-show-label"><%- v.name %></label>
+          </div>
+          <% }); %>
+        <% } else { %>
+          None assigned
+        <% } %>
+        </div>
+        <h4>Progress</h4>
+        <ul class="list-unstyled mb1">
+          <li id="task-length-empty" style="display: none;">None</li>
+          <li>Published: <%- model.publishedAt ? moment(model.publishedAt).format('ddd, MMM D, YYYY') : '--' %></li>
+          <li>Assigned: <%- model.assignedAt ? moment(model.assignedAt).format('ddd, MMM D, YYYY') : '--' %></li>
+          <li>Completed: <%- model.completedAt ? moment(model.completedAt).format('ddd, MMM D, YYYY') : '--' %></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

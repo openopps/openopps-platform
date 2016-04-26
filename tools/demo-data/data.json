@@ -1,0 +1,26 @@
+"users":[
+  {
+    "name": "Tammy Craig",
+    "username": "kids@test.gov",
+    "password": "kidskidsT1!",
+    "title": "Social Media Director",
+    "agency": "Dept of Education",
+    "location": "Washington, DC",
+    "photo": "assets/users/tammy.jpg"
+  },
+]
+"events": [
+  {
+    "timestamp":"",
+    "action": "task.submit",
+    "user": "kids@test.gov",
+    "state": "submitted",
+    "title": "Who to follow on Twitter? Kids.gov wants to know!",
+    "description": "Kids.gov, the official web portal for kids, is putting together a list of influencers that the site should be following and interacting with on Twitter."
+  },
+  {
+    "state": "open",
+    "title": "Is Challenge.gov ready to launch?",
+    "description": "You’ll be the critical eye revieing federal challenge and prize competitions, checking links and making sure everything works. It would be helpful to have people who are not familiar with challenge and prize program to help. This is a simple way to gain experience with web software release practives or a great way to learn about this innovative program."
+  }
+]
