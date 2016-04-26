@@ -56,6 +56,11 @@ module.exports.policies = {
     // 'export': ['passport', 'authenticated', 'admin']
   },
 
+  ActivityController: {
+    '*': ['requireAuth', 'addUserId']
+  },
+
+
   /***************************************************************************
   *                                                                          *
   * Here's an example of mapping some policies to run before a controller    *
