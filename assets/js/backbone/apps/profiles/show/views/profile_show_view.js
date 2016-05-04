@@ -153,6 +153,8 @@ var ProfileShowView = Backbone.View.extend({
             result = JSON.parse($(data.result).text());
           }
           self.model.trigger("profile:updateWithPhotoId", result[0]);
+          // in case there was a previous error
+          self.$("#file-upload-alert").hide();
         },
         fail: function (e, data) {
           // notify the user that the upload failed

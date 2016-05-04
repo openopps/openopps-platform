@@ -20,7 +20,7 @@ env:
     - CF_USERNAME=deploy-open-opportunities
     - CF_ORGANIZATION=open-opportunities
     - B_DOMAIN=18f.gov
-    - secure: "DTYvUyBEyP2RIk4n2KNRKhcrGo6R+KbmF/x+GUVgeVUQTL8r4jYOwjynovYmECrU4aWed68wgtA5l9KZ3tyBRZf1qJLhJBp+XD/XOLyXRvXao8HFDJD3LyQjassW9FtwXaJr8PpFGdJ45Ccn0cstEiUw9OAehMhSv26q08+gYPc="
+    - secure: "EYl3NnLIJBH0LplugWMpXyPphV05ScdGHCrwCGv/enynALxwpWKv9iXg9sqm8g4NCTqJTdx3kdPlnPrWIz3Zj70QFFk5vRohh1xcuKs1Mf2lqCW5sSPmpDQlTWPoD2cAVIOJd2TXxOHhhs1lSWVCp/Eld5l0U/XdDpzi7U9feQk="
 deploy:
   - provider: script
     script: export CF_SPACE=prod && cf-blue-green-travis

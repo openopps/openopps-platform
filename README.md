@@ -15,7 +15,7 @@ Here’s how Open Opportunities works: You come up with a great idea that would 
 <!-- responsive video embed -->
 <div class='embed-container'><iframe src='https://www.youtube-nocookie.com/embed/2FelzCR7pLk?rel=0&amp;showinfo=0' frameborder='0' allowfullscreen></iframe></div>
 <!-- end video embed -->
-[Open Opportunities Testimonial from USA.gov Search Mgr](https://www.youtube.com/watch?v=2FelzCR7pLk&feature=youtu.be)
+[Open Opportunities Testimonial from DigitalGov Search Manager](https://www.youtube.com/watch?v=2FelzCR7pLk&feature=youtu.be)
 
 Open Opportunities can benefit all organizations, but it’s especially useful for those with distributed teams and whose employees have diverse skill sets.  Using Open Opportunities, you and your colleagues can work on projects together, get to know each other better, and develop skills you don’t use as often as you’d like.
 

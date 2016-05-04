@@ -4,10 +4,34 @@
  * @module		:: Controller
  * @description	:: Contains logic for handling requests.
  */
+var fileType = require('file-type');
 var fs = require('fs');
 var gm = require('gm');
 var _ = require('underscore');
 var async = require('async');
+
+// expectedType: image_square or image,
+// if not given it is an attachment which could be anything
+function validType(expectedType, data) {
+  var expectedImageTypes = ['image_square', 'image']
+  var validImageTypes = ['png', 'jpg', 'gif', 'bmp']
+  var detectedType = fileType(data);
+  if (_.contains(expectedImageTypes, expectedType)) {
+    if (detectedType && _.contains(validImageTypes, detectedType.ext)) {
+      sails.log.info('Valid type detected:', detectedType.ext);
+      return true;
+    }
+    sails.log.error('Invalid image:',
+                    detectedType === null ? 'unknown type' : detectedType.ext);
+    return false;
+  }
+  if (detectedType.ext == 'exe') {
+    sails.log.error('Executable files not allowed');
+    return false;
+  }
+  // we didn't find anything bad so we'll generously accept any other file
+  return true;
+}
 
 module.exports = {
   find: function(req, res) {
@@ -49,7 +73,11 @@ module.exports = {
     var processFile = function (upload, done) {
       // Read the temporary file
       fs.readFile(upload.fd, function (err, fdata) {
+        if (err) sails.log.error('FileController create fs.readFile:', err)
         if (err || !fdata) { return done({message:'Error storing file.'}); }
+        if (!validType(req.param('type'), fdata)) {
+          return done({message:'Error storing file, invalid file type'});
+        }
         // Create a file object to put in the database.
         var f = {
           userId: req.user[0].id,
