@@ -6,26 +6,28 @@ var Promise = require('bluebird');
 // Reusable utilities
 
 function createUsers(numUsers) {
-  var promises = [];
+  var userAttrs = [];
 
   for (var i = 0; i < numUsers; i++) {
-    promises.push(User.create(
+    userAttrs.push(
       {
         'name': i.toString(),
         'username': i.toString() + '@gmail.com',
         'password': 'TestTest123#'
       }
-    ));
+    );
   }
-
-  return Promise.all(promises);
+  return User.create(userAttrs);
 }
 
-function createVolunteers(users, task) {
+function createVolunteers(users, taskId) {
+  // creating 4 volunteers at once, creates 4 badges, not sure why...
+  // but the app never actually does that
+  // the following code mimicks what the client app would actually do
   var promises = [];
   var resolver = Promise.defer();
   Promise.each(users, function(user, index, length) {
-    var promise = Volunteer.createAction({user: users[index].id, taskId: task});
+    var promise = Volunteer.createAction({user: users[index].id, taskId: taskId});
 
     promises.push(promise);
 
@@ -47,7 +49,6 @@ describe('Volunteer model', function() {
 
       Task.create({userId: ownerUser.id}).then(function(newTask) {
         task = newTask;
-
         done();
       });
     });
