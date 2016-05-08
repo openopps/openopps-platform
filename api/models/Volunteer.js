@@ -25,15 +25,16 @@ module.exports = {
   // create notification after creating a volunteer
   afterCreate: function ( model, done ) {
 
-    this.assignVolunteerCountBadges( model );
+    this.assignVolunteerCountBadges( model , function(err) {
+      if (err) return done(err);
 
-    if ( true === model.silent ) { return done(); }
+      if ( true === model.silent ) { return done(); }
 
-    Notification.create( {
-      action: 'volunteer.create.thanks',
-      model: model,
-    }, done );
-
+      Notification.create( {
+        action: 'volunteer.create.thanks',
+        model: model,
+      }, done );
+    });
   },
 
   afterDestroy: function(model, done) {
@@ -45,24 +46,34 @@ module.exports = {
     }, done);
   },
 
-  assignVolunteerCountBadges: function (model) {
+  assignVolunteerCountBadges: function (model, done) {
 
-    Volunteer.find({ taskId: model.taskId }).exec(function(err, vols) {
-      if (err) return;
+    Volunteer.find({ taskId: model.task }).exec(function(err, vols) {
+      if (err) return done(err);
 
-      Task.findOne({ id: model.taskId }).exec(function(err, task) {
-        var badge = {
-          user: task.userId,
-          type: 'team builder',
-          task: model.taskId
-        };
-        if (err) return;
-        if (vols.length === 4) {
+      if (vols.length === 4) {
+        Task.findOne({ id: model.task }).exec(function(err, task) {
+          if (err) return done(err);
+
+          var badge = {
+            user: task.owner,
+            type: 'team builder',
+            task: model.task
+          };
+
           Badge.findOrCreate(badge, badge).exec(function(err, b){
-            if (err) return console.error(err);
+            // swallow a potential error (expected) that the badge already exists.
+            if (err && err._e.toString().match('Badge already exists')) {
+              err = null;
+            }
+
+            if (err) return done(err);
+            done();
           });
-        }
-      });
+        });
+      } else {
+        done();
+      }
     });
 
   }
