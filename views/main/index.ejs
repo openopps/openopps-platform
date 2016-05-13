@@ -1,14 +1,1 @@
-<script type="text/javascript">
-  // this will only return true for IE <= 8.
-  if (window.attachEvent && !window.addEventListener) {
-    document.write('<div class="alert alert-danger"><strong>You are using an old, unsupported version of Internet Explorer.</strong>  This website may not work correctly in your browser.  For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</div>');
-  }
-</script>
-<% if (alert) { %>
-<div class="container">
-  <div class="alert alert-danger server-alert">
-    <%- alert.message %>
-  </div>
-</div>
-<% } %>
 <div class="container" id="container"></div>

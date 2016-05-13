@@ -20,11 +20,6 @@
               </a>
             </li>
             <li role="presentation">
-              <a href="#signups" aria-controls="signups" role="tab" data-toggle="tab">
-                Sign-ups: <%- withSignups.length %>
-              </a>
-            </li>
-            <li role="presentation">
               <a href="#assigned" aria-controls="assigned" role="tab" data-toggle="tab">
                 Assigned: <%- assigned.length %>
               </a>
@@ -35,8 +30,8 @@
               </a>
             </li>
             <li role="presentation">
-              <a href="#drafts" aria-controls="open" role="tab" data-toggle="tab">
-                Drafts: <%- drafts.length %>
+              <a href="#draft" aria-controls="open" role="tab" data-toggle="tab">
+                Draft: <%- draft.length %>
               </a>
             </li>
 
@@ -79,14 +74,14 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.user.id %>"><%- vol.user.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
                           <% } ); %>
                         </p>
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
+                        <a href="/profile/<%- task.owner.id %>">
+                          <%- task.owner.name || task.owner.username %>
                         </a>
                       </td>
                       <td class="metrics-table__button">
@@ -140,54 +135,14 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.user.id %>"><%- vol.user.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
                           <% } ); %>
                         </p>
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
-                        </a>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="signups">
-              <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(withSignups).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                        <% if ( task.volunteers.length ) { %>
-                        <p><i>Sign-ups</i>
-                          <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.user.id %>"><%- vol.user.name || vol.user.username %></a>
-                          <% } ); %>
-                        </p>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
+                        <a href="/profile/<%- task.owner.id %>">
+                          <%- task.owner.name || task.owner.username %>
                         </a>
                       </td>
                     </tr>
@@ -220,14 +175,14 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.user.id %>"><%- vol.user.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
                           <% } ); %>
                         </p>
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
+                        <a href="/profile/<%- task.owner.id %>">
+                          <%- task.owner.name || task.owner.username %>
                         </a>
                       </td>
                     </tr>
@@ -260,14 +215,14 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.user.id %>"><%- vol.user.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
                           <% } ); %>
                         </p>
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
+                        <a href="/profile/<%- task.owner.id %>">
+                          <%- task.owner.name || task.owner.username %>
                         </a>
                       </td>
                     </tr>
@@ -275,8 +230,8 @@
                 </tbody>
               </table>
             </div>
-            <div role="tabpanel" class="tab-pane" id="drafts">
-            <% if ( drafts.length ) { %>
+            <div role="tabpanel" class="tab-pane" id="draft">
+            <% if ( draft.length ) { %>
               <table class="metrics-table">
                 <thead>
                   <tr>
@@ -287,7 +242,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% _(drafts).forEach(function(task) { %>
+                  <% _(draft).forEach(function(task) { %>
                     <tr>
                       <td class="metrics-table__label">
                         <a href="/tasks/<%- task.id %>"
@@ -301,8 +256,8 @@
                         <a href="/tasks/<%- task.id %>"><%- task.title %></a>
                       </td>
                       <td class="metrics-table__author">
-                        <a href="/profile/<%- task.user.id %>">
-                          <%- task.user.name || task.user.username %>
+                        <a href="/profile/<%- task.owner.id %>">
+                          <%- task.owner.name || task.owner.username %>
                         </a>
                       </td>
                       <td class="metrics-table__button">

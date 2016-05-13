@@ -1,32 +1,14 @@
 <% for (var i = 0; i < tags.length; i++) { %>
 <div class="tag-title <%- tags[i]['class'] %>" id="<%- tags[i].id %>">
   <h2>
-    <% if (showTags) { %><i class="<%- tags[i].icon %>"></i> <span class="box-icon-text"><% } %>
+    <% if (showTags) { %><i class="<%- tags[i].icon %>"></i> <span><% } %>
     <%- tags[i].plural %>
     <% if (showTags) { %></span><% } %>
   </h2>
   <% if ((data.isOwner || user.isAdmin) && edit) { %>
-  <div style='margin-bottom: 5px'>
+  <div>
     <input type="text" id="tag_<%- tags[i].id.toLowerCase() %>" class="fullwidth" name="tag_<%- tags[i].name.toLowerCase() %>"/>
   </div>
   <% } %>
-  <% if (!edit) { %>
-  <ul class="tags">
-    <li class="tag-empty" id="<%- tags[i]['class'] %>-empty">
-      <% if (tags[i]['class'] === 'location') { %>Anywhere<% } else { %>None<% } %>
-    </li>
-  </ul>
-  <% } %>
-</div>
-<% } %>
-<% if (data.userId) { %>
-<div class="tag-title">
-  <h2><i class="fa fa-child "></i> <span class="box-icon-text">Progress</span></h2>
-  <ul class="tags">
-    <li class="tag-empty" id="task-length-empty" style="display: none;">None</li>
-    <li>Published: <%- data.publishedAt ? moment(data.publishedAt).format('ddd, MMM D, YYYY') : '--' %></li><br>
-    <li>Assigned: <%- data.assignedAt ? moment(data.assignedAt).format('ddd, MMM D, YYYY') : '--' %></li><br>
-    <li>Completed: <%- data.completedAt ? moment(data.completedAt).format('ddd, MMM D, YYYY') : '--' %></li>
-  </ul>
 </div>
 <% } %>

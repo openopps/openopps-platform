@@ -1,0 +1,141 @@
+/*****************
+=  NAVBAR
+******************/
+
+
+/* -----------------
+ * make it so the space below navbar is actually space above container
+ * so we can make the container flush with navbar on some pages */
+
+#container {
+  margin-top: 20px;
+}
+
+
+/*-----------------*/
+
+.navbar .nav .navbar-title {
+  font-size: 18px;
+}
+
+.navbar .nav .navbar-divider {
+  /* vertical divider */
+  background-color: white;
+  height: 50px;
+  width: 1px;
+}
+
+@media (max-width: 768px) {
+  /* horizontal divider */
+  .navbar .nav .navbar-divider {
+    height: 1px;
+    width: 100%;
+  }
+}
+
+#navbar-profile {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.navbar-people {
+  height: 35px;
+  width: 35px;
+  max-height: 35px;
+  border-radius: 50%;
+}
+
+.navbar-side {
+  padding: 5px;
+}
+
+.navbar-side > .nav > li > a,
+.navbar-side > .nav > li > .no-link {
+  padding: 5px 15px;
+}
+
+.navbar-side > .nav > li > .no-link {
+  display: block;
+}
+
+ul.nav-search > li {
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-bottom: 3px;
+  position: relative;
+  display: block;
+}
+
+
+/*
+=  NAVBAR ADMIN
+*/
+
+@media (min-width: 768px) {
+  .admin .navbar-collapse {
+    height: auto;
+    border-top: 0;
+    box-shadow: none;
+    max-height: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .admin .navbar-collapse.collapse {
+    display: block !important;
+    width: auto !important;
+    padding-bottom: 0;
+    overflow: visible !important;
+  }
+  .admin .navbar-collapse.in {
+    overflow-x: visible;
+  }
+  .admin.navbar {
+    max-width: 300px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .admin .navbar-nav,
+  .admin .navbar-nav > li,
+  .admin .navbar-left,
+  .admin .navbar-right,
+  .admin .navbar-header {
+    float: none !important;
+  }
+  .admin .navbar-right .dropdown-menu {
+    left: 0;
+    right: auto;
+  }
+  .admin .navbar-collapse .navbar-nav.navbar-right:last-child {
+    margin-right: 0;
+  }
+}
+
+.admin .navbar-toggle {
+  margin-top: 8px;
+}
+
+// new stuff
+.navbar {
+  margin-bottom: 0;
+  background-color: #fff;
+  min-height: 80px;
+  border: 0;
+}
+
+.navbar-brand {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 80px;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+.navbar-default .navbar-nav > li > a {
+  line-height: 40px;
+}

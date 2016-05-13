@@ -1,17 +1,18 @@
-
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
 var Login = require('../../../config/login.json');
-var FooterTemplate = require('../templates/footer_template.html');
+
+var FooterTemplate = fs.readFileSync(
+  __dirname + '/../templates/footer_template.html'
+).toString();
 
 
 var FooterView = Backbone.View.extend({
+  events: {},
 
-  events: {
-  },
-
-  render: function () {
+  render: function() {
     var self = this;
     var data = {
       version: version,
@@ -19,25 +20,11 @@ var FooterView = Backbone.View.extend({
     };
     var compiledTemplate = _.template(FooterTemplate)(data);
     this.$el.html(compiledTemplate);
-
-    function resizeElements() {
-      headerHeight = $('.navbar').height();
-      footerHeight = $('footer').height();
-      if (($(document.body).height() + footerHeight) < $(window).height()) {
-        self.$el.addClass('navbar-fixed-bottom');
-      } else {
-        self.$el.removeClass('navbar-fixed-bottom');
-      }
-    }
-    resizeElements();
-    $(".container").bind("DOMSubtreeModified", resizeElements);
   },
 
-  cleanup: function () {
+  cleanup: function() {
     removeView(this);
   }
-
 });
 
 module.exports = FooterView;
-

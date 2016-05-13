@@ -41,41 +41,16 @@ exports.register = function (req, res, next) {
     return next(new Error('No password was entered.'));
   }
 
-  User.create({
+  User.register({
     username : username,
     name: name,
+    password: password,
     tags: tags
   }, function (err, user) {
-    if (err) {
-      if (err.code === 'E_VALIDATION') {
-        req.flash('error', 'Error.Passport.User.Exists');
-      }
-
-      return next(err);
-    }
-
-    // Generating accessToken for API authentication
-    var token = crypto.randomBytes(48).toString('base64');
-
-    Passport.create({
-      protocol    : 'local'
-    , password    : password
-    , user        : user.id
-    , accessToken : token
-    }, function (err, passport) {
-      if (err) {
-        if (err.code === 'E_VALIDATION') {
-          req.flash('error', 'Error.Passport.Password.Invalid');
-        }
-
-        return user.destroy(function (destroyErr) {
-          next(destroyErr || err);
-        });
-      }
-
-      next(null, user);
-    });
+    if (err) req.flash('error', 'Error.Passport.Registration.Failed');
+    next(err, user);
   });
+
 };
 
 /**
@@ -130,9 +105,11 @@ exports.connect = function (req, res, next) {
  */
 exports.login = function (req, identifier, password, next) {
   var query = { username: identifier.toLowerCase() },
-      maxAttempts = sails.config.auth.auth.local.passwordAttempts;
+      maxAttempts = sails.config.auth.local.passwordAttempts;
 
-  User.findOne(query, function (err, user) {
+  sails.log.verbose("login attempt for: ", query)
+  User.findOne(query).populate('tags').exec(function (err, user) {
+    sails.log.verbose("from db (err, user)", err, user)
     if (err) return next(err);
 
     if (!user) {
@@ -141,6 +118,7 @@ exports.login = function (req, identifier, password, next) {
     }
 
     if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
+      sails.log.verbose("max passwordAttempts (1)", user.passwordAttempts, maxAttempts)
       return next('locked');
     }
 
@@ -158,6 +136,7 @@ exports.login = function (req, identifier, password, next) {
             user.passwordAttempts++;
             user.save(function() {
               if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
+                sails.log.verbose("max passwordAttempts (2)", user.passwordAttempts, maxAttempts)
                 return next('locked');
               }
               req.flash('error', 'Error.Passport.Password.Wrong');

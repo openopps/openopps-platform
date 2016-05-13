@@ -1,15 +1,17 @@
 var _ = require('underscore');
-var Backbone = require('backbone');
 var async = require('async');
-var UIConfig = require('../../../config/ui.json');
+var Backbone = require('backbone');
 
 var ActivityCollection = window.c = require('../../../entities/activities/activities_collection');
 var TaskCollection = require('../../../entities/tasks/tasks_collection');
+var UIConfig = require('../../../config/ui.json');
 
-var DashboardTemplate = require('../templates/home_dashboard_template.html');
-var BadgesTemplate = require('../templates/home_badges_feed_template.html');
-var UsersTemplate = require('../templates/home_users_feed_template.html');
-var NetworkTemplate = require('../templates/home_network_stats_template.html');
+// templates
+var fs = require('fs');
+var DashboardTemplate = fs.readFileSync(`${__dirname}/../templates/home_dashboard_template.html`).toString();
+var BadgesTemplate = fs.readFileSync(`${__dirname}/../templates/home_badges_feed_template.html`).toString();
+var UsersTemplate = fs.readFileSync(`${__dirname}/../templates/home_users_feed_template.html`).toString();
+var NetworkTemplate = fs.readFileSync(`${__dirname}/../templates/home_network_stats_template.html`).toString();
 
 var templates = {
   main: _.template(DashboardTemplate),
@@ -86,7 +88,7 @@ var DashboardView = Backbone.View.extend({
       }
     });
 
-    this.$el.i18n();
+    // TODO: this.$el.localize();
     return this;
   },
   setTarget: function (target, inner) {

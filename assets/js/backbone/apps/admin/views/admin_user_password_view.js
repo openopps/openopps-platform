@@ -1,10 +1,10 @@
-
-var Bootstrap = require('bootstrap');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
-var AdminUserPassword = require('../templates/admin_user_password.html');
+var Bootstrap = require('bootstrap');
 
+// templates
+var fs = require('fs');
+var AdminUserPassword = fs.readFileSync(`${__dirname}/../templates/admin_user_password.html`).toString();
 
 var AdminUserPasswordView = Backbone.View.extend({
 
@@ -38,7 +38,7 @@ var AdminUserPasswordView = Backbone.View.extend({
     // validate input fields
     var validateIds = ['#newPassword'];
     var abort = false;
-    for (i in validateIds) {
+    for (var i in validateIds) {
       var iAbort = validate({ currentTarget: validateIds[i] });
       abort = abort || iAbort;
     }

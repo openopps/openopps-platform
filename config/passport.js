@@ -36,33 +36,6 @@ module.exports.passport = {
       profileURL: 'https://alpha.my.usa.gov/api/v1/profile',
       scope: ["profile.email", "profile.first_name", "profile.last_name"]
     }
-  },
-
-  linkedin: {
-    strategy: require('passport-linkedin').Strategy,
-    protocol: 'oauth',
-    callback : process.env.LINKEDIN_CALLBACK_URL || '/api/auth/callback/linkedin',
-    options: {
-      consumerKey   : process.env.LINKEDIN_CLIENT_ID  || 'CLIENT_ID',
-      consumerSecret: process.env.LINKEDIN_CLIENT_SECRET || 'CLIENT_SECRET',
-      scope: ["r_basicprofile", "r_fullprofile", "r_emailaddress", "r_network"]
-    },
-    passReqToCallback: true,
-    profileFields: [
-      'id',
-      'first-name',
-      'last-name',
-      'formatted-name',
-      'email-address',
-      'headline',
-      'picture-url',
-      'picture-urls::(original)',
-      'location:(name)',
-      'summary',
-      'skills',
-      'interests',
-      'three-current-positions'
-    ]
   }
 
 };

@@ -1,4 +1,5 @@
-<li data-id="<%- item.id %>" class="box task-box">
+<div data-id="<%- item.id %>" class="col col-12 sm-col-6 md-col-4 px2">
+  <div class="box task-box">
 
     <div class="task-list-title task-title-overflow-multi">
       <a href="/tasks/<%- item.id %>" class="link-backbone c1">
@@ -6,45 +7,44 @@
       </a>
     </div>
 
-  <div class="task-list-description task-desc-overflow-multi">
-    <% /* Escaped by marked() */ %>
-    <%= item.descriptionHtml %>
-  </div>
+    <div class="task-list-description task-desc-overflow-multi">
+      <% /* Escaped by marked() */ %>
+      <%= item.descriptionHtml %>
+    </div>
 
-  <div class="task-list-bottom border-top">
+    <div class="task-list-bottom">
+      <% _.each(tagShow, function (tagType) { %>
 
-    <% _.each(tagShow, function (tagType) { %>
-
-      <% if (tags[tagType]) { %>
-      <div class="task-list-tags c0 task-single-overflow">
-        <i class="task-list-icon-center <%- tagConfig.tags[tagType].icon %>"></i>
-        <% _.each(tags[tagType], function (t, i) { %>
-          <% if (t.type == 'skill') { %>
-            <a href="/tasks?search=<%- t.name %>"><%- t.name %></a><% if (i + 1 < tags[tagType].length) { %>,<% } %>
-          <% } else { %>
-            <%- t.name %><% if (i + 1 < tags[tagType].length) { %>,<% } %>
-          <% } %>
-        <% }); %>
-      </div>
-      <% } %>
-
-    <% }); %>
-
-  </div>
-  <div class="task-list-bottom-person border-top">
-    <div class="task-list-person">
-      <div class="project-people-div float-left" data-userid="<%- item.userId %>" style="text-align: right;">
-        <img src="/api/user/photo/<%- item.userId %>" class="project-people"/>
-      </div>
-      <div class="task-list-requestbox">
-        <div class="task-list-requested">requested by</div>
-        <div class="task-list-name"><%- item.user.name %></div>
-        <% if (item.user.agency) { %>
-        <div class="task-list-agency task-single-overflow"><%- item.user.agency.name %></div>
+        <% if (tags[tagType]) { %>
+        <div class="task-list-tags c0 task-single-overflow">
+          <i class="task-list-icon-center <%- tagConfig.tags[tagType].icon %>"></i>
+          <% _.each(tags[tagType], function (t, i) { %>
+            <% if (t.type == 'skill') { %>
+              <a href="/tasks?search=<%- t.name %>"><%- t.name %></a><% if (i + 1 < tags[tagType].length) { %>,<% } %>
+            <% } else { %>
+              <%- t.name %><% if (i + 1 < tags[tagType].length) { %>,<% } %>
+            <% } %>
+          <% }); %>
+        </div>
         <% } %>
+
+      <% }); %>
+    </div>
+
+    <div class="task-list-bottom-person">
+      <div class="task-list-person">
+        <div class="project-people-div float-left" data-userid="<%- item.owner.id %>" style="text-align: right;">
+          <img src="/api/user/photo/<%- item.owner.id %>" class="project-people" width="30"/>
+        </div>
+        <div class="task-list-requestbox">
+          <div class="task-list-requested">requested by</div>
+          <div class="task-list-name"><%- item.owner.name %></div>
+          <% if (item.owner.agency) { %>
+          <div class="task-list-agency task-single-overflow"><%- item.owner.agency.name %></div>
+          <% } %>
+        </div>
       </div>
     </div>
 
   </div>
-
-</li>
+</div>

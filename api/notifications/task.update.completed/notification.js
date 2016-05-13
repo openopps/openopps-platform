@@ -19,7 +19,7 @@ module.exports = {
           volunteers: '',
           survey: sails.config.survey
         };
-    User.findOne({ id: model.userId }).exec(function(err, owner) {
+    User.findOne( { id: model.owner } ).exec( function ( err, owner ) {
       if (err) return done(err);
       data.owner = owner;
 

@@ -1,12 +1,14 @@
-
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
-var LoginPasswordTemplate = require('../templates/login_password_template.html');
+
+var LoginPasswordTemplate = fs.readFileSync(
+  __dirname + '/../templates/login_password_template.html'
+).toString();
 
 
 var LoginPasswordView = Backbone.View.extend({
-
   initialize: function (options) {
     this.options = options;
   },
@@ -23,4 +25,3 @@ var LoginPasswordView = Backbone.View.extend({
 });
 
 module.exports = LoginPasswordView;
-

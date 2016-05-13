@@ -1,5 +1,4 @@
 module.exports = {
-
   badges: function(req, res) {
     Task.find({
       state: 'completed',
@@ -12,13 +11,13 @@ module.exports = {
       Badge.find({ task: taskIds }).exec(function(err, badges){
         if (err) return res.negotiate(err);
 
-        Volunteer.find({ taskId: taskIds }).exec(function(err, vols) {
+        Volunteer.find({ task: taskIds }).exec(function(err, vols) {
           if (err) return res.negotiate(err);
 
           // Ensure that the User model is being queried for both the original
           // task creator and the users that are labeled as volunteers.
 
-          var allUserIds = _.uniq(_.union( _.pluck( tasks, 'userId' ),
+          var allUserIds = _.uniq(_.union( _.pluck( tasks, 'owner' ),
                                            _.pluck( vols, 'userId' )));
 
           User.find( {id: allUserIds} ).exec(function(err, users) {
@@ -34,8 +33,9 @@ module.exports = {
             badges = _.reject(badges, function(b) { return b.user == null } );
 
             tasks = tasks.map(function(task) {
+
               var ids = _(vols).chain()
-                    .where({ taskId: task.id })
+                    .where({ task: task.id })
                     .pluck('userId').value();
 
               task.badges = _.where(badges, { task: task.id });
@@ -74,25 +74,11 @@ module.exports = {
     });
   },
 
-  network: function(req, res) {
-    var query = JSON.parse(req.param('where', '{}')),
-        where = _.extend(query, { state: 'completed' });
-    Task.find(where).exec(function(err, tasks) {
-      if (err) return res.negotiate(err);
-      var ids = _.pluck(tasks, 'id');
-      Volunteer.count({ userId: ids }).exec(function(err, count) {
-        if (err) return res.negotiate(err);
-        res.json(count);
-      });
-    });
-  },
-
   count: function(req, res) {
     var where = req.param('where', {});
     Task.count(where).exec(function(err, count) {
       if (err) return res.negotiate(err);
       res.json(count);
     });
-  }
-
+  },
 };

@@ -3,7 +3,7 @@
 */
 
 module.exports = function requireId (req, res, next) {
-  if (!req.route.params.id) {
+  if (!req.params.id) {
     return res.send(400, { message: ':id required.'});
   }
   next();

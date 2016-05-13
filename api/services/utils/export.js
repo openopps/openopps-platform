@@ -18,6 +18,7 @@ module.exports = {
    *        parameter, if OK then error should be null and rendered result in buffer.
    */
   renderCSV: function (model, records, done) {
+    sails.log.verbose('renderCSV');
     var output = "";
     var fieldNames = _.keys(model.exportFormat);
     var fields = _.values(model.exportFormat);

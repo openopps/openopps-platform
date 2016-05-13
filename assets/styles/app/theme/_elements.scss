@@ -1,0 +1,54 @@
+/**
+ * HEADERS
+ */
+
+h1 {
+  font-size: 48px;
+  color: $color-c1;
+}
+
+h2 {
+  color: $color-c2;
+  font-size: 22px;
+}
+
+.tag-title > h2 {
+  color: $color-c0;
+  font-size: 18px;
+}
+
+h3 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  font-size: 21px;
+}
+
+h4 {
+  color: $color-c1;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+h5 {
+  color: $color-h5;
+  font-size: 12px;
+}
+
+h6 {
+  color: $color-h6;
+  font-size: 10px;
+}
+
+
+/**
+ * For 508 compliance
+ */
+
+a {
+  color: #317ab9;
+}
+
+footer a {
+  color: #216aa9;
+}

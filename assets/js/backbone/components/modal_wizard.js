@@ -16,38 +16,40 @@
 // then the Form itself for the addition to the list is scoped to the
 // modal-body within this modal-component template.
 
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utilities = require('../mixins/utilities');
 var BaseView = require('../base/base_view');
-var ModalWizardTemplate = require('./modal_wizard_template.html');
+var ModalWizardTemplate = fs.readFileSync(
+  __dirname + '/modal_wizard_template.html'
+).toString();
 
 
-ModalWizard = BaseView.extend({
-
+var ModalWizard = BaseView.extend({
   events: {
-    "click .wizard-forward" : "moveWizardForward",
+    "click .wizard-forward": "moveWizardForward",
     "click .wizard-backward": "moveWizardBackward",
-    "click .wizard-submit"  : "submit",
-    "click .wizard-cancel"  : "cancel",
-    "show.bs.modal"         : "wizardButtons"
+    "click .wizard-submit": "submit",
+    "click .wizard-cancel": "cancel",
+    "show.bs.modal": "wizardButtons"
   },
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.options = options;
     this.initializeListeners();
   },
 
-  initializeListeners: function () {
+  initializeListeners: function() {
     var self = this;
     if (this.model) {
-      this.listenTo(this.model, this.options.modelName + ':modal:hide', function () {
+      this.listenTo(this.model, this.options.modelName + ':modal:hide', function() {
         $('.modal.in').modal('hide');
       });
     }
   },
 
-  render: function () {
+  render: function() {
     var data = {
       id: this.options.id,
       modalTitle: this.options.modalTitle,
@@ -63,7 +65,7 @@ ModalWizard = BaseView.extend({
    * when the view is destroyed
    * @return this for chaining
    */
-  setChildView: function (view) {
+  setChildView: function(view) {
     this.childView = view;
     return this;
   },
@@ -73,7 +75,7 @@ ModalWizard = BaseView.extend({
    * Useful for callbacks
    * @return this for chaining
    */
-  setNext: function (fn) {
+  setNext: function(fn) {
     this.childNext = fn;
     return this;
   },
@@ -83,7 +85,7 @@ ModalWizard = BaseView.extend({
    * Useful for callbacks
    * @return this for chaining
    */
-  setSubmit: function (fn) {
+  setSubmit: function(fn) {
     this.childSubmit = fn;
     return this;
   },
@@ -93,7 +95,7 @@ ModalWizard = BaseView.extend({
   //
   // If you want to force disable one or more buttons on a step of the wizard,
   // add a data-disable-buttons attribute with a space-separated lst.
-  wizardButtons: function (e, step) {
+  wizardButtons: function(e, step) {
     if (_.isUndefined(step)) {
       step = $('.current');
     }
@@ -110,7 +112,7 @@ ModalWizard = BaseView.extend({
     $("#wizard-backward-button").prop('disabled', !prevAvailable);
     var disables = step.data('disable-buttons');
     if (disables) {
-      disables.split(" ").forEach(function (disable) {
+      disables.split(" ").forEach(function(disable) {
         $("#wizard-" + disable + "-button").prop('disabled', true);
       });
     }
@@ -119,7 +121,7 @@ ModalWizard = BaseView.extend({
   // In order for the ModalWizard to work it expects a section
   // by section layout inside the modal, with a 'current' class on
   // the first you want to always start on (re)render.
-  moveWizardForward: function (e) {
+  moveWizardForward: function(e) {
     if (e.preventDefault) e.preventDefault();
 
     // Store $(".current") in cache to reduce query times for DOM lookup
@@ -140,7 +142,7 @@ ModalWizard = BaseView.extend({
     next.show();
   },
 
-  moveWizardBackward: function (e) {
+  moveWizardBackward: function(e) {
     if (e.preventDefault) e.preventDefault();
 
     var current = $(".current");
@@ -157,7 +159,7 @@ ModalWizard = BaseView.extend({
 
   // Dumb submit.  Everything is expected via a promise from
   // from the instantiation of this modal wizard.
-  submit: function (e) {
+  submit: function(e) {
     if (e.preventDefault) e.preventDefault();
 
     var d = this.options.data(this);
@@ -179,12 +181,12 @@ ModalWizard = BaseView.extend({
     this.collection.trigger(this.options.modelName + ":save", d);
   },
 
-  cancel: function (e) {
+  cancel: function(e) {
     if (e.preventDefault) e.preventDefault();
     $('.modal.in').modal('hide');
   },
 
-  cleanup: function () {
+  cleanup: function() {
     if (this.childView) { this.childView.cleanup(); }
     removeView(this);
   }

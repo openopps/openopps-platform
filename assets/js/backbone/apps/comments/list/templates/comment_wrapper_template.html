@@ -1,13 +1,9 @@
-<div class="box-pad-lr">
-  <h2>Discussion
-  </h2>
-</div>
-<div class="comment-spinner fullwidth text-center">
+<h2>Discussion</h2>
+<div class="comment-spinner center">
   Loading discussion... <i class="fa fa-spinner fa-spin"></i>
 </div>
-<div class="box-pad-lr">
-  <div id="comment-form-target"></div>
-  <ul id="comment-list">
+<div id="comment-form-target"></div>
+<ul id="comment-list">
   <% if ( user ) { %>
   <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
     No discussion yet.  Start one!
@@ -18,5 +14,4 @@
   </li>
   <% } %>
 </ul>
-</div>
-<div class="box-pad-lr box-pad-t topic-form-wrapper"></div>
+<div class="topic-form-wrapper"></div>

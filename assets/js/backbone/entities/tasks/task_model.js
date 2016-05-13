@@ -1,18 +1,14 @@
+'use strict';
 var _ = require('underscore');
 var Backbone = require('backbone');
-
-'use strict';
 
 var TaskModel = Backbone.Model.extend({
 
   defaults: {
-
-    projectId: null,
     title : null,
     description : null,
     tags: null,
     state: 'draft',
-
   },
 
   urlRoot: '/api/task',
@@ -61,6 +57,7 @@ var TaskModel = Backbone.Model.extend({
     });
   },
 
+  // TODO: I think this had to do with projects...
   orphan: function(data) {
     var self = this;
 
@@ -92,9 +89,7 @@ var TaskModel = Backbone.Model.extend({
    * @return { Boolean } Returns true if current state is draft.
    */
   isDraft: function () {
-
     return 'draft' === this.attributes.state;
-
   },
 
   /*
@@ -102,9 +97,7 @@ var TaskModel = Backbone.Model.extend({
    * @return { Boolean } Returns true if current state is submitted.
    */
   isSubmission: function () {
-
     return 'submitted' === this.attributes.state;
-
   },
 
   /*
@@ -114,12 +107,10 @@ var TaskModel = Backbone.Model.extend({
    * @return { Boolean }
    */
   hasBeenSubmitted: function () {
-
     return (
       this.attributes.submittedAt ||
       ( ! this.isDraft() && ! this.isSubmission() )
     );
-
   },
 
 });

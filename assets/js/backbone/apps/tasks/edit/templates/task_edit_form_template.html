@@ -1,6 +1,7 @@
 <form action="" id="task-edit-form">
-<div class="col-md-12 box center task-edit-button-bar">
-  <div class="create__buttons">
+
+<div class="p2 mt2 mb3 bg-white">
+  <div>
     <% if ( 'draft' === data.state ) { %>
     <button type="submit" id="js-task-create" class="btn btn-c2 wizard-submit" data-state="submit">
       Submit for Review
@@ -30,180 +31,178 @@
   </div>
   <% } %>
 </div>
-<div class="col-md-9 tight-box">
 
-  <div class="form-group">
-    <label for="time-required">
-      <h3>What type of effort is needed?</h3>
-    </label>
-    <% _.each(tagTypes['task-time-required'], function (t) { %>
-      <div class="radio">
-        <label>
-          <% var selected = madlibTags['task-time-required'] && (madlibTags['task-time-required'][0].id == t.id); %>
-          <input type="radio" name="task-time-required" value="<%- t.id %>" data-descr="<%- t.name %>"
-            <% if (selected) { %>checked<%}%> >
-          <%- t.name %><% if (t.description) { %> &mdash; <%= t.description %> <% } %>
+<div class="clearfix mxn2 mb3">
+  <div class="col col-12 md-col-9 px2">
+    <div class="p2 bg-white">
+      <div class="form-group">
+        <label for="time-required">
+          <h3>What type of effort is needed?</h3>
         </label>
+        <% _.each(tagTypes['task-time-required'], function (t) { %>
+          <div class="radio">
+            <label>
+              <% var selected = madlibTags['task-time-required'] && (madlibTags['task-time-required'][0].id == t.id); %>
+              <input type="radio" name="task-time-required" value="<%- t.id %>" data-descr="<%- t.name %>"
+                <% if (selected) { %>checked<%}%> >
+              <%- t.name %><% if (t.description) { %> &mdash; <%= t.description %> <% } %>
+            </label>
+          </div>
+        <% }); %>
       </div>
-    <% }); %>
-  </div>
-
-  <div class="form-group">
-    <label for="time-estimate">
-      <h3>How much time is needed?</h3>
-    </label>
-    <select id="time-estimate" class="dropdown">
-      <% _.each(tagTypes['task-time-estimate'], function (t) { %>
-        <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
-        <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
-      <% }); %>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="estimated-completion-date">
-      <h3>Estimated completion date (optional)</h3>
-    </label>
-    <input id="estimated-completion-date" type="date" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('YYYY-MM-DD') %>" <% } %> >
-  </div>
-
-  <div class="form-group">
-    <label for="time-required">
-      <h3>Where can participants be located?</h3>
-    </label>
-    <div class="radio">
-      <% var somewhere = madlibTags['location']; %>
-      <label>
-        <input type="radio" name="time-required" id="anywhere" <% if (_.isUndefined(somewhere)) { %> checked <% } %> >
-        Anywhere
-      </label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" name="time-required" id="specific-location" <% if (somewhere) { %> checked <% } %> >
-        At specific locations:
-        <div>
-          <input type="hidden" id="task_tag_location" name="location" />
+      <div class="form-group">
+        <label for="time-estimate">
+          <h3>How much time is needed?</h3>
+        </label>
+        <select id="time-estimate" class="dropdown">
+          <% _.each(tagTypes['task-time-estimate'], function (t) { %>
+            <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
+            <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="estimated-completion-date">
+          <h3>Estimated completion date (optional)</h3>
+        </label>
+        <input id="estimated-completion-date" type="date" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('YYYY-MM-DD') %>" <% } %> >
+      </div>
+      <div class="form-group">
+        <label for="time-required">
+          <h3>Where can participants be located?</h3>
+        </label>
+        <div class="radio">
+          <% var somewhere = madlibTags['location']; %>
+          <label>
+            <input type="radio" name="time-required" id="anywhere" <% if (_.isUndefined(somewhere)) { %> checked <% } %> >
+            Anywhere
+          </label>
         </div>
-      </label>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="people">
-      <h3>How many people are needed?</h3>
-    </label>
-    <select id="people" class="dropdown">
-      <% _.each(tagTypes['task-people'], function (t) { %>
-        <% var selected = madlibTags['task-people'] && (madlibTags['task-people'][0].id == t.id); %>
-        <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
-      <% }); %>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <h3>Headline</h3>
-    <p>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</p>
-    <p><em>(Maximum of 100 characters)</em></p>
-    <input id="task-title" type="text" placeholder="A short description of the problem." value="<%- data.title %>" class="form-control input-lg validate" data-validate="empty,count100"/>
-    <span class="help-block error-empty" style="display:none;">You must enter a title for this <span data-i18n="task">opportunity</span></span>
-    <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
-  </div>
-
-  <div class="form-group">
-    <h3>Description</h3>
-    <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span>
-    </p>
-    <p><em>(There is no limit on length, but we recommend 200 words or less.)</em></p>
-    <div class="markdown-edit"></div>
-    <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
-  </div>
-
-  <div class="form-group">
-    <h3>Tags</h3>
-    <p>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</p>
-    <p><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></p>
-    <input type="hidden" id="task_tag_skills" class="task-skills fullwidth"/>
-  </div>
-</div>
-<div class="col-md-3">
-  <div class="box equal-box">
-    <div>
-      <h3 style="display: inline-block;">Requestor</h3>
-      <a id="change-owner" href="#">Change</a>
-    </div>
-    <div class="project-people-show-div project-owner" data-userid="<%- data.userId %>">
-      <img src="/api/user/photo/<%- data.userId %>" alt="<%- data.owner.name %>"/>
-      <label class="project-people-show-label"><%- data.owner.name %></label>
-    </div>
-    <div class="change-project-owner" style="display: none;">
-      <input style="width: 100%" id="owner" name="owner" type="hidden" value="Edit Owner"/>
-    </div>
-    <div>
-      <h3 style="display: inline-block;">Participants</h3>
-      <% if (window.cache.currentUser.isAdmin) { %>
-      <a id="add-participant" href="#">Add</a>
-      <% } %>
-    </div>
-    <% if (data.volunteers.length > 0) { %>
-      <% _.each(data.volunteers, function (v) { %>
-      <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
-        <a href="#" class="delete-volunteer volunteer-delete fa fa-times"  id="delete-volunteer-<%- v.id %>" data-uid="<%- v.userId %>" data-vid="<%- v.id %>"></a>
-        <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>"/>
-        <label class="project-people-show-label"><%- v.name %></label>
+        <div class="radio">
+          <label>
+            <input type="radio" name="time-required" id="specific-location" <% if (somewhere) { %> checked <% } %> >
+            At specific locations:
+            <div>
+              <input type="hidden" id="task_tag_location" name="location" />
+            </div>
+          </label>
+        </div>
       </div>
-      <% }); %>
-    <% } else { %>
-      <div class="project-no-people">
-        None assigned
+      <div class="form-group">
+        <label for="people">
+          <h3>How many people are needed?</h3>
+        </label>
+        <select id="people" class="dropdown">
+          <% _.each(tagTypes['task-people'], function (t) { %>
+            <% var selected = madlibTags['task-people'] && (madlibTags['task-people'][0].id == t.id); %>
+            <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
+          <% }); %>
+        </select>
       </div>
-    <% } %>
-    <div class="add-participant" style="display: none;">
-      <input style="width: 100%" id="participant" name="participant" type="hidden" value="Add participant"/>
+      <div class="form-group">
+        <h3>Headline</h3>
+        <p>Write a few words that describe what needs to happen, inspires someone about the outcome, or entices them to learn something new.</p>
+        <p><em>(Maximum of 100 characters)</em></p>
+        <input id="task-title" type="text" placeholder="A short description of the problem." value="<%- data.title %>" class="form-control input-lg validate" data-validate="empty,count100"/>
+        <span class="help-block error-empty" style="display:none;">You must enter a title for this <span data-i18n="task">opportunity</span></span>
+        <span class="help-block error-count100" style="display:none;">The short description of the problem must be less than 100 characters.</span>
+      </div>
+      <div class="form-group">
+        <h3>Description</h3>
+        <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span>
+        </p>
+        <p><em>(There is no limit on length, but we recommend 200 words or less.)</em></p>
+        <div class="markdown-edit"></div>
+        <span class="help-block error-empty" style="display:none;">You must enter a description for this <span data-i18n="task">opportunity</span></span>
+      </div>
+      <div class="form-group">
+        <h3>Tags</h3>
+        <p>Create tags using keywords that describe the opportunity. Include the focus area, mission of the work and skills they will develop through as part of the <span data-i18n="task">opportunity</span>.</p>
+        <p><em>(Put a comma between each one. Example: Cyber Security, Research, employee engagement)</em></p>
+        <input type="hidden" id="task_tag_skills" class="task-skills fullwidth"/>
+      </div>
+    </div>
+  </div>
+  <div class="col col-12 md-col-3 px2">
+    <div class="p2 bg-white">
       <div>
-        <input type="checkbox" id="participant-notify" name="participant-notify">Notify participant</input>
+        <h3 style="display: inline-block;">Requestor</h3>
+        <a id="change-owner" href="#">Change</a>
       </div>
-    </div>
-
-    <h3>Progress</h3>
-
-    <div class="progress--date">
-      <label for="submittedAt">Submitted date</label>
-      <input id="js-edit-date-submitted" class="form-control timepicker" type="text" name="submittedAt">
-    </div>
-
-    <div id="div-publishedAt">
-      <label for="publishedAt">Published date</label>
-      <input id="publishedAt" name="publishedAt" class="form-control timepicker" type="text">
-    </div>
-
-    <div id="div-assignedAt">
-      <label for="assignedAt">Assigned date</label>
-      <% if (data.assignedAt) { %>
-        <input id="assignedAt" name="assignedAt" class="form-control timepicker" type="text">
+      <div class="project-people-show-div project-owner" data-userid="<%- data.owner.id %>">
+        <img src="/api/user/photo/<%- data.owner.id %>" alt="<%- data.owner.name %>" class="project-people"/>
+        <label class="project-people-show-label"><%- data.owner.name %></label>
+      </div>
+      <div class="change-project-owner" style="display: none;">
+        <input style="width: 100%" id="owner" name="owner" type="hidden" value="Edit Owner"/>
+      </div>
+      <div>
+        <h3 style="display: inline-block;">Participants</h3>
+        <% if (window.cache.currentUser.isAdmin) { %>
+        <a id="add-participant" href="#">Add</a>
+        <% } %>
+      </div>
+      <% if (data.volunteers.length > 0) { %>
+        <% _.each(data.volunteers, function (v) { %>
+        <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+          <a href="#" class="volunteer-delete fa fa-times" data-uid="<%- v.userId %>" data-vid="<%- v.id %>"></a>
+          <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>"  class="project-people"/>
+          <label class="project-people-show-label"><%- v.name %></label>
+        </div>
+        <% }); %>
       <% } else { %>
-        Not yet assigned.
+        <div class="project-no-people">
+          None assigned
+        </div>
       <% } %>
-    </div>
+      <div class="add-participant" style="display: none;">
+        <input style="width: 100%" id="participant" name="participant" type="hidden" value="Add participant"/>
+        <div>
+          <input type="checkbox" id="participant-notify" name="participant-notify">Notify participant</input>
+        </div>
+      </div>
 
-    <div id="div-completedAt">
-      <label for="completedAt">Completed date</label>
-      <% if (data.completedAt) { %>
-        <input id="completedAt" name="completedAt" class="form-control timepicker" type="text">
-      <% } else { %>
-        Not yet completed.
-      <% } %>
-    </div>
+      <h3>Progress</h3>
 
+      <div class="progress--date">
+        <label for="submittedAt">Submitted date</label>
+        <input id="js-edit-date-submitted" class="form-control timepicker" type="date" name="submittedAt">
+      </div>
+
+      <div id="div-publishedAt">
+        <label for="publishedAt">Published date</label>
+        <input id="publishedAt" name="publishedAt" class="form-control timepicker" type="date">
+      </div>
+
+      <div id="div-assignedAt">
+        <label for="assignedAt">Assigned date</label>
+        <% if (data.assignedAt) { %>
+          <input id="assignedAt" name="assignedAt" class="form-control timepicker" type="date">
+        <% } else { %>
+          Not yet assigned.
+        <% } %>
+      </div>
+
+      <div id="div-completedAt">
+        <label for="completedAt">Completed date</label>
+        <% if (data.completedAt) { %>
+          <input id="completedAt" name="completedAt" class="form-control timepicker" type="date">
+        <% } else { %>
+          Not yet completed.
+        <% } %>
+      </div>
+
+    </div>
+    <aside>
+      <h4>Guidance for Creating Tasks</h4>
+      <p>If you're new to posting opportunities, <a>10 Tips for Creating the Perfect Open Opportunity Task</a> will get you headed in the right direction.</p>
+      <p>Information on the task creation process is in the <a>Task Creator Toolkit</a>.</p>
+    </aside>
   </div>
-  <aside>
-    <h4>Guidance for Creating Tasks</h4>
-    <p>If you're new to posting opportunities, <a>10 Tips for Creating the Perfect Open Opportunity Task</a> will get you headed in the right direction.</p>
-    <p>Information on the task creation process is in the <a>Task Creator Toolkit</a>.</p>
-  </aside>
 </div>
-<div class="col-md-12 box center task-edit-button-bar">
-  <div class="create__buttons">
+
+<div class="p2 mb3 bg-white">
+  <div>
     <% if ( 'draft' === data.state ) { %>
     <button type="submit" class="btn btn-c2 wizard-submit" data-state="submit">
       Submit for Review
@@ -233,4 +232,5 @@
   </div>
   <% } %>
 </div>
+
 </form>

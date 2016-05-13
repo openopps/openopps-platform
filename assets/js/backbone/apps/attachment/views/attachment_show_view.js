@@ -5,12 +5,13 @@ var jqIframe = require('blueimp-file-upload/js/jquery.iframe-transport');
 var jqFU = require('blueimp-file-upload/js/jquery.fileupload.js');
 var TimeAgo = require('../../../../vendor/jquery.timeago');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
+
 var async = require('async');
 var Popovers = require('../../../mixins/popovers');
-var AITemplate = require('../templates/attachment_item_template.html');
-var ASTemplate = require('../templates/attachment_show_template.html');
 
+var fs = require('fs');
+var AITemplate = fs.readFileSync(__dirname + '/../templates/attachment_item_template.html').toString();
+var ASTemplate = fs.readFileSync(__dirname + '/../templates/attachment_show_template.html').toString();
 
 var popovers = new Popovers();
 
@@ -56,7 +57,7 @@ var AttachmentShowView = Backbone.View.extend({
 
 
     $('#attachment-fileupload').fileupload({
-      url: "/api/file/create",
+      url: "/api/upload/create",
       dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       add: function (e, data) {
@@ -71,13 +72,14 @@ var AttachmentShowView = Backbone.View.extend({
         );
       },
       done: function (e, data) {
+        var result;
         // for IE8/9 that use iframe
         if (data.dataType == 'iframe text') {
-          var result = JSON.parse(data.result);
+          result = JSON.parse(data.result);
         }
         // for modern XHR browsers
         else {
-          var result = JSON.parse($(data.result).text());
+          result = JSON.parse($(data.result).text());
         }
 
         // store id in the database with the file
@@ -103,7 +105,7 @@ var AttachmentShowView = Backbone.View.extend({
         if (data.jqXHR.status == 413) {
           message = "The uploaded file exceeds the maximum file size.";
         }
-        self.$(".file-upload-alert > span").html(message)
+        self.$(".file-upload-alert > span").html(message);
         self.$(".file-upload-alert").show();
       }
     });
@@ -111,7 +113,7 @@ var AttachmentShowView = Backbone.View.extend({
   },
 
   render: function () {
-    data = {
+    var data = {
       user: window.cache.currentUser,
       canAdd:
         // Admins

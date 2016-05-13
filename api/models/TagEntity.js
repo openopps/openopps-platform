@@ -21,10 +21,6 @@ module.exports = {
       collection: 'user',
       via: 'tags'
     },
-    projects: {
-      collection: 'project',
-      via: 'tags'
-    },
     tasks: {
       collection: 'task',
       via: 'tags'

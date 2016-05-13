@@ -1,30 +1,31 @@
+var $ = require('jquery');
+window.jQuery = $;    // TODO: this is weird, but Boostrap wants it
 
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Bootstrap = require('bootstrap');
-var utils = require('../../../mixins/utilities');
 var BaseController = require('../../../base/base_controller');
 var LoginView = require('../views/login_view');
 var login = require('../../../config/login.json');
 var ModalComponent = require('../../../components/modal');
 
 
-Login = BaseController.extend({
+var Login = BaseController.extend({
 
   events: {
-    "click #register-cancel"   : "showLogin",
-    "click #login-register"    : "showRegister",
+    "click #register-cancel": "showLogin",
+    "click #login-register": "showRegister",
     "click #forgot-done-cancel": "showLogin",
-    "click #forgot-cancel"     : "showLogin",
-    "click #forgot-password"   : "showForgot"
+    "click #forgot-cancel": "showLogin",
+    "click #forgot-password": "showForgot"
   },
 
-  initialize: function ( options ) {
+  initialize: function(options) {
     this.options = options;
     this.initializeView();
   },
 
-  initializeView: function () {
+  initializeView: function() {
     var self = this;
     if (this.loginView) {
       this.loginView.cleanup();
@@ -32,8 +33,9 @@ Login = BaseController.extend({
     }
 
     // initialize the modal
+    var disableClose;
     if (!_.isUndefined(this.options.message)) {
-      var disableClose = this.options.message.disableClose || false;
+      disableClose = this.options.message.disableClose || false;
     }
     this.modalComponent = new ModalComponent({
       el: this.el,
@@ -53,7 +55,7 @@ Login = BaseController.extend({
     this.$("#forgot-done-view").hide();
     $("#login").modal('show');
 
-    self.listenTo(window.cache.userEvents, "user:login", function (user) {
+    self.listenTo(window.cache.userEvents, "user:login", function(user) {
       // hide the modal
       self.stopListening(window.cache.userEvents);
       // window.cache.userEvents.stopListening();
@@ -65,17 +67,16 @@ Login = BaseController.extend({
           window.cache.userEvents.trigger("user:login:success:navigate", user);
         }
       }).modal('hide');
-
     });
 
     // clean up no matter how the modal is closed
-    $('#login').bind('hidden.bs.modal', function () {
+    $('#login').bind('hidden.bs.modal', function() {
       window.cache.userEvents.trigger("user:login:close");
       self.cleanup();
     });
   },
 
-  showRegister: function (e) {
+  showRegister: function(e) {
     if (e.preventDefault) e.preventDefault();
     this.$("#login-view").hide();
     this.$("#login-footer").hide();
@@ -87,7 +88,7 @@ Login = BaseController.extend({
     this.$("#forgot-done-footer").hide();
   },
 
-  showLogin: function (e) {
+  showLogin: function(e) {
     if (e.preventDefault) e.preventDefault();
     this.$("#login-view").show();
     this.$("#login-footer").show();
@@ -99,7 +100,7 @@ Login = BaseController.extend({
     this.$("#forgot-done-footer").hide();
   },
 
-  showForgot: function (e) {
+  showForgot: function(e) {
     if (e.preventDefault) e.preventDefault();
     this.$("#forgot-view").show();
     this.$("#forgot-footer").show();
@@ -119,7 +120,6 @@ Login = BaseController.extend({
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     removeView(this);
   }
-
 });
 
 module.exports = Login;

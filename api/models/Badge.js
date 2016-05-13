@@ -58,6 +58,7 @@ module.exports = {
   // if the badge was not explicitly set to be silent
   // send out a notification to the user
   afterCreate: function(model, done) {
+    sails.log.verbose('Badge afterCreate', model);
     if (model.silent === true) return done();
 
     User.find({ id: model.user }).exec(function(err, users) {
@@ -143,15 +144,13 @@ module.exports = {
     var badge   = { user: userId },
         counter = { ongoing: 0, oneTime: 0 },
         ongoingTaskId, oneTimeTaskId;
-
+    sails.log.verbose('awardForTaskPublish (user tasks)', userId, tasks)
     // Check if the badge update should be occurring silently by checking the `opts`.
     badge.silent = ( opts && ! _.isUndefined( opts.silent ) ) ? opts.silent : false;
 
     // Catch if `opts` is an actual callback and reassign it to `done`.
     if ( _.isFunction( opts ) && _.isUndefined( done ) ) {
-
       done = opts;
-
     }
 
     tasks.forEach(function(t) {
@@ -178,13 +177,15 @@ module.exports = {
     }
 
     if (badge.type) {
-      Badge.findOrCreate(badge, badge, function(err, b){
+      Badge.findOrCreate(badge, badge, function(err, b) {
         b = [b];
         // swallow a potential error (expected) that the badge
         // already exists
         if (err && err._e.toString().match('Badge already exists')) {
           err = null;
           b = [];
+        } else {
+          sails.log.verbose('awardForTaskPublish badge created (badge)', b)
         }
         if (err) sails.log.error(err);
         if (done) return done(err, b);

@@ -2,12 +2,16 @@ var Bootstrap = require('bootstrap');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var async = require('async');
-var utilities = require('../../../../mixins/utilities');
 var MarkdownEditor = require('../../../../components/markdown_editor');
 var TaskModel = require('../../../../entities/tasks/task_model');
-var TaskFormTemplate = require('../templates/task_form_template.html');
 var TagFactory = require('../../../../components/tag_factory');
 var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
+
+var fs = require('fs');
+var TaskFormTemplate = fs.readFileSync(`${__dirname}/../templates/task_form_template.html`).toString();
+
+var i18n = require('i18next');
+require('jquery-i18next');
 
 var TaskFormView = Backbone.View.extend({
 
@@ -109,17 +113,12 @@ var TaskFormView = Backbone.View.extend({
    * Initialize the event listeners for this ViewController.
    */
   initializeListeners: function () {
-
     var view = this;
 
     _.extend(this, Backbone.Events);
-
-    this.collection.on( 'task:draft:success', function ( task ) {
-
-      view.renderSaveSuccessModal();
-
-    } );
-
+    this.collection.on( 'task:draft:success', function (task) {
+      view.renderSaveSuccessModal(true);
+    });
   },
 
   /*
@@ -150,9 +149,9 @@ var TaskFormView = Backbone.View.extend({
 
     this.$( '#time-options' ).css( 'display', 'none' );
 
-    this.$el.i18n();
+    this.$el.localize();
 
-    this.renderSaveSuccessModal();
+    this.renderSaveSuccessModal(false);
 
     // Return this for chaining.
     return this;
@@ -162,24 +161,18 @@ var TaskFormView = Backbone.View.extend({
   /*
    * Render modal for the Task Creation Form ViewController
    */
-  renderSaveSuccessModal: function () {
-
+  renderSaveSuccessModal: function(show) {
     var $modal = this.$( '.js-success-message' );
-    var userId = this.model.attributes.userId;
+    var owner = this.model.attributes.owner;
 
-    if ( null == userId ) {
-
-      $modal.hide();
-
-    } else {
-
-      $modal.find( '.js-profile-link' ).attr( 'href', '/profile/' + userId );
-
+    if (show && owner) {
+      $modal.find( '.js-profile-link' ).attr( 'href', '/profile/' + owner.id );
       $modal.slideDown( 'slow' );
       $modal.one( 'mouseout', function ( e ) {
         _.delay( _.bind( $modal.slideUp, $modal, 'slow' ), 4200 );
-      } );
-
+      });
+    } else {
+      $modal.hide();
     }
 
   },
@@ -338,7 +331,6 @@ var TaskFormView = Backbone.View.extend({
    * @param { Object } event A jQuery event object
    */
   saveDraft: function ( event ) {
-
     var view = this;
 
     this.model.set( {

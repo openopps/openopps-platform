@@ -74,10 +74,7 @@ module.exports = {
           if (config.link) {
             result.link = config.link + models[i].id;
           }
-          // add image link for projects
-          if ((config.target == 'Project') && (result.coverId)) {
-            result.image = '/api/file/get/' + models[i].coverId;
-          }
+          // add image link for user
           if (config.target == 'User') {
             result.image = '/api/user/photo/' + models[i].id;
           }

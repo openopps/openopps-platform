@@ -1,4 +1,7 @@
 #!/bin/sh
+set -o verbose
+dropdb midas
+createdb midas
+npm run migrate
+npm run init
 
-# Drops the schema and recreates it, thereby removing all tables.
-psql -U midas -c "drop schema public cascade; create schema public;" midas

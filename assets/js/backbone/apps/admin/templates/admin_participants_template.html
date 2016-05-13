@@ -1,36 +1,32 @@
 <div class="alert alert-danger" style="display:none;">
 </div>
+<% if (participantList.length === 0) { %>
+  <div class="col-md-12 bg-white p2">
+    <td>No data.</td>
+  </div>
+<% } else { %>
 <div class="row">
   <div class="col-md-12 box box-pad-lr">
     <div class="row">
-      <div class="export-button pull-right tip" data-toggle="tooltip" data-placement="bottom"
+      <div class="export-button pull-right tip" data-toggle="tooltip" participantList-placement="bottom"
            title="Download list of all participants as a comma-separated file ready for import into Excel">
         <a href="/api/admin/participants?export=true">
           <i class="fa fa-download"></i>
         </a>
       </div>
-
     </div>
     <div class="row overflow-x">
       <div class="col-md-12">
-
         <table class="table table-hover table-condensed">
           <thead>
             <tr>
-              <% _.each(data[0], function(value, key) { %>
+              <% _.each(participantList[0], function(value, key) { %>
               <th><%- key %></th>
               <% }); %>
             </tr>
           </thead>
           <tbody>
-            <% if (data.length === 0) { %>
-            <tr class="empty-row">
-              <td colspan="<%- data[0].length %>">
-                No users found.
-              </td>
-            </tr>
-            <% } %>
-            <% _.each(data, function(row) { %>
+            <% _.each(participantList, function(row) { %>
             <tr>
               <% _.each(row, function(value) { %>
                 <td><%- value %></td>
@@ -44,3 +40,4 @@
     </div>
   </div>
 </div>
+<% } %>

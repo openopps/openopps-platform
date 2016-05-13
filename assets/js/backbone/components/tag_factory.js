@@ -5,33 +5,36 @@
  *
  */
 
+var $ = require('jquery');
+window.jQuery = $;    // TODO: this is weird, but select2 wants it
+
 var _ = require('underscore');
-var Backbone = require('backbone');
 var async = require('async');
-var utils = require('../mixins/utilities');
+var Backbone = require('backbone');
+var i18n = require('i18next');
 var marked = require('marked');
+var select2 = require('select2');
+
 var BaseComponent = require('../base/base_component');
-var jqSelection = require('../../vendor/jquery.selection');
 
 
-TagFactory = BaseComponent.extend({
-
-	initialize: function (options) {
+var TagFactory = BaseComponent.extend({
+  initialize: function(options) {
     this.options = options;
 
     return this;
   },
 
-  addTagEntities: function (tag, context, done) {
-  	//assumes
-  	//  tag -- array of tag objects to add
-  	//  tagType -- string specifying type for tagEntity table
+  addTagEntities: function(tag, context, done) {
+    //assumes
+    //  tag -- array of tag objects to add
+    //  tagType -- string specifying type for tagEntity table
     var self = this;
 
-  	//this is current solution to mark a tag object as on the fly added
-      if ( !tag || typeof tag.unmatched == 'undefined' || !tag.unmatched ){
-        return done();
-      }
+    //this is current solution to mark a tag object as on the fly added
+    if (!tag || typeof tag.unmatched == 'undefined' || !tag.unmatched) {
+      return done();
+    }
     //remove the flag that marks them as new
     delete tag.unmatched;
 
@@ -43,7 +46,7 @@ TagFactory = BaseComponent.extend({
         name: tag.id,
         data: tag.data
       },
-      success: function (data){
+      success: function(data) {
         if (context.data) {
           context.data.newTag = data;
           context.data.newItemTags.push(data);
@@ -61,7 +64,7 @@ TagFactory = BaseComponent.extend({
 
     optional:
     @param {String}   options.width='500px'      - CSS width attribute for the dropdown
-		@param {String}		options.placeholder='Yo'	 - Text that is initially displayed as a placeholder in field
+    @param {String}   options.placeholder='Yo'   - Text that is initially displayed as a placeholder in field
     @param {Boolean}  options.multiple=true      - Whether to allow multiple tags to be selected
     @param {Boolean}  options.allowCreate=true   - Whether a `createSearchChoice` option will be given
     @param {String[]} options.tokenSeparators=[] - Array of valid tag delimeters
@@ -72,53 +75,53 @@ TagFactory = BaseComponent.extend({
   createTagDropDown: function(options) {
 
     //location tags get special treatment
-    var isLocation = (options.type === 'location')
+    var isLocation = (options.type === 'location');
 
     //have to check these beforehand to allow False values to override the default True
-    options.multiple    = (options.multiple    !== undefined ? options.multiple    : true);
+    options.multiple = (options.multiple !== undefined ? options.multiple : true);
     options.allowCreate = (options.allowCreate !== undefined ? options.allowCreate : true);
 
     var tagLabel = i18n.t("tag." + options.type);
-    
+
     //construct the settings for this tag type
     var settings = {
 
-      placeholder:        options.placeholder || "Start typing to select a " + tagLabel,
+      placeholder: options.placeholder || "Start typing to select a " + tagLabel,
       minimumInputLength: (isLocation ? 1 : 2),
-      selectOnBlur:       !isLocation,
-      width:              options.width || "500px",
-      tokenSeparators:    options.tokenSeparators || [],
-      multiple:           options.multiple,
+      selectOnBlur: !isLocation,
+      width: options.width || "500px",
+      tokenSeparators: options.tokenSeparators || [],
+      multiple: options.multiple,
 
-      formatResult: function (obj, container, query) {
+      formatResult: function(obj, container, query) {
         //allow the createSearchChoice to contain HTML
         return (obj.unmatched ? obj.name : _.escape(obj.name));
       },
 
-      formatSelection: function (obj, container, query) {
+      formatSelection: function(obj, container, query) {
         return (obj.unmatched ? obj.name : _.escape(obj.name));
       },
 
       ajax: {
         url: '/api/ac/tag',
         dataType: 'json',
-        data: function (term) {
+        data: function(term) {
           return {
             type: options.type,
             q: term
           };
         },
-        results: function (data) {
+        results: function(data) {
           return { results: data };
         }
       }
     };
 
     //if requested, give users the option to create new
-    if(options.allowCreate) {
-      settings.createSearchChoice = function (term, values) {
+    if (options.allowCreate) {
+      settings.createSearchChoice = function(term, values) {
         values = values.map(function(v) {
-          return v.value.toLowerCase();
+          return (v.value || '').toLowerCase();
         });
 
         if (values.indexOf(term.toLowerCase()) >= 0)
@@ -131,20 +134,18 @@ TagFactory = BaseComponent.extend({
           id: term,
           value: term,
           temp: true,
-          name: "<b>"+_.escape(term)+"</b> <i>" + (isLocation ?
+          name: "<b>" + _.escape(term) + "</b> <i>" + (isLocation ?
             "search for this location" :
             "click to create a new tag with this value") + "</i>"
         };
       };
     }
 
-
     //init Select2
-    var $sel = self.$(options.selector).select2(settings);
-
+    var $sel = $(options.selector).select2(settings);
 
     //event handlers
-    $sel.on("select2-selecting", function (e) {
+    $sel.on("select2-selecting", function(e) {
       if (e.choice.tagType === 'location') {
         if (e.choice.temp) {
           this.temp = true;
@@ -162,18 +163,18 @@ TagFactory = BaseComponent.extend({
               };
             });
             this.cache = $sel.select2('data');
-            if(settings.multiple) {
+            if (settings.multiple) {
               //remove the "Searching for..." text from multi-select boxes
               this.cache = _.reject(this.cache, function(item) {
                 return (item.name.indexOf('Searching') >= 0);
               });
             }
             $sel.select2({
-              data:               { results: d, text: 'name' },
-              width:              settings.width,
-              multiple:           settings.multiple,
-              formatResult:       settings.formatResult,
-              formatSelection:    settings.formatSelection,
+              data: { results: d, text: 'name' },
+              width: settings.width,
+              multiple: settings.multiple,
+              formatResult: settings.formatResult,
+              formatSelection: settings.formatSelection,
               createSearchChoice: settings.createSearchChoice,
             }).select2('data', this.cache).select2('open');
             $sel.remote = false;
@@ -183,7 +184,7 @@ TagFactory = BaseComponent.extend({
           delete this.temp;
         }
       } else { //if this is NOT a location tag
-        if ( e.choice.hasOwnProperty("unmatched") && e.choice.unmatched ){
+        if (e.choice.hasOwnProperty("unmatched") && e.choice.unmatched) {
           //remove the hint before adding it to the list
           e.choice.name = e.val;
         }
@@ -213,7 +214,7 @@ TagFactory = BaseComponent.extend({
     });
 
     //load initial data, if provided
-    if(options.data) {
+    if (options.data) {
       $sel.select2('data', options.data);
     }
 

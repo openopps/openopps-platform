@@ -1,10 +1,12 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utilities = require('../../../../mixins/utilities');
+
 var Autolinker = require('autolinker');
 var marked = require('marked');
-var CommentItemTemplate = require('../templates/comment_item_template.html');
+
+var fs = require('fs');
+var CommentItemTemplate = fs.readFileSync(`${__dirname}/../templates/comment_item_template.html`).toString();
 
 
 var CommentItemView = Backbone.View.extend({

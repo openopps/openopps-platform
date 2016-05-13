@@ -10,10 +10,9 @@ var async = require('async');
 var runSearch = function(type, q, params, cb) {
   var prelim = {};
   var results = [];
-
   var callSource = function(source, done) {
     // Get the source definition that matches the source name
-    var src = sails.config.sources.sources[source];
+    var src = sails.config.sources[source];
     // Find the source actor that can perform the query
     var actor = sails.services.sources[src.type];
     // Run the query and add the results
@@ -27,10 +26,10 @@ var runSearch = function(type, q, params, cb) {
   };
 
   // Iterate through each source and query it, compiling the results
-  async.each(sails.config.sources.autocomplete[type], callSource, function(err) {
+  async.each(sails.config.autocomplete[type], callSource, function(err) {
     // put the results in the order specified in the config
     // since async may get the results of each fn in random order
-    _.each(sails.config.sources.autocomplete[type], function (source) {
+    _.each(sails.config.autocomplete[type], function (source) {
       results = results.concat(prelim[source] || []);
     });
     cb(err, results);
@@ -109,11 +108,4 @@ module.exports = {
     });
   },
 
-  project: function (req, res) {
-    if (!req.param('q')) { return res.send([]); }
-    runSearch('project', req.param('q'), req.query, function (err, results) {
-      if (err) { return res.send(400, { message: 'Error performing search' }); }
-      return res.send(results);
-    });
-  }
 };

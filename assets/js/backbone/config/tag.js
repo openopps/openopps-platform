@@ -95,9 +95,6 @@ module.exports = {
   // This defines the part of the app and which tags apply
   // plural names are for searching the collection
   // singular names are for the individual show views.
-  project   : ['skill', 'topic', 'agency', 'location'],
-  projects  : ['skill', 'topic', 'agency', 'location'],
-
   profile   : ['skill', 'topic'],
   profiles  : ['skill', 'topic', 'agency', 'location'],
 

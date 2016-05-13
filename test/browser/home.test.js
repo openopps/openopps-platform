@@ -1,11 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
 var assert = chai.assert;
-var casper_chai = require('casper-chai');
-chai.use(casper_chai);
-
-// access environment vars
-var system = require('system');
 
 /**
  *
@@ -13,36 +8,50 @@ var system = require('system');
  *
  */
 
+casper.options.waitTimeout = 1000 * 15;
+casper.options.viewportSize = {width: 1000, height:1000};
+casper.userAgent('Mozilla/5.0');
+casper.on('remote.message', function(message) {
+  console.log('browser console.log ==> ', message);
+});
+casper.on('page.error', function(msg, trace) {
+  console.log('!!! page.error !!!')
+  console.log("Error:    " + msg, "ERROR");
+  console.log("trace:     ", trace);
+  // console.log("file:     " + trace[0].file, "WARNING");
+  // console.log("line:     " + trace[0].line, "WARNING");
+  // console.log("function: " + trace[0]["function"], "WARNING");
+});
+casper.on('resource.error', function(message) {
+  console.log('resource.error ==> ', message);
+});
+
 before(function() {
-  casper.start(system.env.TEST_ROOT, function afterStart() {
-    this.options = {
-      waitTimeout: 1000 * 15
-    };
-    this.on('remote.message', function(message) {
-      this.log('browser console.log ==> ' + message);
-    });
-  }).viewport(1000,1000).userAgent('Mozilla/5.0');
+  console.log('before', process.env.TEST_ROOT);
+  casper.start(process.env.TEST_ROOT);
 });
 
 describe('Home page', function() {
 
   it('should have success status', function() {
+    console.log('should have success status');
+
     casper.then(function() {
-      assert.equal(casper.currentHTTPStatus,200);
+      assert.equal(this.status().currentHTTPStatus , 200);
     });
   });
 
   it('should have correct title', function() {
     casper.then(function() {
-      assert.equal(casper.getTitle(), "midas");
+      assert.equal(casper.getTitle(), "Open Opportunities");
     });
   });
 
   it('should link to /tasks', function() {
     casper.then(function() {
-      casper.waitForText('Opportunities', function waitForTextOpportunities() {
-        casper.click('.tasks .nav-link[href]');
-        assert.equal(casper.getCurrentUrl(), system.env.TEST_ROOT + '/tasks');
+      casper.waitForText('Browse opportunities', function afterPageText() {
+        casper.click('a.nav-link');
+        assert.equal(casper.getCurrentUrl(), process.env.TEST_ROOT + '/tasks');
       });
     });
   });

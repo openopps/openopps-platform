@@ -25,13 +25,13 @@ module.exports = {
 
       data.user = user;
 
-      Task.findOne( { id: model.taskId} ).exec( function ( err, task ) {
+      Task.findOne( { id: model.task} ).exec( function ( err, task ) {
 
         if ( err ) { return done( err ); }
 
         data.task = task;
 
-        User.findOne( { id: task.userId } ).exec( function ( err, owner ) {
+        User.findOne( { id: task.owner } ).exec( function ( err, owner ) {
 
           if ( err ) { return done( err ); }
 

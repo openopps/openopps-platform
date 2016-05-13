@@ -1,13 +1,15 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var async = require('async');
-var utils = require('../../../mixins/utilities');
 var UIConfig = require('../../../config/ui.json');
+/** TODO:
 var Login = require('../../../config/login.json');
 var LoginController = require('../../login/controllers/login_controller');
-var HomeTemplate = require('../templates/home_view_template.html');
 var ModalPages = require('../../../components/modal_pages');
-var EmptyModalView = require('../views/empty_modal_view');
+**/
+var fs = require('fs');
+var HomeTemplate = fs.readFileSync(__dirname + '/../templates/home_view_template.html').toString();
+// TODO: var EmptyModalView = require('../views/empty_modal_view');
 
 var HomeView = Backbone.View.extend({
 
@@ -29,10 +31,6 @@ var HomeView = Backbone.View.extend({
       this.checkModalShow(window.cache.currentUser.id);
     });
 
-    if ( UIConfig.modalHome && UIConfig.modalHome.show && window.cache.currentUser ) {
-      this.getUserSettings(window.cache.currentUser.id);
-    }
-
   },
 
   render: function () {
@@ -44,7 +42,7 @@ var HomeView = Backbone.View.extend({
     this.$el.addClass('home');
     compiledTemplate = _.template(HomeTemplate)(data);
     this.$el.html(compiledTemplate);
-    this.$el.i18n();
+    // TODO: this.$el.localize();
 
   return this;
   },
@@ -81,76 +79,6 @@ var HomeView = Backbone.View.extend({
       this.modalPages.setSubmit(this.emptyModalView.childNext);
       this.modalPages.wizardButtons(null,$('.current'));
     }
-  },
-
-  updateUserSetting: function() {
-
-    this.deleteUserSettingByKey("showModalHome");
-
-  },
-
-  getUserSettings: function (userId) {
-    //does this belong somewhere else?
-    var self = this;
-    if ( _.isNull(userId) ){ return null; }
-    $.ajax({
-      url: '/api/usersetting/'+userId,
-      type: 'GET',
-      dataType: 'json'
-    })
-    .success(function(data){
-      _.each(data,function(setting){
-        //save active settings to the current user object
-        if ( setting.isActive ){
-          window.cache.currentUser[setting.key]=setting;
-        }
-      });
-      window.cache.userEvents.trigger("user:load:usersetting:success");
-    });
-  },
-
-  deleteUserSettingByKey: function(settingKey) {
-    //this function expects the entire row from usersetting in the form
-    //     window.cache.currentUser[settingKey] = {}
-    var self = this;
-
-    //if not set skip
-    var targetId =  ( window.cache.currentUser[settingKey] ) ? window.cache.currentUser[settingKey].id : null ;
-
-    if ( targetId ){
-      $.ajax({
-        url: '/api/usersetting/'+targetId,
-        type: 'DELETE',
-        dataType: 'json'
-      })
-    }
-
-  },
-
-  saveUserSettingByKey: function(userId, options) {
-    //this function expects the entire row from usersetting in the form
-    //     window.cache.currentUser[settingKey] = {}
-    var self = this;
-
-    //are values the same, stop
-    if ( options.newValue == options.oldValue ) { return true; }
-
-    //if delete old is set, delete exisitng value
-    //   default is delete
-    if ( !options.deleteOld ){
-      self.deleteUserSettingByKey(options.settingKey);
-    }
-
-    $.ajax({
-        url: '/api/usersetting/',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-          userId: userId,
-          key: options.settingKey,
-          value: options.newValue
-        }
-      });
   },
 
   loginClick: function (e) {

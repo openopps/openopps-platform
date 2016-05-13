@@ -9,7 +9,6 @@ _.extend(Decorator.prototype, {
   addMetrics: function(callback) {
     async.parallel([
       this.addLockedMetrics.bind(this),
-      this.addCreatedProjectMetrics.bind(this),
       this.addCreatedTaskMetrics.bind(this),
       this.addVolunteeredTaskMetrics.bind(this)
     ], function(err) { callback(); } );
@@ -17,22 +16,12 @@ _.extend(Decorator.prototype, {
 
   addLockedMetrics: function(done) {
     this.data.locked = false;
-    var passwordAttemptLimit = sails.config.auth.auth.local.passwordAttempts;
+    var passwordAttemptLimit = sails.config.auth.local.passwordAttempts;
     if (this.data.passwordAttempts >= passwordAttemptLimit) {
       this.data.locked = true;
     }
 
     done();
-  },
-
-  // TODO: this could probably be handled better by an association!
-  addCreatedProjectMetrics: function(done) {
-    this.data.projectsCreatedOpen = 0;
-    this.data.projectsCreatedClosed = 0;
-
-    ProjectOwner.find().where({userId: this.data.id}).exec(
-      this.curryHandler(this.findOwnedProjects, 'Owners', done)
-    );
   },
 
   // TODO: seems like this could be done similar to the others with a single query that is then sorted and set

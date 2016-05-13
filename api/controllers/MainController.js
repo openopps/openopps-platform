@@ -1,10 +1,9 @@
 /**
  * MainController
  *
- * @module    :: Controller
- * @description :: Contains logic for handling requests.
+ * @description :: Server-side logic for managing Mains
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-
 module.exports = {
   index: function(req, res) {
     // include data variables for the view passed by the policies
@@ -18,27 +17,25 @@ module.exports = {
       }).omit('inspect').value() : null
     };
     // get version information
-    sails.config.version(function (v) {
-      data.version = v;
-      data.version.cache = v.gitLong || Date.now();
-      // set cache headers to refresh every hour
-      res.set('Cache-Control', 'no-transform,public,max-age=3600,s-maxage=3600'); // HTTP 1.1.
-      // Hack for this issue: https://github.com/balderdashy/sails/issues/2094
-      if (!res.view) return res.send(200);
-      res.view(data);
-    });
+    data.version = sails.config.version;
+    // set cache headers to refresh every hour
+    res.set('Cache-Control', 'no-transform,public,max-age=3600,s-maxage=3600'); // HTTP 1.1.
+    // Hack for this issue: https://github.com/balderdashy/sails/issues/2094
+    if (!res.view) return res.send(200);
+    res.locals.layout = "main-layout";
+    res.view(data);
   },
 
-  // Tasks the should run on a cron schedule
-  cron: function(req, res) {
-    if (req.param('token') !== sails.config.cron_token) return res.send(400, 'No token');
-    res.send(200);
+	 cron: function(req, res) {
+		 if (req.param('token') !== sails.config.cron_token) return res.send(400, 'No token');
+		 res.send(200);
 
-    // Check for near due tasks
-    Task.sendNotifications(7);
+		 // Check for near due tasks
+		 Task.sendNotifications(7);
 
-    // Check for due tasks
-    Task.sendNotifications();
+		 // Check for due tasks
+		 Task.sendNotifications();
 
-  }
+	 }
+
 };

@@ -27,7 +27,7 @@ module.exports = {
         if (err) return done(err);
         data.task = task;
 
-        User.findOne({ id: task.userId }).exec(function(err, owner) {
+        User.findOne({ id: task.owner }).exec(function(err, owner) {
           if (err) return done(err);
           data.owner = owner;
           done(null, data);

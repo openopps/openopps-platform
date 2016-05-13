@@ -8,6 +8,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="/" title="<%- systemName %> Home">
+        <img src="/images/logo@2x.png" width="188" height="60">
       </a>
     </div>
     <div class="navbar-collapse collapse pull-right">
@@ -21,16 +22,7 @@
             </div>
           </a>
         </li>
-        <% if (ui.project.show) { %>
-        <li class="projects">
-          <a href="/projects" class="nav-link">
-            <div class="navbar-title">
-              <i class="fa fa-comments-o"></i>
-              <span data-i18n="ProjectPlural">Projects</span>
-            </div>
-          </a>
-        </li>
-        <% } %>
+        <!-- TODO People tab:  - hide temporarily
         <% if (user) { %>
         <li class="profiles">
           <a href="/profiles" class="nav-link">
@@ -41,7 +33,7 @@
           </a>
         </li>
         <% } %>
-
+      -->
         <li class="navbar-divider navbar-text"></li>
         <% if (user) { %>
           <li class="profile dropdown">
@@ -67,7 +59,7 @@
           </li>
         <% } else { %>
           <% if (login.signin !== false) { %>
-          <li class="navbar-1line"><a href="/auth" class="login"><i class="fa fa-plus-circle"></i> Sign In</a></li>
+          <li><a href="/auth" class="login"><i class="fa fa-plus-circle"></i> Sign In</a></li>
           <% } %>
         <% }; %>
       </ul>

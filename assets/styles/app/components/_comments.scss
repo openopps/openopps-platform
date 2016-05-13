@@ -1,0 +1,145 @@
+/*****************
+=  COMMENTS
+******************/
+
+.topic {
+  clear: both;
+  /*background-color: #f0f0f0;*/
+}
+
+li[data-topic='true'] {
+  cursor: pointer;
+  cursor: hand;
+}
+
+ul.comment-list > li {
+  list-style: none;
+  position: relative;
+}
+
+.comment-list-wrapper ul {
+  margin: 0;
+  padding: 0;
+  /*padding-top: 10px;*/
+  list-style-type: none;
+}
+
+.comment-form {
+  margin-left: 40px;
+  margin-bottom: 10px;
+}
+
+.comment-form-topic {
+  margin-bottom: 20px;
+}
+
+li.border-left {
+  margin-bottom: 5px;
+}
+
+.add-comment-button {
+  float: right;
+}
+
+.user-username {
+  font-weight: bold;
+}
+
+.comment-metadata {
+  font-size: 10px;
+  padding-top: 3px;
+  color: #767676;
+}
+
+.comment-item {
+  width: 100%;
+  overflow: hidden;
+  display: inline-table;
+  padding-top: 5px;
+}
+
+.comment-image {
+  float: left;
+  display: table-cell;
+  vertical-align: top;
+  max-height: 40px;
+  max-width: 40px;
+  height: 40px;
+  width: 40px;
+}
+
+.comment-inner {
+  padding: 5px;
+  display: table-cell;
+  width: 100%;
+  vertical-align: top;
+}
+
+.comment-alert-empty {
+  display: none;
+}
+
+.comment-content {
+  position: relative;
+  -ms-word-break: break-all;
+  /* Be VERY careful with this, breaks normal words wh_erever */
+  word-break: break-all;
+  /* Non standard for webkit */
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
+.comment-expand,
+.comment-contract {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+.comment-expand > .content,
+.comment-contract > .content {
+  font-size: 10px;
+}
+
+.comment-expand {
+  display: none;
+}
+
+.comment-input {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  position: relative;
+  height: auto;
+  min-height: 30px;
+}
+
+form.comment-submit .input-group-btn {
+  vertical-align: bottom;
+}
+
+#comment-empty {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+a.delete-comment {
+  float: right;
+  right: -2px;
+  top: -2px;
+  background-color: rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  border: 1px solid #c0c0c0;
+  color: #666;
+  font-size: 7px;
+  width: 12px;
+  height: 12px;
+  padding: 0px 3px;
+}
+
+#comment-form-target {
+  margin-top: 5px;
+}

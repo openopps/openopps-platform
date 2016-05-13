@@ -1,8 +1,10 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
-var AdminParticipantsTemplate = require('../templates/admin_participants_template.html');
+
+// templates
+var fs = require('fs');
+var AdminParticipantsTemplate = fs.readFileSync(`${__dirname}/../templates/admin_participants_template.html`).toString();
 
 
 var AdminParticipantsView = Backbone.View.extend({
@@ -27,9 +29,8 @@ var AdminParticipantsView = Backbone.View.extend({
       data: this.data,
       dataType: 'json',
       success: function (data) {
-        var template = _.template(AdminParticipantsTemplate, {
-              variable: 'data'
-            })(data);
+        data = { participantList: data};
+        var template = _.template(AdminParticipantsTemplate)(data);
         self.$el.html(template);
         $('.tip').tooltip();
       }

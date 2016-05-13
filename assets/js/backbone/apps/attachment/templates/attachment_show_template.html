@@ -1,24 +1,22 @@
-<div class="box-pad-lr">
-  <h2>
-    Attachments
-    <div class="btn btn-c0 btn-sm file-add attachment-filebtn fileinput-button" style="<% if (!canAdd) { %>display:none;<% } %>">
-      Add File
-      <input id="attachment-fileupload" type="file" name="files[]" title="Attach Files">
-    </div>
-  </h2>
-</div>
-<div class="attachment-fileupload box-pad-lr box-pad-t">
+<h4>
+  Attachments
+  <div class="btn btn-c0 btn-sm file-add attachment-filebtn fileinput-button" style="<% if (!canAdd) { %>display:none;<% } %>">
+    Add File
+    <input id="attachment-fileupload" type="file" name="files[]" title="Attach Files">
+  </div>
+</h4>
+<div class="py1 attachment-fileupload">
   <div style="display: none;" class="progress progress-striped active">
     <div class="progress-bar" style="width: 0"></div>
   </div>
 </div>
-<div class="box-pad-lr">
+<div>
   <div class="file-upload-alert alert alert-warning" style="display:none;">
     <span></span>
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
   </div>
 </div>
-<div class="box-pad-lr box-pad-t file-list">
+<div class="py1 file-list">
   <table class="table table-hover table-condensed">
     <tbody class="attachment-tbody">
       <tr class="attachment-none"><td>No Attachments</td></tr>

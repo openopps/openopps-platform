@@ -1,7 +1,9 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html');
 
+// templates
+var fs = require('fs');
+var AdminAgenciesTemplate = fs.readFileSync(`${__dirname}/../templates/admin_agencies_template.html`).toString();
 
 var AdminAgenciesView = Backbone.View.extend({
 
@@ -42,4 +44,3 @@ var AdminAgenciesView = Backbone.View.extend({
 });
 
 module.exports = AdminAgenciesView;
-

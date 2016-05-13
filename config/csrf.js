@@ -1,12 +1,11 @@
-console.log('Loading... ', __filename);
-
 /**
- * Cross-Site Request Forgery Protection
+ * Cross-Site Request Forgery Protection Settings
+ * (sails.config.csrf)
  *
  * CSRF tokens are like a tracking chip.  While a session tells the server that a user
  * "is who they say they are", a csrf token tells the server "you are where you say you are".
  *
- * When enabled, all non-GET requests to the Sails server must be accompanied by
+ * When enabled, all non-GET requests to the Sails server must be accompanied by
  * a special token, identified as the '_csrf' parameter.
  *
  * This option protects your Sails app against cross-site request forgery (or CSRF) attacks.
@@ -37,6 +36,29 @@ console.log('Loading... ', __filename);
  *
  * For more information on CSRF, check out:
  * http://en.wikipedia.org/wiki/Cross-site_request_forgery
+ *
+ * For more information on this configuration file, including info on CSRF + CORS, see:
+ * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.csrf.html
+ *
  */
 
-module.exports.csrf = true;
+/****************************************************************************
+*                                                                           *
+* Enabled CSRF protection for your site?                                    *
+*                                                                           *
+****************************************************************************/
+
+// module.exports.csrf = false;
+
+/****************************************************************************
+*                                                                           *
+* You may also specify more fine-grained settings for CSRF, including the   *
+* domains which are allowed to request the CSRF token via AJAX. These       *
+* settings override the general CORS settings in your config/cors.js file.  *
+*                                                                           *
+****************************************************************************/
+
+// module.exports.csrf = {
+//    grantTokenViaAjax: true,
+//    origin: ''
+// }

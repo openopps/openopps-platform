@@ -7,7 +7,7 @@ module.exports = function comment (req, res, next) {
     if (err || !c) { return res.send(400, { message: 'Error finding comment'}); }
 
     // Volunteer must be owned by the user (used by ownerOrAdmin() )
-    req.isOwner = (c.userId == req.user[0].id);
+    req.isOwner = (c.userId == req.user.id);
     return next();
   });
 };

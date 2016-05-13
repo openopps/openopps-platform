@@ -64,3 +64,5 @@ if (module.exports.httpProtocol === 'https') {
     }
   };
 }
+
+module.exports.appUrl = module.exports.httpProtocol + '://' + module.exports.hostName;

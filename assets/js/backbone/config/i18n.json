@@ -1,12 +1,7 @@
 {
-  "resGetPath"      : "/locales/__lng__/__ns__.json",
-
   "lng"             : "en-US",
-
   "fallbackLng"     : "en",
-
-  "useLocalStorage" : false,
-
   "sendMissing"     : false,
-  "sendMissingTo"   : "current"
+  "sendMissingTo"   : "current",
+  "debug"           : false
 }

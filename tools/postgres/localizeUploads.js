@@ -4,7 +4,7 @@ var Sails = require('sails'),
 Sails.lift({}, function(err, sails) {
   if (err) return console.error(err);
 
-  File.find({}).exec(function(err, files) {
+  Upload.find({}).exec(function(err, files) {
     if (err) return console.error(err);
     async.each(files, moveFile, function(err) {
       if (err) sails.log.error(err);
@@ -17,7 +17,7 @@ Sails.lift({}, function(err, sails) {
     var fd = file.id + '.' + file.name.split('.').pop();
     fileStore.store(fd, file.data.parent, function(err, message) {
       if (err) sails.log.error(err);
-      File.update(file.id, { fd: fd }).exec(function(err) {
+      Upload.update(file.id, { fd: fd }).exec(function(err) {
         if (err) sails.log.error(err);
         cb();
       });

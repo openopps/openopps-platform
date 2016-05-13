@@ -1,20 +1,28 @@
+// vendor libraries
+var $ = require('jquery');
 var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
-var UIConfig = require('../../../../config/ui.json');
 var async = require('async');
+var Backbone = require('backbone');
 var jqIframe = require('blueimp-file-upload/js/jquery.iframe-transport');
 var jqFU = require('blueimp-file-upload/js/jquery.fileupload.js');
-var MarkdownEditor = require('../../../../components/markdown_editor');
+var i18n = require('i18next');
+var i18nextJquery = require('jquery-i18next');
 var marked = require('marked');
+var MarkdownEditor = require('../../../../components/markdown_editor');
+
+// internal dependencies
+var UIConfig = require('../../../../config/ui.json');
 var TagShowView = require('../../../tag/show/views/tag_show_view');
-var ProfileShowTemplate = require('../templates/profile_show_template.html');
-var ProfileEditTemplate = require('../templates/profile_edit_template.html');
-var ShareTemplate = require('../templates/profile_share_template.txt');
 var Login = require('../../../../config/login.json');
 var ModalComponent = require('../../../../components/modal');
-var PAView = require('./profile_activity_view');
+var ProfileActivityView = require('./profile_activity_view');
 var TagFactory = require('../../../../components/tag_factory');
+
+// templates
+var fs = require('fs');
+var ProfileShowTemplate = fs.readFileSync(`${__dirname}/../templates/profile_show_template.html`).toString();
+var ProfileEditTemplate = fs.readFileSync(`${__dirname}/../templates/profile_edit_template.html`).toString();
+var ShareTemplate = fs.readFileSync(`${__dirname}/../templates/profile_share_template.txt`).toString();
 
 
 var ProfileShowView = Backbone.View.extend({
@@ -61,9 +69,7 @@ var ProfileShowView = Backbone.View.extend({
             replace: true,
           }
         );
-
       }
-
     }
 
     if (this.data.saved) {
@@ -84,10 +90,18 @@ var ProfileShowView = Backbone.View.extend({
     });
   },
 
+  getTags: function(types) {
+    var allTags = this.model.attributes.tags;
+    var result = _.filter(allTags, function(tag) {
+      return _.contains(types, tag.type);
+    });
+    return result;
+  },
   render: function () {
     var data = {
       login: Login,
       data: this.model.toJSON(),
+      tags: this.getTags(['skill', 'topic']),
       user: window.cache.currentUser || {},
       edit: false,
       saved: this.saved,
@@ -102,15 +116,14 @@ var ProfileShowView = Backbone.View.extend({
 
     var template = this.edit ? _.template(ProfileEditTemplate)(data) : _.template(ProfileShowTemplate)(data);
     this.$el.html(template);
-    this.$el.i18n();
+    this.$el.localize();
 
     // initialize sub components
     this.initializeFileUpload();
     this.initializeForm();
     this.initializeSelect2();
-    this.initializeLikes();
     this.initializeTags();
-    this.initializePAView();
+    this.initializeProfileActivityView();
     this.initializeTextArea();
     this.updatePhoto();
     this.updateProfileEmail();
@@ -127,7 +140,7 @@ var ProfileShowView = Backbone.View.extend({
     var self = this;
 
     $('#fileupload').fileupload({
-        url: "/api/file/create",
+        url: "/api/upload/create",
         dataType: 'text',
         acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
         formData: { 'type': 'image_square' },
@@ -180,7 +193,8 @@ var ProfileShowView = Backbone.View.extend({
           profileLocation: this.model.get('location') ?
             this.model.get('location').name : '',
           profileAgency: this.model.get('agency') ?
-            this.model.get('agency').name : ''
+            this.model.get('agency').name : '',
+          i18n: i18n
         },
         body = _.template(ShareTemplate)(data),
         link = 'mailto:?subject=' + encodeURIComponent(subject) +
@@ -194,6 +208,8 @@ var ProfileShowView = Backbone.View.extend({
     if (this.tagView) { this.tagView.cleanup(); }
     if (this.edit) showTags = false;
 
+    // this is only used for edit view now
+    // TODO: refactor / rename, either reuse or simplify
     this.tagView = new TagShowView({
       model: this.model,
       el: '.tag-wrapper',
@@ -205,33 +221,24 @@ var ProfileShowView = Backbone.View.extend({
     this.tagView.render();
   },
 
-  initializePAView: function () {
-    if (this.projectView) { this.projectView.cleanup(); }
+  initializeProfileActivityView: function () {
     if (this.taskView) { this.taskView.cleanup(); }
     if (this.volView) { this.volView.cleanup(); }
     $.ajax('/api/user/activities/' + this.model.attributes.id).done(function (data) {
-      this.projectView = new PAView({
-        model: this.model,
-        el: '.project-activity-wrapper',
-        target: 'project',
-        handle: 'project',
-        data: data.projects
-      });
-      this.projectView.render();
-      this.taskView = new PAView({
+      this.taskView = new ProfileActivityView({
         model: this.model,
         el: '.task-createdactivity-wrapper',
         target: 'task',
-        handle: 'task',
-        data: data.tasks
+        handle: 'task',  // used in css id
+        data: data.tasks.created
       });
       this.taskView.render();
-      this.volView = new PAView({
+      this.volView = new ProfileActivityView({
         model: this.model,
         el: '.task-activity-wrapper',
         target: 'task',
-        handle: 'volTask',
-        data: data.volTasks
+        handle: 'volTask',  // used in css id
+        data: data.tasks.volunteered
       });
       this.volView.render();
 
@@ -285,19 +292,6 @@ var ProfileShowView = Backbone.View.extend({
       $("#profile-save, #submit").removeClass("btn-success");
       $("#profile-save, #submit").addClass("btn-c2");
     });
-  },
-
-  initializeLikes: function() {
-    $("#like-number").text(this.model.attributes.likeCount);
-    if (parseInt(this.model.attributes.likeCount) === 1) {
-      $("#like-text").text($("#like-text").data('singular'));
-    } else {
-      $("#like-text").text($("#like-text").data('plural'));
-    }
-    if (this.model.attributes.like) {
-      $("#like-button-icon").removeClass('fa fa-star-o');
-      $("#like-button-icon").addClass('fa fa-star');
-    }
   },
 
   initializeSelect2: function () {
@@ -451,7 +445,6 @@ var ProfileShowView = Backbone.View.extend({
   cleanup: function () {
     if (this.md) { this.md.cleanup(); }
     if (this.tagView) { this.tagView.cleanup(); }
-    if (this.projectView) { this.projectView.cleanup(); }
     if (this.taskView) { this.taskView.cleanup(); }
     if (this.volView) { this.volView.cleanup(); }
     removeView(this);

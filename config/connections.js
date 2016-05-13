@@ -1,8 +1,7 @@
+console.log('Loading... ', __filename);
 var cfenv = require('cfenv'),
     appEnv = cfenv.getAppEnv(),
     dbURL = appEnv.getServiceURL('psql-openopps');
-
-console.log('Loading... ', __filename);
 
 /**
  * Connections
@@ -15,25 +14,20 @@ console.log('Loading... ', __filename);
  *
  * Each model must have a `connection` property (a string) which is references the name of one
  * of these connections.  If it doesn't, the default `connection` configured in `config/models.js`
- * will be applied.  Of course, a connection can be (and usually is) shared by multiple models.
+ * will be applied.  Of course, a connection can (and usually is) shared by multiple models.
  * .
  * Note: If you're using version control, you should put your passwords/api keys
  * in `config/local.js`, environment variables, or use another strategy.
- * (this is to prevent you from inadvertently pushing sensitive credentials up to your repository.)
+ * (this is to prevent you inadvertently sensitive credentials up to your repository.)
  *
  * For more information on configuration, check out:
- * http://links.sailsjs.org/docs/config/connections
+ * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.connections.html
  */
 
 module.exports.connections = {
-
   memory: {
     adapter: 'sails-disk',
     inMemory: true
-  },
-
-  test: {
-    adapter: 'sails-disk'
   },
 
   local: {
@@ -49,8 +43,8 @@ module.exports.connections = {
     user        : 'midas',
     password    : 'midas',
     database    : 'midas',
-    softDelete  : true,
-    populateFast: true
+    // populateFast: true  -- removed with sails 0.12.1 upgrade
+    // TODO: delete?       -- was this part of soft-delete implementation?
   }
 
 };
@@ -60,7 +54,6 @@ if (dbURL) {
     postgresql: {
       adapter: 'sails-postgresql',
       url: dbURL,
-      softDelete: true,
       populateFast: true
     }
   };

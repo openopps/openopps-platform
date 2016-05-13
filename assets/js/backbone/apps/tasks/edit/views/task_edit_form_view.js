@@ -1,11 +1,13 @@
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var UIConfig = require('../../../../config/ui.json');
 var marked = require('marked');
 var MarkdownEditor = require('../../../../components/markdown_editor');
-var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TagFactory = require('../../../../components/tag_factory');
 var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
+var TaskEditFormTemplate = fs.readFileSync(__dirname + '/../templates/task_edit_form_template.html').toString();
 
 
 var TaskEditFormView = Backbone.View.extend({
@@ -90,7 +92,7 @@ var TaskEditFormView = Backbone.View.extend({
 
     compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
     this.$el.html(compiledTemplate);
-    this.$el.i18n();
+    this.$el.localize();
 
     // DOM now exists, begin select2 init
     this.initializeSelect2();
@@ -102,29 +104,7 @@ var TaskEditFormView = Backbone.View.extend({
       textAreaId       : 'task-description',
     });
 
-    // Set up time pickers
-    this.$( '#js-edit-date-submitted' ).datetimepicker( {
-      defaultDate: this.data.data.submittedAt,
-    } );
-
-    $('#publishedAt').datetimepicker({
-      defaultDate: this.data.data.publishedAt,
-    });
-
-    if (this.data.data.assignedAt) {
-      $('#assignedAt').datetimepicker({
-        defaultDate: this.data.data.assignedAt,
-      });
-    }
-
-    if (this.data.data.completedAt) {
-      $('#completedAt').datetimepicker({
-        defaultDate: this.data.data.completedAt,
-      });
-    }
-
     this.$( '.js-success-message' ).hide();
-
   },
 
   initializeSelect2: function () {
@@ -277,7 +257,7 @@ var TaskEditFormView = Backbone.View.extend({
       }
 
       if ( owner ) { modelData[ 'userId' ] = owner.id; }
-      if ( completedBy != '' ) { modelData[ 'completedBy' ] = completedBy; }
+      if ( completedBy !== '' ) { modelData[ 'completedBy' ] = completedBy; }
       if ( newParticipant ) {
         if ( this.$( '#participant-notify:checked' ).length > 0 ) { silent = false; }
         $.ajax( {

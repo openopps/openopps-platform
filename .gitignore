@@ -1,11 +1,8 @@
 lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
+coverage/*
+
+# don't want to check it in temporary import data
+tools/import/*
 
 pids
 logs
@@ -14,6 +11,7 @@ results
 .env
 .cf-env
 cf-ssh.yml
+*credentials.json
 
 npm-debug.log
 
@@ -29,6 +27,11 @@ config/local.js
 # Ignore production files
 assets/build
 assets/uploads
+assets/js/bundle.js
+
+# Ignore uswds files, these are set up during npm install
+assets/styles/uswds.css
+assets/images/uswds
 
 # Ignore vagrant & chef tmp files
 .vagrant/*
@@ -46,3 +49,10 @@ chef/cookbooks/*
 
 # ruby version manager
 .rvmrc
+
+# code coverage
+coverage
+
+.python-version
+.sass-cache/*
+npm-debug.log*

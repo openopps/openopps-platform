@@ -8,13 +8,14 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var jqCaret = require('jquery.caret/dist/jquery.caret.min');
 var jqAt = require('jquery.atwho/dist/js/jquery.atwho');
-var utils = require('../../../../mixins/utilities');
+
 var marked = require('marked');
 var CommentCollection = require('../../../../entities/comments/comment_collection');
-var CommentFormTemplate = require('../templates/comment_form_template.html');
-var CommentAcTemplate = require('../templates/comment_ac_template.html');
-var CommentInlineTemplate = require('../templates/comment_inline_template.html');
 
+var fs = require('fs');
+var CommentFormTemplate = fs.readFileSync(`${__dirname}/../templates/comment_form_template.html`).toString();
+var CommentAcTemplate = fs.readFileSync(`${__dirname}/../templates/comment_ac_template.html`).toString();
+var CommentInlineTemplate = fs.readFileSync(`${__dirname}/../templates/comment_inline_template.html`).toString();
 
 var CommentFormView = Backbone.View.extend({
 

@@ -1,10 +1,12 @@
-
+// vendor
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
-var AdminTaskTemplate = require('../templates/admin_task_template.html');
+
 var TaskModel = require( '../../../entities/tasks/task_model' );
 
+// templates
+var fs = require('fs');
+var AdminTaskTemplate = fs.readFileSync(`${__dirname}/../templates/admin_task_template.html`).toString();
 
 var AdminTaskView = Backbone.View.extend({
 

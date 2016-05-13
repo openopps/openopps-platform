@@ -1,5 +1,5 @@
-var UIConfig = require('../config/ui.json');
 var _ = require('underscore');
+var UIConfig = require('../config/ui.json');
 var ShowMarkdown = require('../components/show_markdown');
 
 module.exports = {
@@ -22,5 +22,4 @@ module.exports = {
     }
     return this;
   },
-
 };

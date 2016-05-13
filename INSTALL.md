@@ -69,6 +69,7 @@ run the following commands in the interactive terminal (which runs them
 in the Docker machine):
 
 ```
+npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
 npm install
 npm run init
 npm start
@@ -119,9 +120,9 @@ Install node.js. As of Feb 2015 Node.js has moved to 0.12 for its stable version
 So back to the command line. We assume that nvm is installed and set up
 (added to `.bashrc` or equivalent).
 
-    nvm install 0.10
-    nvm alias default 0.10
-    nvm version             # should be something like v0.10.38
+    nvm install 4.2.2
+    nvm alias default 4.2.2
+    nvm version             # should be v4.2.2
 
 Then follow platform-independent steps below starting at [clone the git repository](#clone-the-git-repository).
 
@@ -205,9 +206,8 @@ Open pgAdmin
 Create database 'midas', user account 'midas' with password 'midas', and assign user 'midas' full rights to administer DB 'midas'
 
 #### Install Node.js via Windows MSI, select all available add-ons
-**_Note that currently Midas has a dependency on nodejs version .10+ and is not tested to work with .11 or .12, do not attempt to install a version higher than node ver .10.38_**
 
-[Node.js](http://nodejs.org/dist/v0.10.38/)
+[Node.js](http://nodejs.org/dist/v4.2.2/)
 
 #### Install GraphicsMagick
 
@@ -228,19 +228,10 @@ Save.
 
 ### All Platforms
 
-#### Upgrade NPM
+#### Optional: Installing the Open Opportunities Theme
 
-The version that ships with `node 0.10.x` is out of date with the required `npm`
-version from the [engine's hash in the `package.json`] [project_engine_hash]. To
-install this version of `npm` you can run the following command.
-[See the official documentation here] [npm_upgrade_documentation].
-
-    sudo npm upgrade --global npm@2.1.x
-
-[project_engine_hash]: https://github.com/18F/openopps-platform/blob/dev/package.json#L99-L101 "Engine Hash for the project in package.json"
-[npm_upgrade_documentation]: https://docs.npmjs.com/getting-started/installing-node#updating-npm "Link to Updating NPM ( official documentation )"
-
-#### Installing the Open Opportunities Theme
+Typically we do development without the theme.  Tests are designed
+to run without the theme, which sets up alternate configuration.
 
 This theme is contained in [a separate repository] [openopps_theme_repo]. To
 hook into the `npm preinstall` hook's theme copy mechanism, you must have an
@@ -252,6 +243,9 @@ Here's an example using `export`:
 
 [openopps_theme_repo]: https://github.com/18F/open-opportunities-theme "Open Opportunities Theme"
 
+Note: the tests don't currently pass when the theme is installed since it
+also changes configuration.  
+
 #### Clone the git repository.
 
      git clone https://github.com/18F/openopps-platform.git
@@ -261,27 +255,18 @@ Here's an example using `export`:
 
 Then run the normal npm package installer
 
+     npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
      npm install
 
 #### Optional: Edit the configuration files
 
-It is not necessary to edit any config files to run the demo locally.  You may optionally edit the config files that you made copies of above, or the front-end configuration (from the root directory):
-
-     cd assets/js/backbone/config
-     vi tag.js
-     vi login.json
-
-`tag.js` specifies the tags that the frontend understands and stores in the backend.
-
-`login.json` specifies the login options available on the frontend, and must have a corresponding backend component or configuration enabled (see `config/settings/auth.ex.js`).
+See the [Configuration Guide](CONFIG.md)
 
 #### Setup the database
 
 From the root of the openopps directory, initialize the database:
 
      npm run init
-
-Please note, run `npm run init` once per database, otherwise you'll see an error. If you get an error you can skip that step.
 
 If you'd like to include a sample project and users, also run:
 
@@ -309,9 +294,9 @@ Run the tests (all should pass)
 
     npm test
 
-Run the server
+Run the server (watch client files, compiling if needed)
 
-    npm start
+    npm run watch
 
 
 Go to [http://localhost:1337](http://localhost:1337) to see the app
@@ -334,11 +319,9 @@ messages after running `npm start`. This is an issue with OSX and Grunt; there a
 
      npm run build
 
-#### Initialize the database
+#### Initialize the database (once)
 
-The database needs to be populated with the tag defaults for your application's configuration.
-
-Edit the configuration file at `test/init/init/config.js` to match your tags in `assets/js/backbone/components/tag.js`
+     npm run init
 
 ### Start the forever server (from the openopps git folder)
 

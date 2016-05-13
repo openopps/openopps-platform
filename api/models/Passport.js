@@ -17,6 +17,7 @@ function hashPassword (passport, next) {
   }
 }
 
+
 /**
  * Passport Model
  *
@@ -31,7 +32,9 @@ function hashPassword (passport, next) {
  * weight as possible as the application only needs to serialize and deserialize
  * the user, but not the authentication data, to and from the session.
  */
+
 module.exports = {
+
   attributes: {
     // Required field: Protocol
     //
@@ -82,7 +85,7 @@ module.exports = {
      * @param {Function} next
      */
     validatePassword: function (password, next) {
-      bcrypt.compare(password, this.password, next);
+      return bcrypt.compare(password, this.password, next);
     },
 
     toJSON: function() {

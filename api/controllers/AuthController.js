@@ -1,15 +1,14 @@
-var userUtils = require('../services/utils/user'),
-    url = require('url');
-
 /**
- * Authentication Controller
+ * AuthController
  *
- * @module    :: Controller
- * @description :: Contains logic for handling authentication requests.
+ * @description :: Server-side logic for handling authentication requests
  */
-var AuthController = {
 
-  /**
+var userUtils = require('../services/utils/user');
+url = require('url');
+
+module.exports = {
+	/**
    * Log out a user and return them to the homepage
    *
    * Passport exposes a logout() function on req (also aliased as logOut()) that
@@ -24,12 +23,6 @@ var AuthController = {
    * @param {Object} res
    */
   logout: function (req, res) {
-    // Disable local logoout when sspi is enabled; User is not
-    // allowed to logout since SSPI provides auto login
-    if (sails.config.auth.auth.sspi.enabled === true) {
-      return res.send(403, { message: 'Authentication method not supported. '});
-    }
-
     req.logout();
 
     // mark the user as logged out for auth purposes
@@ -57,14 +50,6 @@ var AuthController = {
     // Set referer path for redirection after authentication
     req.session.logged_in_path = path;
 
-    // Disable local logins when sspi is enabled; can allow bypassing of
-    // credentials through the sspi auto-login functionality
-    if (sails.config.auth.auth.sspi.enabled === true) {
-      return res.send(403, {
-        message: 'Authentication method not supported.'
-      });
-    }
-
     passport.endpoint(req, res);
   },
 
@@ -85,6 +70,7 @@ var AuthController = {
    * @param {Object} res
    */
   callback: function (req, res) {
+    sails.log.verbose('AuthController.callback', req.params)
     function tryAgain (err) {
 
       // Only certain error messages are returned via req.flash('error', someError)
@@ -106,6 +92,8 @@ var AuthController = {
             (err === 'invalid domain') ?
             'You need to have a .gov or .mil email address.' :
             'Invalid email address or password.';
+
+      sails.log.verbose('error message:', message);
 
       if (req.param('json')) {
         return res.send(403, { message: message });
@@ -176,22 +164,21 @@ var AuthController = {
    */
   forgot: function (req, res) {
     var email = req.param('username');
-    if (!email) {
-      return res.send(400, { message: 'You must enter an email address. '});
+    sails.log.verbose('AuthController.forgot', email);
+    if (!email || email === '') {
+      return res.send(400, { message: 'You must enter an email address.'});
     }
-    userUtils.forgotPassword(email, function (err, token) {
-      if (err) {
-        return res.send(400, err);
-      }
+    User.forgotPassword(email)
+    .then(function(token) {
+      sails.log.verbose('forgotPassword success, token:', token)
       var result = {
         success: true,
         email: email
       };
-      // send the token back to test that it is working
-      if (process.env.NODE_ENV == 'test') {
-        result.token = token.token;
-      }
       return res.send(result);
+    })
+    .catch(function(err) {
+      return res.send(400, {message: err});
     });
   },
   /**
@@ -207,7 +194,7 @@ var AuthController = {
     if (!token) {
       return res.send(400, { message: 'Must provide a token for validation.' });
     }
-    userUtils.checkToken(token, function (err, valid, validToken) {
+    UserPasswordReset.checkToken(token, function (err, valid, validToken) {
       if (err) { return res.send(400, { message: 'Error looking up token.', err:err }); }
       if (valid === true) {
         User.findOneById(validToken.userId, function (err, validUser) {
@@ -232,7 +219,7 @@ var AuthController = {
       message: 'Must provide a token for validation.'
     });
 
-    userUtils.checkToken(token, function (err, valid, validToken) {
+    UserPasswordReset.checkToken(token, function (err, valid, validToken) {
       if (err) return res.send(400, {
         message: 'Error looking up token.',
         err: err
@@ -296,5 +283,3 @@ var AuthController = {
   }
 
 };
-
-module.exports = AuthController;

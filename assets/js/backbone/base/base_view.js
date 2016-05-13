@@ -10,18 +10,14 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utilities = require('../mixins/utilities');
 
 
 var BaseView = Backbone.View.extend({
+  initialize: function() {},
 
-  initialize: function () {
-  },
-
-  cleanup: function () {
+  cleanup: function() {
     removeView(this);
   }
-
 });
 
 module.exports = BaseView;

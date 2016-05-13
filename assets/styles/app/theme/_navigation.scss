@@ -1,0 +1,48 @@
+// old stuff
+
+.navbar-default .navbar-brand {
+  color: $color-c1;
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #f0f0f0;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-text {
+  color: $color-c1;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: $color-c1;
+  text-shadow: none;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: $color-c1;
+  background-color: #f0f0f0;
+}
+
+.navbar .navbar-nav > .active > a,
+.navbar .navbar-nav > .active > a:hover,
+.navbar .navbar-nav > .active > a:focus {
+  color: #fff;
+  background-color: #D63A25;
+}
+
+.navbar .nav .navbar-divider {
+  background-color: $color-c1;
+}
+
+.navbar-brand,
+.navbar-nav > li > a {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.navbar-static-top,
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+  border-radius: 0;
+}

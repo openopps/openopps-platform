@@ -16,22 +16,24 @@
  *     example: ['empty', 'count400']
  */
 
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../mixins/utilities');
 var marked = require('marked');
 var BaseComponent = require('../base/base_component');
-var jqSelection = require('../../vendor/jquery.selection');
-var EditorTemplate = require('./markdown_editor_template.html');
+var EditorTemplate = fs.readFileSync(
+  __dirname + '/markdown_editor_template.html'
+).toString();
 
 
-MarkdownEditor = BaseComponent.extend({
 
+var MarkdownEditor = BaseComponent.extend({
   events: {
-    "click .btn"                 : "clickButton"
+    "click .btn": "clickButton"
   },
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.options = options;
     this.actions = {
       'header': {
@@ -78,7 +80,7 @@ MarkdownEditor = BaseComponent.extend({
     return this;
   },
 
-  render: function () {
+  render: function() {
     var data = {
       id: this.options.id,
       validate: this.options.validate,
@@ -93,21 +95,21 @@ MarkdownEditor = BaseComponent.extend({
     return this;
   },
 
-  clickButton: function (e) {
+  clickButton: function(e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var selText = this.$("#" + this.options.id).selection();
     var editData = t.data('edit');
     if ((editData != 'preview') &&
-        (editData != 'edit') &&
-        (editData != 'help')) {
+      (editData != 'edit') &&
+      (editData != 'help')) {
       // get the current selected positions
       var pos = this.$("#" + this.options.id).selection('getPos');
       var text = this.$("#" + this.options.id).val();
       // check if this modifier has already been inserted
-      var origBefore = text.substring(pos.start-this.actions[editData].before.length,pos.start);
-      var origAfter = text.substring(pos.end,pos.end+this.actions[editData].after.length);
+      var origBefore = text.substring(pos.start - this.actions[editData].before.length, pos.start);
+      var origAfter = text.substring(pos.end, pos.end + this.actions[editData].after.length);
       var before = this.actions[editData].before;
       var after = this.actions[editData].after;
       // If the selected text already has the markdown syntax before and after
@@ -117,21 +119,21 @@ MarkdownEditor = BaseComponent.extend({
         after = '';
       }
       // set placeholder text if no text is selected by the user
-      if (selText == '') {
+      if (selText === '') {
         selText = this.actions[editData].text;
       }
       // insert markdown syntax
       this.$("#" + this.options.id).selection('insert', {
-        text: before,
-        mode: 'before'
-      })
-      .selection('replace', {
-        text: selText
-      })
-      .selection('insert', {
-        text: after,
-        mode: 'after'
-      });
+          text: before,
+          mode: 'before'
+        })
+        .selection('replace', {
+          text: selText
+        })
+        .selection('insert', {
+          text: after,
+          mode: 'after'
+        });
     } else if (editData == 'help') {
       // show help text and links to markdown syntax
       if (this.$('.help').is(':visible')) {
@@ -160,10 +162,10 @@ MarkdownEditor = BaseComponent.extend({
     }
   },
 
-  cleanup: function () {
+  cleanup: function() {
     removeView(this);
   }
-
 });
+
 
 module.exports = MarkdownEditor;

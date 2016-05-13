@@ -10,52 +10,89 @@ var exportUtil = require('../services/utils/export');
 var i18n = require('i18next');
 
 module.exports = {
+  // note: policy addUserId will make the logged in user the owner
+  create: function (req, res) {
+    var attrs = req.body;
+    sails.log.verbose("creating task:",attrs)
+    Task.createAction(attrs)
+    .then(function(task) {
+      task.owner = req.user.toJSON();
+      res.status(201); // created
+      res.json(task)
+    })
+    .catch(res.negotiate);
+  },
+
+  // by default update will populate with volunteers
+  // but the client doesn't expect that, so we override this
+  update: function (req, res) {
+    sails.log.verbose("update task:",req.task)
+    sails.log.verbose("values:",req.body)
+    var taskId = req.params.id
+    req.body.id = taskId;
+    req.task.updateAction(req.body)
+    .then(function(task) {
+      res.status(200);    // created
+      res.json(task); // tasks are unique by id
+    })
+    .catch(res.negotiate);
+  },
 
   find: function (req, res) {
-    var user = (req.user) ? req.user[0] : null,
+    sails.log.verbose('Task.find', req.params);
+    var user = req.user,
+        taskId = req.params['id'],
         where = {};
 
-    if (req.task) {
-      taskUtil.getMetadata(req.task, user, function (err) {
-        if (err) { return res.send(400, { message: i18n.t('taskAPI.errMsg.likes', 'Error looking up task likes.') }); }
-        taskUtil.getVolunteers(req.task, function (err) {
-          if (err) { return res.send(400, { message: i18n.t('taskAPI.errMsg.volunteers','Error looking up task volunteers.') }); }
-          return res.send(req.task);
+    if (taskId) {
+      Task.findOneById(taskId)
+      .populate('tags')
+      .populate('owner')
+      .exec(function(err, task) {
+        sails.log.verbose('Task.find', task);
+        if (err) { return res.negotiate(err) }
+        if (!task) { return res.notFound('Error finding task.'); }
+        task = task.authorized(user);
+        if (!task) { return res.forbidden('Task not found.'); }
+
+        // this all would be way better with associations!
+        var volunteers;
+        Volunteer.findUsersByTask({taskId: taskId})
+        .then(function(taskVolunteers) {
+          sails.log.verbose('volunteers', taskVolunteers);
+          task.volunteers = taskVolunteers[taskId] || [];
+          sails.log.verbose('task', task);
+          return res.send(task);
+        })
+        .catch(function(err) {
+          sails.log.verbose('error fetching volunteers for task', err);
+          return res.negotiate(err);
         });
       });
-      return;
-    }
-    // Only show drafts for current user
-    if (user) {
-      where = { or: [{
-        state: {'!': 'draft'}
-      }, {
-        state: 'draft',
-        userId: user.id
-      }]};
     } else {
-      where.state = {'!': 'draft'};
-    }
+      // Only show drafts for current user
+      if (user) {
+        where = { or: [{
+          state: {'!': 'draft'}
+        }, {
+          state: 'draft',
+          userId: user.id
+        }]};
+      } else {
+        where.state = {'!': 'draft'};
+      }
 
-    // run the common task find query
-    taskUtil.findTasks(where, function (err, tasks) {
-      if (err) { return res.send(400, err); }
-      return res.send({ tasks: tasks });
-    });
+      // run the common task find query
+      taskUtil.findTasks(where, function (err, tasks) {
+        if (err) { return res.send(400, err); }
+        return res.send({ tasks: tasks });
+      });
+    }
   },
 
   findOne: function(req, res) {
+    sails.log.verbose('Task.findOne')
     module.exports.find(req, res);
-  },
-
-  findAllByProjectId: function (req, res) {
-    Task.findByProjectId(req.params.id)
-    .populate('tags')
-    .sort({'updatedAt': -1})
-    .exec(function(err, tasks) {
-      if (err) return res.send(err, 500);
-      res.send({ tasks: tasks });
-    });
   },
 
   copy: function(req, res) {

@@ -1,10 +1,15 @@
-
-var async = require('async');
+// vendor libraries
+var $ = require('jquery');
 var _ = require('underscore');
+var async = require('async');
 var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
+
+// internal dependencies
 var LoginPasswordView = require('../../../login/views/login_password_view');
-var ProfileResetTemplate = require('../templates/profile_reset_template.html');
+
+// templates
+var fs = require('fs');
+var ProfileResetTemplate = fs.readFileSync(`${__dirname}/../templates/profile_reset_template.html`).toString();
 
 
 var ProfileResetView = Backbone.View.extend({
@@ -38,11 +43,11 @@ var ProfileResetView = Backbone.View.extend({
     var success = true;
     _.each(rules, function (value, key) {
       if (value === true) {
-        this.$(".password-rules .success.rule-" + key).show();
-        this.$(".password-rules .error.rule-" + key).hide();
+        $(".password-rules .success.rule-" + key).show();
+        $(".password-rules .error.rule-" + key).hide();
       } else {
-        this.$(".password-rules .success.rule-" + key).hide();
-        this.$(".password-rules .error.rule-" + key).show();
+        $(".password-rules .success.rule-" + key).hide();
+        $(".password-rules .error.rule-" + key).show();
       }
       success = success && value;
     });
@@ -128,4 +133,3 @@ var ProfileResetView = Backbone.View.extend({
 });
 
 module.exports = ProfileResetView;
-

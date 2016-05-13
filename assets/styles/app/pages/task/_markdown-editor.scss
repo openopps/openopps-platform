@@ -1,0 +1,23 @@
+/*****************
+= MARKDOWN EDITOR
+******************/
+
+.markdown-edit > .btn-toolbar {
+    margin-bottom: 10px;
+}
+
+.markdown-edit .help {
+    font-size: 12px;
+    padding-bottom: 5px;
+    display: none;
+}
+
+.markdown-edit > .preview {
+    border-style: solid none;
+    border-width: 1px 0;
+    border-color: #e0e0e0;
+}
+
+.markdown-edit textarea.form-control {
+    width: 100%;
+}

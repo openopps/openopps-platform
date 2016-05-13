@@ -1,13 +1,19 @@
+// vendor libraries
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
+var i18n = require('i18next');
+var i18nextJquery = require('jquery-i18next');
+
+// internal dependencies
 var ModalComponent = require('../../../components/modal');
 var AdminUserPasswordView = require('./admin_user_password_view');
-var AdminUserTemplate = require('../templates/admin_user_template.html');
-var AdminUserTable = require('../templates/admin_user_table.html');
-var Paginate = require('../templates/admin_paginate.html');
 var LoginConfig = require('../../../config/login.json');
 
+// templates
+var fs = require('fs');
+var AdminUserTemplate = fs.readFileSync(`${__dirname}/../templates/admin_user_template.html`).toString();
+var AdminUserTable = fs.readFileSync(`${__dirname}/../templates/admin_user_table.html`).toString();
+var Paginate = fs.readFileSync(`${__dirname}/../templates/admin_paginate.html`).toString();
 
 var AdminUserView = Backbone.View.extend({
 
@@ -73,7 +79,7 @@ var AdminUserView = Backbone.View.extend({
     // hide spinner and show results
     self.$(".spinner").hide();
     self.$(".table-responsive").show();
-    self.$el.i18n();
+    self.$el.localize();
   },
 
   clickPage: function (e) {
@@ -204,7 +210,7 @@ var AdminUserView = Backbone.View.extend({
 
   updateUser: function (t, data) {
     var self = this;
-    var spinner = $($(t.parent()[0]).children('.btn-spin')[0])
+    var spinner = $($(t.parent()[0]).children('.btn-spin')[0]);
     spinner.show();
     t.hide();
     if (data.url) {

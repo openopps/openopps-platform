@@ -1,13 +1,16 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
+
 var TimeAgo = require('../../../../../vendor/jquery.timeago');
 var Popovers = require('../../../../mixins/popovers');
 var CommentCollection = require('../../../../entities/comments/comment_collection');
 var CommentFormView = require('../../new/views/comment_form_view');
 var CommentItemView = require('../views/comment_item_view');
-var CommentWrapper = require('../templates/comment_wrapper_template.html');
+
+var fs = require('fs');
+var CommentWrapper = fs.readFileSync(`${__dirname}/../templates/comment_wrapper_template.html`).toString();
+
 var marked = require('marked');
 
 
@@ -71,7 +74,6 @@ Comment = Backbone.View.extend({
   },
 
   initializeNewTopic: function () {
-
     var options = {
       el: '#comment-form-target',
       target: this.options.target,
@@ -79,7 +81,7 @@ Comment = Backbone.View.extend({
       topic: true,
       depth: -1,
       disable: ( window.cache.currentUser ) ? false : true
-    }
+    };
     options[this.options.target + 'Id'] = this.options.id;
     this.topicForm = new CommentFormView(options);
   },
@@ -113,11 +115,12 @@ Comment = Backbone.View.extend({
   },
 
   renderView: function (collection) {
+    var data;
     var self = this;
     this.parentMap = {};
     this.topics = [];
     if ( typeof collection != 'undefined' ) {
-      var data = {
+      data = {
         comments: collection.toJSON()[0].comments
       };
     } else {
@@ -133,7 +136,7 @@ Comment = Backbone.View.extend({
     for (var i = 0; i < data.comments.length; i += 1) {
         depth[data.comments[i].id] = 0;
         //data.comments[i]['depth'] = depth[data.comments[i].id];
-        data.comments[i]['depth'] = 0;
+        data.comments[i].depth = 0;
         this.topics.push(data);
     }
 
@@ -143,7 +146,7 @@ Comment = Backbone.View.extend({
     this.commentViews = [];
     this.commentForms = [];
 
-    if (data.comments.length == 0) {
+    if (data.comments.length === 0) {
       this.$('#comment-empty').show();
     }
     _.each(data.comments, function (comment, i) {
@@ -187,8 +190,7 @@ Comment = Backbone.View.extend({
       );
   },
 
-  renderComment: function (self, comment, collection, map) {
-
+  renderComment: function (unused, comment, collection, map) {
     var self = this;
 
     var commentIV = new CommentItemView({
@@ -234,7 +236,7 @@ Comment = Backbone.View.extend({
 
   addNewCommentToDom: function (modelJson, currentTarget) {
     var self = this;
-    modelJson['user'] = window.cache.currentUser;
+    modelJson.user = window.cache.currentUser;
     // increment the comment counter
     if ($(currentTarget).data('depth') >= 0) {
       var itemContainer = $(currentTarget).parents('.comment-item.border-left')[0];
@@ -242,7 +244,7 @@ Comment = Backbone.View.extend({
       $(countSpan).html(parseInt($(countSpan).text()) + 1);
     }
     // set the depth based on the position in the tree
-    modelJson['depth'] = $(currentTarget).data('depth') + 1;
+    modelJson.depth = $(currentTarget).data('depth') + 1;
     // update the parentMap for sorting
       this.topics.push(modelJson);
     // hide the empty placeholder, just in case it is still showing
@@ -259,8 +261,8 @@ Comment = Backbone.View.extend({
     for (var i in this.commentForms.reverse()) {
       if (this.commentForms[i]) { this.commentForms[i].cleanup(); }
     }
-    for (var i in this.commentViews.reverse()) {
-      if (this.commentViews[i]) { this.commentViews[i].cleanup(); }
+    for (var j in this.commentViews.reverse()) {
+      if (this.commentViews[j]) { this.commentViews[j].cleanup(); }
     }
     if (this.topicForm) {
       this.topicForm.cleanup();

@@ -1,79 +1,63 @@
 /**
  * UserController
  *
- * @module		:: Controller
- * @description	:: Get and update information about currently logged in user.
+ * @description :: Server-side logic for managing Users
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-var async = require('async');
-var _ = require('underscore');
-var projUtils = require('../services/utils/project');
-var taskUtils = require('../services/utils/task');
 var exportUtil = require('../services/utils/export');
-var tagUtils = require('../services/utils/tag');
-var userUtils = require('../services/utils/user');
 var validator = require('validator');
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 module.exports = {
+	/**
+	 * Check if a given username already exists
+	 *
+	 * @params :id of the username to test, eg:
+	 *         user/username/:id such as user/username/foo
+	 * @return true if the username is taken (can't be used),
+	 *         false if the username is available
+	 */
+	username: function (req, res) {
+		sails.log.verbose('username', req.params)
+		// don't allow empty usernames
+		if (!req.params.id) {
+			return res.send(true);
+		}
 
-  /**
-   * Check if a given username already exists
-   *
-   * @params :id of the username to test, eg:
-   *         user/username/:id such as user/username/foo
-   * @return true if the username is taken (can't be used),
-   *         false if the username is available
-   */
-  username: function (req, res) {
-    // don't allow empty usernames
-    if (!req.route.params.id) {
-      return res.send(true);
-    }
-    // only allow email usernames, so check if the email is valid
-    if (validator.isEmail(req.route.params.id) !== true) {
-      return res.send(true);
-    }
-    // check if a user already has this email
-    User.findOneByUsername(req.route.params.id.toLowerCase(), function (err, user) {
-      if (err) { return res.send(400, { message:'Error looking up username.' }); }
-      if (!user) { return res.send(false); }
-      if (req.user && req.user[0].id == user.id) { return res.send(false); }
-      return res.send(true);
-    });
-  },
-
-  info: function (req, res) {
-    var reqId = null;
-    if (req.user) {
-      reqId = req.user[0].id;
-    }
-    sails.services.utils.user.getUser(req.route.params.id, reqId, function (err, user) {
-      if (err) { return res.send(400, { message: err }); }
-      // prune out any info you don't want to be public here.
-      if (reqId !== req.route.params.id) user.username = null;
-      sails.log.debug('User Get:', user);
-      res.send(user);
-    });
-  },
+		// only allow email usernames, so check if the email is valid
+		if (validator.isEmail(req.params.id) !== true) {
+			return res.send(true);
+		}
+		// check if a user already has this email
+		User.findOneByUsername(req.params.id.toLowerCase(), function (err, user) {
+			if (err || !user) sails.log.error('User.findOneByUsername failed', req.params, err, user);
+			if (err) { return res.send(400, { message:'Error looking up username.' }); }
+			if (!user) { return res.send(false); }
+			// TODO: why is this checking if user is logged in?
+			if (req.user && req.user.id == user.id) { return res.send(false); }
+			return res.send(true);
+		});
+	},
 
   find: function(req, res) {
     // If the user is not logged in, return null object
     if (!req.user) {
-      return res.send(403, null);
+      return res.forbidden("Login required.");
     }
-    var reqId = req.user[0].id;
-    var userId = req.user[0].id;
     if (req.route.params.id) {
       userId = req.route.params.id;
-    }
-    sails.services.utils.user.getUser(userId, reqId, req.user, function (err, user) {
-      // this will only be shown to logged in users.
-      if (err) { return res.send(400, { message: err }); }
-      // non-strict equality test because params are strings
-      if (userId != reqId && !req.user.isAdmin) user.username = null;
-      sails.log.debug('User Get:', user);
-      res.send(user);
-    });
+			User.findOne(userId).populate('tags').populate('badges')
+			.exec(function(err, user){
+				sails.log.verbose('find (err user)',err,user);
+				if (err) return res.negotiate(err);
+				user.isOwner = false;
+				if (req.user.id === user.id) user.isOwner = true;
+				if (req.user.id != user.id && !req.user.isAdmin) user.username = null; // hide email address
+				return res.send(user);
+			});
+    } else {
+			req.user.isOwner = true;
+			return res.send(req.user);
+		}
   },
 
   findOne: function(req, res) {
@@ -96,43 +80,6 @@ module.exports = {
     });
   },
 
-  // Use default Blueprint template with filtered data to return full profiles
-  profile: function(req, res) {
-    if (!req.user) return res.forbidden();
-
-    // Lookup for records that match the specified criteria
-    var Model = actionUtil.parseModel(req),
-        where = _.omit(actionUtil.parseCriteria(req), 'access_token'),
-        query = Model.find()
-          .where(where)
-          .limit(actionUtil.parseLimit(req))
-          .skip(actionUtil.parseSkip(req))
-          .sort(actionUtil.parseSort(req));
-
-    query.exec(function found(err, matchingRecords) {
-      if (err) return res.serverError(err);
-
-      matchingRecords = _.reject(matchingRecords, 'disabled');
-      var ids  = matchingRecords.map(function(m) { return m.id; }),
-          reqId = req.user[0].id;
-
-      async.map(ids, function(userId, cb) {
-        sails.services.utils.user.getUser(userId, reqId, req.user, function (err, user) {
-          if (err) return cb(err);
-          if (userId !== reqId && !_.contains(where.username, user.username)) {
-            delete user.username;
-          }
-          delete user.emails;
-          delete user.auths;
-          cb(null, user);
-        });
-      }, function(err, results) {
-        if (err) { return res.send(400, err); }
-        res.ok(results);
-      });
-    });
-  },
-
   emailCount: function(req, res) {
     var testEmail = req.param('email');
     User.count({ username: testEmail }).exec(function(err, count) {
@@ -142,105 +89,48 @@ module.exports = {
   },
 
   activities: function (req, res) {
-    var reqId = null;
-    var userId = (req.user ? req.user[0].id : null);
-    if (req.user) {
-      reqId = req.user[0].id;
-    }
-    if (req.route.params.id) {
-      reqId = req.route.params.id;
-    }
-    var projects = [];
-    var tasks = [];
-    var volTasks = [];
-    // Get projects owned by this user
+		sails.log.verbose('UserController.activities')
+		var userId = (req.user || req.params).id;
+		if (!userId) res.badRequest("Cant't get activies: no user specified")
+    var result = {tasks: {created:[], volunteered:[]}};
+		// TODO: this should be refactored into User model
     async.parallel([
-      function(callback) {
-        ProjectOwner.find()
-        .where({ userId: reqId })
-        .exec(function (err, ownerList) {
-          var projIds = [];
-          // Get each project that the current user is authorized to see
-          var getProject = function(projId, done) {
-            projUtils.authorized(projId, userId, function (err, proj) {
-              if (proj) {
-                // delete unnecessary data from projects
-                delete proj.deletedAt;
-                projects.push(proj);
-              }
-              done(err);
-            });
-          };
-          for (var i in ownerList) {
-            projIds.push(ownerList[i].projectId);
-          }
-
-          // Grab each of the projects
-          async.each(projIds, getProject, function (err) {
-            if (err) { return res.send(400, { message: 'Error looking up projects.'}); }
-            // Then grab the project metadata
-            var getMetadata = function(proj, done) {
-              projUtils.getMetadata(proj, userId, function (err, newProj) {
-                if (!err) {
-                  proj = newProj;
-                }
-                return done(err);
-              });
-            };
-            var getTaskMetadata = function(task, done) {
-              taskUtils.getMetadata(task, userId, function(err, newTask) {
-                if (!err) {
-                  tasks.push(newTask);
-                }
-                return done(err);
-              });
-            };
-            async.each(projects, getMetadata, function (err) {
-              if (err) { return res.send(400, { message: 'Error looking up projects.'}); }
-              // find tasks that user owns
-              Task.find()
-              .where({ userId: reqId })
-              .exec(function (err, taskList) {
-                if (err) { return res.send(400, { message: 'Error looking up tasks.'}); }
-                async.each(taskList, getTaskMetadata, function (err) {
-                  callback(err);
-                });
-              });
-            });
-          });
-        });
-      },
       // find tasks that the user has volunteered for
       function(callback) {
         var getTask = function(vol, done) {
           Task.findOne()
           .where({ id: vol.taskId })
           .exec(function(err, taskEntry) {
-            taskUtils.getMetadata(taskEntry, userId, function(err, newTask) {
-              if (!err) {
-                volTasks.push(newTask);
-              }
+						// TODO
+            // taskUtils.getMetadata(taskEntry, userId, function(err, newTask) {
+            //   if (!err) {
+            //     tasks.created.push(newTask);
+            //   }
               return done(err);
-            });
+            // });
           });
         };
         Volunteer.find()
-        .where({ userId: reqId })
-        .exec(function (err, volList) {
+        .where({ userId: userId })
+        .exec(function(err, volList) {
           if (err) { return res.send(400, { message: 'Error looking up volunteered tasks.'}); }
           async.each(volList, getTask, function(err) {
             if (err) { return res.send(400, { message: 'Error looking up volunteered tasks.'}); }
             callback(err);
           });
         });
-      }],
+      },
+			function(callback) {
+				Task.find({userId: userId})
+				.exec(function(err, createdTasks) {
+					result.tasks.created = createdTasks;
+					callback(err);
+				})
+			}
+			],
       function(err) {
         if (err) { return res.send(400, { message: 'Error looking up tasks or projects.'}); }
-        return res.send({
-          projects: projects,
-          tasks: tasks,
-          volTasks: volTasks
-        });
+        return res.send(result);
       });
   },
 
@@ -248,7 +138,7 @@ module.exports = {
     User.findOneById(req.route.params.id, function (err, user) {
       if (err || !user) { return res.redirect('/images/default-user-icon-profile.png'); }
       if (user.photoId) {
-        return res.redirect(307, '/api/file/get/' + user.photoId);
+        return res.redirect(307, '/api/upload/get/' + user.photoId);
       } else if (user.photoUrl) {
         return res.redirect(307, user.photoUrl);
       } else {
@@ -366,9 +256,9 @@ module.exports = {
     if (req.route.method != 'post') {
       return res.send(400, {message:'Unsupported operation.'});
     }
-    var userId = req.user[0].id;
+    var userId = req.user.id;
     // Allow administrators to set other users' passwords
-    if ((req.user[0].isAdmin === true) && (req.param('id'))) {
+    if ((req.user.isAdmin === true) && (req.param('id'))) {
       userId = req.param('id');
     }
 
@@ -381,8 +271,8 @@ module.exports = {
     // find the user
     User.findOneById(userId, function (err, user) {
       if (err) { return res.send(400, { message: 'User not found.' }); }
-      // Run password validator (but only if SSPI is disabled and not an admin)
-      if ((sails.config.auth.auth.sspi.enabled !== true) && (req.user[0].isAdmin !== true)) {
+      // Run password validator (but only if not an admin) - TODO: why?
+      if (req.user.isAdmin !== true) {
         // Check that the password meets validation rules
         var rules = userUtils.validatePassword(user.username, password);
         var success = true;
@@ -452,5 +342,4 @@ module.exports = {
       });
     });
   }
-
 };

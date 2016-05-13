@@ -1,34 +1,33 @@
-
+var fs = require('fs');
 var _ = require('underscore');
 var marked = require('marked');
 var BaseComponent = require('../base/base_component');
-var Template = require('./show_markdown.html');
+var Template = fs.readFileSync(__dirname + '/show_markdown.html').toString();
 
 module.exports = BaseComponent.extend({
-
   events: {
-    'click #show-default-description' : 'clickLink'
+    'click #show-default-description': 'clickLink'
   },
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.options = options;
     return this;
   },
 
-  render: function () {
+  render: function() {
     var self = this;
     var data = {
-      id   : self.options.id,
-      data : self.options.data
+      id: self.options.id,
+      data: self.options.data
     };
     var template = _.template(Template)(data);
     self.$el.html(template);
     return self;
   },
 
-  showHide: function (descr) {
+  showHide: function(descr) {
     var self = this;
-    if (self.options.data.length > 0 &&  descr === 'Full Time Detail') {
+    if (self.options.data.length > 0 && descr === 'Full Time Detail') {
       self.$('#' + self.options.id).text('Show Default Description');
       self.$('#show-default-description').show();
       self.setTextAreaText(self.options.data);
@@ -39,7 +38,7 @@ module.exports = BaseComponent.extend({
     return self;
   },
 
-  setTextAreaText: function (text) {
+  setTextAreaText: function(text) {
     var self = this;
     var currentText = $('textarea#' + self.options.textAreaId).val().trim();
     if (currentText.length === 0 && text) {
@@ -49,7 +48,7 @@ module.exports = BaseComponent.extend({
     return self;
   },
 
-  clickLink: function (e) {
+  clickLink: function(e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
 
@@ -59,8 +58,8 @@ module.exports = BaseComponent.extend({
     } else {
       // Render the preview using marked.
       marked.setOptions({
-        gfm    : true,
-        breaks : true
+        gfm: true,
+        breaks: true
       });
       var html = marked(self.options.data);
       self.$('.preview-description').html(html);
@@ -69,8 +68,7 @@ module.exports = BaseComponent.extend({
     }
   },
 
-  cleanup: function () {
+  cleanup: function() {
     removeView(this);
   }
-
 });

@@ -1,15 +1,17 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
+
 var AdminUserView = require('./admin_user_view');
 var AdminTagView = require('./admin_tag_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
 var AdminParticipantsView = require('./admin_participants_view');
 var AdminDashboardView = require('./admin_dashboard_view');
-var AdminMainTemplate = require('../templates/admin_main_template.html');
 
+// templates
+var fs = require('fs');
+var AdminMainTemplate = fs.readFileSync(`${__dirname}/../templates/admin_main_template.html`).toString();
 
 var AdminMainView = Backbone.View.extend({
 

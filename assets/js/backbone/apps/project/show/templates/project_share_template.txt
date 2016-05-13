@@ -1,4 +1,0 @@
-Project: <%- projectTitle %>
-Description: <%- projectDescription %>
-
-I wanted to let you know about this great project. Click on the link to find out more: <%- projectLink  %>

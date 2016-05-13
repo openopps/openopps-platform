@@ -1,8 +1,8 @@
+'use strict';
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var TaskModel = require('./task_model');
-
-'use strict';
 
 var TasksCollection = Backbone.Collection.extend({
 
@@ -25,16 +25,12 @@ var TasksCollection = Backbone.Collection.extend({
     var collection = this;
 
     this.listenTo( this, 'task:save', function ( data ) {
-
       collection.addAndSave( data );
-
-    } );
+    });
 
     this.listenTo( this, 'task:draft', function ( data ) {
-
       collection.addAndSave( data );
-
-    } );
+    });
 
   },
 

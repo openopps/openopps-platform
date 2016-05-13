@@ -1,12 +1,9 @@
-
 var _ = require('underscore');
 var Backbone = require('backbone');
 
 
-	BaseComponent = Backbone.View.extend({
+var BaseComponent = Backbone.View.extend({
+  initialize: function() {}
+});
 
-		initialize: function () {}
-
-	});
-
-	module.exports = BaseComponent;
+module.exports = BaseComponent;

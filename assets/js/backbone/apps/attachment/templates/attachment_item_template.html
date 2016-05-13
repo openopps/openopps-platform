@@ -3,7 +3,7 @@
     <span class="file-tag c3-bg white">file</span>
   </td>
   <td class="attachment-name">
-    <a href="/api/file/get/<%- a.file.id %>" class="file-link" data-id="<%- a.file.id %>" download="<%- a.file.name %>">
+    <a href="/api/upload/get/<%- a.file.id %>" class="file-link" data-id="<%- a.file.id %>" download="<%- a.file.name %>">
       <%- a.file.name %>
       <% if ((user && user.isAdmin) || owner) { %>
       <a href="#" class="file-delete" data-id="<%- a.id %>"><i class="fa fa-remove"></i></a>

@@ -1,17 +1,22 @@
-
+// vendor libraries
 var _ = require('underscore');
 var Backbone = require('backbone');
+
+// internal dependencies
 var BaseController = require('../../../../base/base_controller');
 var ProfileModel = require('../../../../entities/profiles/profile_model');
 var ProfileView = require('../views/profile_show_view');
 var ProfileSettingsView = require('../views/profile_settings_view');
 var ProfileResetView = require('../views/profile_reset_view');
 var Login = require('../../../../config/login.json');
-var AlertTemplate = require('../../../../components/alert_template.html');
 
-Profile = BaseController.extend({
+// templates
+var fs = require('fs');
+var AlertTemplate = fs.readFileSync(`${__dirname}/../../../../components/alert_template.html`).toString();
 
-  // Here we are defining wether or not this is a full-region object
+var Profile = BaseController.extend({
+
+  // Here we are defining whether or not this is a full-region object
   // or a sub-region of another region.
   region: true,
   subRegion: false,

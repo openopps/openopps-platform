@@ -7,24 +7,27 @@
  * to trigger from as per bootstrap BP.
  */
 
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../mixins/utilities');
 var BaseComponent = require('../base/base_component');
-var ModalTemplate = require('./modal_template.html');
+
+var ModalTemplate = fs.readFileSync(
+  __dirname + '/modal_template.html'
+).toString();
 
 
-Modal = BaseComponent.extend({
-
+var Modal = BaseComponent.extend({
   events: {
-    "click .link-backbone"  : "link"
+    "click .link-backbone": "link"
   },
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.options = options;
   },
 
-  render: function () {
+  render: function() {
     var data = {
       id: this.options.id,
       modalTitle: this.options.modalTitle,
@@ -37,7 +40,7 @@ Modal = BaseComponent.extend({
     return this;
   },
 
-  link: function (e) {
+  link: function(e) {
     if (e.preventDefault) e.preventDefault();
     // hide the modal, wait for it to close, then navigate
     $('#' + this.options.id).bind('hidden.bs.modal', function() {
@@ -45,10 +48,10 @@ Modal = BaseComponent.extend({
     }).modal('hide');
   },
 
-  cleanup: function () {
+  cleanup: function() {
     removeView(this);
   }
-
 });
+
 
 module.exports = Modal;

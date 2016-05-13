@@ -2,7 +2,10 @@ var Bootstrap = require('bootstrap');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Popovers = require('../../../../mixins/popovers');
-var utils = require('../../../../mixins/utilities');
+
+var i18n = require('i18next');
+var i18nextJquery = require('jquery-i18next');
+
 var BaseView = require('../../../../base/base_view');
 var CommentListController = require('../../../comments/list/controllers/comment_list_controller');
 var AttachmentView = require('../../../attachment/views/attachment_show_view');
@@ -13,12 +16,15 @@ var ModalAlert = require('../../../../components/modal_alert');
 var TaskEditFormView = require('../../edit/views/task_edit_form_view');
 var UIConfig = require('../../../../config/ui.json');
 var LoginConfig = require('../../../../config/login.json');
-var VolunteerSupervisorNotifyTemplate = require('../templates/volunteer_supervisor_notify_template.html');
-var VolunteerTextTemplate = require('../templates/volunteer_text_template.html');
-var ChangeStateTemplate = require('../templates/change_state_template.html');
-var UpdateLocationAgencyTemplate = require('../templates/update_location_agency_template.html');
-var UpdateNameTemplate = require('../templates/update_name_template.html');
-var CopyTaskTemplate = require('../templates/copy_task_template.html');
+
+var fs = require('fs');
+var VolunteerTextTemplate = fs.readFileSync(__dirname + '/../templates/volunteer_text_template.html').toString();
+var ChangeStateTemplate = fs.readFileSync(__dirname + '/../templates/change_state_template.html').toString();
+var UpdateLocationAgencyTemplate = fs.readFileSync(__dirname + '/../templates/update_location_agency_template.html').toString();
+var UpdateNameTemplate = fs.readFileSync(__dirname + '/../templates/update_name_template.html').toString();
+var CopyTaskTemplate = fs.readFileSync(__dirname + '/../templates/copy_task_template.html').toString();
+
+
 
 
 var popovers = new Popovers();
@@ -38,7 +44,7 @@ var TaskShowController = BaseView.extend({
     'click #task-reopen'                  : 'stateReopen',
     'click #task-copy'                    : 'copy',
     'click .link-backbone'                : linkBackbone,
-    'click .delete-volunteer'             : 'removeVolunteer',
+    'click .volunteer-delete'             : 'removeVolunteer',
     'mouseenter .project-people-show-div' : popovers.popoverPeopleOn,
     'click .project-people-show-div'      : popovers.popoverClick,
   },
@@ -49,9 +55,7 @@ var TaskShowController = BaseView.extend({
     this.initializeTaskItemView();
     this.initializeChildren();
 
-    //load user settings so they are available as needed
-    this.getUserSettings(window.cache.currentUser);
-    this.tagFactory = new TagFactory;
+    this.tagFactory = new TagFactory();
   },
 
   initializeEdit: function () {
@@ -59,12 +63,6 @@ var TaskShowController = BaseView.extend({
     // check if the user owns the task
     var owner = model.isOwner;
     if (owner !== true) {
-      // if they don't own the task, do they own the project?
-      if (!_.isUndefined(model.project)) {
-        if (model.project.isOwner === true) {
-          owner = true;
-        }
-      }
       // if none of these apply, are they an admin?
       if (window.cache.currentUser) {
         if (window.cache.currentUser.isAdmin === true) {
@@ -192,68 +190,6 @@ var TaskShowController = BaseView.extend({
     Backbone.history.navigate('tasks/' + this.model.id, { trigger: true });
   },
 
-  getUserSettings: function (userId) {
-    //does this belong somewhere else?
-    if ( _.isNull(userId) ){ return null; }
-    $.ajax({
-      url: '/api/usersetting/'+userId.id,
-      type: 'GET',
-      dataType: 'json'
-    })
-    .success(function(data){
-      _.each(data,function(setting){
-        //save active settings to the current user object
-        if ( setting.isActive ){
-          window.cache.currentUser[setting.key]=setting;
-        }
-      });
-    });
-  },
-
-  deleteUserSettingByKey: function(settingKey) {
-    //this function expects the entire row from usersetting in the form
-    //     window.cache.currentUser[settingKey] = {}
-    var self = this;
-
-    //if not set skip
-    var targetId =  ( window.cache.currentUser[settingKey] ) ? window.cache.currentUser[settingKey].id : null ;
-
-    if ( targetId ){
-      $.ajax({
-        url: '/api/usersetting/'+targetId,
-        type: 'DELETE',
-        dataType: 'json'
-      })
-    }
-
-  },
-
-  saveUserSettingByKey: function(userId, options) {
-    //this function expects the entire row from usersetting in the form
-    //     window.cache.currentUser[settingKey] = {}
-    var self = this;
-
-    //are values the same, stop
-    if ( options.newValue == options.oldValue ) { return true; }
-
-    //if delete old is set, delete exisitng value
-    //   default is delete
-    if ( !options.deleteOld ){
-      self.deleteUserSettingByKey(options.settingKey);
-    }
-
-    $.ajax({
-        url: '/api/usersetting/',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-          userId: userId,
-          key: options.settingKey,
-          value: options.newValue
-        }
-      });
-  },
-
   volunteer: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (!window.cache.currentUser) {
@@ -275,7 +211,7 @@ var TaskShowController = BaseView.extend({
 
       // If user's profile has no name, ask them to enter one
       if (!window.cache.currentUser.name) {
-        var modalContent = _.template(UpdateNameTemplate)({});
+        var modalNameTemplate = _.template(UpdateNameTemplate)({});
         this.modalComponent = new ModalComponent({
           el: "#modal-volunteer",
           id: "update-name",
@@ -284,7 +220,7 @@ var TaskShowController = BaseView.extend({
         this.modalAlert = new ModalAlert({
           el: "#update-name .modal-template",
           modalDiv: '#update-name',
-          content: modalContent,
+          content: modalNameTemplate,
           validateBeforeSubmit: true,
           cancel: i18n.t('volunteerModal.cancel'),
           submit: i18n.t('volunteerModal.ok'),
@@ -308,7 +244,7 @@ var TaskShowController = BaseView.extend({
       // If user's profile doesn't location, ask them to enter one
       // Includes  quick check to make sure these fields are required
       else if (requiredTags.length !== 2 && (agencyRequired && locationRequired)) {
-        var modalContent = _.template(UpdateLocationAgencyTemplate)({});
+        var modalInfoTemplate = _.template(UpdateLocationAgencyTemplate)({});
         this.modalComponent = new ModalComponent({
           el: "#modal-volunteer",
           id: "update-profile",
@@ -317,7 +253,7 @@ var TaskShowController = BaseView.extend({
         this.modalAlert = new ModalAlert({
           el: "#update-profile .modal-template",
           modalDiv: '#update-profile',
-          content: modalContent,
+          content: modalInfoTemplate,
           validateBeforeSubmit: true,
           cancel: i18n.t('volunteerModal.cancel'),
           submit: i18n.t('volunteerModal.ok'),
@@ -360,17 +296,7 @@ var TaskShowController = BaseView.extend({
         modalTitle: i18n.t("volunteerModal.title")
       }).render();
 
-      if ( UIConfig.supervisorEmail.useSupervisorEmail ) {
-        //not assigning as null because null injected into the modalContent var shows as a literal value
-        //    when what we want is nothing if value is null
-        var supervisorEmail = ( window.cache.currentUser.supervisorEmail ) ? window.cache.currentUser.supervisorEmail.value  : "";
-        var supervisorName = ( window.cache.currentUser.supervisorName ) ? window.cache.currentUser.supervisorName.value : "";
-        var validateBeforeSubmit = true;
-        var modalContent = _.template(VolunteerSupervisorNotifyTemplate)({supervisorEmail: supervisorEmail,supervisorName: supervisorName});
-      } else {
-        validateBeforeSubmit = false;
-        var modalContent = _.template(VolunteerTextTemplate)({});
-      }
+      var modalContent = _.template(VolunteerTextTemplate)({});
 
       this.modalAlert = new ModalAlert({
         el: "#check-volunteer .modal-template",
@@ -378,12 +304,8 @@ var TaskShowController = BaseView.extend({
         content: modalContent,
         cancel: i18n.t('volunteerModal.cancel'),
         submit: i18n.t('volunteerModal.ok'),
-        validateBeforeSubmit: validateBeforeSubmit,
+        validateBeforeSubmit: false,
         callback: function (e) {
-          if ( UIConfig.supervisorEmail.useSupervisorEmail ) {
-            self.saveUserSettingByKey(window.cache.currentUser.id,{settingKey:"supervisorEmail",newValue: $('#userSuperVisorEmail').val(),oldValue: supervisorEmail});
-            self.saveUserSettingByKey(window.cache.currentUser.id,{settingKey:"supervisorName",newValue: $('#userSuperVisorName').val(),oldValue: supervisorName});
-          }
           // user clicked the submit button
           $.ajax({
             url: '/api/volunteer/',
@@ -396,7 +318,7 @@ var TaskShowController = BaseView.extend({
             $('.volunteer-false').hide();
             var html = '<div class="project-people-div" data-userid="' + data.userId + '" data-voluserid="' + data.userId + '"><img src="/api/user/photo/' + data.userId + '" class="project-people"/>';
             if (self.options.action === "edit") {
-              html += '<a href="#" class="delete-volunteer volunteer-delete fa fa-times"  id="delete-volunteer-' + data.id + '" data-uid="' + data.userId + '" data-vid="' +  data.id + '"></a>';
+              html += '<a href="#" class="delete-volunteer fa fa-times"  id="delete-volunteer-' + data.id + '" data-uid="' + data.userId + '" data-vid="' +  data.id + '"></a>';
             }
             html += '</div>';
             $('#task-volunteers').append(html);

@@ -7,7 +7,7 @@
 var async = require('async');
 
 function getFile (a, cb) {
-  File.findOneById(a.fileId, function (err, file) {
+  Upload.findOneById(a.fileId, function (err, file) {
     if (file) {
       delete file['data'];
       a.file = file;

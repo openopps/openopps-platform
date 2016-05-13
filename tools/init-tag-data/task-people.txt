@@ -1,0 +1,4 @@
+1 person
+2 - 5 people
+> 5 people
+A Team

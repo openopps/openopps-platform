@@ -1,0 +1,96 @@
+/*****************
+=  AUTOCOMPLETE
+******************/
+
+.atwho-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  margin-top: 18px;
+  background: white;
+  border: 1px solid #DDD;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  z-index: 10;
+}
+
+.atwho-view .cur {
+  background: #3366FF;
+  color: white;
+}
+
+.atwho-view .cur small {
+  color: white;
+}
+
+.atwho-view strong {
+  color: #3366FF;
+}
+
+.atwho-view .cur strong {
+  color: white;
+  font: bold;
+}
+
+.atwho-view ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.atwho-view ul li {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid #DDD;
+  cursor: pointer;
+  max-height: 40px;
+  overflow: hidden;
+}
+
+.atwho-view small {
+  font-size: smaller;
+  color: #777;
+  font-weight: normal;
+}
+
+.ac-container {
+  display: table;
+}
+
+.ac-content,
+.ac-image {
+  display: table-cell;
+  vertical-align: top
+}
+
+.ac-image {
+  width: 40px;
+  height: 40px;
+}
+
+.ac-content {
+  max-width: 500px;
+  padding-left: 5px;
+  padding-right: 10px;
+  overflow: hidden;
+}
+
+.ac-title {
+  font-size: 18px;
+  line-height: 23px;
+  max-height: 23px;
+}
+
+.ac-description {
+  font-size: 12px;
+  line-height: 15px;
+  max-height: 15px;
+  color: #808080;
+}
+
+.cur .ac-description {
+  color: #e0e0e0;
+}

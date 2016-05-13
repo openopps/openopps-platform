@@ -5,9 +5,6 @@
 <p>Did you mean to:</p>
 </span>
 	<ul>
-		<% if (ui.project && ui.project.show) { %>
-		<li>Look for <span data-i18n="ProjectIndefinite">a Project</span>? Try going to Browse <span data-i18n="ProjectPlural">Projects</span> or clicking <a href='/projects'>here</a> .</li>
-		<% } %>
 		<li>Look for <span data-i18n="TaskIndefinite">a Task</span>? Try going to Browse <span data-i18n="TaskPlural">Tasks</span> or clicking <a href='/tasks'>here</a> . </li>
 		<% if (ui.faq && ui.faq.show) { %>
 		<li>Get an answer to a general question? Try reading the FAQ by clicking <a href='<%- ui.faq.url %>'>here</a> .</li>

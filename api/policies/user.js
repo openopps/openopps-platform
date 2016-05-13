@@ -3,11 +3,11 @@
 */
 
 module.exports = function user (req, res, next) {
-  if (req.user && req.user[0].isAdmin) {
+  if (req.user && req.user.isAdmin) {
     //admins are allowed to do anything
     return next();
   } else {
-    if (req.route.params.id == req.user[0].id) {
+    if (req.route.params.id == req.user.id) {
       //allow the currently logged in user to access themselves
       return next();
     } else {

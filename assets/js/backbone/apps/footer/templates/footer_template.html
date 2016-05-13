@@ -1,17 +1,13 @@
-<footer class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <a target="_blank" href="https://github.com/18F/midas"><i class="fa fa-github"></i> Powered by open source</a>
-      |
-      Version <a target="_blank" href="https://github.com/18F/midas/releases/tag/<%- version.version %>"><%- version.version %></a>
-      <% if (login.terms.enabled === true) { %>
-      |
-      <a href="<%- login.terms.link %>"><%- login.terms.name %></a>
-      <% } %>
-      |
-      Locations provided by <a target="_blank" href="http://www.geonames.org/">GeoNames</a>
-      |
-      Questions? Email us: <a href="mailto:openopps@gsa.gov" target="_blank">openopps@gsa.gov</a>
-    </div>
-  </div>
+<footer class="container center">
+  <a target="_blank" href="https://github.com/18F/midas"><i class="fa fa-github"></i> Powered by open source</a>
+  |
+  Version <a target="_blank" href="https://github.com/18F/midas/releases/tag/<%- version.version %>"><%- version.version %></a>
+  <% if (login.terms.enabled === true) { %>
+  |
+  <a href="<%- login.terms.link %>"><%- login.terms.name %></a>
+  <% } %>
+  |
+  Locations provided by <a target="_blank" href="http://www.geonames.org/">GeoNames</a>
+  |
+  Questions? Email us: <a href="mailto:openopps@gsa.gov" target="_blank">openopps@gsa.gov</a>
 </footer>

@@ -13,11 +13,10 @@ var CommentModel = Backbone.Model.extend({
   saveComment: function () {
     var self = this;
 
-    this.listenTo(this, 'comment:save', function (parentId, comment, projectId) {
+    this.listenTo(this, 'comment:save', function (parentId, comment) {
       self.save({
         parentId  : parentId,
         value     : comment,
-        projectId : projectId
       }, {
         success: function (data) {
           self.trigger("comment:save:success");

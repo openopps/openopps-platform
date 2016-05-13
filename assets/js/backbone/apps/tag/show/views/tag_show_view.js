@@ -2,14 +2,16 @@
 var Bootstrap = require('bootstrap');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
+// var utils = require('../../../../mixins/utilities');
 var async = require('async');
 var ModalComponent = require('../../../../components/modal');
 var TagConfig = require('../../../../config/tag');
-var TagTemplate = require('../templates/tag_item_template.html');
-var TagShowTemplate = require('../templates/tag_show_template.html');
+
 var TagFactory = require('../../../../components/tag_factory');
 
+var fs = require('fs');
+var TagTemplate = fs.readFileSync(`${__dirname}/../templates/tag_item_template.html`).toString();
+var TagShowTemplate = fs.readFileSync(`${__dirname}/../templates/tag_show_template.html`).toString();
 
 var TagShowView = Backbone.View.extend({
 

@@ -1,0 +1,29 @@
+.modal-content {
+  border-radius: 3px;
+}
+
+.modal-content textarea {
+  resize: vertical;
+}
+
+.modal-footer-text {
+  font-size: 13px;
+  text-align: left;
+  color: #808080;
+}
+
+.modal-footer-text > a {
+  text-decoration: none;
+  color: #808080;
+}
+
+.modal-footer-text > a:hover {
+  color: #303030;
+  text-decoration: underline;
+}
+
+.modal-footer-grey {
+  background-color: #e9e9e9;
+  border-top-color: #c0c0c0;
+  border-radius: 0 0 3px 3px;
+}

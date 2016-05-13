@@ -1,59 +1,52 @@
-<div class="wrapper-addProject"></div>
 <div class="wrapper-addTask"></div>
-
-<div class="row search-row">
-  <div class="col-md-3 col-md-push-9 browse-buttons">
-    <% if (ui.project.show) { %>
-    <a href="#addProject" class="btn btn-c2 add-project" data-toggle="modal" data-backdrop="static" style="<% if (!user) { %>display: none;<% } %>"><i class="fa fa-plus"></i> <span data-i18n="Project">Project</span></a>
-    <% } %>
-    <a href="#addTask" class="btn btn-c2 add-opportunity" data-toggle="modal" data-backdrop="static" style="<% if (!user) { %>display: none;<% } %>"><i class="fa fa-plus"></i> <span data-i18n="Task">Opportunity</span></a>
+<div class="clearfix mxn2">
+  <div class="col-right col-12 md-col-3 px2 mb2 browse-buttons">
+        <a href="#addTask" class="btn btn-c2 add-opportunity" data-toggle="modal" data-backdrop="static" style="<% if (!user) { %>display: none;<% } %>"><i class="fa fa-plus"></i> <span data-i18n="Task">Opportunity</span></a>
   </div>
-  <div class="col-md-9 col-md-pull-3">
+  <div class="col col-12 md-col-9 px2 mb2">
     <input type="text" id="search" title="Search" class="form-control" placeholder="<%- placeholder %>">
   </div>
 </div>
-<div class="row">
-
+<div class="clearfix mxn2">
   <% if (target === 'tasks') { %>
-  <div class="col-md-3 col-md-push-9 box">
-    <div class="border-bottom box-pad-lr">
-      <h2>Filters</h2>
-    </div>
-    <div class="box-pad-t">
-      <% if ( target == "tasks" ) {%>
-      <div class="box-pad-lr" id="stateFilters">
-        <% _.each(ui.states, function (t) { %>
-          <label class="<% if ( t.value == "draft" || t.value == 'submitted' ) { %>hidden <%- t.value %>-filter<% } %>">
-            <input type='checkbox' name='state<%- t.label %>' class='stateFilter' value='<%- t.value %>'> <%- t.label %>
-          </label>
-        <% }); %>
+  <div class="col-right col-12 md-col-3 px2">
+    <div class="box">
+      <div class="border-bottom box-pad-lr">
+        <h2>Filters</h2>
       </div>
-      <% } %>
-      <div id="search-projs-wrapper" class="box-pad-lr">
-        <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
-        </ul>
-      </div>
-      <div class="box-pad-lr">
-        <ul id="search-tags" class="nav nav-pills nav-stacked nav-search">
-        </ul>
-      </div>
-      <div class="box-pad-lr search-clear" style="display: none;">
-        <div class="align-right">
-          <a href="#" id="search-clear" class="btn btn-sm btn-c0"><i class="fa fa-remove"></i> Clear Search Criteria</a>
+      <div class="box-pad-t">
+        <% if ( target == "tasks" ) {%>
+        <div class="box-pad-lr" id="stateFilters">
+          <% _.each(ui.states, function (t) { %>
+            <label class="<% if ( t.value == " draft " || t.value == 'submitted' ) { %>hidden <%- t.value %>-filter<% } %>">
+              <input type='checkbox' name='state<%- t.label %>' class='stateFilter' value='<%- t.value %>'>
+              <%- t.label %>
+            </label>
+            <% }); %>
+        </div>
+        <% } %>
+        <div id="search-projs-wrapper" class="box-pad-lr">
+          <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
+          </ul>
+        </div>
+        <div class="box-pad-lr">
+          <ul id="search-tags" class="nav nav-pills nav-stacked nav-search">
+          </ul>
+        </div>
+        <div class="box-pad-lr search-clear" style="display: none;">
+          <div class="align-right">
+            <a href="#" id="search-clear" class="btn btn-sm btn-c0"><i class="fa fa-remove"></i> Clear Search Criteria</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <% } %>
-
-  <div class="<% (target === 'tasks') ? print('col-md-9 col-md-pull-3') : print('col-md-12') %>">
-    <ul class="box custom-popup" id="browse-map">
-    </ul>
+  <div class="<% (target === 'tasks') ? print('col col-12 md-col-9 px2') : print('col col-12') %>">
+    <ul class="box custom-popup" id="browse-map"></ul>
     <div id="browse-search-spinner" class="fullwidth text-center">
       Loading... <i class="fa fa-spinner fa-spin"></i>
     </div>
-    <ul id="browse-list">
-    </ul>
+    <div class="clearfix mxn2" id="browse-list"></div>
   </div>
-
 </div>

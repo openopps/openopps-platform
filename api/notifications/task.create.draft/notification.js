@@ -15,8 +15,8 @@ module.exports = {
       task: model,
       user: {},
     };
-
-    User.findOne( { id: model.userId } ).exec( function ( err, user ) {
+    sails.log.verbose('task.create.draft', model);
+    User.findOne( { id: model.owner } ).exec( function ( err, user ) {
       if ( err ) return done( err );
       data.user = user;
       done( null, data );

@@ -2,9 +2,9 @@
 var async = require('async');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
-var ProfileSettingsTemplate = require('../templates/profile_settings_template.html');
 
+var fs = require('fs');
+var ProfileSettingsTemplate = fs.readFileSync(`${__dirname}/../templates/profile_settings_template.html`).toString();
 
 var ProfileSettingsView = Backbone.View.extend({
 
@@ -19,7 +19,7 @@ var ProfileSettingsView = Backbone.View.extend({
   render: function () {
     var data = {
       user: window.cache.currentUser || {}
-    }
+    };
     var template = _.template(ProfileSettingsTemplate)(data);
     this.$el.html(template);
     return this;
@@ -32,4 +32,3 @@ var ProfileSettingsView = Backbone.View.extend({
 });
 
 module.exports = ProfileSettingsView;
-

@@ -1,0 +1,177 @@
+.task-scroll {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.task-container {
+    padding-bottom: 20px;
+}
+
+.task-container h2 {
+    color: black;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: .1em;
+    margin-top: .3em;
+}
+
+.task-container .table>tbody>tr>td,
+.task-container .table>tbody>tr>th,
+.task-container .table>thead>tr>td,
+.task-container .table>thead>tr>th {
+    border-top: none;
+}
+
+.task-title {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8em;
+    -ms-word-break: break-all;
+    /* Be VERY careful with this, breaks normal words wh_erever */
+    word-break: break-all;
+    /* Non standard for webkit */
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+.task-project {
+    margin-top: -10px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+.task-description {
+    padding-bottom: 5px;
+}
+
+.task-tags-row {
+    width: 100%;
+    overflow: none;
+    max-height: 28px;
+}
+
+ul.task-tags > li {
+    background-color: #FFCB32;
+    font-size: 10px;
+}
+
+.task-show-description {
+    font-size: 18px;
+    margin-bottom: 10px;
+    line-height: 1.5em;
+    -ms-word-break: break-all;
+    /* Be VERY careful with this, breaks normal words wh_erever */
+    word-break: break-all;
+    /* Non standard for webkit */
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+.task-edit-description {
+    line-height: 2.0em;
+}
+
+.task-edit-description > .dropdown {
+    margin-top: -7px;
+}
+
+#task-edit-form .select2-container-multi {
+    line-height: 1.2em;
+}
+
+#task-edit-form .center {
+    text-align: center;
+}
+
+.center [type=submit] {
+    margin-right: 1em;
+}
+
+.center .btn {
+    margin-left: 1em;
+}
+
+#task-edit-form .form-group:not(:first-child) {
+    margin-top: 15px;
+    margin-bottom: 23px;
+}
+
+#task-edit-form label {
+    display: block;
+}
+
+#task-edit-form h3 {
+    margin-bottom: 5px;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+#task-edit-form .radio {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.task-show-creation {
+    font-size: 13px;
+    color: #9a9a9a;
+}
+
+.task-show-creation > time {
+    font-weight: bold;
+}
+
+#stateFilters label {
+    display: block;
+    font-weight: normal;
+}
+
+aside a,
+aside a:hover,
+aside a:focus {
+    color: #00FFFF;
+    text-decoration: underline;
+}
+
+#task-form fieldset aside ol,
+#task-form fieldset aside ul {
+    padding-left: 1.5em;
+}
+
+#task-form fieldset h3 {
+    padding-left: 0;
+}
+
+#task-form .tag-row {
+    margin-top: 2em;
+}
+
+#task-form fieldset {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+#task-form fieldset:first-child {
+    margin-top: 0;
+}
+
+#task-form .buttons {
+    margin-top: 2em;
+    text-align: right;
+}
+
+#task-form .buttons .btn {
+    margin-left: 24px;
+}
+
+#task-form .center {
+    text-align: center;
+}
+
+.task-edit-example {
+    color: #317ab9 !important;
+}

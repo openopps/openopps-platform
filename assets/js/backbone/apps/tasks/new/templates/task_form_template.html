@@ -66,7 +66,7 @@
         <div class="row" id="time-options-time-frequency">
           <div class="col-md-8 display-block">
             <label for="js-time-frequency-estimate">
-              <span class="create__label">How often is this time needed?</span>
+              <span>How often is this time needed?</span>
             </label>
             <select id="js-time-frequency-estimate" class="dropdown">
               <% _.each(tags['task-length'], function (timeEstimate) { %>
@@ -83,7 +83,7 @@
       <div class="row">
         <div class="col-md-8 display-block">
           <label>
-            <span class="create__label">Where can participants be located?</span>
+            <span>Where can participants be located?</span>
           </label>
           <div class="radio">
             <label>
@@ -98,7 +98,7 @@
             </label>
           </div>
           <label for="participants">
-            <span class="create__label">How many people are needed?</span>
+            <span>How many people are needed?</span>
           </label>
           <select id="js-participant-selection" class="dropdown">
             <% _.each(tags['task-people'], function (person) { %>

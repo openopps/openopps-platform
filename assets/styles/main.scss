@@ -1,0 +1,35 @@
+@import 'variables';
+
+
+// third-party libraries
+
+@import 'lib/font-awesome/font-awesome';
+@import 'lib/font-custom';
+
+@import 'lib/bootstrap/bootstrap';
+
+@import 'lib/bootstrap-datetimepicker';
+@import 'lib/jquery-timepicker';
+@import 'lib/jquery-fileupload';
+@import 'lib/select2';
+@import 'lib/leaflet';
+
+@import 'lib/basscss/basscss';
+
+
+// app styles
+
+@import 'app/elements/fonts';
+@import 'app/elements/base';
+@import 'app/elements/misc';
+
+@import 'app/misc/overrides';
+@import 'app/components/components';
+@import 'app/pages/pages';
+@import 'app/theme/theme';
+
+@import 'app/utils';
+
+html {
+    font-size: 15px;
+}

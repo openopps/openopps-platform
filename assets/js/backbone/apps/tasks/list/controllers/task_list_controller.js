@@ -1,7 +1,7 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var Utilities = require('../../../../mixins/utilities');
+
 var Bootstrap = require('bootstrap');
 var TasksCollection = require('../../../../entities/tasks/tasks_collection');
 var TaskCollectionView = require('../views/task_collection_view');

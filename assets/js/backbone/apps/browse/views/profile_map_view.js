@@ -23,7 +23,7 @@ var _currentView = null;
 
 var PeopleMapView = Backbone.View.extend({
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.el = options.el;
     this.target = options.target;
     this.router = options.router;
@@ -34,10 +34,10 @@ var PeopleMapView = Backbone.View.extend({
     this.staticScale = this.width / 960;
     this.$el.height(this.height);
 
-    this.smallestDotPx = 5;         // size of smallest dot
-    this.minRadius = 40000;         // smallest radius size, in meters
+    this.smallestDotPx = 5; // size of smallest dot
+    this.minRadius = 40000; // smallest radius size, in meters
     this.dotSizeFactor = options.dotSizeFactor || 3;
-    this.center = [25.0, 0.0];          // favor the northern hemisphere
+    this.center = [25.0, 0.0]; // favor the northern hemisphere
     this.tipDescTemplate = _.template(tooltipTemplate);
 
     this.countryFillColor = '#cccccc';
@@ -49,13 +49,12 @@ var PeopleMapView = Backbone.View.extend({
     this.map = L.map('browse-map', { scrollWheelZoom: false });
     if (_currentView) {
       this.map.setView(_currentView.center, _currentView.zoom);
-    }
-    else {
+    } else {
       this.map.setView(this.center, 2);
     }
   },
 
-  render: function () {
+  render: function() {
     var self = this;
     this.renderCountries();
     this.renderUserDots();
@@ -64,7 +63,7 @@ var PeopleMapView = Backbone.View.extend({
   /**
    * Render the country basemap from GeoJSON
    */
-  renderCountries: function () {
+  renderCountries: function() {
     var self = this;
     var countryStyle = {
       'color': self.countryOutline,
@@ -73,47 +72,47 @@ var PeopleMapView = Backbone.View.extend({
       'fillOpacity': 1.00,
       'opacity': 1.00
     };
-    L.geoJson(countryData, {style: countryStyle}).addTo(self.map);
+    L.geoJson(countryData, { style: countryStyle }).addTo(self.map);
   },
 
   /**
    * Render the user data as dots on the map
    */
-  renderUserDots: function () {
+  renderUserDots: function() {
     var self = this;
     if (!this.people.length) return;
     // massage data: pivot list of people by city, flatten that into a list with
     // cityname, people in that city, sorted largest first (so largest cities get
     // drawn first (bottom).
     var peopleWithLocations = this.people
-      .filter(function (p) {
+      .filter(function(p) {
         return !_.isUndefined(p.location);
       });
-    var cityPeopleObj = _.groupBy(peopleWithLocations, function (p) {
+    var cityPeopleObj = _.groupBy(peopleWithLocations, function(p) {
       return p.location.name;
     });
-    var cityPeopleList = _.map(_.keys(cityPeopleObj), function (c) {
+    var cityPeopleList = _.map(_.keys(cityPeopleObj), function(c) {
       return {
         cityname: c,
         people: cityPeopleObj[c]
-      }
+      };
     });
-    cityPeopleList = _.sortBy(cityPeopleList, function (cp) {
+    cityPeopleList = _.sortBy(cityPeopleList, function(cp) {
       return cp.people.length * -1;
     });
 
     var previouslySelected = null;
     var allCircles = [];
 
-    _.values(cityPeopleList).forEach(function (cp) {
+    _.values(cityPeopleList).forEach(function(cp) {
       var cityLoc = cp.people[0].location;
 
       var tipDesc = this.tipDescTemplate({
         city: cp.cityname,
         count: cp.people.length,
-        names: _.map(cp.people, function (p) {
-          return p.name;
-        }).slice(0, 3).join(', ')    // only show three names
+        names: _.map(cp.people, function(p) {
+            return p.name;
+          }).slice(0, 3).join(', ') // only show three names
       });
 
       if (!cityLoc.data || !cityLoc.data.lon || !cityLoc.data.lat) {
@@ -141,9 +140,11 @@ var PeopleMapView = Backbone.View.extend({
       circle.setRadius(radius);
       allCircles.push(circle);
 
-      var popup = L.popup({'offset': L.point(0, -20 - radius),
-                           'closeButton': false,
-                           'autoPan': false});
+      var popup = L.popup({
+        'offset': L.point(0, -20 - radius),
+        'closeButton': false,
+        'autoPan': false
+      });
       popup.setContent(tipDesc);
       circle.bindPopup(popup);
 
@@ -159,7 +160,7 @@ var PeopleMapView = Backbone.View.extend({
           this.setStyle({
             fillColor: self.circleFillColor
           });
-          self.trigger("browseRemove", {type: "location", render: true});
+          self.trigger("browseRemove", { type: "location", render: true });
           previouslySelected = null;
         } else {
           // select city: add styling, render people detail list below
@@ -172,7 +173,7 @@ var PeopleMapView = Backbone.View.extend({
           this.setStyle({
             fillColor: self.circleSelectedFillColor
           });
-          self.trigger("browseRemove", {type: "location", render: false});
+          self.trigger("browseRemove", { type: "location", render: false });
           self.trigger("browseSearchLocation", cp.cityname);
           previouslySelected = this;
         }
@@ -189,11 +190,11 @@ var PeopleMapView = Backbone.View.extend({
     }, this);
   },
 
-  cleanup: function () {
+  cleanup: function() {
     _currentView = {
       center: this.map.getCenter(),
       zoom: this.map.getZoom()
-    }
+    };
     this.map.remove();
     removeView(this);
   }

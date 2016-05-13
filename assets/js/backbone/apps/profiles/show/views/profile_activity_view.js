@@ -1,10 +1,16 @@
+// vendor libraries
 var _ = require('underscore');
-var Backbone = require('backbone');
-var utils = require('../../../../mixins/utilities');
-var UIConfig = require('../../../../config/ui.json');
 var async = require('async');
-var ActTemplate = require('../templates/profile_activity_template.html');
+var Backbone = require('backbone');
+var i18n = require('i18next');
+var i18nextJquery = require('jquery-i18next');
 
+// internal dependencies
+var UIConfig = require('../../../../config/ui.json');
+
+// templates
+var fs = require('fs');
+var ProfileActivityTemplate = fs.readFileSync(`${__dirname}/../templates/profile_activity_template.html`).toString();
 
 var ProfileActivityView = Backbone.View.extend({
 
@@ -43,9 +49,9 @@ var ProfileActivityView = Backbone.View.extend({
         data.count[this.options.data[i].state]++;
       }
     }
-    var template = _.template(ActTemplate)(data);
+    var template = _.template(ProfileActivityTemplate)(data);
     this.$el.html(template);
-    this.$el.i18n();
+    this.$el.localize();
 
     return this;
   },

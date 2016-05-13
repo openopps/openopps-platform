@@ -19,7 +19,7 @@ var commentAssemble = function (where, done) {
   .sort({'updatedAt':1})
   .exec(function (err, comments) {
     if (err) return done(err, null);
-
+    console.log('comments', comments);
     var userIds = [];
     for (var i = 0; i < comments.length; i++) {
       if (_.indexOf(userIds, comments[i].userId) == -1) { userIds.push(comments[i].userId); }
@@ -37,6 +37,8 @@ var commentAssemble = function (where, done) {
     async.each(userIds, getId, function (err) {
       if (err) return done(err, null);
       // Attach userIds to topics
+      console.log('users', users);
+      console.log('comments.length', comments.length);
       for (var i = 0; i < comments.length; i++) {
         comments[i].user = { username: users[comments[i].userId].username, name: users[comments[i].userId].name }
       }

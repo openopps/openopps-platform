@@ -1,0 +1,7 @@
+Less than 1 hour
+Up to 2 hours
+2 - 4 hours
+4 - 8 hours
+8 - 16 hours
+16 - 24 hours
+24 - 40 hours

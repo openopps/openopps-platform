@@ -10,9 +10,13 @@ module.exports = {
   create: function (req, res) {
     var v = _.extend(req.body || {}, req.params);
     if (v.silent) v.silent = JSON.parse(v.silent);
-    Volunteer.findOrCreate(v, v, function(err, newV) {
-      if (err) { return res.send(400, { message: 'Error creating volunteer entry' }); }
-      return res.send(newV);
+    Volunteer.createAction(v)
+    .then(function(newVolunteer) {
+      return res.send(newVolunteer);
+    })
+    .catch(function(err) {
+      sails.log.error('VolunteerController.create (err attrs):', err, v);
+      return res.send(400, { message: 'Error creating volunteer entry' });
     });
   }
 

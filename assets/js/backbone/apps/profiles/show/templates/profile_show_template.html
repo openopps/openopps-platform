@@ -1,67 +1,63 @@
-<div class="row">
-
-  <% if (user.isAdmin) { %>
-  <div class="alert alert-info">
-    You are an administrator.
-    <% if (user.id !== data.id) { %>
-      You are viewing another user's profile.
-    <% } %>
-  </div>
+<% if (user.isAdmin) { %>
+<div class="alert alert-info">
+  You are an administrator.
+  <% if (user.id !== data.id) { %>
+    You are viewing another user's profile.
   <% } %>
+</div>
+<% } %>
 
-  <% if (saved) { %>
-  <div class="alert alert-success">Your profile has been successfully updated.</div>
-  <% } %>
+<% if (saved) { %>
+<div class="alert alert-success">Your profile has been successfully updated.</div>
+<% } %>
 
-  <div class="col-md-8">
-    <div class="box row">
-      <div class="col-md-4">
-        <div id="project-header" style="background-image:url('/api/user/photo/<%- data.id %>');">
+<div class="clearfix mxn2 mb2">
+  <div class="col col-12 md-col-8 px2">
+    <div class="p2 bg-white">
+      <div class="clearfix mxn2">
+        <div class="col col-12 md-col-4 px2">
+          <img src="/api/user/photo/<%- data.id %>">
+          <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+            <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+          </div>
+          <div id="file-upload-alert" class="alert alert-warning" style="display:none;">
+          </div>
         </div>
-        <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-          <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
-        </div>
-        <div id="file-upload-alert" class="alert alert-warning" style="display:none;">
+        <div class="col col-12 md-col-8 px2">
+          <h1><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h1>
+
+          <div class="profile-jobtitle"><% if (data.title) { %><i class="fa fa-briefcase"></i> <span class="box-icon-text"><%- data.title %></span><% } %></div>
+          <div class="profile-company"><% if (data.agency) { %><i class="icon-library"></i> <span class="box-icon-text"><%- data.agency.name %></span><% } %></div>
+          <div class="profile-location"><% if (data.location) { %><span class="fa fa-map-marker"></span> <span class="box-icon-text"><%- data.location.name %></span><% } %></div>
+          <div class="profile-email">
+            <i class="fa fa-envelope"></i> <span class="box-icon-text">
+              <% if (email) { %>
+                <%- email %>
+              <% } else { %>
+              No email addresses
+              <% } %>
+            </span>
+          </div>
         </div>
       </div>
-      <div class="col-md-8">
-        <h1><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h1>
-
-        <div class="profile-jobtitle"><% if (data.title) { %><i class="fa fa-briefcase"></i> <span class="box-icon-text"><%- data.title %></span><% } %></div>
-        <div class="profile-company"><% if (data.agency) { %><i class="icon-library"></i> <span class="box-icon-text"><%- data.agency.name %></span><% } %></div>
-        <div class="profile-location"><% if (data.location) { %><span class="fa fa-map-marker"></span> <span class="box-icon-text"><%- data.location.name %></span><% } %></div>
-        <div class="profile-email">
-          <i class="fa fa-envelope"></i> <span class="box-icon-text">
-            <% if (email) { %>
-              <%- email %>
-            <% } else { %>
-            No email addresses
-            <% } %>
-          </span>
-        </div>
-
-        <div class="profile-tags tag-wrapper"></div>
-
+      <div class="mt1 mb2">
+        <% /* Escaped with marked() */ %>
+          <% if (data.bioHtml) { %><%= data.bioHtml %><% } %>
       </div>
-      <div class="col-md-12 profile-bio box-pad-t">
-          <% /* Escaped with marked() */ %>
-          <% if (data.bioHtml) { %><%= data.bioHtml %><% } else { %>This person doesn't have a bio yet.<% } %>
-      </div>
+
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="box">
+
+  <div class="col col-12 md-col-4 px2">
+    <div class="p2 bg-white">
       <div class="navbar-side <% if (data.isOwner || user.isAdmin) { %>border-bottom<% } %>">
         <ul class="nav nav-pills nav-stacked">
           <li>
             <a href="#" id="email"><i class="fa fa-envelope-o"></i> <span class="box-icon-text">Share</span></a>
           </li>
-          <% if (data.isOwner || user.isAdmin) { %>
-          <li>
-            <a href="/api/event/ical/"><span class="fa fa-calendar"></span> <span class="box-icon-text">Calendar</span></a>
-          </li>
         </ul>
       </div>
+      <% if (data.isOwner || user.isAdmin) { %>
       <div class="navbar-side">
           <ul class="nav nav-pills nav-stacked">
           <li>
@@ -71,63 +67,42 @@
             <a href="<%- login.profile.editUrl %>" target="_blank"><i class="fa fa-pencil"></i> <span class="box-icon-text">Edit Profile</span></a>
             <% } %>
           </li>
-          <% } %>
         </ul>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<% if (tags.length > 0) { %>
+<div class="clearfix mxn2 mb2">
+  <div class="col col-12 md-col-8 px2">
+    <div class="p2 bg-white">
+      <h2>Skills &amp; Interests</h2>
+      <div class="py1">
+        <% _.each(tags, function (t) { %>
+          <a class="px2 bg-yellow black rounded" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+        <% }) %>
       </div>
     </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-sm-9 col-md-8">
-    <!-- LEFT MAIN BAR -->
-    <div class="row">
-      <!--
-      <div class="col-md-3 sm-nopadding md-nopadding padding-left-none">
-        <div class="box padding-none">
-          <div class="navbar-side like-row border-bottom">
-            <a href="#" id="like-button" class="like-button">
-              <i id="like-button-icon" class="fa fa-star-o fa-lg gold"></i>
-            </a>
-            <span class="like-number" id="like-number"><%- data.likeCount %></span>
-            <span class="like-plural" id="like-text" data-plural="followers" data-singular="follower">followers</span>
-          </div>
-        </div>
-      </div>
-      -->
+<% } %>
 
-      <% if (ui.project.show) { %>
-        <div class="box">
-        <div class="box-pad-lr border-bottom">
-          <h2><span data-i18n="ProjectPlural">Projects</span></h2>
-        </div>
-        <div class="box-pad-lr box-pad-t">
-          <div class="project-activity-wrapper"></div>
-        </div>
-      </div>
-      <% } %>
-
-      <div class="box">
-        <div class="box-pad-lr">
-          <h2>Opportunities</h2>
-        </div>
-        <div class="box-pad-lr border-bottom">
-          <h3>Participated</h3>
-        </div>
-        <div class="box-pad-lr box-pad-t">
-          <div class="task-activity-wrapper"></div>
-        </div>
-
-        <div class="box-pad-lr border-bottom">
-          <h3>Created</h3>
-        </div>
-        <div class="box-pad-lr box-pad-t">
-          <div class="task-createdactivity-wrapper"></div>
-        </div>
-      </div>
+<div class="clearfix mxn2 mb2">
+  <div class="col col-12 md-col-8 px2">
+    <div class="p2 bg-white">
+      <h2>Opportunities</h2>
+      <h3 class="light">Participated</h3>
+      <div class="task-activity-wrapper"></div>
+      <h3 class="light">Created</h3>
+      <div class="task-createdactivity-wrapper"></div>
     </div>
   </div>
-  <div class="col-sm-3 col-md-4">
-    <div class="box box-pad-lr">
+
+  <% if (data.badges.length > 0) { %>
+  <div class="col col-12 md-col-4 px2">
+    <div class="p2 bg-white">
       <h2>Badges</h2>
       <ul class="profile-badges">
         <% _.map(data.badges, function (b) { %>
@@ -140,4 +115,7 @@
       </ul>
     </div>
   </div>
+
+  <% } %>
+
 </div>

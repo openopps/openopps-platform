@@ -1,8 +1,3 @@
-var fs = require('fs'),
-    nodemailer = require('nodemailer'),
-    protocol = sails.config.emailProtocol,
-    transportConfig = sails.config[protocol.toLowerCase()];
-
 /**
  * Notification
  *
@@ -10,6 +5,10 @@ var fs = require('fs'),
  * @description :: A representation of a user-directed message
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
+ var fs = require('fs'),
+     nodemailer = require('nodemailer'),
+     protocol = sails.config.emailProtocol,
+     transportConfig = sails.config[protocol.toLowerCase()];
 
 module.exports = {
 
@@ -61,9 +60,15 @@ module.exports = {
     @param {object} model triggering the notification
     @param {sting} the triggering model's type
   */
-  trigger: function (notification) {
-
-    sails.log.debug( notification );
+  trigger: function(notification, done) {
+    if (typeof done === "undefined") done = function() {};
+    // Send mail over SMTP with node-mailer
+    if (protocol === '') {
+      sails.log.info('email OFF, would have sent:', notification);
+      return done(null);
+    } else {
+      sails.log.debug( notification );      
+    }
 
     // Get notification script
     var path = __dirname + '/../notifications/' +
@@ -73,6 +78,7 @@ module.exports = {
     // Populate notification data
     template.data(notification.model, function (err, data) {
       if (err) sails.log.error(err);
+      if (err) return done(err);
 
       // Set notification action on the data object
       data._action = notification.action;
@@ -87,8 +93,11 @@ module.exports = {
 
       // Render and send notification
       Notification.render(template, data, function (err, options) {
+        if (err) return done(err);
         Notification.send(options, function (err, info) {
+          if (err) sails.log.error(err);
           if (info) sails.log.info(info);
+          return done(err, info);
         });
       });
 
@@ -113,16 +122,16 @@ module.exports = {
     // Template html content
     fs.readFile(html, function (err, template) {
       if (err) sails.log.error(err);
+      if (err) return done(err);
       data._content = _.template(template)(data);
 
       // Inject template html into layout
       fs.readFile(layout, function (err, layout) {
         if (err) sails.log.error(err);
         mailOptions.html = _.template(layout)(data);
-        done(err, mailOptions);
+        return done(err, mailOptions);
       });
     });
-
   },
 
   // Send an email
@@ -140,17 +149,15 @@ module.exports = {
       sails.config.notificationsBCC
     ]);
 
-    // Send mail over SMTP with node-mailer
     sails.log.info('Sending SMTP message', options);
     this._transport.sendMail(options, function (err, info) {
       if (err) sails.log.error('Failed to send mail. If this is unexpected, ' +
         'please check your email configuration in config/local.js.', err);
       if (done) return done(err, info);
     });
-
   },
 
   // Mailer transport
-  _transport: nodemailer.createTransport(protocol, transportConfig)
+  _transport: nodemailer.createTransport(transportConfig)
 
 };

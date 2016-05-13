@@ -4,7 +4,7 @@
  * - To run, download a spreadsheet as defined here: https://github.com/18F/midas/issues/1039#issuecomment-148751267
  * - Save spreadsheet as `participants.txt` in the same directory as this script
  * - From this directory, run this script with `node ./importParticipants.js`
- * 
+ *
  * The script will add participants for any rows in the spreadsheet that do not already exist. It will also
  * update tasks with information (like `task_state` or `completion_date`) specified in the spreadsheet.
  *
@@ -123,10 +123,10 @@ function updateTask(row, done) {
   console.log('Updating task ' + row.task_id  + ' to state ' + row.task_state);
 
   // Has to be two steps to avoid automatically setting the date
-  Task.update({ id: +row.task_id }, { state: row.task_state }).exec(function(err) {
+  Task.update({ id: +row.task_id }, { id: +row.task_id, state: row.task_state }).exec(function(err) {
     if (err) return done(err);
     console.log('Updating task ' + row.task_id  + ' to date ' + date);
 
-    Task.update({ id: +row.task_id }, { completedAt: date }).exec(done);
+    Task.update({ id: +row.task_id }, { id: +row.task_id, completedAt: date }).exec(done);
   });
 }

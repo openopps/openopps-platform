@@ -1,38 +1,42 @@
+var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
 var LoginPasswordView = require('./login_password_view');
-var LoginTemplate = require('../templates/login_template.html');
 var ModalComponent = require('../../../components/modal');
 var TagFactory = require('../../../components/tag_factory');
 
-var LoginView = Backbone.View.extend({
+var LoginTemplate = fs.readFileSync(
+  __dirname + '/../templates/login_template.html'
+).toString();
 
+
+var LoginView = Backbone.View.extend({
   events: {
-    'click .oauth-link'              : 'link',
-    'keyup #rname'                   : 'checkName',
-    'change #rname'                  : 'checkName',
-    'blur #rname'                    : 'checkName',
-    'keyup #rusername'               : 'checkUsername',
-    'change #rusername'              : 'checkUsername',
-    'click #rusername-button'        : 'clickUsername',
-    'keyup #rpassword'               : 'checkPassword',
-    'blur #rpassword'                : 'checkPassword',
-    'keyup #rpassword-confirm'       : 'checkPasswordConfirm',
-    'blur #rpassword-confirm'        : 'checkPasswordConfirm',
-    'click #register-next'           : 'nextRegistrationView',
-    'click #register-previous'       : 'previousRegistrationView',
-    'submit #login-password-form'    : 'submitLogin',
-    'submit #registration-form'      : 'submitRegister',
-    'submit #forgot-form'            : 'submitForgot'
+    'click .oauth-link': 'link',
+    'keyup #rname': 'checkName',
+    'change #rname': 'checkName',
+    'blur #rname': 'checkName',
+    'keyup #rusername': 'checkUsername',
+    'change #rusername': 'checkUsername',
+    'click #rusername-button': 'clickUsername',
+    'keyup #rpassword': 'checkPassword',
+    'blur #rpassword': 'checkPassword',
+    'keyup #rpassword-confirm': 'checkPasswordConfirm',
+    'blur #rpassword-confirm': 'checkPasswordConfirm',
+    'click #register-next': 'nextRegistrationView',
+    'click #register-previous': 'previousRegistrationView',
+    'submit #login-password-form': 'submitLogin',
+    'submit #registration-form': 'submitRegister',
+    'submit #forgot-form': 'submitForgot'
   },
 
-  initialize: function (options) {
+  initialize: function(options) {
     this.options = options;
     this.tagFactory = new TagFactory();
   },
 
-  render: function () {
+  render: function() {
     var self = this;
     var data = {
       login: this.options.login,
@@ -40,7 +44,7 @@ var LoginView = Backbone.View.extend({
     };
     var template = _.template(LoginTemplate)(data);
     this.$el.html(template);
-    this.$el.i18n();
+    this.$el.localize();
     this.loginPasswordView = new LoginPasswordView({
       el: this.$(".password-view")
     }).render();
@@ -49,21 +53,21 @@ var LoginView = Backbone.View.extend({
 
       if (data.login.agency.enabled === true) {
         var agencyTags = this.tagFactory.createTagDropDown({
-              type:"agency",
-              selector:"#ragency",
-              width: "100%",
-              multiple: false,
-              allowCreate: false
-            });
+          type: "agency",
+          selector: "#ragency",
+          width: "100%",
+          multiple: false,
+          allowCreate: false
+        });
       }
 
       if (data.login.location.enabled === true) {
         var locationTags = this.tagFactory.createTagDropDown({
-              type:"location",
-              selector:"#rlocation",
-              width: "100%",
-              multiple: false
-            });
+          type: "location",
+          selector: "#rlocation",
+          width: "100%",
+          multiple: false
+        });
       }
 
       this.$('#registration-footer-cancel-next').show();
@@ -72,7 +76,7 @@ var LoginView = Backbone.View.extend({
 
     }
 
-    setTimeout(function () {
+    setTimeout(function() {
       self.$("#username").focus();
     }, 500);
     return this;
@@ -81,14 +85,14 @@ var LoginView = Backbone.View.extend({
   // functions to switch out the primary and secondary registration views
   // this happens when either agency or location are configured to be required
   // for users to sign up for the system
-  nextRegistrationView: function () {
+  nextRegistrationView: function() {
     this.$('#default-registration-view').hide();
     this.$('#optional-registration-view').show();
 
     this.$('#registration-footer-cancel-next').hide();
     this.$('#registration-footer-prev-submit').show();
   },
-  previousRegistrationView: function () {
+  previousRegistrationView: function() {
     this.$('#default-registration-view').show();
     this.$('#optional-registration-view').hide();
 
@@ -96,17 +100,17 @@ var LoginView = Backbone.View.extend({
     this.$('#registration-footer-prev-submit').hide();
   },
 
-  link: function (e) {
+  link: function(e) {
     if (e.preventDefault) e.preventDefault();
     var link = $(e.currentTarget).attr('href');
     window.location.href = link;
   },
 
-  v: function (e) {
+  v: function(e) {
     return validate(e);
   },
 
-  submitLogin: function (e) {
+  submitLogin: function(e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var data = {
@@ -118,7 +122,7 @@ var LoginView = Backbone.View.extend({
       url: '/api/auth/local',
       type: 'POST',
       data: data
-    }).done(function (success) {
+    }).done(function(success) {
       $.ajax({
         url: '/api/user',
         dataType: 'json'
@@ -127,16 +131,16 @@ var LoginView = Backbone.View.extend({
         window.cache.currentUser = data;
         window.cache.userEvents.trigger("user:login", data);
       });
-    }).fail(function (error) {
+    }).fail(function(error) {
       var d = JSON.parse(error.responseText);
       self.$("#login-error").html(d.message);
       self.$("#login-error").show();
     });
   },
 
-  submitRegister: function (e) {
+  submitRegister: function(e) {
     var self = this,
-        $submitButton = self.$('#registration-form [type="submit"]');
+      $submitButton = self.$('#registration-form [type="submit"]');
     if (e.preventDefault) e.preventDefault();
 
     $submitButton.prop('disabled', true);
@@ -222,7 +226,7 @@ var LoginView = Backbone.View.extend({
       url: '/api/auth/local/register',
       type: 'POST',
       data: data
-    }).done(function (success) {
+    }).done(function(success) {
       $.ajax({
         url: '/api/user',
         dataType: 'json'
@@ -231,7 +235,7 @@ var LoginView = Backbone.View.extend({
         window.cache.currentUser = data;
         window.cache.userEvents.trigger("user:login", data);
       });
-    }).fail(function (error) {
+    }).fail(function(error) {
       var d = JSON.parse(error.responseText);
       self.$("#registration-error").html(d.message);
       self.$("#registration-error").show();
@@ -239,7 +243,7 @@ var LoginView = Backbone.View.extend({
     });
   },
 
-  submitForgot: function (e) {
+  submitForgot: function(e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var data = {
@@ -250,13 +254,13 @@ var LoginView = Backbone.View.extend({
       url: '/api/auth/forgot',
       type: 'POST',
       data: data
-    }).done(function (success) {
+    }).done(function(success) {
       // Set the user object and trigger the user login event
       self.$("#forgot-view").hide();
       self.$("#forgot-footer").hide();
       self.$("#forgot-done-view").show();
       self.$("#forgot-done-footer").show();
-    }).fail(function (error) {
+    }).fail(function(error) {
       var d = JSON.parse(error.responseText);
       self.$("#forgot-error").html(d.message);
       self.$("#forgot-error").show();
@@ -266,7 +270,7 @@ var LoginView = Backbone.View.extend({
   // following doesn't use regular validate() because we want to
   // display the .help-block instead of the .error-* blocks but
   // could change in the future and make validate() more general
-  checkName: function (e) {
+  checkName: function(e) {
     var name = this.$("#rname").val();
     if (name && name !== '') {
       $("#rname").closest(".form-group").find(".help-block").hide();
@@ -275,11 +279,11 @@ var LoginView = Backbone.View.extend({
     }
   },
 
-  checkUsername: function (e) {
+  checkUsername: function(e) {
     var username = $("#rusername").val();
     $.ajax({
       url: '/api/user/username/' + username,
-    }).done(function (data) {
+    }).done(function(data) {
       $("#rusername-button").removeClass('btn-success');
       $("#rusername-button").removeClass('btn-danger');
       $("#rusername-check").removeClass('fa fa-check');
@@ -298,8 +302,8 @@ var LoginView = Backbone.View.extend({
     });
   },
 
-  checkPassword: function (e) {
-    var rules = validatePassword(this.$("#rusername").val(), this.$("#rpassword").val());
+  checkPassword: function(e) {
+    var rules = validatePassword($("#rusername").val(), $("#rpassword").val());
     var valuesArray = _.values(rules);
     var validRules = _.every(valuesArray);
     var success = true;
@@ -307,20 +311,20 @@ var LoginView = Backbone.View.extend({
       $("#rpassword").closest(".form-group").removeClass('has-error');
       $("#rpassword").closest(".form-group").find(".help-block").hide();
     }
-    _.each(rules, function (value, key) {
+    _.each(rules, function(value, key) {
       if (value === true) {
-        this.$(".password-rules .success.rule-" + key).show();
-        this.$(".password-rules .error.rule-" + key).hide();
+        $(".password-rules .success.rule-" + key).show();
+        $(".password-rules .error.rule-" + key).hide();
       } else {
-        this.$(".password-rules .success.rule-" + key).hide();
-        this.$(".password-rules .error.rule-" + key).show();
+        $(".password-rules .success.rule-" + key).hide();
+        $(".password-rules .error.rule-" + key).show();
       }
       success = success && value;
     });
     return success;
   },
 
-  checkPasswordConfirm: function (e) {
+  checkPasswordConfirm: function(e) {
     var success = true;
     var password = this.$("#rpassword").val();
     var confirm = this.$("#rpassword-confirm").val();
@@ -333,14 +337,15 @@ var LoginView = Backbone.View.extend({
     return success;
   },
 
-  clickUsername: function (e) {
+  clickUsername: function(e) {
     e.preventDefault();
   },
 
-  cleanup: function () {
+  cleanup: function() {
     if (this.loginPasswordView) { this.loginPasswordView.cleanup(); }
     removeView(this);
   },
 });
+
 
 module.exports = LoginView;

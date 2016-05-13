@@ -1,8 +1,8 @@
-
 var _ = require('underscore');
-var utils = require('../../../mixins/utilities');
+var Backbone = require('backbone');
 var BaseController = require('../../../base/base_controller');
 var HomeView = require('../views/home_view');
+
 var DashboardView = require('../views/home_dashboard_view');
 
 var HomeController = BaseController.extend({

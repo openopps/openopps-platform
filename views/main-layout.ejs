@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=typeof title == 'undefined' ? 'Open Opportunities' : title%></title>
+
+    <!-- Application data -->
+    <script type="text/javascript">
+    systemName = "Midas"; // TODO: JSON.stringify(systemName)
+    draftAdminOnly = <%- JSON.stringify(draftAdminOnly) %>;
+    version = <%- JSON.stringify(version) %>;
+    backendUser = <%- JSON.stringify(user) %>;
+    </script>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- special SailsJS markers -->
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/main.css">
+    <!--STYLES END-->
+  </head>
+
+  <body class="site">
+    <script type="text/javascript">
+      // this will only return true for IE <= 8.
+      if (window.attachEvent && !window.addEventListener) {
+        document.write('<div class="alert alert-danger"><strong>You are using an old, unsupported version of Internet Explorer.</strong>  This website may not work correctly in your browser.  For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</div>');
+      }
+    </script>
+
+    <div class="site-wrap">
+      <div class="navigation">
+      </div>
+      <% if (alert) { %>
+      <div class="container">
+        <div class="alert alert-danger server-alert">
+          <%- alert.message %>
+        </div>
+      </div>
+      <% } %>
+      <%- body %>
+    </div>
+    <footer class="bg-white p1" id="footer"></footer>
+    <!-- special SailsJS markers -->
+    <!--TEMPLATES-->
+    
+    <!--TEMPLATES END-->
+    <% if (process.env.NODE_ENV !== 'test') { %>
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/sails.io.js"></script>
+    <!--SCRIPTS END-->
+    <% } %>
+    <script src="/js/bundle.js"></script>
+
+  </body>
+</html>

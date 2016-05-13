@@ -1,7 +1,7 @@
 sudo: true
 language: node_js
 node_js:
-  - "0.10"
+  - "4.2.2"
 services:
   - postgresql
 addons:
@@ -11,7 +11,6 @@ before_install:
   - psql -c "CREATE USER midas WITH PASSWORD 'midas';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE midas to midas;" -U postgres
   - psql -c "ALTER SCHEMA public OWNER TO midas;" -U postgres
-  - "npm install npm@2.1.x -g"
 before_deploy: npm install -g https://github.com/18F/cf-blue-green/tarball/master
 env:
   global:

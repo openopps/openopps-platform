@@ -1,18 +1,18 @@
 /**
-* Add userId into params for knowing who created them.
+* Add userId into params or body for knowing who created them.
 */
 var _ = require('underscore');
 
 module.exports = function addUserId (req, res, next) {
   if (req.user) {
-    // Check if this request is sending an object in the body
+    // if this request is sending an object in the body
+    // add in the user's id which will identify object owner/creator
     if (!_.isEmpty(req.body)) {
-      if (!req.user[0].isAdmin || (req.user[0].isAdmin && !req.body.userId)) {
-        req.body.userId = req.user[0].id;
+      if (!req.user.isAdmin || (req.user.isAdmin && !req.body.userId)) {
+        req.body.userId = req.user.id;
       }
-    }
-    // If not, add the logged in user to the parameters
-    else {
+    } else {
+      // If not, add the logged in user to the parameters
       req.params.userId = req.user.id;
     }
   }

@@ -4,6 +4,18 @@
  * running.
  */
 
+// Set up Backbone to use jQuery
+var $ = window.jQuery = require('jquery');
+// TODO: ideally ^^^ wouldn't be global, blueimp-file-upload wants this
+
+var _ = require('underscore');
+var Backbone = require('backbone');
+
+require('./global-utils');
+
+Backbone.$ = $;
+
+
 // Set CSRF header
 $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
   var token;
@@ -16,9 +28,10 @@ $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
 });
 
 // Install jQuery plugins
+// TODO: maybe this shouldn't be global vvv
 require('blueimp-file-upload/js/vendor/jquery.ui.widget');
-i18n = require('i18next-client/i18next.commonjs.withJQuery');
-moment = require('moment');
+window.moment = require('moment');
+
 
 // Set markdown defaults
 var marked = require('marked');
@@ -30,22 +43,18 @@ marked.setOptions({
 });
 
 // App
-window.Application      = window.Application || {};
-window.cache            = { userEvents: {}, currentUser: null, system: {} };
+window.Application = window.Application || {};
+window.cache = { userEvents: {}, currentUser: null, system: {} };
 
 // Events
 window.entities = { request: {} };
-rendering       = {};
+window.rendering = {};
 
-// Set up Backbone to use jQuery
-_ = require('underscore');
-Backbone = require('backbone');
-Backbone.$ = jQuery;
 
 // Global AJAX error listener. If we ever get an auth error, prompt to log
 // in otherwise show the error.
-$(function () {
-  $(document).ajaxError(function (e, jqXHR, settings, errorText) {
+$(function() {
+  $(document).ajaxError(function(e, jqXHR, settings, errorText) {
     $('.spinner').hide();
     if (jqXHR.status === 401 || jqXHR.status === 403) {
       if (!window.cache || !window.cache.userEvents ||

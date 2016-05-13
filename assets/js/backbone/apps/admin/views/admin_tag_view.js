@@ -1,9 +1,14 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var utils = require('../../../mixins/utilities');
-var AdminTagTemplate = require('../templates/admin_tag_template.html');
+var i18n = require('i18next');
+var i18nextJquery = require('jquery-i18next');
+
 var TagFactory = require('../../../components/tag_factory');
+
+// templates
+var fs = require('fs');
+var AdminTagTemplate = fs.readFileSync(`${__dirname}/../templates/admin_tag_template.html`).toString();
 
 var AdminTagView = Backbone.View.extend({
 
@@ -22,7 +27,8 @@ var AdminTagView = Backbone.View.extend({
       'topic'
     ];
     var data = {
-      types: types
+      types: types,
+      i18n: i18n
     };
     var template = _.template(AdminTagTemplate)(data);
     var self = this;
@@ -41,7 +47,7 @@ var AdminTagView = Backbone.View.extend({
     var $sel = this.tagFactory.createTagDropDown({
       type: type,
       selector: "#" + type,
-    })
+    });
 
     $sel.on('change', function(e) {
       var $el = self.$(e.currentTarget);

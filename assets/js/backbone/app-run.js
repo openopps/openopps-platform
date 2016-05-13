@@ -1,14 +1,12 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-var AppsRouter = require('./apps/apps_router');
+var AppsRouter = require('./apps-router');
 
-
-Application = {
-
+var Application = {
   started: null,
 
   // Initialize and fire up the application.
-  initialize: function () {
+  initialize: function() {
     var self = this;
     // Cache user
     // Check if a user is already defined

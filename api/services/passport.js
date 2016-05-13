@@ -66,6 +66,7 @@ passport.protocols = require('./protocols');
  * @param {Function} next
  */
 passport.connect = function (req, query, profile, next) {
+  sails.log.verbose('passport.connect')
   var user = {}
     , provider;
 
@@ -118,6 +119,7 @@ passport.connect = function (req, query, profile, next) {
       //           authentication provider.
       // Action:   Create a new user and assign them a passport.
       if (!passport) {
+        sails.log.verbose('new user with 3rd party auth');
         User.findOrCreate({ username: user.username }, user, function(err, user) {
           if (err) return next(err);
 
@@ -137,19 +139,24 @@ passport.connect = function (req, query, profile, next) {
       //           connected passport.
       // Action:   Get the user associated with the passport.
       else {
+        sails.log.verbose('existing user with already connected passport:', passport.user);
         // If the tokens have changed since the last session, update them
         if (query.hasOwnProperty('tokens') && query.tokens !== passport.tokens) {
           passport.tokens = query.tokens;
         }
 
         // Save any updates to the Passport before moving on
-        passport.save(function (err, passport) {
+        passport.save(function (err, obj) {
           if (err) {
             return next(err);
           }
 
           // Fetch the user associated with the Passport
-          User.findOne(passport.user.id, next);
+          User.findOne(passport.user).populate('tags')
+          .exec(function(err, user) {
+            if (err) sails.log.verbose('error finding user:', err);
+            next(err, user);
+          });
         });
       }
     } else {
@@ -157,6 +164,7 @@ passport.connect = function (req, query, profile, next) {
       //           passport.
       // Action:   Create and assign a new passport to the user.
       if (!passport) {
+        sails.log.verbose('connecting new passport');
         query.user = req.user.id;
 
         Passport.create(query, function (err, passport) {
@@ -171,6 +179,7 @@ passport.connect = function (req, query, profile, next) {
       // Scenario: Connection already exists.
       // Action:   Simply pass along the already established session.
       else {
+        sails.log.verbose('re-connecting passport to existing session');
         next(null, req.user);
       }
     }
@@ -187,6 +196,8 @@ passport.connect = function (req, query, profile, next) {
  * @param  {Object} res
  */
 passport.endpoint = function (req, res) {
+  sails.log.verbose('passport.endpoint')
+
   var strategies = sails.config.passport
     , provider   = req.param('provider')
     , options    = {};
@@ -219,6 +230,8 @@ passport.endpoint = function (req, res) {
  * @param {Function} next
  */
 passport.callback = function (req, res, next) {
+  sails.log.verbose('passport.callback')
+
   var provider = req.param('provider', 'local')
     , action   = req.param('action');
 
@@ -275,6 +288,7 @@ passport.callback = function (req, res, next) {
 passport.loadStrategies = function () {
   var self       = this
     , strategies = sails.config.passport;
+  sails.log.verbose('passport.loadStrategies', strategies)
 
   Object.keys(strategies).forEach(function (key) {
     var options = { passReqToCallback: true }, Strategy;
@@ -300,47 +314,6 @@ passport.loadStrategies = function () {
         self.use(new Strategy(self.protocols.bearer.authorize));
       }
 
-    } else if (key === 'sspi') {
-      Strategy = strategies.local.strategy;
-
-      // SSPI LocalStrategy - (DoS non-OAuth provider)
-      self.use(new Strategy({
-          passReqToCallback: true,
-        },
-        function (req, username, password, done) {
-          // get username and domain from request
-          console.log('SSPI req object:', req.sspi);
-          console.log('Username:', username);
-          console.log('Password:', password);
-          request.get({url: sails.config.auth.auth.sspi.contentUrl,
-                       json: true,
-                       qs: { username: req.sspi.rawUser, domain: password }
-                      }, function (err, req2, providerUsers) {
-            if (!providerUsers) {
-              return done(null, false, { message: 'An error occurred while loading user information.' });
-            }
-            var user = providerUsers.users.pop();
-            user = user || {};
-            // map fields to what passport expects for profiles
-            user.id = user.id;
-            user.emails = [ {value: user.email, type: 'work'} ];
-            user.displayName = user.fullname;
-            user.photoUrl = user.image;
-            user.skill = user.skills.tags;
-            user.topic = user.proftags.tags;
-            // check if the settings should be overwritten
-            if (sails.config.auth.auth.sspi.overwrite === true) {
-              user.overwrite = true;
-            }
-            // Send through standard local user creation flow
-            User.findOrCreate({ username: username }).exec(function(err, user) {
-              if (err) { return done(null, false, { message: 'Error creating user' }); }
-              return done(null, user);
-            });
-          });
-        }
-      ));
-
     } else {
       var protocol = strategies[key].protocol
         , callback = strategies[key].callback;
@@ -351,7 +324,7 @@ passport.loadStrategies = function () {
 
       Strategy = strategies[key].strategy;
 
-      var baseUrl = sails.getBaseurl();
+      var baseUrl = sails.config.appUrl;
 
       switch (protocol) {
         case 'oauth':
@@ -383,6 +356,7 @@ passport.loadStrategies = function () {
  * @param  {Object} res
  */
 passport.disconnect = function (req, res, next) {
+  sails.log.verbose('passport.disconnect')
   var user     = req.user
     , provider = req.param('provider', 'local')
     , query    = {};
@@ -412,56 +386,11 @@ passport.serializeUser(function (user, next) {
 });
 
 passport.deserializeUser(function (id, next) {
-  User.findOne(id).populate('tags').exec(function(err, user){
+  // TODO: consider caching active users
+  User.findOne(id).populate('tags').populate('badges').exec(function(err, user){
     if (err) next(err);
     next(null, user);
   });
 });
 
 module.exports = passport;
-
-function linkedinProfile(profile) {
-  // parse profile data to standard format
-  // take standard low-res photo
-  if (profile._json.pictureUrl) {
-    profile.photoUrl = profile._json.pictureUrl;
-  }
-  // upgrade to higher res photo if its available
-  if (profile._json.pictureUrls && (profile._json.pictureUrls._total > 0)) {
-    profile.photoUrl = profile._json.pictureUrls.values[0];
-  }
-  // bio
-  if (profile._json.summary) {
-    profile.bio = profile._json.summary;
-  }
-  // current company and title
-  if (profile._json.threeCurrentPositions && (profile._json.threeCurrentPositions._total > 0)) {
-    profile.company = profile._json.threeCurrentPositions.values[0].company.name;
-    profile.title = profile._json.threeCurrentPositions.values[0].title;
-  }
-  // parse skills
-  profile.skill = [];
-  if (profile._json.skills && (profile._json.skills._total > 0)) {
-    _.each(profile._json.skills.values, function (s) {
-      profile.skill.push(s.skill.name);
-    });
-  }
-  // parse topics
-  profile.topic = [];
-  if (profile._json.interests) {
-    _.each(profile._json.interests.split(','), function (i) {
-      i = i.trim();
-      if (i.toLowerCase().substring(0,4) == 'and ') {
-        i = i.slice(3).trim();
-      }
-      if (i.substring(0,1) == '&') {
-        i = i.slice(1).trim();
-      }
-      profile.topic.push(i);
-    });
-  }
-  if (sails.config.auth.auth.linkedin.overwrite === true) {
-    profile.overwrite = true;
-  }
-  return profile;
-}
