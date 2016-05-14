@@ -126,8 +126,11 @@ ul.nav-search > li {
 .navbar-brand {
   padding-top: 10px;
   padding-bottom: 10px;
-  height: 80px;
+  img {
+    height: 60px;
+  }
 }
+
 
 @media (min-width: 768px) {
   .navbar-nav > li > a {
