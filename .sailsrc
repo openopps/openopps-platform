@@ -1,0 +1,6 @@
+{
+  "hooks": {
+    "sockets": false,
+    "pubsub": false
+  }
+}

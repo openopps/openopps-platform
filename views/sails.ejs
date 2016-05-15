@@ -1,0 +1,9 @@
+<!-- special SailsJS markers -->
+<!--TEMPLATES-->
+
+<!--TEMPLATES END-->
+<% if (process.env.NODE_ENV !== 'test' && (sails.config.hooks.sockets || sails.config.hooks.pubsub)) { %>
+<!--SCRIPTS-->
+<script src="/js/dependencies/sails.io.js"></script>
+<!--SCRIPTS END-->
+<% } %>
