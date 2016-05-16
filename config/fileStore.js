@@ -6,10 +6,13 @@ var AWS = require('aws-sdk'),
 // If running in Cloud Foundry with an S3 credential service available
 if (s3Creds) {
   AWS.config.update({
-    accessKeyId: s3Creds.access_key,
-    secretAccessKey: s3Creds.secret_key
+    accessKeyId: s3Creds.access_key_id,
+    secretAccessKey: s3Creds.secret_access_key
   });
+  process.env.S3_BUCKET = s3Creds.bucket;
+  process.env.S3_PREFIX = 'openopps-uploads';
 }
+
 
 module.exports.fileStore = {
   service: process.env.FILESTORE || 'local',
