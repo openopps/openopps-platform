@@ -1,8 +1,7 @@
 ## Contributing
 
 We aspire to create a welcoming environment for collaboration on this project.
-To that end, we follow the [18F Code of Conduct](https://github.com/18F/code-of-conduct/blob/master/code-of-conduct.md) and ask that all contributors do the same. Open Opps has a defined [governance model](https://github.com/18F/openopps-platform/master/GOVERNANCE.md) to assist with managing the project.
-
+To that end, we follow the [18F Code of Conduct](https://github.com/18F/code-of-conduct/blob/master/code-of-conduct.md) and ask that all contributors do the same. Open Opps has a defined [governance model](GOVERNANCE.md) to assist with managing the project.  
 ### Public domain
 
 This project is in the public domain within the United States, and
