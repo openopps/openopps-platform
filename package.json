@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -99,9 +99,12 @@
     "supertest": "^1.2.0"
   },
   "config": {
-    "grunt": "./node_modules/.bin/grunt"
+    "grunt": "./node_modules/.bin/grunt",
+    "dir": "."
   },
   "scripts": {
+    "preinstall": "if [ \"$THEME\" ]; then git clone $THEME _theme; npm run import --openopps-platform:dir=_theme; fi",
+    "import": "cp -v $npm_package_config_dir/exclude.txt exclude.txt | true && rsync -av --exclude-from=exclude.txt $npm_package_config_dir/* .",
     "install-sail-dependencies": "cd node_modules/sails && npm install && cd -",
     "install": "npm run install-sail-dependencies && npm run uswds && node --version && pwd && ls",
     "init": "node ./tools/init.js",

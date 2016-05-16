@@ -1,5 +1,6 @@
 ---
 inherit: manifest.yml
 host: openopps-staging
+instances: 2
 env:
   THEME: https://github.com/18F/open-opportunities-theme.git

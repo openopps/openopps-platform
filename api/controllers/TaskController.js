@@ -129,7 +129,7 @@ module.exports = {
       }
       sails.log.debug('task export: found %s tasks', tasks.length)
 
-      User.find({id: _.pluck(tasks, 'userId')}).populate('tags').exec(function (err, creators) {
+      User.find({id: _.pluck(tasks, 'owner')}).populate('tags').exec(function (err, creators) {
         if (err) {
           sails.log.error("task creator query error. " + err);
           resp.send(400, {message: 'Error when querying task creators.', error: err});
@@ -137,7 +137,7 @@ module.exports = {
         }
         sails.log.debug('task export: found %s creators', creators.length)
         for (var i=0; i < tasks.length; i++) {
-          var creator = _.findWhere(creators, {id: tasks[i].userId});
+          var creator = _.findWhere(creators, {id: tasks[i].owner});
           tasks[i].creator_name = creator ? creator.name : "";
           creator.agency = _.findWhere(creator.tags, {type: 'agency'});
           tasks[i].agency_name = creator && creator.agency ? creator.agency.name : "";
@@ -152,7 +152,7 @@ module.exports = {
           var volunteers = volQueryResult.rows;
           sails.log.debug('task export: found %s task volunteer counts', volunteers ? volunteers.length : 0)
           for (var i=0; i < tasks.length; i++) {
-            var taskVols = _.findWhere(volunteers, {id: tasks[i].id});
+            var taskVols = _.findWhere(volunteers, {id: tasks[i].owner});
             tasks[i].signups = taskVols ? parseInt(taskVols.count) : 0;
           }
           // gathered all data, render and return as file for download

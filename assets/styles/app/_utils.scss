@@ -39,3 +39,51 @@
   color: #666;
   font-size: 7px;
 }
+
+// copied from old app style, might benefit from refactoring
+body > .popover {
+  width: 390px;
+  max-width: 390px;
+  min-height: 100px;
+  max-height: 200px;
+  margin-bottom: 20px;
+}
+
+.popover-table {
+  display: table;
+  width: 100%;
+}
+.popover-row {
+  display: table-row;
+  width: 100%;
+  clear: both;
+}
+.popover-cell-left, .popover-cell-right {
+  display: table-cell;
+  float: left;
+}
+.popover-cell-left {
+  width: 70px;
+}
+.popover-cell-right {
+  width: 288px;
+}
+
+.popover-image {
+  height: 60px;
+  width: 60px;
+  border-radius: 35px;
+  margin-right: 10px;
+}
+
+.popover-person {
+  font-size: 12px;
+}
+.popover-person > .title {
+  font-size: 16px;
+  font-weight: 500;
+}
+.popover-person > .text-line {
+  height: 1.5em;
+  overflow: hidden;
+}

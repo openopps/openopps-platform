@@ -41,16 +41,9 @@
       <%- body %>
     </div>
     <footer class="bg-white p1" id="footer"></footer>
-    <!-- special SailsJS markers -->
-    <!--TEMPLATES-->
-    
-    <!--TEMPLATES END-->
-    <% if (process.env.NODE_ENV !== 'test') { %>
-    <!--SCRIPTS-->
-    <script src="/js/dependencies/sails.io.js"></script>
-    <!--SCRIPTS END-->
-    <% } %>
+    <%- partial ('sails.ejs') %>
     <script src="/js/bundle.js"></script>
+    <%- partial ('analytics.ejs') %>
 
   </body>
 </html>

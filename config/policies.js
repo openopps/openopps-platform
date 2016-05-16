@@ -44,6 +44,11 @@ module.exports.policies = {
     '*': 'admin',
   },
 
+  AttachmentController : {
+    '*': 'requireAuth',
+    'findAllBytaskId': true
+  },
+
   // Auth controller can be accessed by anyone
   AuthController : {
     '*': true
@@ -61,7 +66,7 @@ module.exports.policies = {
     'create': ['requireAuth', 'requireId', 'addUserId', 'authorizeTask'],
     'update': ['requireAuth', 'requireId', 'authorizeTask', 'comment', 'ownerOrAdmin'],
     'destroy': ['requireAuth', 'requireId', 'admin'],
-    'findAllByTaskId': ['requireAuth', 'requireId', 'authorizeTask']
+    'findAllByTaskId': ['requireId', 'authorizeTask']
   },
 
   LocationController : {
@@ -90,21 +95,29 @@ module.exports.policies = {
     'export': ['admin']
   },
 
+  // Disable the index blueprints for UploadController due to security concerns
+  UploadController : {
+    'index': false,
+    'findAll': 'admin',
+    // everything else is protected (limits access for private files)
+    '*': 'protectFile'
+  },
+
   UserController : {
     '*': false,
     'profile': true,
-    'find': 'requireAuth',
-    'findOne': 'requireAuth',
-    'photo': ['requireId'],
-    'info': ['requireId'],
+    'find': true,
+    'findOne': 'requireId',
+    'photo': 'requireId',
+    'info': 'requireId',
     'update': ['requireAuth', 'requireId', 'user'],
     'username': true,
-    'all': ['requireAuth'],
-    'activities': ['requireAuth'],
+    'all': 'requireAuth',
+    'activities': 'requireAuth',
     'disable': ['requireAuth', 'requireId', 'admin'],
     'enable': ['requireAuth', 'requireId', 'admin'],
-    'resetPassword': ['requireAuth'],
-    'export': ['admin']
+    'resetPassword': 'requireAuth',
+    'export': 'admin'
   },
 
   VolunteerController : {

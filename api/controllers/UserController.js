@@ -39,10 +39,6 @@ module.exports = {
 	},
 
   find: function(req, res) {
-    // If the user is not logged in, return null object
-    if (!req.user) {
-      return res.forbidden("Login required.");
-    }
     if (req.route.params.id) {
       userId = req.route.params.id;
 			User.findOne(userId).populate('tags').populate('badges')
@@ -50,11 +46,15 @@ module.exports = {
 				sails.log.verbose('find (err user)',err,user);
 				if (err) return res.negotiate(err);
 				user.isOwner = false;
-				if (req.user.id === user.id) user.isOwner = true;
-				if (req.user.id != user.id && !req.user.isAdmin) user.username = null; // hide email address
+				if (req.user && req.user.id === user.id) user.isOwner = true;
+				if (req.user && req.user.id != user.id && !req.user.isAdmin) user.username = null; // hide email address
 				return res.send(user);
 			});
     } else {
+			// With no ID given, send the user's own info
+			// If the user is not logged in, return null object
+			if (!req.user) return res.send(403, null);
+
 			req.user.isOwner = true;
 			return res.send(req.user);
 		}

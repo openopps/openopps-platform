@@ -221,7 +221,7 @@ module.exports = {
   },
 
   exportFormat: {
-    'project_id': 'projectId',
+    'task_id': 'id',
     'name': {field: 'title', filter: exportUtils.nullToEmptyString},
     'description': {field: 'description', filter: exportUtils.nullToEmptyString},
     'created_date': {field: 'createdAt', filter: exportUtils.excelDateFormat},
@@ -230,7 +230,6 @@ module.exports = {
     'submitted_date': {field: 'submittedAt', filter: exportUtils.excelDateFormat},
     'creator_name': {field: 'creator_name', filter: exportUtils.nullToEmptyString},
     'signups': 'signups',
-    'task_id': 'id',
     'task_state': 'state',
     'agency_name': {field: 'agency_name', filter: exportUtils.nullToEmptyString},
     'completion_date': {field: 'completedAt', filter: exportUtils.excelDateFormat},
