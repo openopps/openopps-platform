@@ -74,7 +74,7 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
                           <% } ); %>
                         </p>
                         <% } %>
@@ -135,7 +135,7 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
                           <% } ); %>
                         </p>
                         <% } %>
@@ -175,7 +175,7 @@
                         <% if ( task.volunteers.length ) { %>
                         <p><i>Sign-ups</i>
                           <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
+                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
                           <% } ); %>
                         </p>
                         <% } %>
@@ -212,13 +212,6 @@
                       </td>
                       <td class="metrics-table__title">
                         <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                        <% if ( task.volunteers.length ) { %>
-                        <p><i>Sign-ups</i>
-                          <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%- vol.name || vol.user.username %></a>
-                          <% } ); %>
-                        </p>
-                        <% } %>
                       </td>
                       <td class="metrics-table__author">
                         <a href="/profile/<%- task.owner.id %>">
