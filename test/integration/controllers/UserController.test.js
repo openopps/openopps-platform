@@ -5,7 +5,6 @@ var resAssert = require('./resAssert');
 var userFixtures = require('../../fixtures/user');
 
 describe('UserController', function() {
-  var users;  // user fixtures loaded fresh for each test
   var newUserAttrs;
   var loggedInUser;
 
@@ -87,18 +86,20 @@ describe('UserController', function() {
     });
 
     describe('when logged in', function() {
-
-      var agent;
+      var agent, emmyUser;
       beforeEach(function(done) {
-        agent = request.agent(sails.hooks.http.app);
-        agent.post('/api/auth/local')
-          .send({
-            identifier: newUserAttrs.username,
-            password: newUserAttrs.password,
-            json: true
-          })
-          .expect(200)
-          .end(done)
+        User.register(userFixtures.emmy, function(err, newUser) {
+          emmyUser = newUser;   // not logged in user
+          agent = request.agent(sails.hooks.http.app);
+          agent.post('/api/auth/local')
+            .send({
+              identifier: newUserAttrs.username,
+              password: newUserAttrs.password,
+              json: true
+            })
+            .expect(200)
+            .end(done)
+        })
       });
       it('empty activities for new user', function (done) {
         agent.get('/api/user/activities')
@@ -127,15 +128,27 @@ describe('UserController', function() {
         });
         it('reports correct tasks', function (done) {
           agent.get('/api/user/activities')
-            .expect(200)
-            .expect(function(res) {
-              assert.isNotNull(res.body);
-              assert.isNotNull(res.body.tasks);
-              assert.isNotNull(res.body.tasks.created);
-              assert.deepEqual(res.body.tasks.created.length, userTasks.length);
-            })
-            .end(done)
-          });
+          .expect(200)
+          .expect(function(res) {
+            assert.isNotNull(res.body);
+            assert.isNotNull(res.body.tasks);
+            assert.isNotNull(res.body.tasks.created);
+            assert.deepEqual(res.body.tasks.created.length, userTasks.length);
+          })
+          .end(done)
+        });
+        it('reports correct tasks when user id specified', function (done) {
+          agent.get('/api/user/activities/'+emmyUser.id)
+          .expect(200)
+          .expect(function(res) {
+            assert.isNotNull(res.body);
+            assert.isNotNull(res.body.tasks);
+            assert.isNotNull(res.body.tasks.created);
+            assert.deepEqual(res.body.tasks.created.length, 0);
+          })
+          .end(done)
+        });
+
       });
     });
   });
