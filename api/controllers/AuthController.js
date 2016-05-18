@@ -25,8 +25,8 @@ module.exports = {
   logout: function (req, res) {
     req.logout();
 
-    // mark the user as logged out for auth purposes
-    req.session.authenticated = false;
+    // destroy the session, so client logs out the user
+    req.session.destroy();
 
     if (req.param('json')) {
       res.send({ logout: true });
