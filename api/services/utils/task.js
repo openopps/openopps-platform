@@ -95,11 +95,14 @@ var findTasks = function (where, cb) {
     if (err) { return cb({ message: 'Error looking up tasks.' }, null); }
     tasks.forEach(function(task) {
       var owner = task.owner
-      task.owner = {
-        id: owner.id,
-        name: owner.name,
-        agency: owner.tags && owner.tags[0]
-      };
+      if (!owner) sails.log.error('no owner for task', task);
+      else {
+        task.owner = {
+          id: owner.id,
+          name: owner.name,
+          agency: owner.tags && owner.tags[0]
+        };        
+      }
     });
     return cb(null, tasks);
   });
