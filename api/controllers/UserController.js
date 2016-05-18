@@ -89,8 +89,8 @@ module.exports = {
   },
 
   activities: function (req, res) {
-		sails.log.verbose('UserController.activities')
-		var userId = (req.user || req.params).id;
+		sails.log.verbose('UserController.activities', req.param('id'))
+		var userId = req.param('id') || req.user.id;
 		if (!userId) res.badRequest("Cant't get activies: no user specified")
     var result = {tasks: {created:[], volunteered:[]}};
 		// TODO: this should be refactored into User model

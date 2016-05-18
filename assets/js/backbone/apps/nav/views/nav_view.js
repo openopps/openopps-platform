@@ -40,7 +40,7 @@ var NavView = Backbone.View.extend({
 
     this.listenTo(window.cache.userEvents, "user:logout", function() {
       self.doRender({ user: null });
-      Backbone.history.loadUrl();
+      Backbone.history.navigate('', {trigger: true});
       window.cache.userEvents.trigger("user:logout:success");
     });
 

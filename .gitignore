@@ -8,7 +8,7 @@ pids
 logs
 results
 
-.env
+.env*
 .cf-env
 cf-ssh.yml
 *credentials.json
