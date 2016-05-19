@@ -80,9 +80,11 @@
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
+                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
                         <a href="/profile/<%- task.owner.id %>">
                           <%- task.owner.name || task.owner.username %>
                         </a>
+                        <% } %>
                       </td>
                       <td class="metrics-table__button">
                         <a href="#open/<%- task.id %>"
@@ -141,9 +143,11 @@
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
+                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
                         <a href="/profile/<%- task.owner.id %>">
                           <%- task.owner.name || task.owner.username %>
                         </a>
+                        <% } %>
                       </td>
                     </tr>
                   <% }); %>
@@ -181,9 +185,11 @@
                         <% } %>
                       </td>
                       <td class="metrics-table__author">
+                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
                         <a href="/profile/<%- task.owner.id %>">
                           <%- task.owner.name || task.owner.username %>
                         </a>
+                        <% } %>
                       </td>
                     </tr>
                   <% }); %>
@@ -214,9 +220,11 @@
                         <a href="/tasks/<%- task.id %>"><%- task.title %></a>
                       </td>
                       <td class="metrics-table__author">
+                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
                         <a href="/profile/<%- task.owner.id %>">
                           <%- task.owner.name || task.owner.username %>
                         </a>
+                        <% } %>
                       </td>
                     </tr>
                   <% }); %>
@@ -249,9 +257,11 @@
                         <a href="/tasks/<%- task.id %>"><%- task.title %></a>
                       </td>
                       <td class="metrics-table__author">
+                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
                         <a href="/profile/<%- task.owner.id %>">
                           <%- task.owner.name || task.owner.username %>
                         </a>
+                        <% } %>
                       </td>
                       <td class="metrics-table__button">
                         <a href="#delete/<%- task.id %>"
