@@ -477,7 +477,6 @@ module.exports = {
     }
 
     findTasks.then(function(output) {
-      console.log('output ---->', output)
       res.json( output );
     })
     .catch(function(err) {

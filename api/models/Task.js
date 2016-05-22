@@ -204,7 +204,6 @@ module.exports = {
         return Task.byCategoryWithVolunteers(tasks);
       })
       .then(function(output) {
-        console.log('here')
         return output;
       })
     return promise;

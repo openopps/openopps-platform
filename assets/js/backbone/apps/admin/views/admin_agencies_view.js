@@ -17,7 +17,6 @@ var AdminAgenciesView = Backbone.View.extend({
     this.data = {
       agency: window.cache.currentUser.agency
     };
-    console.log('AdminAgenciesView data', this.data.agency);
   },
 
   render: function () {
@@ -42,7 +41,6 @@ var AdminAgenciesView = Backbone.View.extend({
   },
 
   link: function (e) {
-    console.log('link this.data.agency.slug', this.data.agency.slug)
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     this.adminMainView.routeTarget(t.data('target'), this.data.agency.slug);

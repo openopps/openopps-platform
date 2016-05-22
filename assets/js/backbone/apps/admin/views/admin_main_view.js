@@ -20,7 +20,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    console.log('AdminMainView', this.options)
     this.options = options;
   },
 
@@ -47,7 +46,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   routeTarget: function (target, agencyId) {
-    console.log('routeTarget:', target);
     agencyId = agencyId || this.options.agencyId;
     if (!target) {
       target = 'dashboard';
@@ -63,7 +61,7 @@ var AdminMainView = Backbone.View.extend({
     $($(t.parents('ul')[0]).find('li')).removeClass('active');
     // make the current link active
     $(t.parent('li')[0]).addClass('active');
-    console.log('target', target);
+
     if (target == 'users') {
       if (!this.adminUserView) {
         this.initializeAdminUserView(agencyId);
@@ -118,7 +116,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   initializeAdminUserView: function (agencyId) {
-    console.log('initializeAdminUserView', agencyId)
     if (this.adminUserView) {
       this.adminUserView.cleanup();
     }
@@ -138,7 +135,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   initializeAdminTaskView: function (agencyId) {
-    console.log('initializeAdminTaskView', agencyId)
     if (this.adminTaskView) {
       this.adminTaskView.cleanup();
     }
@@ -149,7 +145,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   initializeAdminAgenciesView: function () {
-    console.log('initializeAdminAgenciesView', this.options.agencyId)
     if (this.adminAgenciesView) {
       this.adminAgenciesView.cleanup();
     }
