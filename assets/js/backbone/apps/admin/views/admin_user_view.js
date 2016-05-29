@@ -32,7 +32,6 @@ var AdminUserView = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    console.log('AdminUserView options', options);
     this.options = options;
     this.data = {
       page: 1
