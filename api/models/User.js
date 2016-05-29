@@ -174,6 +174,17 @@ module.exports = {
 
   },
 
+  // returns a promise
+  findByDomain: function(domain) {
+    var queryStr = "SELECT * FROM midas_user WHERE username SIMILAR TO '%(@|.)" +
+                   domain + "'";
+    var userQuery = Promise.promisify(User.query, {context: User});
+    return userQuery(queryStr).
+    then(function(result) {
+      return result.rows;
+    })
+  },
+
   // TODO: add more fields, likely driven off subqueries
   exportFormat: {
     'user_id': 'id',
@@ -190,6 +201,5 @@ module.exports = {
     'admin': 'isAdmin',
     'disabled': 'disabled'
   },
-
 
 };

@@ -45,9 +45,16 @@ module.exports.connections = {
     database    : 'midas',
     // populateFast: true  -- removed with sails 0.12.1 upgrade
     // TODO: delete?       -- was this part of soft-delete implementation?
+  },
+  postgresqlTest: {
+    adapter     : 'sails-postgresql',
+    host        : 'localhost',
+    user        : 'midas',
+    password    : 'midas',
+    database    : 'midastest',
   }
-
 };
+
 
 if (dbURL) {
   module.exports.connections = {

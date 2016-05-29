@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var AppsRouter = require('./apps-router');
+import User from '../utils/user';
 
 var Application = {
   started: null,
@@ -11,7 +12,7 @@ var Application = {
     // Cache user
     // Check if a user is already defined
     if (!_.isUndefined(backendUser)) {
-      window.cache.currentUser = backendUser;
+      window.cache.currentUser = new User(backendUser);
     }
     if (!_.isUndefined(systemName)) {
       window.cache.system.name = systemName;

@@ -62,8 +62,19 @@ For testing in Midas, we are using:
 * [request](https://github.com/mikeal/request) to make http calls for testing API endpoints
 
 The following command will execute a single test file in the application context:
-```NODE_ENV=test ./node_modules/.bin/mocha test/test.upstart.js test/api/sails/tag.test.js```
 
+```
+NODE_ENV=test ./node_modules/.bin/mocha test/test.upstart.js test/api/sails/tag.test.js
+```
+
+Note: there are some methods that use postgres-specific queries.  For ease of development,
+tests for these are marked _pending_. If you are modifying this code, enable these tests
+and make sure they pass.  You will need to have a test database:
+
+```
+psql midas
+CREATE DATABASE midastest WITH TEMPLATE midas;
+```
 
 ### Backbone
 

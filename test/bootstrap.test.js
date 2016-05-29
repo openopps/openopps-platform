@@ -17,12 +17,12 @@ before(function(done) {
     },
     csrf: false,
     connections: {
-      testDB: {
+      defaultTestDB: {
         adapter: 'sails-memory'
       }
     },
     models: {
-      connection: 'testDB'
+      connection: 'defaultTestDB'
     },
     emailProtocol: ''
     // TODO: validateDomains: false,
@@ -31,7 +31,6 @@ before(function(done) {
     // TODO: taskState: 'draft',
     // TODO: draftAdminOnly: false,
   };
-
   sails.lift(config, function(err, server) {
     if (err) return done(err);
     // here you can load fixtures, etc.
@@ -45,8 +44,12 @@ after(function(done) {
 });
 
 beforeEach(function(done) {
-  // Drops database between each test. Also causes all models to be reloaded.
-  // This works because we use the memory database
+  if ( sails.config.models.connection == 'postgresql') {
+    console.log('note: using postgresql connection, not dropping test data');
+  }
+  // When we're using the memory database...
+  // this will drop database between each test.
+  // Also causes all models to be reloaded.
   sails.once('hook:orm:reloaded', done);
   sails.emit('hook:orm:reload');
 });

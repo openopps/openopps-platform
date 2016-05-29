@@ -28,7 +28,7 @@ var BrowseRouter = Backbone.Router.extend({
     'profile/:id(/)'                : 'showProfile',
     'profile/:id(/)/:action'        : 'showProfile',
     'admin(/)'                      : 'showAdmin',
-    'admin(/):action(/)(?:queryStr)': 'showAdmin'
+    'admin(/):action(/)(:agencyId)' : 'showAdmin'
   },
 
   data: { saved: false },
@@ -91,7 +91,6 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   listTasks: function(queryStr) {
-    console.log("listTasks");
     this.cleanupChildren();
     this.browseListController = new BrowseListController({
       target: 'tasks',
@@ -174,14 +173,12 @@ var BrowseRouter = Backbone.Router.extend({
     this.profileShowController = new ProfileShowController({ id: id, action: action, data: this.data });
   },
 
-  showAdmin: function(action) {
-
+  showAdmin: function(action, agencyId) {
     this.cleanupChildren();
     this.adminMainController = new AdminMainController({
-
       el: '#container',
       action: action,
-
+      agencyId: agencyId
     });
 
   },

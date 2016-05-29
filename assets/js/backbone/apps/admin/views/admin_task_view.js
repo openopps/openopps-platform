@@ -26,8 +26,12 @@ var AdminTaskView = Backbone.View.extend({
 
   render: function () {
     var view = this;
+    var url = '/admin/tasks';
+    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
+    Backbone.history.navigate(url);
+
     $.ajax({
-      url: '/api/admin/tasks',
+      url: '/api' + url,
       data: this.data,
       dataType: 'json',
       success: function ( data ) {
@@ -39,7 +43,6 @@ var AdminTaskView = Backbone.View.extend({
       },
     });
 
-    Backbone.history.navigate( '/admin/tasks' );
     return this;
 
   },

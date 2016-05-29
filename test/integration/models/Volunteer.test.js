@@ -2,23 +2,7 @@ var assert = require('chai').assert;
 var users = require('../../fixtures/user');
 var sinon = require('sinon');
 var Promise = require('bluebird');
-
-// Reusable utilities
-
-function createUsers(numUsers) {
-  var userAttrs = [];
-
-  for (var i = 0; i < numUsers; i++) {
-    userAttrs.push(
-      {
-        'name': i.toString(),
-        'username': i.toString() + '@gmail.com',
-        'password': 'TestTest123#'
-      }
-    );
-  }
-  return User.create(userAttrs);
-}
+var createUsers = require('./modelUtils').createUsers;
 
 function createVolunteers(users, taskId) {
   // creating 4 volunteers at once, creates 4 badges, not sure why...

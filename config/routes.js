@@ -82,6 +82,19 @@ module.exports.routes = {
     controller: 'main',
     action: 'index'
   },
+  '/admin/agencies/:id': {
+    controller: 'main',
+    action: 'index'
+  },
+  '/admin/users/:id': {
+    controller: 'main',
+    action: 'index'
+  },
+  '/admin/tasks/:id': {
+    controller: 'main',
+    action: 'index'
+  },
+
   // '/cron': {
   //   controller: 'main',
   //   action: 'cron'

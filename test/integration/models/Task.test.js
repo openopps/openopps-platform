@@ -1,8 +1,13 @@
+var _ = require('lodash');
+
 var chai = require('chai');
 var assert = chai.assert;
+
+var createUsers = require('./modelUtils').createUsers;
+var createTasks = require('./modelUtils').createTasks;
 var taskFixtures = require('../../fixtures/task');
 var userFixtures = require('../../fixtures/user');
-var _ = require('lodash');
+
 
 describe('Task model', function() {
   var task;
@@ -161,4 +166,56 @@ describe('Task model', function() {
     });
 
   });
+
+  // this requires setting up a separate db 'midastest' (see CONTRIBUTING.md)
+  // marked 'pending' since this requires manual setup
+  xdescribe('#findByOwnerDomain', function() {
+    var gsaUsers, otherUsers;
+    var gsaTaskOwner;
+
+    before(function(done) {
+      sails.config.models.connection = 'postgresqlTest'
+      done();
+    })
+    after(function(done) {
+      sails.config.models.connection = 'defaultTestDB'
+      done();
+    })
+    beforeEach(function(done) {
+      User.destroy({})
+      .then(function() {
+        return Task.destroy({})
+      })
+      .then(function() {
+        return createUsers(2, 'gsa.gov')
+      })
+      .then(function(newUsers) {
+        gsaUsers = newUsers;
+        gsaTaskOwner = gsaUsers[0];
+        return createTasks(2, {owner: gsaTaskOwner});
+      })
+      .then(function(gsaTasks) {
+        return createUsers(4, 'irs.gov')
+      })
+      .then(function(newUsers) {
+        otherUsers = newUsers;
+        return createTasks(3, {owner: otherUsers[0]});
+      })
+      .then(function(irsTasks) {
+        done();
+      })
+      .catch(done);
+    });
+    it('finds only users with given agency', function(done) {
+      Task.findByOwnerDomain('gsa.gov')
+      .then(function(result) {
+        assert.isNotNull(result);
+        assert.equal(result.length, 2);
+        assert.equal(result[0].userId, gsaTaskOwner.id);
+        done()
+      })
+    })
+
+  });
+
 });

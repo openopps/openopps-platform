@@ -2,6 +2,8 @@ var chai = require('chai');
 var assert = chai.assert;
 chai.use(require('chai-datetime'));
 var users = require('../../fixtures/user');
+var createUsers = require('./modelUtils').createUsers;
+
 
 describe('UserModel', function() {
   var createAttrs, expectedAttrs;
@@ -169,4 +171,47 @@ describe('UserModel', function() {
     });
 
   });
+  // this requires setting up a separate db 'midastest' (see CONTRIBUTING.md)
+  // marked 'pending' since this requires manual setup
+  xdescribe('#findByDomain', function() {
+    before(function(done) {
+      sails.config.models.connection = 'postgresqlTest'
+      done();
+    })
+    after(function(done) {
+      sails.config.models.connection = 'defaultTestDB'
+      done();
+    })
+
+    beforeEach(function(done) {
+      User.destroy({})
+      .then(function() {
+        return createUsers(10, 'gsa.gov')
+      })
+      .then(function() {
+        // expect that subdomains are found
+        return createUsers(2, 'pbs.gsa.gov')
+      })
+      .then(function() {
+        // this should not be found
+        return createUsers(1, 'fakegsa.gov')
+      })
+      .then(function() {
+        return createUsers(4, 'usda.gov')
+      })
+      .then(function() {
+        done();
+      })
+      .catch(done);
+    });
+    it('finds only users with given agency', function(done) {
+      User.findByDomain('gsa.gov')
+      .then(function(result) {
+        assert.isNotNull(result);
+        assert.equal(result.length, 12);
+        done()
+      })
+    })
+  });
+
 });

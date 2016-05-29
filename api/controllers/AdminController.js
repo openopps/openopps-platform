@@ -21,44 +21,62 @@ module.exports = {
    * @param q the filter to apply to the search (filters by name)
    */
   users: function (req, res) {
+    sails.log.verbose('AdminController users', req.allParams())
     var page = parseInt(req.param('page', 1));
     var limit = req.param('limit', 25);
     var query = req.param('q');
-    var where = {};
+    var id = req.param('id');
 
-    if (query) {
-      // search by both name and username
-      where = {
-        or: [
-          { like: { name: '%' + query + '%' }},
-          { like: { username: '%' + query + '%' }}
-        ]
-      };
-    }
+    if (id) {  // this will be the agency id, e.g. 'gsa'
+      var domain = id + '.gov';   // just prototyping, should refactor to use data model
+      User.findByDomain(domain)
+      .then(function(users) {
+        return res.send({
+          page: 1,
+          limit: users.length,
+          count: users.length,
+          users: users,
+          q: query
+        });
+      })
+      .catch(res.negotiate);
+    } else {
+      var where = {};
 
-    // find users that meet this criteria
-    User.find()
-      .where(where)
-      .sort({ createdAt: 'desc' })
-      .paginate({ page: page, limit: limit})
-      .exec(function (err, users) {
-        if (err) { return res.send(400, { message: 'Error looking up users', err: err}); }
-        // count the total number of users
-        User.count(function (err, count) {
-          if (err) { return res.send(400, { message: 'Error counting users', err: err}); }
-          async.each(users, addUserMetrics, function(err) {
-            if (err) { res.send(400, { message: 'Error retrieving metrics for users.', err: err}); }
-            // return a paginated object
-            return res.send({
-              page: page,
-              limit: Math.min(users.length, limit),
-              count: count,
-              users: users,
-              q: query
+      if (query) {
+        // search by both name and username
+        where = {
+          or: [
+            { like: { name: '%' + query + '%' }},
+            { like: { username: '%' + query + '%' }}
+          ]
+        };
+      }
+
+      // find users that meet this criteria
+      User.find()
+        .where(where)
+        .sort({ createdAt: 'desc' })
+        .paginate({ page: page, limit: limit})
+        .exec(function (err, users) {
+          if (err) { return res.send(400, { message: 'Error looking up users', err: err}); }
+          // count the total number of users
+          User.count(function (err, count) {
+            if (err) { return res.send(400, { message: 'Error counting users', err: err}); }
+            async.each(users, addUserMetrics, function(err) {
+              if (err) { res.send(400, { message: 'Error retrieving metrics for users.', err: err}); }
+              // return a paginated object
+              return res.send({
+                page: page,
+                limit: Math.min(users.length, limit),
+                count: count,
+                users: users,
+                q: query
+              });
             });
           });
         });
-      });
+      }
   },
 
   /**
@@ -438,7 +456,6 @@ module.exports = {
   * eg: /api/admin/tasks
   */
   tasks: function ( req, res ) {
-
     var page = parseInt( req.param( 'page', 1 ) ),
       limit = req.param( 'limit', 1000 ),
       sort = req.param( 'sort', 'createdAt desc' ),
@@ -449,9 +466,16 @@ module.exports = {
       },
       openTasks,
       steps = [];
+    var id = req.param('id'); // this will be the agency id, e.g. 'gsa'
+    var domain;
+    if (id) {
+      domain = id + '.gov';   // just prototyping, should refactor to use data model
+      findTasks = Task.byCategoryForDomain(domain)
+    } else {
+      findTasks = Task.byCategory(page, limit, sort, domain)
+    }
 
-    Task.byCategory(page, limit, sort)
-    .then(function(output) {
+    findTasks.then(function(output) {
       res.json( output );
     })
     .catch(function(err) {
@@ -642,8 +666,11 @@ module.exports = {
   // Get an agency
   agency: function (req, res) {
     var requestedAgencyId = req.route.params.id;
-    // Future work: Figure out requirements
-    res.send({ requestedAgency: requestedAgencyId });
+    TagEntity.findOne(req.route.params.id)
+    .then(function(agencyEntity) {
+      res.send(agencyEntity);
+    })
+    .catch(res.negotiate);
   },
 
   /**

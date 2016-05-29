@@ -39,22 +39,32 @@ var AdminMainView = Backbone.View.extend({
     return !!(window.cache.currentUser && window.cache.currentUser.isAgencyAdmin);
   },
 
-  routeTarget: function (target) {
+  userAgencyId: function () {
+    return (window.cache.currentUser
+              && window.cache.currentUser.agency
+              && window.cache.currentUser.agency.slug);
+  },
+
+  routeTarget: function (target, agencyId) {
+    agencyId = agencyId || this.options.agencyId;
     if (!target) {
       target = 'dashboard';
     }
     // If agency admin, display My Agency page
     if (!this.isAdmin() && this.isAgencyAdmin()) {
-      target = 'agencies';
+      this.hideDashboardMenu();
+      agencyId = this.userAgencyId();   // restrict access to User agency
+      if (target == 'dashboard') target = 'agencies';
     }
     var t = $((this.$("[data-target=" + target + "]"))[0]);
     // remove active classes
     $($(t.parents('ul')[0]).find('li')).removeClass('active');
     // make the current link active
     $(t.parent('li')[0]).addClass('active');
-    if (target == 'user') {
+
+    if (target == 'users') {
       if (!this.adminUserView) {
-        this.initializeAdminUserView();
+        this.initializeAdminUserView(agencyId);
       }
       this.hideOthers();
       this.adminUserView.render();
@@ -66,7 +76,7 @@ var AdminMainView = Backbone.View.extend({
       this.adminTagView.render();
     } else if (target == 'tasks') {
       if (!this.adminTaskView) {
-        this.initializeAdminTaskView();
+        this.initializeAdminTaskView(agencyId);
       }
       this.hideOthers();
       this.adminTaskView.render();
@@ -101,12 +111,17 @@ var AdminMainView = Backbone.View.extend({
     this.$(".admin-container").hide();
   },
 
-  initializeAdminUserView: function () {
+  hideDashboardMenu: function () {
+    this.$(".dashboard-menu").hide();
+  },
+
+  initializeAdminUserView: function (agencyId) {
     if (this.adminUserView) {
       this.adminUserView.cleanup();
     }
     this.adminUserView = new AdminUserView({
-      el: "#admin-user"
+      el: "#admin-user",
+      agencyId: agencyId
     });
   },
 
@@ -119,12 +134,13 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  initializeAdminTaskView: function () {
+  initializeAdminTaskView: function (agencyId) {
     if (this.adminTaskView) {
       this.adminTaskView.cleanup();
     }
     this.adminTaskView = new AdminTaskView({
-      el: "#admin-task"
+      el: "#admin-task",
+      agencyId: agencyId
     });
   },
 
@@ -133,7 +149,9 @@ var AdminMainView = Backbone.View.extend({
       this.adminAgenciesView.cleanup();
     }
     this.adminAgenciesView = new AdminAgenciesView({
-      el: "#admin-agencies"
+      el: "#admin-agencies",
+      agencyId: this.options.agencyId,
+      adminMainView: this
     });
   },
 

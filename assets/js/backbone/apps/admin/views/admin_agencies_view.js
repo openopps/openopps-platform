@@ -8,12 +8,14 @@ var AdminAgenciesTemplate = fs.readFileSync(`${__dirname}/../templates/admin_age
 var AdminAgenciesView = Backbone.View.extend({
 
   events: {
+    'click .link'             : 'link'
   },
 
   initialize: function (options) {
     this.options = options;
+    this.adminMainView = options.adminMainView;
     this.data = {
-      agency: _(window.cache.currentUser.tags).findWhere({ type: 'agency' })
+      agency: window.cache.currentUser.agency
     };
   },
 
@@ -22,19 +24,28 @@ var AdminAgenciesView = Backbone.View.extend({
 
     this.$el.show();
 
+    // get meta data for agency
     $.ajax({
       url: '/api/admin/agency/' + this.data.agency.id,
       dataType: 'json',
-      success: function (data) {
+      success: function (agencyInfo) {
+        agencyInfo.slug = agencyInfo.data.abbr.toLowerCase();
+        agencyInfo.data.domain = agencyInfo.data.domain[0];
         var template = _.template(AdminAgenciesTemplate, {
-          variable: 'data'
-        })(data);
+          variable: 'agency'
+        })(agencyInfo);
         self.$el.html(template);
       }
     });
 
-    Backbone.history.navigate('/admin/agencies/' + this.data.agency.id);
+    Backbone.history.navigate('/admin/agencies/' + this.data.agency.slug);
     return this;
+  },
+
+  link: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    this.adminMainView.routeTarget(t.data('target'), this.data.agency.slug);
   },
 
   cleanup: function () {

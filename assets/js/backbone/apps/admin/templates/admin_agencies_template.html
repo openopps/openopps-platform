@@ -1,11 +1,18 @@
 <div class="alert alert-danger" style="display:none;">
 </div>
 <div class="row">
+  <% if (!agency.data) { %>
+  <p>Agency not set up.</p>
+  <% } else { %>
   <div class="col-md-12 box box-pad-lr">
     <div class="row">
       <div class="col-md-12 box-pad-b">
-        <h2>Coming Soon</h2>
+        <h2><%= agency.name %></h2>
+        <p>Domain: <%= agency.data.domain %></p>
+        <h3><a class="link" data-target="users" href="/admin/users/<%=agency.slug %>"><%= agency.data.abbr %> Users</a>
+          <h3><a class="link" data-target="tasks" href="/admin/tasks/<%=agency.slug %>"><%= agency.data.abbr %> Opportunities</a>
       </div>
     </div>
   </div>
+  <% } %>
 </div>
