@@ -171,13 +171,18 @@ describe('UserModel', function() {
     });
 
   });
-  // this requires setting up a separate db 'midas-test'
-  // temporarily disabling, since this requires manual setup
+  // this requires setting up a separate db 'midastest' (see CONTRIBUTING.md)
+  // marked 'pending' since this requires manual setup
   xdescribe('#findByDomain', function() {
     before(function(done) {
       sails.config.models.connection = 'postgresqlTest'
       done();
     })
+    after(function(done) {
+      sails.config.models.connection = 'defaultTestDB'
+      done();
+    })
+
     beforeEach(function(done) {
       User.destroy({})
       .then(function() {

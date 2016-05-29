@@ -51,7 +51,7 @@ module.exports.connections = {
     host        : 'localhost',
     user        : 'midas',
     password    : 'midas',
-    database    : 'midas-test',
+    database    : 'midastest',
   }
 };
 
