@@ -28,10 +28,12 @@ var AdminAgenciesView = Backbone.View.extend({
     $.ajax({
       url: '/api/admin/agency/' + this.data.agency.id,
       dataType: 'json',
-      success: function (data) {
+      success: function (agencyInfo) {
+        agencyInfo.slug = agencyInfo.data.abbr.toLowerCase();
+        agencyInfo.data.domain = agencyInfo.data.domain[0];
         var template = _.template(AdminAgenciesTemplate, {
           variable: 'agency'
-        })(data);
+        })(agencyInfo);
         self.$el.html(template);
       }
     });
