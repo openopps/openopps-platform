@@ -1,8 +1,8 @@
 ![OpenOpps Platform](assets/images/logo.png)
 
-[![Build Status](https://travis-ci.org/18F/openopps-platform.png?branch=master)](https://travis-ci.org/18F/openopps-platform)
-[![Dependency Status](https://gemnasium.com/18F/midas.png)](https://gemnasium.com/18F/midas)
-<a href="https://codeclimate.com/github/18F/openopps-platform"><img src="https://codeclimate.com/github/18F/openopps-platform/badges/gpa.svg" /></a>
+[![CircleCI](https://circleci.com/gh/openopps/openopps-platform.svg?style=svg)](https://circleci.com/gh/openopps/openopps-platform)
+[![Dependency Status](https://gemnasium.com/badges/github.com/openopps/openopps-platform.svg)](https://gemnasium.com/github.com/openopps/openopps-platform)
+[![Code Climate](https://codeclimate.com/github/openopps/openopps-platform/badges/gpa.svg)](https://codeclimate.com/github/openopps/openopps-platform)
 
 ---
 
