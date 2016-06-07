@@ -13,8 +13,14 @@
     </div>
 
     <div class="task-list-bottom">
-      <% _.each(tagShow, function (tagType) { %>
+      <% if (!tags["location"]) { %>
+        <div class="task-list-tags c0 task-single-overflow">
+          <i class="task-list-icon-center fa fa-map-marker %>"></i>
+          Virtual
+        </div>
+      <% } %>
 
+      <% _.each(tagShow, function (tagType) { %>
         <% if (tags[tagType]) { %>
         <div class="task-list-tags c0 task-single-overflow">
           <i class="task-list-icon-center <%- tagConfig.tags[tagType].icon %>"></i>
