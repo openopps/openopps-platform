@@ -15,10 +15,10 @@ class User {
     // ideally this would be its own object
     return { id: agencyTag.id,
              name: agencyTag.name,
-             abbr: agencyTag.data.abbr,
-             domain: agencyTag.data.domain[0],
-             slug: agencyTag.data.abbr.toLowerCase(),
-             allowRestrictAgency: agencyTag.data.allowRestrictAgency
+             abbr: agencyTag.data ? agencyTag.data.abbr : '',
+             domain: agencyTag.data ? agencyTag.data.domain[0] : '',
+             slug: agencyTag.data ? agencyTag.data.abbr.toLowerCase() : '',
+             allowRestrictAgency: agencyTag.data ? agencyTag.data.allowRestrictAgency : false
            }
   }
 
