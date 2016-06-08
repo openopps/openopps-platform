@@ -12,6 +12,8 @@ class User {
   get agency() {
     var agencyTag = _(this.tags).findWhere({ type: 'agency' });
 
+    if (!agencyTag) agencyTag = {};
+
     // ideally this would be its own object
     return { id: agencyTag.id,
              name: agencyTag.name,
