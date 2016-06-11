@@ -126,20 +126,6 @@
     "uswds:images": "cp -r node_modules/uswds/dist/img/ ./assets/images/uswds",
     "uswds:fonts": "mkdir -p ./assets/fonts && cp node_modules/uswds/dist/fonts/* ./assets/fonts/."
   },
-  "browser": {
-    "jquery": "./node_modules/jquery/dist/jquery.min.js",
-    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
-  },
-  "browserify": {
-    "transform": ["babelify"]
-  },
-  "browserify-shim": {
-    "bootstrap": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    }
-  },
   "main": "app.js",
   "repository": {
     "type": "git",
