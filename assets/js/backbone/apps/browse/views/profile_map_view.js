@@ -12,10 +12,10 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var d3 = require('d3');
-// var leaflet = require('leaflet');
-// var topojson = require('topojson');
-//var tooltipTemplate = require('../templates/profile_map_tooltip.html');
-//var countryData = require('../../../../../data/ne_110m_admin_0_countries.json');
+var leaflet = require('leaflet');
+var topojson = require('topojson');
+var tooltipTemplate = require('../templates/profile_map_tooltip.html');
+var countryData = require('../../../../../data/ne_110m_admin_0_countries.json');
 
 // Forcing a re-render will cause us to lose part of the map's state, but
 // we can save it off.
@@ -57,7 +57,7 @@ var PeopleMapView = Backbone.View.extend({
   render: function() {
     var self = this;
     this.renderCountries();
-    this.renderUserDots();
+     /**this.renderUserDots();*/
   },
 
   /**

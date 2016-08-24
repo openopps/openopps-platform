@@ -161,7 +161,6 @@ var BrowseMainView = Backbone.View.extend({
   },
 
   renderMap: function(profiles) {
-    return;
     // create a new view for the returned data. Need to show the div before
     // rendering otherwise the SVG borders will be wrong.
     if (this.browseMapView) { this.browseMapView.cleanup(); }
