@@ -1,0 +1,18 @@
+<p>Hello<% if (owner.name) { %> <%- owner.name %><% } %>,</p>
+<p>
+<% if (commenter.name) { %>
+<a href="<%- globals.urlPrefix %>/profile/<%- commenter.id %>"><%- commenter.name %></a>
+<% } else { %>Someone<% } %>
+commented in your <% if (comment.projectId) { %>project.<% } else { %>opportunity.<% } %>
+They said:
+<blockquote>
+  <%= comment.value %>
+</blockquote>
+<p class="center full-width">
+  <a href="<%- globals.urlPrefix %>/<% comment.projectId ? print('projects') : print('tasks') %>/<%- model.id%>#comment-<%- comment.id %>" class="btn btn-c2" bgcolor="39B7EA">View Discussion</a>
+</p>
+<p>
+  Thanks!
+  <br/>
+  - The <%- globals.systemName %> Team
+</p>
