@@ -48,8 +48,8 @@
                 <!-- One-time, On-going, Full-Time Detail -->
                 <%= madlibTags['task-time-required'][0].name %>
               <% } %>
+               <!-- Time commitment should not be shown when the task is a full time detail. -->
               <% if (madlibTags['task-time-estimate'] &&
-                     <!-- Time commitment should not be shown when the task is a full time detail. -->
                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
                 &mdash;
                  <%- madlibTags['task-time-estimate'][0].name %>

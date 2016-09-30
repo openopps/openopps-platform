@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "0.10.8",
+  "version": "0.12.0",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -27,9 +27,11 @@
     "db-migrate": "^0.10.0-beta.11",
     "db-migrate-pg": "^0.1.9",
     "ejs": "2.3.4",
+    "express": "^3.21.2",
     "file-type": "^3.8.0",
     "gm": "^1.22.0",
     "grunt": "0.4.5",
+    "grunt-cli": "1.2.0",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-coffee": "0.13.0",
     "grunt-contrib-concat": "0.5.1",
@@ -43,17 +45,16 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sass": "^1.1.0",
     "grunt-sync": "0.2.4",
+    "helmet": "^2.1.1",
     "i18next": "^2.4.1",
     "i18next-xhr-backend": "^0.5.3",
     "include-all": "~0.1.6",
     "jquery": "^2.2.2",
     "jquery-i18next": "^0.2.0",
-    "jquery.atwho": "ichord/At.js#v0.4.7",
-    "jquery.caret": "ichord/Caret.js#v0.0.7",
-    "jsdom": "^8.4.0",
     "json2csv": "^3.3.0",
     "location": "0.0.1",
     "lodash": "^4.11.2",
+    "lusca": "^1.4.1",
     "marked": "openopps/marked",
     "moment": "^2.12.0",
     "navigator": "^1.0.1",
@@ -67,6 +68,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "passport-myusa": "^1.0.0",
+    "pg": "4.5.5",
     "pg-promise": "^3.7.5",
     "rc": "1.0.1",
     "request": "^2.69.0",
@@ -98,18 +100,16 @@
     "supertest": "^1.2.0"
   },
   "config": {
-    "grunt": "./node_modules/.bin/grunt",
     "dir": "."
   },
   "scripts": {
-    "preinstall": "if [ \"$THEME\" ]; then git clone $THEME _theme; npm run import --openopps-platform:dir=_theme; fi",
+    "preinstall": "if [ \"$THEME\" ]; then rm -rf _theme; git clone $THEME _theme; npm run import --openopps-platform:dir=_theme; fi",
     "import": "cp -v $npm_package_config_dir/exclude.txt exclude.txt | true && rsync -av --exclude-from=exclude.txt $npm_package_config_dir/* .",
-    "install-sail-dependencies": "cd node_modules/sails && npm install && cd -",
-    "install": "npm run install-sail-dependencies && npm run uswds && node --version && pwd && ls",
+    "postinstall": "npm run migrate && npm run uswds && node --version && pwd && ls",
     "init": "node ./tools/init.js",
     "demo": "node ./tools/demo.js",
     "build": "npm run browserify",
-    "migrate": "$npm_package_config_grunt db:migrate:up",
+    "migrate": "grunt db:migrate:up",
     "check-migrate": "$npm_package_config_grunt db:migrate:up --dry-run | perl -ne 's/.*Processed migration (.*)/\\x1b[41m[WARNING] Pending Migration: \\1\\x1b[0m (Run `npm run migrate`)/ && print'",
     "start": "npm run build && node app.js",
     "test": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/integration/**/*.test.js",
@@ -132,9 +132,9 @@
     "url": "https://github.com/18F/openopps-platform.git"
   },
   "bugs": "https://github.com/18F/openopps-platform/issues",
-  "license": "CC0",
+  "license": "CC0-1.0",
   "engines": {
-    "node": "~4.4.x",
-    "npm": "~3.8.x"
+    "node": "4.4.7",
+    "npm": "3.8.9"
   }
 }

@@ -33,9 +33,10 @@ module.exports = {
           path = p.join(sails.config.appPath, dir, name);
       fs.writeFile(path, data, cb);
     },
-    get: function(name, res) {
+    get: function(file, res) {
+      res.type(file.mimeType);
       var dir = config.local.dirname || '/assets/uploads',
-          path = p.join(sails.config.appPath, dir, name);
+          path = p.join(sails.config.appPath, dir, file.name);
       fs.createReadStream(path)
         .on('error', function() { res.send(404); }).pipe(res);
     }
@@ -52,11 +53,12 @@ module.exports = {
           };
       s3.upload(params, cb);
     },
-    get: function(name, res) {
+    get: function(file, res) {
+      res.type(file.mimeType);
       var s3 = new AWS.S3(),
           params = {
             Bucket: config.s3.bucket,
-            Key: p.join(config.s3.prefix || '', name)
+            Key: p.join(config.s3.prefix || '', file.name)
           };
       s3.getObject(params).createReadStream()
         .on('error', function(e) {

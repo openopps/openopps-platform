@@ -1,0 +1,16 @@
+machine:
+  environment:
+    DB_OWNER: ubuntu
+    DB_USER: midas
+    DB_PASSWORD: midas
+  node:
+    version: 4.4.7
+
+dependencies:
+  pre:
+    - ./tools/postgres/create-db.sh
+    - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+    - rm -rvf node_modules
+  override:
+    - npm install
+

@@ -69,6 +69,7 @@ run the following commands in the interactive terminal (which runs them
 in the Docker machine):
 
 ```
+npm i -g npm@3
 npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
 npm install
 npm run init
@@ -209,6 +210,12 @@ Create database 'midas', user account 'midas' with password 'midas', and assign 
 
 [Node.js](http://nodejs.org/dist/v4.2.2/)
 
+Use npm version 3.x
+
+```
+npm i -g npm@3
+```
+
 #### Install GraphicsMagick
 
 [GraphicsMagick](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/`)
@@ -253,8 +260,9 @@ also changes configuration.
 
 #### Install openopps node packages (from the openopps git folder)
 
-Then run the normal npm package installer
+Then install npm 3.x and run the normal npm package installer
 
+     npm i -g npm@3
      npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
      npm install
 

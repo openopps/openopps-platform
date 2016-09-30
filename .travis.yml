@@ -11,9 +11,19 @@ before_install:
   - psql -c "CREATE USER midas WITH PASSWORD 'midas';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE midas to midas;" -U postgres
   - psql -c "ALTER SCHEMA public OWNER TO midas;" -U postgres
-before_deploy: npm install -g https://github.com/18F/cf-blue-green/tarball/master
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+before_deploy:
+  - curl -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx
+  - mkdir -p ./tmp/
+  - mv -v cf ./tmp/cf
+  - ./tmp/cf api $CF_API
+  - ./tmp/cf login -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORGANIZATION -s dev
+  - ./tmp/cf -v
+  - go get github.com/concourse/autopilot
+  - ./tmp/cf install-plugin $GOPATH/bin/autopilot -f
 env:
   global:
+    - GOPATH="${HOME}/.go_workspace"
     - CF_APP=openopps
     - CF_API=https://api.cloud.gov
     - CF_USERNAME=deploy-open-opportunities
@@ -22,14 +32,17 @@ env:
     - secure: "jNZWNeSMl4pCb6jjzlDGZ2BIOXM0BFocCFpbI0y0HFuS2sPJkaGXwPbdDwxaeE+fUWIz6RmMjTqvGZ0DL5nBYXlw1pynIG7oBOPiRwyoz6TT0DcvL/P6WChZb+SLVB2U+Uheg0mnk4mt2wSw7Qp5kb5P/nuvcvFS7aKhIQH/jOXXOF8pow9e4n7aoOC3cVQBLKTy2C6sWWei9GI0cXJZYez8/vBuhJRmzId/XfnL+oAl3CFcKii//5Mbwc4lxOoNuzDJhz/9Lb5NFG9Xs2TuTaRU98oO/+zu0HAIjYo8rBLR5VQktI15Ro0nq0R6nswr0kODbPvIhy8xByohlIeyAi6irO9J0zouvDuJhL6/sNXMEUgpsFcsfQE2BwUbW7qoPxV0nBeo5510kxMTXinICrgl0p1ef8fPta3Klqo6WD7Uf35/lzVrf4s3glkbHkZ9bndWty/V/rgeD4y0hRKCRhNrpbIdw6eysDffK9mkjX2byCEX1wW5UoqHWY9i5Gg21eL+rLXVjwKrFBDduKDyPBjSSLRkijRPj0kho4ADXlofOSo96XVIKeErpzuRGiCfCWWd4l+7UBKVwozK1UZQub1mQ/aFWyC0c1+EcRgLvRhLRWZ6MTr1pgO7QFYtICHxxQUBr6UTYXfwH6JdbH0K0/3gemkO2zLb727wqOQhmGY="
 deploy:
   - provider: script
-    script: export CF_SPACE=prod && cf-blue-green-travis
+    script: ./tmp/cf t -s prod && ./tmp/cf zero-downtime-push $CF_APP -f manifest-prod.yml
+    skip_cleanup: true
     on:
       branch: master
   - provider: script
-    script: export CF_SPACE=staging && cf-blue-green-travis
+    script: ./tmp/cf t -s staging && ./tmp/cf zero-downtime-push $CF_APP -f manifest-staging.yml
+    skip_cleanup: true
     on:
       branch: staging
   - provider: script
-    script: export CF_SPACE=dev && cf-blue-green-travis
+    script: ./tmp/cf t -s dev && ./tmp/cf zero-downtime-push $CF_APP -f manifest-dev.yml
+    skip_cleanup: true
     on:
       branch: dev

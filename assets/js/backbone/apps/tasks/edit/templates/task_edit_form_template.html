@@ -49,12 +49,15 @@
             </label>
           </div>
         <% }); %>
+        <% // README: Checking if agency exists. %>
+        <% if ( agency ) { %>
         <div class="py2" id="task-restrict-agency-area" >
           <label>
             <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency">
             Limit Participation to <%- agency.abbr %> Employees
           </label>
         </div>
+        <% } %>
       </div>
 
       <div class="form-group" id="time-options-time-required">

@@ -6,8 +6,8 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
-var jqCaret = require('jquery.caret/dist/jquery.caret.min');
-var jqAt = require('jquery.atwho/dist/js/jquery.atwho');
+//var jqCaret = require('jquery.caret/dist/jquery.caret.min');
+//var jqAt = require('jquery.atwho/dist/js/jquery.atwho');
 
 var marked = require('marked');
 var CommentCollection = require('../../../../entities/comments/comment_collection');
@@ -75,57 +75,57 @@ var CommentFormView = Backbone.View.extend({
       return _.template(template)(data);
     };
 
-    this.$(".comment-input").atwho({
-      at: '@',
-      search_key: 'value',
-      tpl: CommentAcTemplate,
-      insert_tpl: CommentInlineTemplate,
-      limit: 10,
-      callbacks: {
-        tpl_eval: genTemplate,
-        sorter: function (query, items, search_key) {
-          // don't sort, use the order from the server
-          return items;
-        },
-        highlighter: function (li, query) {
-          return li;
-        },
-        // highlighter: function (li, query) {
-        //   var regexp;
-        //   if (!query) {
-        //     return li;
-        //   }
-        //   // just want to find all case insensitive matches and replace with <strong>
-        //   // set up the query as a regular expression
-        //   var re = new RegExp('(' + query.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ')', 'ig');
-        //   // parse the li string into a DOM node
-        //   var liDom = $.parseHTML(li);
-        //   var text = $(liDom[0]).text().replace(re, "<strong>$1</strong>");
-        //   $(liDom[0]).html(text);
-        //   return liDom[0];
-        // },
-        remote_filter: function (query, callback) {
-          // get data from the server
-          $.getJSON("/api/ac/inline", { q: query }, function (data) {
-            _.each(data, function (d) {
-              // At.js expects the name to be set for the matcher fn
-              if (_.isUndefined(d.name)) {
-                d.name = d.value;
-              }
-            });
-            callback(data);
-          });
-        }
-      }
-    }).on("inserted.atwho", function(event, $li) {
-      // This is a hack to hide the space after inserting an element.
-      var ids = self.$("span.atwho-view-flag > span:visible");
-      // insert a non-breaking space after the inserted element, but not within it
-      // this allows the user to delete that space if they want to, without deleting
-      // the referenced element
-      ids.parent().after('&nbsp;');
-      ids.hide();
-    });
+    //this.$(".comment-input").atwho({
+      //at: '@',
+      //search_key: 'value',
+      //tpl: CommentAcTemplate,
+      //insert_tpl: CommentInlineTemplate,
+      //limit: 10,
+      //callbacks: {
+        //tpl_eval: genTemplate,
+        //sorter: function (query, items, search_key) {
+          //// don't sort, use the order from the server
+          //return items;
+        //},
+        //highlighter: function (li, query) {
+          //return li;
+        //},
+        //// highlighter: function (li, query) {
+        ////   var regexp;
+        ////   if (!query) {
+        ////     return li;
+        ////   }
+        ////   // just want to find all case insensitive matches and replace with <strong>
+        ////   // set up the query as a regular expression
+        ////   var re = new RegExp('(' + query.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ')', 'ig');
+        ////   // parse the li string into a DOM node
+        ////   var liDom = $.parseHTML(li);
+        ////   var text = $(liDom[0]).text().replace(re, "<strong>$1</strong>");
+        ////   $(liDom[0]).html(text);
+        ////   return liDom[0];
+        //// },
+        //remote_filter: function (query, callback) {
+          //// get data from the server
+          //$.getJSON("/api/ac/inline", { q: query }, function (data) {
+            //_.each(data, function (d) {
+              //// At.js expects the name to be set for the matcher fn
+              //if (_.isUndefined(d.name)) {
+                //d.name = d.value;
+              //}
+            //});
+            //callback(data);
+          //});
+        //}
+      //}
+    //}).on("inserted.atwho", function(event, $li) {
+      //// This is a hack to hide the space after inserting an element.
+      //var ids = self.$("span.atwho-view-flag > span:visible");
+      //// insert a non-breaking space after the inserted element, but not within it
+      //// this allows the user to delete that space if they want to, without deleting
+      //// the referenced element
+      //ids.parent().after('&nbsp;');
+      //ids.hide();
+    //});
 
     return this;
   },

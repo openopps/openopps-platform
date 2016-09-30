@@ -186,7 +186,7 @@ module.exports = {
   //
   disable: function ( request, response ) {
 
-    var currentUser     = request.user[ 0 ];
+    var currentUser     = request.user;
     var requestedUserId = request.route.params.id;
     var isSelfEditing   = ( currentUser.id === requestedUserId );
 

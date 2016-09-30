@@ -1,6 +1,6 @@
 var cfenv = require('cfenv'),
     appEnv = cfenv.getAppEnv(),
-    dbURL = appEnv.getServiceURL('psql-openopps'),
+    dbURL = appEnv.getServiceURL('psql-openopps') || process.env.DATABASE_URL,
     redisCreds = appEnv.getServiceCreds('redis-openopps');
 
 /**
@@ -43,8 +43,8 @@ if (redisCreds) {
 } else if (process.env.NODE_ENV !== 'test' && process.env.DATASTORE !== 'local') {
 
   var pgSession = require('connect-pg-simple'),
-      express = require('sails/node_modules/express'),
-      pg = require('sails-postgresql/node_modules/pg'),
+      express = require('express'),
+      pg = require('pg'),
       environment = process.env.NODE_ENV || 'development',
       configs = ['./connections', './env/' + environment, './local'],
       config = {};

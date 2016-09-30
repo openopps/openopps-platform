@@ -5,6 +5,7 @@ var Backbone = require('backbone');
 var LoginPasswordView = require('./login_password_view');
 var ModalComponent = require('../../../components/modal');
 var TagFactory = require('../../../components/tag_factory');
+import User from '../../../../utils/user';
 
 var LoginTemplate = fs.readFileSync(
   __dirname + '/../templates/login_template.html'
@@ -128,8 +129,10 @@ var LoginView = Backbone.View.extend({
         dataType: 'json'
       }).done(function(data) {
         // Set the user object and trigger the user login event
-        window.cache.currentUser = data;
-        window.cache.userEvents.trigger("user:login", data);
+        var user = new User(data);
+        console.log('login', user);
+        window.cache.currentUser = user;
+        window.cache.userEvents.trigger("user:login", user);
       });
     }).fail(function(error) {
       var d = JSON.parse(error.responseText);
@@ -232,8 +235,10 @@ var LoginView = Backbone.View.extend({
         dataType: 'json'
       }).done(function(data) {
         // Set the user object and trigger the user login event
-        window.cache.currentUser = data;
-        window.cache.userEvents.trigger("user:login", data);
+        var user = new User(data);
+        console.log('registered', user);
+        window.cache.currentUser = user;
+        window.cache.userEvents.trigger("user:login", user);
       });
     }).fail(function(error) {
       var d = JSON.parse(error.responseText);

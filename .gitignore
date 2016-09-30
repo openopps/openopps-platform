@@ -56,3 +56,6 @@ coverage
 .python-version
 .sass-cache/*
 npm-debug.log*
+
+# Temporary root directory
+tmp/

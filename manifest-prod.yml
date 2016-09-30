@@ -4,6 +4,6 @@ host: openopps
 domains:
   - 18f.gov
 instances: 2
-memory: 1024M
+memory: 512M
 env:
   THEME: https://github.com/18F/open-opportunities-theme.git

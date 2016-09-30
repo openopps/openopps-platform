@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+psql -c "CREATE DATABASE ${DB_USER};" -U $DB_OWNER
+psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';" -U $DB_OWNER
+psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_USER} TO ${DB_USER};" -U $DB_OWNER
+psql -c "ALTER SCHEMA public OWNER TO ${DB_USER};" -U $DB_OWNER
+
+echo "DATABASE ${DB_USER} created via psql"
