@@ -55,7 +55,7 @@ module.exports = {
     // description of the task
     description: 'STRING',
 
-    // timestaps for state changes
+    // timestamps for state changes
     completedBy: 'datetime',
     publishedAt: 'datetime',
     assignedAt: 'datetime',
