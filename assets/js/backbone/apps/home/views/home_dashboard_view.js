@@ -125,7 +125,6 @@ var DashboardView = Backbone.View.extend({
       },
     });
 
-
     var collection = this.collection.chain().pluck('attributes').filter(function (item) {
       // filter out tasks that are full time details with other agencies
       var userAgency = { id: false },
@@ -165,6 +164,7 @@ var DashboardView = Backbone.View.extend({
       collection: collection,
     });
 
+    // If there are no eligible tasks, hide the section entirely.
     if (this.collection.length == 0) {
         $('.dashboard__task-list').hide();
     }
