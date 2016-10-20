@@ -31,7 +31,7 @@ var DashboardView = Backbone.View.extend({
     this.queryParams = {};
     this.fireUpCollection();
     this.initializeView();
-    this.collection.trigger('browse:fetch');
+    this.collection.trigger('browse:task:fetch');
     return this;
   },
 
