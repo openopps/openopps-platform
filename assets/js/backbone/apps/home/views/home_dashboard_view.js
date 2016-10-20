@@ -31,7 +31,7 @@ var DashboardView = Backbone.View.extend({
     this.queryParams = {};
     this.fireUpCollection();
     this.initializeView();
-    this.collection.trigger('browse:task:fetch');
+    this.collection.trigger('browse:fetch');
     return this;
   },
 
@@ -125,6 +125,7 @@ var DashboardView = Backbone.View.extend({
       },
     });
 
+
     var collection = this.collection.chain().pluck('attributes').filter(function (item) {
       // filter out tasks that are full time details with other agencies
       var userAgency = { id: false },
@@ -163,6 +164,10 @@ var DashboardView = Backbone.View.extend({
       target: 'project',
       collection: collection,
     });
+
+    if (this.collection.length == 0) {
+        $('.dashboard__task-list').hide();
+    }
 
     // TODO: this.$el.localize();
     return this;
