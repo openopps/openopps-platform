@@ -164,6 +164,11 @@ var DashboardView = Backbone.View.extend({
       collection: collection,
     });
 
+    // If there are no eligible tasks, hide the section entirely.
+    if (this.collection.length == 0) {
+        $('.dashboard__task-list').hide();
+    }
+
     // TODO: this.$el.localize();
     return this;
   },
