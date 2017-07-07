@@ -10,15 +10,6 @@
      protocol = sails.config.emailProtocol,
      transportConfig = sails.config[protocol.toLowerCase()];
 
-if (protocol == '') {
-  // We're running tests, just use nodemailer's stream transport.
-  transportConfig = {
-    streamTransport: true,
-    newline: 'unix',
-    buffer: true
-  };
-}
-
 module.exports = {
 
   attributes: {

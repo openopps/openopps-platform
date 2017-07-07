@@ -1,4 +1,0 @@
-FROM node:6.10.1
-
-RUN apt-get update && \
-  apt-get install -y postgresql-client graphicsmagick
