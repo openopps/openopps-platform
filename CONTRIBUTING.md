@@ -15,7 +15,7 @@ with this waiver of copyright interest.
 ## Communication
 
 Anyone actively contributing to or using OpenOpps should join our [Mailing List](https://groups.google.com/forum/#!forum/openopps-platform).
-We also have a public Slack chat room. If you're interested in following along with the development process or have questions, feel free to [join us](https://chat.18f.gov/?channel=openopps-public).
+We also have a public Slack chat team. If you're interested in following along with the development process or have questions, feel free to [join us](https://openopps.slack.com).
 
 You should be using the master branch for the most stable release; please review [release notes](https://github.com/openopps/openopps-platform/releases) regularly. We do releases every week or two and send out notes. We're generally using [semantic versioning](http://semver.org/), but we're pre-1.0, so the API can change at any time. We use the minor version for changes where there are significant installation process changes or API changes or a database migration is needed.
 
