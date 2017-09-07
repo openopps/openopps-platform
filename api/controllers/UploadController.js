@@ -7,6 +7,7 @@
 var fileType = require('file-type');
 var fs = require('fs');
 var gm = require('gm');
+gm = gm.subClass({ imageMagick: true });
 var _ = require('underscore');
 var async = require('async');
 
