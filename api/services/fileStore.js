@@ -36,7 +36,7 @@ module.exports = {
     get: function (file, res) {
       res.type(file.mimeType);
       var dir = config.local.dirname || '/assets/uploads';
-      var path = p.join(sails.config.appPath, dir, file.name);
+      var path = p.join(sails.config.appPath, dir, file.fd);
       fs.createReadStream(path)
         .on('error', function () { res.send(404); }).pipe(res);
     },
