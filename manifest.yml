@@ -1,9 +1,13 @@
 ---
 applications:
 - name: openopps
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack
+  command: node app.js
 domain: 18f.gov
 services:
 - env-openopps
 - psql-openopps
 - redis-openopps
 - s3-midas-assets
+env:
+  OPTIMIZE_MEMORY: true
