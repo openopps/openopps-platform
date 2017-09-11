@@ -68,7 +68,6 @@ The instructions have been tested on 10.9.2, but earlier versions likely work.  
 In the Terminal:
 
     brew install postgresql
-    brew install graphicsmagick
 
 When Homebrew is done installing Postgres, follow the instructions at the end to start Postgres.
 
@@ -160,10 +159,6 @@ AND modify `pg_hba.conf`:
      sudo apt-get update
      sudo apt-get install nodejs
 
-#### Install GraphicsMagick
-
-     sudo apt-get install graphicsmagick
-
 ### Windows (Windows 2008 Server)
 
 #### Install Visual C++ 2008 x64 or x86 Redistributable Package
@@ -193,20 +188,11 @@ Use npm version 3.x
 ```
 npm i -g npm@3
 ```
-
-#### Install GraphicsMagick
-
-[GraphicsMagick](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/`)
-
-Select Q8 version along with latest corresponding to 32 bit vs. 64 bit OS
-
 #### Set System Path Variables
 
 Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
 Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
 
-	DRIVE:\program files\graphicsmagick-1.3.18-q8;
-	(or similar, depending on your graphicsmagick version)
 	DRIVE:\Program Files\nodejs\;
 
 Save.
