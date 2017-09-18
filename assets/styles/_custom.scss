@@ -1,2 +1,9 @@
 // styles for custom themes
 // this is loaded last allowing a customization to override anything
+
+.dashboard__task-list {
+  .col {
+    float: none;
+    width: 100% !important;
+  }
+}

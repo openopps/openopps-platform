@@ -1,6 +1,6 @@
 var cfenv = require('cfenv'),
     appEnv = cfenv.getAppEnv(),
-    dbURL = appEnv.getServiceURL('psql-openopps'),
+    dbURL = appEnv.getServiceURL('psql-openopps') || process.env.DATABASE_URL,
     redisCreds = appEnv.getServiceCreds('redis-openopps');
 
 /**
@@ -20,7 +20,7 @@ var session = {
   // Session secret is automatically generated when your new app is created
   // Replace at your own risk in production-- you will invalidate the cookies of your users,
   // forcing them to log in again.
-  secret: '0fa32505a53e70cd2b5626d70dd15b6c',
+  secret: process.env.SAILS_SECRET,
 
   // Set the cookie maximum age (timeout).  If this is not set, then cookies
   // will persist forever.
@@ -43,8 +43,8 @@ if (redisCreds) {
 } else if (process.env.NODE_ENV !== 'test' && process.env.DATASTORE !== 'local') {
 
   var pgSession = require('connect-pg-simple'),
-      express = require('sails/node_modules/express'),
-      pg = require('sails-postgresql/node_modules/pg'),
+      express = require('express'),
+      pg = require('pg'),
       environment = process.env.NODE_ENV || 'development',
       configs = ['./connections', './env/' + environment, './local'],
       config = {};

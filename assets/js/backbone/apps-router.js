@@ -18,7 +18,11 @@ var initialize = function() {
   var i18nConfig = JSON.parse(i18nConfigJSON);
   i18n.use(XHR)
     .init(i18nConfig, function(err, t) {
-      i18nextJquery.default.init(i18n, $);
+      // TODO: Not sure if older version of jquery-i18next was
+      // used previously, but it seems the version of it
+      // on my system doesn't have a 'default' property--
+      // 'init' is directly a property of the object itself. -AV
+      (i18nextJquery.default || i18nextJquery).init(i18n, $);
 
       // Here we are going to fire up all the routers for our app to listen
       // in on their respective applications.  We are -testing- this functionality

@@ -16,6 +16,14 @@
         <div data-target="users-feed" class="users-feed"></div>
         <div data-target="network-stats" class="network-stats"></div>
       </div>
+      <div class="col col-12 md-col-4 px2 dashboard__task-list">
+        <h2><%= window.cache.currentUser.agency.abbr  %> Opportunities</h2>
+        <div id="browse-search-spinner" class="fullwidth text-center">
+          Loading... <i class="fa fa-spinner fa-spin"></i>
+        </div>
+        <div class="clearfix mxn2" id="browse-list"></div>
+        <a class="see-more-tasks" href="/tasks?agency=<%= window.cache.currentUser.agency.abbr %>">See more <%= window.cache.currentUser.agency.name %> opportunities.</a>
+      </div>
     </div>
   </div>
 </div>

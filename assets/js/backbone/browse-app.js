@@ -52,6 +52,16 @@ var BrowseRouter = Backbone.Router.extend({
       $('.navigation .nav-link[href="' + href + '"]')
         .closest('li')
         .addClass("active");
+      $.getJSON('/csrfToken', function (t) {
+        $('meta[name="csrf-token"]').attr('content', t._csrf);
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+          var token;
+          token = $('meta[name="csrf-token"]').attr('content');
+          if (token) {
+            return jqXHR.setRequestHeader('X-CSRF-Token', token);
+          }
+        });
+      });
     });
   },
 

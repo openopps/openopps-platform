@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var BaseComponent = require('../base/base_component');

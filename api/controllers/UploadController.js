@@ -7,6 +7,7 @@
 var fileType = require('file-type');
 var fs = require('fs');
 var gm = require('gm');
+gm = gm.subClass({ imageMagick: true });
 var _ = require('underscore');
 var async = require('async');
 
@@ -56,7 +57,7 @@ module.exports = {
       Upload.findOneById(req.params.id, function(err, f) {
         if (err) { return res.send(400, {message:'Error while finding file.'}); }
         if (!f || !f.fd) { return res.send(400, {message:'Error while finding file.'}); }
-        fileStore.get(f.fd, res);
+        fileStore.get(f, res);
       });
     } else {
       return res.send(400, {message: 'Abiguous file; please use file id.'});
@@ -80,7 +81,7 @@ module.exports = {
         if (!validType(req.param('type'), fdata)) {
           return done({message:'Error storing file, invalid file type'});
         }
-        
+
         // Create a file object to put in the database.
         var f = {
           userId: req.user.id,

@@ -48,8 +48,8 @@
                 <!-- One-time, On-going, Full-Time Detail -->
                 <%= madlibTags['task-time-required'][0].name %>
               <% } %>
+               <!-- Time commitment should not be shown when the task is a full time detail. -->
               <% if (madlibTags['task-time-estimate'] &&
-                     <!-- Time commitment should not be shown when the task is a full time detail. -->
                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
                 &mdash;
                  <%- madlibTags['task-time-estimate'][0].name %>
@@ -66,7 +66,7 @@
                  <%= moment(model.completedBy).format('ddd, MMM D, YYYY') %>
             </div>
             <% } %>
-            <h4 class="mb0">Work Location</h4>
+            <h4 class="mb0">Duty Location</h4>
             <div class="mb2">
               <% if (madlibTags.location) { %>
                 <% _.each(madlibTags.location, function (s, i) { %>
@@ -91,11 +91,11 @@
           <div id="modal-volunteer"></div>
           <ul class="nav nav-pills nav-stacked">
             <li class="volunteer-true" style="display: none;">
-              <a href="#" id="volunteered" class="btn btn-c1"><i class="fa fa-thumbs-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteeredButton">Participated</span></a>
+              <a href="#" id="volunteered" class="btn btn-c1"><i class="fa fa-thumbs-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteeredButton">Application received</span></a>
 
             </li>
             <li class="volunteer-false">
-              <a href="#" id="volunteer" class="btn btn-c2"><i class="fa fa-thumbs-o-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteerButton">Participate</span></a>
+              <a href="#" id="volunteer" class="btn btn-c2"><i class="fa fa-thumbs-o-up"></i> <span class="box-icon-text" data-i18n="taskPage.volunteerButton">I'm interested</span></a>
             </li>
             <li>
               <a href="#" id="email"><i class="fa fa-envelope-o"></i> <span class="box-icon-text">Share</span></a>

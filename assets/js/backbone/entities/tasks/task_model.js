@@ -9,7 +9,13 @@ var TaskModel = Backbone.Model.extend({
     description : null,
     tags: null,
     state: 'draft',
-    restrict: '',
+    restrict: {
+      name: '',
+      abbr: '',
+      domain: '',
+      slug: '',
+      projectNetwork: false,
+    },
   },
 
   urlRoot: '/api/task',

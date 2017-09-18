@@ -43,7 +43,7 @@ var authorized = function (id, userId, user, cb) {
   });
 };
 
-var getMetadata = function(task, user, cb) {
+var getMetadata = function (task, user, cb) {
   if (!task) return cb();
   task.like = false;
   task.volunteer = false;
@@ -93,15 +93,14 @@ var findTasks = function (where, cb) {
   .sort({ publishedAt: 0, updatedAt: 0 })
   .exec(function (err, tasks) {
     if (err) { return cb({ message: 'Error looking up tasks.' }, null); }
-    tasks.forEach(function(task) {
-      var owner = task.owner
+    tasks.forEach(function (task) {
+      var owner = task.owner;
       if (!owner) sails.log.error('no owner for task', task);
       else {
         task.owner = {
           id: owner.id,
           name: owner.name,
-          agency: owner.tags && owner.tags[0]
-        };        
+        };
       }
     });
     return cb(null, tasks);
@@ -112,5 +111,5 @@ module.exports = {
   authorized: authorized,
   getMetadata: getMetadata,
   getVolunteers: getVolunteers,
-  findTasks: findTasks
+  findTasks: findTasks,
 };

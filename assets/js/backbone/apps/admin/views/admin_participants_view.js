@@ -1,6 +1,7 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
+var $ = require('jquery');
 
 // templates
 var fs = require('fs');

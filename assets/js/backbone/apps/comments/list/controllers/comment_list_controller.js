@@ -1,6 +1,7 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
+var $ = require('jquery');
 
 var TimeAgo = require('../../../../../vendor/jquery.timeago');
 var Popovers = require('../../../../mixins/popovers');

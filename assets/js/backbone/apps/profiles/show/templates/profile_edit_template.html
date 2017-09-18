@@ -81,26 +81,6 @@
                           <div id="email-update-alert" class="alert alert-warning" style="display:none;">
                           </div>
                         </div>
-                        <div class="form-group">
-                          <% if (login.oauth.length > 0) { %>
-                          <label for="services" class="control-label">Connected Accounts</label>
-                          <div class="" id="services">
-                            <form class="form-horizontal" role="form">
-                            <% _.each(login.oauth, function (a) { %>
-                              <div class="form-group">
-                                  <img src="<%- login.config[a].image %>" alt="<%- login.config[a].name %>" style="height: 30px"/>
-                                  <% if (_.findWhere(data.auths, { provider: a })) { %>
-                                  <a href="#" class="btn btn-danger btn-sm removeAuth pull-right" data-service="<%- a %>" data-id="<%- _.findWhere(data.auths, { provider: a }).id %>"><span class="fa fa-remove"></span> Disconnect</a>
-                                  <% } else { %>
-                                  <a href="<%- login.config[a].endpoint %>" class="btn btn-success btn-sm pull-right"><span class="fa fa-plus"></span> Connect</a>
-                                  <% } %>
-                                  <!-- <%- login.config[a].name %> -->
-                              </div>
-                            <% }); %>
-                            </form>
-                          </div>
-                          <% } %>
-                        </div>
                       </div>
                       <div class="col col-12 md-col-4">
                         <fieldset>

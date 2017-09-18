@@ -23,19 +23,19 @@ module.exports.passport = {
     strategy: require('passport-http-bearer').Strategy
   },
 
-  myusa: {
-    strategy: require('passport-myusa').Strategy,
-    protocol: 'oauth2',
-    callback : process.env.MYUSA_CALLBACK_URL || '/api/auth/callback/myusa',
-    options: {
-      clientID    : process.env.MYUSA_CLIENT_ID  || 'CLIENT_ID',
-      clientSecret: process.env.MYUSA_CLIENT_SECRET || 'CLIENT_SECRET',
-      // Initially use alpha.my.usa.gov until app approved for production
-      authorizationURL: 'https://alpha.my.usa.gov/oauth/authorize',
-      tokenURL: 'https://alpha.my.usa.gov/oauth/token',
-      profileURL: 'https://alpha.my.usa.gov/api/v1/profile',
-      scope: ["profile.email", "profile.first_name", "profile.last_name"]
-    }
-  }
+  // myusa: {
+    // strategy: require('passport-myusa').Strategy,
+    // protocol: 'oauth2',
+    // callback : process.env.MYUSA_CALLBACK_URL || '/api/auth/callback/myusa',
+    // options: {
+      // clientID    : process.env.MYUSA_CLIENT_ID  || 'CLIENT_ID',
+      // clientSecret: process.env.MYUSA_CLIENT_SECRET || 'CLIENT_SECRET',
+      // // Initially use alpha.my.usa.gov until app approved for production
+      // authorizationURL: 'https://alpha.my.usa.gov/oauth/authorize',
+      // tokenURL: 'https://alpha.my.usa.gov/oauth/token',
+      // profileURL: 'https://alpha.my.usa.gov/api/v1/profile',
+      // scope: ["profile.email", "profile.first_name", "profile.last_name"]
+    // }
+  // }
 
 };

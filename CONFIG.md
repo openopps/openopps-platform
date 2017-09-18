@@ -3,6 +3,21 @@ Configuration
 
 ## Task Configuration
 
+### Setting secrets
+
+If you see the following error message:
+
+SailsJS will actively complain about _generated secrets_ when booting up.
+
+```2016-10-17T15:03:43.50-0400 [App/0]      ERR This generated session secret is NOT OK for production!
+2016-10-17T15:03:43.50-0400 [App/0]      ERR It will change each time the server starts and break multi-instance deployments.
+2016-10-17T15:03:43.50-0400 [App/0]      ERR To set up a session secret, add or update it in `config/session.js`:
+2016-10-17T15:03:43.50-0400 [App/0]      ERR module.exports.session = { secret: "keyboardcat" }
+```
+
+It means you don't have an environment variable set for the secret.  Please call this variable `SAILS_SECRET`.  It should be a randomly generated long string.
+
+
 ### Task attributes
 
 Part of the test framework is actually used to bootstrap the app when you run `npm run init` it creates tags specified in `test/init/init`. This configuration file defines the standard tags for this installation which control options on the task creation and editing page, as well as icons for skills, topics, agency.

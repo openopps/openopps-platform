@@ -9,6 +9,8 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.http.html
  */
 
+var helment = require('helmet');
+
 module.exports.http = {
 
   /****************************************************************************
@@ -29,8 +31,10 @@ module.exports.http = {
   * router is invoked by the "router" middleware below.)                     *
   *                                                                          *
   ***************************************************************************/
+    xframe: require('lusca').xframe('SAMEORIGIN'),
 
     order: [
+      'xframe',
       'startRequestTimer',
       'cookieParser',
       'session',
@@ -41,13 +45,16 @@ module.exports.http = {
       'handleBodyParserError',
       'compress',
       'methodOverride',
-      'poweredBy',
       'router',
       'www',
       'favicon',
       '404',
       '500'
     ],
+
+    customMiddleware: function (app) {
+      app.use(helmet());
+    },
 
   /****************************************************************************
   *                                                                           *

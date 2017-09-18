@@ -45,8 +45,8 @@
         <div class="task-list-requestbox">
           <div class="task-list-requested">requested by</div>
           <div class="task-list-name"><%- item.owner.name %></div>
-          <% if (item.owner.agency) { %>
-          <div class="task-list-agency task-single-overflow"><%- item.owner.agency.name %></div>
+          <% if (item.restrict) { %>
+          <div class="task-list-agency task-single-overflow"><%- item.restrict.name %></div>
           <% } %>
         </div>
       </div>

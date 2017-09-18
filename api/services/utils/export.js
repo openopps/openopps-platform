@@ -33,17 +33,13 @@ module.exports = {
       }
     });
 
-    json2csv({
+    var csv = json2csv({
       data: records,
       fields: fields,
       fieldNames: fieldNames
-    }, function (err, csv) {
-      if (err) {
-        done(err);
-      }
-      output += csv + "\n";
     });
-    done(null, output);
+
+    done(null, csv);
   },
 
   /**

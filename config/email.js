@@ -2,6 +2,13 @@ console.log('Loading... ', __filename);
 
 var fs = require('fs');
 
+const isSecure = function () {
+  if ( process.env.EMAIL_SSL === 'false' ) {
+    return false;
+  }
+  return true;
+};
+
 module.exports = {
 
   // Email dispatch protocol
@@ -17,21 +24,21 @@ module.exports = {
     // remote SMTP host
     host                : process.env.EMAIL_HOST || '',
     // true to use SSL connections
-    secure              : true,
+    secure              : isSecure(),
     // 25 (non-secure) or 465 (secure)
-    port                : 465,
+    port                : process.env.EMAIL_PORT || 465,
     // username and password settings for secure connections
     auth                : {
       user              : process.env.EMAIL_USER || '',
-      pass              : process.env.EMAIL_PASS || ''
+      pass              : process.env.EMAIL_PASS || '',
     },
     // ignore server support for STARTTLS (defaults to false)
-    ignoreTLS           : false,
+    ignoreTLS           : process.env.EMAIL_IGNORE_TLS || false,
     // output client and server messages to console
     debug               : false,
     pool                : true,
     // how many connections to keep in the pool (defaults to 5)
-    maxConnections      : 5
+    maxConnections      : 5,
     // limit the count of messages to send through a single connection (defaults to 100)
     // maxMessages         :
   },
@@ -40,6 +47,6 @@ module.exports = {
   systemEmail: process.env.EMAIL_SYSTEM_ADDRESS || 'example@example.com',
 
   notificationsCC  : process.env.NOTIFICATIONS_CC || '',
-  notificationsBCC : process.env.NOTIFICATIONS_BCC || ''
+  notificationsBCC : process.env.NOTIFICATIONS_BCC || '',
 
 };

@@ -49,12 +49,21 @@
             </label>
           </div>
         <% }); %>
+        <% // README: Checking if agency exists. %>
+        <% if ( agency ) { %>
         <div class="py2" id="task-restrict-agency-area" >
           <label>
-            <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency">
+            <input
+              type="checkbox"
+              <% if (agency.projectNetwork ) { %>
+              checked="checked"
+              <% } %>
+              id="task-restrict-agency"
+              name="task-restrict-agency">
             Limit Participation to <%- agency.abbr %> Employees
           </label>
         </div>
+        <% } %>
       </div>
 
       <div class="form-group" id="time-options-time-required">
@@ -127,7 +136,7 @@
       </div>
       <div class="form-group">
         <h3>Description</h3>
-        <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span>
+        <p>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine the impact or outcome of this opportunity.<span class="show-markdown"></span>
         </p>
         <p><em>(There is no limit on length, but we recommend 200 words or less.)</em></p>
         <div class="markdown-edit"></div>

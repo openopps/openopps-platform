@@ -31,7 +31,7 @@
           <% b.badges.forEach( function( badge ) { %>
             <li>
               <% badge.type = badge.type.replace( ' ', '-' ); %>
-              <a href="/profile/<%- badge.user.id %>"><%- badge.user.name %></a> earned the <%- badge.type %> badge. <%- badge.description %>
+              <a href="/profile/<%- badge.user.id %>"><%- badge.user.name %></a> earned the <%- badge.type %> badge. The <%- badge.type %> badge is awarded when you <%- badge.description %>
               <img class="activity-feed--badge" src="/images/badges/<%- badge.type %>.png" alt="The <%- badge.type %> badge is awarded when you <%- badge.description %>" title="The <%- badge.type %> badge is awarded when you <%- badge.description %>">
             </li>
           <% } ); %>

@@ -1,3 +1,5 @@
 ---
 inherit: manifest.yml
 host: openopps-test
+instances: 1
+memory: 512M

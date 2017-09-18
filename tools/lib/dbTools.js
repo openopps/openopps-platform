@@ -89,7 +89,17 @@ module.exports = {
     var tags = [];
     // load tags from file
     if (fs.existsSync(tagFile)) {
-      tags = fs.readFileSync(tagFile).toString().split("\n");
+      lines = fs.readFileSync(tagFile).toString().split("\n");
+      tags = _.map(lines, function(line) {
+        if (tagType == 'agency') {
+          var match = line.match(/\((.+)\)/);
+          if (match && match.length > 1) {
+            var abbr = match[1];
+            return { name: line, abbr: abbr, slug: abbr.toLowerCase(), domain: [abbr.toLowerCase() + '.gov'], allowRestrictAgency: true};
+          }
+        }
+        return { name: line };
+      });
     } else {
       var msg = "File Not Found: '" + tagFile + "'"
       console.log(msg)
@@ -101,11 +111,12 @@ module.exports = {
     // returns a promise
     return db.tx(function (t) {
       tagQueries = [];
-      var query_text = 'INSERT INTO tagEntity ("type","name","createdAt","updatedAt") SELECT $1, $2, $3, $4 WHERE NOT EXISTS (SELECT id FROM tagEntity WHERE "name" = $5 AND "type" = $6)';
+      var query_text = 'INSERT INTO tagEntity ("type","name","data","createdAt","updatedAt") SELECT $1, $2, to_json($3::text), $4, $5 WHERE NOT EXISTS (SELECT id FROM tagEntity WHERE "name" = $5 AND "type" = $6)';
       for (i in tags) {
-        if (tags[i].length > 0) {
-          console.log('>', tags[i]);
-          var query_data = [tagType, tags[i], date, date, tags[i], tagType];
+        if (!_.isEmpty(tags[i])) {
+          var tagData = JSON.stringify(tags[i]);
+          console.log('>', tagData);
+          var query_data = [tagType, tags[i].name, tagData, date, date, tags[i], tagType];
           var query = t.none(query_text, query_data);
           tagQueries.push(query);
         }

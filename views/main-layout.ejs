@@ -14,6 +14,8 @@
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+    <meta name="csrf-token" content="<%= _csrf %>">
+
     <!-- special SailsJS markers -->
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/main.css">
@@ -42,7 +44,7 @@
     </div>
     <footer class="bg-white p1" id="footer"></footer>
     <%- partial ('sails.ejs') %>
-    <script src="/js/bundle.js"></script>
+    <script src="/js/bundle.js?v<%- JSON.stringify(version) %>"></script>
     <%- partial ('analytics.ejs') %>
 
   </body>

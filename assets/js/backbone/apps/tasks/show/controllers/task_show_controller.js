@@ -19,6 +19,7 @@ var LoginConfig = require('../../../../config/login.json');
 
 var fs = require('fs');
 var VolunteerTextTemplate = fs.readFileSync(__dirname + '/../templates/volunteer_text_template.html').toString();
+var VolunteerFullTimeTextTemplate = fs.readFileSync(__dirname + '/../templates/volunteer_full_time_text_template.html').toString();
 var ChangeStateTemplate = fs.readFileSync(__dirname + '/../templates/change_state_template.html').toString();
 var UpdateLocationAgencyTemplate = fs.readFileSync(__dirname + '/../templates/update_location_agency_template.html').toString();
 var UpdateNameTemplate = fs.readFileSync(__dirname + '/../templates/update_name_template.html').toString();
@@ -290,20 +291,30 @@ var TaskShowController = BaseView.extend({
         return;
       }
 
+      var hasFullTimeDetail = _.chain(this.model.attributes.tags)
+        .map(_.property('name'))
+        .indexOf('Full Time Detail')
+        .value() >= 0;
+
+      var modalType = "volunteerModal";
+      var modalContent = _.template(VolunteerTextTemplate)({});
+      if (hasFullTimeDetail) {
+        var modalType = "volunteerFullTimeModal";
+        modalContent = _.template(VolunteerFullTimeTextTemplate)({});
+      }
+
       this.modalComponent = new ModalComponent({
         el: "#modal-volunteer",
         id: "check-volunteer",
-        modalTitle: i18n.t("volunteerModal.title")
+        modalTitle: i18n.t(modalType +".title")
       }).render();
-
-      var modalContent = _.template(VolunteerTextTemplate)({});
 
       this.modalAlert = new ModalAlert({
         el: "#check-volunteer .modal-template",
         modalDiv: '#check-volunteer',
         content: modalContent,
-        cancel: i18n.t('volunteerModal.cancel'),
-        submit: i18n.t('volunteerModal.ok'),
+        cancel: i18n.t(modalType +'.cancel'),
+        submit: i18n.t(modalType +'.ok'),
         validateBeforeSubmit: false,
         callback: function (e) {
           // user clicked the submit button

@@ -11,7 +11,7 @@ var Application = {
     var self = this;
     // Cache user
     // Check if a user is already defined
-    if (!_.isUndefined(backendUser)) {
+    if (backendUser != null) {
       window.cache.currentUser = new User(backendUser);
     }
     if (!_.isUndefined(systemName)) {

@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var BaseController = require('../../../base/base_controller');
 var BrowseMainView = require('../views/browse_main_view');
 var TasksCollection = require('../../../entities/tasks/tasks_collection');
-//var ProfilesCollection = require('../../../entities/profiles/profiles_collection');
+var ProfilesCollection = require('../../../entities/profiles/profiles_collection');
 var TaskModel = require('../../../entities/tasks/task_model');
 // var TaskFormView = require('../../tasks/new/views/task_form_view');
 // var ModalWizardComponent = require('../../../components/modal_wizard');
@@ -45,7 +45,7 @@ Browse.ListController = BaseController.extend({
   fireUpCollection: function() {
     var self = this;
     this.tasksCollection = new TasksCollection();
-    // TODO: this.profilesCollection = new ProfilesCollection();
+    this.profilesCollection = new ProfilesCollection();
     if (this.target == 'tasks') {
       this.collection = this.tasksCollection;
     } else {

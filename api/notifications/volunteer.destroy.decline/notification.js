@@ -23,7 +23,7 @@ module.exports = {
       if (err) return done(err);
       data.user = user;
 
-      Task.findOne({ id: model.taskId }).exec(function(err, task) {
+      Task.findOne({ id: model.task }).exec(function(err, task) {
         if (err) return done(err);
         data.task = task;
 

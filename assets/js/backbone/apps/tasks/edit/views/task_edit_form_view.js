@@ -30,7 +30,7 @@ var TaskEditFormView = Backbone.View.extend({
     var view                    = this;
     this.options                = options;
     this.tagFactory             = new TagFactory();
-    this.agency                 = window.cache.currentUser.agency;
+    this.agency                 = this.model.get( 'restrict' );
     this.data                   = {};
     this.data.newTag            = {};
 
@@ -255,9 +255,12 @@ var TaskEditFormView = Backbone.View.extend({
         completedAt : this.$( '#completedAt' ).val() || undefined,
         projectId   : null,
         state       : this.model.get( 'state' ),
-        restrict    : TaskFormViewHelper.getRestrictAgencyValue(this),
+        restrict    : this.model.get( 'restrict' ),
       };
 
+      if (this.agency) {
+        modelData.restrict.projectNetwork = view.$(  '#task-restrict-agency'  ).prop( 'checked' );
+      }
 
       // README: Check if draft is being saved or if this is a submission.
       // If the state isn't a draft and it isn't simply being saved, then it will
@@ -269,7 +272,10 @@ var TaskEditFormView = Backbone.View.extend({
         modelData.state = 'submitted';
       }
 
-      if ( owner ) { modelData[ 'userId' ] = owner.id; }
+      if ( owner ) {
+        modelData[ 'userId' ] = owner.id;
+        modelData.owner = owner;
+      }
       if ( completedBy !== '' ) { modelData[ 'completedBy' ] = completedBy; }
       if ( newParticipant ) {
         if ( this.$( '#participant-notify:checked' ).length > 0 ) { silent = false; }
@@ -349,7 +355,7 @@ var TaskEditFormView = Backbone.View.extend({
    * Setup Time Options toggling
    */
   toggleTimeOptions: function (e) {
-    TaskFormViewHelper.toggleTimeOptions(this)
+    TaskFormViewHelper.toggleTimeOptions(this);
   },
 
   displayChangeOwner: function (e) {
@@ -371,7 +377,7 @@ var TaskEditFormView = Backbone.View.extend({
 
     // Gather tags for submission after the task is created
     var tags = [],
-      taskTimeTag = this.$('[name=task-time-required]:checked').val();
+        taskTimeTag = this.$('[name=task-time-required]:checked').val();
 
     if (taskTimeTag) {
       tags.push.apply(tags,[{

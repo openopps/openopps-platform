@@ -47,7 +47,7 @@ Users who continue to engage with the project and its community will often find 
 All participants in the community are encouraged to provide support for new people, ideally via open communication channels so future new people benefit from the same answers. This support is an important part of growing the community. Those seeking support should recognise that all support activity within the project is voluntary and is therefore provided as and when time allows. Someone who requires guaranteed response times or results should therefore seek to purchase a support contract from a vendor. (Of course, that vendor should be an active member of the community.) However, for those willing to engage with the project on its own terms, and willing to help support other people, the community support channels are ideal.
 
 ## Contribution Process
-Anyone can contribute to the project, regardless of their skills, as there are many ways to contribute (see above).  For details of the logistics, please see our [Contribution Guide](https://github.com/18F/code-of-conduct/blob/master/CONTRIBUTING.md).
+Anyone can contribute to the project, regardless of their skills, as there are many ways to contribute (see above).  For details of the logistics, please see our [Contribution Guide](CONTRIBUTING.md).
 
 ## References:
 [Benevolent Dictator](http://producingoss.com/html-chunk/social-infrastructure.html#benevolent-dictator-qualifications)

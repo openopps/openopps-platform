@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
+var $ = require('jquery');
 var i18n = require('i18next');
 var i18nextJquery = require('jquery-i18next');
 

@@ -12,7 +12,7 @@ var NoListItem = fs.readFileSync(__dirname + '/../templates/no_search_results.ht
 
 var BrowseListView = Backbone.View.extend({
 
-  initialize: function(options) {
+  initialize: function (options) {
     var self = this;
 
     var pageSize = 27;
@@ -24,17 +24,17 @@ var BrowseListView = Backbone.View.extend({
       pageSize: pageSize,
       page: 1
     };
-    $(window).on('scroll', function(e) {
+    $(window).on('scroll', function (e) {
       self.scrollCheck(e);
     });
   },
 
-  organizeTags: function(tags) {
+  organizeTags: function (tags) {
     // put the tags into their types
     return _(tags).groupBy('type');
   },
 
-  scrollCheck: function(e) {
+  scrollCheck: function (e) {
     var currentScrollPos = $(window).scrollTop();
     var currentMaxHeight = $('#container').height();
     var buffer = 600;
@@ -45,7 +45,7 @@ var BrowseListView = Backbone.View.extend({
     }
   },
 
-  render: function() {
+  render: function () {
     var start, limit, compiledTemplate;
 
     //settings for infinite scroll
@@ -108,7 +108,7 @@ var BrowseListView = Backbone.View.extend({
     return this;
   },
 
-  cleanup: function() {
+  cleanup: function () {
     removeView(this);
   }
 

@@ -1,7 +1,9 @@
 ## Contributing
 
-We aspire to create a welcoming environment for collaboration on this project.
-To that end, we follow the [18F Code of Conduct](https://github.com/18F/code-of-conduct/blob/master/code-of-conduct.md) and ask that all contributors do the same. Open Opps has a defined [governance model](GOVERNANCE.md) to assist with managing the project.  
+We aspire to create a welcoming environment for collaboration on this project.  To that end, we follow the [Code for America Code of Conduct](https://github.com/codeforamerica/codeofconduct) and ask that all contributors do the same.
+
+Note: Open Opps has a defined [governance model](GOVERNANCE.md) to assist with managing the project.  
+
 ### Public domain
 
 This project is in the public domain within the United States, and
@@ -14,12 +16,12 @@ with this waiver of copyright interest.
 
 ## Communication
 
-Anyone actively contributing or using OpenOpps, should join our [Mailing List](https://groups.google.com/forum/#!forum/openopps-platform).
-We also have a public Slack chat room. If you're interested in following along with the development process or have questions, feel free to [join us](https://chat.18f.gov/?channel=openopps-public).
+Anyone actively contributing to or using OpenOpps should join our [Mailing List](https://groups.google.com/forum/#!forum/openopps-platform).
+We also have a public Slack chat team. If you're interested in following along with the development process or have questions, feel free to [join us](https://openopps.slack.com).
 
-You should be using the master branch for most stable release, please review [release notes](https://github.com/openopps/openopps-platform/releases) regularly. We do releases every week or two and send out notes.  We're generally using [semantic versioning](http://semver.org/), but we're pre-1.0, so API can change at any time. We use the minor version for changes where there are significant installation process changes or API changes or a database migration is needed.
+You should be using the master branch for the most stable release; please review [release notes](https://github.com/openopps/openopps-platform/releases) regularly. We do releases every week or two and send out notes. We're generally using [semantic versioning](http://semver.org/), but we're pre-1.0, so the API can change at any time. We use the minor version for changes where there are significant installation process changes or API changes or a database migration is needed.
 
-If you want to keep up with the latest changes, we work in the "dev" branch.  If you are using dev, keep an eagle-eye on commits and/or join our daily standup.
+If you want to keep up with the latest changes, we work in the `dev` branch.  If you are using dev, keep an eagle-eye on commits and/or join our daily standup.
 
 We also have a [wiki](https://github.com/openopps/openopps-platform/wiki) where we keep various development notes. If anything is confusing or your questions are not answered there, please shout out on the [mailing list](https://groups.google.com/forum/#!forum/openopps-platform).
 
@@ -98,7 +100,7 @@ When working in the development environment, be sure to install the project spec
 
 ### <a name="code-style"></a> Code Style
 
-Generally try to follow the [Google Javascript Style Guide](http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml).  Spaces should be used instead of tabs, and the tab width should be set to 2 spaces.  No spaces at the end of lines.
+Generally try to follow the [Google Javascript Style Guide](https://google.github.io/styleguide/jsguide.html).  Spaces should be used instead of tabs, and the tab width should be set to 2 spaces.  No spaces at the end of lines.
 
 ### <a name="commit-messages"></a> Commit Messages
 

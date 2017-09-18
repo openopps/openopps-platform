@@ -114,3 +114,15 @@
   font-size: 14px;
   font-weight: 300;
 }
+
+.see-more-tasks {
+  text-align: center !important;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  display: block;
+}
+
+.dashboard__task-list .col {
+  float: none;
+  width: 100% !important;
+}

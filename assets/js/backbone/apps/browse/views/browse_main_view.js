@@ -9,8 +9,8 @@ var UIConfig = require('../../../config/ui.json');
 var Popovers = require('../../../mixins/popovers');
 var TagConfig = require('../../../config/tag');
 var BrowseListView = require('./browse_list_view');
-// var ProfileListView = require('./profile_list_view');
-// var ProfileMapView = require('./profile_map_view');
+var ProfileListView = require('./profile_list_view');
+var ProfileMapView = require('./profile_map_view');
 var BrowseMainTemplate = fs.readFileSync(__dirname + ('/../templates/browse_main_view_template.html')).toString();
 var BrowseSearchTag = fs.readFileSync(__dirname + ('/../templates/browse_search_tag.html')).toString();
 var i18n = require('i18next');
@@ -24,6 +24,7 @@ var BrowseMainView = Backbone.View.extend({
   events: {
     "keyup #search": 'search',
     "change #stateFilters input": 'stateFilter',
+    'change #js-restrict-task-filter input': 'agencyFilter',
     "mouseenter .project-people-div"  : popovers.popoverPeopleOn,
     "click      .project-people-div"  : popovers.popoverClick,
   },
@@ -34,7 +35,35 @@ var BrowseMainView = Backbone.View.extend({
     this.filters = options.queryParams.filters ?
       JSON.parse(options.queryParams.filters) :
       options.target === 'profiles' ? {} : { state: 'open' };
+
+    this.userAgency = window.cache.currentUser ? window.cache.currentUser.agency : {};
+    this.initAgencyFilter();
+
     window.foo = this;
+  },
+
+  isAgencyChecked: function() {
+    return !!$( '#js-restrict-task-filter input:checked' ).length;
+  },
+
+  initAgencyFilter: function() {
+    this.agency = { data: {} };
+    if (this.options.queryParams.agency) {
+      // TODO: ideally we would be able to query the API for agencies
+      // and look up the name via the abbreviation. This is basically
+      // a hack to determine whether the current user's agency matches
+      // the abbreviation passed in the query string.
+      this.agency.data.abbr = this.options.queryParams.agency;
+      if (this.userAgency.name &&
+          this.userAgency.name.indexOf('(' + this.agency.data.abbr + ')') >= 0) {
+        this.agency.data.name = this.userAgency.name;
+      } else {
+        this.agency.data.name = this.agency.data.abbr;
+      }
+      this.filter( undefined, undefined, this.agency );
+    } else if (this.isAgencyChecked()) {
+      this.agency.data = this.userAgency;
+    }
   },
 
   render: function() {
@@ -46,7 +75,8 @@ var BrowseMainView = Backbone.View.extend({
         placeholder: target === 'tasks' ?
           "I'm looking for opportunities by name, " + i18n.t("tag.agency") + ", skill, topic, description..." : target === 'projects' ?
           "I'm looking for working groups by name, " + i18n.t("tag.agency") + ", skill, topic, description..." : target === 'profiles' ?
-          "I'm looking for people by name, title,  " + i18n.t("tag.agency") + ", location..." : "I'm looking for..."
+          "I'm looking for people by name, title,  " + i18n.t("tag.agency") + ", location..." : "I'm looking for...",
+        agencyName: (!(_.isEmpty(this.agency.data)) ? this.agency.data.name : this.userAgency.name)
       };
     this.rendered = _.template(BrowseMainTemplate)(options);
     this.$el.html(this.rendered);
@@ -60,6 +90,8 @@ var BrowseMainView = Backbone.View.extend({
         $('#stateFilters [value="' + state + '"]').prop('checked', true);
       });
 
+    $('#js-restrict-task-filter [name="restrict"]').prop('checked', !(_.isEmpty(this.agency.data)));
+
     // Allow chaining.
     return this;
   },
@@ -71,49 +103,44 @@ var BrowseMainView = Backbone.View.extend({
 
   stateFilter: function(event) {
     var states = _($('#stateFilters input:checked')).pluck('value');
-    this.filter(undefined, { state: states });
+    if ( this.isAgencyChecked() ) {
+      this.filter( undefined, { state: states }, this.agency );
+    } else {
+      this.filter(undefined, { state: states }, { data: {} });
+    }
   },
 
-  filter: function(term, filters) {
+  agencyFilter: function ( event ) {
+    var isChecked = event.target.checked;
+    var states = _( $( '#stateFilters input:checked' ) ).pluck( 'value' );
+    this.initAgencyFilter();
+    if ( isChecked ) {
+      this.filter( undefined, { state: states }, this.agency );
+    } else {
+      this.stateFilter();
+    }
+  },
+
+  filter: function (term, filters, agency) {
     var items;
 
     if (typeof term !== 'undefined') this.term = term;
     if (typeof filters !== 'undefined') this.filters = filters;
+    if (typeof agency !== 'undefined') this.agency = agency;
     term = this.term;
     filters = this.filters;
-
-    items = this.collection.chain().pluck('attributes').filter(function(item) {
-      // filter out tasks that are full time details with other agencies
-      var userAgency = { id: false },
-        timeRequiredTag = _.where(item.tags, { type: 'task-time-required' })[0],
-        fullTimeTag = false;
-
-      if (window.cache.currentUser) {
-        userAgency = _.where(window.cache.currentUser.tags, { type: 'agency' })[0];
-      }
-
-      if (timeRequiredTag && timeRequiredTag.name === 'Full Time Detail') {
-        fullTimeTag = true;
-      }
-
-      if (!fullTimeTag) return item;
-      if (fullTimeTag && userAgency && (timeRequiredTag.data.agency.id === userAgency.id)) return item;
-    }).filter(function(data) {
-      var searchBody = JSON.stringify(_.values(data)).toLowerCase();
-      return !term || searchBody.indexOf(term.toLowerCase()) >= 0;
-    }).filter(function(data) {
-      var test = [];
-      _.each(filters, function(value, key) {
-        if (_.isArray(value)) {
-          test.push(_.some(value, function(val) {
-            return data[key] === val || _.contains(data[key], value);
-          }));
-        } else {
-          test.push(data[key] === value || _.contains(data[key], value));
-        }
-      });
-      return test.length === _.compact(test).length;
-    }).value();
+    agency = this.agency;
+    /**
+     * TODO: There are three separate filters happening here on the same dataset.
+     * There should not be three separate filters. The following code is used throughout
+     * the application so modify it at your own risk.
+     */
+    items = this.collection.chain()
+      .pluck('attributes')
+      .filter( _.bind( filterTaskByAgency, this, agency ) )
+      .filter( _.bind( filterTaskByTerm, this, term ) )
+      .filter( _.bind( filterTaskByFilter, this, filters ) )
+      .value();
 
     this.renderList(items);
     if (this.options.target === 'profiles') this.renderMap(items);
@@ -161,6 +188,7 @@ var BrowseMainView = Backbone.View.extend({
   },
 
   renderMap: function(profiles) {
+    return;
     // create a new view for the returned data. Need to show the div before
     // rendering otherwise the SVG borders will be wrong.
     if (this.browseMapView) { this.browseMapView.cleanup(); }
@@ -182,5 +210,38 @@ var BrowseMainView = Backbone.View.extend({
   }
 
 });
+
+
+function filterTaskByAgency ( agency, task ) {
+  var getAbbr = _.property( 'abbr' );
+
+  if ( _.isEmpty( agency.data ) ) {
+    return task;
+  }
+
+  if ( getAbbr( agency.data ) === getAbbr( task.restrict ) ) {
+    return _.property( 'restrictToAgency' )( task.restrict ) || _.property( 'projectNetwork' )( task.restrict );
+  }
+
+}
+
+function filterTaskByTerm ( term, task ) {
+  var searchBody = JSON.stringify( _.values( task ) ).toLowerCase();
+  return ( ! term ) || ( searchBody.indexOf( term.toLowerCase() ) >= 0 );
+}
+
+function filterTaskByFilter ( filters, task ) {
+  var test = [];
+  _.each( filters, function ( value, key ) {
+    if ( _.isArray( value ) ) {
+      test.push( _.some( value, function ( val ) {
+        return task[ key ] === val || _.contains( task[ key ], value );
+      } ) );
+    } else {
+      test.push( task[ key ] === value || _.contains( task[ key ], value ) );
+    }
+  } );
+  return test.length === _.compact(test).length;
+}
 
 module.exports = BrowseMainView;

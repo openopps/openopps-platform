@@ -35,8 +35,8 @@
   "Browse" : "Browse",
 
   "taskPage" : {
-    "volunteerButton" : "Participate",
-    "volunteeredButton" : "Thanks!"
+    "volunteerButton" : "I'm interested",
+    "volunteeredButton" : "Application received"
   },
 
   "loginModal" : {
@@ -44,10 +44,25 @@
     "emailAddress": "Email Address"
   },
 
+  "volunteerFullTimeModal": {
+    "supervisorApprovalTitle": "Supervisor Approval",
+    "supervisorApproval": "I have my supervisor's approval to apply to this opportunity.",
+    "performanceTitle": "Position/ Performance",
+    "fullTimeRequirement": "I am a GSA employee serving under a permanent appointment and am at the full performance level of my position.",
+    "performanceLevel3": "I have a performance rating of 3 or higher.",
+    "noDisciplinaries": "I have had no formal, documented disciplinary action within the past year (such as a written warning notice, reprimand, or suspension). -I am not participating in a different formal development program.",
+    "gradeTitle": "Grade Level",
+    "grade": "If this opportunity is for a specific grade level (i.e. not to unclassified duties), I am at that grade level or higher.",
+    "title": "Are you eligible to participate?",
+    "cancel": "Cancel",
+    "ok": "I Agree"
+  },
+
   "volunteerModal": {
-    "notifySupervisor": "I understand it is my responsibility to confirm supervisor approval prior to committing to an opportunity.",
-    "cantCancel": "Once you offer to participate in an opportunity, you will not be able to cancel your commitment.",
-    "title": "Do you want to participate?",
+    "supervisorApproval": "I have my supervisor's approval to apply to this opportunity.",
+    "federalEmployee": "I am a federal employee (not a contractor).",
+    "specificLocation": "If this opportunity is for a specific location (i.e. it is not a virtual opportunity), I am located within the same commuting area.",
+    "title": "Are you eligible to participate?",
     "cancel": "Cancel",
     "ok": "I Agree"
   },

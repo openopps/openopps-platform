@@ -1,24 +1,13 @@
-var AWS = require('aws-sdk'),
-    cfenv = require('cfenv'),
-    appEnv = cfenv.getAppEnv(),
-    s3Creds = appEnv.getServiceCreds('s3-midas-assets');
+var AWS = require('aws-sdk');
+var cfenv = require('cfenv');
+var appEnv = cfenv.getAppEnv();
+var s3Creds = appEnv.getServiceCreds('s3-midas-assets');
 
-// If running in Cloud Foundry with an S3 credential service available
-if (s3Creds) {
-  AWS.config.update({
-    accessKeyId: s3Creds.access_key_id,
-    secretAccessKey: s3Creds.secret_access_key
-  });
-  process.env.S3_BUCKET = s3Creds.bucket;
-  process.env.S3_PREFIX = 'openopps-uploads';
-}
-
-
-module.exports.fileStore = {
+var FS = {
   service: process.env.FILESTORE || 'local',
 
   local: {
-    dirname: 'assets/uploads'
+    dirname: 'assets/uploads',
   },
 
   /**
@@ -35,8 +24,21 @@ module.exports.fileStore = {
    */
 
   s3: {
-    bucket: process.env.S3_BUCKET || 'midas-filestore',
-    prefix: process.env.S3_PREFIX || 'assets/uploads'
-  }
+    bucket: process.env.S3_BUCKET || null,
+    prefix: process.env.S3_PREFIX || 'uploads',
+  },
 
 };
+
+// If running in Cloud Foundry with an S3 credential service available
+if (s3Creds) {
+  AWS.config.update({
+    accessKeyId: s3Creds.access_key_id,
+    secretAccessKey: s3Creds.secret_access_key,
+    region: s3Creds.region,
+  });
+  FS.s3.bucket = s3Creds.bucket;
+  FS.s3.prefix = 'openopps-uploads';
+}
+
+module.exports.fileStore = FS;

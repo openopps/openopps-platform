@@ -1,6 +1,7 @@
 // vendor
 var _ = require('underscore');
 var Backbone = require('backbone');
+var $ = require('jquery');
 
 var TaskModel = require( '../../../entities/tasks/task_model' );
 

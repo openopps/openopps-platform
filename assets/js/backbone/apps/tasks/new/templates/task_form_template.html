@@ -26,12 +26,15 @@
               </label>
             </div>
           <% }); %>
+          <% // README: Checking if agency exists. %>
+          <% if ( agency ) { %>
           <div class="py2" id="task-restrict-agency-area" >
             <label>
               <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency">
               Limit Participation to <%- agency.abbr %> Employees
             </label>
           </div>
+          <% } %>
         </div>
         <div class="col-md-4">
         </div>
@@ -159,7 +162,7 @@
         <div class="col-md-8">
           <label for="task-description">
             <span class="create__label">Description</span>
-            <span>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine what this will be like when completed. <span class="show-markdown"></span></span>
+            <span>Write a description that explains the <span data-i18n="task">opportunity</span>. Add details so that people can imagine the impact or outcome of this opportunity. <span class="show-markdown"></span></span>
             <span><em>(There is no limit on length, but we recommend 200 words or less.)</em></span>
           </label>
           <div class="markdown-edit"></div>

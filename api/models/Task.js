@@ -10,7 +10,7 @@ var exportUtils = require('../services/utils/export'),
 // handle a possible state change for an existing task
 // (always a state "change" for a new task)
 // update values with dates and return action
-function handleStateChange(values, task) {
+function handleStateChange (values, task) {
   // If task state hasn't changed, continue
   if (task && task.state === values.state) return null;
 
@@ -35,7 +35,7 @@ function handleStateChange(values, task) {
       task && task.volunteersCompleted();
       break;
   }
-  sails.log.verbose('handleStateChange action:', action)
+  sails.log.verbose('handleStateChange action:', action);
   return action;
 }
 
@@ -63,12 +63,12 @@ module.exports = {
     submittedAt: 'datetime',
 
     // limit participation to a specific agency
-    restrict: 'STRING',
+    restrict: 'JSON',
 
     // owner has specific privileges, defaults to task creator
     owner: {
       columnName: 'userId',
-      model: 'user'
+      model: 'user',
     },
 
     tags: {
@@ -76,20 +76,20 @@ module.exports = {
       via: 'tasks',
       dominant: true,
     },
-    getOwnerId: function() {
+    getOwnerId: function () {
       // if populate has been called, we'll have a user object
       // otherwise user is a number and is the id of the user
       var id = (typeof this.owner === 'object') ? this.owner.id : this.owner;
       return id;
     },
-    isOpen: function() {
+    isOpen: function () {
       if (_.indexOf(['open', 'public', 'assigned'], this.state) != -1) {
         return true;
       }
       return false;
     },
 
-    isClosed: function() {
+    isClosed: function () {
       if (_.indexOf(['closed', 'archived', 'completed'], this.state) != -1) {
         return true;
       }
@@ -99,35 +99,35 @@ module.exports = {
     // if user is given and is the owner, sets isOwner
     // returns task if public or user has special access
     // returns null if task should not be accessed based on given user
-    authorized: function(user) {
-        task = this;
-        task.isOwner = false;
+    authorized: function (user) {
+      task = this;
+      task.isOwner = false;
         // check if current user is owner
-        if (user && (task.getOwnerId() == user.id)) {
-          task.isOwner = true;
-          return task;   // owners always have access
-        }
+      if (user && (task.getOwnerId() == user.id)) {
+        task.isOwner = true;
+        return task;   // owners always have access
+      }
         // admins always have access
-        if (user && user.isAdmin) return task;
+      if (user && user.isAdmin) return task;
 
         // all states except draft and submitted are public
-        if ((task.state !== 'draft') && (task.state !== 'submitted')) {
-          return task;
-        }
+      if ((task.state !== 'draft') && (task.state !== 'submitted')) {
+        return task;
+      }
         // Default denied: return no task
-        return null;
+      return null;
     },
 
     // Called when a task is marked as complete, and increments
     // each participant's completedTasks counter
-    volunteersCompleted: function() {
+    volunteersCompleted: function () {
       var task = this;
 
-      Volunteer.find({ taskId: task.id }).exec(function(err, volunteers) {
+      Volunteer.find({ taskId: task.id }).exec(function (err, volunteers) {
         if (err) return done(err);
 
-        volunteers.forEach(function(vol) {
-          User.findOne({ id: vol.userId }).exec(function(err, user) {
+        volunteers.forEach(function (vol) {
+          User.findOne({ id: vol.userId }).exec(function (err, user) {
             user.taskCompleted(task);
           });
         });
@@ -137,14 +137,14 @@ module.exports = {
     // this is called when a human is performing an update action
     // on the task, use this instead of the class method
     // when all of the domain logic needs to be followed
-    updateAction: function(values) {
+    updateAction: function (values) {
       var task = this;
-      sails.log.verbose("task.updateAction", values)
+      sails.log.verbose('task.updateAction', values);
       var action = handleStateChange(values, task);
       values.id = task.id;
       var promise =
         Task.update(task.id, values)
-        .then(function(updatedTasks) {
+        .then(function (updatedTasks) {
           var updatedTask = updatedTasks[0];
           sails.log.verbose('task updated, action:', action);
           // If no notification specified, continue
@@ -154,33 +154,33 @@ module.exports = {
             action: action,
             model: updatedTask,
           })
-          .then(function(notification) {
+          .then(function (notification) {
             return updatedTask;
           });
         })
-        .then(function(updatedTask) {
+        .then(function (updatedTask) {
           var ownerId = updatedTask.owner;
-          return Task.find({ userId: ownerId }).populate('tags').then(function(tasks) {
+          return Task.find({ userId: ownerId }).populate('tags').then(function (tasks) {
             var awardBadge = Promise.promisify(Badge.awardForTaskPublish, {context: Badge});
-            return awardBadge(tasks, ownerId).then(function(badge) {
+            return awardBadge(tasks, ownerId).then(function (badge) {
               sails.log.verbose('awardForTaskPublish completed', badge);
               return updatedTask;
             });
           });
         });
       return promise;
-    }
+    },
   },
 
   //** CLASS METHODS **
   // finds task based on taskId
   // sets isOwner if user is given and is the owner
   // only returns task if public or user has special access
-  authorized: function(taskId, user, done) {
+  authorized: function (taskId, user, done) {
     Task.findOneById(taskId)
     .populate('tags')
-    .exec(function(err, task) {
-      if (err) { return done(err) }
+    .exec(function (err, task) {
+      if (err) { return done(err); }
       if (!task) { return done('Error finding task.'); }
       result = task.authorized(user);
       return done(null, result);
@@ -195,58 +195,64 @@ module.exports = {
   // draft: [],
   // open: [],
   // submitted: []
-  byCategory: function(page, limit, sort) {
-    var page = page || 1,
-      limit = limit || 1000,
-      sort = sort || 'createdAt desc';
+  byCategory: function (page, limit, sort) {
+    page = page || 1;
+    limit = limit || 1000;
+    sort = sort || 'createdAt desc';
     var tasks;
-    var promise =
-      Task.find({ state: [ 'draft', 'submitted', 'open', 'assigned', 'completed' ] })
-          .populate('owner')
-          .sort(sort)
-          .paginate({ page: page, limit: limit })
-      .then(function(allTasks) {
+    return Task.find({
+        state: [
+          'draft',
+          'submitted',
+          'open',
+          'assigned',
+          'completed',
+        ],
+    })
+      .populate('owner')
+      .sort(sort)
+      .paginate({ page: page, limit: limit })
+      .then(function (allTasks) {
         tasks = allTasks;
         return Task.byCategoryWithVolunteers(tasks);
       })
-      .then(function(output) {
+      .then(function (output) {
         return output;
-      })
-    return promise;
+      });
   },
   // returns a promise to annotate the tasks with their volunteers
   // and sort into a hash by task state
-  byCategoryWithVolunteers: function(tasks) {
-    var states = [ 'draft', 'submitted', 'open', 'assigned', 'completed' ]
-    var output = {}
+  byCategoryWithVolunteers: function (tasks) {
+    var states = [ 'draft', 'submitted', 'open', 'assigned', 'completed' ];
+    var output = {};
     for (var i in states) {
-      state = states[i]
+      state = states[i];
       output[state] = [];
     }
-    var volQuery = _.map(tasks, function(t) { return {taskId: t.id} });
+    var volQuery = _.map(tasks, function (t) { return {taskId: t.id}; });
     var promise =
       Volunteer.findUsersByTask(volQuery)
-      .then(function(taskVolunteers) {
-        _.forEach(tasks, function(t) {
+      .then(function (taskVolunteers) {
+        _.forEach(tasks, function (t) {
           if (_.includes(states, t.state)) {
             output[t.state].push(t);
-            t.volunteers = taskVolunteers[t.id] || []
+            t.volunteers = taskVolunteers[t.id] || [];
           }
-        })
+        });
         return output;
-      })
+      });
     return promise;
   },
-  byCategoryForDomain: function(domain) {
+  byCategoryForDomain: function (domain) {
     var promise =
       Task.findByOwnerDomain(domain)
-      .then(function(allTasks) {
+      .then(function (allTasks) {
         tasks = allTasks;
-        return Task.byCategoryWithVolunteers(tasks)
+        return Task.byCategoryWithVolunteers(tasks);
       })
-      .then(function(output) {
+      .then(function (output) {
         return output;
-      })
+      });
     return promise;
   },
 
@@ -267,12 +273,12 @@ module.exports = {
 
   // encapsulates all domain logic and dependencies (notifcation, badges)
   // for when a user creates a task
-  createAction: function(values) {
-    sails.log.verbose("Task.createAction", values)
+  createAction: function (values) {
+    sails.log.verbose('Task.createAction', values);
     handleStateChange(values);
 
     var promise = Task.create(values)
-    .then(function(task) {
+    .then(function (task) {
       if ('draft' === task.state) {
         // afterCreate model.createdAt and updatedAt are strings
         // so cast to compare for consistency
@@ -280,7 +286,7 @@ module.exports = {
           return Notification.create({
             action: 'task.create.draft',
             model: task,
-          }).then(function(notification) {
+          }).then(function (notification) {
             return task;
           });
         } else {
@@ -290,7 +296,7 @@ module.exports = {
         return Notification.create({
           action: 'task.create.thanks',
           model: task,
-        }).then(function(notification) {
+        }).then(function (notification) {
           return task;
         });
       }
@@ -301,34 +307,34 @@ module.exports = {
 
   // find where owner has username with matching domain
   // returns a promise
-  findByOwnerDomain: function(domain) {
-    var queryStr = "SELECT task.* from task where \"userId\" " +
-                   "in (SELECT id FROM midas_user WHERE username SIMILAR TO '%(@|.)' || $1)";
+  findByOwnerDomain: function (domain) {
+    var queryStr = 'SELECT task.* from task where "userId" ' +
+                   'in (SELECT id FROM midas_user WHERE username SIMILAR TO \'%(@|.)\' || $1)';
     var taskQuery = Promise.promisify(Task.query, {context: Task});
     return taskQuery({name:'Task.findByOwnerDomain', text:queryStr, values:[domain]}).
-      then(function(result) {
+      then(function (result) {
         return result.rows;
-      })
+      });
   },
 
-  sendNotifications: function(i) {
+  sendNotifications: function (i) {
     i = i || 0;
 
     var now = new Date(new Date().toISOString().split('T')[0]),
-      begin = moment(now).add(i, 'days').toDate(),
-      end = moment(now).add(i + 1, 'days').toDate();
+        begin = moment(now).add(i, 'days').toDate(),
+        end = moment(now).add(i + 1, 'days').toDate();
 
     Task.find({
       completedBy: { '>=': begin, '<': end },
       state: 'assigned',
-    }).exec(function(err, tasks) {
+    }).exec(function (err, tasks) {
       if (err) return sails.log.error(err);
       var action = i ? 'task.due.soon' : 'task.due.today';
 
-      tasks.forEach(function(task) {
+      tasks.forEach(function (task) {
         var find = { action: action, callerId: task.id },
-          model = { action: action, callerId: task.id, model: task };
-        Notification.findOrCreate(find, model, function(err, notification) {
+            model = { action: action, callerId: task.id, model: task };
+        Notification.findOrCreate(find, model, function (err, notification) {
           if (err) sails.log.error(err);
           if (notification) sails.log.verbose('New notification', notification);
         });

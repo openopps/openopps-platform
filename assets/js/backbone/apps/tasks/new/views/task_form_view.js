@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var async = require('async');
 var Backbone = require('backbone');
+var $ = require('jquery');
 var Bootstrap = require('bootstrap');
 
 var MarkdownEditor = require('../../../../components/markdown_editor');
@@ -117,7 +118,7 @@ var TaskFormView = Backbone.View.extend({
 
       tags: this.tagSources,
       model: this.model,
-      agency: this.agency
+      agency: this.agency,
     };
 
     var template = _.template( TaskFormTemplate )( data );
@@ -153,7 +154,7 @@ var TaskFormView = Backbone.View.extend({
   /*
    * Render modal for the Task Creation Form ViewController
    */
-  renderSaveSuccessModal: function(show) {
+  renderSaveSuccessModal: function (show) {
     var $modal = this.$( '.js-success-message' );
     var owner = this.model.attributes.owner;
 
@@ -250,7 +251,7 @@ var TaskFormView = Backbone.View.extend({
    * Setup Time Options toggling
    */
   toggleTimeOptions: function (e) {
-    TaskFormViewHelper.toggleTimeOptions(this)
+    TaskFormViewHelper.toggleTimeOptions(this);
   },
 
   locationChange: function (e) {
@@ -300,15 +301,34 @@ var TaskFormView = Backbone.View.extend({
   saveDraft: function ( event ) {
     var view = this;
 
+    this.setUpModel( 'draft' );
+
+    this.collection.trigger( 'task:draft', this.model );
+
+  },
+
+  /**
+   * Sets up the model in one place regardless of the state.
+   * This method is called on the saveDraft and the submit methods.
+   * @param { string } state - The state as a string, can be either draft or submitted
+   * @see TaskFormView#submit()
+   * @see TaskFormView#saveDraft()
+   */
+  setUpModel: function ( state ) {
+
     this.model.set( {
       title        :  this.$( '#task-title' ).val(),
       description  :  this.$( '#task-description' ).val(),
-      state        :  'draft',
+      state        :  state,
       tags         :  this.getTags(),
-      restrict     :  TaskFormViewHelper.getRestrictAgencyValue(this)
+      restrict     : {
+        name: this.agency.name,
+        abbr: this.agency.abbr,
+        slug: this.agency.slug,
+        domain: this.agency.slug + '.gov',
+        projectNetwork: this.$(  '#task-restrict-agency'  ).prop( 'checked' ),
+      },
     } );
-
-    this.collection.trigger( 'task:draft', this.model );
 
   },
 
@@ -325,13 +345,7 @@ var TaskFormView = Backbone.View.extend({
 
     if ( ! validForm ) { return this; }
 
-    this.model.set( {
-      title        :  this.$( '#task-title' ).val(),
-      description  :  this.$( '#task-description' ).val(),
-      state        :  'submitted',
-      tags         :  this.getTags(),
-      restrict     :  TaskFormViewHelper.getRestrictAgencyValue(this)
-    } );
+    this.setUpModel( 'submitted' );
 
     if ( ! _.isEmpty( completedBy ) ) {
 

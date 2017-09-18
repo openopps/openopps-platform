@@ -27,8 +27,8 @@
   "Browse" : "Browse",
 
   "taskPage" : {
-    "volunteerButton" : "Participate",
-    "volunteeredButton" : "Thanks!"
+    "volunteerButton" : "I'm interested",
+    "volunteeredButton" : "Application received"
   },
 
   "loginModal" : {

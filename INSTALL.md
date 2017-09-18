@@ -33,50 +33,29 @@ Installation
 
 ### Docker for Development
 
-After installing docker, as above, you can use it for development, by syncing a local directory with the virtual container.
+After installing Docker and Docker Compose, run the following command to bring
+up the database and the application.
 
-First, grab the code and clone onto your local machine.
-
-```
-git clone git@github.com:18F/openopps-platform.git docker-openopps
-cd docker-openopps
+```sh
+npm run docker:up
 ```
 
-Note: I've created a different directory name to remind myself that this code
-that will run in Docker.  I will be configuring this and installing modules for
-the Docker environment, which is different than my local machine.
+You can also restart the app container.
 
-Run Kitematic, and choose menu `File` > `Open Docker Command-Line Terminal`
-
-Then on the command-line:
-
-```
-docker login
-docker pull 18fgsa/open-opps
-docker run -Pti  -v `pwd`:/usr/src/app --entrypoint=/bin/bash --name local-opps 18fgsa/open-opps
+```sh
+npm run docker:restart
 ```
 
-Every once in a while, there's a timeout when executing this command multiple
-times.  If that happens, resetting the environment can fix it:
-
-```
-docker-machine restart default  # Restart environment
-eval $(docker-machine env default)  # Refresh environment settings
+When you're down with local development, spin down all the containers.
+```sh
+npm run docker:down
 ```
 
-Now, with your Docker machine running and synced to your local directory,
-run the following commands in the interactive terminal (which runs them
-in the Docker machine):
+Your local code is now running in the Docker container with Mailcatcher for
+reviewing Notifications.
 
-```
-npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
-npm install
-npm run init
-npm start
-```
-
-Now you can see your local code run in the Docker container.  You can modify
-the code locally and stop and start the server to see changes.
+For the application: http://localhost:3000/
+For the mail server: http://localhost:8025/
 
 ## Step by Step Installation from Source
 The following installation steps for Mac, Linux, and Windows can be used for setting up a development or production environment manually.
@@ -89,7 +68,6 @@ The instructions have been tested on 10.9.2, but earlier versions likely work.  
 In the Terminal:
 
     brew install postgresql
-    brew install graphicsmagick
 
 When Homebrew is done installing Postgres, follow the instructions at the end to start Postgres.
 
@@ -181,10 +159,6 @@ AND modify `pg_hba.conf`:
      sudo apt-get update
      sudo apt-get install nodejs
 
-#### Install GraphicsMagick
-
-     sudo apt-get install graphicsmagick
-
 ### Windows (Windows 2008 Server)
 
 #### Install Visual C++ 2008 x64 or x86 Redistributable Package
@@ -209,19 +183,16 @@ Create database 'midas', user account 'midas' with password 'midas', and assign 
 
 [Node.js](http://nodejs.org/dist/v4.2.2/)
 
-#### Install GraphicsMagick
+Use npm version 3.x
 
-[GraphicsMagick](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/`)
-
-Select Q8 version along with latest corresponding to 32 bit vs. 64 bit OS
-
+```
+npm i -g npm@3
+```
 #### Set System Path Variables
 
 Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
 Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
 
-	DRIVE:\program files\graphicsmagick-1.3.18-q8;
-	(or similar, depending on your graphicsmagick version)
 	DRIVE:\Program Files\nodejs\;
 
 Save.
@@ -244,7 +215,7 @@ Here's an example using `export`:
 [openopps_theme_repo]: https://github.com/18F/open-opportunities-theme "Open Opportunities Theme"
 
 Note: the tests don't currently pass when the theme is installed since it
-also changes configuration.  
+also changes configuration.
 
 #### Clone the git repository.
 
@@ -253,8 +224,9 @@ also changes configuration.
 
 #### Install openopps node packages (from the openopps git folder)
 
-Then run the normal npm package installer
+Then install npm 3.x and run the normal npm package installer
 
+     npm i -g npm@3
      npm install -g node-gyp@3.3.1 grunt-cli@0.1.13
      npm install
 
@@ -292,10 +264,13 @@ Now you are ready to rock!
 
 Run the tests (all should pass)
 
+    export VCAP_APPLICATION='{ "uris": [ "openopps-test.18f.gov" ] }'
     npm test
 
 Run the server (watch client files, compiling if needed)
 
+    export SAILS_SECRET='RANDOM_BITS_FOR_SAILS_SESSIONS_ID'
+    export VCAP_APPLICATION='{ "uris": [ "openopps-test.18f.gov" ] }'
     npm run watch
 
 

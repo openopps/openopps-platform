@@ -8,14 +8,14 @@ var badgeDescriptions = {
   'game changer': 'have completed five tasks.',
   'disruptor': 'have completed ten tasks.',
   'partner': 'have completed fifteen tasks.',
-  'mentor': 'have created your first ongoing task',
-  'instigator': 'have created your first one-time task',
-  'team builder': 'have accepted at least four people on a task',
+  'mentor': 'have created your first ongoing task.',
+  'instigator': 'have created your first one-time task.',
+  'team builder': 'have accepted at least four people on a task.',
 
   // the badges below have yet to be implemented
-  'local': 'have completed 2 tasks for one agency',
-  'explorer': 'have completed a task for your second agency',
-  'connector': 'have completed a task for your third agency',
+  'local': 'have completed 2 tasks for one agency.',
+  'explorer': 'have completed a task for your second agency.',
+  'connector': 'have completed a task for your third agency.',
 };
 
 module.exports = {

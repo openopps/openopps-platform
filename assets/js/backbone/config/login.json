@@ -1,15 +1,5 @@
 {
   "signin": true,
-  "oauth": [
-    "myusa"
-  ],
-  "config": {
-    "myusa": {
-      "name": "MyUSA",
-      "image": "/images/login/myusa.png",
-      "endpoint": "/api/auth/myusa"
-    }
-  },
   "local": {
     "enabled": true,
     "expand": true,

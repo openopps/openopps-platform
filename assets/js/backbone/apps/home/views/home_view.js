@@ -42,9 +42,8 @@ var HomeView = Backbone.View.extend({
     this.$el.addClass('home');
     compiledTemplate = _.template(HomeTemplate)(data);
     this.$el.html(compiledTemplate);
-    // TODO: this.$el.localize();
-
-  return this;
+    this.$el.localize();
+    return this;
   },
 
   toggleButton: function (e) {
