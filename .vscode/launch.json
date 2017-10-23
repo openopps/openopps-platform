@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [{
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceRoot}/app.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Functional Tests",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "test/functional/**/*.spec.js",
+        "--opts",
+        "test/functional/mocha.opts",
+        "--no-timeouts"
+      ],
+      "stopOnEntry": false,
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "NODE_ENV": "testing"
+      }
+    }
+  ]
+}

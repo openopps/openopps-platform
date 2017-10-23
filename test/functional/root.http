@@ -1,0 +1,4 @@
+https://openopps-staging.app.cloud.gov/
+
+###
+GET https://openopps-staging.app.cloud.gov/csrfToken HTTP/1.1

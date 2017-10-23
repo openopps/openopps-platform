@@ -59,3 +59,6 @@ npm-debug.log*
 
 # Temporary root directory
 tmp/
+
+# Ignore nyp output files
+.nyc_output
