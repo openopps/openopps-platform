@@ -112,7 +112,7 @@ module.exports = {
     // returns a promise
     return db.tx(function (t) {
       tagQueries = [];
-      var query_text = 'INSERT INTO tagEntity ("type","name","data","createdAt","updatedAt") SELECT $1, $2, to_json($3::text), $4, $5 WHERE NOT EXISTS (SELECT id FROM tagEntity WHERE "name" = $5 AND "type" = $6)';
+      var query_text = 'INSERT INTO tagEntity ("type","name","data","createdAt","updatedAt") SELECT $1, $2, $3, $4, $5 WHERE NOT EXISTS (SELECT id FROM tagEntity WHERE "name" = $5 AND "type" = $6)';
       for (i in tags) {
         if (!_.isEmpty(tags[i])) {
           var tagData = JSON.stringify(tags[i]);
