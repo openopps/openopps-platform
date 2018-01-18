@@ -21,7 +21,7 @@ var session = {
    * This is different from cookie.maxAge, setting
    * this to null to get ttl from cookie.maxAge.
    */
-  ttl: 15 * 60 * 1000, // 15 minutes
+  ttl: 35 * 60 * 1000, // 35 minutes
 
   /* Force a session identifier cookie to be set on every response.
    * The expiration is reset to the original maxAge, resetting the

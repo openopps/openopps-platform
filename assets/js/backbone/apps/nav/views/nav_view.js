@@ -11,6 +11,7 @@ var UIConfig = require('../../../config/ui.json');
 var Login = require('../../../config/login.json');
 var LoginController = require('../../login/controllers/login_controller');
 var NavTemplate = require('../templates/nav_template.html');
+var IdleModal = require('../../../components/modal_idle');
 var User = require('../../../../utils/user');
 
 var NavView = Backbone.View.extend({
@@ -27,15 +28,23 @@ var NavView = Backbone.View.extend({
 
     this.listenTo(window.cache.userEvents, 'user:login:success', function (userData) {
       self.doRender({ user: userData });
+      this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
+      this.idleModal.resetTimeout();
     });
 
     this.listenTo(window.cache.userEvents, 'user:login:close', function () {
       self.doingLogin = false;
     });
 
+    this.listenTo(window.cache.userEvents, 'user:request:logout', function () {
+      if(this.idleModal) this.idleModal.cleanup();
+      self.logout({});
+    });
+
     this.listenTo(window.cache.userEvents, 'user:logout', function () {
       self.doRender({ user: null });
       Backbone.history.navigate('', {trigger: true});
+      this.idleModal.cleanup();
       window.cache.userEvents.trigger('user:logout:success');
     });
 
@@ -70,6 +79,10 @@ var NavView = Backbone.View.extend({
   render: function () {
     var self = this;
     this.doRender({ user: window.cache.currentUser, systemName: window.cache.system.name });
+    if(window.cache.currentUser) {
+      this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
+      this.idleModal.resetTimeout();
+    }
     return this;
   },
 
@@ -115,6 +128,9 @@ var NavView = Backbone.View.extend({
   cleanup: function () {
     if (this.loginController) {
       this.loginController.cleanup();
+    }
+    if (this.idleModal) {
+      this.idleModal.cleanup();
     }
     removeView(this);
   },

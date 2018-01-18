@@ -53,6 +53,7 @@ var BrowseRouter = Backbone.Router.extend({
         .closest('li')
         .addClass('active');
       $.getJSON('/csrfToken', function (t) {
+        window.cache.userEvents.trigger('idle:reset');
         $('meta[name="csrf-token"]').attr('content', t._csrf);
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
           var token;
