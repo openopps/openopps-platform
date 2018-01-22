@@ -4,6 +4,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const AWS = require('aws-sdk');
 const fs = require('fs');
+const fileType = require('file-type');
 const path = require('path');
 const uuid = require('uuid');
 const config = openopps.fileStore || {};
@@ -29,7 +30,16 @@ local = {
   },
   get: function (name, cb) {
     var dir = path.join(openopps.appPath, config.local.dirname || 'assets/uploads');
-    fs.readFile(path.join(dir, name), cb);
+    fs.readFile(path.join(dir, name), (err, data) => {
+      if(err) {
+        cb(err, null);
+      } else {
+        cb(null, {
+          Body: data,
+          ContentType: fileType(data).mime,
+        });
+      }
+    });
   },
 };
 
@@ -174,7 +184,7 @@ function findOne (id) {
           log.info('Error retrieving file ', file.name, err);
           resolve(false);
         }
-        resolve((data && data.Body) ? data.Body : data);
+        resolve(data);
       });
     }).catch((err) => {
       resolve(false);

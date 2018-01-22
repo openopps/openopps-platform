@@ -11,6 +11,7 @@ const redisStore = require('koa-redis');
 const passport = require('koa-passport');
 const cacheControl = require('koa-cache-control');
 const flash = require('koa-better-flash');
+const md5File = require('md5-file');
 const _ = require('lodash');
 
 module.exports = (config) => {
@@ -156,6 +157,7 @@ module.exports = (config) => {
         version: openopps.version,
         alert: null,
         user: ctx.state.user || null,
+        jsHash: md5File.sync(path.join(__dirname, 'dist', 'js', 'bundle.min.js')),
       };
       await ctx.render('main/index', data);
     }
