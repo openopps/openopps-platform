@@ -23,7 +23,6 @@
     "db-migrate": "^0.10.2",
     "db-migrate-pg": "^0.1.9",
     "ejs": "^2.x.x",
-    "file-type": "^7.5.0",
     "fs-extra": "^4.0.3",
     "git-clone": "^0.1.0",
     "gm": "^1.23.0",
