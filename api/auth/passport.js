@@ -45,7 +45,7 @@ passport.deserializeUser(async function (id, done) {
 passport.use(new LocalStrategy(localStrategyOptions, async (username, password, done) => {
   var maxAttempts = openopps.auth.local.passwordAttempts;
   log.info('local login attempt for:', username);
-  await dao.User.findOne('username = ?', username).then(async (user) => {
+  await dao.User.findOne('username = ?', username.toLowerCase().trim()).then(async (user) => {
     if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
       log.info('max passwordAttempts (1)', user.passwordAttempts, maxAttempts);
       done('locked', false);

@@ -29,6 +29,7 @@ async function register (attributes, done) {
   if (!attributes.password || attributes.password === '') {
     return done(new Error('password may not be blank'));
   }
+  attributes.username = username.toLowerCase().trim();
   await dao.User.insert(_.extend(_.clone(baseUser), attributes)).then(async (user) => {
     log.info('created user', _.omit(user, 'password'));
 

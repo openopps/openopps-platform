@@ -33,7 +33,7 @@ router.get('/api/user/username/:username', async (ctx, next) => {
   if (validator.isEmail(ctx.params.username) !== true) {
     return ctx.body = true;
   }
-  await service.findOneByUsername(ctx.params.username.toLowerCase(), function (err, user) {
+  await service.findOneByUsername(ctx.params.username.toLowerCase().trim(), function (err, user) {
     if (err) {
       ctx.status = 400;
       return ctx.body = { message:'Error looking up username.' };
