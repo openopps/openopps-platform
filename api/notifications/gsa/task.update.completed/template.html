@@ -1,0 +1,11 @@
+<p>Congrats! You’ve successfully completed “<a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a>.” Your profile has been updated to reflect your achievement.</p>
+
+<% if (survey) { %>
+<p>We at <%- globals.systemName %> are always looking for ways to make our program better. Please take a moment to complete this quick survey — your feedback will help us continue to improve your experience: <%- survey %></p>
+<% } %>
+
+<p>
+  Thanks again,
+  <br>
+  The <%- globals.systemName %> Team
+</p>

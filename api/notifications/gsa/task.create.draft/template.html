@@ -1,0 +1,13 @@
+<p>Dear <%- user.name %>,</p>
+
+<p>Thank you for drafting an open opportunity.</p>
+
+<p>Your draft can be found <a href="<%- globals.urlPrefix %>/profile/<%- user.id %>">in your profile under Drafts</a>.<p>
+
+<p>For your reference, here's a link to the opportunity: <a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a></p>
+
+<p>
+  Thanks!
+  <br/>
+  - The <%- globals.systemName %> Team
+</p>

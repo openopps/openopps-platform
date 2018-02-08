@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<style type="text/css">
+.wrapper {
+  border-width: 1px;
+  border-color: #c0c0c0;
+  border-radius: 3px;
+  border-style: solid;
+  width: 100%;
+  max-width: 600px;
+  color: #606060;
+  font-size: 18px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-family: "Helvetica Neue", "Arial", "sans-serif"
+}
+
+.header {
+  border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  height: 10px;
+  background-color: #F04F24;
+}
+
+.logo {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  border-bottom: solid 1px #c0c0c0;
+}
+
+.content {
+  padding: 10px;
+  width: 100%;
+  max-width: 600px;
+}
+.content a {
+  color: #606060;
+}
+.center {
+  text-align: center;
+}
+.full-width {
+  width: 100%;
+  max-width: 600px;
+}
+
+blockquote {
+  border-left: solid 3px #c0c0c0;
+  color: #909090;
+  margin-left: 6px;
+  margin-bottom: 10px;
+  padding: 10px 0 10px 20px;
+}
+
+.btn {
+  padding: 10px;
+  text-decoration: none;
+  border: solid 1px #c0c0c0;
+  border-radius: 8px;
+}
+.btn-c1 {
+  background-color: #F04F24;
+  color: #fff;
+}
+.content a.btn-c2,
+a.btn-c2,
+.btn-c2 {
+  border-color: #297BB5;
+  background-color: #39B7EA;
+  color: #fff;
+  font-weight: bold;
+}
+.btn-lg {
+  font-size: 24px;
+  padding: 15px;
+}
+
+.footer {
+  width: 100%;
+  max-width: 600px;
+  background-color: #f0f0f0;
+  color: #808080;
+  padding: 10px;
+  font-size: 12px;
+}
+.footer a,
+.footer a:link,
+.footer a:active,
+.footer a:visited {
+  color: #606060;
+}
+.footer a:hover {
+  color: #000000;
+}
+</style>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+
+  <table class="wrapper" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td class="header" bgcolor="F04F24" height="10" width="100%">
+      </td>
+    </tr>
+    <tr>
+      <td class="logo">
+        <img src="<%- globals.urlPrefix %>/images/logo.png" alt="<%- globals.systemName %>"/>
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" class="content">
+        <%= _content %>
+      </td>
+    </tr>
+    <tr>
+      <td width="100%" class="footer" bgcolor="F0F0F0">
+        <p>
+        You received this email because you signed up for <a href="<%- globals.urlPrefix %>"><%- globals.systemName %></a>.
+        </p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
