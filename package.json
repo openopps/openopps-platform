@@ -100,7 +100,6 @@
   "scripts": {
     "preinstall": "",
     "import": "node import-theme $npm_package_config_dir",
-    "postinstall": "npm run setup",
     "setup": "npm run setup:theme && npm run uswds && npm run build",
     "setup:theme": "node install-theme && npm run import --openopps-platform:dir=_theme",
     "init": "node ./tools/init.js",

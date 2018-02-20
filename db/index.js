@@ -20,4 +20,15 @@ if(!_.isEmpty(psqlConnection)) {
   config.port = psqlConnection.port;
 }
 
+var config = {
+  host: process.env.RDS_HOSTNAME,
+  db: 'ebdb',
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT
+};
+
+console.log('process env TEST_DATABASE_URL', process.env.TEST_DATABASE_URL);
+console.log('process env DATABASE_URL', process.env.DATABASE_URL);
+console.log('db config', config);
 module.exports = gen(config);

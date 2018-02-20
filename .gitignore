@@ -1,7 +1,6 @@
 lib-cov
 coverage/*
-
-package-lock.json
+.elasticbeanstalk/*
 
 # don't want to check it in temporary import data
 tools/import/*
@@ -70,3 +69,7 @@ npm-debug.log*
 
 # Temporary root directory
 tmp/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+.git
+.gitignore
