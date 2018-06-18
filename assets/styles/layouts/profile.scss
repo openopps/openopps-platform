@@ -391,8 +391,8 @@
     padding-right: 0;
 }
 
-form [type=submit], form [type=submit] {
-    display: initial;
+form [type=submit] {
+    display: inline-block;
 }
 
 //skills

@@ -266,9 +266,12 @@
     z-index: 800;
 
     .svg-inline--fa {
-      margin-top: 12.5rem;
-      margin-bottom: 12.5rem;
+      // margin-top: 12.5rem;
+      // margin-bottom: 12.5rem;
       color: #02bfe7;
+      position: fixed;
+      top: calc(50% - 53px);
+      left: calc(50% - 43px);
     }
   }
 
@@ -279,18 +282,18 @@
     @include media($L) {
       flex: 1 0 calc(50% - 15px);
       margin-right: $size-default;
-      max-width: 48.8%; //Keeps last result card from taking up entire width
-      min-width: 48.8%; //Keeps result cards from being too narrow in IE
+      max-width: 48.7%; //Keeps last result card from taking up entire width
+      min-width: 48.7%; //Keeps result cards from being too narrow in IE
     }
 
     @include media($XL) {
-      max-width: 49%; //Keeps last result card from taking up entire width
-      min-width: 49%; //Keeps result cards from being too narrow in IE
+      max-width: 48.9%; //Keeps last result card from taking up entire width
+      min-width: 48.9%; //Keeps result cards from being too narrow in IE
     }
 
     @include media($XXL) {
-      max-width: 49.2%; //Keeps last result card from taking up entire width
-      min-width: 49.1%; //Keeps result cards from being too narrow in IE
+      max-width: 49.1%; //Keeps last result card from taking up entire width
+      min-width: 49%; //Keeps result cards from being too narrow in IE
     }
 
     &:nth-child(2n) {

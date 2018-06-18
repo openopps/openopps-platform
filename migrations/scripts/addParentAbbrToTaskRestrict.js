@@ -13,7 +13,7 @@ const _ = require('underscore');
 const queries = {
   findTasks: 'with agencies as ( ' +
       'select name, data->>\'abbr\' as abbr, data->>\'parentAbbr\' as "parentAbbr" from tagentity ' +
-      'where type = \'agency\' and data->>\'parentAbbr\' is not null ' +
+      'where type = \'agency\' and (data->>\'parentAbbr\') is not null ' +
     ') ' +
     'select task.id, restrict, agencies.* from task ' +
     'join agencies on agencies.name = JSON(task.restrict)->>\'name\'',
