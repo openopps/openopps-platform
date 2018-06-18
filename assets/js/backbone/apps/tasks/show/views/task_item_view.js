@@ -108,6 +108,8 @@ var TaskItemView = BaseView.extend({
     var compiledTemplate = _.template(TaskShowTemplate)(self.data);
 
     self.$el.html(compiledTemplate);
+    
+    // $('#search-results-loading').hide();
     self.$el.localize();
     if(taskState.toLowerCase() == 'in progress' && self.data.model.acceptingApplicants) {
       this.updatePill('in progress', true);
@@ -125,6 +127,7 @@ var TaskItemView = BaseView.extend({
         replace: true,
       });
     }
+    $('#search-results-loading').hide();
   },
 
   initializeProgress: function () {

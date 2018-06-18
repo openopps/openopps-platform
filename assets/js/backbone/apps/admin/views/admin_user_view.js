@@ -48,6 +48,7 @@ var AdminUserView = Backbone.View.extend({
       login: LoginConfig,
     };
     var template = _.template(AdminUserTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch user data

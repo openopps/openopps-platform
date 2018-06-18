@@ -46,6 +46,7 @@ var DashboardView = Backbone.View.extend({
   },
 
   render: function () {
+    $('#search-results-loading').hide();
     this.$el.html(templates.main());
     
     _.each(['search', 'users'], function (type) {

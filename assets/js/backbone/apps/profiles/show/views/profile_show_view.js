@@ -134,6 +134,7 @@ var ProfileShowView = Backbone.View.extend({
     }
 
     var template = this.edit ? _.template(ProfileEditTemplate)(data) : _.template(ProfileShowTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
 
