@@ -29,6 +29,7 @@ var LoginView = Backbone.View.extend({
       message: this.options.message,
     };
     var template = _.template(LoginTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
     this.loginPasswordView = new LoginPasswordView({

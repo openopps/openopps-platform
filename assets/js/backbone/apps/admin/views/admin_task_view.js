@@ -33,6 +33,7 @@ var AdminTaskView = Backbone.View.extend({
       success: function (data) {
         view.tasks = data;
         var template = _.template(AdminTaskTemplate)(data);
+        $('#search-results-loading').hide();
         view.$el.html(template);
         view.$el.show();
         view.renderTasks(view.tasks);

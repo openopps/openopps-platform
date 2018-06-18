@@ -237,33 +237,6 @@
   }
 
   &__loading {
-    -webkit-box-align: start;
-    -moz-box-align: start;
-    box-align: start;
-    -webkit-align-items: flex-start;
-    -moz-align-items: flex-start;
-    -ms-align-items: flex-start;
-    -o-align-items: flex-start;
-    align-items: flex-start;
-    -ms-flex-align: start;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-    box-pack: center;
-    -webkit-justify-content: center;
-    -moz-justify-content: center;
-    -ms-justify-content: center;
-    -o-justify-content: center;
-    justify-content: center;
-    -ms-flex-pack: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #fffc;
-    text-align: center;
-    vertical-align: middle;
-    z-index: 800;
 
     .svg-inline--fa {
       // margin-top: 12.5rem;

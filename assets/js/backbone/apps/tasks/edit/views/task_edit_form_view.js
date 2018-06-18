@@ -136,6 +136,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.toggleTimeOptions();
     this.toggleLocationOptions();
     this.toggleCareerField();
+    $('#search-results-loading').hide();
   },
 
   initializeSelect2: function () {

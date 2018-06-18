@@ -14,6 +14,7 @@ var PeopleListView = Backbone.View.extend({
   },
 
   render: function () {
+    $('#search-results-loading').show();
     //var peopleToRender = this.collection.chain().pluck('attributes').value();
     var template = _.template(ProfileListTemplate)({});
     this.$el.html(template);
@@ -27,9 +28,9 @@ var PeopleListView = Backbone.View.extend({
       success: function (collection) {
         var peopleToRender = collection.chain().pluck('attributes').value();
         var template = _.template(ProfileListTable)({ people: peopleToRender });
-        self.$('#search-results-loading').hide();
-        self.$('.loading-container').hide();
+        // self.$('.loading-container').hide();
         self.$('.table-responsive').html(template);
+        $('#search-results-loading').hide();
       },
     });
   },

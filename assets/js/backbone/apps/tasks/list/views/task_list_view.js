@@ -55,6 +55,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   render: function () {
+    $('#search-results-loading').show();
     var template = _.template(TaskListTemplate)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -98,6 +99,7 @@ var TaskListView = Backbone.View.extend({
             response(_.reject(data, function (item) {
               return _.findWhere(this.filters.keywords, _.pick(item, 'type', 'name', 'id'));
             }.bind(this)));
+            $('#search-results-loading').hide();
           }.bind(this),
         });
       }.bind(this),

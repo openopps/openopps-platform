@@ -40,6 +40,7 @@ var AdminDashboardView = Backbone.View.extend({
       login: LoginConfig,
     };
     var template = _.template(AdminDashboardTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch data
