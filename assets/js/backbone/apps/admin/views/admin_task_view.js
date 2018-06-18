@@ -23,7 +23,7 @@ var AdminTaskView = Backbone.View.extend({
       secondary: {
         text: 'Cancel',
         action: function () {
-          this.modal.cleanup();
+          this.modalComponent.cleanup();
         }.bind(this),
       },
     };
@@ -44,7 +44,7 @@ var AdminTaskView = Backbone.View.extend({
         $('#search-results-loading').hide();
         this.$el.html(template);
         this.$el.show();
-        this.renderTasks(view.tasks);
+        this.renderTasks(this.tasks);
       }.bind(this),
     });
     return this;
@@ -65,7 +65,6 @@ var AdminTaskView = Backbone.View.extend({
 
   collectEventData: function (event) {
     event.preventDefault();
-    if (this.modalComponent) this.modalComponent.cleanup();
     return { 
       id: $(event.currentTarget).data('task-id'),
       title: $( event.currentTarget ).data('task-title'),
@@ -78,9 +77,7 @@ var AdminTaskView = Backbone.View.extend({
    */
   openTask: function (event) {
     var data = this.collectEventData(event);
-    $('body').addClass('modal-is-open');
-
-    this.modal = new Modal(_.extend(this.baseModal, {
+    this.displayModal(new Modal(_.extend(this.baseModal, {
       id: 'confirm-publish',
       modalTitle: 'Confirm publish',
       alert: {
@@ -94,7 +91,7 @@ var AdminTaskView = Backbone.View.extend({
           this.submitPublish.bind(this)(data.id);
         }.bind(this),
       },
-    })).render();
+    })));
   },
 
   submitPublish: function (id) {
@@ -111,9 +108,7 @@ var AdminTaskView = Backbone.View.extend({
 
   deleteTask: function (event) {
     var data = this.collectEventData(event);
-    $('body').addClass('modal-is-open');
-
-    this.modal = new Modal(_.extend(this.baseModal, {
+    this.displayModal(new Modal(_.extend(this.baseModal, {
       id: 'confirm-deletion',
       modalTitle: 'Confirm deletion',
       alert: {
@@ -127,7 +122,7 @@ var AdminTaskView = Backbone.View.extend({
           this.submitDelete.bind(this)(data.id);
         }.bind(this),
       },
-    })).render();
+    })));
   },
 
   submitDelete: function (id) {
@@ -141,11 +136,17 @@ var AdminTaskView = Backbone.View.extend({
     }.bind(this));
   },
 
+  displayModal: function (modal) {
+    if (this.modalComponent) this.modalComponent.cleanup();
+    this.modalComponent = modal.render();
+    $('body').addClass('modal-is-open');
+  },
+
   cleanupModal: function () {
     $('.usajobs-modal__canvas-blackout').remove();
     $('.modal-is-open').removeClass();
     this.render();
-    this.modal.cleanup();
+    this.modalComponent.cleanup();
   },
 
   displayError: function (modalId, error) {
