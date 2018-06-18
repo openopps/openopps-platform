@@ -1,9 +1,9 @@
 /*
  * This script will analyze the data in the task table looking
  * null or invalid data in the restrict column.
- * 
+ *
  * Example of invalid restrict column data:
- * 
+ *
  * {"abbr":"","slug":"","domain":".gov","projectNetwork":false}
  */
 
@@ -15,10 +15,10 @@ const _ = require('underscore');
 const queries = {
   findTasks: 'with tasks as (select state, task.id, "userId", restrict from task ' +
     'where ' +
-      'restrict is null ' + 
-      'or restrict = \'\' ' +
-      'or json(restrict)->>\'name\' = \'\' ' +
-      'or json(restrict)->>\'name\' is null ' +
+      'restrict is null ' +
+      'or restrict::text = \'\' ' +
+      'or (json(restrict)->>\'name\') = \'\' ' +
+      'or (json(restrict)->>\'name\') is null ' +
     '), agencies as ( ' +
       'select user_tags.user_tags as "userId", agency.* from tagentity_users__user_tags user_tags ' +
       'join tagentity agency on agency.id = user_tags.tagentity_users and agency.type = \'agency\' ' +
