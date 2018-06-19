@@ -37,9 +37,6 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    var model = this.model.toJSON();
-    var currentUser = window.cache.currentUser || {};
-    var isAdmin = currentUser.isAdmin;
     var career = [];
 
     this.options = options;
@@ -69,6 +66,8 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initializeAction: function () {
+    var model = this.model.toJSON();
+    var currentUser = window.cache.currentUser || {};
     if (this.options.action === 'edit') {
       this.edit = true;
       if (model.id !== currentUser.id && !model.canEditProfile) {
