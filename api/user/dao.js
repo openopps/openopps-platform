@@ -5,7 +5,8 @@ const badgeDescriptions = require('../../utils').badgeDescriptions;
 const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @tags.* ' +
   'from @midas_user m_user ' +
   'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
-  'left join @tagentity tags on tags.id = user_tags.tagentity_users ';
+  'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
+  'where disabled = false';
 
 const tagQuery = 'select tags.* ' +
   'from tagentity tags ' +

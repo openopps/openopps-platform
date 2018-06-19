@@ -5,8 +5,6 @@ var async = require('async');
 var Backbone = require('backbone');
 var jqIframe = require('blueimp-file-upload/js/jquery.iframe-transport');
 var jqFU = require('blueimp-file-upload/js/jquery.fileupload.js');
-var i18n = require('i18next');
-var i18nextJquery = require('jquery-i18next');
 var marked = require('marked');
 var MarkdownEditor = require('../../../../components/markdown_editor');
 
@@ -28,21 +26,17 @@ var ProfileParticipatedTemplate = require('../templates/profile_participated_tem
 
 var ProfileShowView = Backbone.View.extend({
   events: {
-    'keyup .validate'            : 'validateField',
     'change .validate'           : 'validateField',
     'blur .validate'             : 'validateField',
-    'submit #profile-form'       : 'profileSubmit',
-    'click #profile-save'        : 'profileSave',
+    'click #profile-save'        : 'profileSubmit',
     'click .link-backbone'       : linkBackbone,
     'click #profile-cancel'      : 'profileCancel',
-    'keyup .form-control'        : 'fieldModified',
     'change .form-control'       : 'fieldModified',
     'blur .form-control'         : 'fieldModified',
     'click .removeAuth'          : 'removeAuth',
   },
 
   initialize: function (options) {
-    var self = this;
     var model = this.model.toJSON();
     var currentUser = window.cache.currentUser || {};
     var isAdmin = currentUser.isAdmin;
@@ -52,8 +46,18 @@ var ProfileShowView = Backbone.View.extend({
     this.data = options.data;
     this.tagFactory = new TagFactory();
     this.data.newItemTags = [];
-    this.edit = false;
 
+    this.initializeCareerList();
+    this.initializeAction();
+    this.initializeErrorHandling();
+
+    if (this.data.saved) {
+      this.saved = true;
+      this.data.saved = false;
+    }
+  },
+
+  initializeCareerList: function () {
     $.ajax({
       url: '/api/ac/tag?type=career&list',
       type: 'GET',
@@ -62,12 +66,11 @@ var ProfileShowView = Backbone.View.extend({
         this.tagTypes = { career: data };
       }.bind(this),
     });
+  },
 
+  initializeAction: function () {
     if (this.options.action === 'edit') {
       this.edit = true;
-
-      // Check if the user is not an admin and editing another profile other than
-      // the current user.
       if (model.id !== currentUser.id && !model.canEditProfile) {
         this.edit = false;
         Backbone.history.navigate('profile/' + model.id, {
@@ -76,11 +79,9 @@ var ProfileShowView = Backbone.View.extend({
         });
       }
     }
+  },
 
-    if (this.data.saved) {
-      this.saved = true;
-      this.data.saved = false;
-    }
+  initializeErrorHandling: function () {
     // Handle server side errors
     this.model.on('error', function (model, xhr) {
       var error = xhr.responseJSON;
@@ -88,8 +89,8 @@ var ProfileShowView = Backbone.View.extend({
         for (var item in error.invalidAttributes) {
           if (error.invalidAttributes[item]) {
             message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
-            self.$('#' + item + '-update-alert-message').html(message);
-            self.$('#' + item + '-update-alert').show();
+            $('#' + item + '-update-alert-message').html(message);
+            $('#' + item + '-update-alert').show();
           }
         }
       } else if (error) {
@@ -97,7 +98,7 @@ var ProfileShowView = Backbone.View.extend({
         $('.alert.alert-danger').text(alertText).show();
         $(window).animate({ scrollTop: 0 }, 500);
       }
-    });
+    }.bind(this));
   },
 
   getTags: function (types) {
@@ -158,24 +159,19 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initializeFileUpload: function () {
-    var self = this;
-
     $('#fileupload').fileupload({
       url: '/api/upload/create',
       dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
-        self.$('#file-upload-progress-container').show();
+        $('#file-upload-progress-container').show();
         data.submit();
-      },
+      }.bind(this),
       progressall: function (e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        self.$('#file-upload-progress').css(
-          'width',
-          progress + '%'
-        );
-      },
+        $('#file-upload-progress').css('width', progress + '%');
+      }.bind(this),
       done: function (e, data) {
         var result;
         // for IE8/9 that use iframe
@@ -186,20 +182,20 @@ var ProfileShowView = Backbone.View.extend({
         else {
           result = JSON.parse($(data.result).text());
         }
-        self.model.trigger('profile:updateWithPhotoId', result[0]);
+        this.model.trigger('profile:updateWithPhotoId', result[0]);
         // in case there was a previous error
-        self.$('#file-upload-alert').hide();
-      },
+        $('#file-upload-alert').hide();
+      }.bind(this),
       fail: function (e, data) {
         // notify the user that the upload failed
         var message = data.jqXHR.responseText || data.errorThrown;
-        self.$('#file-upload-progress-container').hide();
+        $('#file-upload-progress-container').hide();
         if (data.jqXHR.status == 413) {
           message = 'The uploaded file exceeds the maximum file size.';
         }
-        self.$('#file-upload-alert-message').html(message);
-        self.$('#file-upload-alert').show();
-      },
+        $('#file-upload-alert-message').html(message);
+        $('#file-upload-alert').show();
+      }.bind(this),
     });
 
   },
@@ -249,31 +245,27 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initializeForm: function () {
-    var self = this;
-
-    this.listenTo(self.model, 'profile:save:success', function (data) {
+    this.listenTo(this.model, 'profile:save:success', function (data) {
       // Bootstrap .button() has execution order issue since it
       // uses setTimeout to change the text of buttons.
       // make sure attr() runs last
       $('#submit').button('success');
       // notify listeners if the current user has been updated
-      if (self.model.toJSON().id == window.cache.currentUser.id) {
+      if (this.model.toJSON().id == window.cache.currentUser.id) {
         window.cache.userEvents.trigger('user:profile:save', data.toJSON());
       }
+      $('#profile-save').removeClass('btn-primary');
+      $('#profile-save').addClass('btn-success');
+      this.data.saved = true;
+      Backbone.history.navigate('profile/' + this.model.toJSON().id, { trigger: true });
+    }.bind(this));
 
-      // setTimeout(function () { $('#profile-save, #submit').attr('disabled', 'disabled'); },0);
-      $('#profile-save, #submit').removeClass('btn-primary');
-      $('#profile-save, #submit').addClass('btn-success');
-      self.data.saved = true;
-      Backbone.history.navigate('profile/' + self.model.toJSON().id, { trigger: true });
-    });
-
-    this.listenTo(self.model, 'profile:save:fail', function (data) {
-      $('#submit').button('fail');
-    });
-    this.listenTo(self.model, 'profile:removeAuth:success', function (data, id) {
-      self.render();
-    });
+    this.listenTo(this.model, 'profile:save:fail', function (data) {
+      $('#profile-save').button('fail');
+    }.bind(this));
+    this.listenTo(this.model, 'profile:removeAuth:success', function (data, id) {
+      this.render();
+    }.bind(this));
 
     setTimeout(function () {
       $('.skill-aside .skills').appendTo('#s2id_tag_skill');
@@ -282,39 +274,24 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initializeSelect2: function () {
-    var self = this;
     var modelJson = this.model.toJSON();
 
-    /*
-      The location and company selectors differ from the
-      defaults in tag_show_view, so they are explicitly
-      created here (with different HTML IDs than normal,
-      to avoid conflicts).
-    */
-
-    this.tagFactory.createTagDropDown({
-      type:        'location',
-      selector:    '#location',
-      multiple:    false,
-      data:        modelJson.location,
-      width:       '100%',
-    });
-
-    this.tagFactory.createTagDropDown({
-      type:        'agency',
-      selector:    '#company',
-      multiple:    false,
-      allowCreate: false,
-      data:        modelJson.agency,
-      width:       '100%',
-    });
+    _.each(['location', 'agency'], function (value) {
+      this.tagFactory.createTagDropDown({
+        type: value,
+        selector:'#' + value,
+        multiple: false,
+        data: (value == 'location') ? modelJson.location : modelJson.agency,
+        allowCreate: (value == 'location') ? true : false,
+        width: '100%',
+      });
+    }.bind(this));
 
     $('#career-field').select2({
       placeholder: '-Select-',
       width: '100%',
       allowClear: true,
     });
-
   },
 
   initializeTextArea: function () {
@@ -349,7 +326,6 @@ var ProfileShowView = Backbone.View.extend({
             this.model.get('location').name : '',
           profileAgency: this.model.get('agency') ?
             this.model.get('agency').name : '',
-          i18n: i18n,
         },
         body = _.template(ShareTemplate)(data),
         link = 'mailto:?subject=' + encodeURIComponent(subject) +
@@ -372,28 +348,21 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   updatePhoto: function () {
-    var self = this;
     this.model.on('profile:updatedPhoto', function (data) {
       //added timestamp to URL to force FF to reload image from server
       var url = '/api/user/photo/' + data.attributes.id + '?' + new Date().getTime();
       $('#profile-picture').attr('src', url);
-      //$('#project-header').css('background-image', "url('" + url + "')");
       $('#file-upload-progress-container').hide();
       // notify listeners of the new user image, but only for the current user
-      if (self.model.toJSON().id == window.cache.currentUser.id) {
+      if (this.model.toJSON().id == window.cache.currentUser.id) {
         window.cache.userEvents.trigger('user:profile:photo:save', url);
       }
-    });
+    }.bind(this));
   },
 
   profileCancel: function (e) {
     e.preventDefault();
     Backbone.history.navigate('profile/' + this.model.toJSON().id, { trigger: true });
-  },
-
-  profileSave: function (e) {
-    e.preventDefault();
-    $('#profile-form').submit();
   },
 
   profileSubmit: function (e) {
@@ -407,7 +376,7 @@ var ProfileShowView = Backbone.View.extend({
     $('#profile-save, #submit').button('loading');
 
     var newTags = [].concat(
-          $('#company').select2('data'),
+          $('#agency').select2('data'),
           $('#career-field').select2('data'),
           $('#tag_topic').select2('data'),
           $('#tag_skill').select2('data'),
@@ -420,21 +389,16 @@ var ProfileShowView = Backbone.View.extend({
           username: $('#profile-email').val(),
         },
         email = this.model.get('username'),
-        self = this,
-        tags = _(newTags).chain()
-          .filter(function (tag) {
-            return _(tag).isObject() && !tag.context;
-          })
-          .map(function (tag) {
-            return (tag.id && tag.id !== tag.name) ? +tag.id : {
-              name: tag.name,
-              type: tag.tagType,
-              data: tag.data,
-            };
-          }).unique().value();
-
+        tags = _(newTags).chain().filter(function (tag) {
+          return _(tag).isObject() && !tag.context;
+        }).map(function (tag) {
+          return (tag.id && tag.id !== tag.name) ? +tag.id : {
+            name: tag.name,
+            type: tag.tagType,
+            data: tag.data,
+          };
+        }).unique().value();
     data.tags = tags;
-
     this.model.trigger('profile:save', data);
   },
 
@@ -451,7 +415,6 @@ var ProfileShowView = Backbone.View.extend({
     if (this.volView) { this.volView.cleanup(); }
     removeView(this);
   },
-
 });
 
 module.exports = ProfileShowView;

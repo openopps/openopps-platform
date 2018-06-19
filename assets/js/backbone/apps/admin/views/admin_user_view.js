@@ -232,13 +232,13 @@ var AdminUserView = Backbone.View.extend({
         text: 'Send email',
         action: function () {
           this.submitReset.bind(this)(user.email);
-        }.bind(this)
+        }.bind(this),
       },
       secondary: {
         text: 'Close',
         action: function () {
           this.modal.cleanup();
-        }.bind(this)
+        }.bind(this),
       },
     }).render();
   },
