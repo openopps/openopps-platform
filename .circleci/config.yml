@@ -6,7 +6,7 @@ jobs:
     environment:
       CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
     docker:
-      - image: circleci/node:8.6.0
+      - image: circleci/node:8.11.3
       - image: circleci/postgres:9.6-alpine
         environment:
           POSTGRES_USER: midas
@@ -14,7 +14,7 @@ jobs:
           POSTGRES_DB: midastest
     steps:
       - checkout
-      - run: if [[ `npm -v` != 5* ]]; then npm i -g npm@5.4.2; fi
+      - run: if [[ `npm -v` != 6* ]]; then npm i -g npm@6.1.0; fi
       - run: rm -rvf node_modules
       - run: npm install
       - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
