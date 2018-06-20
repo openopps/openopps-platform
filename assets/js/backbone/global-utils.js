@@ -145,7 +145,7 @@ global.validatePassword = function (username, password) {
 global.validate = function (e) {
   var target = (e.currentTarget.classList && e.currentTarget.classList.contains('select2-container')) ? e.currentTarget.nextSibling : e.currentTarget;
   var opts = String($(target).data('validate')).split(',');
-  var val = ($(target).prop('tagName') == 'DIV' ? $(target).text() : $(target).val());
+  var val = ($(target).prop('tagName') == 'DIV' ? $(target).text().trim() : $(target).val().trim());
   var parent = $(target).parents('.required-input, .checkbox')[0];
   var result = false;
   _.each(opts, function (o) {

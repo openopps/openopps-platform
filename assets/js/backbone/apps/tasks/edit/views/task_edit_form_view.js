@@ -15,7 +15,6 @@ var TaskEditFormView = Backbone.View.extend({
 
   events: {
     'blur .validate'                   : 'validateField',
-    'keyup .validate'                  : 'validateField',
     'change .validate'                 : 'validateField',
     'click #change-owner'              : 'displayChangeOwner',
     'click #add-participant'           : 'displayAddParticipant',

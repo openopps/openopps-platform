@@ -98,7 +98,10 @@ var LoginCreateView = Backbone.View.extend({
     }
 
     // if error, show them and return without submitting data
-    if (abort) { return; }
+    if (abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+      return;
+    }
 
     // Create a data object with the required fields
     var data = {
