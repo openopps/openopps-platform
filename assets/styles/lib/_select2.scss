@@ -559,6 +559,8 @@ disabled look for disabled choices in the results dropdown
   max-width: 46rem;
   padding: 0 0.7rem;
   width: 100%;
+  display: -ms-grid;
+  -ms-grid-columns: 100%;
 }
 
 html[dir="rtl"] .select2-container-multi .select2-choices {
@@ -597,12 +599,9 @@ html[dir="rtl"] .select2-container-multi .select2-choices li {
   margin: 0;
   padding: 0;
   white-space: nowrap;
-  width: min-content;
+  width: -webkit-fill-available;
+  width: max-content;
 }
-
-// #filters-container .select2-search-field {
-//   width: 100%;
-// }
 
 .select2-container-multi .select2-choices .select2-search-field input {
   padding: 0 5px;
