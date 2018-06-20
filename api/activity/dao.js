@@ -32,12 +32,12 @@ const taskByTypeQuery = 'select tag.name, tag.id, count(*) ' +
 const taskHistoryQuery = 'select @task.* ' +
 'from @task task ' +
 'where state = ? ' +
-'order by task."createdAt" desc ' +
+'order by task."completedAt" desc ' +
 'limit 6 ';
 
 const participantsQuery = 'select @m_user.* ' +
 'from @midas_user m_user left join volunteer on m_user.id = volunteer."userId" ' +
-'where volunteer."taskId" = ? ';
+'where volunteer."taskComplete" = true and volunteer."taskId" = ? ';
 
 const badgeQuery = 'select badge.*, @user.* ' +
 'from badge inner join @midas_user "user" on badge.user = "user".id ' +
