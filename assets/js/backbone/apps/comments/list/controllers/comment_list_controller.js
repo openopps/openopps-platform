@@ -55,7 +55,10 @@ var Comment = Backbone.View.extend({
   },
 
   initializeRender: function () {
-    var template = _.template(CommentWrapper)({ user: window.cache.currentUser });
+    var template = _.template(CommentWrapper)({ 
+      user: window.cache.currentUser,
+      state: this.options.state,
+    });
     this.$el.html(template);
   },
 
@@ -85,7 +88,7 @@ var Comment = Backbone.View.extend({
       collection: this.commentCollection,
       topic: true,
       depth: -1,
-      disable: ( window.cache.currentUser ) ? false : true,
+      disable: (!_.contains(['draft', 'submitted'], this.options.state) && window.cache.currentUser) ? false : true,
     };
     options[this.options.target + 'Id'] = this.options.id;
     this.topicForm = new CommentFormView(options);
