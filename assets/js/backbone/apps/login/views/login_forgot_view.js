@@ -10,7 +10,6 @@ var LoginForgotView = Backbone.View.extend({
 
   events: {
     'click .oauth-link'       : 'link',
-    'change .validate'        : 'validateField',
     'blur .validate'          : 'validateField',
     'submit #forgot-form'     : 'submitForgot',
   },

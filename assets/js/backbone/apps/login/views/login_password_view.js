@@ -5,9 +5,7 @@ var LoginPasswordTemplate = require('../templates/login_password_template.html')
 
 var LoginPasswordView = Backbone.View.extend({
   events: {
-    'keyup #rpassword'            : 'checkPassword',
     'blur #rpassword'             : 'checkPassword',
-    'keyup #rpassword-confirm'    : 'checkPasswordConfirm',
     'blur #rpassword-confirm'     : 'checkPasswordConfirm',
   },
 
