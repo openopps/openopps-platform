@@ -11,14 +11,12 @@ var LoginCreateView = Backbone.View.extend({
 
   events: {
     'click .oauth-link' : 'link',
-    'change .validate'  : 'validateField',
     'blur .validate'    : 'validateField',
     'blur #rusername'  : 'checkUsername',
-    'change #rusername' : 'checkUsername',
     'click #rusername-button'     : 'clickUsername',
     'blur .select2-container'     : 'checkSelect2',
-    'change #ragency'             : 'checkSelect2',
-    'change #rlocation'           : 'checkSelect2',
+    'blur #ragency'             : 'checkSelect2',
+    'blur #rlocation'           : 'checkSelect2',
     'submit #registration-form'   : 'submitRegister',
   },
 
