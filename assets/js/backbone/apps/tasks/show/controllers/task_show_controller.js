@@ -107,6 +107,7 @@ var TaskShowController = BaseView.extend({
         self.commentListController = new CommentListController({
           target: 'task',
           id: self.model.attributes.id,
+          state: self.model.attributes.state,
           canEditTask: self.model.attributes.canEditTask,
         });
         if (self.attachmentView) self.attachmentView.cleanup();
