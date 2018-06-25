@@ -34,6 +34,7 @@ var ProfileResetView = Backbone.View.extend({
       el: this.$('.password-view'),
       action: this.options.action,
     }).render();
+    $('#search-results-loading').hide();
     return this;
   },
 
