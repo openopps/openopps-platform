@@ -18,7 +18,10 @@ var User = function () {
     if (this.name) {
       var name = this.name;
       var nameSplit = name.split(' ');
-      this.initials = nameSplit[0].charAt(0).toUpperCase() + nameSplit[1].charAt(0).toUpperCase();
+      this.initials = nameSplit[0].charAt(0).toUpperCase();
+      if(nameSplit[1]) {
+        this.initials += nameSplit[1].charAt(0).toUpperCase();
+      }
     }
   }
 
