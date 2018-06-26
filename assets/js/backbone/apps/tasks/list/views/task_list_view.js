@@ -146,6 +146,10 @@ var TaskListView = Backbone.View.extend({
     if(!_.contains(this.filters.location, 'in-person')) {
       $('#location').siblings('.select2-container').hide();
     }
+    
+  },
+
+  initializeCareerSelect2: function () {
     $('#career').select2({
       placeholder: 'Select a career field',
       width: '100%',
@@ -160,6 +164,21 @@ var TaskListView = Backbone.View.extend({
       }
       this.filter(this.term, this.filters, this.agency);
     }.bind(this));
+  },
+
+  intializeAcquisition: function () {
+    if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
+    _.find(this.filters.series, { name: '1102 (Contracting)' })) {
+      $('.usajobs-open-opps-search__box').addClass('display-acquisition');
+      $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
+      $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
+    } else {
+      $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
+      $('#search-pills-remove-all').attr('title', 'Remove all filters');
+      $('#search-pills-remove-all').children('.text').text('Remove all filters');
+    }
+    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
+    $('#footer').addClass('filter-margin');
   },
 
   removeFilter: function (event) {
@@ -220,18 +239,10 @@ var TaskListView = Backbone.View.extend({
     });
     $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
-    if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
-      _.find(this.filters.series, { name: '1102 (Contracting)' })) {
-      $('.usajobs-open-opps-search__box').addClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
-    } else {
-      $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters');
-    }
-    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-    $('#footer').addClass('filter-margin');
+    setTimeout(function () {
+      this.initializeCareerSelect2();
+    }.bind(this), 100);
+    this.intializeAcquisition();
   },
 
   renderList: function (page) {
