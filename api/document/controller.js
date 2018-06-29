@@ -25,6 +25,7 @@ router.post('/api/upload/create', async (ctx, next) => {
     ctx.body = wrapper;
   }).catch((err) => {
     ctx.status = 400;
+    ctx.body = err.message;
   });
 });
 

@@ -18,7 +18,8 @@
  *    primary: { // primary button
  *      text: [button text],
  *      action: [function]
- *    }
+ *    },
+ *    cleanup: [function] // additional clean up to preform
  * }
  *
  * var modal = new Modal({ el: '#site-modal' ... }).render();
@@ -33,6 +34,7 @@ var ModalTemplate = require('./modal_template.html');
 
 var Modal = BaseComponent.extend({
   events: {
+    'keydown': 'checkTabbing',
     'click .link-backbone': 'link',
     'click #primary-btn': 'primaryAction',
     'click #secondary-btn': 'secondaryAction',
@@ -49,9 +51,23 @@ var Modal = BaseComponent.extend({
   render: function () {
     var compiledTemplate = _.template(ModalTemplate)(this.options);
     this.$el.html(compiledTemplate);
+    $('body').addClass('.modal-is-open');
     $('body').append('<div class="usajobs-modal__canvas-blackout" tabindex="-1" aria-hidden="true"></div>');
-
+    setTimeout(function () {
+      this.$el.find(':tabbable').first().focus();
+    }.bind(this), 100);
     return this;
+  },
+
+  checkTabbing: function (e) {
+    var inputs = this.$el.find(':tabbable');
+    if (e.keyCode === 9 && !e.shiftKey && e.target == inputs.last()[0]) {
+      e.preventDefault();
+      inputs.first().focus();
+    } else if (e.keyCode === 9 && e.shiftKey && e.target == inputs.first()[0]) {
+      e.preventDefault();
+      inputs.last().focus();
+    }
   },
 
   primaryAction: function (e) {
@@ -73,6 +89,9 @@ var Modal = BaseComponent.extend({
   },
 
   cleanup: function () {
+    if(this.options.cleanup) {
+      this.options.cleanup();
+    }
     $('.usajobs-modal__canvas-blackout').remove();
     $('.modal-is-open').removeClass();
     removeView(this);

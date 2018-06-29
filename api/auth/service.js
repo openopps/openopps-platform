@@ -22,38 +22,37 @@ const basePassport = {
 };
 
 async function register (attributes, done) {
-  if (!attributes.password || attributes.password === '') {
-    return done(new Error('password may not be blank'));
-  }
   attributes.username = attributes.username.toLowerCase().trim();
-  var newUser = _.extend(_.clone(baseUser), attributes);
-  newUser.createdAt = new Date();
-  newUser.updatedAt = new Date();
-  await dao.User.insert(newUser).then(async (user) => {
-    log.info('created user', _.omit(user, 'password'));
+  if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
+    done({ message: 'The email address provided is not a valid government email address or is already in use.' });
+  } else {
+    var newUser = _.extend(_.clone(baseUser), attributes);
+    newUser.createdAt = new Date();
+    newUser.updatedAt = new Date();
+    await dao.User.insert(newUser).then(async (user) => {
+      log.info('created user', user);
 
-    var tags = attributes.tags || attributes['tags[]'] || [];
-    await userService.processUserTags(user, tags).then(tags => {
-      user.tags = tags;
-    });
-    var passport = {
-      user: user.id,
-      password: await bcrypt.hash(attributes.password, 10),
-      accessToken: crypto.randomBytes(48).toString('base64'),
-    };
-    var newPassport = _.extend(_.clone(basePassport), passport);
-    newPassport.createdAt = new Date();
-    newPassport.updatedAt = new Date();
-    await dao.Passport.insert(newPassport).then(passport => {
-      log.info('created passport', _.omit(passport, ['password', 'accessToken']));
+      var tags = attributes.tags || attributes['tags[]'] || [];
+      await userService.processUserTags(user, tags).then(tags => {
+        user.tags = tags;
+      });
+      var passwordReset = {
+        userId: user.id,
+        token: uuid.v4(),
+        createdAt: new Date(),
+        updatedAt: new Date,
+      };
+      await dao.UserPasswordReset.insert(passwordReset).then((obj) => {
+        return done(null, _.extend(user, { token: obj.token }));
+      }).catch((err) => {
+        log.info('Error creating password reset record', err);
+        return done(true);
+      });
     }).catch(err => {
-      log.info('register: failed to create passport ', attributes.username, err);
+      log.info('register: failed to create user ', attributes.username, err);
+      return done(true);
     });
-    return done(null, user);
-  }).catch(err => {
-    log.info('register: failed to create user ', attributes.username, err);
-    return done(true);
-  });
+  }
 }
 
 async function sendUserCreateNotification (user, action) {
@@ -62,6 +61,7 @@ async function sendUserCreateNotification (user, action) {
     model: {
       name: user.name,
       username: user.username,
+      token: user.token,
     },
   };
   notification.createNotification(data);

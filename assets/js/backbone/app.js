@@ -7,6 +7,7 @@
 // Set up Backbone to use jQuery
 var $ = window.jQuery = require('jquery');
 // TODO: ideally ^^^ wouldn't be global, blueimp-file-upload wants this
+require('jquery-ui-dist/jquery-ui');
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -14,7 +15,6 @@ var Backbone = require('backbone');
 require('./global-utils');
 
 Backbone.$ = $;
-
 
 // Set CSRF header
 $.ajaxPrefilter(function (options, originalOptions, jqXHR) {

@@ -12,14 +12,14 @@ var User = require('../../../../utils/user');
 var TaskListView = require('../../tasks/list/views/task_list_view');
 var TasksCollection = require('../../../entities/tasks/tasks_collection');
 var DashboardTemplate = require('../templates/home_dashboard_template.html');
-var AnnoucementTemplate = require('../templates/home_annoucement_template.html');
+var AnnouncementTemplate = require('../templates/home_announcement_template.html');
 var SearchTemplate = require('../templates/home_search_template.html');
 var UsersTemplate = require('../templates/home_users_feed_template.html');
 var AchievementsTemplate = require('../templates/home_achievements_template.html');
 
 var templates = {
   main: _.template(DashboardTemplate),
-  annoucement: _.template(AnnoucementTemplate),
+  announcement: _.template(AnnouncementTemplate),
   users: _.template(UsersTemplate),
   search: _.template(SearchTemplate),
   achievements: _.template(AchievementsTemplate),
@@ -46,6 +46,7 @@ var DashboardView = Backbone.View.extend({
   },
 
   render: function () {
+    $('#search-results-loading').hide();
     this.$el.html(templates.main());
     
     _.each(['search', 'users'], function (type) {
@@ -66,8 +67,14 @@ var DashboardView = Backbone.View.extend({
       this.setTarget('achievements-feed', achievementsHtml);
     }.bind(this));
     
-    annoucementHtml = templates.annoucement();
-    this.setTarget('annoucement-feed', annoucementHtml);
+    $.ajax({
+      url: '/api/announcement',
+      dataType: 'json',
+      success: function (announcementInfo) {
+        announcementHtml = templates.announcement(announcementInfo);
+        this.setTarget('announcement-feed', announcementHtml);
+      }.bind(this),
+    });
 
     this.$el.localize();
     return this;

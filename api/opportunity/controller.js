@@ -10,7 +10,7 @@ const Badge = require('../model/Badge');
 var router = new Router();
 
 router.get('/api/task', async (ctx, next) => {
-  ctx.body = await service.list();
+  ctx.body = await service.list(ctx.state.user);
 });
 
 router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {

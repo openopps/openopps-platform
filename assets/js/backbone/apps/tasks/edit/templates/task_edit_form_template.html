@@ -9,7 +9,7 @@
               First time creating an opportunity? Read our
               <a href="https://usajobs.github.io/openopps-help/getting-started/top-10-tips/"
                 target="_blank">
-                Top 10 tips for creating an ideal opportunity</a>.
+                Top 10 tips for creating an ideal opportunity<span class="sr-only">Opens in a new window</span></a>.
             </div>
           </fieldset>
           <fieldset id="step-1" class="usajobs-fieldset">
@@ -99,8 +99,8 @@
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
               <!-- <% if ( agency ) { %> -->
-                <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency" value="task-restrict-agency" <% if (agency.projectNetwork ) { %> checked="checked" <% } %> >
-                <label for="task-restrict-agency">Limit participation to <%- agency.abbr %> employees</label>
+                <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency" value="task-restrict-agency" <% if (data.restrict.projectNetwork ) { %> checked="checked" <% } %> >
+                <label for="task-restrict-agency">Limit participation to <%- agency.abbr ? agency.parentAbbr ? agency.parentAbbr : agency.abbr : agency.name %> employees</label>
               <!-- <% } %> -->
             </div>
 
@@ -211,7 +211,7 @@
             </div>
             <ul class="expandorama">
               <li>
-                <label for="opportunity-skills" class="expandorama-button expandorama-button-skills" aria-expanded="false" aria-controls="skills">
+                <label for="opportunity-skills" class="expandorama-button expandorama-button-skills" aria-controls="skills">
                   <!-- <i class="fas fa-minus-circle"></i> -->
                   <h3>What you'll learn <span class="usa-input-optional"></span></h3>
                 </label>
@@ -224,7 +224,7 @@
                 </div>
               </li>
               <li>
-                <label for="opportunity-team" class="expandorama-button expandorama-button-team" aria-expanded="false" aria-controls="team">
+                <label for="opportunity-team" class="expandorama-button expandorama-button-team" aria-controls="team">
                   <h3>Who we are <span class="usa-input-optional"></span></h3>
                 </label>
                 <div class="required-input expandorama-content" id="team">
@@ -236,7 +236,7 @@
                 </div>
               </li>
               <li>
-                <label for="task_tag_keywords" class="expandorama-button expandorama-button-keywords" aria-expanded="false" aria-controls="keywords">
+                <label for="task_tag_keywords" class="expandorama-button expandorama-button-keywords" aria-controls="keywords">
                   <h3>Related keyword <span class="usa-input-optional"></span></h3>
                 </label>
                 <div class="required-input expandorama-content" id="keywords">

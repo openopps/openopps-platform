@@ -55,6 +55,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   render: function () {
+    $('#search-results-loading').show();
     var template = _.template(TaskListTemplate)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -68,6 +69,7 @@ var TaskListView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     this.fetchData();
+    this.initializeKeywordSearch();
     $('.usajobs-open-opps-search__box').hide();
     return this;
   },
@@ -80,6 +82,34 @@ var TaskListView = Backbone.View.extend({
         self.filter(self.term, self.filters, self.agency);
         self.$('.usajobs-open-opps-search__box').show();
       },
+    });
+  },
+
+  initializeKeywordSearch: function () {
+    $('#search').autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          url: '/api/ac/tag',
+          dataType: 'json',
+          data: {
+            type: 'keywords',
+            q: request.term.trim(),
+          },
+          success: function (data) {
+            response(_.reject(data, function (item) {
+              return _.findWhere(this.filters.keywords, _.pick(item, 'type', 'name', 'id'));
+            }.bind(this)));
+            $('#search-results-loading').hide();
+          }.bind(this),
+        });
+      }.bind(this),
+      minLength: 3,
+      select: function (event, ui) {
+        event.preventDefault();
+        this.filters['keywords'] = _.union(this.filters['keywords'], [_.pick(ui.item, 'type', 'name', 'id')]);
+        this.filter(this.term, this.filters, this.agency);
+        $('#search').val('');
+      }.bind(this),
     });
   },
 
@@ -116,6 +146,10 @@ var TaskListView = Backbone.View.extend({
     if(!_.contains(this.filters.location, 'in-person')) {
       $('#location').siblings('.select2-container').hide();
     }
+    
+  },
+
+  initializeCareerSelect2: function () {
     $('#career').select2({
       placeholder: 'Select a career field',
       width: '100%',
@@ -130,6 +164,21 @@ var TaskListView = Backbone.View.extend({
       }
       this.filter(this.term, this.filters, this.agency);
     }.bind(this));
+  },
+
+  intializeAcquisition: function () {
+    if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
+    _.find(this.filters.series, { name: '1102 (Contracting)' })) {
+      $('.usajobs-open-opps-search__box').addClass('display-acquisition');
+      $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
+      $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
+    } else {
+      $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
+      $('#search-pills-remove-all').attr('title', 'Remove all filters');
+      $('#search-pills-remove-all').children('.text').text('Remove all filters');
+    }
+    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
+    $('#footer').addClass('filter-margin');
   },
 
   removeFilter: function (event) {
@@ -174,7 +223,7 @@ var TaskListView = Backbone.View.extend({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
-      agencyName: this.userAgency.name,
+      userAgency: this.userAgency,
       tagTypes: this.tagTypes,
       term: this.term,
       filters: this.filters,
@@ -190,18 +239,10 @@ var TaskListView = Backbone.View.extend({
     });
     $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
-    if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
-      _.find(this.filters.series, { name: '1102 (Contracting)' })) {
-      $('.usajobs-open-opps-search__box').addClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
-    } else {
-      $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters');
-    }
-    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-    $('#footer').addClass('filter-margin');
+    setTimeout(function () {
+      this.initializeCareerSelect2();
+    }.bind(this), 100);
+    this.intializeAcquisition();
   },
 
   renderList: function (page) {
@@ -220,27 +261,49 @@ var TaskListView = Backbone.View.extend({
     });
 
     if (this.tasks.length === 0) {
-      var settings = {
-        ui: UIConfig,
-      };
-      compiledTemplate = _.template(NoListItem)(settings);
-      $('#task-list').append(compiledTemplate);
-      $('#task-page').hide();
+      this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-      var pageSize = 20;
-      var start = (page - 1) * pageSize;
-      var stop = page * pageSize;
-      $('#task-list').append(this.tasks.slice(start, stop).map(function (task) {
-        task.owner.initials = getInitials(task.owner.name);
-        return this.renderItem(task);
-      }.bind(this)));
+      var pageSize = 10;
+      this.renderPage(page, pageSize);
       this.renderPagination({
         page: page,
         numberOfPages: Math.ceil(this.tasks.length/pageSize),
         pages: [],
       });
     }
+  },
+
+  renderNoResults: function () {
+    var settings = {
+      ui: UIConfig,
+    };
+    compiledTemplate = _.template(NoListItem)(settings);
+    $('#task-list').append(compiledTemplate);
+    $('#task-page').hide();      
+    $('#results-count').hide();
+  },
+
+  renderPage: function (page, pageSize) {
+    var start = (page - 1) * pageSize;
+    var stop = page * pageSize;
+    $('#task-list').append(this.tasks.slice(start, stop).map(function (task) {
+      task.owner.initials = getInitials(task.owner.name);
+      return this.renderItem(task);
+    }.bind(this)));
+    this.renderResultsCount(start, stop, pageSize);
+  },
+
+  renderResultsCount: function (start, stop, pageSize) {
+    var tasksToDisplay = this.tasks.slice(start, stop);
+    if (this.tasks.length <= pageSize) {
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + this.tasks.length + ' of ' + this.tasks.length + ' opportunities');
+    } else if (tasksToDisplay.length < pageSize) {
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + tasksToDisplay.length) + ' of ' + this.tasks.length + ' opportunities');
+    } else {
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + this.tasks.length + ' opportunities');
+    }
+    $('#results-count').show();
   },
 
   renderItem: function (task) {
@@ -258,7 +321,7 @@ var TaskListView = Backbone.View.extend({
       item.tags = [];
     }
     if (task.description) {
-      item.item.descriptionHtml = marked(task.description);
+      item.item.descriptionHtml = marked(task.description).replace(/<\/?a(|\s+[^>]+)>/g, '');
     }
     return _.template(TaskListItem)(item);
   },
@@ -298,19 +361,7 @@ var TaskListView = Backbone.View.extend({
 
   initAgencyFilter: function () {
     this.agency = { data: {} };
-    if (this.queryParams.agency) {
-      // TODO: ideally we would be able to query the API for agencies
-      // and look up the name via the abbreviation. This is basically
-      // a hack to determine whether the current user's agency matches
-      // the abbreviation passed in the query string.
-      this.agency.data.abbr = this.queryParams.agency;
-      if (this.userAgency.name &&
-          this.userAgency.name.indexOf('(' + this.agency.data.abbr + ')') >= 0) {
-        this.agency.data.name = this.userAgency.name;
-      } else {
-        this.agency.data.name = this.agency.data.abbr;
-      }
-    } else if (this.isAgencyChecked()) {
+    if (this.isAgencyChecked()) {
       this.agency.data = this.userAgency;
     }
   },
@@ -485,16 +536,17 @@ function parseTaskStatus (task) {
 }
 
 function filterTaskByAgency ( agency, task ) {
-  var getAbbr = _.property( 'abbr' );
-
-  if ( _.isEmpty( agency.data ) ) {
-    return task;
+  if (_.isEmpty(agency.data)) {
+    return true;
+  } else if (agency.data.abbr === task.restrict.abbr) {
+    return _.property( 'projectNetwork' )( task.restrict );
+  } else if (agency.data.parentAbbr && _.contains([task.restrict.abbr, task.restrict.parentAbbr], agency.data.parentAbbr)) {
+    return _.property( 'projectNetwork' )( task.restrict );
+  } else if (task.restrict.parentAbbr && _.contains([agency.data.abbr, agency.data.parentAbbr], task.restrict.parentAbbr)) {
+    return _.property( 'projectNetwork' )( task.restrict );
+  } else {
+    return false;
   }
-
-  if ( getAbbr( agency.data ) === getAbbr( task.restrict ) ) {
-    return _.property( 'restrictToAgency' )( task.restrict ) || _.property( 'projectNetwork' )( task.restrict );
-  }
-
 }
 
 function filterTaskByTerm ( term, task ) {

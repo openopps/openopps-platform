@@ -15,14 +15,16 @@
   </div>
   <!-- <div class="btn-group btn-group-sm">
     <button type="button" class="btn btn-c0" data-edit="help" tabindex="-1"><i class="fa fa-question-circle" alt="Help"></i> Help</button>
-  </div>
+  </div>-->
 
-  <div class="btn-group btn-group-sm">
-    <button type="button" class="btn btn-c1 btn-preview" data-edit="preview" tabindex="-1"><i class="fa fa-eye" alt="Open"></i> Preview</button>
-  </div>
-  <div class="btn-group btn-group-sm">
-    <button type="button" class="btn btn-c1 btn-edit" data-edit="edit" style="display: none;" tabindex="-1"><i class="fa fa-pencil-alt" alt="Edit"></i> Edit</button>
-  </div> -->
+  <% if (preview) { %>
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn btn-c1 btn-preview" data-edit="preview" tabindex="-1"><i class="fa fa-eye" alt="Open"></i> Preview</button>
+    </div>
+    <div class="btn-group btn-group-sm">
+      <button type="button" class="btn btn-c1 btn-edit" data-edit="edit" style="display: none;" tabindex="-1"><i class="fa fa-pencil-alt" alt="Edit"></i> Edit</button>
+    </div>
+  <% } %>
 </div>
 
 <textarea

@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 // Include gulp
 var gulp = require('gulp');
 
@@ -50,7 +52,7 @@ gulp.task('sass', function () {
 
 // Concatenate & Minify JS
 gulp.task('scripts', function () {
-  gulp.src('assets/js/backbone/app.js')
+  return gulp.src('assets/js/backbone/app.js')
     .pipe(babel())
     .pipe(bro({ transform: stringify }))
     .pipe(rename('bundle.min.js'))
@@ -61,7 +63,7 @@ gulp.task('scripts', function () {
 });
 
 // Move additional resources
-gulp.task('move', function () {
+gulp.task('move', function (done) {
   gulp.src(['./assets/files/**'])
     .pipe(gulp.dest('dist/files'));
   gulp.src(['./assets/fonts/**'])
@@ -76,17 +78,18 @@ gulp.task('move', function () {
     .pipe(gulp.dest('dist'));
   gulp.src(['./assets/js/vendor/fontawesome-all.js'])
     .pipe(gulp.dest('dist/js'));
+  done();
 });
 
 // Watch Files For Changes
 gulp.task('watch', function () {
-  gulp.watch('assets/js/backbone/**', ['lint', 'scripts']);
-  gulp.watch('assets/js/utils/**', ['lint', 'scripts']);
-  gulp.watch('assets/styles/**', ['sass']);
+  gulp.watch('assets/js/backbone/**', gulp.series('lint', 'scripts'));
+  gulp.watch('assets/js/utils/**', gulp.series('lint', 'scripts'));
+  gulp.watch('assets/styles/**', gulp.series('sass'));
 });
 
 // Build task
-gulp.task('build', ['lint', 'sass', 'scripts', 'move']);
+gulp.task('build', gulp.series('lint', 'sass', 'scripts', 'move'));
 
 // Bump package version number
 gulp.task('bump', function () {
@@ -95,14 +98,14 @@ gulp.task('bump', function () {
     throw new Error('When calling `gulp bump` you must specify one of these options: ' + Object.keys(versionBumps));
   }
   var bump = require('gulp-bump');
-  gulp.src('./package.json')
+  return gulp.src('./package.json')
     .pipe(bump({ type: type }))
     .pipe(gulp.dest('./'));
 });
 
 gulp.task('bump:patch', function () {
   var bump = require('gulp-bump');
-  gulp.src('./package.json')
+  return gulp.src('./package.json')
     .pipe(bump({ type: 'patch' }))
     .pipe(gulp.dest('./'));
 });
@@ -123,7 +126,7 @@ gulp.task('create-release', function () {
   }
 });
 
-gulp.task('publish', ['create-release'], function () {
+gulp.task('publish', gulp.series('create-release', function (done) {
   const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
   const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
@@ -146,6 +149,10 @@ gulp.task('publish', ['create-release'], function () {
       };
       simpleCreateRelease(releaseParams).then((release) => {
         console.log('Octopus release created:', release);
+        // Update current version in README
+        var readme = fs.readFileSync('README.md');
+        fs.writeFileSync('README.md', readme.toString().replace(/v\d+\.\d+.\d+/, 'v' + package.version));
+        // Commit the new version
         git.exec({ args: 'add --all', maxBuffer: Infinity }, (err) => {
           if(err) { throw(err); }
           var commitMsg = 'commit -m "Create release package ' + package.version + '"';
@@ -153,15 +160,17 @@ gulp.task('publish', ['create-release'], function () {
             if(err) { throw(err); }
             git.tag('v' + package.version, '', function (err) {
               if (err) throw err;
+              done();
             });
           });
         });
       }, (error) => {
         console.log('Octopus release creation failed!', error);
+        done();
       });
     });
   });
-});
+}));
 
 //Default task
-gulp.task('default', ['lint', 'sass', 'scripts', 'move', 'watch']);
+gulp.task('default', gulp.series('lint', 'sass', 'scripts', 'move', 'watch'));

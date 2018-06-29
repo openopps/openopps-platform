@@ -225,8 +225,8 @@ button.opportunity-options__button {
     text-align: left;
     -webkit-font-smoothing: auto;
     background-color: $color-white;
-    background-image: url(../img/minus-circle-green.png);
-    background-image: url(../img/minus-circle-green.svg);
+    background-image: url(../img/plus-circle-green.png);
+    background-image: url(../img/plus-circle-green.svg);
     background-position: left center;
     background-repeat: no-repeat;
     background-size: 2.8rem;
@@ -247,9 +247,9 @@ button.opportunity-options__button {
       }
     }
 
-    &[aria-expanded=false] {
-      background-image: url(../img/plus-circle-green.png);
-      background-image: url(../img/plus-circle-green.svg);
+    &[aria-expanded=true] {
+      background-image: url(../img/minus-circle-green.png);
+      background-image: url(../img/minus-circle-green.svg);
       background-repeat: no-repeat;
       background-size: 2.8rem;
     }
@@ -261,7 +261,6 @@ button.opportunity-options__button {
 
   .expandorama-content {
       background-color: #fff;
-      overflow: auto;
       padding: 0;
 
       &[aria-hidden=true] {

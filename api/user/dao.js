@@ -5,7 +5,8 @@ const badgeDescriptions = require('../../utils').badgeDescriptions;
 const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @tags.* ' +
   'from @midas_user m_user ' +
   'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
-  'left join @tagentity tags on tags.id = user_tags.tagentity_users ';
+  'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
+  'where disabled = false';
 
 const tagQuery = 'select tags.* ' +
   'from tagentity tags ' +
@@ -18,7 +19,7 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   'where midas_user.id = ? ' +
   "and tagentity.type = 'agency' ";
 
-const taskParticipatedQuery = 'select distinct task.*, volunteer.assigned, volunteer."taskComplete" ' +
+const taskParticipatedQuery = 'select task.*, volunteer.assigned, volunteer."taskComplete" ' +
   'from task inner join volunteer on task.id = volunteer."taskId" ' +
   'where volunteer."userId" = ?';
 
@@ -59,9 +60,6 @@ const clean = {
     return records.map(function (record) {
       var cleaned = _.pickBy(record, _.identity);
       cleaned.owner = cleaned.userId;
-      if(!_.isEmpty(cleaned.restrict)) {
-        cleaned.restrict = JSON.parse(cleaned.restrict);
-      }
       return cleaned;
     });
   },

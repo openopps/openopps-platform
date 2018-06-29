@@ -10,6 +10,7 @@ const session = require('koa-generic-session');
 const redisStore = require('koa-redis');
 const passport = require('koa-passport');
 const cacheControl = require('koa-cache-control');
+const compress = require('koa-compress');
 const flash = require('koa-better-flash');
 const md5File = require('md5-file');
 const _ = require('lodash');
@@ -50,6 +51,9 @@ module.exports = (config) => {
 
   // initialize cache controller
   app.use(cacheControl(openopps.cache.public));
+
+  // initialize response compression
+  app.use(compress({}));
 
   // configure session
   app.proxy = true;
@@ -148,6 +152,7 @@ module.exports = (config) => {
   app.use(feature('activity'));
   app.use(feature('comment'));
   app.use(feature('document'));
+  app.use(feature('announcement'));
 
   app.listen(openopps.port);
   console.log('App running at ' + openopps.hostName + ':' + openopps.port);

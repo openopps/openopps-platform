@@ -6,6 +6,7 @@ var AdminUserView = require('./admin_user_view');
 var AdminTagView = require('./admin_tag_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
+var AdminAnnouncementView = require('./admin_announcement_view');
 var AdminParticipantsView = require('./admin_participants_view');
 var AdminDashboardView = require('./admin_dashboard_view');
 var NavSecondaryView = require('./nav_secondary_view');
@@ -28,6 +29,7 @@ var AdminMainView = Backbone.View.extend({
   render: function () {
     var data = {};
     var template = _.template(AdminMainTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.routeTarget(this.options.action || '', undefined, true);
     return this;
@@ -44,7 +46,7 @@ var AdminMainView = Backbone.View.extend({
   userAgencyId: function () {
     return (window.cache.currentUser
               && window.cache.currentUser.agency
-              && window.cache.currentUser.agency.slug);
+              && window.cache.currentUser.agency.id);
   },
 
   routeTarget: function (target, agencyId, replace) {
@@ -90,6 +92,12 @@ var AdminMainView = Backbone.View.extend({
       }
       this.hideOthers();
       this.adminAgenciesView.render(replace);
+    } else if (target == 'announcement') {
+      if (!this.adminAnnouncementView) {
+        this.initializeAdminAnnouncementView();
+      }
+      this.hideOthers();
+      this.adminAnnouncementView.render(replace);
     } else if (target == 'participants') {
       if (!this.adminParticipantsView) {
         this.initializeAdminParticipantsView();
@@ -159,6 +167,17 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
+  initializeAdminAnnouncementView: function () {
+    if (this.adminAnnouncementView) {
+      this.adminAnnouncementView.cleanup();
+    }
+    this.adminAnnouncementView = new AdminAnnouncementView({
+      el: '#admin-announcement',
+      agencyId: this.options.agencyId,
+      adminMainView: this,
+    });
+  },
+
   initializeAdminParticipantsView: function () {
     if (this.adminParticipantsView) {
       this.adminParticipantsView.cleanup();
@@ -197,6 +216,7 @@ var AdminMainView = Backbone.View.extend({
     if (this.adminUserView) this.adminUserView.cleanup();
     if (this.adminTagView) this.adminTagView.cleanup();
     if (this.adminTaskView) this.adminTaskView.cleanup();
+    if (this.adminAnnouncementView) this.adminAnnouncementView.cleanup();
     if (this.adminDashboardView) this.adminDashboardView.cleanup();
     if (this.navSecondaryView) this.navSecondaryView.cleanup();
     removeView(this);

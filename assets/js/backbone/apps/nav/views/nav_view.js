@@ -16,47 +16,57 @@ var User = require('../../../../utils/user');
 
 var NavView = Backbone.View.extend({
   events: {
-    'click .navbar-brand': linkBackbone,
-    'click .nav-link': linkBackbone,
-    'click .login': 'loginClick',
-    'click .logout': 'logout',
-    'click .toggle-one': 'toggleMenu',
-    'click .toggle-two': 'toggleMenu2',
+    'click .navbar-brand'                         : linkBackbone,
+    'click .nav-link'                             : linkBackbone,
+    'click .login'                                : 'loginClick',
+    'click .logout'                               : 'logout',
+    'click .toggle-one'                           : 'menuClick',
+    'click .toggle-two'                           : 'menuClick2',
+    'click .subnav-link'                          : 'subMenuClick',
   },
 
   initialize: function (options) {
-    var self = this;
     this.options = options;
 
+    this.initializeLoginListeners();
+    this.initializeLogoutListeners();
+    this.initializeProfileListeners();
+  },
+
+  initializeLoginListeners: function () {
     this.listenTo(window.cache.userEvents, 'user:login:success', function (userData) {
-      self.doRender({ user: userData });
+      this.doRender({ user: userData });
       this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
       this.idleModal.resetTimeout();
       var referrer = window.location.search.replace('?','') + window.location.hash;
       Backbone.history.navigate('/' + referrer, { trigger: true, replaceState: true });
-    });
+    }.bind(this));
 
     this.listenTo(window.cache.userEvents, 'user:login:close', function () {
-      self.doingLogin = false;
-    });
-
-    this.listenTo(window.cache.userEvents, 'user:request:logout', function () {
-      if(this.idleModal) this.idleModal.cleanup();
-      self.logout({});
-    });
-
-    this.listenTo(window.cache.userEvents, 'user:logout', function () {
-      self.doRender({ user: null });
-      Backbone.history.navigate('', {trigger: true});
-      this.idleModal.cleanup();
-      window.cache.userEvents.trigger('user:logout:success');
-    });
+      this.doingLogin = false;
+    }.bind(this));
 
     // request that the user log in to see the page
     this.listenTo(window.cache.userEvents, 'user:request:login', function (message) {
       Backbone.history.navigate('/login', {trigger: true});
     });
+  },
 
+  initializeLogoutListeners: function () {
+    this.listenTo(window.cache.userEvents, 'user:request:logout', function () {
+      if(this.idleModal) this.idleModal.cleanup();
+      this.logout({});
+    }.bind(this));
+
+    this.listenTo(window.cache.userEvents, 'user:logout', function () {
+      this.doRender({ user: null });
+      Backbone.history.navigate('', {trigger: true});
+      this.idleModal.cleanup();
+      window.cache.userEvents.trigger('user:logout:success');
+    }.bind(this));
+  },
+
+  initializeProfileListeners: function () {
     // update the navbar when the profile changes
     this.listenTo(window.cache.userEvents, 'user:profile:save', function (data) {
       $.ajax({
@@ -66,9 +76,9 @@ var NavView = Backbone.View.extend({
         // reset the currentUser object
         window.cache.currentUser = new User(data);
         // re-render the view
-        self.render();
-      });
-    });
+        this.render();
+      }.bind(this));
+    }.bind(this));
 
     // update the user's photo when they change it
     this.listenTo(window.cache.userEvents, 'user:profile:photo:save', function (url) {
@@ -77,7 +87,6 @@ var NavView = Backbone.View.extend({
   },
 
   render: function () {
-    var self = this;
     this.doRender({ user: window.cache.currentUser, systemName: window.cache.system.name });
     if(window.cache.currentUser) {
       this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
@@ -95,69 +104,6 @@ var NavView = Backbone.View.extend({
     this.activePage();
   },
 
-  activePage: function () {
-    if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
-      //set Profile to active
-      $('a[title="Account"]').addClass('is-active');
-      $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section');
-      $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section-active');
-    }
-    else if (window.location.pathname.match(/profiles\/?$/)) {
-      //set People to active
-      $('a[title="People"]').addClass('is-active');
-      $('a[title="People"] > span').removeClass('usajobs-nav--openopps__section');
-      $('a[title="People"] > span').addClass('usajobs-nav--openopps__section-active');
-    }
-    else if (window.location.pathname.match(/tasks\/?$/)) {
-      //set Search to active
-      $('a[title="Search Opportunities"]').addClass('is-active');
-      $('a[title="Search Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
-      $('a[title="Search Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
-    }
-    else {
-      //do nothing
-    }
-  },
-
-  toggleMenu: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    $('.usajobs-nav__account').attr('data-state', function (i, attr) {
-      return attr == 'is-open' ? 'is-closed' : 'is-open';
-    });
-    $('#section-one').attr('aria-expanded', function (i, attr) {
-      return attr == 'true' ? 'false' : 'true';
-    });
-    //close other menu
-    $('.usajobs-nav__menu-search.mobile').attr('data-state', function (i, attr) {
-      return attr == 'is-closed';
-    });
-    $('#section-two').attr('aria-expanded', function (i, attr) {
-      return attr == 'false';
-    });
-  },
-
-  toggleMenu2: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    $('.usajobs-nav__menu-search.mobile').attr('data-state', function (i, attr) {
-      return attr == 'is-open' ? 'is-closed' : 'is-open';
-    });
-    $('#section-two').attr('aria-expanded', function (i, attr) {
-      return attr == 'true' ? 'false' : 'true';
-    });
-    //close other menu
-    $('.usajobs-nav__account').attr('data-state', function (i, attr) {
-      return attr == 'is-closed';
-    });
-    $('#section-one').attr('aria-expanded', function (i, attr) {
-      return attr == 'false';
-    });
-  },
-
-  loginClick: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    Backbone.history.navigate('/login', {trigger: true});
-  },
-
   logout: function (e) {
     if (e.preventDefault) e.preventDefault();
     $.ajax({
@@ -170,13 +116,126 @@ var NavView = Backbone.View.extend({
     });
   },
 
+  activePage: function () {
+    $('.usajobs-nav--openopps__section-active').switchClass('usajobs-nav--openopps__section-active', 'usajobs-nav--openopps__section', 0);
+    $('.usajobs-openopps-secondary-nav__link').switchClass('is-active', '', 0);
+    if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
+      this.showSubMenu1();
+      this.activateProfile();
+    }
+    else if (window.location.pathname.match(/admin/)) {
+      this.showSubMenu1();
+      this.activateAdmin();
+    }
+    else if (window.location.pathname.match(/profiles\/?$/)) {
+      this.showSubMenu2();
+      this.activateProfiles();
+    }
+    else if (window.location.pathname.match(/tasks\/?$/)) {
+      this.showSubMenu2();
+      this.activateTasks();
+    }
+  },
+
+  activeSubPage: function () {
+    $('.usajobs-openopps-secondary-nav__link').switchClass('is-active', '', 0);
+    if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
+      //set Profile to active
+      $('a[title="Profile"]').addClass('is-active');
+    }
+    else if (window.location.pathname.match(/admin/)) {
+      //set Administration to active
+      $('a[title="Administration"]').addClass('is-active');
+    }
+    else if (window.location.pathname.match(/profiles\/?$/)) {
+      //set People to active
+      $('a[title="People"]').addClass('is-active');
+    }
+    else if (window.location.pathname.match(/tasks\/?$/)) {
+      //set Opportunities to active
+      $('a[title="Opportunities"]').addClass('is-active');
+    }
+  },
+
+  activateProfile: function () {
+    //set Profile to active
+    $('a[title="Account"]').addClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section-active');
+
+    //set Profile to active
+    $('a[title="Profile"]').addClass('is-active');
+    $('a[title="Profile"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Profile"] > span').addClass('usajobs-nav--openopps__section-active');
+  },
+
+  activateAdmin: function () {
+    //set Administration to active
+    $('a[title="Administration"]').addClass('is-active');
+    $('a[title="Administration"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Administration"] > span').addClass('usajobs-nav--openopps__section-active');
+  },
+
+  activateProfiles: function () {
+    //set People to active
+    $('a[title="People"]').addClass('is-active');
+    $('a[title="People"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="People"] > span').addClass('usajobs-nav--openopps__section-active');
+  },
+
+  activateTasks: function () {
+    //set Search to active
+    $('a[title="Search Opportunities"]').addClass('is-active');
+    $('a[title="Search Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Search Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
+
+    //set Opportunities to active
+    $('a[title="Opportunities"]').addClass('is-active');
+    $('a[title="Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
+  },
+
+  menuClick: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    Backbone.history.navigate('/profile/' + window.cache.currentUser.id, {trigger: true});
+    this.activePage();
+  },
+
+  menuClick2: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    Backbone.history.navigate('/tasks', {trigger: true});
+    this.activePage();
+  },
+
+  showSubMenu1: function () {
+    $('.toggle-one').attr('data-state', 'is-open');
+    $('#section-one').attr('aria-expanded', true);
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-closed');
+    $('#section-two').attr('aria-expanded', false);
+  },
+
+  showSubMenu2: function () {
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-open');
+    $('#section-two').attr('aria-expanded', true);
+    $('.toggle-one').attr('data-state', 'is-closed');
+    $('#section-one').attr('aria-expanded', false);
+  },
+
+  subMenuClick: function (s) {
+    if (s.preventDefault) s.preventDefault();
+    var link = $(s.currentTarget).attr('href');
+    Backbone.history.navigate(link, {trigger: true});
+    this.activeSubPage();
+  },
+
+  loginClick: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    Backbone.history.navigate('/login', {trigger: true});
+  },
+
   cleanup: function () {
-    if (this.loginController) {
-      this.loginController.cleanup();
-    }
-    if (this.idleModal) {
-      this.idleModal.cleanup();
-    }
+    this.loginController && this.loginController.cleanup();
+    this.idleModal && this.idleModal.cleanup();
     removeView(this);
   },
 });

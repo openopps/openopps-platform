@@ -1,15 +1,28 @@
 <section class="usajobs-canvas">
   <div class="usajobs-content-gutter">
     <div id="registration-error" class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
-        <div class="usajobs-alert__figure">
-          <div class="usajobs-alert__icon">
-          </div>
-        </div>
-        <div class="usajobs-alert__body">
-          <p class="usa-alert-text" id="registration-error-text">
-          </p>
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
         </div>
       </div>
+      <div class="usajobs-alert__body">
+        <p class="usa-alert-text" id="registration-error-text">
+        </p>
+      </div>
+    </div>
+    <div id="registration-complete" class="usa-alert usajobs-alert usajobs-alert--info" role="alert" data-object="alert" style="display:none;">
+      <div class="usajobs-alert__figure">
+          <div class="usajobs-alert__icon">
+          </div>
+      </div>
+      <div class="usajobs-alert__body">
+              <h2>Account creation successful</h2>
+          <p class="usa-alert-text">
+              Thank you for signing up for Open Opportunities! An email will arrive shortly with a link to complete your registration.
+              If you don't receive an email shortly, check your spam folder.
+          </p>
+      </div>
+    </div>
     <main id="main-content" role="main" aria-label="Create account">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-login">
         <form class="usa-form-large" id="registration-form">
@@ -33,36 +46,31 @@
                 <div class="required-input">
                   <label for="rusername" class="control-label">Official government email address</label>
                   <span class="field-validation-error error-empty" style="display:none;">The email address is required.</span>
-                  <span class="field-validation-error error-email" style="display:none;">The email address is not valid or is already in use.</span>
-                  <input type="text" class="form-control" id="rusername" name="username" placeholder="Email Address" />
+                  <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid government email address or is already in use.</span>
+                  <input type="text" class="form-control" id="rusername" name="username" placeholder="Email Address" data-validate="email"/>
               </div>
             </div>
             <div class="password-view">
             </div>
             <div id="optional-registration-view">
-              <% if (login.agency.enabled === true) { %>
-                  <div class="form-group">
-                    <div class="required-input">
-                      <label for="ragency" class="control-label">Agency</label>
-                      <span class="field-validation-error error-empty" style="display:none;">Please select a valid agency.</span>
-                      <input type="hidden" id="ragency" name="ragency" style="width: 100%" data-validate="empty"/>
-                    </div>
-                  </div>
-              <% } %>
-
-              <% if (login.location.enabled === true) { %>
-                <div class="form-group">
-                    <div class="required-input">
-                      <label for="rlocation" class="control-label">Location</label>
-                      <span class="field-validation-error error-empty" style="display:none;">Please select a valid location.</span>
-                      <input type="hidden" id="rlocation" name="rlocation" style="width: 100%" data-validate="empty"/>
-                    </div>
-                  </div>
-              <% } %>
+              <div class="form-group">
+                <div class="required-input">
+                  <label for="ragency" class="control-label">Agency</label>
+                  <span class="field-validation-error error-empty" style="display:none;">Please select a valid agency.</span>
+                  <input type="hidden" id="ragency" name="ragency" style="width: 100%" data-validate="empty"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="required-input">
+                  <label for="rlocation" class="control-label">Location</label>
+                  <span class="field-validation-error error-empty" style="display:none;">Please select a valid location.</span>
+                  <input type="hidden" id="rlocation" name="rlocation" style="width: 100%" data-validate="empty"/>
+                </div>
+              </div>
             </div>
             <div class="required-input checkbox">
                 <input type="checkbox" id="rterms" class="validate" data-validate="checked">
-                <label for="rterms"><span>I am a federal employee and agree to the </span><a href="<%- login.terms.link %>" target="_blank"><%- login.terms.name %></a>.</label>
+                <label for="rterms"><span>I am a federal employee and agree to the </span><a href="<%- login.terms.link %>" target="_blank"><%- login.terms.name %><span class="sr-only">Opens in a new window</span></a>.</label>
                 <span class="field-validation-error error-checked" style="display:none;">You must accept the Terms and Conditions to register.</span>
               </div>
             </div>

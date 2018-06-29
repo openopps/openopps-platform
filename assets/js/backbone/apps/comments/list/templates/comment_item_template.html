@@ -1,8 +1,6 @@
 <li class="comment-item clearfix">
   <div class="comment-content">
-  <% if (canEdit || ( currentUser.id === userId )) { %>
-    <a href="#" class="delete-comment" data-commentid="<%- commentId %>"><span class='fa fa-times'></span></a>
-  <% } %>
+  
     <!-- <div class="comment-image">
       <div class="project-people-div" data-userid="<%- userId %>">
         <img src="/api/user/photo/<%- userId %>" alt="<%- user.name %>" class="project-people" />
@@ -39,6 +37,10 @@
         <a href="#reply-to-comment" class="reply-to-<%- id %>" data-depth="<%- depth %>" data-commentid="<%- id %>" data-authorid="<%- userId %>" data-commentauthor="<% if (user.name) { %><%- user.name %><% } else { %><%- user.username %><% } %>">Reply</a>
         <% } %>
       </div>
+
+      <% if (canEdit || ( currentUser.id === userId )) { %>
+        <a href="#" class="delete-comment" data-commentid="<%- commentId %>"><span class='fa fa-times'></span><span class="sr-only">Delete comment</span></a>
+      <% } %>
     </div>
   </div>
 </li>

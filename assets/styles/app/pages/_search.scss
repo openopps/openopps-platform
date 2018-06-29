@@ -212,6 +212,10 @@
   float: left;
   height: 4.3rem;
   margin-bottom: 0;
+
+  &[placeholder] { text-overflow: ellipsis; }
+  ::-moz-placeholder { text-overflow: ellipsis; } /* firefox 19+ */
+  &:-moz-placeholder { text-overflow: ellipsis; }
 }
 
 .usa-button.usajobs-open-opps-search-button {
@@ -233,38 +237,14 @@
   }
 
   &__loading {
-    -webkit-box-align: start;
-    -moz-box-align: start;
-    box-align: start;
-    -webkit-align-items: flex-start;
-    -moz-align-items: flex-start;
-    -ms-align-items: flex-start;
-    -o-align-items: flex-start;
-    align-items: flex-start;
-    -ms-flex-align: start;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-    box-pack: center;
-    -webkit-justify-content: center;
-    -moz-justify-content: center;
-    -ms-justify-content: center;
-    -o-justify-content: center;
-    justify-content: center;
-    -ms-flex-pack: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #fffc;
-    text-align: center;
-    vertical-align: middle;
-    z-index: 800;
 
     .svg-inline--fa {
-      margin-top: 12.5rem;
-      margin-bottom: 12.5rem;
+      // margin-top: 12.5rem;
+      // margin-bottom: 12.5rem;
       color: #02bfe7;
+      position: fixed;
+      top: calc(50% - 53px);
+      left: calc(50% - 43px);
     }
   }
 
@@ -275,22 +255,26 @@
     @include media($L) {
       flex: 1 0 calc(50% - 15px);
       margin-right: $size-default;
-      max-width: 48.8%; //Keeps last result card from taking up entire width
-      min-width: 48.8%; //Keeps result cards from being too narrow in IE
+      max-width: 48.7%; //Keeps last result card from taking up entire width
+      min-width: 48.7%; //Keeps result cards from being too narrow in IE
     }
 
     @include media($XL) {
-      max-width: 49%; //Keeps last result card from taking up entire width
-      min-width: 49%; //Keeps result cards from being too narrow in IE
+      max-width: 48.9%; //Keeps last result card from taking up entire width
+      min-width: 48.9%; //Keeps result cards from being too narrow in IE
     }
 
     @include media($XXL) {
-      max-width: 49.2%; //Keeps last result card from taking up entire width
-      min-width: 49.1%; //Keeps result cards from being too narrow in IE
+      max-width: 49.1%; //Keeps last result card from taking up entire width
+      min-width: 49%; //Keeps result cards from being too narrow in IE
     }
 
     &:nth-child(2n) {
       margin-right: 0;
+    }
+
+    a {
+      color: #000;
     }
 
     // Fade the description in search results.
@@ -302,6 +286,7 @@
       overflow: hidden;
       overflow-wrap: break-word;
       hyphens: auto;
+      color: #000;
     }
   }
 }

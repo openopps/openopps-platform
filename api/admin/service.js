@@ -4,6 +4,9 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const json2csv = require('json2csv');
 const TaskMetrics = require('./taskmetrics');
+const Audit = require('../model/Audit');
+const volunteerService = require('../volunteer/service');
+const opportunityService = require('../opportunity/service');
 
 async function getMetrics () {
   var tasks = await getTaskMetrics();
@@ -23,14 +26,15 @@ async function getTaskStateMetrics () {
   return states;
 }
 
-async function getAgencyTaskStateMetrics (agency) {
+async function getAgencyTaskStateMetrics (agencyId) {
   var states = {};
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'in progress', agency.toLowerCase(), dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'completed', agency.toLowerCase(), dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'draft', agency.toLowerCase(), dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'open', agency.toLowerCase(), dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'not open', agency.toLowerCase(), dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'submitted', agency.toLowerCase(), dao.options.task));
+  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'in progress', agency.name.toLowerCase(), dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'completed', agency.name.toLowerCase(), dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'draft', agency.name.toLowerCase(), dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'open', agency.name.toLowerCase(), dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'not open', agency.name.toLowerCase(), dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'submitted', agency.name.toLowerCase(), dao.options.task));
 
   return states;
 }
@@ -154,11 +158,12 @@ async function getUsers (page, limit) {
   return result;
 }
 
-async function getUsersForAgency (page, limit, agency) {
+async function getUsersForAgency (page, limit, agencyId) {
+  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
   result.page = +page;
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agency, page)).rows;
+  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agency.name.toLowerCase(), page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
   return result;
@@ -347,6 +352,84 @@ async function getDashboardTaskMetrics (group, filter) {
   return generator.metrics;
 }
 
+async function canChangeOwner (user, taskId) {
+  var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
+    return undefined;
+  });
+  var agency = _.find(user.tags, { type: 'agency' });
+  return task && (task.restrict.name == agency.name);
+}
+
+async function getOwnerOptions (taskId, done) {
+  var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
+    return undefined;
+  });
+  if (task) {
+    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));
+  } else {
+    done(undefined, 'Unable to locate specified task');
+  }
+}
+
+async function changeOwner (user, data, done) {
+  var task = await dao.Task.findOne('id = ?', data.taskId).catch((err) => { 
+    return undefined;
+  });
+  if (task) {
+    var originalOwner = _.pick(await dao.User.findOne('id = ?', task.userId), 'id', 'name', 'username');
+    task.userId = data.userId;
+    task.updatedAt = new Date();
+    await dao.Task.update(task).then(async () => {
+      var audit = Audit.createAudit('TASK_CHANGE_OWNER', user, {
+        taskId: task.id, 
+        originalOwner: originalOwner,
+        newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
+      });
+      await dao.AuditLog.insert(audit).then(() => {
+        done(audit.data.newOwner);
+      }).catch((err) => {
+        done(audit.data.newOwner);
+      });
+    }).catch((err) => {
+      done(undefined, 'An error occured trying to change the owner of this task.');
+    });
+  } else {
+    done(undefined, 'Unable to locate specified task');
+  }
+}
+
+async function assignParticipant (user, data, done) {
+  var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', data.taskId, data.userId);
+  if (volunteer.length > 0) {
+    done(undefined, 'Participant already has been added.');
+  } else {
+    await dao.Volunteer.insert({
+      taskId: data.taskId,
+      userId: data.userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      silent: false,
+      assigned: false,
+      taskComplete: false,
+    }).then(async (volunteer) => {
+      var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', user, {
+        taskId: data.taskId,
+        participant: _.pick(await dao.User.findOne('id = ?', volunteer.userId), 'id', 'name', 'username'),
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        // TODO: Log audit errors
+      });
+      var addedVolunteer = await dao.User.findOne('id = ?', volunteer.userId);
+      var task = await opportunityService.findById(data.taskId);
+      volunteerService.sendAddedVolunteerNotification(addedVolunteer, volunteer, 'volunteer.create.thanks');
+      opportunityService.sendTaskAppliedNotification(addedVolunteer, task);
+      done(audit.data.participant);
+    }).catch((err) => {
+      done(undefined, 'Error assigning new participant');
+    });
+  }
+}
+
 module.exports = {
   getMetrics: getMetrics,
   getInteractions: getInteractions,
@@ -363,4 +446,8 @@ module.exports = {
   getDashboardTaskMetrics: getDashboardTaskMetrics,
   getActivities: getActivities,
   canAdministerAccount: canAdministerAccount,
+  canChangeOwner: canChangeOwner,
+  getOwnerOptions: getOwnerOptions,
+  changeOwner: changeOwner,
+  assignParticipant: assignParticipant,
 };

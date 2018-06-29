@@ -45,19 +45,24 @@
 @import 'component/alert';
 @import 'component/media-object';
 @import 'component/initials';
+@import 'component/markdown';
 
 // Layouts ------------- //
 @import 'layouts/profile';
 @import 'layouts/admin-dashboard';
 
 body {
-    background-color: $color-gray-lightest;
+  background-color: $color-gray-lightest;
+
+  &.modal-is-open {
+    overflow-y: hidden;
+  }
 }
 
 @media screen and (min-width: 120em) {
-    .usajobs-nav--full_bleed__banner-inner, .usajobs-nav--core-v2__banner-inner, .usajobs-nav--open-opps__banner-inner {
-        padding-left: 3rem;
-    }
+  .usajobs-nav--full_bleed__banner-inner, .usajobs-nav--core-v2__banner-inner, .usajobs-nav--open-opps__banner-inner {
+    padding-left: 3rem;
+  }
 }
 
 h1, h2 {

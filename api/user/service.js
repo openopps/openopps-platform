@@ -28,10 +28,14 @@ async function isUsernameUsed (id, username) {
 }
 
 async function getProfile (id) {
-  var profile = await findOne(id);
-  profile.badges = dao.clean.badge(await dao.Badge.find('"user" = ?', id));
-  profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
-  return dao.clean.profile(profile);
+  var profile = await findOne(id).catch((err) => { return undefined; });
+  if(profile) {
+    profile.badges = dao.clean.badge(await dao.Badge.find('"user" = ?', id));
+    profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
+    return dao.clean.profile(profile);
+  } else {
+    return undefined;
+  }
 }
 
 async function populateBadgeDescriptions (user) {
@@ -54,10 +58,15 @@ function processUserTags (user, tags) {
       return await createUserTag(tag, user);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
+      if (tag.type == 'location' && !tag.id) {
+        tag.id = ((await dao.TagEntity.find('type = ? and name = ?', 'location', tag.name))[0] || {}).id;
+      }
+      tag = _.pickBy(tag, _.identity);
       if (tag.id) {
         return await createUserTag(tag.id, user);
+      } else {
+        return await createNewUserTag(tag, user);
       }
-      return await createNewUserTag(tag, user);
     }
   }));
 }

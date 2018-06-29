@@ -131,17 +131,11 @@ const clean = {
   tasks: function (records) {
     return records.map(function (record) {
       var cleaned = _.pickBy(record, _.identity);
-      if(!_.isEmpty(cleaned.restrict)) {
-        cleaned.restrict = JSON.parse(cleaned.restrict);
-      }
       return cleaned;
     });
   },
   task: function (record) {
     var cleaned = _.pickBy(record, _.identity);
-    if(!_.isEmpty(cleaned.restrict)) {
-      cleaned.restrict = JSON.parse(cleaned.restrict);
-    }
     return cleaned;
   },
   user: function (record) {

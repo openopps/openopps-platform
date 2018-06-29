@@ -68,3 +68,6 @@ npm-debug.log*
 
 # Temporary root directory
 tmp/
+
+# ignore npm audit
+.audit

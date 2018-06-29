@@ -2,7 +2,7 @@
   <div id="<%- handle %>-tab-open">
     <div style="overflow-x:auto;">
       <% if (_.filter(data, function (item) { return item.state != 'archived' }).length > 0) { %>
-        <table class="usa-table-borderless">
+        <table class="usa-table-borderless" role="presentation">
         	<thead>
         	<tr class="usajobs-grid open-opps-row header">
         		<th scope="col">Status</th>
@@ -34,7 +34,7 @@
 
       <% } else { %>
 
-        <table class="usa-table-borderless">
+        <table class="usa-table-borderless" role="presentation">
         	<thead>
         	<tr class="usajobs-grid open-opps-row header">
         		<th scope="col">Your status</th>

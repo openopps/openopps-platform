@@ -6,13 +6,13 @@
           <div class="search__box-search">
             <h1>Search for opportunities</h1>
             <p class="search__box-content">Gain experience with hands-on training, share your expertise and work with others across the government.</p>
-            <p class="search__box-content">Learn more about <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+            <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
           </div>
           <div class="search__box-acquisition">
             <h1>Acquisition Open Opportunities</h1>
             <h3 id="search__box-subtitle">You're now viewing Acquisition opportunities only.</h3>
             <p class="search__box-content">Gain experience with hands-on training, share your expertise and work with others across the government.</p>
-            <p class="search__box-content">Learn more about <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+            <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
           </div>
             <label for="search" class="search__box-label">
             <span class="fas fa-search search-icon"></span>
@@ -20,7 +20,7 @@
           </label>
           <div class="usajobs-grid-full">
             <div class="usa-width-two-thirds">
-              <input type="text" id="search" title="Search" class="usajobs-open-opps-search__input" value="<%- term %>">
+              <input type="text" id="search" title="Search" class="usajobs-open-opps-search__input" value="<%- term %>" placeholder="Find opportunities by topic, skill, career field, agency or series">
             </div>
             <div class="usa-width-one-third">
               <button id="search-button" class="usa-button usa-button-primary-alt usajobs-nav__search-button">Search</button>
@@ -29,6 +29,7 @@
         </div>
       </div>
       <div id="usajobs-search-pills"></div>
+      <h4 id="results-count"></h4>
       <div class="usajobs-open-opps-search-results" id="task-list">
         <div class="usajobs-open-opps-search-results__loading" id="search-results-loading">
           <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
@@ -42,7 +43,7 @@
       <nav class="usajobs-search-tab-bar" data-object="search-tab-bar">
           <div class="usajobs-search-tab-bar__body" id="search-tab-bar-controls">
               <a href="javascript:void(0);" id="search-tab-bar-filter" class="usajobs-search-tab-bar__link usajobs-search-tab-bar__filters" data-behavior="search-tab-bar.toggle-filters"
-              aria-controls="usajobs-search-filters" aria-expanded="false" title="Filter">
+              aria-controls="task-filters" aria-expanded="false" title="Filter">
                   <button class="usa-button-secondary-inverse usajobs-search-tab-bar__filters-default" aria-hidden="false">
                     <span class="usajobs-icon--center">
                       <svg class="fa fa-sliders-h fa-w-18" title="Filter" aria-labelledby="fa-title-16" data-prefix="fas" data-icon="sliders-h"

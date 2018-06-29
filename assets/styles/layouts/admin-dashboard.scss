@@ -166,6 +166,33 @@
     .delete-task {
       color: #CD2026;
     }
+
+    .task-change-owner {
+      margin-right: $size-default;
+    }
+
+    .task-change-owner:visited, .task-add-participant:visited {
+      color: $color-primary;
+    }
+  }
+
+  .announcement-description, #announcement-title {
+    width: 100%;
+    max-width: initial;
+  }
+
+  #announcement-title {
+    height: 6.5rem;
+
+    @include media($M-down) {
+      height: 9rem;
+    }
+  }
+
+  @include media($SM-down) {
+    .usa-button-secondary {
+      margin: 0 0 1.5rem 0;
+    }
   }
 
   @media screen and (min-width: 62rem) {

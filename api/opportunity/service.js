@@ -29,8 +29,25 @@ async function findById (id, loggedIn) {
   return task;
 }
 
-async function list () {
-  var tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));
+async function list (user) {
+  if(user) {
+    user.agency = _.find(user.tags, {type: 'agency' });
+  }
+  var tasks = [];
+  if(user && user.isAdmin) {
+    tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));
+  } else {
+    var where = " where task.restrict->>'projectNetwork' = 'false'";
+    if(user && user.agency && !_.isEmpty(user.agency.data)) {
+      where += " or task.restrict->>'abbr' = '" + user.agency.data.abbr + "'";
+      where += " or task.restrict->>'parentAbbr' = '" + user.agency.data.abbr + "'";
+      if(user.agency.data.parentAbbr) {
+        where += " or task.restrict->>'parentAbbr' = '" + user.agency.data.parentAbbr + "'";
+        where += " or task.restrict->>'abbr' = '" + user.agency.data.parentAbbr + "'";
+      }
+    }
+    tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + where + ' order by task."createdAt" desc', {}, dao.options.task));
+  }
   tasks = await Promise.all(tasks.map(async (task) => {
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     return task;
@@ -49,6 +66,10 @@ function processTaskTags (task, tags) {
       return await createTaskTag(tag, task);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
+      if (tag.type == 'location' && !tag.id) {
+        tag.id = ((await dao.TagEntity.find('type = ? and name = ?', 'location', tag.name))[0] || {}).id;
+      }
+      tag = _.pickBy(tag, _.identity);
       if (tag.id) {
         return await createTaskTag(tag.id, task);
       }
@@ -266,6 +287,14 @@ async function sendTaskAssignedNotification (user, task) {
   }
 }
 
+async function sendTaskAppliedNotification (user, task) {
+  var template = ('task.update.applied');
+  var data = await getNotificationTemplateData(user, task, template);
+  if(!data.model.task.owner.bounced) {
+    notification.createNotification(data);
+  }
+}
+
 async function sendTaskSubmittedNotification (user, task) {
   var baseData = await getNotificationTemplateData(user, task, 'task.update.submitted.admin');
   _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), (admin) => {
@@ -303,6 +332,9 @@ async function copyOpportunity (attributes, user, done) {
     restrict: getRestrictValues(user),
     state: 'draft',
     description: results.description,
+    details: results.details,
+    outcome: results.outcome,
+    about: results.about,
   };
 
   var newTask = _.extend(_.clone(baseTask), task);
@@ -322,6 +354,7 @@ function getRestrictValues (user) {
   var restrict = {
     name: record.name,
     abbr: record.data.abbr,
+    parentAbbr: record.data.parentAbbr,
     slug: record.data.slug,
     domain: record.data.domain,
     projectNetwork: false,
@@ -414,6 +447,7 @@ module.exports = {
   sendTaskNotification: sendTaskNotification,
   sendTaskStateUpdateNotification: sendTaskStateUpdateNotification,
   sendTaskAssignedNotification: sendTaskAssignedNotification,
+  sendTaskAppliedNotification: sendTaskAppliedNotification,
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,

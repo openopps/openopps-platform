@@ -4,6 +4,7 @@ const _ = require('lodash');
 const service = require('./service');
 const passport = require('koa-passport');
 const utils = require('../../utils');
+const validGovtEmail = require('../model').ValidGovtEmail;
 
 const router = new Router();
 
@@ -40,25 +41,21 @@ router.post('/api/auth/local', async (ctx, next) => {
 });
 
 router.post('/api/auth/local/register', async (ctx, next) => {
-  log.info('Register user', _.omit(ctx.request.body, 'password'));
+  log.info('Register user', ctx.request.body);
 
   delete(ctx.request.body.isAdmin);
   delete(ctx.request.body.isAgencyAdmin);
   if (!ctx.request.body.username) {
     ctx.flash('error', 'Error.Passport.Username.Missing');
     ctx.status = 400;
-    return ctx.body = { message: 'No username was entered.' };
-  }
-
-  if (!ctx.request.body.password) {
-    ctx.flash('error', 'Error.Passport.Password.Missing');
+    return ctx.body = { message: 'The email address is required.' };
+  } else if (!validGovtEmail(ctx.request.body.username)) {
     ctx.status = 400;
-    return ctx.body = { message: 'No password was entered.' };
+    return ctx.body = { message: 'The email address provided is not a valid government email address.' };
   }
 
   await service.register(ctx.request.body, function (err, user) {
     if (err) {
-      ctx.flash('error', 'Error.Passport.Registration.Failed');
       ctx.status = 400;
       return ctx.body = { message: err.message || 'Registration failed.' };
     }
@@ -67,7 +64,6 @@ router.post('/api/auth/local/register', async (ctx, next) => {
     } finally {
       ctx.body = { success: true };
     }
-    return ctx.login(user);
   });
 });
 

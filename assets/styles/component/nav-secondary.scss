@@ -26,7 +26,7 @@
   &__body {
     @include outer-container();
     max-width: $site-max-width;
-    border-bottom: 1px solid $color-gray-light;
+    // border-bottom: 1px solid $color-gray-light;
 
     a {
       // Another override of the base styles just to be certain we don't have
@@ -130,6 +130,126 @@
         background-color: $color-gray-lighter;
         text-decoration: underline;
       }
+    }
+  }
+}
+
+.usajobs-openopps-secondary-nav {
+  position: relative;
+  // margin-bottom: $size-M;
+  background-color: $color-primary-darker;
+
+  @include media($L) {
+    // margin-bottom: $size-L;
+  }
+
+  &.is-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: $layer-panel;
+    @include boxShadow(2);
+  }
+
+
+  &__body {
+    @include outer-container();
+    max-width: $site-max-width;
+
+    @include media($L) {
+      padding-left: $size-M;
+      padding-right: $size-M;
+    }
+
+    a {
+      // Another override of the base styles just to be certain we don't have
+      // underlined links in the nav
+      text-decoration: none;
+    }
+  }
+
+  &__menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    text-align: center;
+
+    @include media($L) {
+      text-align: left;
+    }
+
+    &[aria-expanded="false"] {
+      display: none;
+    }
+  }
+
+  @include media($L) {
+    &__menu:first-child {
+      .usajobs-openopps-secondary-nav__item:last-child {
+        float: right;
+        padding-right: 0;
+
+        .usajobs-openopps-secondary-nav__link {
+          font-size: 1.5rem;
+          text-decoration: underline;
+          padding-bottom: 1.1rem;
+        }
+      }
+    }
+  }
+
+  &__item {
+    display: inline-table;
+    text-align: center;
+    border-color: $color-white;
+    padding: 0 $size-default;
+
+    &.mobile {
+      @include media($M) {
+        display: none;
+      }
+    }
+  }
+
+  &__link {
+    display: block;
+    padding: $size-default 0 .8975rem;
+    line-height: 1.25;
+    font-size: $base-font-size;
+    border-bottom: .3525rem solid transparent;
+    color: $color-white;
+    @include transition(all .25s ease-in-out);
+    text-decoration: none;
+
+    &:visited {
+      color: $color-white;
+    }
+
+    &:hover {
+      color: $color-white;
+      text-decoration: none;
+      border-bottom-color: inherit;
+    }
+
+    &.is-active,
+    &[data-state="is-active"] {
+      font-weight: bold;
+      border-bottom-color: inherit;
+    }
+  }
+
+  &__short-name {
+    @include media($SM) {
+      display: none;
+    }
+  }
+  &__long-name {
+    display: none;
+
+    @include media($SM) {
+      display: inherit;
     }
   }
 }

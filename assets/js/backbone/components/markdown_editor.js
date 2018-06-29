@@ -88,6 +88,7 @@ var MarkdownEditor = BaseComponent.extend({
       placeholder: this.options.placeholder,
       title: this.options.title,
       data: this.options.data,
+      preview: this.options.preview,
     };
     var template = _.template(EditorTemplate)(data);
     this.$el.html(template);

@@ -70,7 +70,7 @@ $nav_item_height: 17px + 24px;
 
   &__brand {
     display: block;
-    padding: 1.6rem 0 1.2rem $size-default;
+    padding: $size-default 0 $size-S $size-default;
     line-height: 1;
 
     @include media($ML) {
@@ -114,16 +114,6 @@ $nav_item_height: 17px + 24px;
   &__menu {
     display: block;
     float: right;
-    padding-right: $size-default;
-    // height: rem($logo_height-S);
-
-    @include media($M) {
-      padding-right: initial;
-    }
-
-    @include media($L) {
-      // height: rem($logo_height-L);
-    }
 
     ul {
       margin: 0;
@@ -139,7 +129,6 @@ $nav_item_height: 17px + 24px;
       display: inherit;
       max-width: rem(140px);
       text-overflow: ellipsis;
-      // overflow: hidden;
     }
   }
 
@@ -171,8 +160,7 @@ $nav_item_height: 17px + 24px;
       @include transition(all $duration-fast linear);
 
       .usajobs-nav__section-link {
-        color: $color-white;
-        background-color: $color-primary-darker;
+        color: $color-primary;
         @include boxShadow(2);
       }
 
@@ -262,7 +250,7 @@ $nav_item_height: 17px + 24px;
     position: absolute;
     left: 0;
     right: 0;
-    margin: 0 $size-default;
+    margin: 0;
     padding: $size-base 0;
     background-color: $color-gray-lightest;
     @include boxShadow(2);
@@ -272,7 +260,6 @@ $nav_item_height: 17px + 24px;
     @include media($M) {
       left: auto;
       right: auto;
-      margin: 0;
     }
 
     li {
@@ -297,13 +284,8 @@ $nav_item_height: 17px + 24px;
         display: block;
         width: 100%;
         clear: both;
-        // padding: $size-S $size-M;
-        padding: $size-S $size-default;
+        padding: $size-S $size-M;
         white-space: nowrap;
-
-        @include media($M) {
-          padding: $size-S 4.1rem;
-        }
       }
     }
   }
@@ -480,6 +462,14 @@ $nav_item_height: 17px + 24px;
 }
 
 .usajobs-nav--core-v2 {
+  &.has-secondary-nav &__body {
+    border-bottom: 0;
+  }
+
+  &__header {
+    position: relative;
+  }
+
   &__brand &__logo {
     width: 10.5rem;
     height: 2.4rem;
@@ -499,29 +489,52 @@ $nav_item_height: 17px + 24px;
   }
 
   &__brand {
-    padding: $size-default 0 $size-default $size-default;
+    padding: 1.7rem 0 1.3rem $size-default;
 
     @include media($SM) {
       padding-bottom: $size-S;
     }
 
     @include media($M) {
-      // padding: $size-S 0 $size-S $size-default;
+      padding-top: $size-default;
     }
 
     @include media($ML) {
       padding-left: $size-M;
     }
+
+    @include media($XXXXL) {
+      padding-left: 0;
+    }
   }
 
-  &__help &__section-link svg {
+  &__menu-container {
+    line-height: 1;
+
     @include media($M) {
+      display: inline-table;
+      text-align: center;
+      border-color: $color-primary-darker;
+      padding: 0 $size-default;
     }
+
+    @include media($ML) {
+      padding: 0 $size-M;
+    }
+  }
+
+  &__header-container {
+    position: relative;
+    max-width: $site-max-width;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &__section-link {
     font-size: $small-font-size;
-    padding: 1.3rem $size-S $size-S;
+    padding: $size-S $size-S .2875rem;
+    line-height: 1.25;
+    border-bottom: .7125rem solid transparent;
 
     @include media($SM) {
       font-size: $base-font-size;
@@ -529,31 +542,33 @@ $nav_item_height: 17px + 24px;
     }
 
     @include media($M) {
-      display: inline-block;
-      padding-top: 2.2rem;
-      padding-bottom: 2.2rem;
+      display: block;
+      padding: 2rem .5rem 1.2875rem 0;
+      line-height: 1.25;
+      font-size: $base-font-size;
+      border-bottom: .7125rem solid transparent;
+      @include transition(all .25s ease-in-out);
+      text-decoration: none;
     }
 
-    @include media($ML) {
-      padding-left: $size-M;
-      padding-right: $size-M;
+    &.is-active {
+      box-shadow: none;
+      background-color: inherit;
+      font-weight: bold;
+      border-bottom-color: inherit;
     }
 
     &.menu-toggle {
-      padding-top: 1.3rem;
+      // This is just overriding the original variation
+      padding: $size-S $size-S .5375rem;
 
       @include media($SM) {
         padding-top: 1.7rem;
       }
 
       @include media($M) {
-        padding-top: 2.4rem;
+        padding: 2rem .5rem 1.2875rem 0;
       }
-    }
-
-    &.is-active {
-      box-shadow: none;
-      background-color: inherit;
     }
 
     svg {
@@ -571,44 +586,58 @@ $nav_item_height: 17px + 24px;
     }
   }
 
+  // Reverts the search menu highlight
+  &__menu-container {
+    &[data-state="is-open"] {
+      .usajobs-nav__section-link {
+        color: $color-primary-darker;
+        background-color: $color-white;
+        box-shadow: none;
+        border-bottom-color: inherit; // This makes the border bottom appear
+      }
+    }
+  }
+
   &__section-link.is-active &__section-active {
-    border-bottom: 0.7rem solid $color-primary;
-    padding-bottom: 0.2rem;
+    border-bottom: 0.7rem solid $color-primary-darker;
 
     @include media($M) {
-      padding-bottom: 1.4rem;
+      padding-bottom: 1.9rem;
+    }
+  }
+
+  &__help &__section-link.is-active &__section-active {
+    @include media($M) {
+      padding-right: $size-S;
+    }
+  }
+
+  &__icon-center {
+    @include media($SM) {
+      @include iconCenter(1.5em);
+      height: 1em;
+
+      svg {
+        height: $base-font-size;
+      }
     }
   }
 }
 
 .usajobs-nav--openopps {
-  &__brand-container {
-    // padding: $size-default 0 $size-default $size-default;
-    padding: 0;
-
-    @include media($SM) {
-      // padding-bottom: $size-S;
-    }
+  &__brand {
+    padding: 1.2rem 0 1.1rem $size-default;
 
     @include media($ML) {
-      // padding-left: $size-M;
-    }
-
-    @include media($L) {
-      // padding-top: 1.2rem;
+      padding-left: $size-M;
     }
 
     img {
       width: 17.0rem;
-      // height: 2.3rem;
+      height: auto;
 
-      @include media($ML) {
-        width: 22.8rem;
-      }
-
-      @include media($L) {
-        width: 29.8rem;
-        // width: 34.1rem;
+      @include media($SM) {
+        width: 23rem;
       }
     }
   }
@@ -628,7 +657,7 @@ $nav_item_height: 17px + 24px;
 
   &__section-link {
     font-size: $small-font-size;
-    padding: 0.8rem $size-base $size-S;
+    padding: 1.3rem $size-S $size-S;
 
     @include media($SM) {
       font-size: $base-font-size;
@@ -637,8 +666,8 @@ $nav_item_height: 17px + 24px;
 
     @include media($M) {
       display: inline-block;
-      padding-top: 2.2rem;
-      padding-bottom: 2.6rem;
+      padding-top: 1.5rem;
+      padding-bottom: 2.1rem;
     }
 
     @include media($ML) {
@@ -654,7 +683,7 @@ $nav_item_height: 17px + 24px;
       }
 
       @include media($M) {
-        padding-top: 2.7rem;
+      padding-top: 2.2rem;
       }
     }
 
@@ -679,45 +708,24 @@ $nav_item_height: 17px + 24px;
     }
   }
 
-
-  &__section-link.is-active &__section-active {
-    border-bottom: 0.7rem solid $color-primary;
-    padding-bottom: 0.2rem;
-
-    @include media($M) {
-      padding-bottom: 1.7rem;
-    }
-  }
-
+  &__section-link.is-active &__section-active,
   &__menu-container[data-state="is-open"] &__first-name {
-    border-bottom: 0;
+    border-bottom: 0.7rem solid $color-primary-darker;
     padding-bottom: 0.2rem;
 
     @include media($M) {
-      padding-bottom: 1.6rem;
+      padding-bottom: 1.2rem;
     }
   }
 
   &__menu-container[data-state="is-open"] &__section-link.menu-toggle {
-    padding-top: 1.3rem;
-    padding-bottom: 1rem;
-    background-color: $color-primary-darkest;
     box-shadow: none;
-
-    @include media($SM) {
-      padding-top: 1.7rem;
-    }
-
-    @include media($M) {
-      padding-top: 2.7rem;
-      padding-bottom: 2.6rem;
-    }
   }
 
-  &__help {
+  &__people {
     display: none;
 
-    @include media($M) {
+    @include media($SM) {
       display: inline-block;
     }
 
@@ -738,7 +746,6 @@ $nav_item_height: 17px + 24px;
   }
 
   .desktop {
-
     @include media($M-down) {
       display: none;
     }
@@ -764,7 +771,7 @@ $nav_item_height: 17px + 24px;
   }
 
   ul.usajobs-nav__secondary-menu {
-    background-color: $color-primary-darkest;
+    background-color: $color-primary-darker;
 
     li a,
     li a:hover,
@@ -812,7 +819,7 @@ $nav_item_height: 17px + 24px;
   &__brand {
     .test,
     .test:visited {
-      @include h2();
+      @include h3();
       margin: rem(-2px) 0 0;
       color: $color-primary-alt-dark;
       line-height: 0;
@@ -955,8 +962,11 @@ ul.ui-autocomplete {
     top: 0;
     right: 320px;
     max-width: 400px;
-    margin: $size-base 0;
     border-radius: $border-radius;
+  }
+
+  &[aria-hidden=true] {
+    display: none;
   }
 
   &__body {

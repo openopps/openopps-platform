@@ -8,6 +8,7 @@ const opportunityService = require('../opportunity/service');
 var router = new Router();
 
 router.post('/api/volunteer', auth, async (ctx, next) => {
+  var task = await opportunityService.findById(ctx.request.body.taskId);
   if (await service.canAddVolunteer(ctx.request.body, ctx.state.user)) {
     var attributes = ctx.request.body;
     attributes.userId = ctx.state.user.id;
@@ -17,6 +18,7 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
       }
       if (volunteer.silent == null || volunteer.silent == 'false') {
         service.sendAddedVolunteerNotification(ctx.state.user, volunteer, 'volunteer.create.thanks');
+        opportunityService.sendTaskAppliedNotification(ctx.state.user, task);
       }
       volunteer.name = ctx.state.user.name;
       return ctx.body = volunteer;

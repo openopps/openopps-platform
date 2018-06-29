@@ -23,10 +23,15 @@ const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
+const ownerListQuery = 'select midas_user.id, midas_user.name ' +
+'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
+'inner join tagentity tag on tags.tagentity_users = tag.id ' +
+"where midas_user.disabled = false and tag.type = 'agency' and tag.name = ?";
+
 const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where tag.type = 'agency' and lower(data->>'abbr') = ? " +
+  "where tag.type = 'agency' and lower(tag.name) = ? " +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -76,9 +81,7 @@ const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'left join tagentity_users__user_tags tags on owner.id = tags.user_tags ' +
-  'left join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where task.state = ? and lower(data->>'abbr') = ? ";
+  "where task.state = ? and lower(restrict->>'name') = ? ";
 
 const activityQuery = 'select comment."createdAt", comment.id, ' + "'comment' as type " + '' +
   'from midas_user ' +
@@ -144,6 +147,7 @@ var exportFormat = {
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',
   'disabled': 'disabled',
+  'announcement': {field: 'content', filter: nullToEmptyString},
 };
 
 function nullToEmptyString (str) {
@@ -190,9 +194,6 @@ const clean = {
   task: function (records) {
     return records.map(function (record) {
       var cleaned = _.pickBy(record, _.identity);
-      if(!_.isEmpty(cleaned.restrict)) {
-        cleaned.restrict = JSON.parse(cleaned.restrict);
-      }
       return cleaned;
     });
   },
@@ -213,6 +214,7 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
+    AuditLog: dao({ db: db, table: 'audit_log'}),
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
@@ -223,6 +225,7 @@ module.exports = function (db) {
       postQuery: postQuery,
       volunteerCountQuery: volunteerCountQuery,
       userListQuery: userListQuery,
+      ownerListQuery: ownerListQuery,
       userAgencyListQuery: userAgencyListQuery,
       userListFilteredQuery: userListFilteredQuery,
       userAgencyListFilteredQuery: userAgencyListFilteredQuery,

@@ -48,6 +48,7 @@ var AdminUserView = Backbone.View.extend({
       login: LoginConfig,
     };
     var template = _.template(AdminUserTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch user data
@@ -231,13 +232,13 @@ var AdminUserView = Backbone.View.extend({
         text: 'Send email',
         action: function () {
           this.submitReset.bind(this)(user.email);
-        }.bind(this)
+        }.bind(this),
       },
       secondary: {
         text: 'Close',
         action: function () {
           this.modal.cleanup();
-        }.bind(this)
+        }.bind(this),
       },
     }).render();
   },

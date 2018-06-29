@@ -29,5 +29,5 @@ exports.up = function (db, callback) {
 };
 
 exports.down = function (db, callback) {
-  db.createTable('notification_monitor', callback);
+  db.dropTable('notification_monitor', callback);
 };

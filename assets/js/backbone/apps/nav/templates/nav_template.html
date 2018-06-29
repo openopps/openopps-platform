@@ -1,15 +1,15 @@
 
-<nav class="usajobs-nav usajobs-nav--openopps" role="navigation" aria-label="main navigation">
-  <div class="usajobs-nav__body usajobs-nav--openopps">
+<nav class="usajobs-nav usajobs-nav--openopps has-secondary-nav" role="navigation" aria-label="main navigation">
+  <div class="usajobs-nav__body usajobs-nav--openopps__body">
     <div  class="usajobs-nav__header-container">
-      <div class="usajobs-nav__header usajobs-nav--openopps">
+      <div class="usajobs-nav__header usajobs-nav--openopps__header">
         <div class="usajobs-nav__brand-container usajobs-nav--openopps__brand-container">
           <a class="usajobs-nav__brand usajobs-nav--openopps__brand" href="/" title="Open Opportunities - Home">
-            <img src="/img/logo/svg/open-opportunities.svg" alt="Open Opportunities logo">
-        </a>
-    </div>
-    <div class="usajobs-nav__menu" id="usajobs-menu">
-          <ul>
+            <img src="/img/logo/svg/openopps_logo.svg" alt="Open Opportunities logo">
+          </a>
+        </div>
+        <div class="usajobs-nav__menu" id="usajobs-menu">
+          <ul role="menubar">
             <% if (user) { %>
               <li class="usajobs-nav__menu-container usajobs-nav__account usajobs-nav--openopps__menu-container" data-state="is-closed">
                 <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-one" href="#" title="Account" aria-haspopup="true" aria-controls="section-one">
@@ -23,70 +23,67 @@
                   <% } %>
                   </span>
                 </a>
-                <ul id="section-one" class="usajobs-nav__secondary-menu" aria-expanded="false" aria-label="submenu" role="menu">
-                  <li role="menuitem">
-                    <a href="/profile/<%- user.id %>" id="profileLink">Profile</a>
-                  </li>
-                  <li role="menuitem">
-                    <a href="/profiles" title="People">People</a>
-                  </li>
-                  <li role="menuitem">
-                      <a href="/tasks/new" title="Create Opportunity">Create Opportunity</a>
-                    </li>
-                  <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
-                  <li role="menuitem"><a href="/admin">Administration</a></li>
-                  <% } %>
-                  <% if (login.local.logout) { %>
-                  <li role="menuitem"><a href="/auth/logout" class="logout">Sign Out</a></li>
-                  <% } %>
-                </ul>
               </li>
               
-              <li class="usajobs-nav__menu-container usajobs-nav__menu-search usajobs-nav--openopps__menu-container mobile" data-state="is-closed">
-                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="#" title="Search Opportunities" aria-haspopup="true" aria-controls="section-two">
-                  <span class="usajobs-nav--openopps__section">
-                    <span class="fas fa-search fa-fw" focusable="false"></span>Search
-                  </span>
+            <% } else { %>
+              <% if (login.signin !== false) { %>
+              <li class="usajobs-nav__menu-container usajobs-nav__account">
+                <a href="/login" class="usajobs-nav__section-link usajobs-nav--openopps__section-link">
+                  <span class="fas fa-sign-in-alt fa-fw" data-fa-transform="right-6" focusable="false"></span>
+                  Sign In
                 </a>
-                <ul id="section-two" class="usajobs-nav__secondary-menu" aria-expanded="false" aria-label="submenu" role="menu">
-                  <li role="menuitem"><a href="/tasks">Opportunities</a></li>
-                  <li role="menuitem"><a href="https://usajobs.github.io/openopps-help/" title="Help" target="blank">Help</a></li>
-                </ul>
               </li>
+              <% } %>
+              <% }; %>
               <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
-                  <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/" title="Help" target="blank">
+                  <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/" title="Help">
                     <span class="usajobs-nav--openopps__section">
                       <span class="fas fa-question-circle" title="Help"></span>Help
                     </span>
                   </a>
                 </li>
               <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
-                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="/tasks" title="Search Opportunities">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link toggle-two" href="/tasks" title="Search Opportunities">
                   <span class="usajobs-nav--openopps__section">
                     <span class="fas fa-search fa-fw" style="margin-top:0.5rem;" focusable="false"></span>Search
                   </span>
                 </a>
               </li>
-            <% } else { %>
-              <% if (login.signin !== false) { %>
-                <li class="usajobs-nav__menu-container usajobs-nav__account">
-                  <a href="/login" class="usajobs-nav__section-link usajobs-nav--openopps__section-link">
-                    <span class="fas fa-sign-in-alt fa-fw" data-fa-transform="right-6" focusable="false"></span>
-                    Sign In
-                  </a>
-                </li>
-                <li class="usajobs-nav__menu-container usajobs-nav__menu-search">
-                  <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="/tasks" title="Search Opportunities">
+              <li class="usajobs-nav__menu-container usajobs-nav__menu-search usajobs-nav--openopps__menu-container mobile" data-state="is-closed">
+                  <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="#" title="Search Opportunities" aria-haspopup="true" aria-controls="section-two">
                     <span class="usajobs-nav--openopps__section">
-                      <span class="fas fa-search fa-fw" style="margin-top:0.5rem;" focusable="false"></span>Search
+                      <span class="fas fa-search fa-fw" focusable="false"></span>Search
                     </span>
                   </a>
                 </li>
-              <% } %>
-            <% }; %>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </nav>
+
+<nav class="usajobs-openopps-secondary-nav">
+    <div class="usajobs-openopps-secondary-nav__body">
+      <% if (user) { %>
+      <ul id="section-one" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+        <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+          <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
+        </li>
+        <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
+        <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
+        <% } %>
+        <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+          <a href="/auth/logout" class="usajobs-openopps-secondary-nav__link logout">Sign out</a>
+        </li>
+      </ul>
+      <% } %>
+      <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+          <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/tasks" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
+          <% if (user) { %>
+          <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
+          <% } %>
+          <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>
+        </ul>
+    </div>
+  </nav>

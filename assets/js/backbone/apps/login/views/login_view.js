@@ -11,8 +11,6 @@ var LoginView = Backbone.View.extend({
 
   events: {
     'click .oauth-link'          : 'link',
-    'keyup .validate'            : 'validateField',
-    'change .validate'           : 'validateField',
     'blur .validate'             : 'validateField',
     'click #submitLogin'         : 'submitLogin',
   },
@@ -29,6 +27,7 @@ var LoginView = Backbone.View.extend({
       message: this.options.message,
     };
     var template = _.template(LoginTemplate)(data);
+    $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
     this.loginPasswordView = new LoginPasswordView({

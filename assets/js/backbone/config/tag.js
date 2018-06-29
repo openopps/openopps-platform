@@ -12,7 +12,8 @@ module.exports = {
       'id': 'skill',
       'type': 'skill',
       'name': 'Skill',
-      'plural': 'Skills'
+      'plural': 'Skills',
+      'profileEdit': 'I have experience with',
     },
 
     'topic': {
@@ -21,7 +22,8 @@ module.exports = {
       'id': 'topic',
       'type': 'topic',
       'name': 'Interest',
-      'plural': 'Interests'
+      'plural': 'Interests',
+      'profileEdit': 'I want to develop',
     },
 
     'agency': {
@@ -30,7 +32,7 @@ module.exports = {
       'id': 'agency',
       'type': 'agency',
       'name': 'Agency',
-      'plural': 'Agencies'
+      'plural': 'Agencies',
     },
 
     'location': {
@@ -39,7 +41,7 @@ module.exports = {
       'id': 'location',
       'type': 'location',
       'name': 'Work location',
-      'plural': 'Work locations'
+      'plural': 'Work locations',
     },
 
     // ---
@@ -51,7 +53,7 @@ module.exports = {
       'id': 'task-skills-required',
       'type': 'task-skills-required',
       'name': 'Skill Required',
-      'plural': 'Skills Required'
+      'plural': 'Skills Required',
     },
 
     'task-time-required': {
@@ -60,7 +62,7 @@ module.exports = {
       'id': 'task-time-required',
       'type': 'task-time-required',
       'name': 'Time commitment',
-      'plural': 'Time commitment'
+      'plural': 'Time commitment',
     },
 
     'task-people': {
@@ -69,7 +71,7 @@ module.exports = {
       'id': 'task-people',
       'type': 'task-people',
       'name': 'Personnel needed',
-      'plural': 'Personnel needed'
+      'plural': 'Personnel needed',
     },
 
     'task-length': {
@@ -78,7 +80,7 @@ module.exports = {
       'id': 'task-length',
       'type': 'task-length',
       'name': 'Deadline',
-      'plural': 'Deadline'
+      'plural': 'Deadline',
     },
 
     'task-time-estimate': {
@@ -87,8 +89,8 @@ module.exports = {
       'id': 'task-time-estimate',
       'type': 'task-time-estimate',
       'name': 'Estimated Time Required',
-      'plural': 'Estimated Time Required'
-    }
+      'plural': 'Estimated Time Required',
+    },
 
   },
 
@@ -99,5 +101,5 @@ module.exports = {
   profiles  : ['skill', 'topic', 'agency', 'location'],
 
   task      : ['skill', 'topic', 'location', 'task-people', 'task-time-estimate', 'task-time-required', 'task-length'],
-  tasks     : ['skill', 'topic', 'agency', 'location', 'task-skills-required', 'task-time-required', 'task-people', 'task-length', 'task-time-estimate']
+  tasks     : ['skill', 'topic', 'agency', 'location', 'task-skills-required', 'task-time-required', 'task-people', 'task-length', 'task-time-estimate'],
 };

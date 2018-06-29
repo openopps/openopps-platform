@@ -93,4 +93,48 @@ router.get('/api/admin/tasks/*', auth.isAdminOrAgencyAdmin, async (ctx, next) =>
   ctx.body = await service.getAgencyTaskStateMetrics(ctx.params[0]);
 });
 
+router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
+    await service.getOwnerOptions(ctx.params.taskId, function (results, err) {
+      if (err) {
+        ctx.status = 400;
+        ctx.body = err;
+      } else {
+        ctx.status = 200;
+        ctx.body = results;
+      }
+    });
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.post('/api/admin/changeOwner', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.request.body.taskId)) {
+    await service.changeOwner(ctx.state.user, ctx.request.body, function (result, err) {
+      if (err) {
+        ctx.status = 400;
+        ctx.body = err;
+      } else {
+        ctx.status = 200;
+        ctx.body = result;
+      }
+    });
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.post('/api/admin/assign', auth.isAdmin, async (ctx, next) => {
+  await service.assignParticipant(ctx.state.user, ctx.request.body, function (result, err) {
+    if (err) {
+      ctx.status = 400;
+      ctx.body = err;
+    } else {
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  });
+});
+
 module.exports = router.routes();

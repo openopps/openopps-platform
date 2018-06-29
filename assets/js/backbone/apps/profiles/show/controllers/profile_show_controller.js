@@ -39,16 +39,14 @@ var Profile = BaseController.extend({
     if (this.settingsView) { this.settingsView.cleanup(); }
     if (this.profileResetView) { this.profileResetView.cleanup(); }
     // If the action does not require the profile model, display that action
-    if (this.routeId == 'reset') {
+    if (this.routeId == 'reset' || this.routeId == 'register') {
       this.profileResetView = new ProfileResetView({
         el: this.$el,
         routeId: this.routeId,
         action: this.action,
         data: this.data,
       }).render();
-    }
-    // otherwise load the profile model and display the appropriate view
-    else {
+    } else { // otherwise load the profile model and display the appropriate view
       this.initializeProfileModelInstance();
     }
   },

@@ -3,7 +3,7 @@ var dao = require('postgres-gen-dao');
 
 const tagByType = 'select @tagentity.* from @tagentity tagentity where tagentity.type = ?';
 
-const userByName = 'select midas_user.id, midas_user.name, midas_user.title from midas_user where LOWER(name) like ?';
+const userByName = 'select midas_user.id, midas_user.name, midas_user.title from midas_user where disabled = false and LOWER(name) like ?';
 
 const options = {
   tagByType: {

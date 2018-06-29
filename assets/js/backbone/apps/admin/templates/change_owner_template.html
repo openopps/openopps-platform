@@ -1,0 +1,13 @@
+<div class="title-change-owner">
+    <div class="form-group required-input">
+        <label for="task-change-owner" class="no-margin-top">Select a new owner for <strong><%- title %></strong>.</label>
+        <div class="field-validation-error error-empty" style="display:none;">You must select a new owner</div>
+        <select id="task-change-owner" class="dropdown validate" data-validate="empty" data-taskid="<%- taskId %>">
+            <option></option>
+            <% _.each(users, function (user) { %>
+                <option value=<%- user.id %>><%- user.name %></option>
+            <% }); %>
+        </select>
+    </div>
+  </div>
+  

@@ -15,7 +15,6 @@ var TaskEditFormView = Backbone.View.extend({
 
   events: {
     'blur .validate'                   : 'validateField',
-    'keyup .validate'                  : 'validateField',
     'change .validate'                 : 'validateField',
     'click #change-owner'              : 'displayChangeOwner',
     'click #add-participant'           : 'displayAddParticipant',
@@ -136,6 +135,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.toggleTimeOptions();
     this.toggleLocationOptions();
     this.toggleCareerField();
+    $('#search-results-loading').hide();
   },
 
   initializeSelect2: function () {
@@ -148,45 +148,6 @@ var TaskEditFormView = Backbone.View.extend({
       }
       return formatted;
     };
-
-    this.$('#owner').select2({
-      placeholder: 'task owner',
-      multiple: false,
-      formatResult: formatResult,
-      formatSelection: formatResult,
-      allowClear: false,
-      ajax: {
-        url: '/api/ac/user',
-        dataType: 'json',
-        data: function (term) {
-          return { q: term };
-        },
-        results: function (data) {
-          return { results: data };
-        },
-      },
-    });
-    if (this.data.data.owner) {
-      this.$('#owner').select2('data', this.data.data.owner);
-    }
-
-    this.$('#participant').select2({
-      placeholder: 'Add participant',
-      multiple: false,
-      formatResult: formatResult,
-      formatSelection: formatResult,
-      allowClear: false,
-      ajax: {
-        url: '/api/ac/user',
-        dataType: 'json',
-        data: function (term) {
-          return { q: term };
-        },
-        results: function (data) {
-          return { results: data };
-        },
-      },
-    });
 
     this.tagFactory.createTagDropDown({
       type: 'series',
@@ -205,6 +166,8 @@ var TaskEditFormView = Backbone.View.extend({
       width: '100%',
       tokenSeparators: [','],
       data: this.data['madlibTags'].skill,
+      maximumSelectionSize: 5,
+      maximumInputLength: 35,
     });
 
     this.tagFactory.createTagDropDown({
@@ -217,8 +180,11 @@ var TaskEditFormView = Backbone.View.extend({
     this.tagFactory.createTagDropDown({
       type: 'keywords',
       selector: '#task_tag_keywords',
+      placeholder: 'Start typing to select a keyword',
       width: '100%',
       data: this.data['madlibTags'].keywords,
+      maximumSelectionSize: 5,
+      maximumInputLength: 35,
     });
 
     $('#opportunity-career-field').select2({
@@ -327,7 +293,7 @@ var TaskEditFormView = Backbone.View.extend({
         modelData.state = 'submitted';
         modelData.acceptingApplicants = true;
       }
-
+      this.cleanup();
       this.options.model.trigger( modelData.id ? 'task:update' : 'task:save', modelData );
     });
   },
@@ -500,11 +466,11 @@ var TaskEditFormView = Backbone.View.extend({
         $('#task-restrict-agency')[0].checked = true;
         break;
     }
-    if(target.id != 'full-time' && $('#task-restrict-agency').attr('disabled')) {
+    if(e && target.id != 'full-time' && $('#task-restrict-agency').attr('disabled')) {
       $('#task-restrict-agency')[0].checked = false;
     }
     $('#task-restrict-agency').attr('disabled', target.id == 'full-time');
-    $('#task-restrict-agency').siblings('label').attr('title', (target.id == 'full-time') ? 'Required for full time detail' : '')
+    $('#task-restrict-agency').siblings('label').attr('title', (target.id == 'full-time') ? 'Required for full time detail' : '');
   },
 
   toggleLocationOptions: function (e) {

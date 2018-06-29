@@ -214,6 +214,7 @@ $color-completed: $color-primary-alt;
   color: $color-base;
   text-align: center;
   font-weight: bold;
+  display: block;
 
   &.status-draft {
     background-color: $color-gray-dark;

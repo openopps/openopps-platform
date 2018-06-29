@@ -21,13 +21,17 @@ router.get('/api/user/:id', auth, async (ctx, next) => {
     ctx.body = await service.populateBadgeDescriptions(ctx.state.user);
   } else {
     var profile = await service.getProfile(ctx.params.id);
-    profile.canEditProfile = await service.canAdministerAccount(ctx.state.user, ctx.params);
-    ctx.body = profile;
+    if(profile) {
+      profile.canEditProfile = await service.canAdministerAccount(ctx.state.user, ctx.params);
+      ctx.body = profile;
+    } else {
+      ctx.status = 404;
+    }
   }
 });
 
 router.get('/api/user/username/:username', async (ctx, next) => {
-  if (!ctx.params.username || !validator.isEmail(ctx.params.username)) {
+  if (!ctx.params.username || !validator.isEmail(ctx.params.username) || !validGovtEmail(ctx.params.username)) {
     return ctx.body = true;
   }
   log.info('looking up username', ctx.params.username);

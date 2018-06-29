@@ -27,7 +27,7 @@ var AdminAgenciesView = Backbone.View.extend({
       url: '/api/admin/agency/' + this.data.agency.id,
       dataType: 'json',
       success: function (agencyInfo) {
-        agencyInfo.slug = agencyInfo.data.abbr.toLowerCase();
+        agencyInfo.slug = (agencyInfo.data.abbr || '').toLowerCase();
         agencyInfo.data.domain = agencyInfo.data.domain;
         var template = _.template(AdminAgenciesTemplate, {
           variable: 'agency',
@@ -36,14 +36,14 @@ var AdminAgenciesView = Backbone.View.extend({
       },
     });
 
-    Backbone.history.navigate('/admin/agencies/' + this.data.agency.slug, { replace: replace });
+    Backbone.history.navigate('/admin/agencies/' + this.data.agency.id, { replace: replace });
     return this;
   },
 
   link: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    this.adminMainView.routeTarget(t.data('target'), this.data.agency.slug);
+    this.adminMainView.routeTarget(t.data('target'), this.data.agency.id);
   },
 
   cleanup: function () {

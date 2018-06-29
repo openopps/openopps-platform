@@ -11,6 +11,7 @@
     <div class="usajobs-search-filters__container" id="filters-container">
         <a href="https://usajobs.github.io/openopps-help/opportunity/search/" class="usajobs-opop-section__help" target="_blank">
         <span class="fas fa-question-circle" title="Help"></span> Help
+        <span class="sr-only">Opens in a new window</span>
         </a>
         <h3>Filters</h3>
         <h4 class="usajobs-search-filters__title">Status</h4>
@@ -97,12 +98,12 @@
             </li>
         </ul>
 
-        <% if (agencyName) { %>
+        <% if (!_.isEmpty(userAgency)) { %>
             <h4 class="usajobs-search-filters__title agency">Agency</h4>
             <ul id="agencyFilters" class="usa-unstyled-list">
                 <li>
                     <input id="js-restrict-task-filter" class="restrict-participation" type="checkbox" name="restrict" value="restrict" <% if (!_.isEmpty(agency.data)) { %>checked<% } %>/>
-                    <label for="js-restrict-task-filter">Restrict to <%- agencyName %></label>
+                    <label for="js-restrict-task-filter">Participation limited to <%- (userAgency.abbr) ? userAgency.parentAbbr ? userAgency.parentAbbr : userAgency.abbr : userAgency.name %> employees</label>
                 </li>
             </ul>
         <% } %>

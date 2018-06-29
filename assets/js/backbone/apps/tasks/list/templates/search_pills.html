@@ -48,7 +48,7 @@
     <% if(!_.isEmpty(agency.data)) { %>
       <li class="usajobs-search-pills__item" data-type="agency" data-value="" data-behavior="search-pills.remove">
         <a class="usajobs-search-pills__pill" title="Remove restrict agency filter" tabindex="0">
-          <span class="search-pill-name">Restrict to <%- agency.data.name %></span>
+          <span class="search-pill-name">Participation limited to <%- agency.data.abbr ? agency.data.parentAbbr ? agency.data.parentAbbr : agency.data.abbr : agency.data.name %> employees</span>
           <span class="usajobs-search-pills__remove-icon">
             <span class="fas fa-times" title="Remove filter"></span>
           </span>

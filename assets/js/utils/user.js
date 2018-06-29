@@ -18,7 +18,10 @@ var User = function () {
     if (this.name) {
       var name = this.name;
       var nameSplit = name.split(' ');
-      this.initials = nameSplit[0].charAt(0).toUpperCase() + nameSplit[1].charAt(0).toUpperCase();
+      this.initials = nameSplit[0].charAt(0).toUpperCase();
+      if(nameSplit[1]) {
+        this.initials += nameSplit[1].charAt(0).toUpperCase();
+      }
     }
   }
 
@@ -34,8 +37,9 @@ var User = function () {
         id: agencyTag.id,
         name: agencyTag.name,
         abbr: agencyTag.data ? agencyTag.data.abbr : '',
-        domain: agencyTag.data ? agencyTag.data.domain[0] : '',
-        slug: agencyTag.data ? agencyTag.data.abbr.toLowerCase() : '',
+        parentAbbr: agencyTag.data ? agencyTag.data.parentAbbr : undefined,
+        domain: agencyTag.data ? _.isArray(agencyTag.data.domain) ? agencyTag.data.domain[0] : agencyTag.data.domain : '',
+        slug: agencyTag.data && agencyTag.data.abbr ? agencyTag.data.abbr.toLowerCase() : '',
         allowRestrictAgency: agencyTag.data ? agencyTag.data.allowRestrictAgency : false,
       };
     },
