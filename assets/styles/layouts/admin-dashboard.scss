@@ -6,7 +6,6 @@
   max-width: 154rem;
   min-height: 84rem;
   margin: auto;
-  margin-top: 3rem;
   background: #ffffff;
   padding: 1rem 3rem 3rem 3rem;
 
@@ -21,6 +20,11 @@
 
   .box-icon-text {
     margin-left: 0.5rem;
+    a {
+      text-decoration: underline;
+      font-size: $base-font-size;
+      font-weight: $font-normal;
+    }
   }
 
   .overflow-x {

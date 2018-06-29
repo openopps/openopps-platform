@@ -26,7 +26,7 @@
   &__body {
     @include outer-container();
     max-width: $site-max-width;
-    // border-bottom: 1px solid $color-gray-light;
+    border-bottom: 1px solid $color-gray-light;
 
     a {
       // Another override of the base styles just to be certain we don't have
