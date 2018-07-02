@@ -1,0 +1,29 @@
+<div class="usajobs-grid usa-grid-example usajobs-grid-text">
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/users" class="">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Active users: <%- users.count %></li>
+      <li>Admins: <%- users.count %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks" class="">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total created: <%- tasks.count %></li>
+      <li>Submitted: <%- tasks.submitted %></li>
+      <li>Open: <%- tasks.open %></li>
+      <li>Not open: <%- tasks.notOpen %></li>
+      <li>In progress: <%- tasks.assigned %></li>
+      <li>Completed: <%- tasks.completed %></li>
+      <li>Canceled: <%- tasks.archived %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions <a href=# class="">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Applicants: <%- interactions.signups %></li>
+        <li>Assigned participants: <%- interactions.assignments %></li>
+        <li>Discussion posts: <%- interactions.posts %></li>
+    </ul>
+  </div>
+</div>

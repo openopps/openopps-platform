@@ -7,14 +7,12 @@ var LoginConfig = require('../../../config/login.json');
 var marked = require('marked');
 
 // templates
-var AdminDashboardTemplate = require('../templates/admin_dashboard_template.html');
+var AdminCommunityTemplate = require('../templates/admin_community_template.html');
 var AdminSummaryTemplate = require('../templates/admin_summary_template.html');
 var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.html');
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
 
-var AdminAnnouncementView = require('./admin_announcement_view');
-
-var AdminDashboardView = Backbone.View.extend({
+var AdminCommunityView = Backbone.View.extend({
 
   events: {
     'change .group': 'renderTasks',
@@ -30,7 +28,7 @@ var AdminDashboardView = Backbone.View.extend({
 
   render: function (replace) {
     var self = this;
-    Backbone.history.navigate('/admin/sitewide', { replace: replace });
+    Backbone.history.navigate('/admin/community', { replace: replace });
     this.$el.show();
     if (this.rendered === true) {
       return this;
@@ -39,7 +37,7 @@ var AdminDashboardView = Backbone.View.extend({
       user: window.cache.currentUser,
       login: LoginConfig,
     };
-    var template = _.template(AdminDashboardTemplate)(data);
+    var template = _.template(AdminCommunityTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
@@ -127,20 +125,6 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.spinner').hide();
     self.$('.activity-block').show();
     self.renderTasks(self, this.data);
-    self.renderAdminAnnouncement();
-  },
-
-  
-  renderAdminAnnouncement: function () {
-    if (this.adminAnnouncementView) {
-      this.adminAnnouncementView.cleanup();
-    }
-    this.adminAnnouncementView = new AdminAnnouncementView({
-      el: '#manage-announcement',
-      agencyId: this.options.agencyId,
-      adminMainView: this,
-    });
-    this.adminAnnouncementView.render();
   },
 
   fetchData: function (self, data) {
@@ -174,6 +158,7 @@ var AdminDashboardView = Backbone.View.extend({
   cleanup: function () {
     removeView(this);
   },
+
 });
 
-module.exports = AdminDashboardView;
+module.exports = AdminCommunityView;

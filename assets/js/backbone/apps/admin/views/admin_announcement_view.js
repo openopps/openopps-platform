@@ -35,7 +35,7 @@ var AdminAnnouncementView = Backbone.View.extend({
       }.bind(this),
     });
     
-    Backbone.history.navigate('/admin/announcement', { replace: replace });
+    // Backbone.history.navigate('/admin/announcement', { replace: replace });
 
     return this;
   },
