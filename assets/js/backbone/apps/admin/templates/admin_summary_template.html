@@ -9,13 +9,13 @@
   <div class="usa-width-one-third">
     <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
-      <li>Total created: <%- tasks.count %></li>
+      <li>Total created: <%- tasks.totalCreated %></li>
       <li>Submitted: <%- tasks.submitted %></li>
-      <li>Open: <%- tasks.open %></li>
+      <li>Open: <%- tasks.totalOpen %></li>
       <li>Not open: <%- tasks.notOpen %></li>
-      <li>In progress: <%- tasks.assigned %></li>
+      <li>In progress: <%- tasks.totalInProgress %></li>
       <li>Completed: <%- tasks.completed %></li>
-      <li>Canceled: <%- tasks.archived %></li>
+      <li>Canceled: <%- tasks.canceled %></li>
     </ul>
   </div>
   <div class="usa-width-one-third">

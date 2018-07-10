@@ -22,6 +22,7 @@ async function getTaskStateMetrics () {
   states.open = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'open', dao.options.task));
   states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'not open', dao.options.task));
   states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'submitted', dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'canceled', dao.options.task));
 
   return states;
 }
@@ -35,6 +36,8 @@ async function getAgencyTaskStateMetrics (agencyId) {
   states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'open', agency.name.toLowerCase(), dao.options.task));
   states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'not open', agency.name.toLowerCase(), dao.options.task));
   states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'submitted', agency.name.toLowerCase(), dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'canceled', agency.name.toLowerCase(), dao.options.task));
+
 
   return states;
 }
@@ -201,24 +204,33 @@ async function getTaskMetrics () {
   tasks.count = +temp.rows[0].count;
 
   taskStates = (await dao.Task.db.query(dao.query.taskStateQuery)).rows;
-  tasks.archived = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'archived' ) ? count + 1 : count;
+  tasks.inProgress = taskStates.reduce( function ( count, task ) {
+    return ( task.state == 'in progress' ) ? count + 1 : count;
   }, 0 );
 
-  tasks.assigned = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'assigned' ) ? count + 1 : count;
+  taskStates = (await dao.Task.db.query(dao.query.taskStateQuery)).rows;
+  tasks.canceled = taskStates.reduce( function ( count, task ) {
+    return ( task.state == 'canceled' ) ? count + 1 : count;
   }, 0 );
+
+  // tasks.assigned = taskStates.reduce( function ( count, task ) {
+  //   return ( task.state == 'assigned' ) ? count + 1 : count;
+  // }, 0 );
 
   tasks.completed = taskStates.reduce( function ( count, task ) {
     return ( task.state == 'completed' ) ? count + 1 : count;
   }, 0 );
 
-  tasks.draft = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'draft' ) ? count + 1 : count;
-  }, 0 );
+  // tasks.draft = taskStates.reduce( function ( count, task ) {
+  //   return ( task.state == 'draft' ) ? count + 1 : count;
+  // }, 0 );
 
   tasks.open = taskStates.reduce( function ( count, task ) {
     return ( task.state == 'open' ) ? count + 1 : count;
+  }, 0 );
+
+  tasks.notOpen = taskStates.reduce( function ( count, task ) {
+    return ( task.state == 'not open' ) ? count + 1 : count;
   }, 0 );
 
   tasks.submitted = taskStates.reduce( function ( count, task ) {
@@ -227,6 +239,9 @@ async function getTaskMetrics () {
 
   temp = await dao.Task.db.query(dao.query.volunteerQuery, 'withVolunteers');
   tasks.withVolunteers = +temp.rows[0].count;
+  tasks.totalCreated = tasks.inProgress + tasks.submitted + tasks.open + tasks.notOpen + tasks.completed + tasks.canceled;
+  tasks.totalOpen = tasks.inProgress - tasks.notOpen;
+  tasks.totalInProgress = tasks.inProgress - tasks.open;
 
   return tasks;
 }
@@ -250,7 +265,7 @@ async function getUserTaskMetrics (result) {
     participantTaskStates = (await dao.Task.db.query(await dao.query.participantTaskState, result.users[i].id)).rows;
 
     result.users[i].tasksCreatedArchived = taskStates.reduce( function ( count, task ) {
-      return ( task.state == 'archived' ) ? count + 1 : count;
+      return ( task.state == 'canceled' ) ? count + 1 : count;
     }, 0 );
 
     result.users[i].tasksCreatedAssigned = taskStates.reduce( function ( count, task ) {

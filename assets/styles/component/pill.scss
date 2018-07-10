@@ -228,6 +228,12 @@ $color-completed: $color-primary-alt;
     color: $color-white;
   }
 
+  &.status-not-open {
+    background-color: $color-gray-light;
+    border-color: $color-gray-light;
+    color: $color-base;
+  }
+
   &.status-submitted {
     background-color: $color-primary-alt-darkest;
     border-color:  $color-primary-alt-darkest;

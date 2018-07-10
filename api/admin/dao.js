@@ -161,7 +161,7 @@ const options = {
       volunteers: [],
     },
     exclude: {
-      task: [ 'projectId', 'description', 'userId', 'createdAt', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
+      task: [ 'projectId', 'description', 'userId', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
         'completedAt', 'completedBy', 'submittedAt', 'restrict' ],
       owner: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],

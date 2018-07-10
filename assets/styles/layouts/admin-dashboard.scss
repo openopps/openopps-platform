@@ -153,18 +153,28 @@
   .task-table {
 
     width: 100%;
-
-    .metrics-table__label {
-      min-width: 15rem;
+    
+    th.center {
+      text-align: center;
     }
 
-    .metrics-table__button {
-      min-width: 10rem;
+    .metrics-table {
+      &__title {
+        padding-left: 0;
+      }
+
+      &__label {
+        min-width: 15rem;
+      }
+
+      &__button, &__date {
+        min-width: 10rem;
+        text-align: center;
+      }
     }
 
     .task-open {
       color: #487E40;
-      margin-right: $size-M;
     }
 
     .delete-task {

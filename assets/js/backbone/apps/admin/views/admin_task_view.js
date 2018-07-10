@@ -10,7 +10,7 @@ var AdminTaskView = Backbone.View.extend({
   events: {
     'click .delete-task'            : 'deleteTask',
     'click .task-open'              : 'openTask',
-    'click input[type="checkbox"]'  : 'filterChanged',
+    'click input[type="radio"]'     : 'filterChanged',
   },
 
   initialize: function (options) {
@@ -52,7 +52,7 @@ var AdminTaskView = Backbone.View.extend({
 
   renderTasks: function (tasks) {
     var data = { tasks: [] };
-    $('.filter-ckbx:checked').each(function (index, item) {
+    $('.filter-radio:checked').each(function (index, item) {
       data.tasks = data.tasks.concat(tasks[item.id]);
     });
     var template = _.template(AdminTaskTable)(data);
