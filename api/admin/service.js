@@ -16,13 +16,13 @@ async function getMetrics () {
 
 async function getTaskStateMetrics () {
   var states = {};
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'in progress', dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'completed', dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'draft', dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'open', dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'not open', dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'submitted', dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery, 'canceled', dao.options.task));
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'completed'", dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'draft'", dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'not open'", dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'submitted'", dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'canceled'", dao.options.task));
 
   return states;
 }
@@ -198,63 +198,14 @@ async function getUsersForAgencyFiltered (q, agency) {
 }
 
 async function getTaskMetrics () {
-  var tasks = {};
-  var taskStates = [];
-  var temp = await dao.Task.db.query(dao.query.taskQuery);
-  tasks.count = +temp.rows[0].count;
-
-  taskStates = (await dao.Task.db.query(dao.query.taskStateQuery)).rows;
-  tasks.inProgress = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'in progress' ) ? count + 1 : count;
-  }, 0 );
-
-  taskStates = (await dao.Task.db.query(dao.query.taskStateQuery)).rows;
-  tasks.canceled = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'canceled' ) ? count + 1 : count;
-  }, 0 );
-
-  // tasks.assigned = taskStates.reduce( function ( count, task ) {
-  //   return ( task.state == 'assigned' ) ? count + 1 : count;
-  // }, 0 );
-
-  tasks.completed = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'completed' ) ? count + 1 : count;
-  }, 0 );
-
-  // tasks.draft = taskStates.reduce( function ( count, task ) {
-  //   return ( task.state == 'draft' ) ? count + 1 : count;
-  // }, 0 );
-
-  tasks.open = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'open' ) ? count + 1 : count;
-  }, 0 );
-
-  tasks.notOpen = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'not open' ) ? count + 1 : count;
-  }, 0 );
-
-  tasks.submitted = taskStates.reduce( function ( count, task ) {
-    return ( task.state == 'submitted' ) ? count + 1 : count;
-  }, 0 );
-
-  temp = await dao.Task.db.query(dao.query.volunteerQuery, 'withVolunteers');
-  tasks.withVolunteers = +temp.rows[0].count;
-  tasks.totalCreated = tasks.inProgress + tasks.submitted + tasks.open + tasks.notOpen + tasks.completed + tasks.canceled;
-  tasks.totalOpen = tasks.inProgress - tasks.notOpen;
-  tasks.totalInProgress = tasks.inProgress - tasks.open;
-
+  var tasks = (await dao.Task.db.query(dao.query.taskStateQuery)).rows[0];
+  tasks.totalCreated = Object.values(tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  tasks.withVolunteers = (await dao.Task.db.query(dao.query.volunteerQuery, 'withVolunteers')).rows[0].count;
   return tasks;
 }
 
 async function getUserMetrics () {
-  var users = {};
-  var temp = await dao.Task.db.query(dao.query.userQuery, 'f');
-  users.count = temp.rows[0].count;
-
-  temp = await dao.Task.db.query(dao.query.withTasksQuery);
-  users.withTasks = temp.rows[0].count;
-
-  return users;
+  return (await dao.User.db.query(dao.query.userQuery)).rows[0];
 }
 
 async function getUserTaskMetrics (result) {
