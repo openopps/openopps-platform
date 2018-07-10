@@ -29,7 +29,7 @@ $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 // TODO: maybe this shouldn't be global vvv
 require('blueimp-file-upload/js/vendor/jquery.ui.widget');
 window.moment = require('moment');
-
+window.numeral = require('numeral');
 
 // Set markdown defaults
 var marked = require('marked');

@@ -66,6 +66,7 @@
     "nodemailer": "^4.4.2",
     "nodemailer-smtp-pool": "^2.8.3",
     "nodemailer-smtp-transport": "^2.7.4",
+    "numeral": "^2.0.6",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
