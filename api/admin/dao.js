@@ -15,6 +15,7 @@ const taskStateQuery = 'select ' +
 const volunteerQuery = 'select count(*) as count from task where exists (select 1 from volunteer where task.id = volunteer."taskId") ';
 
 const userQuery = 'select ' +
+  'count(*) as "total", ' +
   'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
   'sum(case when "isAdmin" then 1 else 0 end) as "admins" ' +
   'from midas_user';
