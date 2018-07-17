@@ -207,10 +207,10 @@ $color-completed: $color-primary-alt;
 .usajobs-pill--opportunity-status {
   margin-bottom: $size-S;
   padding: 0 $size-S;
-  width: 12rem;
+  max-width: 12rem;
   background-color: $color-gray-light;
   border: 1px solid $color-gray-light;
-  border-radius: rem(11.5px);
+  border-radius: 1.15rem;
   color: $color-base;
   text-align: center;
   font-weight: bold;
