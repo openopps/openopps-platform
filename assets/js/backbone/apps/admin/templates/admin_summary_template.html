@@ -2,8 +2,9 @@
   <div class="usa-width-one-third">
     <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/users" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
-      <li>Active users: <%- users.count %></li>
-      <li>Admins: <%- users.count %></li>
+      <li>Total users: <%- numeral(users.total).format('0,0') %></li>
+      <li>Active users: <%- numeral(users.active).format('0,0') %></li>
+      <li>Admins: <%- numeral(users.admins).format('0,0') %></li>
     </ul>
   </div>
   <div class="usa-width-one-third">
@@ -11,9 +12,9 @@
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- tasks.totalCreated %></li>
       <li>Submitted: <%- tasks.submitted %></li>
-      <li>Open: <%- tasks.totalOpen %></li>
+      <li>Open: <%- tasks.open %></li>
       <li>Not open: <%- tasks.notOpen %></li>
-      <li>In progress: <%- tasks.totalInProgress %></li>
+      <li>In progress: <%- tasks.inProgress %></li>
       <li>Completed: <%- tasks.completed %></li>
       <li>Canceled: <%- tasks.canceled %></li>
     </ul>

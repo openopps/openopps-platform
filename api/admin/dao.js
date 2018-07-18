@@ -3,11 +3,22 @@ const dao = require('postgres-gen-dao');
 
 const taskQuery = 'select count(*) as count from task ';
 
-const taskStateQuery = 'select state from task ';
+const taskStateQuery = 'select ' +
+  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
+  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
+  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
+  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
+  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
+  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
+  'from task';
 
 const volunteerQuery = 'select count(*) as count from task where exists (select 1 from volunteer where task.id = volunteer."taskId") ';
 
-const userQuery = 'select count(*) from midas_user where disabled = ? ';
+const userQuery = 'select ' +
+  'count(*) as "total", ' +
+  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
+  'sum(case when "isAdmin" then 1 else 0 end) as "admins" ' +
+  'from midas_user';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
 
@@ -75,7 +86,7 @@ const taskStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'where task.state = ? ';
+  'where ';
 
 const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
