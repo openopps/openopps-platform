@@ -34,6 +34,9 @@ var AdminTaskView = Backbone.View.extend({
     if (this.options.agencyId) url = url + '/' + this.options.agencyId;
     Backbone.history.navigate(url);
 
+    var s = '[data-target=sitewide]';
+    $(s).addClass('is-active');
+
     $.ajax({
       url: '/api' + url,
       data: this.data,
@@ -56,11 +59,22 @@ var AdminTaskView = Backbone.View.extend({
       data.tasks = data.tasks.concat(tasks[item.id]);
     });
     var template = _.template(AdminTaskTable)(data);
-    self.$('#task-table').html(template);
+    this.$('#task-table').html(template);
   },
 
   filterChanged: function () {
     this.renderTasks(this.tasks);
+    var t = $('input[name=opp-status]:checked').val(); 
+    if (t == 'completed' || t == 'submitted') {
+      $('[data-target=change-add]').addClass('hide');
+      $('[data-target=publish-delete]').removeClass('hide');
+    } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {
+      $('[data-target=change-add]').removeClass('hide');
+      $('[data-target=publish-delete]').addClass('hide');
+    } else if (t == 'canceled') {
+      $('[data-target=change-add]').addClass('hide');
+      $('[data-target=publish-delete]').addClass('hide');
+    }
   },
 
   collectEventData: function (event) {

@@ -51,18 +51,6 @@
     }
 }
 
-// @media screen and (min-width: $XXXL-screen) {
-//   .tips-left {
-//     background-color: #e1f3f8;
-//     padding: 2rem;
-//     margin-top: 0;
-//     margin-right: 1.5rem;
-//     width: 32rem;
-//     left: calc(100% + 6rem);
-//     position: absolute;
-//   }
-// }
-
 .usa-form-xl, .usa-form-xl label {
     max-width: 56rem;
 }
@@ -105,10 +93,15 @@
     li,  li > label {
       margin-top: $size-XS;
       margin-bottom: $size-XS;
+
+      &::before {
+        margin-bottom: 2px;
+      }      
+
       span.usajobs-pill--opportunity-status  {
-        width: 12rem;
-        padding: 0 1rem;
         margin-right: $size-XS;
+        border-radius: 1.3rem;
+        width: 12rem;
         display: inline-block;
       }
     }
@@ -179,8 +172,6 @@ button.opportunity-options__button {
   border: 1px solid $color-gray-lightest;
   @include boxShadow(1);
   color: $color-green-light;
-  // display: flex;
-  // flex-direction: column;
   padding: 0 $size-SM $size-S $size-SM;
   float: left;
   margin: 0 $size-default $size-default 0;
