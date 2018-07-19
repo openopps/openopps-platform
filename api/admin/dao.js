@@ -12,6 +12,15 @@ const taskStateQuery = 'select ' +
   'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
   'from task';
 
+const agencyTaskStateQuery = 'select ' +
+  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
+  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
+  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
+  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
+  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
+  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
+  'from task where lower(restrict->>\'name\') = ?';
+
 const volunteerQuery = 'select count(*) as count from task where exists (select 1 from volunteer where task.id = volunteer."taskId") ';
 
 const userQuery = 'select ' +
@@ -19,6 +28,15 @@ const userQuery = 'select ' +
   'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
   'sum(case when "isAdmin" then 1 else 0 end) as "admins" ' +
   'from midas_user';
+
+const agencyUsersQuery = 'select ' +
+  'count(*) as "total", ' +
+  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
+  'sum(case when "isAgencyAdmin" then 1 else 0 end) as "admins" ' +
+  'from midas_user ' + 
+  'join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
+  'join tagentity tag on tags.tagentity_users = tag.id ' +
+  'where tag.type = \'agency\' and tag.id = ?';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
 
@@ -92,7 +110,7 @@ const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  "where task.state = ? and lower(restrict->>'name') = ? ";
+  "where lower(restrict->>'name') = ? and ";
 
 const activityQuery = 'select comment."createdAt", comment.id, ' + "'comment' as type " + '' +
   'from midas_user ' +
@@ -229,8 +247,10 @@ module.exports = function (db) {
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
+      agencyTaskStateQuery: agencyTaskStateQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
+      agencyUsersQuery: agencyUsersQuery,
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,

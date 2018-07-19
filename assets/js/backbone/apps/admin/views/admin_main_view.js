@@ -69,48 +69,38 @@ var AdminMainView = Backbone.View.extend({
     
     this.initializeNavSecondaryView();
 
-    if (target == 'users') {
-      if (!this.adminUserView) {
+    this.hideOthers();
+    switch (target) {
+      case 'users':
         this.initializeAdminUserView(agencyId);
-      }
-      this.hideOthers();
-      this.adminUserView.render();
-    } else if (target == 'tag') {
-      if (!this.adminTagView) {
+        this.adminUserView.render();
+        break;
+      case 'tag':
         this.initializeAdminTagView();
-      }
-      this.hideOthers();
-      this.adminTagView.render();
-    } else if (target == 'tasks') {
-      if (!this.adminTaskView) {
+        this.adminTagView.render();
+        break;
+      case 'tasks':
         this.initializeAdminTaskView(agencyId);
-      }
-      this.hideOthers();
-      this.adminTaskView.render();
-    } else if (target == 'agencies') {
-      if (!this.adminAgenciesView) {
-        this.initializeAdminAgenciesView();
-      }
-      this.hideOthers();
-      this.adminAgenciesView.render(replace);
-    } else if (target == 'participants') {
-      if (!this.adminParticipantsView) {
+        this.adminTaskView.render();
+        break;
+      case 'agencies':
+        this.initializeAdminAgenciesView(agencyId);
+        this.adminAgenciesView.render(replace);
+        break;
+      case 'participants':
         this.initializeAdminParticipantsView();
-      }
-      this.hideOthers();
-      this.adminParticipantsView.render();
-    } else if (target == 'sitewide') {
-      if (!this.adminDashboardView) {
+        this.adminParticipantsView.render();
+        break;
+      case 'sitewide':
         this.initializeAdminDashboardView();
-      }
-      this.hideOthers();
-      this.adminDashboardView.render(replace);
-    } else if (target == 'community') {
-      if (!this.adminCommunityView) {
+        this.adminDashboardView.render(replace);
+        break;
+      case 'community':
         this.initializeAdminCommunityView();
-      }
-      this.hideOthers();
-      this.adminCommunityView.render(replace);
+        this.adminCommunityView.render(replace);
+        break;
+      default:
+        break;
     }
   },
 

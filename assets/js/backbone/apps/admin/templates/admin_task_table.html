@@ -16,7 +16,7 @@
         <td colspan="5">No tasks</td>
       </tr>
     <% } %>
-    <% _.each(tasks, function (task) { %>
+    <% _.each(_.sortBy(tasks, 'createdAt').reverse(), function (task) { %>
       <tr>
         <td class="metrics-table__title">
           <a href="/tasks/<%- task.id %>"><%- task.title %></a>

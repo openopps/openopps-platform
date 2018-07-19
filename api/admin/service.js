@@ -23,22 +23,19 @@ async function getTaskStateMetrics () {
   states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'not open'", dao.options.task));
   states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'submitted'", dao.options.task));
   states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'canceled'", dao.options.task));
-
   return states;
 }
 
 async function getAgencyTaskStateMetrics (agencyId) {
   var states = {};
   var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'in progress', agency.name.toLowerCase(), dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'completed', agency.name.toLowerCase(), dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'draft', agency.name.toLowerCase(), dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'open', agency.name.toLowerCase(), dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'not open', agency.name.toLowerCase(), dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'submitted', agency.name.toLowerCase(), dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery, 'canceled', agency.name.toLowerCase(), dao.options.task));
-
-
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", agency.name.toLowerCase(), dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'completed'", agency.name.toLowerCase(), dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'draft'", agency.name.toLowerCase(), dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", agency.name.toLowerCase(), dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'not open'", agency.name.toLowerCase(), dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'submitted'", agency.name.toLowerCase(), dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'canceled'", agency.name.toLowerCase(), dao.options.task));
   return states;
 }
 
@@ -264,7 +261,11 @@ async function updateProfile (user, done) {
 }
 
 async function getAgency (id) {
-  return await dao.TagEntity.findOne('id = ?', id);
+  var agency = await dao.TagEntity.findOne('id = ?', id);
+  agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, agency.name.toLowerCase())).rows[0];
+  agency.tasks.totalCreated = Object.values(agency.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  agency.users = await (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
+  return agency;
 }
 
 async function canAdministerAccount (user, id) {

@@ -72,13 +72,9 @@
     }
   }
 
-  .agency-details {
-    p {
-      margin: 0.5rem 0rem;
-    }
-    a, a:visited {
-      color: #0071BA;
-    }
+  .admin-agency-name {
+    margin-top: 0;
+    margin-bottom: $size-M;
   }
 
   .user-filter {
