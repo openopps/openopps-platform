@@ -22,10 +22,10 @@
   <div class="usa-width-one-third">
     <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
     <ul class="usajobs-unstyled-list">
-        <li>Total applications: <%- interactions.signups %></li>
-        <li>Total assigned: <%- interactions.assignments %></li>
-        <li>Total completed: <%- interactions.completions %></li>
-        <li>Discussion posts: <%- interactions.posts %></li>
+        <li>Total applications: <%- numeral(interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(interactions.posts).format('0,0') %></li>
     </ul>
   </div>
 </div>
