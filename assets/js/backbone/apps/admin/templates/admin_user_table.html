@@ -1,21 +1,17 @@
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>
-      <th class="admin-user-id">#</th>
-      <th>Name</th>
+      <th class="admin-user-id">User #</th>
+      <th class="admin-table-name">Name</th>
       <th>Email</th>
-      <th>Created At</th>
-      <!-- <th><span data-i18n="ProjectPlural">Projects</span> (open / closed)</th> -->
-      <th><span data-i18n="TaskPlural">Tasks</span></th>
-      <th>Participant</th>
-      <th class="admin-user-checkbox">Enabled</th>
+      <th>Created</th>
+      <th class="admin-user-checkbox">Account<br />enabled</th>
       <% if (login.local.enabled === true) { %>
-        <th class="admin-user-checkbox">Reset<br/>Password</th>
+        <th class="admin-user-checkbox">Reset<br/>password</th>
       <% } %>
       <% if (user.isAdmin) { %>
-        <th class="admin-user-checkbox">Admin</th>
+        <th>Admin</th>
       <% } %>
-      <th class="admin-user-checkbox">Agency<br/>Admin</th>
     </tr>
   </thead>
   <tbody>
@@ -38,23 +34,7 @@
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
         </td>
         <td class="admin-table-createdat">
-          <!-- day -->
-          <% var created = new Date(u.createdAt); %>
-          <%- created.toLocaleDateString() %><br/>
-          <!-- time -->
-          <%- created.toLocaleTimeString() %>
-        </td>
-        <td class="admin-table-tasks">
-          <% if (u.tasksCreatedOpen > 0) { %>Open: <%- u.tasksCreatedOpen %><br/><% } %>
-          <% if (u.tasksCreatedAssigned > 0) { %>Assigned: <%- u.tasksCreatedAssigned %><br/><% } %>
-          <% if (u.tasksCreatedCompleted > 0) { %>Completed: <%- u.tasksCreatedCompleted %><br/><% } %>
-          <% if (u.tasksCreatedArchived > 0) { %>Archived: <%- u.tasksCreatedArchived %><br/><% } %>
-        </td>
-        <td class="admin-table-volunteer">
-          <% if (u.volCountOpen > 0) { %>Open: <%- u.volCountOpen %><br/><% } %>
-          <% if (u.volCountAssigned > 0) { %>Assigned: <%- u.volCountAssigned %><br/><% } %>
-          <% if (u.volCountCompleted > 0) { %>Completed: <%- u.volCountCompleted %><br/><% } %>
-          <% if (u.volCountArchived > 0) { %>Archived: <%- u.volCountArchived %><br/><% } %>
+          <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>
         <td>
           <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
@@ -71,18 +51,11 @@
             <% } %>
           </td>
         <% } %>
-        <% if (user.isAdmin) { %>
-          <td>
-            <input class="user-admin" id="user-admin-<%- u.id %>" type="checkbox" data-action='admin' <% if (u.isAdmin) { %> checked <% } %> />
-            <label class="no-label" for="user-admin-<%- u.id %>"><span class="sr-only">Admin</span></label>
-            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
-          </td>
-        <% } %>
         <td>
-          <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
-            <input class="user-agency-admin" id="user-agency-admin-<%- u.id %>" type="checkbox" data-action='agencyAdmin' <% if (u.isAgencyAdmin) { %> checked <% } %> />
-            <label class="no-label" for="user-agency-admin-<%- u.id %>"><span class="sr-only">Agency Admin</span></label>
-            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          <% if (!user.isAdmin || (!user.isAgencyAdmin || !u.isAdmin)) { %>
+            <p><a href="#">Assign</a></p>
+          <% } else if (user.isAdmin || (user.isAgencyAdmin || u.isAdmin)) { %>
+            <p><a href="#">Assigned</a></p>
           <% } %>
         </td>
       </tr>
