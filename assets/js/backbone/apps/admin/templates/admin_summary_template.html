@@ -20,11 +20,12 @@
     </ul>
   </div>
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions <a href=# class="">Manage</a></span></h3>
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
     <ul class="usajobs-unstyled-list">
-        <li>Applicants: <%- interactions.signups %></li>
-        <li>Assigned participants: <%- interactions.assignments %></li>
-        <li>Discussion posts: <%- interactions.posts %></li>
+        <li>Total applications: <%- numeral(interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(interactions.posts).format('0,0') %></li>
     </ul>
   </div>
 </div>

@@ -39,7 +39,7 @@
             <%- moment(task.createdAt).format('MM/DD/YY') %>
         </td>
         <td class="metrics-table__button">
-          <% if (_.contains(['completed', 'submitted'], task.state.toLowerCase())) { %>
+          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
             <a href="#open/<%- task.id %>"
               data-task-id="<%- task.id %>"
               data-task-title="<%- task.title %>"
@@ -60,7 +60,7 @@
           <% } %>    
         </td>
         <td class="metrics-table__button">
-          <% if (_.contains(['completed', 'submitted'], task.state.toLowerCase())) { %>
+          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
             <a href="#delete/<%- task.id %>"
               data-task-id="<%- task.id %>"
               data-task-title="<%- task.title %>"
