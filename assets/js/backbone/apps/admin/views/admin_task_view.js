@@ -65,13 +65,13 @@ var AdminTaskView = Backbone.View.extend({
   filterChanged: function () {
     this.renderTasks(this.tasks);
     var t = $('input[name=opp-status]:checked').val(); 
-    if (t == 'completed' || t == 'submitted') {
+    if (t == 'submitted') {
       $('[data-target=change-add]').addClass('hide');
       $('[data-target=publish-delete]').removeClass('hide');
     } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {
       $('[data-target=change-add]').removeClass('hide');
       $('[data-target=publish-delete]').addClass('hide');
-    } else if (t == 'canceled') {
+    } else if (t == 'completed' || t == 'canceled') {
       $('[data-target=change-add]').addClass('hide');
       $('[data-target=publish-delete]').addClass('hide');
     }
