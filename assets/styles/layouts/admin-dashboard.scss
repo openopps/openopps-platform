@@ -77,6 +77,66 @@
     margin-bottom: $size-M;
   }
 
+  .back-link {
+    color: $color-primary;
+
+    .fa-chevron-circle-left {
+      margin-right: $size-base;
+    }
+  }
+
+  .admin-table-name {
+    padding-left: 0;
+  }
+
+  .user-enable[type=checkbox]:checked {
+    border: none;
+    height: auto;
+
+    + label::before {
+      background-color: transparent;
+      box-shadow: none;
+      display: inline-block;
+      height: 2.4rem;
+      width: 2.7rem;
+      background-image: url(../img/toggle-on-solid.svg);
+    }
+  }
+
+  .user-enable[type=checkbox] {
+    border: none;
+    height: auto;
+
+    + label::before {
+      background-color: transparent;
+      box-shadow: none;
+      display: inline-block;
+      height: 2.4rem;
+      width: 2.7rem;
+      background-image: url(../img/toggle-off-solid.svg);
+    }
+  }
+
+  .user-filter {
+
+    @include media($SM) {
+      input {
+        max-width: initial;
+        float: left;
+        width: calc(100% - 12.6rem);
+        border-right: 0;
+      }
+
+      .user-filter-search-button {
+        font-size: 2rem;
+        height: 4.4rem;
+        width: 11.6rem;
+        margin-top: 0.25rem;
+        border-radius: 0 5px 5px 0;
+      }
+    }
+  }
+
   .user-filter {
     input {
       max-width: initial;
@@ -93,6 +153,7 @@
 
   .user-table {
     width: 100%;
+    margin-top: 0;
 
     th {
       vertical-align: bottom;
