@@ -38,50 +38,61 @@
         <td class="metrics-table__date">
             <%- moment(task.createdAt).format('MM/DD/YY') %>
         </td>
-        <td class="metrics-table__button">
+        
           <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
-            <a href="#open/<%- task.id %>"
-              data-task-id="<%- task.id %>"
-              data-task-title="<%- task.title %>"
-              class="task-open"
-              alt="Publish Task"
-              title="Publish Task">
-              <span class='fa fa-check'></span>
-            </a>
-          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
-            <a href="#change-owner/<%- task.id %>"
-              data-task-id="<%- task.id %>"
-              data-task-title="<%- task.title %>"
-              class="task-change-owner"
-              alt="Change Owner"
-              title="Change Owner">
-              <i class="fas fa-user-cog"></i>
-            </a>
-          <% } %>    
-        </td>
-        <td class="metrics-table__button">
-          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
-            <a href="#delete/<%- task.id %>"
-              data-task-id="<%- task.id %>"
-              data-task-title="<%- task.title %>"
-              class="delete-task"
-              alt="Delete Task"
-              title="Delete Task">
-              <span class='fa fa-times'></span>
-            </a>
-          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
-            <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
-              <a href="#add-participant/<%- task.id %>"
+            <td class="metrics-table__button">
+              <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
-                class="task-add-participant"
-                alt="Add participant"
-                title="Add participant">
-                <i class="fas fa-user-plus"></i>
+                class="task-open"
+                alt="Publish Task"
+                title="Publish Task">
+                <span class='fa fa-check'></span>
               </a>
+            </td>
+          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
+            <td class="metrics-table__button">
+              <a href="#change-owner/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="task-change-owner"
+                alt="Change Owner"
+                title="Change Owner">
+                <i class="fas fa-user-cog"></i>
+              </a>
+            </td>
+          <% } else if (_.contains(['completed', 'canceled'], task.state.toLowerCase())) { %>
+            <td>&nbsp;</td>
+          <% } %>   
+        
+        
+          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
+            <td class="metrics-table__button">
+              <a href="#delete/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="delete-task"
+                alt="Delete Task"
+                title="Delete Task">
+                <span class='fa fa-times'></span>
+              </a>
+            </td>
+          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
+            <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+              <td class="metrics-table__button">
+                <a href="#add-participant/<%- task.id %>"
+                  data-task-id="<%- task.id %>"
+                  data-task-title="<%- task.title %>"
+                  class="task-add-participant"
+                  alt="Add participant"
+                  title="Add participant">
+                  <i class="fas fa-user-plus"></i>
+                </a>
+              </td>
             <% } %>
-          <% } %>    
-        </td>
+          <% } else if (_.contains(['completed', 'canceled'], task.state.toLowerCase())) { %>
+            <td>&nbsp;</td>
+          <% } %>
       </tr>
     <% }); %>
   </tbody>
