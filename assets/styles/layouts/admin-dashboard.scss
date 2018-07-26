@@ -304,3 +304,51 @@
     width: 5rem;
   }
 }
+
+.enable-internships {
+  margin-top: $size-M;
+  position: relative;
+
+  .enable-internships__toggle {
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    padding: $size-default;
+
+    .enable-internships__toggle-container {
+      position: relative;
+      width: 86px;
+      cursor: pointer;
+
+      &::after {
+        display: inline-block;
+        height: 2.4rem;
+        width: 27.4375px;
+        content: url(../img/toggle-on.svg);
+        position: absolute;
+        right: 2.8rem;
+      }
+
+      .enable-internships__toggle-labelon {
+        float: right;
+        font-weight: 600;
+      }
+    }
+
+    .toggle-off {
+
+      &:after {
+        content: url(../img/toggle-off.svg);
+      }
+
+      .enable-internships__toggle-labeloff {
+        font-weight: 600;
+      }
+
+      .enable-internships__toggle-labelon {
+        font-weight: normal;
+      }
+    }
+  }
+}
+
