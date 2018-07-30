@@ -7,6 +7,7 @@ var AdminAgenciesView = Backbone.View.extend({
 
   events: {
     'click .link' : 'link',
+    'change #agencies' : 'changeAgency',
   },
 
   initialize: function (options) {
@@ -16,10 +17,7 @@ var AdminAgenciesView = Backbone.View.extend({
   },
 
   render: function (replace) {
-    var self = this;
-
     this.$el.show();
-
     // get meta data for agency
     $.ajax({
       url: '/api/admin/agency/' + this.agencyId,
@@ -29,9 +27,17 @@ var AdminAgenciesView = Backbone.View.extend({
         agencyInfo.data.domain = agencyInfo.data.domain;
         var template = _.template(AdminAgenciesTemplate)({
           agency: agencyInfo,
+          agencies: this.options.agencies,
         });
-        self.$el.html(template);
-      },
+        this.$el.html(template);
+        if(this.options.agencies) {
+          setTimeout(function () {
+            $('#agencies').select2({
+              allowClear: false,
+            });
+          }, 50);
+        }
+      }.bind(this),
     });
 
     Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
@@ -42,6 +48,10 @@ var AdminAgenciesView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     this.adminMainView.routeTarget(t.data('target'), this.data.agency.id);
+  },
+
+  changeAgency: function (event) {
+    Backbone.history.navigate('/admin/agencies/' + $('#agencies').val(), { trigger: true });
   },
 
   cleanup: function () {
