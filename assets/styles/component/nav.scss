@@ -52,6 +52,10 @@ $nav_item_height: 17px + 24px;
     @include clearfix();
   }
 
+  &__header-container {
+    position: relative;
+  }
+
   &__banner-inner {
     @include media($ML) {
       padding-left: $size-M;
@@ -957,10 +961,10 @@ ul.ui-autocomplete {
 .usajobs-nav .usajobs-nav-login-gov-banner {
   background-color: $color-gold;
 
-  @include media($L) {
+  @include media(66em) {
     position: absolute;
     top: 0;
-    right: 320px;
+    right: 380px;
     max-width: 400px;
     border-radius: $border-radius;
   }
@@ -978,7 +982,7 @@ ul.ui-autocomplete {
     }
 
     @include media($L) {
-      padding: $size-base $size-default;
+      padding: 0.4rem $size-default;
     }
   }
 
@@ -1017,7 +1021,7 @@ ul.ui-autocomplete {
 	  border-left: 30px solid $color-gold;
 	  border-bottom: 15px solid transparent;
 
-    @include media($L) {
+    @include media(66em) {
       display: inherit;
     }
   }
