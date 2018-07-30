@@ -132,6 +132,7 @@ module.exports = (config) => {
       var data = {
         systemName:  openopps.systemName,
         draftAdminOnly: openopps.draftAdminOnly,
+        loginGov: openopps.auth.loginGov.enabled,
         version: openopps.version,
         alert: null,
         jsHash: md5File.sync(path.join(__dirname, 'dist', 'js', 'bundle.min.js')),
