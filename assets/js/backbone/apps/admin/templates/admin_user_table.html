@@ -1,3 +1,4 @@
+<h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>
@@ -52,10 +53,10 @@
           </td>
         <% } %>
         <td>
-          <% if (!user.isAdmin || (!user.isAgencyAdmin || !u.isAdmin)) { %>
-            <p><a href="#">Assign</a></p>
-          <% } else if (user.isAdmin || (user.isAgencyAdmin || u.isAdmin)) { %>
-            <p><a href="#">Assigned</a></p>
+          <% if (u.isAdmin || u.isAgencyAdmin) { %>
+            <p><a href="#assign-admin/<%- u.id %>" class="assign-admin">Assigned</a></p>
+          <% } else { %>
+            <p><a href="#assign-admin/<%- u.id %>" class="assign-admin">Assign</a></p>
           <% } %>
         </td>
       </tr>

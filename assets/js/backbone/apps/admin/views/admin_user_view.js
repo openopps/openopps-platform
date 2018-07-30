@@ -2,8 +2,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
-var i18n = require('i18next');
-var i18nextJquery = require('jquery-i18next');
 
 // internal dependencies
 var Modal = require('../../../components/modal');
@@ -14,15 +12,13 @@ var AdminUserTemplate = require('../templates/admin_user_template.html');
 var AdminUserTable = require('../templates/admin_user_table.html');
 var Paginate = require('../templates/admin_paginate.html');
 
+
 var AdminUserView = Backbone.View.extend({
 
   events: {
     'click a.page'              : 'clickPage',
     'click .link-backbone'      : linkBackbone,
-    'click .user-admin'         : 'toggleCheckbox',
-    'click .user-agency-admin'  : 'toggleCheckbox',
     'click .user-enable'        : 'toggleCheckbox',
-    'click .admin-user-unlock'  : 'adminUnlock',
     'click .user-reset'         : 'resetPassword',
     'keyup #user-filter'        : 'filter',
   },
@@ -67,6 +63,10 @@ var AdminUserView = Backbone.View.extend({
     data.trueLimit = self.limit;
     data.login = LoginConfig;
     data.user = window.cache.currentUser;
+    data.firstOf = data.page * data.limit - data.limit + 1;
+    data.lastOf = data.page * data.limit - data.limit + data.users.length;
+    data.countOf = data.count;
+
     // render the table
     var template = _.template(AdminUserTable)(data);
     // render the pagination
@@ -82,7 +82,6 @@ var AdminUserView = Backbone.View.extend({
   },
 
   renderPagination: function (data) {
-    var self = this;
     data.pages = [];
     data.numberOfPages = Math.ceil(data.count/data.trueLimit);
     if(data.numberOfPages < 8) {
@@ -98,7 +97,7 @@ var AdminUserView = Backbone.View.extend({
       data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
     }
     var paginate = _.template(Paginate)(data);
-    self.$('#user-page').html(paginate);
+    this.$('#user-page').html(paginate);
   },
 
   clickPage: function (e) {

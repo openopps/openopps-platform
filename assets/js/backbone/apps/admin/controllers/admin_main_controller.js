@@ -8,14 +8,16 @@ var ModalComponent = require('../../../components/modal');
 
 var ChangeOwnerTemplate = require('../templates/change_owner_template.html').toString();
 var AddParticipantTemplate = require('../templates/add_participant_template.html').toString();
+var AssignAdminTemplate = require('../templates/assign_admin_template.html').toString();
 
 var Admin = {};
 
 Admin.ShowController = BaseController.extend({
 
   events: {
-    'click .task-change-owner': 'changeOwner',
+    'click .task-change-owner'   : 'changeOwner',
     'click .task-add-participant': 'addParticipant',
+    'click .assign-admin'        : 'assignAdmin',
   },
 
   // Initialize the admin view
@@ -200,6 +202,92 @@ Admin.ShowController = BaseController.extend({
       validate({ currentTarget: $('#task-change-owner') });
     }.bind(this));
     $('#task-change-owner').focus();
+  },
+
+  getUrlFor: function (id, elem) {
+    switch (elem.data('action')) {
+      // case 'community':
+      //   return '/api/community/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
+      case 'admin':
+        return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
+      case 'agencyAdmin':
+        return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
+    }
+  },
+
+  // toggleCheckbox: function (e) {
+  //   if (e.preventDefault) e.preventDefault();
+  //   var t = $(e.currentTarget);
+  //   var id = $(t.parents('tr')[0]).data('id');
+  //   this.updateUser(t, {
+  //     id: id,
+  //     checked: t.prop('checked'),
+  //     url: this.getUrlFor(id, t),
+  //   });
+  // },
+
+  assignAdmin: function (event) {
+    if (event.preventDefault) event.preventDefault();
+    var t = $(e.currentTarget);
+    var id = $(t.parents('tr')[0]).data('id');
+    // var userId = $(event.currentTarget).data('user-id');
+    // var name = $( event.currentTarget ).data('user-name');
+
+    $.ajax({
+      url: this.getURLFor(id, t),
+    }).done(function (data) {
+      this.displayAssignAdminModal(event, { users: data, taskId: taskId, title: title });
+    }.bind(this));
+  },
+
+  displayAssignAdminModal: function (event, data) {
+    this.target = $(event.currentTarget).parent();
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+    var modalContent = _.template(AssignAdminTemplate)(data);
+    $('body').addClass('modal-is-open');
+  
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'assign-admin',
+      modalTitle: 'Assign as an administrator',
+      modalBody: modalContent,
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          $('#assign-admin').select2('destroy');
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Assign',
+        action: function () {
+          $('#assign-admin').select2('close');
+          if(!validate( { currentTarget: $('#assign-admin') } )) { // validate returns true if has validation errors
+            $.ajax({
+              url: '/api/admin/changeOwner',
+              method: 'POST',
+              data: {
+                taskId: $('#assign-admin').data('taskid'),
+                userId: $('#assign-admin').select2('data').id,
+              },
+            }).done(function (data) {
+              var newAuthor = '<a href="/profile/' + data.id + '">' + data.name + '</a>';
+              this.target.siblings('.metrics-table__author').html(newAuthor);
+              this.target = undefined;
+              $('#assign-admin').select2('destroy');
+              this.modalComponent.cleanup();
+            }.bind(this));
+          }
+        }.bind(this),
+      },
+      cleanup: function () {
+        $('#assign-admin').select2('destroy');
+      },
+    }).render();
+    setTimeout(function () {
+      this.initializeChangeOwnerOptions();
+    }.bind(this), 100);
   },
 
 
