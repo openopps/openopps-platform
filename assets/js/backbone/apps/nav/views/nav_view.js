@@ -16,13 +16,14 @@ var User = require('../../../../utils/user');
 
 var NavView = Backbone.View.extend({
   events: {
-    'click .navbar-brand'                         : linkBackbone,
-    'click .nav-link'                             : linkBackbone,
-    'click .login'                                : 'loginClick',
-    'click .logout'                               : 'logout',
-    'click .toggle-one'                           : 'menuClick',
-    'click .toggle-two'                           : 'menuClick2',
-    'click .subnav-link'                          : 'subMenuClick',
+    'click .navbar-brand'                           : linkBackbone,
+    'click .nav-link'                               : linkBackbone,
+    'click .login'                                  : 'loginClick',
+    'click .logout'                                 : 'logout',
+    'click .toggle-one'                             : 'menuClick',
+    'click .toggle-two'                             : 'menuClick2',
+    'click .subnav-link'                            : 'subMenuClick',
+    'click .usajobs-nav-login-gov-banner__dismiss'  : 'dismissLoginGovBanner',
   },
 
   initialize: function (options) {
@@ -102,6 +103,9 @@ var NavView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     this.activePage();
+    if (sessionStorage.dismissLoginGovBanner) {
+      $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
+    }
   },
 
   logout: function (e) {
@@ -231,6 +235,14 @@ var NavView = Backbone.View.extend({
   loginClick: function (e) {
     if (e.preventDefault) e.preventDefault();
     Backbone.history.navigate('/login', {trigger: true});
+  },
+
+  dismissLoginGovBanner: function () {
+    if(typeof(Storage) !== 'undefined') {
+      sessionStorage.setItem('dismissLoginGovBanner', 'true');
+      document.getElementById('usajobs-nav-login-gov-banner').innerHTML = sessionStorage.getItem('dismissLoginGovBanner');
+    }
+    $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
   },
 
   cleanup: function () {

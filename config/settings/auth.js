@@ -8,5 +8,8 @@ module.exports = {
       // expire password reset tokens after this many milliseconds
       tokenExpiration  : 60 * 60 * 1000,
     },
+    loginGov : {
+      enabled: process.env.LOGINGOV || false,
+    },
   },
 };

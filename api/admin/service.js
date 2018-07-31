@@ -397,10 +397,15 @@ async function assignParticipant (user, data, done) {
   }
 }
 
+async function getAgencies () {
+  return await dao.TagEntity.find('type = ?', 'agency');
+}
+
 module.exports = {
   getMetrics: getMetrics,
   getInteractions: getInteractions,
   getUsers: getUsers,
+  getAgencies: getAgencies,
   getUsersForAgency: getUsersForAgency,
   getUsersFiltered: getUsersFiltered,
   getUsersForAgencyFiltered: getUsersForAgencyFiltered,

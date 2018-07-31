@@ -84,8 +84,7 @@ var AdminMainView = Backbone.View.extend({
         this.adminTaskView.render();
         break;
       case 'agencies':
-        this.initializeAdminAgenciesView(agencyId);
-        this.adminAgenciesView.render(replace);
+        this.initializeAdminAgenciesView(agencyId, replace);
         break;
       case 'participants':
         this.initializeAdminParticipantsView();
@@ -147,15 +146,26 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  initializeAdminAgenciesView: function () {
-    if (this.adminAgenciesView) {
-      this.adminAgenciesView.cleanup();
+  initializeAdminAgenciesView: function (agencyId, replace) {
+    this.adminAgenciesView && this.adminAgenciesView.cleanup();
+    var callback = function (agencies) {
+      this.adminAgenciesView = new AdminAgenciesView({
+        el: '#admin-agencies',
+        agencyId: agencyId,
+        adminMainView: this,
+        agencies: agencies,
+      });
+      this.adminAgenciesView.render(replace);
+    };
+    if(this.isAdmin()) {
+      $.ajax({
+        url: '/api/admin/agencies',
+        dataType: 'json',
+        success: callback.bind(this),
+      });
+    } else {
+      callback();
     }
-    this.adminAgenciesView = new AdminAgenciesView({
-      el: '#admin-agencies',
-      agencyId: this.options.agencyId,
-      adminMainView: this,
-    });
   },
 
   initializeAdminParticipantsView: function () {
