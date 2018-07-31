@@ -24,7 +24,10 @@
       </tr>
     <% } %>
     <% _.each(users, function (u) { %>
-      <tr data-id="<%- u.id %>">
+      <tr data-id="<%- u.id %>"
+          data-user-name="<%- u.name %>"
+          data-admin="<%- u.isAdmin %>"
+          data-agency-admin="<%- u.isAgencyAdmin %>">
         <td>
           <%- u.id %>
         </td>
