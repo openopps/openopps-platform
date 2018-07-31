@@ -6,8 +6,9 @@ var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html')
 var AdminAgenciesView = Backbone.View.extend({
 
   events: {
-    'click .link' : 'link',
-    'change #agencies' : 'changeAgency',
+    'click #accept-toggle'  : 'toggleAccept',
+    'click .link'           : 'link',
+    'change #agencies'      : 'changeAgency',
   },
 
   initialize: function (options) {
@@ -49,6 +50,35 @@ var AdminAgenciesView = Backbone.View.extend({
     var t = $(e.currentTarget);
     this.adminMainView.routeTarget(t.data('target'), this.data.agency.id);
   },
+
+  toggleAccept: function (e) {
+    var toggleOn = $(e.currentTarget).hasClass('toggle-off');
+    var state = this.model.attributes.state.toLowerCase();
+    if(state == 'open' && !toggleOn) {
+      state = 'not open';
+    } else if (state == 'not open' && toggleOn) {
+      state = 'open';
+    }
+    $.ajax({
+      url: '/api/task/state/' +  this.model.attributes.id,
+      type: 'PUT',
+      data: {
+        id: this.model.attributes.id,
+        state: state,
+        acceptingApplicants: toggleOn,
+      },
+      success: function (data) {
+        if(toggleOn) {
+          $(e.currentTarget).removeClass('toggle-off');
+        } else {
+          $(e.currentTarget).addClass('toggle-off');
+        }
+        this.updatePill(state, toggleOn);
+      }.bind(this),
+      error: function (err) {
+        // display modal alert type error
+      }.bind(this),
+    });
 
   changeAgency: function (event) {
     Backbone.history.navigate('/admin/agencies/' + $('#agencies').val(), { trigger: true });
