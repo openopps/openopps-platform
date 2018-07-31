@@ -9,8 +9,8 @@
 
     <script type="text/javascript">
     systemName = <%- JSON.stringify(systemName) %>;
-    loginGov = <%- JSON.stringify(loginGov) %>;
-    draftAdminOnly = <%- JSON.stringify(draftAdminOnly) %>;
+    loginGov = <%- JSON.parse(loginGov) %>;
+    draftAdminOnly = <%- JSON.parse(draftAdminOnly) %>;
     version = <%- JSON.stringify(version) %>;
     </script>
     <script defer src="/js/fontawesome-all.js"></script>
