@@ -1,5 +1,5 @@
 <div class="assing-admin">
-    <div>Please select the admin permission you would like to assign to <%- u.name %></div>
+    <div>Please select the admin permission you would like to assign to <strong><%- user %></strong>.</div>
         <ul id="assignAdmin" class="usa-unstyled-list">
             <li>
                 <input type="checkbox" name="assignAdmin" id="assignSitewide" value="sitewide">
@@ -9,13 +9,5 @@
                 <input type="checkbox" name="assignAdmin" id="assignAgency" value="agency">
                 <label for="assignAgency" class="agency-admin">Agency</label>
             </li>
-            <li>
-                <input type="checkbox" name="assignAdmin" id="assignCommunity" value="community">
-                <label for="assignCommunity" class="community-admin">Community</label>
-            </li>
         </ul>
-    <div class="form-group required-input">
-        <div class="field-validation-error error-empty" style="display:none;">You must select a community</div>
-        <input type="hidden" id="add-orgaization" class="dropdown validate" data-validate="empty" data-userid="<%- u.id %>" />
-    </div>
   </div>
