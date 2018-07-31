@@ -10,6 +10,9 @@ module.exports = {
     },
     loginGov : {
       enabled: process.env.LOGINGOV || false,
+      discoveryURL: process.env.DISCOVERY_URL,
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
     },
   },
 };
