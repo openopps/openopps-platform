@@ -7,8 +7,10 @@
       <th>Email</th>
       <th>Created</th>
       <th class="admin-user-checkbox">Account<br />enabled</th>
-      <% if (login.local.enabled === true) { %>
-        <th class="admin-user-checkbox">Reset<br/>password</th>
+      <% if (!loginGov) { %>
+        <% if (login.local.enabled === true) { %>
+          <th class="admin-user-checkbox">Reset<br/>password</th>
+        <% } %>
       <% } %>
       <% if (user.isAdmin) { %>
         <th>Admin</th>
@@ -44,13 +46,15 @@
             <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           <% } %>
         </td>
-        <% if (login.local.enabled === true) { %>
-          <td class="pull-center">
-            <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
-              <i class="user-reset fa fa-sync-alt"></i>
-              <span class="sr-only">Reset password</span>
-            <% } %>
-          </td>
+        <% if (!loginGov) { %>
+          <% if (login.local.enabled === true) { %>
+            <td class="pull-center">
+              <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
+                <i class="user-reset fa fa-sync-alt"></i>
+                <span class="sr-only">Reset password</span>
+              <% } %>
+            </td>
+          <% } %>
         <% } %>
         <td>
           <% if (u.isAdmin || u.isAgencyAdmin) { %>
