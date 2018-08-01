@@ -86,22 +86,20 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
   });
 }));
 
-if(openopps.auth.loginGov) {
+if(openopps.auth.oidc) {
   const { Strategy } = require('openid-client');
   var OpenIDStrategyOptions = {
+    client: openopps.auth.oidc,
     params: {
       redirect_uri: path.join(openopps.hostName, 'api/auth/oidc/cb'),
     },
   };
-  require('./loginGov').then((client) => {
-    OpenIDStrategyOptions.client = client;
-    passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
-      log.info('tokenset', tokenset);
-      log.info('access_token', tokenset.access_token);
-      log.info('id_token', tokenset.id_token);
-      log.info('claims', tokenset.claims);
-      log.info('userinfo', userinfo);
-      done(null, userinfo);
-    }));
-  });
+  passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
+    log.info('tokenset', tokenset);
+    log.info('access_token', tokenset.access_token);
+    log.info('id_token', tokenset.id_token);
+    log.info('claims', tokenset.claims);
+    log.info('userinfo', userinfo);
+    done(null, userinfo);
+  }));
 }
