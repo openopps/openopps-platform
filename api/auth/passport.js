@@ -4,6 +4,7 @@ const log = require('log')('app:passport');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
+const path = require('path');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -84,3 +85,23 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
     done(new Error('Username not found.'), false);
   });
 }));
+
+if(openopps.auth.loginGov) {
+  const { Strategy } = require('openid-client');
+  var OpenIDStrategyOptions = {
+    params: {
+      redirect_uri: path.join(openopps.hostName, 'api/auth/oidc/cb'),
+    },
+  };
+  require('./loginGov').then((client) => {
+    OpenIDStrategyOptions.client = client;
+    passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
+      log.info('tokenset', tokenset);
+      log.info('access_token', tokenset.access_token);
+      log.info('id_token', tokenset.id_token);
+      log.info('claims', tokenset.claims);
+      log.info('userinfo', userinfo);
+      done(null, userinfo);
+    }));
+  });
+}

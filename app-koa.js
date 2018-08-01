@@ -156,5 +156,5 @@ module.exports = (config) => {
   app.use(feature('announcement'));
 
   app.listen(openopps.port);
-  console.log('App running at ' + openopps.hostName + ':' + openopps.port);
+  console.log('App running at ' + openopps.hostName);
 };

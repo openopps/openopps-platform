@@ -40,6 +40,21 @@ router.post('/api/auth/local', async (ctx, next) => {
   })(ctx, next);
 });
 
+router.get('/api/auth/oidc', passport.authenticate('oidc'));
+
+router.get('/api/auth/oidc/cb', async (ctx, next) => {
+  await passport.authenticate('oidc', (err, user, info, status) => {
+    if (err || !user) {
+      log.info('Authentication Error: ', err);
+      ctx.status = 401;
+      return ctx.redirect('/');
+    } else {
+      ctx.body = { success: true };
+      return ctx.login(user);
+    }
+  });
+});
+
 router.post('/api/auth/local/register', async (ctx, next) => {
   log.info('Register user', ctx.request.body);
 
