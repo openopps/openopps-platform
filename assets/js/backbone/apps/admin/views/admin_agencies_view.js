@@ -79,6 +79,7 @@ var AdminAgenciesView = Backbone.View.extend({
         // display modal alert type error
       }.bind(this),
     });
+  },
 
   changeAgency: function (event) {
     Backbone.history.navigate('/admin/agencies/' + $('#agencies').val(), { trigger: true });
