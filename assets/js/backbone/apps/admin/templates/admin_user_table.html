@@ -12,7 +12,7 @@
           <th class="admin-user-checkbox">Reset<br/>password</th>
         <% } %>
       <% } %>
-      <% if (user.isAdmin) { %>
+      <% if (u.isAdmin || u.isAgencyAdmin) { %>
         <th>Admin</th>
       <% } %>
     </tr>
