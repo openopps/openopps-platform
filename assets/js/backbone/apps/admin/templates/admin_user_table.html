@@ -12,8 +12,9 @@
           <th class="admin-user-checkbox">Reset<br/>password</th>
         <% } %>
       <% } %>
-      <% if (user.isAdmin) || user.isAgencyAdmin) { %>
+      <% if (user.isAdmin || user.isAgencyAdmin) { %>
         <th class="admin-user-checkbox"><%= target === 'Agencies' ? 'Agency' : target %><br /> Admin</th>
+      <% } %>
     </tr>
   </thead>
   <tbody>
