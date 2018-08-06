@@ -18,6 +18,7 @@ var AdminTaskView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
+    this.target = 'Sitewide';
     this.baseModal = {
       el: '#site-modal',
       secondary: {
@@ -34,8 +35,8 @@ var AdminTaskView = Backbone.View.extend({
     if (this.options.agencyId) url = url + '/' + this.options.agencyId;
     Backbone.history.navigate(url);
 
-    var s = '[data-target=sitewide]';
-    $(s).addClass('is-active');
+    if (this.options.agencyId) this.target = 'Agencies';
+    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
 
     $.ajax({
       url: '/api' + url,

@@ -19,6 +19,7 @@ var AdminUserView = Backbone.View.extend({
     'click a.page'              : 'clickPage',
     'click .link-backbone'      : linkBackbone,
     'click .user-enable'        : 'toggleCheckbox',
+    'click .assign-admin'       : 'toggleCheckbox',
     'click .user-reset'         : 'resetPassword',
     'keyup #user-filter'        : 'filter',
   },
@@ -28,6 +29,7 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
+    this.target = 'Sitewide';
   },
 
   render: function () {
@@ -39,16 +41,22 @@ var AdminUserView = Backbone.View.extend({
     if (this.rendered === true) {
       return this;
     }
+
+    if (this.options.agencyId) this.target = 'Agencies';
+    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
+
     var data = {
       user: window.cache.currentUser,
       login: LoginConfig,
     };
+
     var template = _.template(AdminUserTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch user data
     this.fetchData(self, this.data);
+    this.data.target = this.target;
     return this;
   },
 
@@ -63,9 +71,11 @@ var AdminUserView = Backbone.View.extend({
     data.trueLimit = self.limit;
     data.login = LoginConfig;
     data.user = window.cache.currentUser;
+
     data.firstOf = data.page * data.limit - data.limit + 1;
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
+    data.target = this.target;
 
     // render the table
     var template = _.template(AdminUserTable)(data);
@@ -96,6 +106,11 @@ var AdminUserView = Backbone.View.extend({
     } else {
       data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
     }
+    
+    data.firstOf = data.page * data.trueLimit - data.trueLimit + 1;
+    data.lastOf = data.page * data.trueLimit - data.trueLimit + data.users.length;
+    data.countOf = data.count;
+
     var paginate = _.template(Paginate)(data);
     this.$('#user-page').html(paginate);
   },
@@ -155,10 +170,12 @@ var AdminUserView = Backbone.View.extend({
     switch (elem.data('action')) {
       case 'user':
         return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
-      case 'admin':
+      case 'Sitewide':
         return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
-      case 'agencyAdmin':
+      case 'Agencies':
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
+      case 'Community':
+        return '/api/admin/communityAdmin/' + id + '?action=' + elem.prop('checked');
     }
   },
 
@@ -166,23 +183,34 @@ var AdminUserView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var id = $(t.parents('tr')[0]).data('id');
-    this.updateUser(t, {
-      id: id,
-      checked: t.prop('checked'),
-      url: this.getUrlFor(id, t),
-    });
+    var username = $(t.parents('tr')[0]).data('user-name');
+
+    if (t.hasClass('assign-admin')) {
+      this.confirmAdminAssign(t, {
+        id: id,
+        name: username,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else {
+      this.updateUser(t, {
+        id: id,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    }
   },
 
-  adminUnlock: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    var t = $(e.currentTarget);
-    var id = $(t.parents('tr')[0]).data('id');
-    this.updateUser(t, {
-      id: id,
-      passwordAttempts: 0,
-      url: '/api/admin/unlock/' + id,
-    });
-  },
+  // adminUnlock: function (e) {
+  //   if (e.preventDefault) e.preventDefault();
+  //   var t = $(e.currentTarget);
+  //   var id = $(t.parents('tr')[0]).data('id');
+  //   this.updateUser(t, {
+  //     id: id,
+  //     passwordAttempts: 0,
+  //     url: '/api/admin/unlock/' + id,
+  //   });
+  // },
 
   updateUser: function (t, data) {
     var self = this;
@@ -195,6 +223,9 @@ var AdminUserView = Backbone.View.extend({
         url: data.url,
         dataType: 'json',
         success: function (d) {
+          $('.usajobs-modal__canvas-blackout').remove();
+          $('.modal-is-open').removeClass();
+
           // Hide spinner and show checkbox
           spinner.hide();
           t.siblings('label').show();
@@ -202,6 +233,35 @@ var AdminUserView = Backbone.View.extend({
         },
       });
     }
+  },
+
+  confirmAdminAssign: function (t, data) {
+    if (this.modalComponent) this.modalComponent.cleanup();
+    $('body').addClass('modal-is-open');
+
+    this.modal = new Modal({
+      el: '#site-modal',
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
+      alert: {
+        type: 'error',
+        text: 'Error assigning as administrator.',
+      },
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' + data.name + '</strong> as ' + this.data.target + ' administrator?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    }).render();
   },
 
   resetPassword: function (e) {
