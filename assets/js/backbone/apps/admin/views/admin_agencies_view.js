@@ -34,8 +34,12 @@ var AdminAgenciesView = Backbone.View.extend({
         if(this.options.agencies) {
           setTimeout(function () {
             $('#agencies').select2({
+              placeholder: 'Select an agency',
               allowClear: false,
             });
+            try {
+              $('#s2id_agencies').children('.select2-choice').children('.select2-search-choice-close').remove();
+            } catch (error) { /* swallow exception because close image has already been removed*/ }
           }, 50);
         }
       }.bind(this),
