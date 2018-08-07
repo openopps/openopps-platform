@@ -19,6 +19,13 @@ var AdminAgenciesView = Backbone.View.extend({
 
   render: function (replace) {
     this.$el.show();
+    this.loadAgencyData();
+
+    Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
+    return this;
+  },
+
+  loadAgencyData: function () {
     // get meta data for agency
     $.ajax({
       url: '/api/admin/agency/' + this.agencyId,
@@ -32,17 +39,22 @@ var AdminAgenciesView = Backbone.View.extend({
         });
         this.$el.html(template);
         if(this.options.agencies) {
-          setTimeout(function () {
-            $('#agencies').select2({
-              allowClear: false,
-            });
-          }, 50);
+          this.initializeAgencySelect();
         }
       }.bind(this),
     });
+  },
 
-    Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
-    return this;
+  initializeAgencySelect: function () {
+    setTimeout(function () {
+      $('#agencies').select2({
+        placeholder: 'Select an agency',
+        allowClear: false,
+      });
+      try {
+        $('#s2id_agencies').children('.select2-choice').children('.select2-search-choice-close').remove();
+      } catch (error) { /* swallow exception because close image has already been removed*/ }
+    }, 50);
   },
 
   link: function (e) {
