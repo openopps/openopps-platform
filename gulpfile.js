@@ -138,7 +138,7 @@ gulp.task('publish', gulp.series('create-release', function (done) {
   git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
     if(err) { throw(err); }
     var logCMD = 'log ' + tag.replace(/\r?\n?/g, '') + '..@ --no-merges ' +
-      '--pretty=format:"[%h](http://github.com/openopps/openopps-platform/commit/%H): %s%n"';
+      '--pretty=format:"[%h](http://github.com/openopps/openopps-platform/commit/%H): %s"';
     git.exec({ args: logCMD, maxBuffer: Infinity }, (err, releaseNotes) => {
       if(err) { throw(err); }
       const releaseParams = {
@@ -155,7 +155,7 @@ gulp.task('publish', gulp.series('create-release', function (done) {
         // Commit the new version
         git.exec({ args: 'add --all', maxBuffer: Infinity }, (err) => {
           if(err) { throw(err); }
-          var commitMsg = 'commit -m "Create release package ' + package.version + '"';
+          var commitMsg = 'commit -m "Create release package ' + package.version + '" -m "' + releaseNotes + '"';
           git.exec({ args: commitMsg, maxBuffer: Infinity }, (err) => {
             if(err) { throw(err); }
             git.tag('v' + package.version, '', function (err) {
