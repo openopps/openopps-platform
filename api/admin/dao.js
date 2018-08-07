@@ -75,7 +75,7 @@ const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_coun
 const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(data->>'abbr') = ? " +
+  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(tag.name) = ? " +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';

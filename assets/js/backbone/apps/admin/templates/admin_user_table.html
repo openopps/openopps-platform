@@ -1,4 +1,6 @@
-<h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+<% if(countOf) { %>
+  <h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+<% } %>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>

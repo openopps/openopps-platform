@@ -151,7 +151,7 @@ async function getInteractions () {
 async function getUsers (page, limit) {
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
+  result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userListQuery, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
@@ -169,28 +169,27 @@ async function getUsersForAgency (page, limit, agencyId) {
   return result;
 }
 
-async function getUsersFiltered (q) {
-  var result = {};
-  result.users = (await dao.User.db.query(await dao.query.userListFilteredQuery,
-    '%' + q.toLowerCase() + '%' || q.toLowerCase() + '%' || '%' + q.toLowerCase(),
-    '%' + q.toLowerCase() + '%' || q.toLowerCase() + '%' || '%' + q.toLowerCase())).rows;
+async function getUsersFiltered (page, query) {
+  var result = { page: page, q: query, limit: 25 };
+  result.users = (await dao.User.db.query(dao.query.userListFilteredQuery,
+    '%' + query.toLowerCase() + '%',
+    '%' + query.toLowerCase() + '%',
+    page)).rows;
   result = await getUserTaskMetrics (result);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  result.page = 1;
-  result.q = q;
   return result;
 }
 
-async function getUsersForAgencyFiltered (q, agency) {
-  var result = {};
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListFilteredQuery,
-    '%' + q.toLowerCase() + '%' || q.toLowerCase() + '%' || '%' + q.toLowerCase(),
-    '%' + q.toLowerCase() + '%' || q.toLowerCase() + '%' || '%' + q.toLowerCase(),
-    agency.toLowerCase())).rows;
+async function getUsersForAgencyFiltered (page, query, agencyId) {
+  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
+  var result = { page: page, q: query, limit: 25 };
+  result.users = (await dao.User.db.query(dao.query.userAgencyListFilteredQuery,
+    '%' + query.toLowerCase() + '%',
+    '%' + query.toLowerCase() + '%',
+    agency.name.toLowerCase(),
+    page)).rows;
   result = await getUserTaskMetrics (result);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  result.page = 1;
-  result.q = q;
   return result;
 }
 
