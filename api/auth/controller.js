@@ -40,9 +40,11 @@ router.post('/api/auth/local', async (ctx, next) => {
   })(ctx, next);
 });
 
-router.get('/api/auth/oidc', passport.authenticate('oidc'));
+router.get('/api/auth/oidc', async (ctx, next) => {
+  await passport.authenticate('oidc')(ctx, next);
+});
 
-router.get('/api/auth/oidc/cb', async (ctx, next) => {
+router.get('/api/auth/oidc/callback', async (ctx, next) => {
   await passport.authenticate('oidc', (err, user, info, status) => {
     if (err || !user) {
       log.info('Authentication Error: ', err);
@@ -52,7 +54,7 @@ router.get('/api/auth/oidc/cb', async (ctx, next) => {
       ctx.body = { success: true };
       return ctx.login(user);
     }
-  });
+  })(ctx, next);
 });
 
 router.post('/api/auth/local/register', async (ctx, next) => {

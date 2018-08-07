@@ -91,8 +91,10 @@ if(openopps.auth.oidc) {
   var OpenIDStrategyOptions = {
     client: openopps.auth.oidc,
     params: {
-      redirect_uri: path.join(openopps.hostName, 'api/auth/oidc/cb'),
+      redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
+      scope: 'openid profile email phone address',
     },
+    //usePKCE: 'S256',
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
     log.info('tokenset', tokenset);

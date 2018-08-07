@@ -8,10 +8,12 @@ module.exports = new Promise(async (resolve) => {
     return null;
   });
   if(issuer) {
-    resolve(new issuer.Client({
+    var client = new issuer.Client({
       client_id: openopps.auth.loginGov.clientID,
       client_secret: openopps.auth.loginGov.clientSecret,
-    }));
+    });
+    client.CLOCK_TOLERANCE = 300; // to allow a 300s (5m) skew
+    resolve(client);
   } else {
     resolve(null);
   }
