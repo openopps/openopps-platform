@@ -11,6 +11,7 @@
 </div>
 <% if (agencies) { %>
   <select id="agencies" class="dropdown">
+    <option value=""></option>
     <% _.each(agencies, function (a) { %>
         <option value=<%- a.id %> <% if (a.id == agency.id) { %>selected<% } %>><%- a.name %></option>
     <% }); %>
