@@ -44,7 +44,11 @@ const taskHistoryQuery = 'select "assignedAt", "completedAt", "createdAt", "publ
 
 const postQuery = 'select count(*) from comment ';
 
-const volunteerCountQuery = 'select count(*) from volunteer ';
+const volunteerCountQuery = 'select ' +
+    'count(*) as signups, ' +
+    'sum(case when assigned then 1 else 0 end) as assignments, ' +
+    'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer';
 
 const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
