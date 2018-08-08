@@ -122,28 +122,9 @@ async function getInteractions () {
   var temp = await dao.Task.db.query(dao.query.postQuery);
   interactions.posts = +temp.rows[0].count;
   temp = await dao.Task.db.query(dao.query.volunteerCountQuery);
-  interactions.signups = +temp.rows[0].count;
-
-  var tasks = (await dao.Task.db.query(dao.query.taskHistoryQuery)).rows;
-  interactions.assignments = tasks.reduce( function ( count, task ) {
-    return ( task.assignedAt ) ? count + 1 : count;
-  }, 0 );
-
-  interactions.completions = tasks.reduce( function ( count, task ) {
-    return ( task.completedAt ) ? count + 1 : count;
-  }, 0 );
-
-  interactions.drafts = tasks.reduce( function ( count, task ) {
-    return ( task.createdAt ) ? count + 1 : count;
-  }, 0 );
-
-  interactions.publishes = tasks.reduce( function ( count, task ) {
-    return ( task.publishedAt ) ? count + 1 : count;
-  }, 0 );
-
-  interactions.submitted = tasks.reduce( function ( count, task ) {
-    return ( task.submittedAt ) ? count + 1 : count;
-  }, 0 );
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
 
   return interactions;
 }
