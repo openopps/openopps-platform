@@ -62,11 +62,11 @@
           <% } %>
         <% } %>
         <td>
-            <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
-              <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (u.isAdmin) { %> checked <% } %> />
-              <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
-              <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
-            <% } %>
+          <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
+            <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
+            <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          <% } %>
         </td>
       </tr>
     <% }); %>

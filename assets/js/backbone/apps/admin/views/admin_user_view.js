@@ -27,38 +27,38 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
-    this.target = 'Sitewide';
+    this.target = (this.options.agencyId ? 'Agencies' : 'Sitewide');
     this.agency = {
       name: 'Sitewide',
     };
   },
 
   render: function () {
-    var url = '/admin/users';
-    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
-    Backbone.history.navigate(url);
+    Backbone.history.navigate('/admin/users' + (this.options.agencyId ? '/' + this.options.agencyId : ''));
     this.$el.show();
     if (this.rendered === true) {
       return this;
     }
 
-    if (this.options.agencyId) this.target = 'Agencies';
     $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
 
     if (this.options.agencyId) {
-      // get meta data for agency
-      $.ajax({
-        url: '/api/admin/agency/' + this.options.agencyId,
-        dataType: 'json',
-        success: function (agencyInfo) {
-          this.agency = agencyInfo;
-          this.loadData();
-        }.bind(this),
-      });
+      this.loadAgencyData();
     } else {
       this.loadData();
     }
     return this;
+  },
+
+  loadAgencyData: function () {
+    $.ajax({
+      url: '/api/admin/agency/' + this.options.agencyId,
+      dataType: 'json',
+      success: function (agencyInfo) {
+        this.agency = agencyInfo;
+        this.loadData();
+      }.bind(this),
+    });
   },
 
   loadData: function () {
@@ -80,11 +80,7 @@ var AdminUserView = Backbone.View.extend({
   renderUsers: function (data) {
     data.urlbase = '/admin/users';
     data.q = data.q || '';
-    // if the limit of results coming back hasn't been set yet
-    // use the server's default
-    if (!this.limit) {
-      this.limit = data.limit;
-    }
+    this.limit = this.limit || data.limit;
     data.trueLimit = this.limit;
     data.login = LoginConfig;
     data.user = window.cache.currentUser;
@@ -93,6 +89,7 @@ var AdminUserView = Backbone.View.extend({
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
     data.target = this.target;
+    data.isAdministrator = this.isAdministrator;
 
     // render the table
     var template = _.template(AdminUserTable)(data);
@@ -210,16 +207,10 @@ var AdminUserView = Backbone.View.extend({
     }
   },
 
-  // adminUnlock: function (e) {
-  //   if (e.preventDefault) e.preventDefault();
-  //   var t = $(e.currentTarget);
-  //   var id = $(t.parents('tr')[0]).data('id');
-  //   this.updateUser(t, {
-  //     id: id,
-  //     passwordAttempts: 0,
-  //     url: '/api/admin/unlock/' + id,
-  //   });
-  // },
+  isAdministrator: function (user, target) {
+    return (target == 'Sitewide' && user.isAdmin) ||
+      (target == 'Agencies' && user.isAgencyAdmin);
+  },
 
   updateUser: function (t, data) {
     var self = this;
