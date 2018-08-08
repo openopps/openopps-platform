@@ -6,6 +6,7 @@ var Modal = require('../../../components/modal');
 // templates
 var AdminTaskTemplate = require('../templates/admin_task_template.html');
 var AdminTaskTable = require('../templates/admin_task_table.html');
+
 var AdminTaskView = Backbone.View.extend({
   events: {
     'click .delete-task'            : 'deleteTask',
@@ -17,6 +18,10 @@ var AdminTaskView = Backbone.View.extend({
     this.options = options;
     this.data = {
       page: 1,
+    };
+    this.target = 'Sitewide';
+    this.agency = {
+      name: 'Sitewide',
     };
     this.baseModal = {
       el: '#site-modal',
@@ -34,8 +39,19 @@ var AdminTaskView = Backbone.View.extend({
     if (this.options.agencyId) url = url + '/' + this.options.agencyId;
     Backbone.history.navigate(url);
 
-    var s = '[data-target=sitewide]';
-    $(s).addClass('is-active');
+    if (this.options.agencyId) this.target = 'Agencies';
+    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
+
+    if (this.options.agencyId) {
+      // get meta data for agency
+      $.ajax({
+        url: '/api/admin/agency/' + this.options.agencyId,
+        dataType: 'json',
+        success: function (agencyInfo) {
+          this.agency = agencyInfo;
+        }.bind(this),
+      });
+    } 
 
     $.ajax({
       url: '/api' + url,
@@ -43,6 +59,7 @@ var AdminTaskView = Backbone.View.extend({
       dataType: 'json',
       success: function (data) {
         this.tasks = data;
+        data.agency = this.agency;
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);

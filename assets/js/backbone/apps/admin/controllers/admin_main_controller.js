@@ -8,7 +8,6 @@ var ModalComponent = require('../../../components/modal');
 
 var ChangeOwnerTemplate = require('../templates/change_owner_template.html').toString();
 var AddParticipantTemplate = require('../templates/add_participant_template.html').toString();
-var AssignAdminTemplate = require('../templates/assign_admin_template.html').toString();
 
 var Admin = {};
 
@@ -17,7 +16,6 @@ Admin.ShowController = BaseController.extend({
   events: {
     'click .task-change-owner'   : 'changeOwner',
     'click .task-add-participant': 'addParticipant',
-    'click .assign-admin'        : 'assignAdmin',
   },
 
   // Initialize the admin view
@@ -203,83 +201,6 @@ Admin.ShowController = BaseController.extend({
     }.bind(this));
     $('#task-change-owner').focus();
   },
-
-
-  assignAdmin: function (event) {
-    if (event.preventDefault) event.preventDefault();
-    var t = $(event.currentTarget);
-    var id = $(t.parents('tr')[0]).data('id');
-
-    var data = { 
-      user: $(t.parents('tr')[0]).data('user-name'), 
-      userid: id, 
-      isAdmin: $(t.parents('tr')[0]).data('admin'), 
-      isAgencyAdmin: $(t.parents('tr')[0]).data('agency-admin'), 
-      url: this.getUrlFor(id, t), 
-    };
-
-    this.displayAssignAdminModal(t, data);
-  },
-
-  displayAssignAdminModal: function (event, data) {
-    this.target = $(event.currentTarget).parent();
-    if (this.modalComponent) { this.modalComponent.cleanup(); }
-    var modalContent = _.template(AssignAdminTemplate)(data);
-    $('body').addClass('modal-is-open');
-  
-    this.modalComponent = new ModalComponent({
-      el: '#site-modal',
-      id: 'assign-admin',
-      modalTitle: 'Assign as an administrator',
-      modalBody: modalContent,
-      validateBeforeSubmit: true,
-      secondary: {
-        text: 'Cancel',
-        action: function () {
-          this.modalComponent.cleanup();
-        }.bind(this),
-      },
-      primary: {
-        text: 'Assign',
-        action: function () {
-          if(!validate( { currentTarget: $('#assign-admin') } )) { // validate returns true if has validation errors
-            $.ajax({
-              url: data.url,
-              method: 'POST',
-              data: {
-                userId: $('#assign-admin').data('userid'),
-              },
-            }).done(function (data) {
-              // var newAuthor = '<a href="/profile/' + data.id + '">' + data.name + '</a>';
-              // this.target.siblings('.metrics-table__author').html(newAuthor);
-              this.target = undefined;
-              this.modalComponent.cleanup();
-            }.bind(this));
-          }
-        }.bind(this),
-      },
-    }).render();
-  },
-
-  getUrlFor: function (id, elem) {
-    switch (elem.data('action')) {
-      case 'admin':
-        return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
-      case 'agencyAdmin':
-        return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
-    }
-  },
-
-  // toggleCheckbox: function (e) {
-  //   if (e.preventDefault) e.preventDefault();
-  //   var t = $(e.currentTarget);
-  //   var id = $(t.parents('tr')[0]).data('id');
-  //   this.updateUser(t, {
-  //     id: id,
-  //     checked: t.prop('checked'),
-  //     url: this.getUrlFor(id, t),
-  //   });
-  // },
 
   // Cleanup controller and views
   cleanup: function () {

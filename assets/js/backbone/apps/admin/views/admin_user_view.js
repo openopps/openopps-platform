@@ -12,13 +12,12 @@ var AdminUserTemplate = require('../templates/admin_user_template.html');
 var AdminUserTable = require('../templates/admin_user_table.html');
 var Paginate = require('../templates/admin_paginate.html');
 
-
 var AdminUserView = Backbone.View.extend({
-
   events: {
     'click a.page'              : 'clickPage',
     'click .link-backbone'      : linkBackbone,
     'click .user-enable'        : 'toggleCheckbox',
+    'click .assign-admin'       : 'toggleCheckbox',
     'click .user-reset'         : 'resetPassword',
     'keyup #user-filter'        : 'filter',
   },
@@ -28,10 +27,13 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
+    this.target = 'Sitewide';
+    this.agency = {
+      name: 'Sitewide',
+    };
   },
 
   render: function () {
-    var self = this;
     var url = '/admin/users';
     if (this.options.agencyId) url = url + '/' + this.options.agencyId;
     Backbone.history.navigate(url);
@@ -39,46 +41,71 @@ var AdminUserView = Backbone.View.extend({
     if (this.rendered === true) {
       return this;
     }
+
+    if (this.options.agencyId) this.target = 'Agencies';
+    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
+
+    if (this.options.agencyId) {
+      // get meta data for agency
+      $.ajax({
+        url: '/api/admin/agency/' + this.options.agencyId,
+        dataType: 'json',
+        success: function (agencyInfo) {
+          this.agency = agencyInfo;
+          this.loadData();
+        }.bind(this),
+      });
+    } else {
+      this.loadData();
+    }
+    return this;
+  },
+
+  loadData: function () {
     var data = {
       user: window.cache.currentUser,
       login: LoginConfig,
+      agency: this.agency,
     };
+
     var template = _.template(AdminUserTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch user data
-    this.fetchData(self, this.data);
-    return this;
+    this.fetchData(this.data);
+    this.data.target = this.target;
   },
 
-  renderUsers: function (self, data) {
+  renderUsers: function (data) {
     data.urlbase = '/admin/users';
     data.q = data.q || '';
     // if the limit of results coming back hasn't been set yet
     // use the server's default
-    if (!self.limit) {
-      self.limit = data.limit;
+    if (!this.limit) {
+      this.limit = data.limit;
     }
-    data.trueLimit = self.limit;
+    data.trueLimit = this.limit;
     data.login = LoginConfig;
     data.user = window.cache.currentUser;
+
     data.firstOf = data.page * data.limit - data.limit + 1;
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
+    data.target = this.target;
 
     // render the table
     var template = _.template(AdminUserTable)(data);
     // render the pagination
-    self.renderPagination(data);
-    self.$('#filter-count').html(data.users.length);
-    self.$('#user-table').html(template);
-    self.$('.btn').tooltip();
+    this.renderPagination(data);
+    this.$('#filter-count').html(data.users.length);
+    this.$('#user-table').html(template);
+    this.$('.btn').tooltip();
     // hide spinner and show results
-    self.$('.spinner').hide();
-    self.$('#user-table').show();
+    this.$('.spinner').hide();
+    this.$('#user-table').show();
     window.scrollTo(0, 0);
-    self.$el.localize();
+    this.$el.localize();
   },
 
   renderPagination: function (data) {
@@ -96,23 +123,21 @@ var AdminUserView = Backbone.View.extend({
     } else {
       data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
     }
+    
+    data.firstOf = data.page * data.trueLimit - data.trueLimit + 1;
+    data.lastOf = data.page * data.trueLimit - data.trueLimit + data.users.length;
+    data.countOf = data.count;
+
     var paginate = _.template(Paginate)(data);
     this.$('#user-page').html(paginate);
   },
 
   clickPage: function (e) {
-    var self = this;
-    // if meta or control is held, or if the middle mouse button is pressed,
-    // let the link process normally.
-    // eg: open a new tab or window based on the browser prefs
-    if ((e.metaKey === true) || (e.ctrlKey === true) || (e.which == 2)) {
-      return;
-    }
     if (e.preventDefault) e.preventDefault();
     // load this page of data
-    this.fetchData(self, {
+    this.fetchData({
       page: $(e.currentTarget).data('page'),
-      q: $($(e.currentTarget).parent('ul')[0]).data('filter'),
+      q: this.q,
       limit: this.limit,
     });
   },
@@ -129,25 +154,23 @@ var AdminUserView = Backbone.View.extend({
     this.$('#user-table').hide();
     this.$('.spinner').show();
     // fetch this query, starting from the beginning page
-    this.fetchData(this, {
-      q: val,
-    });
+    this.fetchData({ q: val });
   },
 
-  fetchData: function (self, data) {
+  fetchData: function (data) {
     // perform the ajax request to fetch the user list
     var url = '/api/admin/users';
-    if (self.options.agencyId) url = url + '/' + self.options.agencyId;
+    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
 
     $.ajax({
       url: url,
       dataType: 'json',
       data: data,
       success: function (data) {
-        self.data = data;
-        self.renderUsers(self, data);
+        this.data = data;
+        this.renderUsers(data);
         $('.tip').tooltip();
-      },
+      }.bind(this),
     });
   },
 
@@ -155,10 +178,12 @@ var AdminUserView = Backbone.View.extend({
     switch (elem.data('action')) {
       case 'user':
         return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
-      case 'admin':
+      case 'Sitewide':
         return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
-      case 'agencyAdmin':
+      case 'Agencies':
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
+      case 'Community':
+        return '/api/admin/communityAdmin/' + id + '?action=' + elem.prop('checked');
     }
   },
 
@@ -166,23 +191,35 @@ var AdminUserView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var id = $(t.parents('tr')[0]).data('id');
-    this.updateUser(t, {
-      id: id,
-      checked: t.prop('checked'),
-      url: this.getUrlFor(id, t),
-    });
+    var username = $(t.parents('tr')[0]).data('user-name');
+
+    if (t.hasClass('assign-admin')) {
+      this.confirmAdminAssign(t, {
+        id: id,
+        name: username,
+        agency: this.agency.name,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else {
+      this.updateUser(t, {
+        id: id,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    }
   },
 
-  adminUnlock: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    var t = $(e.currentTarget);
-    var id = $(t.parents('tr')[0]).data('id');
-    this.updateUser(t, {
-      id: id,
-      passwordAttempts: 0,
-      url: '/api/admin/unlock/' + id,
-    });
-  },
+  // adminUnlock: function (e) {
+  //   if (e.preventDefault) e.preventDefault();
+  //   var t = $(e.currentTarget);
+  //   var id = $(t.parents('tr')[0]).data('id');
+  //   this.updateUser(t, {
+  //     id: id,
+  //     passwordAttempts: 0,
+  //     url: '/api/admin/unlock/' + id,
+  //   });
+  // },
 
   updateUser: function (t, data) {
     var self = this;
@@ -195,6 +232,9 @@ var AdminUserView = Backbone.View.extend({
         url: data.url,
         dataType: 'json',
         success: function (d) {
+          $('.usajobs-modal__canvas-blackout').remove();
+          $('.modal-is-open').removeClass();
+
           // Hide spinner and show checkbox
           spinner.hide();
           t.siblings('label').show();
@@ -202,6 +242,36 @@ var AdminUserView = Backbone.View.extend({
         },
       });
     }
+  },
+
+  confirmAdminAssign: function (t, data) {
+    if (this.modalComponent) this.modalComponent.cleanup();
+    $('body').addClass('modal-is-open');
+
+    this.modal = new Modal({
+      el: '#site-modal',
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
+      alert: {
+        type: 'error',
+        text: 'Error assigning as administrator.',
+      },
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as <strong>' + (data.agency ? data.agency : this.data.target) + '</strong> administrator?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    }).render();
   },
 
   resetPassword: function (e) {
