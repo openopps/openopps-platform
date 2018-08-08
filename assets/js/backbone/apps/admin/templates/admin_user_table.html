@@ -1,4 +1,6 @@
-<h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+<% if(countOf) { %>
+  <h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+<% } %>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>
@@ -13,7 +15,7 @@
         <% } %>
       <% } %>
       <% if (user.isAdmin || user.isAgencyAdmin) { %>
-        <th>Admin</th>
+        <th class="admin-user-checkbox"><%= target === 'Agencies' ? 'Agency' : target %><br /> Admin</th>
       <% } %>
     </tr>
   </thead>
@@ -60,11 +62,11 @@
           <% } %>
         <% } %>
         <td>
-          <% if (u.isAdmin || u.isAgencyAdmin) { %>
-            <p><a href="#assign-admin/<%- u.id %>" class="assign-admin">Assigned</a></p>
-          <% } else { %>
-            <p><a href="#assign-admin/<%- u.id %>" class="assign-admin">Assign</a></p>
-          <% } %>
+            <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
+              <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (u.isAdmin) { %> checked <% } %> />
+              <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+              <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+            <% } %>
         </td>
       </tr>
     <% }); %>
