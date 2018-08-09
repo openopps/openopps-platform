@@ -10,16 +10,20 @@
   </div>
 </div>
 <% if (agencies) { %>
-  <select id="agencies" class="dropdown">
-    <option value=""></option>
-    <% _.each(agencies, function (a) { %>
-        <option value=<%- a.id %> <% if (a.id == agency.id) { %>selected<% } %>><%- a.name %></option>
-    <% }); %>
-  </select>
+  <div class="usajobs-grid-full">
+    <div class="usa-width-one-whole">
+      <select id="agencies" class="dropdown">
+        <option value=""></option>
+        <% _.each(agencies, function (a) { %>
+            <option value=<%- a.id %> <% if (a.id == agency.id) { %>selected<% } %>><%- a.name %></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
 <% } else { %>
   <h2 class="admin-agency-name"><%= agency.name %></h2>
 <% } %>
-<div class="usajobs-grid usa-grid-example usajobs-grid-text">
+<div class="usajobs-grid-full">
   <div class="usa-width-one-third">
     <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/users/<%=agency.id %>" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
@@ -39,16 +43,6 @@
       <li>Completed: <%- numeral(agency.tasks.completed).format('0,0') %></li>
       <li>Canceled: <%- numeral(agency.tasks.canceled).format('0,0') %></li>
     </ul>
-    <div class="enable-internships">
-      <div>Allow posting internships</div>
-        <!-- <input class="user-enable" id="intership-enable>" type="checkbox" data-action='user' <% if (1 == 1) { %> checked <% } %> /> -->
-      <div class="enable-internships__toggle">
-        <div id="accept-toggle" class="enable-internships__toggle-container <% if (true) { %>toggle-on<% } %>">
-          <span class="enable-internships__toggle-labeloff">Off</span>
-          <span class="enable-internships__toggle-labelon">On</span>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 </div>
