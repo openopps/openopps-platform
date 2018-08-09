@@ -30,7 +30,6 @@ var AdminMainView = Backbone.View.extend({
   render: function () {
     var data = {};
     var template = _.template(AdminMainTemplate)(data);
-    $('#search-results-loading').hide();
     this.$el.html(template);
     this.routeTarget(this.options.action || '', undefined, true);
     return this;

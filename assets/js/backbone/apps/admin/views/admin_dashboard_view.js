@@ -40,7 +40,6 @@ var AdminDashboardView = Backbone.View.extend({
       login: LoginConfig,
     };
     var template = _.template(AdminDashboardTemplate)(data);
-    $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch data
@@ -52,8 +51,6 @@ var AdminDashboardView = Backbone.View.extend({
     var template = _.template(AdminSummaryTemplate)(data);
     self.$('.metric-block').html(template);
     this.$el.localize();
-    // hide spinner and show results
-    self.$('.spinner').hide();
     self.$('.metric-block').show();
   },
 
@@ -80,11 +77,10 @@ var AdminDashboardView = Backbone.View.extend({
       success: function (data) {
         data.label = label;
         var template = _.template(AdminDashboardTasks)(data);
+        $('#search-results-loading').hide();
         data.tasks.active = self.data.tasks;
         self.$('.task-metrics').html(template);
         self.$el.localize();
-        // hide spinner and show results
-        self.$('.spinner').hide();
         self.$('.task-metrics').show();
         self.$('.group').val(group);
         self.$('.filter').val(filter);
