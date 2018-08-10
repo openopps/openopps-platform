@@ -69,12 +69,12 @@ var AdminUserView = Backbone.View.extend({
     };
 
     var template = _.template(AdminUserTemplate)(data);
-    $('#search-results-loading').hide();
     this.$el.html(template);
     this.rendered = true;
     // fetch user data
     this.fetchData(this.data);
     this.data.target = this.target;
+    $('#search-results-loading').hide();
   },
 
   renderUsers: function (data) {
@@ -98,8 +98,6 @@ var AdminUserView = Backbone.View.extend({
     this.$('#filter-count').html(data.users.length);
     this.$('#user-table').html(template);
     this.$('.btn').tooltip();
-    // hide spinner and show results
-    this.$('.spinner').hide();
     this.$('#user-table').show();
     window.scrollTo(0, 0);
     this.$el.localize();
