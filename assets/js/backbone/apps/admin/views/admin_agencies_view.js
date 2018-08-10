@@ -20,7 +20,7 @@ var AdminAgenciesView = Backbone.View.extend({
   render: function (replace) {
     this.$el.show();
     this.loadAgencyData();
-
+    $('#search-results-loading').hide();
     Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
     return this;
   },
