@@ -8,6 +8,7 @@
             <img src="/img/logo/svg/openopps_logo.svg" alt="Open Opportunities logo">
           </a>
         </div>
+        <% if(!accessForbidden) { %>
         <div class="usajobs-nav__menu" id="usajobs-menu">
           <ul role="menubar">
             <% if (user) { %>
@@ -34,37 +35,38 @@
                 </a>
               </li>
               <% } %>
-              <% }; %>
-              <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
-                  <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/" title="Help">
-                    <span class="usajobs-nav--openopps__section">
-                      <span class="fas fa-question-circle" title="Help"></span>Help
-                    </span>
-                  </a>
-                </li>
-              <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
-                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link toggle-two" href="/tasks" title="Search Opportunities">
+            <% } %>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/" title="Help">
                   <span class="usajobs-nav--openopps__section">
-                    <span class="fas fa-search fa-fw" style="margin-top:0.5rem;" focusable="false"></span>Search
+                    <span class="fas fa-question-circle" title="Help"></span>Help
                   </span>
                 </a>
               </li>
-              <li class="usajobs-nav__menu-container usajobs-nav__menu-search usajobs-nav--openopps__menu-container mobile" data-state="is-closed">
-                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="#" title="Search Opportunities" aria-haspopup="true" aria-controls="section-two">
-                  <span class="usajobs-nav--openopps__section">
-                    <span class="fas fa-search fa-fw" focusable="false"></span>Search
-                  </span>
-                </a>
-              </li>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
+              <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link toggle-two" href="/tasks" title="Search Opportunities">
+                <span class="usajobs-nav--openopps__section">
+                  <span class="fas fa-search fa-fw" style="margin-top:0.5rem;" focusable="false"></span>Search
+                </span>
+              </a>
+            </li>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search usajobs-nav--openopps__menu-container mobile" data-state="is-closed">
+              <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="#" title="Search Opportunities" aria-haspopup="true" aria-controls="section-two">
+                <span class="usajobs-nav--openopps__section">
+                  <span class="fas fa-search fa-fw" focusable="false"></span>Search
+                </span>
+              </a>
+            </li>
           </ul>
         </div>
+        <% } %>
       </div>
 
-      <% if (!user && loginGov) { %>
+      <% if (!accessForbidden && !user && loginGov) { %>
       <div class="usajobs-nav-login-gov-banner" id="usajobs-nav-login-gov-banner" data-object="alert">
         <div class="usajobs-nav-login-gov-banner__body">
           <p class="usajobs-nav-login-gov-banner__text">
-            <strong>A new way to sign in.</strong> Create a <a class="usajobs-nav-login-gov-banner__link" href="https://www.usajobs.gov/Access/Transition">login.gov account</a> to sign into Open Opportunities. <a class="usajobs-nav-login-gov-banner__link" href="http://usajobs.github.io/Help/faq/account/login-gov/">Learn more</a>
+            <strong>A new way to sign in.</strong> Create a <a class="usajobs-nav-login-gov-banner__link" href="https://www.usajobs.gov/Access/Transition">login.gov account</a> to sign into Open Opportunities. <a class="usajobs-nav-login-gov-banner__link" href="https://usajobs.github.io/openopps-help/account/login-gov">Learn more</a>
           </p>
           <div class="usajobs-nav-login-gov-banner__indicator"></div>
           <!-- The JS is not hooked up currently to close this banner -->
@@ -73,34 +75,34 @@
             <span class="usajobs-assistive-text">Close</span>
           </button>
         </div>
-      </div>
-      <% }; %>
-
+      <% } %>
     </div>
   </div>
 </nav>
 
+<% if(!accessForbidden) { %>
 <nav class="usajobs-openopps-secondary-nav">
-    <div class="usajobs-openopps-secondary-nav__body">
-      <% if (user) { %>
-      <ul id="section-one" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
-        <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
-          <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
-        </li>
-        <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
-        <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
-        <% } %>
-        <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
-          <a href="/auth/logout" class="usajobs-openopps-secondary-nav__link logout">Sign out</a>
-        </li>
-      </ul>
+  <div class="usajobs-openopps-secondary-nav__body">
+    <% if (user) { %>
+    <ul id="section-one" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+        <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
+      </li>
+      <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
       <% } %>
-      <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
-          <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/tasks" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
-          <% if (user) { %>
-          <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
-          <% } %>
-          <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>
-        </ul>
-    </div>
-  </nav>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+        <a href="/auth/logout" class="usajobs-openopps-secondary-nav__link logout">Sign out</a>
+      </li>
+    </ul>
+    <% } %>
+    <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/tasks" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
+      <% if (user) { %>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
+      <% } %>
+      <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>
+    </ul>
+  </div>
+</nav>
+<% } %>
