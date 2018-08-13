@@ -15,7 +15,7 @@ const flash = require('koa-better-flash');
 const md5File = require('md5-file');
 const _ = require('lodash');
 
-module.exports = (config) => {
+module.exports = async (config) => {
   // import vars from Cloud Foundry service
   var envVars = cfenv.getAppEnv().getServiceCreds('env-openopps');
   if (envVars) _.extend(process.env, envVars);
@@ -61,6 +61,12 @@ module.exports = (config) => {
   app.use(session(openopps.session, app));
 
   // initialize authentication
+  if(openopps.auth.loginGov) {
+    openopps.auth.oidc = await require(path.join(__dirname, 'api/auth/loginGov'));
+    if(!openopps.auth.oidc) {
+      throw new Error('Application failed to start: Unable to establish OpenID Client connection.');
+    }
+  }
   require(path.join(__dirname, 'api/auth/passport'));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -134,6 +140,7 @@ module.exports = (config) => {
         draftAdminOnly: openopps.draftAdminOnly,
         loginGov: openopps.auth.loginGov.enabled,
         version: openopps.version,
+        usajobsURL: openopps.usajobsURL,
         alert: null,
         jsHash: md5File.sync(path.join(__dirname, 'dist', 'js', 'bundle.min.js')),
         cssHash: md5File.sync(path.join(__dirname, 'dist', 'styles', 'main.css')),
@@ -156,5 +163,5 @@ module.exports = (config) => {
   app.use(feature('announcement'));
 
   app.listen(openopps.port);
-  console.log('App running at ' + openopps.hostName + ':' + openopps.port);
+  console.log('App running at ' + openopps.hostName);
 };
