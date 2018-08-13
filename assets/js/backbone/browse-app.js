@@ -32,6 +32,7 @@ var BrowseRouter = Backbone.Router.extend({
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
+    'unauthorized(/)'               : 'showUnauthorized',
   },
 
   data: { saved: false },
@@ -101,6 +102,18 @@ var BrowseRouter = Backbone.Router.extend({
         data: this.data,
       });
     }
+  },
+
+  showUnauthorized: function () {
+    Backbone.history.navigate('/', { replace: true });
+    this.navView = new NavView({
+      el: '.navigation',
+      accessForbidden: true, 
+    }).render();
+    var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
+    $('#container').html(_.template(UnauthorizedTemplate)());
+    $('#search-results-loading').hide();
+    $('.usa-footer-return-to-top').hide();
   },
 
   parseQueryParams: function (str) {

@@ -11,6 +11,8 @@ module.exports = {
   // hostName defines the domain upon which your app will be deployed (e.g. 'localhost:1337', for development)
   hostName: process.env.HOST || 'localhost:3000',
 
+  usajobsURL: process.env.USAJOBS_URL || 'https://www.usajobs.gov',
+
   // redirect domain not matching hostName
   redirect: (process.env.REDIRECT || '').match(/^true$/i) || false,
 

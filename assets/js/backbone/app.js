@@ -55,12 +55,14 @@ $(function () {
   $(document).ajaxError(function (e, jqXHR, settings, errorText) {
     $('.spinner').hide();
     if (jqXHR.status === 401 || jqXHR.status === 403) {
-      if (!window.cache || !window.cache.userEvents ||
-        !('trigger' in window.cache.userEvents)) return;
-      window.cache.userEvents.trigger('user:request:login', {
-        disableClose: false,
-        message: (jqXHR.responseJSON && jqXHR.responseJSON.message) || '',
-      });
+      if(jqXHR.responseText == 'Access Forbidden') {
+        Backbone.history.navigate('/unauthorized', { replace: true, trigger: true });
+      } else if (window.cache || window.cache.userEvents || ('trigger' in window.cache.userEvents)) {
+        window.cache.userEvents.trigger('user:request:login', {
+          disableClose: false,
+          message: (jqXHR.responseJSON && jqXHR.responseJSON.message) || '',
+        });
+      }
     } else {
       $('.alert-global')
         .html('<strong>' + errorText + '</strong>. ' +

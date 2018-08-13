@@ -101,7 +101,12 @@ if(openopps.auth.oidc) {
       // TODO: Add unauthorized attempt to access OpenOpps to audit_log
       done('Not authorized');
     } else {
-      dao.User.findOne('username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+      dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(async user => {
+        if(!user.linkedId || user.username != tokenset.claims['usaj:governmentURI']) {
+          user.linkedId = tokenset.claims.sub;
+          user.username = tokenset.claims['usaj:governmentURI'];
+          await dao.User.update(user);
+        }
         done(null, user);
       }).catch(err => {
         done(err);

@@ -47,9 +47,13 @@ router.get('/api/auth/oidc', async (ctx, next) => {
 router.get('/api/auth/oidc/callback', async (ctx, next) => {
   await passport.authenticate('oidc', (err, user, info, status) => {
     if (err || !user) {
-      log.info('Authentication Error: ', err);
-      ctx.status = 503;
-      return ctx.body = { error: 'Something went wrong!' };
+      if(err == 'Not authorized') {
+        ctx.status = 403;
+        ctx.redirect('/unauthorized');
+      } else {
+        log.info('Authentication Error: ', err);
+        ctx.status = 503;
+      }
     } else {
       ctx.login(user).then(() => {
         ctx.redirect('/profile/' + user.id);
