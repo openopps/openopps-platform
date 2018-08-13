@@ -48,11 +48,14 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
   await passport.authenticate('oidc', (err, user, info, status) => {
     if (err || !user) {
       log.info('Authentication Error: ', err);
-      ctx.status = 401;
-      return ctx.redirect('/');
+      ctx.status = 503;
+      return ctx.body = { error: 'Something went wrong!' };
     } else {
-      ctx.body = { success: true };
-      return ctx.login(user);
+      ctx.login(user).then(() => {
+        ctx.redirect('/profile/' + user.id);
+      }).catch((err) => {
+        ctx.redirect('/');
+      });
     }
   })(ctx, next);
 });

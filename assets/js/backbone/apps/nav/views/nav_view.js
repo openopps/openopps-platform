@@ -18,7 +18,6 @@ var NavView = Backbone.View.extend({
   events: {
     'click .navbar-brand'                           : linkBackbone,
     'click .nav-link'                               : linkBackbone,
-    'click #login-gov'                              : 'loginClick',
     'click .logout'                                 : 'logout',
     'click .toggle-one'                             : 'menuClick',
     'click .toggle-two'                             : 'menuClick2',
@@ -230,15 +229,6 @@ var NavView = Backbone.View.extend({
     var link = $(s.currentTarget).attr('href');
     Backbone.history.navigate(link, {trigger: true});
     this.activeSubPage();
-  },
-
-  loginClick: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    $.ajax({
-      url: '/api/auth/oidc',
-    }).fail(function (error) {
-      // TODO: An error has occured trying to login
-    });
   },
 
   dismissLoginGovBanner: function () {

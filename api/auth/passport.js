@@ -97,11 +97,15 @@ if(openopps.auth.oidc) {
     //usePKCE: 'S256',
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
-    log.info('tokenset', tokenset);
-    log.info('access_token', tokenset.access_token);
-    log.info('id_token', tokenset.id_token);
-    log.info('claims', tokenset.claims);
-    log.info('userinfo', userinfo);
-    done(null, userinfo);
+    if(tokenset.claims['usaj:hiringPath'] != 'fed' || !tokenset.claims['usaj:governmentURI']) {
+      // TODO: Add unauthorized attempt to access OpenOpps to audit_log
+      done('Not authorized');
+    } else {
+      dao.User.findOne('username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+        done(null, user);
+      }).catch(err => {
+        done(err);
+      });
+    }
   }));
 }

@@ -90,13 +90,17 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showLogin: function () {
-    this.cleanupChildren();
-    this.loginController = new LoginController({
-      target: 'login',
-      el: '#container',
-      router: this,
-      data: this.data,
-    });
+    if(loginGov) {
+      window.location = '/api/auth/oidc';
+    } else {
+      this.cleanupChildren();
+      this.loginController = new LoginController({
+        target: 'login',
+        el: '#container',
+        router: this,
+        data: this.data,
+      });
+    }
   },
 
   parseQueryParams: function (str) {
