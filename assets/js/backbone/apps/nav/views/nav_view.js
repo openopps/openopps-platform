@@ -127,6 +127,10 @@ var NavView = Backbone.View.extend({
       this.showSubMenu1();
       this.activateProfile();
     }
+    else if (window.location.pathname.match(/home/)) {
+      this.showSubMenu1();
+      this.activateHome();
+    }
     else if (window.location.pathname.match(/admin/)) {
       this.showSubMenu1();
       this.activateAdmin();
@@ -173,6 +177,13 @@ var NavView = Backbone.View.extend({
     $('a[title="Profile"] > span').addClass('usajobs-nav--openopps__section-active');
   },
 
+  activateHome: function () {
+    //set Home to active
+    $('a[title="Home"]').addClass('is-active');
+    $('a[title="Home"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Home"] > span').addClass('usajobs-nav--openopps__section-active');
+  },
+
   activateAdmin: function () {
     //set Administration to active
     $('a[title="Administration"]').addClass('is-active');
@@ -201,7 +212,7 @@ var NavView = Backbone.View.extend({
 
   menuClick: function (e) {
     if (e.preventDefault) e.preventDefault();
-    Backbone.history.navigate('/profile/' + window.cache.currentUser.id, {trigger: true});
+    Backbone.history.navigate('/home/' + window.cache.currentUser.id, {trigger: true});
     this.activePage();
   },
 
