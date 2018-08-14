@@ -1,6 +1,10 @@
 {
+    
+    "CLIENT_ID": "",
+    "CLIENT_SECRET": "",
     "CRON_TOKEN": "",
     "DATASTORE": "",
+    "DISCOVERY_URL": "",
     "DRAFT_ADMIN_ONLY": true,
     "EMAIL_HOST": "",
     "EMAIL_PASS": "",
@@ -23,5 +27,6 @@
     "SURVEY_LINK": "",
     "SYSTEM_NAME": "Open Opportunities",
     "TASK_STATE": "draft",
+    "USAJOBS_URL": "https://www.usajobs.gov",
     "VALIDATE_DOMAINS": true
 }
