@@ -1,0 +1,88 @@
+<div class="usajobs-opop-people__body">
+  <h2>See other people like you</h2>
+  <div class="usajobs-grid-full">
+    <div class="usa-width-one-half">
+      <h3>Based on your job title</h3>
+      <% if (users.title.length > 0) { %>
+        <ul class="list-unstyled jobtitle">
+          <% _.forEach(users.title, function (u) { %>
+            <li>
+              <div class="usajobs-open-opps-opportunity-requestor people">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(u.id) %>">
+                    <% if (u.photoId) { %>
+                      <img src="/api/user/photo/<%- u.id %>" alt="Profile picture of <%- u.name %>">
+                    <% } else { %>
+                      <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(u.name) %></div>
+                    <% } %>
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name">
+                        <a href="/profile/<%= u.id %>"><%= u.name %></a>
+                    </p>
+                    <% if(u.title) { %>
+                      <p class="usajobs-open-opps-opportunity-requestor__jobtitle">
+                          <%- u.title %> 
+                      </p>
+                    <% } %>
+                    <% if (u.agency) { %>
+                      <p class="usajobs-open-opps-opportunity-requestor__company">
+                          <%- u.agency.name.replace(/\(.*\)/,'') %>
+                      </p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <p class="no-match">No match found.</p>
+        <p class="no-match">Update your <a href="/profile/<%- window.cache.currentUser.id %>">profile</a> or <a href="/profiles">search manually</a>.</p>
+      <% } %>
+    </div>
+    <div class="usa-width-one-half">
+      <h3>Based on your agency</h3>
+        <% if (users.agency.length > 0) { %>
+          <ul class="list-unstyled agency">
+            <% _.forEach(users.agency, function (u) { %>
+              <li>
+                <div class="usajobs-open-opps-opportunity-requestor people">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                    <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(u.id) %>">
+                      <% if (u.photoId) { %>
+                        <img src="/api/user/photo/<%- u.id %>" alt="Profile picture of <%- u.name %>">
+                      <% } else { %>
+                        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(u.name) %></div>
+                      <% } %>
+                    </div>
+                    <div class="usajobs-open-opps-opportunity-requestor__body">
+                      <p class="usajobs-open-opps-opportunity-requestor__name">
+                          <a href="/profile/<%= u.id %>"><%= u.name %></a>
+                      </p>
+                      <% if(u.title) { %>
+                        <p class="usajobs-open-opps-opportunity-requestor__jobtitle">
+                            <%- u.title %> 
+                        </p>
+                      <% } %>
+                      <% if (u.agency) { %>
+                        <p class="usajobs-open-opps-opportunity-requestor__company">
+                            <%- u.agency.name.replace(/\(.*\)/,'') %>
+                        </p>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <p class="no-match">No match found.</p>
+          <p class="no-match">Update your <a href="/profile/<%- window.cache.currentUser.id %>">profile</a> or <a href="/profiles">search manually</a>.</p>
+        <% } %>
+      </div>
+  </div>
+  <div class="usajobs-grid-full usajobs-opop-people__button">
+      <a href="/profiles" class="usa-button usa-button-secondary">View all people</a>
+  </div>
+</div>
