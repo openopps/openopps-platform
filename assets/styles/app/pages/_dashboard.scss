@@ -39,14 +39,48 @@
 }
 
 .usajobs-grid.usajobs-opop-dashboard {
-  background-color: #ffffff;
-  max-width: 100%
+  padding-left: 0;
+  padding-right: 0;
+
+  @include media($L) {
+    padding-left: $size-M;
+    padding-right: $size-M;
+  }
+
+  h1 {
+    color: $color-primary-darkest;
+    text-align: center;
+    font-size: $h2-font-size;
+
+    @include media($L) {
+      display: inline-block;
+      text-align: left;
+      font-size: $h1-font-size;
+    }
+  }
+
+  .logout {
+    color: $color-primary;
+    font-weight: bold;
+    font-size: $lead-font-size;
+    line-height: 2.6rem;
+    margin-left: $size-S;
+    text-align: center;
+    display: block;
+
+    @include media($L) {
+      text-align: left;
+      float: right;
+      padding-top: 1.9rem;
+    }
+  }
 }
 
 .usajobs-opop-dashboard__body {
-  max-width: 102rem;
   margin-left: auto;
   margin-right: auto;
+  background: $color-white;
+  padding: 0 $size-M $size-default $size-M;
 
   &::after {
     clear: both;
