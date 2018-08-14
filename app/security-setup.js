@@ -4,6 +4,35 @@ const session = require('koa-generic-session');
 const redisStore = require('koa-redis');
 const passport = require('koa-passport');
 
+const policy = {
+  'default-src': ['self'],
+  'img-src': [
+    'self',
+    '*.google-analytics.com',
+  ],
+  'script-src': [
+    'self',
+    '*.googletagmanager.com',
+    '*.google-analytics.com',
+    '*.usajobs.gov',
+    'unsafe-inline',
+    'unsafe-eval',
+  ],
+  'style-src': [
+    'self',
+    'unsafe-inline',
+  ],
+};
+
+const csrfOptions = {
+  invalidSessionSecretMessage: { message: 'Invalid session' },
+  invalidSessionSecretStatusCode: 401,
+  invalidTokenMessage: JSON.stringify({ message: 'Invalid CSRF token' }),
+  invalidTokenStatusCode: 401,
+  excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
+  disableQuery: true,
+};
+
 module.exports = async (app) => {
   // configure session
   app.proxy = true;
@@ -25,15 +54,8 @@ module.exports = async (app) => {
   app.use(require('../api/notification/controller'));
 
   // configure CSRF
-  app.use(new CSRF({
-    invalidSessionSecretMessage: { message: 'Invalid session' },
-    invalidSessionSecretStatusCode: 401,
-    invalidTokenMessage: JSON.stringify({ message: 'Invalid CSRF token' }),
-    invalidTokenStatusCode: 401,
-    excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
-    disableQuery: true,
-  }));
-  
+  app.use(new CSRF(csrfOptions));
+
   // GET CSRF Token
   app.use(async (ctx, next) => {
     if(ctx.path === '/csrfToken') {
@@ -43,25 +65,5 @@ module.exports = async (app) => {
   });
 
   // configure Content-Security-Policy
-  app.use(csp({
-    policy: {
-      'default-src': ['self'],
-      'img-src': [
-        'self',
-        '*.google-analytics.com',
-      ],
-      'script-src': [
-        'self',
-        '*.googletagmanager.com',
-        '*.google-analytics.com',
-        '*.usajobs.gov',
-        'unsafe-inline',
-        'unsafe-eval',
-      ],
-      'style-src': [
-        'self',
-        'unsafe-inline',
-      ],
-    },
-  }));
+  app.use(csp({ policy: policy }));
 };
