@@ -40,6 +40,30 @@ router.post('/api/auth/local', async (ctx, next) => {
   })(ctx, next);
 });
 
+router.get('/api/auth/oidc', async (ctx, next) => {
+  await passport.authenticate('oidc')(ctx, next);
+});
+
+router.get('/api/auth/oidc/callback', async (ctx, next) => {
+  await passport.authenticate('oidc', (err, user, info, status) => {
+    if (err || !user) {
+      if(err == 'Not authorized') {
+        ctx.status = 403;
+        ctx.redirect('/unauthorized');
+      } else {
+        log.info('Authentication Error: ', err);
+        ctx.status = 503;
+      }
+    } else {
+      ctx.login(user).then(() => {
+        ctx.redirect('/profile/' + user.id);
+      }).catch((err) => {
+        ctx.redirect('/');
+      });
+    }
+  })(ctx, next);
+});
+
 router.post('/api/auth/local/register', async (ctx, next) => {
   log.info('Register user', ctx.request.body);
 

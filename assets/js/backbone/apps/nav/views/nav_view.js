@@ -18,7 +18,6 @@ var NavView = Backbone.View.extend({
   events: {
     'click .navbar-brand'                           : linkBackbone,
     'click .nav-link'                               : linkBackbone,
-    'click .login'                                  : 'loginClick',
     'click .logout'                                 : 'logout',
     'click .toggle-one'                             : 'menuClick',
     'click .toggle-two'                             : 'menuClick2',
@@ -99,6 +98,7 @@ var NavView = Backbone.View.extend({
   doRender: function (data) {
     data.login = Login;
     data.ui = UIConfig;
+    data.accessForbidden = this.options.accessForbidden;
     var template = _.template(NavTemplate)(data);
     this.$el.html(template);
     this.$el.localize();
@@ -241,11 +241,6 @@ var NavView = Backbone.View.extend({
     var link = $(s.currentTarget).attr('href');
     Backbone.history.navigate(link, {trigger: true});
     this.activeSubPage();
-  },
-
-  loginClick: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    Backbone.history.navigate('/login', {trigger: true});
   },
 
   dismissLoginGovBanner: function () {

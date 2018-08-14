@@ -7,6 +7,7 @@ var FooterView = require('./apps/footer/views/footer_view');
 var ProfileHomeController = require('./apps/profiles/home/controllers/home_controller');
 var ProfileShowController = require('./apps/profiles/show/controllers/profile_show_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
+var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
 var TaskModel = require('./entities/tasks/task_model');
 var TaskCollection = require('./entities/tasks/tasks_collection');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
@@ -28,11 +29,13 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/:id/:action(/)'          : 'showTask',
     'profiles(/)(?:queryStr)'       : 'listProfiles',
     'profile(/)'                    : 'showProfile',
+    'profile/find(/)'               : 'findProfile',
     'profile/:id(/)'                : 'showProfile',
     'profile/:id(/)/:action'        : 'showProfile',
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
+    'unauthorized(/)'               : 'showUnauthorized',
   },
 
   data: { saved: false },
@@ -73,6 +76,7 @@ var BrowseRouter = Backbone.Router.extend({
   cleanupChildren: function () {
     if (this.browseListController) { this.browseListController.cleanup(); }
     if (this.profileShowController) { this.profileShowController.cleanup(); }
+    if (this.profileFindController) { this.profileFindController.cleanup(); }
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
@@ -91,13 +95,29 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showLogin: function () {
-    this.cleanupChildren();
-    this.loginController = new LoginController({
-      target: 'login',
-      el: '#container',
-      router: this,
-      data: this.data,
-    });
+    if(loginGov) {
+      window.location = '/api/auth/oidc';
+    } else {
+      this.cleanupChildren();
+      this.loginController = new LoginController({
+        target: 'login',
+        el: '#container',
+        router: this,
+        data: this.data,
+      });
+    }
+  },
+
+  showUnauthorized: function () {
+    Backbone.history.navigate('/', { replace: true });
+    this.navView = new NavView({
+      el: '.navigation',
+      accessForbidden: true, 
+    }).render();
+    var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
+    $('#container').html(_.template(UnauthorizedTemplate)());
+    $('#search-results-loading').hide();
+    $('.usa-footer-return-to-top').hide();
   },
 
   parseQueryParams: function (str) {
@@ -223,6 +243,15 @@ var BrowseRouter = Backbone.Router.extend({
       router: this,
       data: this.data,
       id: id,
+    });
+  },
+  
+  findProfile: function () {
+    this.cleanupChildren();
+    this.profileFindController = new ProfileFindController({
+      target: 'profile/find',
+      el: '#container',
+      router: this,
     });
   },
 

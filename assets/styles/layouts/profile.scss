@@ -364,6 +364,14 @@
   margin-top: $size-XL;
 }
 
+.usajobs-button_bar--split, .usajobs-button-bar--split {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin: 3rem 0;
+  border-top: 1px solid #d6d7d9;
+}
+
 .usajobs-button_bar--slim, .usajobs-button-bar--slim {
     max-width: 1200px;
     margin-left: auto;
@@ -378,17 +386,38 @@
     padding: 3rem;
 }
 
-.usajobs-button_bar__body .usa-button, .usajobs-button_bar__body .usa-button-big, .usajobs-button-bar__body .usa-button, .usajobs-button-bar__body .usa-button-big {
+.usajobs-button_bar__body .usa-button, 
+.usajobs-button_bar__body .usa-button-big, 
+.usajobs-button-bar__body .usa-button, 
+.usajobs-button-bar__body .usa-button-big {
     margin: 0;
 }
 
-.usajobs-button_bar__body .usa-button-secondary {
-  margin: 0 0.5em 0 0;
+.usajobs-button_bar__body, .usajobs-button-bar__body { 
+  .usa-button-secondary {
+    margin: 0 0.5em 0 0;
+  }
 }
 
-.usajobs-button_bar--slim .usajobs-button_bar__body, .usajobs-button_bar--slim .usajobs-button-bar__body, .usajobs-button-bar--slim .usajobs-button_bar__body, .usajobs-button-bar--slim .usajobs-button-bar__body {
+.usajobs-button_bar--slim .usajobs-button_bar__body, 
+.usajobs-button_bar--slim .usajobs-button-bar__body, 
+.usajobs-button-bar--slim .usajobs-button_bar__body, 
+.usajobs-button-bar--slim .usajobs-button-bar__body,
+.usajobs-button_bar--split .usajobs-button_bar__body, 
+.usajobs-button_bar--split .usajobs-button-bar__body, 
+.usajobs-button-bar--split .usajobs-button_bar__body, 
+.usajobs-button-bar--split .usajobs-button-bar__body {
     padding-left: 0;
     padding-right: 0;
+
+    .usa-button-secondary {
+      margin: 0.5rem 0 0.5em 0;
+    }
+  
+    .usajobs-button-primary {
+      margin: 0.5rem 0 0.5em 0;
+      float: right;
+    }
 }
 
 form [type=submit] {
@@ -723,3 +752,14 @@ form [type=submit] {
     border: none;
   }
 }
+
+
+.usajobs-open-opps-opportunity.profile-find {
+  padding: 1.5rem;
+
+  @include media($M) {
+    padding: 1.5rem 3rem 3rem;
+  }
+}
+
+

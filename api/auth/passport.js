@@ -4,6 +4,7 @@ const log = require('log')('app:passport');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
+const path = require('path');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -84,3 +85,32 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
     done(new Error('Username not found.'), false);
   });
 }));
+
+if(openopps.auth.oidc) {
+  const { Strategy } = require('openid-client');
+  var OpenIDStrategyOptions = {
+    client: openopps.auth.oidc,
+    params: {
+      redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
+      scope: 'openid profile email phone address',
+    },
+    //usePKCE: 'S256',
+  };
+  passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
+    if(tokenset.claims['usaj:hiringPath'] != 'fed' || !tokenset.claims['usaj:governmentURI']) {
+      // TODO: Add unauthorized attempt to access OpenOpps to audit_log
+      done('Not authorized');
+    } else {
+      dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(async user => {
+        if(!user.linkedId || user.username != tokenset.claims['usaj:governmentURI']) {
+          user.linkedId = tokenset.claims.sub;
+          user.username = tokenset.claims['usaj:governmentURI'];
+          await dao.User.update(user);
+        }
+        done(null, user);
+      }).catch(err => {
+        done(err);
+      });
+    }
+  }));
+}
