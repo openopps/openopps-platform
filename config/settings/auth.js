@@ -9,7 +9,7 @@ module.exports = {
       tokenExpiration  : 60 * 60 * 1000,
     },
     loginGov : {
-      enabled: process.env.LOGINGOV || false,
+      enabled: (process.env.LOGINGOV || '').match(/^true$/i) || false,
       discoveryURL: process.env.DISCOVERY_URL,
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
