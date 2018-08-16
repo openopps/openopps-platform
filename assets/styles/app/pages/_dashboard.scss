@@ -198,17 +198,6 @@
   }
 }
 
-// .usajobs-opop-badges__body {
-//   max-width: 60rem;
-//   text-align: left;
-//   margin-top: 0;
-//   padding-top: 1.4rem;
-
-//   @include media($M) {
-//     margin-top: 0.1rem;
-//   }
-// }
-
 .usajobs-opop-achievements__body {
   margin-top: 0 0 $size-M 0;
   padding-top: 1.4rem;
@@ -218,8 +207,7 @@
   }
 }
 
-.users-feed {
-
+.users {
   .list-unstyled {
     list-style: none;
     padding-left: 0;

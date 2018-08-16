@@ -8,7 +8,7 @@ var i18nextJquery = require('jquery-i18next');
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
 
-var ProfileActivityView = Backbone.View.extend({
+var HomeActivityView = Backbone.View.extend({
 
   events: {
     'click .js-clickable-row' : 'followLink',
@@ -46,7 +46,7 @@ var ProfileActivityView = Backbone.View.extend({
         data.count[this.options.data[i].state]++;
       }
     }
-    var template = _.template(this.options.template)(data);
+    var template = this.options.template(data);
     this.$el.html(template);
     this.$el.localize();
 
@@ -64,4 +64,4 @@ var ProfileActivityView = Backbone.View.extend({
 
 });
 
-module.exports = ProfileActivityView;
+module.exports = HomeActivityView;
