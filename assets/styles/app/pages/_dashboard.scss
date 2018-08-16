@@ -79,8 +79,12 @@
 .usajobs-opop-dashboard__body {
   margin-left: auto;
   margin-right: auto;
-  background: $color-white;
-  padding: 0 $size-M $size-default $size-M;
+  // background: $color-white;
+  // padding: 0 $size-SM $size-default $size-SM;
+
+  // @include media($L) {
+  //   padding: 0 $size-M $size-default $size-M;
+  // }
 
   &::after {
     clear: both;
@@ -112,18 +116,85 @@
 }
 
 .usajobs-opop-search__body {
-  margin-bottom: $size-M;
-  .usajobs-opop-search__button {
-    text-align: center;
-    margin: $size-M 0;
+  margin-bottom: none;
+  border-bottom: 1px solid $color-gray-light;
+  margin-left: auto;
+  margin-right: auto;
+  background: $color-white;
+  padding: $size-default $size-SM $size-L $size-SM;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  .title-container {
+    margin-bottom: 3rem;
+  }
+
+  .search-title {
+    margin-bottom: $size-M;
+  }
+
+  h2 {
+    display: inline;
+  }
+
+  .side-link {
+    color: $color-primary;
+    font-weight: normal;
+    font-size: $small-font-size;
+    text-decoration: underline;
+    margin-left: $size-default;
+    display: inline-flex;
+    vertical-align: top;
+    margin-top: 1.1rem;
+  }
+
+  .usa-button.usa-button-secondary.align-right {
+    float: right;
+    margin: 0;
   }
 }
 
 .usajobs-opop-people__body {
-  margin-bottom: $size-M;
-  .usajobs-opop-people__button {
-    text-align: center;
-    margin: $size-M 0;
+  margin-bottom: none;
+  margin-left: auto;
+  margin-right: auto;
+  background: $color-white;
+  padding: $size-default $size-SM $size-default $size-SM;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    margin-bottom: $size-default;
+  }
+
+  .title-container {
+    margin-bottom: 3rem;
+  }
+
+  .search-title {
+    margin-bottom: $size-M;
+  }
+
+  h2 {
+    display: inline;
+  }
+
+  .side-link {
+    color: $color-primary;
+    font-weight: normal;
+    font-size: $small-font-size;
+    text-decoration: underline;
+    margin-left: $size-default;
+    display: inline-flex;
+    vertical-align: top;
+    margin-top: 1.1rem;
+  }
+
+  .usajobs-open-opps-opportunity-requestor__company {
+    margin-top: 0;
   }
 }
 
@@ -148,7 +219,6 @@
 }
 
 .users-feed {
-  margin-top: $size-M;
 
   .list-unstyled {
     list-style: none;
