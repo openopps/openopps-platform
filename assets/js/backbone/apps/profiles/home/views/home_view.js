@@ -12,7 +12,7 @@ var User = require('../../../../../utils/user');
 // templates
 var HomeTemplate = require('../templates/home_template.html');
 var SearchTemplate = require('../templates/home_search_template.html');
-var UsersTemplate = require('../templates/home_users_feed_template.html');
+var UsersTemplate = require('../templates/home_users_template.html');
 var HomeCreatedTemplate = require('../templates/home_created_template.html');
 var HomeParticipatedTemplate = require('../templates/home_participated_template.html');
 
@@ -21,7 +21,7 @@ var templates = {
   users: _.template(UsersTemplate),
   search: _.template(SearchTemplate),
   created: _.template(HomeCreatedTemplate),
-  participated: _.template(HomeParticipatedTemplate)
+  participated: _.template(HomeParticipatedTemplate),
 };
 
 var HomeView = Backbone.View.extend({
@@ -32,11 +32,9 @@ var HomeView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
-    // return this;
   },
 
   render: function () {
-
     this.$el.html(templates.main);
     $('#search-results-loading').hide();
     this.$el.localize();
@@ -86,7 +84,7 @@ var HomeView = Backbone.View.extend({
         var data = {};
         data[type] = e.toJSON()[0];
         var html = templates[type](data);
-        this.setTarget(type + '-feed', html);
+        this.setTarget(type, html);
       }.bind(this));
     }.bind(this));
   },
