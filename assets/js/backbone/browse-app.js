@@ -22,7 +22,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   routes: {
     ''                              : 'showLanding',
-    'home/:id(/)'                   : 'showHome',
+    'home'                          : 'showHome',
     'tasks/new(?*queryString)'      : 'newTask',
     'tasks(/)(?:queryStr)'          : 'listTasks',
     'tasks/:id(/)'                  : 'showTask',
@@ -242,7 +242,6 @@ var BrowseRouter = Backbone.Router.extend({
       el: '#container',
       router: this,
       data: this.data,
-      id: id,
     });
   },
   

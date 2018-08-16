@@ -13,7 +13,6 @@ var UIConfig = require('../../../../config/ui.json');
 var TagShowView = require('../../../tag/show/views/tag_show_view');
 var Login = require('../../../../config/login.json');
 var ModalComponent = require('../../../../components/modal');
-var ProfileActivityView = require('./profile_activity_view');
 var TagFactory = require('../../../../components/tag_factory');
 
 // templates
@@ -21,8 +20,6 @@ var ProfileShowTemplate = require('../templates/profile_show_template.html');
 var ProfileEditTemplate = require('../templates/profile_edit_template.html');
 var ProfileSkillsTemplate = require('../templates/profile_skills_template.html');
 var ShareTemplate = require('../templates/profile_share_template.txt');
-var ProfileCreatedTemplate = require('../templates/profile_created_template.html');
-var ProfileParticipatedTemplate = require('../templates/profile_participated_template.html');
 
 
 var ProfileShowView = Backbone.View.extend({
@@ -154,7 +151,6 @@ var ProfileShowView = Backbone.View.extend({
     this.initializeForm();
     this.initializeSelect2();
     this.initializeTags();
-    this.initializeProfileActivityView();
     this.initializeTextArea();
     this.updatePhoto();
     this.updateProfileEmail();
@@ -227,32 +223,6 @@ var ProfileShowView = Backbone.View.extend({
       showTags: showTags,
     });
     this.tagView.render();
-  },
-
-  initializeProfileActivityView: function () {
-    if (this.taskView) { this.taskView.cleanup(); }
-    if (this.volView) { this.volView.cleanup(); }
-    $.ajax('/api/user/activities/' + this.model.attributes.id).done(function (data) {
-      this.taskView = new ProfileActivityView({
-        model: this.model,
-        el: '.task-createdactivity-wrapper',
-        template: ProfileCreatedTemplate,
-        target: 'task',
-        handle: 'task',  // used in css id
-        data: data.tasks.created,
-      });
-      this.taskView.render();
-      this.volView = new ProfileActivityView({
-        model: this.model,
-        el: '.task-activity-wrapper',
-        template: ProfileParticipatedTemplate,
-        target: 'task',
-        handle: 'volTask',  // used in css id
-        data: data.tasks.volunteered,
-        getStatus: this.getStatus,
-      });
-      this.volView.render();
-    }.bind(this));
   },
 
   initializeForm: function () {
