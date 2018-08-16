@@ -212,7 +212,7 @@ var NavView = Backbone.View.extend({
 
   menuClick: function (e) {
     if (e.preventDefault) e.preventDefault();
-    Backbone.history.navigate('/home/' + window.cache.currentUser.id, {trigger: true});
+    Backbone.history.navigate('/home', {trigger: true});
     this.activePage();
   },
 

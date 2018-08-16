@@ -1,16 +1,16 @@
 <main class="usajobs-opop" id="main-content" role="main">
   
   <div class="usajobs-grid usajobs-opop-dashboard">
-    <h1>Welcome <%- name %><a href="/auth/logout" class="logout">Sign out</a></h1>
+    <h1>Welcome <%- window.cache.currentUser.name %><a href="/auth/logout" class="logout">Sign out</a></h1>
     
 
     <div class="usajobs-opop-dashboard__body">
       <div class="usajobs-open-opps-participated__body">
         <h2>Opportunities</h2>
         <h3>Participated</h3>
-        <div class="task-activity-wrapper"></div>
+        <div class="opportunity-participated"></div>
         <h3>Created</h3>
-        <div class="task-createdactivity-wrapper"></div>
+        <div class="opportunity-created"></div>
       </div>
       <div data-target="search-feed" class="search-feed"></div>
       <div data-target="users-feed" class="users-feed"></div>

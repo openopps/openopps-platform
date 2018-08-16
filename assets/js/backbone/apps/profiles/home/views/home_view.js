@@ -4,13 +4,12 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 var ActivityCollection = window.c = require('../../../../entities/activities/activities_collection');
-var TaskCollection = require('../../../../entities/tasks/tasks_collection');
+// var TaskCollection = require('../../../../entities/tasks/tasks_collection');
+var HomeActivityView = require('./home_activity_view');
 var UIConfig = require('../../../../config/ui.json');
 var User = require('../../../../../utils/user');
 
 // templates
-var TaskListView = require('../../../tasks/list/views/task_list_view');
-var TasksCollection = require('../../../../entities/tasks/tasks_collection');
 var HomeTemplate = require('../templates/home_template.html');
 var SearchTemplate = require('../templates/home_search_template.html');
 var UsersTemplate = require('../templates/home_users_feed_template.html');
@@ -22,7 +21,7 @@ var templates = {
   users: _.template(UsersTemplate),
   search: _.template(SearchTemplate),
   created: _.template(HomeCreatedTemplate),
-  // participated: _template(HomeParticipatedTemplate)
+  participated: _.template(HomeParticipatedTemplate)
 };
 
 var HomeView = Backbone.View.extend({
@@ -33,66 +32,19 @@ var HomeView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
-    this.queryParams = {};
-    this.initializeView();
-    return this;
-  },
-
-  initializeView: function () {
-    if (this.taskListView) {
-      this.taskListView.cleanup();
-    }
-    this.taskListView = new TaskListView({
-      el: '#task-list',
-      collection: this.collection,
-      queryParams: this.queryParams,
-    });
+    // return this;
   },
 
   render: function () {
+
+    this.$el.html(templates.main);
     $('#search-results-loading').hide();
-    this.$el.html(templates.main());
-    
-    _.each(['search', 'users'], function (type) {
-      this.listenTo(new ActivityCollection({ type: type }), 'activity:collection:fetch:success', function (e) {
-        var data = {};
-        data[type] = e.toJSON()[0];
-        var html = templates[type](data);
-        this.setTarget(type + '-feed', html);
-      }.bind(this));
-    }.bind(this));
-
-
-    if (this.taskView) { this.taskView.cleanup(); }
-    if (this.volView) { this.volView.cleanup(); }
-    $.ajax('/api/user/activities/' + this.data.id).done(function (data) {
-      this.taskView = new HomeActivityView({
-        model: this.model,
-        el: '.task-createdactivity-wrapper',
-        template: created,
-        target: 'task',
-        handle: 'task',  // used in css id
-        data: data.tasks.created,
-      });
-      this.taskView.render();
-      this.volView = new HomeActivityView({
-        model: this.model,
-        el: '.task-activity-wrapper',
-        template: participated,
-        target: 'task',
-        handle: 'volTask',  // used in css id
-        data: data.tasks.volunteered,
-        getStatus: this.getStatus,
-      });
-      this.volView.render();
-    }.bind(this));
-
-
     this.$el.localize();
 
-    // // initialize sub components
-    // this.initializeHomeActivityView();
-
+    // initialize sub components
+    this.initializeParticipatedCreated();
+    this.initializeSearchUsers();
+    
     return this;
   },
 
@@ -101,31 +53,56 @@ var HomeView = Backbone.View.extend({
     $(s).html(inner);
   },
 
-  // initializeHomeActivityView: function () {
-  //   if (this.taskView) { this.taskView.cleanup(); }
-  //   if (this.volView) { this.volView.cleanup(); }
-  //   $.ajax('/api/user/activities/' + this.model.attributes.id).done(function (data) {
-  //     this.taskView = new HomeActivityView({
-  //       model: this.model,
-  //       el: '.task-createdactivity-wrapper',
-  //       template: HomeCreatedTemplate,
-  //       target: 'task',
-  //       handle: 'task',  // used in css id
-  //       data: data.tasks.created,
-  //     });
-  //     this.taskView.render();
-  //     this.volView = new HomeActivityView({
-  //       model: this.model,
-  //       el: '.task-activity-wrapper',
-  //       template: HomeParticipatedTemplate,
-  //       target: 'task',
-  //       handle: 'volTask',  // used in css id
-  //       data: data.tasks.volunteered,
-  //       getStatus: this.getStatus,
-  //     });
-  //     this.volView.render();
-  //   }.bind(this));
-  // },
+  initializeParticipatedCreated: function () {
+    if (this.volView) { this.volView.cleanup(); }
+    if (this.taskView) { this.taskView.cleanup(); }
+    $.ajax('/api/user/activities/' + window.cache.currentUser.id).done(function (data) {
+      this.volView = new HomeActivityView({
+        model: this.model,
+        el: '.opportunity-participated',
+        template: templates.participated,
+        target: 'task',
+        handle: 'volTask',  // used in css id
+        data: data.tasks.volunteered,
+        getStatus: this.getStatus,
+      });
+      this.volView.render();
+
+      this.taskView = new HomeActivityView({
+        model: this.model,
+        el: '.opportunity-created',
+        template: templates.created,
+        target: 'task',
+        handle: 'task',  // used in css id
+        data: data.tasks.created,
+      });
+      this.taskView.render();
+    }.bind(this));
+  },
+
+  initializeSearchUsers: function () {
+    _.each(['search', 'users'], function (type) {
+      this.listenTo(new ActivityCollection({ type: type }), 'activity:collection:fetch:success', function (e) {
+        var data = {};
+        data[type] = e.toJSON()[0];
+        var html = templates[type](data);
+        this.setTarget(type + '-feed', html);
+      }.bind(this));
+    }.bind(this));
+  },
+
+  getStatus: function (task) {
+    switch (task.state) {
+      case 'completed':
+        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
+      case 'in progress':
+        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
+      case 'canceled':
+        return 'Canceled';
+      default:
+        return (task.assigned ? 'Assigned' : 'Applied');
+    }
+  },
 
   logout: function (e) {
     if (e.preventDefault) e.preventDefault();

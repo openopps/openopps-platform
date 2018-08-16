@@ -4,7 +4,6 @@ var BaseController = require('../../../../base/base_controller');
 var HomeView = require('../views/home_view');
 
 var HomeController = BaseController.extend({
-  // The initialize method is mainly used for event bindings (for efficiency)
   initialize: function (options) {
     this.options - options;
     this.homeView = new HomeView({
@@ -14,9 +13,6 @@ var HomeController = BaseController.extend({
     return this;
   },
 
-  // ---------------------
-  //= Utility Methods
-  // ---------------------
   cleanup: function () {
     if (this.homeView) this.homeView.cleanup();
     removeView(this);
