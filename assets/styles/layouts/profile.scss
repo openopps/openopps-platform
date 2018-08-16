@@ -364,6 +364,10 @@
   margin-top: $size-XL;
 }
 
+.usajobs-open-opps-profile .usajobs-fieldset.skills-interests h2 {
+  margin-top: 0;
+}
+
 .usajobs-button_bar--split, .usajobs-button-bar--split {
   max-width: 1200px;
   margin-left: auto;
@@ -376,7 +380,7 @@
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
-    margin: 3rem 0 6rem;
+    margin: 3rem 0 0;
     border-top: 1px solid #d6d7d9;
 }
 

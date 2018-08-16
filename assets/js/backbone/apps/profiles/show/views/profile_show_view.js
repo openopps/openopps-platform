@@ -19,6 +19,7 @@ var TagFactory = require('../../../../components/tag_factory');
 // templates
 var ProfileShowTemplate = require('../templates/profile_show_template.html');
 var ProfileEditTemplate = require('../templates/profile_edit_template.html');
+var ProfileSkillsTemplate = require('../templates/profile_skills_template.html');
 var ShareTemplate = require('../templates/profile_share_template.txt');
 var ProfileCreatedTemplate = require('../templates/profile_created_template.html');
 var ProfileParticipatedTemplate = require('../templates/profile_participated_template.html');
@@ -77,6 +78,15 @@ var ProfileShowView = Backbone.View.extend({
           replace: true,
         });
       }
+    } else if (this.options.action === 'skills') {
+      this.skills = true;
+      if (model.id !== currentUser.id && !model.canEditProfile) {
+        this.skills = false;
+        Backbone.history.navigate('profile/' + model.id, {
+          trigger: false,
+          replace: true,
+        });
+      }
     }
   },
 
@@ -122,6 +132,7 @@ var ProfileShowView = Backbone.View.extend({
       tagTypes: this.tagTypes,
       user: window.cache.currentUser || {},
       edit: false,
+      skills: false,
       saved: this.saved,
       ui: UIConfig,
     };
@@ -133,7 +144,7 @@ var ProfileShowView = Backbone.View.extend({
       data.data.bioHtml = marked(data.data.bio);
     }
 
-    var template = this.edit ? _.template(ProfileEditTemplate)(data) : _.template(ProfileShowTemplate)(data);
+    var template = this.edit ? _.template(ProfileEditTemplate)(data) : this.skills ? _.template(ProfileSkillsTemplate)(data) : _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
@@ -212,6 +223,7 @@ var ProfileShowView = Backbone.View.extend({
       target: 'profile',
       targetId: 'userId',
       edit: this.edit,
+      skills: this.skills,
       showTags: showTags,
     });
     this.tagView.render();
