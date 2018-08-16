@@ -1,7 +1,14 @@
 <div class="usajobs-opop-people__body">
-  <h2>See other people like you</h2>
+  <div class="usajobs-grid-full title-container">
+      <div class="usa-width-one-whole">
+          <div class="people-title">
+              <h2>See other people like you</h2>
+              <a href="/profiles" class="side-link">View all people</a>
+          </div>
+      </div>
+  </div>
   <div class="usajobs-grid-full">
-    <div class="usa-width-one-half">
+    <div class="usa-width-one-third">
       <h3>Based on your job title</h3>
       <% if (users.title.length > 0) { %>
         <ul class="list-unstyled jobtitle">
@@ -41,7 +48,7 @@
         <p class="no-match">Update your <a href="/profile/<%- window.cache.currentUser.id %>">profile</a> or <a href="/profiles">search manually</a>.</p>
       <% } %>
     </div>
-    <div class="usa-width-one-half">
+    <div class="usa-width-one-third">
       <h3>Based on your agency</h3>
         <% if (users.agency.length > 0) { %>
           <ul class="list-unstyled agency">
@@ -81,8 +88,5 @@
           <p class="no-match">Update your <a href="/profile/<%- window.cache.currentUser.id %>">profile</a> or <a href="/profiles">search manually</a>.</p>
         <% } %>
       </div>
-  </div>
-  <div class="usajobs-grid-full usajobs-opop-people__button">
-      <a href="/profiles" class="usa-button usa-button-secondary">View all people</a>
   </div>
 </div>
