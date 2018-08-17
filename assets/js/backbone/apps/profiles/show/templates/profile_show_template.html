@@ -94,6 +94,13 @@
       </div>
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
         <div class="usajobs-open-opps-participated__body usajobs-grid-full">
+          <% if (data.isOwner || data.canEditProfile) { %>
+          <div class="usajobs-opop-section-edit skills-edit">
+            <% if (login.profile.edit === true) { %>
+            <a href="/profile/<%- data.id %>/skills" class="link-backbone"><span>Edit</span></a>
+            <% } %>
+          </div>
+          <% } %>
           <% if (skillsTags.length > 0 || interestsTags.length > 0) { %>
             <h2>Skills</h2>
           <% } %>

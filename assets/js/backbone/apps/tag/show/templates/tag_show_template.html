@@ -1,12 +1,10 @@
 <% for (var i = 0; i < tags.length; i++) { %>
   <div class="tag-title <%- tags[i]['class'] %>" id="<%- tags[i].id %>">
-    <h2>
-      <% if (showTags) { %><i class="<%- tags[i].icon %>"></i> <span><% } %>
+    <h3>
       <%- tags[i].profileEdit %>
-      <% if (showTags) { %></span><% } %>
-      <span class="usajobs-form__legend"><span class="usa-input-optional"></span></span>
-    </h2>
-    <% if ((data.isOwner || data.canEditProfile) && edit) { %>
+      <span class="usajobs-form__legend"></span>
+    </h3>
+    <% if ((data.isOwner || data.canEditProfile) && (edit || skills)) { %>
       <div>
         <input type="text" id="tag_<%- tags[i].id.toLowerCase() %>" class="fullwidth" name="tag_<%- tags[i].name.toLowerCase() %>"/>
       </div>
