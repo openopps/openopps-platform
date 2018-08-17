@@ -266,6 +266,9 @@ var BrowseRouter = Backbone.Router.extend({
     // normalize actions that don't have ids
     if (!action && id) {
       if (id == 'edit') {
+        if (loginGov) {
+          window.location = usajobsURL + '/Applicant/Profile';
+        }
         action = id;
         id = window.cache.currentUser.id;
       } else if (id == 'settings') {

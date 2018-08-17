@@ -16,6 +16,10 @@
     }
 }
 
+.usajobs-content-gutter.profile-gutter .usajobs-open-opps-opportunity.usajobs-opop-skill__body {
+  margin-top: $size-SM;
+}
+
 @media screen and (min-width: 37.5em) {
     .usajobs-opop-section__edit {
         top: 1.5rem;
@@ -169,8 +173,8 @@
     height: 6.5rem !important;
 
     @include media($L) {
-      width: 15rem !important;
-      height: 15rem !important;
+      width: 8rem !important;
+      height: 8rem !important;
     }
   }
 
@@ -190,8 +194,8 @@
     height: 10rem !important;
 
     @include media($L) {
-      width: 15rem !important;
-      height: 15rem !important;
+      width: 8rem !important;
+      height: 8rem !important;
     }
   }
 
@@ -278,7 +282,15 @@
     }
 }
 
-.main-content a {
+.usajobs-profile-home-section__field-label {
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: #5b616b;
+}
+
+.main-content .profile-share a {
     text-decoration: none;
 }
 
