@@ -1,7 +1,7 @@
 const koa = require('koa');
 const app = new koa();
 
-module.exports = () => {
+module.exports = async () => {
   // load environment variables and configuration
   global.openopps = require('./openopps-setup');
 
@@ -9,7 +9,7 @@ module.exports = () => {
   require('./middleware-setup')(app);
 
   // configure session and security
-  require('./security-setup')(app);
+  await require('./security-setup')(app);
 
   // redirect any request coming other than openopps.hostName
   require('./redirect')(app);

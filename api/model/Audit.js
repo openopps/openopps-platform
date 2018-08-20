@@ -11,6 +11,11 @@ const AuditTypes = {
     description: 'A new user is added to the applicant pool for an opportunity.',
     data: ['taskId', 'participant'],
   },
+  'UNAUTHORIZED_APPLICATION_ACCESS': {
+    action: 'UNAUTHORIZED_APPLICATION_ACCESS',
+    description: 'An unauthorized USAJOBS user has attempted to access Open Opportunities.',
+    data: ['documentId'],
+  },
 };
 
 function getRole (user) {
