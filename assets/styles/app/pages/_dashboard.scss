@@ -282,7 +282,7 @@
   transition: height .5s;
 }
 
-.usa-button.usajobs-show-next__trigger {
+#participated-show-all, #created-show-all {
   display: block;
   margin: 1.5rem 0 0;
   padding: 1rem;
@@ -301,6 +301,22 @@
     height: 1.7rem;
     width: 1.094rem;
     content: url(../../../../img/arrow-down.svg);
+  }
+}
+
+.opportunity-created .usajobs-pill--opportunity-status {
+  margin-bottom: 0;
+}
+
+.results-filter {
+  tbody tr:nth-child(n+6) {
+    display: none;
+  }
+}
+
+.participated-show-all {
+  tbody tr:nth-child(n+6) {
+    display: table-row;
   }
 }
 

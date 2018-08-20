@@ -26,7 +26,9 @@ var templates = {
 
 var HomeView = Backbone.View.extend({
   events: {
-    'click .logout' : 'logout',
+    'click .logout'                : 'logout',
+    'click #participated-show-all' : 'showAllParticipated',
+    'click #created-show-all'      : 'showAllCreated',
   },
 
   initialize: function (options) {
@@ -100,6 +102,20 @@ var HomeView = Backbone.View.extend({
       default:
         return (task.assigned ? 'Assigned' : 'Applied');
     }
+  },
+
+  showAllParticipated: function () {
+    var table = document.getElementById('participated-table');
+    table.classList.remove('results-filter');
+    var button = document.getElementById('participated-show-all');
+    button.style.display = 'none';
+  },
+
+  showAllCreated: function () {
+    var table = document.getElementById('created-table');
+    table.classList.remove('results-filter');
+    var button = document.getElementById('created-show-all');
+    button.style.display = 'none';
   },
 
   logout: function (e) {
