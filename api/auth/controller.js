@@ -50,6 +50,19 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
       if(err == 'Not authorized') {
         ctx.status = 403;
         ctx.redirect('/unauthorized');
+      } else if (err == 'No account found') {
+        /* TODO:
+         * Insert unmatched account into staging table?
+         *  id: PKey
+         *  uuid: guid
+         *  link_id: string
+         *  government_uri: string
+         *  
+         * params:
+         *  key => Hash guid + link_id
+         *  linked_id 
+         */
+        ctx.redirect('/profile/find');
       } else {
         log.info('Authentication Error: ', err);
         ctx.status = 503;
