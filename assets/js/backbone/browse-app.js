@@ -4,6 +4,7 @@ var $ = require('jquery');
 
 var NavView = require('./apps/nav/views/nav_view');
 var FooterView = require('./apps/footer/views/footer_view');
+var ProfileHomeController = require('./apps/profiles/home/controllers/home_controller');
 var ProfileShowController = require('./apps/profiles/show/controllers/profile_show_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
 var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
@@ -20,8 +21,8 @@ var Modal = require('./components/modal');
 var BrowseRouter = Backbone.Router.extend({
 
   routes: {
-    ''                              : 'showHome',
-    'dashboard(/)'                  : 'showHome',
+    ''                              : 'showLanding',
+    'home'                          : 'showHome',
     'tasks/new(?*queryString)'      : 'newTask',
     'tasks(/)(?:queryStr)'          : 'listTasks',
     'tasks/:id(/)'                  : 'showTask',
@@ -83,7 +84,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.data = { saved: false };
   },
 
-  showHome: function () {
+  showLanding: function () {
     this.cleanupChildren();
     this.homeController = new HomeController({
       target: 'home',
@@ -231,6 +232,19 @@ var BrowseRouter = Backbone.Router.extend({
     });
   },
 
+  showHome: function (id) {
+    this.cleanupChildren();
+    if (id) {
+      id = id.toLowerCase();
+    }
+    this.profileHomeController = new ProfileHomeController({
+      target: 'home',
+      el: '#container',
+      router: this,
+      data: this.data,
+    });
+  },
+  
   findProfile: function () {
     this.cleanupChildren();
     this.profileFindController = new ProfileFindController({

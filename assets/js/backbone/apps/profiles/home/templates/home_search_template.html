@@ -1,7 +1,17 @@
 <div class="usajobs-opop-search__body">
-    <h2>Search opportunities by</h2>
-    <div class="usajobs-grid-full">
+    <div class="usajobs-grid-full title-container">
+        <div class="usa-width-two-thirds">
+            <div class="search-title">
+                <h2>Search opportunities by</h2>
+                <a href="/tasks" class="side-link">View all opportunities</a>
+            </div>
+        </div>
         <div class="usa-width-one-third">
+            <a href="/tasks" class="usa-button usa-button-secondary align-right">Search based on your profile</a>
+        </div>
+    </div>
+    <div class="usajobs-grid-full">
+        <div class="usa-width-one-fourth">
             <h3>Career field</h3>
             <ul class="usa-unstyled-list">
                 <li class="usajobs-open-opps-search_item">
@@ -14,7 +24,7 @@
                 <% }); %>
             </ul>
         </div>
-        <div class="usa-width-one-third">
+        <div class="usa-width-one-fourth">
             <h3>Skill</h3>
             <ul class="usa-unstyled-list">
                 <% _.forEach(search.skills, function(skill) { %>
@@ -24,7 +34,7 @@
                 <% }); %>
             </ul>
         </div>
-        <div class="usa-width-one-third">
+        <div class="usa-width-one-fourth">
             <h3>Location</h3>
             <ul class="usa-unstyled-list">
                 <li class="usajobs-open-opps-search_item">
@@ -37,8 +47,5 @@
                 <% }); %>
             </ul>
         </div>
-    </div>
-    <div class="usajobs-grid-full usajobs-opop-search__button">
-        <a href="/tasks" class="usa-button usa-button-secondary">View all opportunities</a>
     </div>
 </div>
