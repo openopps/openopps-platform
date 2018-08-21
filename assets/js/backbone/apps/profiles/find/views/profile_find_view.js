@@ -24,6 +24,7 @@ var ProfileFindView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     $('.usajobs-nav__menu').hide();
+    $('#usajobs-nav-login-gov-banner').hide();
     return this;
   },
 

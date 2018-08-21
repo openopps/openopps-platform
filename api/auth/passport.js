@@ -5,6 +5,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const Audit = require('../model/Audit');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -35,11 +36,17 @@ async function fetchPassport (user, protocol) {
 }
 
 passport.serializeUser(function (user, done) {
-  done(null, user.id);
+  done(null, { 
+    id: user.id,
+    access_token: user.access_token,
+    id_token: user.id_token,
+  });
 });
 
-passport.deserializeUser(async function (id, done) {
-  var user = await fetchUser(id);
+passport.deserializeUser(async function (userObj, done) {
+  var user = await fetchUser(userObj.id);
+  user.access_token = userObj.access_token,
+  user.id_token = userObj.id_token,
   done(null, user);
 });
 
@@ -94,22 +101,26 @@ if(openopps.auth.oidc) {
       redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
       scope: 'openid profile email phone address',
     },
-    //usePKCE: 'S256',
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
     if(tokenset.claims['usaj:hiringPath'] != 'fed' || !tokenset.claims['usaj:governmentURI']) {
-      // TODO: Add unauthorized attempt to access OpenOpps to audit_log
+      var audit = Audit.createAudit('UNAUTHORIZED_APPLICATION_ACCESS', { id: 0 }, {
+        documentId: tokenset.claims.sub,
+      });
+      dao.AuditLog.insert(audit).catch(() => {});
       done('Not authorized');
     } else {
       dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(async user => {
-        if(!user.linkedId || user.username != tokenset.claims['usaj:governmentURI']) {
+        if(!user.linkedId || user.governmentUri != tokenset.claims['usaj:governmentURI']) {
           user.linkedId = tokenset.claims.sub;
-          user.username = tokenset.claims['usaj:governmentURI'];
+          user.governmentUri = tokenset.claims['usaj:governmentURI'];
           await dao.User.update(user);
         }
+        user.access_token = tokenset.access_token,
+        user.id_token = tokenset.id_token,
         done(null, user);
       }).catch(err => {
-        done(err);
+        done('No account found');
       });
     }
   }));
