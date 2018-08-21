@@ -104,18 +104,21 @@ var HomeView = Backbone.View.extend({
     }
   },
 
-  showAllParticipated: function () {
-    var table = document.getElementById('participated-table');
-    table.classList.remove('results-filter');
-    var button = document.getElementById('participated-show-all');
-    button.style.display = 'none';
-  },
-
-  showAllCreated: function () {
-    var table = document.getElementById('created-table');
-    table.classList.remove('results-filter');
-    var button = document.getElementById('created-show-all');
-    button.style.display = 'none';
+  showAllParticipated: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    var participatedTable = document.getElementById('participated-table');
+    var participatedButton = document.getElementById('participated-show-all');
+    var createdTable = document.getElementById('created-table');    
+    var createdButton = document.getElementById('created-show-all');
+    
+    if (t.hasClass('participated-show-all')) {
+      participatedTable.classList.remove('results-filter');
+      participatedButton.classList.add('hide');
+    } else {
+      createdTable.classList.remove('results-filter');
+      createdButton.classList.add('hide');
+    }
   },
 
   logout: function (e) {

@@ -290,17 +290,19 @@
   text-align: center;
   color: #212121;
   background-color: #d6d7d9;
+  width: 100%;
 
   &::after {
     vertical-align: middle;
-  }
-
-  &[aria-expanded=false]::after {
     display: inline-block;
     background-size: 1.7rem 1.094rem;
     height: 1.7rem;
     width: 1.094rem;
     content: url(../../../../img/arrow-down.svg);
+  }
+
+  &.hide {
+    display: none;
   }
 }
 
