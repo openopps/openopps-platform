@@ -27,8 +27,8 @@ var templates = {
 var HomeView = Backbone.View.extend({
   events: {
     'click .logout'                : 'logout',
-    'click #participated-show-all' : 'showAllParticipated',
-    'click #created-show-all'      : 'showAllCreated',
+    'click .participated-show-all' : 'showAllParticipated',
+    'click .created-show-all'      : 'showAllParticipated',
   },
 
   initialize: function (options) {
@@ -108,16 +108,16 @@ var HomeView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var participatedTable = document.getElementById('participated-table');
-    var participatedButton = document.getElementById('participated-show-all');
+    var participatedButton = document.getElementsByClassName('participated-show-all');
     var createdTable = document.getElementById('created-table');    
-    var createdButton = document.getElementById('created-show-all');
+    var createdButton = document.getElementsByClassName('created-show-all');
     
     if (t.hasClass('participated-show-all')) {
       participatedTable.classList.remove('results-filter');
-      participatedButton.classList.add('hide');
+      participatedButton[0].classList.add('hide');
     } else {
       createdTable.classList.remove('results-filter');
-      createdButton.classList.add('hide');
+      createdButton[0].classList.add('hide');
     }
   },
 

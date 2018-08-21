@@ -282,12 +282,8 @@
   transition: height .5s;
 }
 
-#participated-show-all, #created-show-all {
+#volTask-tab-open .participated-show-all, #task-tab-open .created-show-all {
   display: block;
-  margin: 1.5rem 0 0;
-  padding: 1rem;
-  font-weight: bold;
-  text-align: center;
   color: #212121;
   background-color: #d6d7d9;
   width: 100%;
@@ -313,12 +309,6 @@
 .results-filter {
   tbody tr:nth-child(n+6) {
     display: none;
-  }
-}
-
-.participated-show-all {
-  tbody tr:nth-child(n+6) {
-    display: table-row;
   }
 }
 
