@@ -6,6 +6,7 @@ var NavView = require('./apps/nav/views/nav_view');
 var FooterView = require('./apps/footer/views/footer_view');
 var ProfileHomeController = require('./apps/profiles/home/controllers/home_controller');
 var ProfileShowController = require('./apps/profiles/show/controllers/profile_show_controller');
+var ProfileEditController = require('./apps/profiles/edit/controllers/profile_edit_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
 var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
 var TaskModel = require('./entities/tasks/task_model');
@@ -28,10 +29,11 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/:id(/)'                  : 'showTask',
     'tasks/:id/:action(/)'          : 'showTask',
     'profiles(/)(?:queryStr)'       : 'listProfiles',
-    'profile(/)'                    : 'showProfile',
+    // 'profile(/)'                    : 'showProfile',
     'profile/find(/)'               : 'findProfile',
     'profile/:id(/)'                : 'showProfile',
-    'profile/:id(/)/:action'        : 'showProfile',
+    'profile/edit/skills/:id(/)'    : 'editSkills',
+    'profile/edit/:id(/)'           : 'editProfile',
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
@@ -254,29 +256,27 @@ var BrowseRouter = Backbone.Router.extend({
     });
   },
 
-  showProfile: function (id, action) {
+  editSkills: function (id) {
     this.cleanupChildren();
-    // normalize input
+    this.profileEditController = new ProfileEditController({ id: id, action: 'skills', data: this.data });
+    
+  },
+
+  editProfile: function (id) {
+    this.cleanupChildren();
+    this.profileEditController = new ProfileEditController({ id: id,  action: 'edit', data: this.data });
+  },
+
+  showProfile: function (id) {
+    this.cleanupChildren();
+
     if (id) {
-      id = id.toLowerCase();
-    }
-    if (action) {
-      action = action.toLowerCase();
-    }
-    // normalize actions that don't have ids
-    if (!action && id) {
-      if (id == 'edit') {
-        if (loginGov) {
-          window.location = usajobsURL + '/Applicant/Profile';
-        }
-        action = id;
-        id = window.cache.currentUser.id;
-      } else if (id == 'settings') {
-        action = id;
-        id = window.cache.currentUser.id;
+      if (loginGov) {
+        window.location = usajobsURL + '/Applicant/Profile';
       }
+      // id = window.cache.currentUser.id;
     }
-    this.profileShowController = new ProfileShowController({ id: id, action: action, data: this.data });
+    this.profileShowController = new ProfileShowController({ id: id, data: this.data });
   },
 
   showAdmin: function (action, agencyId) {
