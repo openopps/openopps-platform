@@ -38,6 +38,7 @@ const clean = {
 module.exports = function (db) {
   return {
     AuditLog: dao({ db: db, table: 'audit_log'}),
+    AccountStaging: dao({ db: db, table: 'account_staging'}),
     Badge: dao({ db: db, table: 'badge'}),
     Passport: dao({ db: db, table: 'passport' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),

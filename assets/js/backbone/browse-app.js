@@ -30,12 +30,14 @@ var BrowseRouter = Backbone.Router.extend({
     'profiles(/)(?:queryStr)'       : 'listProfiles',
     'profile(/)'                    : 'showProfile',
     'profile/find(/)'               : 'findProfile',
+    'profile/link(/)'               : 'linkProfile',
     'profile/:id(/)'                : 'showProfile',
     'profile/:id(/)/:action'        : 'showProfile',
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
     'unauthorized(/)'               : 'showUnauthorized',
+    'expired(/)'                    : 'showExpired',
   },
 
   data: { saved: false },
@@ -96,7 +98,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   showLogin: function () {
     if(loginGov) {
-      window.location = '/api/auth/oidc';
+      window.location = '/api/auth/oidc' + location.search;
     } else {
       this.cleanupChildren();
       this.loginController = new LoginController({
@@ -116,6 +118,17 @@ var BrowseRouter = Backbone.Router.extend({
     }).render();
     var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
     $('#container').html(_.template(UnauthorizedTemplate)());
+    $('#search-results-loading').hide();
+    $('.usa-footer-return-to-top').hide();
+  },
+
+  showExpired: function () {
+    Backbone.history.navigate('/', { replace: true });
+    this.navView = new NavView({
+      el: '.navigation', 
+    }).render();
+    var ExpiredTemplate = require('./apps/login/templates/expired.html');
+    $('#container').html(_.template(ExpiredTemplate)());
     $('#search-results-loading').hide();
     $('.usa-footer-return-to-top').hide();
   },

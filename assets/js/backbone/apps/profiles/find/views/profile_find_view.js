@@ -11,7 +11,8 @@ var ProfileFindTemplate = require('../templates/profile_find_template.html');
 var ProfileFindView = Backbone.View.extend({
   events: {
     'click #find-cancel'        : 'cancel',
-    'submit #form-profile-find' : 'submitEmail',
+    'keydown #email-address'   : 'clearError',
+    'submit #form-find-profile' : 'submitEmail',
   },
   
   initialize: function (options) {
@@ -35,10 +36,33 @@ var ProfileFindView = Backbone.View.extend({
   cancel: function (e) {
     window.history.back();
   },
+
+  clearError: function (e) {
+    var parent = $(e.currentTarget).parents('.required-input')[0];
+    $(parent).find('.error-email').hide();
+    $(parent).removeClass('usa-input-error');
+  },
   
   submitEmail: function (e) {
     e.preventDefault && e.preventDefault();
-    alert('test');
+    if (!this.validateField({ currentTarget: this.$el.find('#email-address') })) {
+      $.ajax({
+        url: '/api/auth/find',
+        type: 'POST',
+        data: {
+          email: this.$el.find('#email-address').val(),
+          id: getUrlParameter('id'),
+          h: getUrlParameter('h'),
+        },
+        success: function (data) {
+          self.$('#profile-find-done').show();
+          self.$('#main-content').hide();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
   },
   
   cleanup: function () {

@@ -2,7 +2,12 @@
 const { Issuer } = require('openid-client');
 const log = require('log')('app:oidc:LoginGov');
 
-module.exports = new Promise(async (resolve) => { 
+module.exports = new Promise(async (resolve) => {
+  Issuer.defaultHttpOptions = {
+    timeout: 30000,
+    retries: 2,
+  };
+  log.info('Loading Openid Client...');
   var issuer = await Issuer.discover(openopps.auth.loginGov.discoveryURL).catch(err => {
     log.error('Unable to discover issuer', err);
     return null;

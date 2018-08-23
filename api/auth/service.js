@@ -8,6 +8,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const userService = require('../user/service');
+const Audit = require('../model/Audit');
 
 const baseUser = {
   isAdmin: false,
@@ -143,11 +144,76 @@ async function checkToken (token, done) {
   });
 }
 
+function validate (data, hash) {
+  return bcrypt.compareSync(data.join('|'), hash);
+}
+
+async function createStagingRecord (user, done) {
+  await dao.AccountStaging.upsert(_.extend(user, { uuid: uuid.v4() })).then(account => {
+    done(null, _.extend(account, { hash: bcrypt.hashSync([account.linkedId, account.uuid].join('|'), 10) }));
+  }).catch(err => {
+    done(err);
+  });
+}
+
+async function linkAccount (user, data, done) {
+  var account = await dao.AccountStaging.findOne('linked_id = ?', user.linkedId).catch(() => { return null; });
+  if(!account || user.linkedId !== account.linkedId || !validate([account.linkedId, account.uuid, account.username], data.h)) {
+    done({ message: 'This link is no longer valid.' });
+  } else {
+    await dao.User.findOne('username = ? and linked_id = \'\'', account.username).then(async u => {
+      u.linkedId = account.linkedId;
+      u.governmentUri = account.governmentUri;
+      await dao.User.update(u);
+      u.access_token = user.access_token,
+      u.id_token = user.id_token,
+      await dao.AccountStaging.delete(account);
+      done(null, u);
+    }).catch(err => {
+      done(err);
+    });
+  }
+}
+
+async function sendFindProfileConfirmation (data, done) {
+  var account = await dao.AccountStaging.findOne('linked_id = ?', data.id).catch(() => { return null; });
+  if(!account || !validate([account.linkedId, account.uuid], data.h)) {
+    done({ message: 'Invalid request' });
+  } else {
+    await dao.User.findOne('username = ? and linked_id = \'\'', data.email).then(async user => {
+      await dao.AccountStaging.update(_.extend(account, { username: user.username })).then(account => {
+        notification.createNotification({
+          action: 'find.profile.confirmation',
+          model: {
+            user: { name: user.name, username: user.username },
+            hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
+          },
+        });
+        done();
+      }).catch(err => {
+        // TODO: Something bad happened
+        log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
+        done({ message: 'Unkown error occurred' });
+      });
+    }).catch(err => {
+      var audit = Audit.createAudit('UNKNOWN_USER_PROFILE_FIND', { id: 0 }, {
+        documentId: account.linkedId,
+        email: data.email,
+      });
+      dao.AuditLog.insert(audit).catch(() => {});
+      done();
+    });
+  }
+}
+
 module.exports = {
-  register: register,
-  forgotPassword: forgotPassword,
   checkToken: checkToken,
+  createStagingRecord: createStagingRecord,
+  forgotPassword: forgotPassword,
+  linkAccount: linkAccount,
+  register: register,
   resetPassword: resetPassword,
+  sendFindProfileConfirmation: sendFindProfileConfirmation,
   sendUserCreateNotification: sendUserCreateNotification,
   sendUserPasswordResetNotification: sendUserPasswordResetNotification,
 };

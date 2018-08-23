@@ -16,6 +16,11 @@ const AuditTypes = {
     description: 'An unauthorized USAJOBS user has attempted to access Open Opportunities.',
     data: ['documentId'],
   },
+  'UNKNOWN_USER_PROFILE_FIND': {
+    action: 'UNKNOWN_USER_PROFILE_FIND',
+    description: 'A USAJOBS user has attempted to link to an Open Opportunities profile, but no profile exist.',
+    data: ['documentId', 'email'],
+  },
 };
 
 function getRole (user) {
