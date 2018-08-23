@@ -20,7 +20,7 @@
     <div style="overflow-x:auto;">
       <% if (_.filter(data, function (item) { return item.state != 'archived' }).length > 0) { %>
         <div class="usajobs-show-next" data-object="reveal">
-          <table class="usa-table-borderless" role="presentation">
+          <table class="usa-table-borderless results-filter" role="presentation" id="participated-table">
             <thead>
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col">Status</th>
@@ -49,7 +49,7 @@
               <% } %>
             </tbody>
           </table>
-          <a href="#next" class="usa-button usa-button-outline usajobs-show-next__trigger" aria-expanded="false" aria-controls="next-content-1" data-behavior="reveal.show-next">
+          <a href="#next" class="usa-button usa-button-outline participated-show-all">
             Show more
           </a>
         </div>
