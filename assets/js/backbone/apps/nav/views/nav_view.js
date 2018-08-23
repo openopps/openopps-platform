@@ -18,7 +18,6 @@ var NavView = Backbone.View.extend({
   events: {
     'click .navbar-brand'                           : linkBackbone,
     'click .nav-link'                               : linkBackbone,
-    'click .logout'                                 : 'logout',
     'click .toggle-one'                             : 'menuClick',
     'click .toggle-two'                             : 'menuClick2',
     'click .subnav-link'                            : 'subMenuClick',
@@ -106,18 +105,6 @@ var NavView = Backbone.View.extend({
     if (sessionStorage.dismissLoginGovBanner) {
       $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
     }
-  },
-
-  logout: function (e) {
-    if (e.preventDefault) e.preventDefault();
-    $.ajax({
-      url: '/api/auth/logout?json=true',
-    }).done(function (success) {
-      window.cache.currentUser = null;
-      window.cache.userEvents.trigger('user:logout');
-    }).fail(function (error) {
-      // do nothing
-    });
   },
 
   activePage: function () {

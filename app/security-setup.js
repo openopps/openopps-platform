@@ -6,6 +6,10 @@ const passport = require('koa-passport');
 
 const policy = {
   'default-src': ['self'],
+  'connect-src': [
+    'self',
+    '*.usajobs.gov',
+  ],
   'img-src': [
     'self',
     '*.google-analytics.com',

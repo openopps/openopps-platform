@@ -1,14 +1,15 @@
 <section class="usajobs-canvas">
     <div>
-      <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" id="profile-reset-check-error" style="display:none;">
+      <div class="usa-alert usajobs-alert usajobs-alert--info" role="alert" data-object="alert" id="profile-find-done" style="display:none;">
           <div class="usajobs-alert__figure">
               <div class="usajobs-alert__icon">
               </div>
           </div>
           <div class="usajobs-alert__body">
-              <h3>email...</h3>
+              <h3>Find your Open Opportunities profile</h3>
               <p class="usa-alert-text">
-                  text...
+                Thank you! An email will arrive shortly with a link to complete the process of linking your USAJOBS profile with your Open Opportunities profile.
+                If you don't receive an email shortly, check your spam folder.
               </p>
           </div>
       </div>
@@ -24,9 +25,10 @@
               <div>
                   Enter the <strong>email address</strong> that's associated with your Open Opportunities profile.
               </div>
-              <div>
+              <div class="required-input">
                 <label for="email-address" class="control-label">Email address</label>
-                <input id="email-address" type="text" class="form-control" autofocus/>
+                <span class="field-validation-error error-email" style="display:none;">Must be a valid email address.</span>
+                <input id="email-address" type="text" class="form-control validate" data-validate="email" autofocus/>
               </div>
               <div class="usajobs-button_bar--split">
                 <div class="usajobs-button_bar__body">

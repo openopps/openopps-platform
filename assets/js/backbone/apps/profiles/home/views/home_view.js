@@ -106,9 +106,13 @@ var HomeView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     $.ajax({
       url: '/api/auth/logout?json=true',
-    }).done(function (success) {
+    }).done(function (data) {
       window.cache.currentUser = null;
-      window.cache.userEvents.trigger('user:logout');
+      if(data.redirectURL) {
+        window.location = data.redirectURL;
+      } else {
+        window.cache.userEvents.trigger('user:logout');
+      }
     }).fail(function (error) {
       // do nothing
     });

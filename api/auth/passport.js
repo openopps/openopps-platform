@@ -5,6 +5,8 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const uuid = require('uuid');
+const _ = require('lodash');
 const Audit = require('../model/Audit');
 
 const localStrategyOptions = {
@@ -33,6 +35,21 @@ async function fetchUser (id) {
 
 async function fetchPassport (user, protocol) {
   return (await dao.Passport.find('"user" = ? and protocol = ? and "deletedAt" is null', user, protocol))[0];
+}
+
+async function userFound (user, tokenset, done) {
+  if(user.disabled) {
+    done({ message: 'Not authorized' });
+  } else {
+    if(!user.linkedId || user.governmentUri != tokenset.claims['usaj:governmentURI']) {
+      user.linkedId = tokenset.claims.sub;
+      user.governmentUri = tokenset.claims['usaj:governmentURI'];
+      await dao.User.update(user);
+    }
+    user.access_token = tokenset.access_token,
+    user.id_token = tokenset.id_token,
+    done(null, user);
+  }
 }
 
 passport.serializeUser(function (user, done) {
@@ -108,19 +125,22 @@ if(openopps.auth.oidc) {
         documentId: tokenset.claims.sub,
       });
       dao.AuditLog.insert(audit).catch(() => {});
-      done('Not authorized');
+      done({ message: 'Not authorized' });
     } else {
-      dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(async user => {
-        if(!user.linkedId || user.governmentUri != tokenset.claims['usaj:governmentURI']) {
-          user.linkedId = tokenset.claims.sub;
-          user.governmentUri = tokenset.claims['usaj:governmentURI'];
-          await dao.User.update(user);
-        }
-        user.access_token = tokenset.access_token,
-        user.id_token = tokenset.id_token,
-        done(null, user);
-      }).catch(err => {
-        done('No account found');
+      dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
+        userFound(user, tokenset, done);
+      }).catch(async () => {
+        var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => { 
+          return { 
+            linkedId: tokenset.claims.sub,
+            governmentUri: tokenset.claims['usaj:governmentURI'],
+          };
+        });
+        done(null, _.extend(account, { 
+          type: 'staging',
+          access_token: tokenset.access_token,
+          id_token: tokenset.id_token,
+        }));
       });
     }
   }));

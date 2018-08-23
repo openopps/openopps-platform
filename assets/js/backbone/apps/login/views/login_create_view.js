@@ -128,7 +128,7 @@ var LoginCreateView = Backbone.View.extend({
 
     // Post the registration request to the server
     $.ajax({
-      url: '/api/auth/local/register',
+      url: '/api/auth/register',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
