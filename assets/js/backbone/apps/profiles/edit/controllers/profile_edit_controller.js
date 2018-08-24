@@ -5,15 +5,15 @@ var Backbone = require('backbone');
 // internal dependencies
 var BaseController = require('../../../../base/base_controller');
 var ProfileModel = require('../../../../entities/profiles/profile_model');
-var ProfileView = require('../views/profile_show_view');
-var ProfileSettingsView = require('../views/profile_settings_view');
-var ProfileResetView = require('../views/profile_reset_view');
+var ProfileEditView = require('../views/profile_edit_view');
+var ProfileSkillsView = require('../views/profile_skills_view');
 var Login = require('../../../../config/login.json');
 
 // templates
 var AlertTemplate = require('../../../../components/alert_template.html');
 
 var Profile = BaseController.extend({
+
   el: '#container',
 
   initialize: function (options) {
@@ -26,20 +26,10 @@ var Profile = BaseController.extend({
 
   initializeController: function () {
     // Clean up previous views
-    if (this.profileView) { this.profileView.cleanup(); }
-    if (this.settingsView) { this.settingsView.cleanup(); }
-    if (this.profileResetView) { this.profileResetView.cleanup(); }
-    // If the action does not require the profile model, display that action
-    if (this.routeId == 'reset' || this.routeId == 'register') {
-      this.profileResetView = new ProfileResetView({
-        el: this.$el,
-        routeId: this.routeId,
-        action: this.action,
-        data: this.data,
-      }).render();
-    } else { // otherwise load the profile model and display the appropriate view
-      this.initializeProfileModelInstance();
-    }
+    if (this.profileEditView) { this.profileEditView.cleanup(); }
+    if (this.profileSkillsView) { this.profileSkillsView.cleanup(); }
+
+    this.initializeProfileModelInstance();  
   },
 
   initializeProfileModelInstance: function () {
@@ -49,7 +39,7 @@ var Profile = BaseController.extend({
     this.model = new ProfileModel();
 
     // prevent directly editing profiles when disabled
-    if ((Login.profile.edit === false) && (this.action == 'edit')) {
+    if (Login.profile.edit === false) {
       var data = {
         alert: {
           message: '<strong>Direct editing of profiles is disabled.</strong>  <a href="' + Login.profile.editUrl + '" title="Edit Profile">Click here to edit your profile</a>',
@@ -59,8 +49,7 @@ var Profile = BaseController.extend({
       this.$el.html(template);
       return;
     }
-    // var fetchId = null;
-    // if (this.id && this.id != 'edit') { fetchId = this.id; }
+
     if(!window.cache.currentUser) {
       Backbone.history.navigate('/login?profile/' + this.routeId, { trigger: true });
     } else {
@@ -81,7 +70,7 @@ var Profile = BaseController.extend({
           self.model.location.tagId = modelJson.tags[i].id;
         }
       });
-      self.initializeProfileViewInstance();
+      this.initializeProfileViewInstance();
     });
     // if the profile fetch fails, check if it is due to the user
     // not being logged in
@@ -112,28 +101,23 @@ var Profile = BaseController.extend({
   },
 
   initializeProfileViewInstance: function () {
-    if (this.action == 'settings') {
-      this.settingsView = new ProfileSettingsView({
-        el: this.$el,
-        model: this.model,
-        routeId: this.routeId,
-        action: this.action,
-        data: this.data,
-      }).render();
+    var data = {
+      el: this.$el,
+      model: this.model,
+      routeId: this.routeId,
+      action: this.action,
+      data: this.data,
+    };
+    if (this.action == 'skills') {
+      this.profileSkillsView = new ProfileSkillsView(data).render();
     } else {
-      this.profileView = new ProfileView({
-        el: this.$el,
-        model: this.model,
-        routeId: this.routeId,
-        action: this.action,
-        data: this.data,
-      }).render();
+      this.profileEditView = new ProfileEditView(data).render();
     }
   },
 
   cleanup: function () {
-    if (this.profileView) { this.profileView.cleanup(); }
-    if (this.settingsView) { this.settingsView.cleanup(); }
+    if (this.profileEditView) { this.profileEditView.cleanup(); }
+    if (this.profileSkillsView) { this.profileSkillsView.cleanup(); }
     removeView(this);
   },
 

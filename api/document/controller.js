@@ -29,6 +29,16 @@ router.post('/api/upload/create', async (ctx, next) => {
   });
 });
 
+router.get('/api/upload/remove/:id', async (ctx, next) => {
+  var result = await service.remove(ctx.params.id);
+  if(result) {
+    ctx.type = result.ContentType;
+    ctx.body = result.Body;
+  } else {
+    ctx.status = 404;
+  }
+});
+
 router.get('/api/attachment/findAllBytaskId/:id', async (ctx, next) => {
   if (ctx.isAuthenticated()) {
     await service.taskAttachments(ctx.params.id).then((results) => {

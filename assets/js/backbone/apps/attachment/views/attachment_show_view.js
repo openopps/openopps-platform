@@ -54,7 +54,6 @@ var AttachmentShowView = Backbone.View.extend({
   initializeFileUpload: function () {
     var self = this;
 
-
     $('#attachment-fileupload').fileupload({
       url: '/api/upload/create',
       dataType: 'text',
@@ -71,19 +70,8 @@ var AttachmentShowView = Backbone.View.extend({
         );
       },
       done: function (e, data) {
-        var result;
-        // for IE8/9 that use iframe
-        if (data.dataType == 'iframe text') {
-          result = JSON.parse(data.result);
-        }
-        // for modern XHR browsers
-        else {
-          result = JSON.parse($(data.result).text());
-        }
-
-        // store id in the database with the file
         var aData = {
-          fileId: result[0].id,
+          fileId: JSON.parse($(data.result).text())[0].id,
         };
         aData[self.options.target + 'Id'] = self.options.id;
         $.ajax({
