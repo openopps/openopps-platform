@@ -29,6 +29,8 @@ var HomeView = Backbone.View.extend({
     'click .logout'                : 'logout',
     'click .participated-show-all' : 'showAllParticipated',
     'click .created-show-all'      : 'showAllParticipated',
+    'change #sort-participated'    : 'sortTasks',
+    'change #sort-created'         : 'sortTasks',
   },
 
   initialize: function (options) {
@@ -53,17 +55,22 @@ var HomeView = Backbone.View.extend({
     $(s).html(inner);
   },
 
+  filterArchived: function (item) { 
+    return item.state != 'archived';
+  },
+
   initializeParticipatedCreated: function () {
     if (this.volView) { this.volView.cleanup(); }
     if (this.taskView) { this.taskView.cleanup(); }
     $.ajax('/api/user/activities/' + window.cache.currentUser.id).done(function (data) {
+      this.data.tasks = data.tasks;
       this.volView = new HomeActivityView({
         model: this.model,
         el: '.opportunity-participated',
         template: templates.participated,
         target: 'task',
         handle: 'volTask',  // used in css id
-        data: data.tasks.volunteered,
+        data: _.sortBy(_.filter(data.tasks.volunteered, this.filterArchived), 'updatedAt').reverse(),
         getStatus: this.getStatus,
       });
       this.volView.render();
@@ -74,7 +81,7 @@ var HomeView = Backbone.View.extend({
         template: templates.created,
         target: 'task',
         handle: 'task',  // used in css id
-        data: data.tasks.created,
+        data: _.sortBy(_.filter(data.tasks.created, this.filterArchived), 'updatedAt').reverse(),
       });
       this.taskView.render();
     }.bind(this));
@@ -107,17 +114,38 @@ var HomeView = Backbone.View.extend({
   showAllParticipated: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    var participatedTable = document.getElementById('participated-table');
-    var participatedButton = document.getElementsByClassName('participated-show-all');
-    var createdTable = document.getElementById('created-table');    
-    var createdButton = document.getElementsByClassName('created-show-all');
     
     if (t.hasClass('participated-show-all')) {
-      participatedTable.classList.remove('results-filter');
-      participatedButton[0].classList.add('hide');
+      this.volView.options.showAll = true;
+      this.volView.render();
     } else {
-      createdTable.classList.remove('results-filter');
-      createdButton[0].classList.add('hide');
+      this.taskView.options.showAll = true;
+      this.taskView.render();
+    }
+  },
+
+  sortTasks: function (e) {
+    var target = $(e.currentTarget)[0];
+    var data = this.data.tasks[target.id == 'sort-participated' ? 'volunteered' : 'created'];
+    var sortedData = [];
+    if(target.id == 'sort-participated' && target.value == 'state') {
+      sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
+        return this.getStatus(item);
+      }.bind(this));
+    } else {
+      sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
+    }
+    if(target.value == 'updatedAt') {
+      sortedData = sortedData.reverse();
+    }
+    if(target.id == 'sort-participated') {
+      this.volView.options.sort = target.value;
+      this.volView.options.data = sortedData;
+      this.volView.render();
+    } else {
+      this.taskView.options.sort = target.value;
+      this.taskView.options.data = sortedData;
+      this.taskView.render();
     }
   },
 

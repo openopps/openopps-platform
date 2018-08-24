@@ -2,25 +2,31 @@
   <div id="usajobs-search-controls">
     <div class="usajobs-grid usajobs-search-controls">
       <div class="usajobs-search-controls__results-count-container no-params">
-        <h4 id="created-count" class="usajobs-search-controls__results-count">
-          Viewing 1 – 10 of 25 opportunities
-        </h4>
+          <% if (data.length > 0) { %>
+            <h4 id="created-count" class="usajobs-search-controls__results-count">
+              Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %>5<% } %> of <%= data.length %> opportunities
+            </h4>
+          <% } %>
       </div>
-      <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
-        <label class="usajobs-search-controls__sort-label" for="sort_attribute">
-          Sort by
-        </label>
-        <select name="sort_attribute" id="sort_attribute" class="usajobs-search-controls__sort-control">
-          <option value="last-updated">Last updated</option>
-        </select>
-      </div>
+      <% if (data.length > 0) { %>
+        <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+          <label class="usajobs-search-controls__sort-label" for="sort_attribute">
+            Sort by
+          </label>
+          <select name="sort_attribute" id="sort-created" class="usajobs-search-controls__sort-control">
+            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
+            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
+            <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
+          </select>
+        </div>
+      <% } %>
     </div>
   </div>
   <div id="<%- handle %>-tab-open">
     <div style="overflow-x:auto;">
-      <% if (_.filter(data, function (item) { return item.state != 'archived' }).length > 0) { %>
+      <% if (data.length > 0) { %>
         <div class="usajobs-show-next" data-object="reveal">
-          <table class="usa-table-borderless results-filter" role="presentation" id="created-table">
+          <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="created-table">
             <thead>
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col">Opportunity status</th>
@@ -30,7 +36,6 @@
             </thead>
             <tbody>
               <% for (var i in data) { %>
-                <% if (data[i].state == 'archived') { continue; } %>
                 <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
                   <td class="your-status">
                     <span  class="usajobs-pill--opportunity-status status-<%= data[ i ].state.charAt( 0 ).toLowerCase() + data[ i ].state.slice( 1 ).replace(' ', '-') %>">
@@ -51,9 +56,11 @@
               <% } %>
             </tbody>
           </table>
-          <a href="#next" class="usa-button usa-button-outline created-show-all">
-            Show more
-          </a>
+          <% if (!showAll) { %>
+            <a href="#next" class="usa-button usa-button-outline created-show-all">
+              Show more
+            </a>
+          <% } %>
         </div>
 
       <% } else { %>
