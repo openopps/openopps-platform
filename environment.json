@@ -13,6 +13,7 @@
     "FILESTORE": "",
     "HOST": "",
     "LOGINGOV": false,
+    "LOGOUT_URL": "",
     "NEW_RELIC_APP_NAME": "",
     "NEW_RELIC_LICENSE_KEY": "",
     "NODE_ENV": "production",
