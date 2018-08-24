@@ -19,14 +19,6 @@ var HomeActivityView = Backbone.View.extend({
   },
 
   render: function () {
-    // sort initially by date, descending.
-    var results = this.options.data
-      .filter(function (i) {
-        return i && i.createdAt;
-      })
-      .sort(function (a, b) {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
     var data = {
       ui: UIConfig,
       target: this.options.target,
@@ -34,7 +26,9 @@ var HomeActivityView = Backbone.View.extend({
       targetsFriendly: i18n.t(this.options.target + 'Plural'),
       targetCapitalized: this.options.target.charAt(0).toUpperCase() + this.options.target.slice(1),
       handle: this.options.handle,
-      data: results,
+      showAll: this.options.showAll,
+      sort: this.options.sort || 'updatedAt',
+      data: this.options.data,
       getStatus: this.options.getStatus,
       count: {},
     };
