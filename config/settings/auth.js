@@ -10,6 +10,7 @@ module.exports = {
     },
     loginGov : {
       enabled: (process.env.LOGINGOV || '').match(/^true$/i) || false,
+      logoutURL: process.env.LOGOUT_URL,
       discoveryURL: process.env.DISCOVERY_URL,
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
