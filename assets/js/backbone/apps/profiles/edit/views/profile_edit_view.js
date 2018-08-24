@@ -17,7 +17,7 @@ var TagFactory = require('../../../../components/tag_factory');
 
 // templates
 var ProfileEditTemplate = require('../templates/profile_edit_template.html');
-var ProfileSkillsTemplate = require('../../show/templates/profile_skills_template.html');
+var ProfileSkillsTemplate = require('../templates/profile_skills_template.html');
 
 var ProfileEditView = Backbone.View.extend({
   events: {
@@ -135,7 +135,6 @@ var ProfileEditView = Backbone.View.extend({
     }
     
     var template = _.template(ProfileEditTemplate)(data);
-    //this.skills ? _.template(ProfileSkillsTemplate)(data) : _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();

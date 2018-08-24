@@ -78,6 +78,21 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
+    this.listenTo(this, 'skills:save', function (form) {
+      var data = {
+        username: form.username,
+        tags: form.tags,
+      };
+      _this.save(data, {
+        success: function (data) {
+          _this.trigger('skills:save:success', data);
+        },
+        error: function (data) {
+          _this.trigger('skills:save:fail', data);
+        },
+      });
+    });
+
     this.listenTo(this, 'profile:removeAuth', function (service) {
       $.ajax({
         url: '/api/auth/disconnect/' + service,

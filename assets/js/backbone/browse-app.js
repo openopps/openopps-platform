@@ -29,7 +29,6 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/:id(/)'                  : 'showTask',
     'tasks/:id/:action(/)'          : 'showTask',
     'profiles(/)(?:queryStr)'       : 'listProfiles',
-    // 'profile(/)'                    : 'showProfile',
     'profile/find(/)'               : 'findProfile',
     'profile/:id(/)'                : 'showProfile',
     'profile/edit/skills/:id(/)'    : 'editSkills',
@@ -79,6 +78,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.browseListController) { this.browseListController.cleanup(); }
     if (this.profileShowController) { this.profileShowController.cleanup(); }
     if (this.profileFindController) { this.profileFindController.cleanup(); }
+    if (this.profileEditController) { this.profileEditController.cleanup(); }
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
@@ -269,13 +269,6 @@ var BrowseRouter = Backbone.Router.extend({
 
   showProfile: function (id) {
     this.cleanupChildren();
-
-    if (id) {
-      if (loginGov) {
-        window.location = usajobsURL + '/Applicant/Profile';
-      }
-      // id = window.cache.currentUser.id;
-    }
     this.profileShowController = new ProfileShowController({ id: id, data: this.data });
   },
 

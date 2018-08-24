@@ -14,15 +14,7 @@ var AlertTemplate = require('../../../../components/alert_template.html');
 
 var Profile = BaseController.extend({
 
-//   // Here we are defining whether or not this is a full-region object
-//   // or a sub-region of another region.
-//   region: true,
-//   subRegion: false,
-
   el: '#container',
-
-//   events: {
-//   },
 
   initialize: function (options) {
     this.options = options;
@@ -37,22 +29,7 @@ var Profile = BaseController.extend({
     if (this.profileEditView) { this.profileEditView.cleanup(); }
     if (this.profileSkillsView) { this.profileSkillsView.cleanup(); }
 
-    if (this.action == 'skills') {
-      this.profileSkillsView = new ProfileSkillsView({
-        el: this.$el,
-        routeId: this.routeId,
-        action: this.action,
-        data: this.data,
-      }).render();
-    } else {
-    //   this.profileEditView = new ProfileEditView({
-    //     el: this.$el,
-    //     routeId: this.routeId,
-    //     action: this.action,
-    //     data: this.data,
-    //   }).render();
-      this.initializeProfileModelInstance();
-    }  
+    this.initializeProfileModelInstance();  
   },
 
   initializeProfileModelInstance: function () {
@@ -124,12 +101,18 @@ var Profile = BaseController.extend({
   },
 
   initializeProfileViewInstance: function () {
-    this.profileEditView = new ProfileEditView({
+    var data = {
       el: this.$el,
       model: this.model,
       routeId: this.routeId,
+      action: this.action,
       data: this.data,
-    }).render();
+    };
+    if (this.action == 'skills') {
+      this.profileSkillsView = new ProfileSkillsView(data).render();
+    } else {
+      this.profileEditView = new ProfileEditView(data).render();
+    }
   },
 
   cleanup: function () {
