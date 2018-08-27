@@ -15,7 +15,7 @@ router.get('/api/activity/users', auth, async (ctx, next) => {
 });
 
 router.get('/api/activity/search', auth, async (ctx, next) => {
-  ctx.body = await service.getTaskTypeList();
+  ctx.body = await service.getTaskTypeList(ctx.state.user);
 });
 
 router.get('/api/activity/count', auth, async (ctx, next) => {

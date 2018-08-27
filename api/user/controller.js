@@ -78,6 +78,22 @@ router.post('/api/user/resetPassword', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/user/skills/:id', auth, async (ctx, next) => {
+  if (await service.canUpdateProfile(ctx)) {
+    ctx.status = 200;
+    await service.updateSkills(ctx.request.body, function (errors, result) {
+      if (errors) {
+        ctx.status = 400;
+        return ctx.body = errors;
+      }
+      ctx.body = result;
+    });
+  } else {
+    ctx.status = 403;
+    ctx.body = { success: false };
+  }
+});
+
 router.put('/api/user/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;

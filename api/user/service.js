@@ -54,7 +54,7 @@ async function getActivities (id) {
 
 function processUserTags (user, tags) {
   return Promise.all(tags.map(async (tag) => {
-    if(_.isNumber(tag)) {
+    if(!_.isNaN(_.parseInt(tag))) {
       return await createUserTag(tag, user);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
@@ -111,6 +111,22 @@ async function updateProfile (attributes, done) {
   }).catch (err => { return done({'message':'Error updating profile.'}); });
 }
 
+async function updateSkills (attributes, done) {
+  var errors = User.validateTags({ invalidAttributes: {} }, attributes);
+  if (!_.isEmpty(errors.invalidAttributes)) {
+    return done(errors);
+  }
+  await dao.UserTags.db.query(dao.query.deleteSkillTags, attributes.id).then(async () => {
+    var tags = [].concat(attributes.tags || attributes['tags[]'] || []);
+    await processUserTags({ id: attributes.id, username: attributes.username }, tags).then(result => {
+      tags = result;
+    });
+    return done(null, tags);
+  }).catch (err => { 
+    return done({'message':'Error updating skills.'});
+  });
+}
+
 async function updateProfileStatus (opts, done) {
   if (await canAdministerAccount(opts.user, { id: opts.id })) {
     var user = await getProfile(opts.id);
@@ -128,10 +144,10 @@ async function updateProfileStatus (opts, done) {
 }
 
 async function canUpdateProfile (ctx) {
-  if (+ctx.params.id === ctx.request.body.id) {
+  if (ctx.params.id == ctx.request.body.id) {
     if (ctx.state.user.isAdmin ||
        (ctx.state.user.isAgencyAdmin && checkAgency(ctx.state.user, ctx.params) && await checkRoleEscalation(ctx.request.body)) ||
-       (ctx.state.user.id === +ctx.params.id && await checkRoleEscalation(ctx.request.body))) {
+       (ctx.state.user.id == ctx.params.id && await checkRoleEscalation(ctx.request.body))) {
       return true;
     }
   }
@@ -194,6 +210,7 @@ module.exports = {
   updateProfile: updateProfile,
   updateProfileStatus: updateProfileStatus,
   updatePassword: updatePassword,
+  updateSkills: updateSkills,
   processUserTags: processUserTags,
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
