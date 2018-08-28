@@ -43,7 +43,7 @@ async function useLocalAuthentication (ctx, next) {
 
 function loginUser (state, user, ctx) {
   ctx.login(user).then(() => {
-    ctx.redirect(state.redirect ? ('/' + state.redirect) : ('/profile/' + user.id));
+    ctx.redirect(state.redirect ? ('/' + state.redirect) : ('/home'));
   }).catch((err) => {
     ctx.redirect('/');
   });

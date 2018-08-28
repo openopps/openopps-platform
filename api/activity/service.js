@@ -28,12 +28,30 @@ async function getTaskCount (state) {
   return result.rows[0].count;
 }
 
-async function getTaskTypeList () {
+async function getTaskTypeList (user) {
   return {
     careers: _.reject((await dao.Task.db.query(dao.query.taskByType, 'career', 4)).rows, { name: 'Acquisition' }).slice(0, 3),
     skills: (await dao.Task.db.query(dao.query.taskByType, 'skill', 4)).rows,
     locations: (await dao.Task.db.query(dao.query.taskByType, 'location', 3)).rows,
+    byProfile: generateByProfileQuery(user),
   };
+}
+
+function generateByProfileQuery (user) {
+  var career = _.filter(user.tags, { type: 'career' })[0];
+  var location = _.filter(user.tags, { type: 'location' })[0];
+  var skills = _.filter(user.tags, { type: 'skill' }).slice(0, 5);
+  var query = '?'
+  if(!_.isEmpty(career)) {
+    query += 'career=' + career.name + ':' + career.id + '&';
+  }
+  if(!_.isEmpty(location)) {
+    query += 'location=' + location.name + ':' + location.id + '&';
+  }
+  if(!_.isEmpty(skills)) {
+    query += 'skill=' + skills.map((skill) => { return skill.name + ':' + skill.id; }).join(';');
+  }
+  return query;
 }
 
 module.exports = {

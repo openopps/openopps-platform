@@ -42,49 +42,89 @@
       </div>
       <% } %>
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <div class="usajobs-open-opps-opportunity">
         <div class="usajobs-open-opps-profile__body usajobs-grid-full">
-          <% if (data.isOwner || data.canEditProfile) { %>
-          <div class="usajobs-opop-section-edit">
-              <% if (login.profile.edit === true) { %>
-              <a href="/profile/<%- data.id %>/edit" class="link-backbone"><i class="fas fa-edit"></i> <span>Edit</span></a>
-              <% } else if (login.profile.editUrl) { %>
-              <a href="<%- login.profile.editUrl %>" target="_blank"><i class="fas fa-edit"></i> <span>Edit</span><span class="sr-only">Opens in a new window</span></a>
-              <% } %>
+          <% if (data.isOwner || (!loginGov && data.canEditProfile)) { %>
+          <div class="usajobs-opop-section-edit">             
+            <% if (loginGov) { %>
+              <a href="<%- usajobsURL %>/applicant/profile">Edit</a>
+            <% } else { %>
+              <a href="/profile/edit/<%- data.id %>" class="link-backbone">Edit</a>
+            <% } %>
           </div>
           <% } %>
-          <div class="usa-width-one-whole">
-            <h1 class="usajobs-opop-intro-hiring-paths__section-title">Profile</h1>
-          </div>
           <div id="profile" class="usajobs-opop-profile-title profile usa-width-one-fourth">
-            <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
-                <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
-                  <% if (data.photoId) { %>
-                    <img src="/api/user/photo/<%- data.id %>" alt="Profile picture of <%- data.name %>">
-                  <% } else { %>
-                    <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
-                  <% } %>
-                </div>
+              <div class="usajobs-form--narrow center-upload">
+                  <div class="usajobs-open-opps-opportunity-requestor profile profile-edit">
+                      <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
+                          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
+                            <% if (data.photoId) { %>
+                              <img id="profile-picture" src="/api/user/photo/<%- data.id %>" alt="Profile picture of <%- data.name %>">
+                            <% } else { %>
+                              <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
+                            <% } %>
+                          </div>
+                      </div>
+                    </div>
+                  <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
+                    <% if (data.photoId) { %>
+                      <a href=#>Remove
+                          <input id="fileremove" type="file" name="files[]" accept="image/*" title="Remove photo" />
+                        </a>
+                    <% } else { %>
+                      <a href=#>Upload photo
+                        <input id="fileupload" type="file" name="files[]" accept="image/*" title="Upload photo" />
+                      </a>
+                    <% } %>
+                  </div>
+                  <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+                    <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+                  </div>
               </div>
-              <h2 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h2>
+              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
           </div>
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-name-role">
-              <h2 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h2>
+              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
               <% if (data.isAdmin || data.isAgencyAdmin) { %>
               <span class="role-label"><% if (user.isAgencyAdmin) { %> Agency <% } %> Administrator</span>
               <% } %>
             </div>
-            <div class="profile-jobtitle"><% if (data.title) { %><span><%- data.title %></span><% } %></div>
-            <% if (career) { %><div class="profile-careerfield"><span><%- career.name %></span></div><% } %>
-            <div class="profile-agency"><% if (data.agency) { %><span class="profile-icon"><i class="fa fa-university"></i></span><span><%- data.agency.name %></span><% } %></div>
-            <div class="profile-location"><% if (data.location) { %><span class="profile-icon"><i class="fa fa-map-marker"></i></span><span><%- data.location.name %></span><% } %></div>
-            <div class="profile-email"><% if (email) { %><span class="profile-icon"><i class="far fa-envelope"></i></span><a href='mailto:<%= email %>'><%= email %></a><% } %></div>
-            <div class="profile-biography">
-                <% if (data.bioHtml) { %>
-                  <h3>Biography</h3>
-                  <%= data.bioHtml %>
-                <% } %>
+            <div class="profile-jobtitle">
+              <% if (data.title) { %>
+              <div class="usajobs-profile-home-section__field-label">Job title</div>
+              <span><%- data.title %></span>
+              <% } %>
+            </div>
+            <div class="profile-careerfield">
+              <% if (career) { %>
+              <div class="usajobs-profile-home-section__field-label">Career field</div>
+              <span><%- career.name %></span>
+              <% } %>
+            </div>
+            <div class="profile-agency">
+              <% if (data.agency) { %>
+              <div class="usajobs-profile-home-section__field-label">Agency</div>
+              <span><%- data.agency.name %></span>
+              <% } %>
+            </div>
+            <div class="profile-location">
+              <% if (data.location) { %>
+              <div class="usajobs-profile-home-section__field-label">Location</div>
+              <span><%- data.location.name %></span>
+              <% } %>
+            </div>
+            <div class="profile-email">
+              <% if (email) { %>
+              <div class="usajobs-profile-home-section__field-label">Official government email address</div>
+              <span><%= email %></span>
+              <% } %>
+            </div>
+            <div class="profile-biography"> 
+              <% if (data.bioHtml) { %>
+              <h3>Biography</h3>
+              <%= data.bioHtml %>
+              <% } %>
             </div>
             <div class="profile-share <% if (data.isOwner || user.isAdmin) { %>border-bottom<% } %>">
                 <a href="#" id="email"><i class="fas fa-share-alt"></i> <span>Share Profile</span></a>
@@ -92,34 +132,41 @@
           </div>
         </div>
       </div>
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
-        <div class="usajobs-open-opps-participated__body usajobs-grid-full">
-          <% if (data.isOwner || data.canEditProfile) { %>
-          <div class="usajobs-opop-section-edit skills-edit">
-            <% if (login.profile.edit === true) { %>
-            <a href="/profile/<%- data.id %>/skills" class="link-backbone"><span>Edit</span></a>
+      <div class="usajobs-opop-skill__body">
+        <div class="usajobs-open-opps-opportunity">
+          <div class="usajobs-open-opps-participated__body usajobs-grid-full">
+            <% if ((data.isOwner || data.canEditProfile) && (skillsTags.length > 0 || interestsTags.length > 0)) { %>
+            <div class="usajobs-opop-section-edit skills-edit">
+              <% if (login.profile.edit === true) { %>
+              <a href="/profile/edit/skills/<%- data.id %>" class="link-backbone"><span>Edit</span></a>
+              <% } %>
+            </div>
+            <% } %>
+            <h2><label class="usa-input-optional">Skills</label></h2>
+            <% if (skillsTags.length > 0 || interestsTags.length > 0) { %>
+              <% if (skillsTags.length > 0) { %>
+              <h3>I have experience with</h3>
+              <div>
+                <% _.each(skillsTags, function (t) { %>
+                  <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                <% }) %>
+              </div>
+              <% } %>  
+              <% if (interestsTags.length > 0) { %>
+                <h3>I want to develop</h3>
+                <div>
+                  <% _.each(interestsTags, function (t) { %>
+                    <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                  <% }) %>
+                </div>
+              <% } %>
+            <% } else { %>
+              <div>List all of your relevant skills.</div>
+              <a href="/profile/edit/skills/<%- data.id %>/" class="usa-button add-skills">
+                <i class="fas fa-plus-circle"></i> Add skills
+              </a>
             <% } %>
           </div>
-          <% } %>
-          <% if (skillsTags.length > 0 || interestsTags.length > 0) { %>
-            <h2>Skills</h2>
-          <% } %>
-          <% if (skillsTags.length > 0) { %>
-            <h3>I have experience with</h3>
-            <div>
-              <% _.each(skillsTags, function (t) { %>
-                <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
-              <% }) %>
-            </div>
-          <% } %>
-          <% if (interestsTags.length > 0) { %>
-            <h3>I want to develop</h3>
-            <div>
-              <% _.each(interestsTags, function (t) { %>
-                <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
-              <% }) %>
-            </div>
-          <% } %>
         </div>
       </div>
     </main>

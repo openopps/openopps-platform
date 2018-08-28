@@ -16,6 +16,16 @@
     }
 }
 
+.usajobs-content-gutter.profile-gutter .usajobs-opop-skill__body {
+  margin-top: $size-SM;
+  padding: 0; 
+
+  .usajobs-open-opps-participated__body {
+    margin-top: 0;
+  }
+
+}
+
 @media screen and (min-width: 37.5em) {
     .usajobs-opop-section__edit {
         top: 1.5rem;
@@ -25,7 +35,6 @@
 
     .usajobs-opop-section-edit, .usajobs-opop-section-edit a:visited {
         position: absolute;
-        top: 3rem;
         right: 3rem;
         text-decoration: none;
         color: #0D71B9;
@@ -74,8 +83,9 @@
 }
 
 @media screen and (min-width: 62em) {
-    .profile-name-role {
-        margin-top: 3rem;
+    .usajobs-opop-profile-details .profile-name-role h3 {
+        margin-top: $size-M;
+        margin-bottom: $size-M;
     }
 }
 
@@ -169,8 +179,8 @@
     height: 6.5rem !important;
 
     @include media($L) {
-      width: 15rem !important;
-      height: 15rem !important;
+      width: 8rem !important;
+      height: 8rem !important;
     }
   }
 
@@ -190,8 +200,8 @@
     height: 10rem !important;
 
     @include media($L) {
-      width: 15rem !important;
-      height: 15rem !important;
+      width: 8rem !important;
+      height: 8rem !important;
     }
   }
 
@@ -259,7 +269,7 @@
     margin-left: 0;
 
     @include media($L) {
-      margin-top: 1.2rem;
+      margin-top: 3.7rem;
       margin-left: 1rem;
       margin-bottom: initial;
       float: left;
@@ -278,7 +288,15 @@
     }
 }
 
-.main-content a {
+.usajobs-profile-home-section__field-label {
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: #5b616b;
+}
+
+.main-content .profile-share a {
     text-decoration: none;
 }
 
@@ -493,15 +511,16 @@ form [type=submit] {
   }
 }
 
-.center-upload {
-    text-align: center;
-}
+.profile {
+  .center-upload {
+      text-align: center;
+  }
 
-.fileinput-button {
-    color: #2574B6;
-    font-size: 1.7rem;
+  .fileinput-button {
+      color: #2574B6;
+      font-size: 1.4rem;
+  }
 }
-
 
 // Popovers classes
 // ----------------------
@@ -740,6 +759,10 @@ form [type=submit] {
     margin: 0;
     padding: 1.5rem;
     box-shadow: none;
+
+    .usa-input-optional {
+      margin-top: 0;
+    }
   }
 
   #rightrail {
@@ -758,13 +781,22 @@ form [type=submit] {
   }
 }
 
-
 .usajobs-open-opps-opportunity.profile-find {
   padding: 1.5rem;
 
   @include media($M) {
     padding: 1.5rem 3rem 3rem;
   }
+}
+
+.add-skills {
+  width: 100%;
+  border-radius: 0;
+  padding-top: $size-default;
+  padding-bottom: $size-default;
+  margin-bottom: 0;
+  position: absolute;
+  left: 0;
 }
 
 

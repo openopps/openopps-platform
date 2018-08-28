@@ -188,6 +188,22 @@ function findOne (id) {
   });
 }
 
+function remove (id) {
+  return new Promise(async (resolve) => {
+    dao.File.remove('id = ?', id).then(file => {
+      get(file.fd, (err, data) => {
+        if(err) {
+          log.info('Error retrieving file ', file.name, err);
+          resolve(false);
+        }
+        resolve({ Body: data, ContentType: file.mimeType });
+      });
+    }).catch((err) => {
+      resolve(false);
+    });
+  });
+}
+
 function upload (userId, data) {
   return Promise.all((data['files[]'] || []).map(async (file) => {
     if(validType(data.type, file.type)) {
@@ -210,5 +226,6 @@ async function taskAttachments (taskId) {
 module.exports = {
   findOne: findOne,
   upload: upload,
+  remove: remove,
   taskAttachments: taskAttachments,
 };
