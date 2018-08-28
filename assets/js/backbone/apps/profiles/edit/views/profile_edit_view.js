@@ -1,23 +1,18 @@
 // vendor libraries
 var $ = require('jquery');
 var _ = require('underscore');
-var async = require('async');
 var Backbone = require('backbone');
-var jqIframe = require('blueimp-file-upload/js/jquery.iframe-transport');
-var jqFU = require('blueimp-file-upload/js/jquery.fileupload.js');
 var marked = require('marked');
 var MarkdownEditor = require('../../../../components/markdown_editor');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
-var TagShowView = require('../../../tag/show/views/tag_show_view');
 var Login = require('../../../../config/login.json');
 var ModalComponent = require('../../../../components/modal');
 var TagFactory = require('../../../../components/tag_factory');
 
 // templates
 var ProfileEditTemplate = require('../templates/profile_edit_template.html');
-var ProfileSkillsTemplate = require('../templates/profile_skills_template.html');
 
 var ProfileEditView = Backbone.View.extend({
   events: {
@@ -116,9 +111,6 @@ var ProfileEditView = Backbone.View.extend({
     var data = {
       login: Login,
       data: this.model.toJSON(),
-      tags: this.getTags(['skill', 'topic']),
-      skillsTags: this.getTags(['skill']),
-      interestsTags: this.getTags(['topic']),
       tagTypes: this.tagTypes,
       user: window.cache.currentUser || {},
       edit: false,
@@ -143,7 +135,6 @@ var ProfileEditView = Backbone.View.extend({
     this.initializeFileUpload();
     this.initializeForm();
     this.initializeSelect2();
-    this.initializeTags();
     this.initializeTextArea();
     this.updatePhoto();
     
@@ -182,25 +173,6 @@ var ProfileEditView = Backbone.View.extend({
         $('#file-upload-alert').show();
       }.bind(this),
     });
-  },
-    
-  initializeTags: function () {
-    var showTags = true;
-    if (this.tagView) { this.tagView.cleanup(); }
-    if (this.edit) showTags = false;
-    
-    // this is only used for edit view now
-    // TODO: refactor / rename, either reuse or simplify
-    this.tagView = new TagShowView({
-      model: this.model,
-      el: '.tag-wrapper',
-      target: 'profile',
-      targetId: 'userId',
-      edit: this.edit,
-      skills: this.skills,
-      showTags: showTags,
-    });
-    this.tagView.render();
   },
     
   initializeForm: function () {
@@ -305,8 +277,6 @@ var ProfileEditView = Backbone.View.extend({
     var newTags = [].concat(
           $('#agency').select2('data'),
           $('#career-field').select2('data'),
-          $('#tag_topic').select2('data'),
-          $('#tag_skill').select2('data'),
           $('#location').select2('data')
         ),
         data = {

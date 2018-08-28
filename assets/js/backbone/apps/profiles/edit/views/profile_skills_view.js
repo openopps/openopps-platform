@@ -33,10 +33,6 @@ var ProfileSkillsView = Backbone.View.extend({
 
   initializeForm: function () {
     this.listenTo(this.model, 'skills:save:success', function (data) {
-      // notify listeners if the current user has been updated
-      if (this.model.toJSON().id == window.cache.currentUser.id) {
-        window.cache.userEvents.trigger('user:skills:save', data.toJSON());
-      }
       this.data.saved = true;
       Backbone.history.navigate('profile/' + this.model.toJSON().id, { trigger: true });
     }.bind(this));

@@ -44,10 +44,10 @@
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div class="usajobs-open-opps-opportunity">
         <div class="usajobs-open-opps-profile__body usajobs-grid-full">
-          <% if (data.isOwner || data.canEditProfile) { %>
+          <% if (data.isOwner || (!loginGov && data.canEditProfile)) { %>
           <div class="usajobs-opop-section-edit">             
-            <% if (login.profile.editUrl) { %>
-              <a href="<%- login.profile.editUrl %>" target="_blank">Edit<span class="sr-only">Opens in a new window</span></a>
+            <% if (loginGov) { %>
+              <a href="<%- usajobsURL %>/applicant/profile">Edit</a>
             <% } else { %>
               <a href="/profile/edit/<%- data.id %>" class="link-backbone">Edit</a>
             <% } %>
