@@ -16,6 +16,7 @@ var TaskShowController = require('./apps/tasks/show/controllers/task_show_contro
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
+var ApplyController = require('./apps/apply/controllers/apply_controller');
 var LoginController = require('./apps/login/controllers/login_controller');
 var Modal = require('./components/modal');
 
@@ -37,6 +38,7 @@ var BrowseRouter = Backbone.Router.extend({
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
+    'apply'                         : 'showApply',
     'unauthorized(/)'               : 'showUnauthorized',
     'expired(/)'                    : 'showExpired',
   },
@@ -254,6 +256,19 @@ var BrowseRouter = Backbone.Router.extend({
     }
     this.profileHomeController = new ProfileHomeController({
       target: 'home',
+      el: '#container',
+      router: this,
+      data: this.data,
+    });
+  },
+
+  showApply: function () {
+    this.cleanupChildren();
+    // if (id) {
+    //   id = id.toLowerCase();
+    // }
+    this.applyController = new ApplyController({
+      target: 'apply',
       el: '#container',
       router: this,
       data: this.data,
