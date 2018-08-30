@@ -22,40 +22,46 @@
   }
 
   .usajobs-progress_indicator {
-    background-color: #112e51;
+    background-color: $color-primary-darkest;
 
     @include media($L) {
       display: block;
       width: 100%;
-      padding: 0 3rem;
+      padding: 0 $size-M;
     }
 
     &__body {
-      padding: 0 1.5rem;
-
-      @include media($ML) {
-        padding: 1.5rem 3rem;
-      }
+      padding: 0 $size-default;
+      display: flex;
 
       @include media($L) {
-        display: flex;
-        // width: 100%;
         padding: 0;
       }
     }
 
     &__step {
       display: flex;
+      flex-direction: column;
       width: 20%;
       height: 100%;
-      padding: 1.5rem 0;
+      padding: $size-default 0 $size-base 0;
       text-decoration: none;
 
-      @include media($L) {
+      @include media($ML) {
         position: relative;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem 1.5rem;
+      }
+
+      @include media($L) {
+        padding: $size-S $size-default;
+
+        &:not(:last-child)::after {
+          content: "";
+          position: absolute;
+          top: 3.9rem;
+          right: -2.5rem;
+          border-bottom: 1px solid $color-gray-light;
+          width: 5rem;
+        }
       }
 
       &.is-disabled {
@@ -64,28 +70,19 @@
       }
 
       &.has-visit .circle {
-        color: #ffffff;
-        background-color: #2d8700;
+        color: $color-white;
+        background-color: $color-green;
         box-shadow: none;
-      }
-
-      &:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        top: 3.9rem;
-        right: -2.5rem;
-        border-bottom: 1px solid #aeb0b5;
-        width: 5rem;
       }
 
       &.is-current {
         .circle {
-          color: #ffffff;
+          color: $color-white;
           box-shadow: inset 0 0 0 2px $color-green;
         }
 
         .usajobs-progress_indicator__step-desc h5 {
-          color: #ffffff;
+          color: $color-white;
           font-weight: 700;
         }
       }
@@ -95,9 +92,8 @@
       display: block;
 
       h5 {
-        margin-top: 0.5rem;
-        margin-bottom: 1rem;
-        font-size: 1.7rem;
+        margin-top: $size-base;
+        margin-bottom: $size-S;
         text-align: center;
         font-weight: 400;
         color: $color-white;
@@ -106,14 +102,25 @@
 
       .long-desc {
         display: block;
+        font-size: $base-font-size;
 
-        @include media($ML-down) {
+        @include media($L-down) {
           display: none;
         }
       }
 
       .short-desc {
-        @include media($ML) {
+        font-size: $xsmall-font-size;
+
+        @include media(375px) {
+          font-size: $small-font-size;
+        }
+
+        @include media($SM) {
+          font-size: $base-font-size;
+        }
+
+        @include media($L) {
           display: none;
         }
       }
@@ -123,12 +130,11 @@
       text-align: center;
 
       @include media($ML) {
-        text-align: left;
+        display: block;
         font-weight: 700;
       }
 
       @include media($L) {
-        display: block;
         height: 50%;
         width: 100%;
       }
@@ -143,17 +149,17 @@
       color: $color-gray-light;
       background: none;
       box-shadow: inset 0 0 0 2px $color-gray-light;
-      margin: 0.5rem auto 0.25rem;
+      margin: $size-base auto $size-XS;
       text-align: center;
 
       @include media($L) {
         display: block;
-        width: 45px;
-        height: 45px;
-        line-height: 45px;
-        font-size: 1.9rem;
+        width: $size-L;
+        height: $size-L;
+        line-height: $size-L;
+        font-size: $h4-font-size;
         text-decoration: none;
-        margin-bottom: 0.5rem;
+        margin-bottom: $size-base;
       }
     }
   }
@@ -175,18 +181,43 @@
   &-container {
     margin-left: auto;
     margin-right: auto;
+    padding: $size-default;
     max-width: 90rem;
+    font-size: 4.4rem;
+    color: $color-base;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
     @include media($ML) {
-      display: block;
       padding-top: $size-S;
       padding-bottom: $size-S;
     }
 
-    h1 {
+    svg {
+      margin-top: $size-base;
+
+      @include media ($M) {
+        margin-top: 0;
+      }
+
+      @include media ($L) {
+        margin-top: $size-base;
+      }
+    }
+
+    span {
       color: $color-base;
-      text-align: center;
       margin: 0;
+      text-align: left;
+      font-size: $h2-font-size;
+      font-weight: bold;
+      margin-left: $size-default;
+
+      @include media ($L) {
+        font-size: $h1-font-size;
+      }
     }
 
     &::after {
@@ -323,5 +354,120 @@
     flex-grow: 8;
     flex-shrink: 8;
     align-self: center;
+  }
+}
+
+.usajobs-landing-fed-app-process__list {
+  display: block;
+  margin: $size-L 0 0 0;
+  padding: 0;
+  list-style-type: none;
+  position: relative;
+  overflow: hidden;
+
+  &>li {
+    display: list-item;
+    margin: 0;
+
+    &::before, &::after {
+      display: none;
+    }
+  }
+
+  .usajobs-landing-fed-app-process__item {
+    display: block;
+  }
+
+  .usajobs-landing-fed-app-process__step-number {
+    padding-top: 0.1rem;
+    text-align: center;
+    display: inline-block;
+    width: 2.975rem;
+    height: 2.975rem;
+    line-height: 2.975rem;
+    border-radius: 50%;
+    color: #fff;
+    background-color: inherit;
+    box-shadow: inset 0 0 0 2px $color-green;
+    color: $color-green;
+    background-color: $color-white;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    margin-top: 0;
+    padding: 0 1.5rem;
+    color: $color-base;
+    font-weight: bold;
+  }
+
+  .usajobs-landing-fed-app-process__text {
+    max-width: 62rem;
+    margin: 0;
+    padding: 0 0 3rem 4.5rem;
+    color: $color-base;
+  }
+}
+
+.no-flexbox {
+  .usajobs-landing-fed-app-process__figure {
+    display: table;
+
+    &::after {
+      clear: both;
+      content: "";
+      display: table;
+    }
+  }
+
+  .usajobs-landing-fed-app-process__step-number, .usajobs-landing-fed-app-process__step-title {
+    display: table-cell;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    width: -webkit-calc(100% - 4.475rem);
+    width: calc(100% - 4.475rem);
+  }
+}
+
+.lt-ie9 .no-flexbox .usajobs-landing-fed-app-process__step-title {
+  width: 75%;
+}
+
+.flexbox {
+  .usajobs-landing-fed-app-process__figure {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    -o-align-items: center;
+    align-items: center;
+    -ms-flex-align: center;
+  }
+
+  .usajobs-landing-fed-app-process__step-number {
+    -webkit-flex-shrink: 0;
+    -moz-flex-shrink: 0;
+    flex-shrink: 0;
+    -ms-flex-negative: 0;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    min-width: 0;
   }
 }
