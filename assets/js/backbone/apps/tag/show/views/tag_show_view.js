@@ -59,9 +59,7 @@ var TagShowView = Backbone.View.extend({
     _.each(['skill', 'topic'], function (value) {
       this.tagFactory.createTagDropDown({
         type: value,
-        placeholder: (value == 'skill')
-          ? 'Start typing to select your experience'
-          : 'Start typing to select development goals',
+        placeholder: 'Start typing to select a skill',
         selector:'#tag_' + value,
         width: '100%',
         tokenSeparators: [','],
