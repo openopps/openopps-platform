@@ -86,7 +86,7 @@
   //   padding: 0 $size-M $size-default $size-M;
   // }
 
-  &::after {
+  &::after, &::before {
     clear: both;
     content: "";
     display: table;
@@ -98,14 +98,46 @@
   text-decoration: none;
 }
 
+.usajobs-grid .usa-width-one-half.profile-home {
+
+  @include media($M) {
+    margin-right: 0;
+    width: 100%;
+    // margin-right: 2.41458%;  
+    // width: 48.79271%;
+  }
+
+  @include media($L) {
+    margin-right: 1.178825%;
+    width: 49.4105825%;
+  }
+
+  &:nth-child(4) {
+    margin-right: 0;
+  }
+}
+
 .usajobs-opop-announcement { 
   &__body {
-    margin: $size-M $size-M $size-M 0;
+    margin-bottom: none;
+    background: $color-white;
+    padding: $size-default $size-SM $size-default $size-SM;
+
+    @include media($L) {
+      padding: $size-SM $size-M $size-M $size-M;
+      // margin-bottom: $size-default;
+      border-bottom: none;
+    }
+
+    &.read-less {
+      max-height: 35rem;
+      overflow: hidden;
+    }
   }
 
   &__title {
-    color: $color-gray;
     font-size: $lead-font-size;
+    font-weight: bold;
     margin-bottom: $size-S;
   }
 
@@ -228,11 +260,75 @@
 }
 
 .usajobs-opop-achievements__body {
-  margin-top: 0 0 $size-M 0;
-  padding-top: 1.4rem;
+  margin-bottom: none;
+  background: $color-white;
+  padding: $size-default $size-SM $size-default $size-SM;
 
-  @include media($M) {
-    margin-top: 0.1rem;
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    // margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  &.read-less {
+    max-height: 35rem;
+    overflow: hidden;
+  }
+
+  ul.achievements {
+
+    .usajobs-open-opps-opportunity-achievements  {
+      padding: 1.5rem 0;
+    }
+  }
+  
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+.profile-home {
+  position: relative;
+  margin-bottom: none;
+  border-bottom: 1px solid $color-gray-light;
+
+  @include media($L) {
+    margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  &::before {
+    content: '';
+    width: 100%;
+    height: 9rem;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 40%);
+    transition: height .5s;
+  }
+
+  &.show::before {
+    display: none;
+  }
+
+  &.read-less {
+    max-height: 35rem;
+    overflow: hidden;
+  }
+
+  .read-more {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: $size-M;
+    text-decoration: underline;
+    font-weight: bold;
+    display: block;
+    width: 100%;
   }
 }
 
@@ -295,10 +391,6 @@
     height: 1.7rem;
     width: 1.094rem;
     content: url(../../../../img/arrow-down.svg);
-  }
-
-  &.hide {
-    display: none;
   }
 }
 

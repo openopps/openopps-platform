@@ -13,14 +13,6 @@ var templates = {
 };
 
 var ApplyView = Backbone.View.extend({
-  events: {
-    'click .logout'                : 'logout',
-    'click .participated-show-all' : 'showAllParticipated',
-    'click .created-show-all'      : 'showAllParticipated',
-    'change #sort-participated'    : 'sortTasks',
-    'change #sort-created'         : 'sortTasks',
-  },
-
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
@@ -33,6 +25,8 @@ var ApplyView = Backbone.View.extend({
 
     // initialize sub components
     this.renderProcessFlowTemplate();
+
+    $('.apply-hide').hide();
 
     return this;
   },

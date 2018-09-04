@@ -4,10 +4,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 var ActivityCollection = window.c = require('../../../../entities/activities/activities_collection');
-// var TaskCollection = require('../../../../entities/tasks/tasks_collection');
 var HomeActivityView = require('./home_activity_view');
-var UIConfig = require('../../../../config/ui.json');
-var User = require('../../../../../utils/user');
 
 // templates
 var HomeTemplate = require('../templates/home_template.html');
@@ -15,6 +12,8 @@ var SearchTemplate = require('../templates/home_search_template.html');
 var UsersTemplate = require('../templates/home_users_template.html');
 var HomeCreatedTemplate = require('../templates/home_created_template.html');
 var HomeParticipatedTemplate = require('../templates/home_participated_template.html');
+var AnnouncementTemplate = require('../templates/home_announcement_template.html');
+var AchievementsTemplate = require('../templates/home_achievements_template.html');
 
 var templates = {
   main: _.template(HomeTemplate),
@@ -22,6 +21,8 @@ var templates = {
   search: _.template(SearchTemplate),
   created: _.template(HomeCreatedTemplate),
   participated: _.template(HomeParticipatedTemplate),
+  announcement: _.template(AnnouncementTemplate),
+  achievements: _.template(AchievementsTemplate),
 };
 
 var HomeView = Backbone.View.extend({
@@ -29,6 +30,7 @@ var HomeView = Backbone.View.extend({
     'click .logout'                : 'logout',
     'click .participated-show-all' : 'showAllParticipated',
     'click .created-show-all'      : 'showAllParticipated',
+    'click .read-more'             : 'readMore',
     'change #sort-participated'    : 'sortTasks',
     'change #sort-created'         : 'sortTasks',
   },
@@ -46,7 +48,26 @@ var HomeView = Backbone.View.extend({
     // initialize sub components
     this.initializeParticipatedCreated();
     this.initializeSearchUsers();
+
+    this.listenTo(new ActivityCollection({ type: 'badges' }), 'activity:collection:fetch:success', function  (e) {
+      var bs = e.toJSON().filter(function (b) {     
+        return b.participants.length > 0;
+      });
+      
+      var achievementsHtml = templates.achievements({ achievements: bs });
+      this.setTarget('achievements-feed', achievementsHtml);
+    }.bind(this));
     
+    $.ajax({
+      url: '/api/announcement',
+      dataType: 'json',
+      success: function (announcementInfo) {
+        announcementHtml = templates.announcement(announcementInfo);
+        this.setTarget('announcement-feed', announcementHtml);
+      }.bind(this),
+    });
+    
+    this.$el.localize();
     return this;
   },
 
@@ -121,6 +142,21 @@ var HomeView = Backbone.View.extend({
     } else {
       this.taskView.options.showAll = true;
       this.taskView.render();
+    }
+  },
+
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('announcement')) {
+      $('.usajobs-opop-announcement__body').removeClass('read-less');
+      $('.announcement.profile-home .read-more').hide();
+      $('.announcement.profile-home').addClass('show');
+    } else {
+      $('.usajobs-opop-achievements__body').removeClass('read-less');
+      $('.achievements.profile-home .read-more').hide();
+      $('.achievements.profile-home').addClass('show');
     }
   },
 

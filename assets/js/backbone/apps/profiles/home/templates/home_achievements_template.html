@@ -1,0 +1,35 @@
+<div class="usajobs-opop-achievements__body read-less">
+  <h2>Latest achievements</h2>
+  <ul class="usa-unstyled-list achievements">
+    <% _.forEach(achievements, function(b) { %>
+      <li class="usajobs-open-opps-opportunity-achievements">
+        <% var ps = b.participants.map(function(p) { %>
+          <% return '<a href="/profile/' + _.escape(p.id) + '">' + _.escape(p.name) + '</a>' %>
+        <% }); %>
+        <% if (b.participants.length === 1) var pText = ps; %>
+        <% if (b.participants.length === 2) var pText = ps.join(' and '); %>
+        <% if (b.participants.length > 2) { %>
+          <% var last  = ps.slice(-1); %>
+          <% var rest  = ps.slice(0, -1).join(', '); %>
+          <% var pText = [rest, last].join(', and '); %>
+        <% } %>
+        <a href="/tasks/<%- b.id %>"><%- b.title %></a> was completed with the help of <%= pText %>.
+        <div class="usajobs-open-opps-opportunity-requestor achievements">
+          <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
+            <% b.participants.map(function(p, i) { %>
+              <a href="/profile/<%- p.id %>">
+                <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(p.id) %> space">
+                  <% if (p.photoId) { %>
+                    <img src="/api/user/photo/<%- p.id %>" alt="Profile picture of <%- p.name %>">
+                  <% } else { %>
+                    <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(p.name) %></div>
+                  <% } %>
+                </div>
+              </a>
+            <% }); %>
+          </div>
+        </div>
+      </li>
+    <% }); %>
+  </ul>
+</div>
