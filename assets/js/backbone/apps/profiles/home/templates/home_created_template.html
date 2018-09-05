@@ -14,6 +14,7 @@
             Sort by
           </label>
           <select name="sort_attribute" id="sort-created" class="usajobs-search-controls__sort-control">
+            <option value="" disabled>- Sort By -</option>
             <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
             <option value="title" <% if (sort == 'title') { %>selected<% } %>>Opportunity</option>
             <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
