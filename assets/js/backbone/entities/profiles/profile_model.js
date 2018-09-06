@@ -60,6 +60,21 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
+    this.listenTo(this, 'profile:removePhoto', function (file) {
+      var _self = this;
+      var data = {
+        photoId: file.id,
+      };
+      _this.remove(data, {
+        success: function (data) {
+          _this.trigger('profile:updatedPhoto', data);
+        },
+        error: function (data) {
+          // an error occurred
+        },
+      });
+    });
+
     this.listenTo(this, 'profile:save', function (form) {
       var data = {
         name: form.name,

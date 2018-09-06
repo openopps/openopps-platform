@@ -84,26 +84,6 @@
         <div class="usajobs-open-opps-profile__body">
           <h1 class="usajobs-opop-intro-hiring-paths__section-title usajobs-form__title">Edit profile
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
-          <div class="usajobs-form--narrow center-upload">
-            <div class="usajobs-open-opps-opportunity-requestor profile profile-edit">
-                <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
-                    <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
-                      <% if (data.photoId) { %>
-                        <img id="profile-picture" src="/api/user/photo/<%- data.id %>" alt="Profile picture of <%- data.name %>">
-                      <% } else { %>
-                        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
-                      <% } %>
-                    </div>
-                </div>
-              </div>
-            <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
-              <i class="fa fa-camera" title="Change Cover Photo" id="fileupload-icon"></i> Upload
-              <input id="fileupload" type="file" name="files[]" accept="image/*" title="Upload Photo">
-            </div>
-            <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-              <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
-            </div>
-          </div>
         </div>
         <form action="" class="usajobs-form--narrow" role="form" id="profile-form">
           <fieldset class="usajobs-fieldset">

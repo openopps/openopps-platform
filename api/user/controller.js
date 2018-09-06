@@ -4,6 +4,7 @@ const Router = require('koa-router');
 const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
+const documentService = require('../document/service');
 const validGovtEmail = require('../model').ValidGovtEmail;
 
 var router = new Router();
@@ -67,6 +68,22 @@ router.get('/api/user/photo/:id', async (ctx, next) => {
   else {
     ctx.status = 307;
     ctx.redirect('/images/default-user-icon-profile.png');
+  }
+});
+
+router.post('/api/user/photo/remove/:id', async (ctx, next) => {
+  if (await service.canUpdateProfile(ctx)) {
+    //ctx.status = 200;
+    await documentService.removeFile(ctx.state.user.photoId).then(async (result) => {
+      if(!result) {
+        return ctx.status = 404;
+      }
+      await service.updatePhotoId(ctx.params.id);
+      ctx.body = { success: true };
+    });
+  } else {
+    ctx.status = 403;
+    ctx.body = { success: false };
   }
 });
 

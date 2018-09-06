@@ -54,33 +54,7 @@
           </div>
           <% } %>
           <div id="profile" class="usajobs-opop-profile-title profile usa-width-one-fourth">
-              <div class="usajobs-form--narrow center-upload">
-                  <div class="usajobs-open-opps-opportunity-requestor profile profile-edit">
-                      <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
-                          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
-                            <% if (data.photoId) { %>
-                              <img id="profile-picture" src="/api/user/photo/<%- data.id %>" alt="Profile picture of <%- data.name %>">
-                            <% } else { %>
-                              <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
-                            <% } %>
-                          </div>
-                      </div>
-                    </div>
-                  <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
-                    <% if (data.photoId) { %>
-                      <a href=#>Remove
-                          <input id="fileremove" type="file" name="files[]" accept="image/*" title="Remove photo" />
-                        </a>
-                    <% } else { %>
-                      <a href=#>Upload photo
-                        <input id="fileupload" type="file" name="files[]" accept="image/*" title="Upload photo" />
-                      </a>
-                    <% } %>
-                  </div>
-                  <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-                    <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
-                  </div>
-              </div>
+              <div class="profile-photo"></div>
               <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
           </div>
           <div class="usajobs-opop-profile-details usa-width-three-fourths">

@@ -128,10 +128,10 @@ async function updateProfileStatus (opts, done) {
 }
 
 async function canUpdateProfile (ctx) {
-  if (+ctx.params.id === ctx.request.body.id) {
+  if (ctx.params.id == ctx.request.body.id) {
     if (ctx.state.user.isAdmin ||
        (ctx.state.user.isAgencyAdmin && checkAgency(ctx.state.user, ctx.params) && await checkRoleEscalation(ctx.request.body)) ||
-       (ctx.state.user.id === +ctx.params.id && await checkRoleEscalation(ctx.request.body))) {
+       (ctx.state.user.id == ctx.params.id && await checkRoleEscalation(ctx.request.body))) {
       return true;
     }
   }
@@ -184,6 +184,13 @@ async function updateProfilePasswordAttempts (id) {
   return dao.User.update(user);
 }
 
+async function updatePhotoId (id) {
+  var user = (await dao.User.find('id = ?', id))[0];
+  user.photoId = null;
+  user.updatedAt = new Date();
+  return dao.User.update(user);
+}
+
 module.exports = {
   list: list,
   findOne: findOne,
@@ -197,4 +204,5 @@ module.exports = {
   processUserTags: processUserTags,
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
+  updatePhotoId: updatePhotoId,
 };
