@@ -25,14 +25,14 @@ var ProfileResetView = Backbone.View.extend({
     var data = {
       user: window.cache.currentUser || {},
     };
-    var template = _.template((this.options.routeId == 'reset') 
+    var template = _.template((this.options.action == 'reset') 
       ? ProfileResetTemplate
       : ProfileRegistrationTemplate
     )(data);
     this.$el.html(template);
     this.loginPasswordView = new LoginPasswordView({
       el: this.$('.password-view'),
-      action: this.options.action,
+      action: this.options.key,
     }).render();
     $('#search-results-loading').hide();
     return this;
