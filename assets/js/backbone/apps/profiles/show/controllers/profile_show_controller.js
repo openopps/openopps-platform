@@ -7,7 +7,6 @@ var BaseController = require('../../../../base/base_controller');
 var ProfileModel = require('../../../../entities/profiles/profile_model');
 var ProfileView = require('../views/profile_show_view');
 var ProfileSettingsView = require('../views/profile_settings_view');
-var ProfileResetView = require('../views/profile_reset_view');
 var Login = require('../../../../config/login.json');
 
 // templates
@@ -28,18 +27,7 @@ var Profile = BaseController.extend({
     // Clean up previous views
     if (this.profileView) { this.profileView.cleanup(); }
     if (this.settingsView) { this.settingsView.cleanup(); }
-    if (this.profileResetView) { this.profileResetView.cleanup(); }
-    // If the action does not require the profile model, display that action
-    if (this.routeId == 'reset' || this.routeId == 'register') {
-      this.profileResetView = new ProfileResetView({
-        el: this.$el,
-        routeId: this.routeId,
-        action: this.action,
-        data: this.data,
-      }).render();
-    } else { // otherwise load the profile model and display the appropriate view
-      this.initializeProfileModelInstance();
-    }
+    this.initializeProfileModelInstance();
   },
 
   initializeProfileModelInstance: function () {

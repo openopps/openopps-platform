@@ -559,8 +559,8 @@ disabled look for disabled choices in the results dropdown
   max-width: 46rem;
   padding: 0 0.7rem;
   width: 100%;
-  display: -ms-grid;
-  -ms-grid-columns: 100%;
+  // display: -ms-grid;       // Added for #2247 / Removed for #2464
+  // -ms-grid-columns: 100%;  // Added for #2247 / Removed for #2464
 }
 
 html[dir="rtl"] .select2-container-multi .select2-choices {

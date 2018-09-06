@@ -4,7 +4,7 @@
       <div class="usajobs-search-controls__results-count-container no-params">
           <% if (data.length > 0) { %>
             <h4 id="created-count" class="usajobs-search-controls__results-count">
-              Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %>5<% } %> of <%= data.length %> opportunities
+              Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %><%= Math.min(data.length, 5) %><% } %> of <%= data.length %> opportunities
             </h4>
           <% } %>
       </div>
@@ -14,8 +14,9 @@
             Sort by
           </label>
           <select name="sort_attribute" id="sort-created" class="usajobs-search-controls__sort-control">
+            <option value="" disabled>- Sort By -</option>
             <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
-            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
+            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Opportunity</option>
             <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
           </select>
         </div>
@@ -56,7 +57,7 @@
               <% } %>
             </tbody>
           </table>
-          <% if (!showAll) { %>
+          <% if (!showAll && data.length > 5) { %>
             <a href="#next" class="usa-button usa-button-outline created-show-all">
               Show more
             </a>

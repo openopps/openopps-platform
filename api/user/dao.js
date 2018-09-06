@@ -23,7 +23,17 @@ const taskParticipatedQuery = 'select task.*, volunteer.assigned, volunteer."tas
   'from task inner join volunteer on task.id = volunteer."taskId" ' +
   'where volunteer."userId" = ?';
 
-const deleteUserTags = 'delete from tagentity_users__user_tags where user_tags = ?';
+const deleteUserTags = 'delete from tagentity_users__user_tags where id in (' +
+  'select tagentity_users__user_tags.id ' +
+  'from tagentity_users__user_tags ' +
+  'join tagentity on tagentity.id = tagentity_users and type not in (\'skill\', \'topic\') ' +
+  'where user_tags = ?)';
+
+const deleteSkillTags = 'delete from tagentity_users__user_tags where id in (' +
+  'select tagentity_users__user_tags.id ' +
+  'from tagentity_users__user_tags ' +
+  'join tagentity on tagentity.id = tagentity_users and type in (\'skill\', \'topic\') ' +
+  'where user_tags = ?)';
 
 const options = {
   user: {
@@ -86,6 +96,7 @@ module.exports = function (db) {
       participated: taskParticipatedQuery,
       userAgencyQuery: userAgencyQuery,
       deleteUserTags: deleteUserTags,
+      deleteSkillTags: deleteSkillTags,
     },
     options: options,
     clean: clean,

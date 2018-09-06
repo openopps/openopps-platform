@@ -7,15 +7,16 @@ var FooterView = require('./apps/footer/views/footer_view');
 var ProfileHomeController = require('./apps/profiles/home/controllers/home_controller');
 var ProfileShowController = require('./apps/profiles/show/controllers/profile_show_controller');
 var ProfileEditController = require('./apps/profiles/edit/controllers/profile_edit_controller');
+var ProfileResetController = require('./apps/profiles/reset/controllers/profile_reset_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
 var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
 var TaskModel = require('./entities/tasks/task_model');
-var TaskCollection = require('./entities/tasks/tasks_collection');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
+var ApplyController = require('./apps/apply/controllers/apply_controller');
 var LoginController = require('./apps/login/controllers/login_controller');
 var Modal = require('./components/modal');
 
@@ -34,9 +35,11 @@ var BrowseRouter = Backbone.Router.extend({
     'profile/:id(/)'                : 'showProfile',
     'profile/edit/skills/:id(/)'    : 'editSkills',
     'profile/edit/:id(/)'           : 'editProfile',
+    'profile/:action/:key'          : 'resetProfile',
     'admin(/)'                      : 'showAdmin',
     'admin(/):action(/)(:agencyId)' : 'showAdmin',
     'login(/)'                      : 'showLogin',
+    'apply'                         : 'showApply',
     'unauthorized(/)'               : 'showUnauthorized',
     'expired(/)'                    : 'showExpired',
   },
@@ -259,6 +262,19 @@ var BrowseRouter = Backbone.Router.extend({
       data: this.data,
     });
   },
+
+  showApply: function () {
+    this.cleanupChildren();
+    // if (id) {
+    //   id = id.toLowerCase();
+    // }
+    this.applyController = new ApplyController({
+      target: 'apply',
+      el: '#container',
+      router: this,
+      data: this.data,
+    });
+  },
   
   findProfile: function () {
     this.cleanupChildren();
@@ -278,6 +294,11 @@ var BrowseRouter = Backbone.Router.extend({
   editProfile: function (id) {
     this.cleanupChildren();
     this.profileEditController = new ProfileEditController({ id: id,  action: 'edit', data: this.data });
+  },
+
+  resetProfile: function (action, key) {
+    this.cleanupChildren();
+    this.profileResetController = new ProfileResetController({ action: action, key: key });
   },
 
   showProfile: function (id) {

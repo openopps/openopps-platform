@@ -1,17 +1,13 @@
 // vendor libraries
 var $ = require('jquery');
 var _ = require('underscore');
-var async = require('async');
 var Backbone = require('backbone');
-
 var marked = require('marked');
-var MarkdownEditor = require('../../../../components/markdown_editor');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
 var TagShowView = require('../../../tag/show/views/tag_show_view');
 var Login = require('../../../../config/login.json');
-var ModalComponent = require('../../../../components/modal');
 var TagFactory = require('../../../../components/tag_factory');
 var ProfilePhotoView = require('./profile_photo_view');
 
@@ -29,8 +25,6 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    var career = [];
-
     this.options = options;
     this.data = options.data;
     this.tagFactory = new TagFactory();
@@ -38,11 +32,6 @@ var ProfileShowView = Backbone.View.extend({
 
     this.initializeAction();
     this.initializeErrorHandling();
-
-    if (this.data.saved) {
-      this.saved = true;
-      this.data.saved = false;
-    }
   },
 
   initializeAction: function () {
@@ -112,7 +101,7 @@ var ProfileShowView = Backbone.View.extend({
       ui: UIConfig,
     };
 
-    data.email = data.data.username;
+    data.email = (loginGov ? data.data.governmentUri : data.data.username);
     data.career = this.getTags(['career'])[0];
 
     if (data.data.bio) {
@@ -140,19 +129,6 @@ var ProfileShowView = Backbone.View.extend({
     });
     this.photoView.render();
   },
-
-  
-
-  // deletePhotoId: function () {
-  //   $.ajax({
-  //     url: '/api/user/photo/remove/' + this.model.attributes.id,
-  //     type: 'DELETE',
-  //     data: {
-  //       id: this.model.attributes.id,
-  //     },
-  //   }).done(function ( data ) {
-  //   }.bind(this));
-  // },
 
   initializeTags: function () {
     var showTags = true;

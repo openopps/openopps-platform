@@ -54,7 +54,7 @@ async function getActivities (id) {
 
 function processUserTags (user, tags) {
   return Promise.all(tags.map(async (tag) => {
-    if(_.isNumber(tag)) {
+    if(!_.isNaN(_.parseInt(tag))) {
       return await createUserTag(tag, user);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
@@ -109,6 +109,22 @@ async function updateProfile (attributes, done) {
         return done(null, user);
       }).catch (err => { return done({'message':'Error updating profile.'}); });
   }).catch (err => { return done({'message':'Error updating profile.'}); });
+}
+
+async function updateSkills (attributes, done) {
+  var errors = User.validateTags({ invalidAttributes: {} }, attributes);
+  if (!_.isEmpty(errors.invalidAttributes)) {
+    return done(errors);
+  }
+  await dao.UserTags.db.query(dao.query.deleteSkillTags, attributes.id).then(async () => {
+    var tags = [].concat(attributes.tags || attributes['tags[]'] || []);
+    await processUserTags({ id: attributes.id, username: attributes.username }, tags).then(result => {
+      tags = result;
+    });
+    return done(null, tags);
+  }).catch (err => { 
+    return done({'message':'Error updating skills.'});
+  });
 }
 
 async function updateProfileStatus (opts, done) {
@@ -201,6 +217,7 @@ module.exports = {
   updateProfile: updateProfile,
   updateProfileStatus: updateProfileStatus,
   updatePassword: updatePassword,
+  updateSkills: updateSkills,
   processUserTags: processUserTags,
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
