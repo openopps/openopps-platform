@@ -1,18 +1,13 @@
 // vendor libraries
 var $ = require('jquery');
 var _ = require('underscore');
-var async = require('async');
 var Backbone = require('backbone');
-var jqIframe = require('blueimp-file-upload/js/jquery.iframe-transport');
-var jqFU = require('blueimp-file-upload/js/jquery.fileupload.js');
 var marked = require('marked');
-var MarkdownEditor = require('../../../../components/markdown_editor');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
 var TagShowView = require('../../../tag/show/views/tag_show_view');
 var Login = require('../../../../config/login.json');
-var ModalComponent = require('../../../../components/modal');
 var TagFactory = require('../../../../components/tag_factory');
 
 // templates
@@ -29,8 +24,6 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    var career = [];
-
     this.options = options;
     this.data = options.data;
     this.tagFactory = new TagFactory();
@@ -38,11 +31,6 @@ var ProfileShowView = Backbone.View.extend({
 
     this.initializeAction();
     this.initializeErrorHandling();
-
-    // if (this.data.saved) {
-    //   this.saved = true;
-    //   this.data.saved = false;
-    // }
   },
 
   initializeAction: function () {
