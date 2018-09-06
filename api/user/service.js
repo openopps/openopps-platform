@@ -200,6 +200,13 @@ async function updateProfilePasswordAttempts (id) {
   return dao.User.update(user);
 }
 
+async function updatePhotoId (id) {
+  var user = (await dao.User.find('id = ?', id))[0];
+  user.photoId = null;
+  user.updatedAt = new Date();
+  return dao.User.update(user);
+}
+
 module.exports = {
   list: list,
   findOne: findOne,
@@ -214,4 +221,5 @@ module.exports = {
   processUserTags: processUserTags,
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
+  updatePhotoId: updatePhotoId,
 };

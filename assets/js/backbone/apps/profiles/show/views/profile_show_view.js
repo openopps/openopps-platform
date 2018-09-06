@@ -9,6 +9,7 @@ var UIConfig = require('../../../../config/ui.json');
 var TagShowView = require('../../../tag/show/views/tag_show_view');
 var Login = require('../../../../config/login.json');
 var TagFactory = require('../../../../components/tag_factory');
+var ProfilePhotoView = require('./profile_photo_view');
 
 // templates
 var ProfileShowTemplate = require('../templates/profile_show_template.html');
@@ -113,47 +114,20 @@ var ProfileShowView = Backbone.View.extend({
     this.$el.localize();
 
     // initialize sub components
-    this.initializeFileUpload();
     this.initializeTags();
-    this.updatePhoto();
+    this.initializePhoto();
     this.shareProfileEmail();
 
-    // Force reloading of image (in case it was changed recently)
-    if (data.user.id === data.data.id) {
-      var url = '/api/user/photo/' + data.user.id + '?' + new Date().getTime();
-      $('#profile-picture').attr('src', url);
-    }
     return this;
   },
 
-  initializeFileUpload: function () {
-    $('#fileupload').fileupload({
-      url: '/api/upload/create',
-      dataType: 'text',
-      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-      formData: { 'type': 'image_square' },
-      add: function (e, data) {
-        $('#file-upload-progress-container').show();
-        data.submit();
-      }.bind(this),
-      progressall: function (e, data) {
-        var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#file-upload-progress').css('width', progress + '%');
-      }.bind(this),
-      done: function (e, data) {
-        this.model.trigger('profile:updateWithPhotoId', JSON.parse($(data.result).text())[0]);
-        $('#file-upload-alert').hide();
-      }.bind(this),
-      fail: function (e, data) {
-        var message = data.jqXHR.responseText || data.errorThrown;
-        $('#file-upload-progress-container').hide();
-        if (data.jqXHR.status == 413) {
-          message = 'The uploaded file exceeds the maximum file size.';
-        }
-        $('#file-upload-alert-message').html(message);
-        $('#file-upload-alert').show();
-      }.bind(this),
+  initializePhoto: function () {
+    if (this.photoView) { this.photoView.cleanup(); }
+    this.photoView = new ProfilePhotoView({
+      data: this.model,
+      el: '.profile-photo',
     });
+    this.photoView.render();
   },
 
   initializeTags: function () {
@@ -192,19 +166,6 @@ var ProfileShowView = Backbone.View.extend({
           '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
-  },
-
-  updatePhoto: function () {
-    this.model.on('profile:updatedPhoto', function (data) {
-      //added timestamp to URL to force FF to reload image from server
-      var url = '/api/user/photo/' + data.attributes.id + '?' + new Date().getTime();
-      $('#profile-picture').attr('src', url);
-      $('#file-upload-progress-container').hide();
-      // notify listeners of the new user image, but only for the current user
-      if (this.model.toJSON().id == window.cache.currentUser.id) {
-        window.cache.userEvents.trigger('user:profile:photo:save', url);
-      }
-    }.bind(this));
   },
 
   cleanup: function () {
