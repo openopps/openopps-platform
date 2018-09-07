@@ -102,7 +102,9 @@ async function updateProfile (attributes, done) {
   await dao.User.update(attributes).then(async (user) => {
     await dao.UserTags.db.query(dao.query.deleteUserTags, attributes.id)
       .then(async () => {
-        var tags = attributes.tags || attributes['tags[]'] || [];
+        var tags = [].concat(attributes.tags || attributes['tags[]'] || []).filter((tag) => {
+          return (tag.type != 'skill' && tag.type != 'topic');
+        });
         await processUserTags(user, tags).then(tags => {
           user.tags = tags;
         });
