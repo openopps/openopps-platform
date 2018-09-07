@@ -517,8 +517,16 @@ form [type=submit] {
   }
 
   .fileinput-button {
-      color: #2574B6;
       font-size: 1.4rem;
+      margin: 0.5rem;
+
+      a, a:hover, a:visited {
+        color: #2574B6;
+      }
+
+      #photo-remove {
+        color: #CD2026;
+      }
   }
 }
 

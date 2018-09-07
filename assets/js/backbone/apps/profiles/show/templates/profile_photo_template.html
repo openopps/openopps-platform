@@ -11,8 +11,8 @@
             </div>
           </div>
         <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
-          <a href=#>Upload photo
-            <input id="fileupload" type="file" name="files[]" accept="image/*" title="Upload photo" />
+          <a href=#><%- data.photoId ? 'Update photo' : 'Upload photo' %>
+            <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- data.photoId ? 'Update photo' : 'Upload photo' %>" />
           </a>
         </div>
         <div class="fileinput-button">
