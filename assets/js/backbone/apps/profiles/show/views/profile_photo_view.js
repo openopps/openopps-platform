@@ -75,10 +75,6 @@ var ProfilePhotoView = Backbone.View.extend({
     });
   },
 
-  initalizeOnUpdatePhoto: function () {
-    
-  },
-
   removePhoto: function () {
     $.ajax({
       url: '/api/user/photo/remove/' + this.model.attributes.id,

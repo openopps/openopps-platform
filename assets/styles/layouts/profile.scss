@@ -765,8 +765,8 @@ form [type=submit] {
     position: relative;
     background-color: #ffffff;
     margin: 0;
-    padding: 1.5rem;
-    box-shadow: none;
+    padding: 1.5rem 3rem;
+    // box-shadow: none;
 
     .usa-input-optional {
       margin-top: 0;
@@ -781,11 +781,6 @@ form [type=submit] {
     @include media($L-down) {
       display: none;
     }
-  }
-
-  #rightrail > .usajobs-open-opps-opportunity.usajobs-open-opps-section {
-    box-shadow: none;
-    border: none;
   }
 }
 
