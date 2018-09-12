@@ -402,6 +402,11 @@ async function getExportData () {
   });
 }
 
+async function reindexOpportunities () {
+  var records = (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
+  return records;
+}
+
 async function sendTasksDueNotifications (action, i) {
   var now = new Date(new Date().toISOString().split('T')[0]);
   var dateToCheck = i == 0 ? moment(new Date()).format('MM/DD/YYYY') : moment(new Date()).add(i, 'days').format('MM/DD/YYYY');
@@ -443,6 +448,7 @@ module.exports = {
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
   getExportData: getExportData,
+  reindexOpportunities: reindexOpportunities,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
   sendTaskStateUpdateNotification: sendTaskStateUpdateNotification,
