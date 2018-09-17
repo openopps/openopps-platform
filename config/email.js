@@ -46,9 +46,9 @@ module.exports = {
 
   // Google Analytics
   googleAnalytics: {
-    enabled: JSON.parse(process.env.GOOGLE_ANALTICS || false),
-    account: process.env.GOOGLE_ANALTICS_ACCOUNT,
-    category: process.env.GOOGLE_ANALTICS_EMAIL_CATEGORY || 'email',
+    enabled: JSON.parse(process.env.GOOGLE_ANALYTICS || false),
+    account: process.env.GOOGLE_ANALYTICS_ACCOUNT,
+    category: process.env.GOOGLE_ANALYTICS_EMAIL_CATEGORY || 'email',
   },
 
   // system email address (from address)
