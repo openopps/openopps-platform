@@ -29,7 +29,7 @@ $body-padding: $size-M;
     padding: $size-default $body-padding;
     background-color: $color-white;
 
-    [aria-hidden=true] {
+    &[aria-hidden=true] {
       display: none;
     }
   }

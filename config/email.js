@@ -44,6 +44,13 @@ module.exports = {
     // maxMessages         :
   },
 
+  // Google Analytics
+  googleAnalytics: {
+    enabled: JSON.parse(process.env.GOOGLE_ANALYTICS || false),
+    account: process.env.GOOGLE_ANALYTICS_ACCOUNT,
+    category: process.env.GOOGLE_ANALYTICS_EMAIL_CATEGORY || 'email',
+  },
+
   // system email address (from address)
   systemEmail: process.env.EMAIL_SYSTEM_ADDRESS || 'example@example.com',
 
