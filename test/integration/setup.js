@@ -4,8 +4,8 @@ const _ = require('lodash');
 const dbConnection = {
   host: 'localhost',
   db: 'midastest',
-  user: 'midas',
-  password: 'midas',
+  user: 'postgres',
+  password: 'postgres',
   port: '5432',
 };
 
