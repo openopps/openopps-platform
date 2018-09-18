@@ -1,0 +1,83 @@
+{
+    "task": {
+        "properties": {
+            "id":                    { "type": "long" },
+            "title":                 { "type": "text",  "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+            "description":           { "type": "text" },
+            "state":                 { "type": "keyword", "normalizer": "lowercase" },
+            "details":               { "type": "text" },
+            "outcome":               { "type": "text" },
+            "about":                 { "type": "text" },
+            "restrictedToAgency":    { "type": "keyword", "normalizer": "lowercase" },
+            "name":                  { "type": "keyword", "normalizer": "lowercase" },
+            "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
+            "acceptingApplicants":   { "type": "boolean" },
+            "task-people": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "skills": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "task-length": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "location":    { 
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "task-time-estimate": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "series": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "task-time-required": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "career": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "task-skills-required": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "keywords": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "topic": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            }
+        }
+    }
+}

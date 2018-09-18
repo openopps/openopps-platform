@@ -15,5 +15,6 @@ _.extend(configuration, require('../config/cache'));
 _.extend(configuration, require('../config/version'));
 _.extend(configuration, require('../config/fileStore'));
 _.extend(configuration, require('../config/email'));
+_.extend(configuration, require('../elastic/elastic-client'));
 
 module.exports = configuration;
