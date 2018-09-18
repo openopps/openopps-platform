@@ -110,7 +110,7 @@ router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (c
 
 router.post('/api/admin/changeOwner', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.request.body.taskId)) {
-    await service.changeOwner(ctx.state.user, ctx.request.body, function (result, err) {
+    await service.changeOwner(ctx, ctx.request.body, function (result, err) {
       if (err) {
         ctx.status = 400;
         ctx.body = err;
@@ -125,7 +125,7 @@ router.post('/api/admin/changeOwner', auth.isAdminOrAgencyAdmin, async (ctx, nex
 });
 
 router.post('/api/admin/assign', auth.isAdmin, async (ctx, next) => {
-  await service.assignParticipant(ctx.state.user, ctx.request.body, function (result, err) {
+  await service.assignParticipant(ctx, ctx.request.body, function (result, err) {
     if (err) {
       ctx.status = 400;
       ctx.body = err;

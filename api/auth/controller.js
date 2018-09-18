@@ -51,6 +51,7 @@ function loginUser (state, user, ctx) {
 
 function loginError (ctx, err) {
   if(err.message == 'Not authorized') {
+    service.logAuthenticationError(ctx, 'UNAUTHORIZED_APPLICATION_ACCESS', err.data);
     ctx.status = 403;
     ctx.redirect('/unauthorized');
   } else {
@@ -105,7 +106,7 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
 });
 
 router.post('/api/auth/find', async (ctx, next) => {
-  await service.sendFindProfileConfirmation(ctx.request.body, (err) => {
+  await service.sendFindProfileConfirmation(ctx, ctx.request.body, (err) => {
     if(err) {
       ctx.status = 400;
       return ctx.body = { message: err };

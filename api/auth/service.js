@@ -22,6 +22,15 @@ const basePassport = {
   protocol: 'local',
 };
 
+function generatePasswordReset (user) {
+  return {
+    userId: user.id,
+    token: uuid.v4(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
+
 async function register (attributes, done) {
   attributes.username = attributes.username.toLowerCase().trim();
   if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
@@ -37,13 +46,7 @@ async function register (attributes, done) {
       await userService.processUserTags(user, tags).then(tags => {
         user.tags = tags;
       });
-      var passwordReset = {
-        userId: user.id,
-        token: uuid.v4(),
-        createdAt: new Date(),
-        updatedAt: new Date,
-      };
-      await dao.UserPasswordReset.insert(passwordReset).then((obj) => {
+      await dao.UserPasswordReset.insert(generatePasswordReset(user)).then((obj) => {
         return done(null, _.extend(user, { token: obj.token }));
       }).catch((err) => {
         log.info('Error creating password reset record', err);
@@ -97,13 +100,7 @@ async function forgotPassword (username, error) {
     return done('Please enter a valid email address.');
   }
   await dao.User.findOne('username = ?', username).then(async (user) => {
-    var passwordReset = {
-      userId: user.id,
-      token: uuid.v4(),
-      createdAt: new Date(),
-      updatedAt: new Date,
-    };
-    await dao.UserPasswordReset.insert(passwordReset).then((obj) => {
+    await dao.UserPasswordReset.insert(generatePasswordReset(user)).then((obj) => {
       return error(obj.token, false);
     }).catch((err) => {
       log.info('Error creating password reset record', err);
@@ -175,7 +172,7 @@ async function linkAccount (user, data, done) {
   }
 }
 
-async function sendFindProfileConfirmation (data, done) {
+async function sendFindProfileConfirmation (ctx, data, done) {
   var account = await dao.AccountStaging.findOne('linked_id = ?', data.id).catch(() => { return null; });
   if(!account || !validate([account.linkedId, account.uuid], data.h)) {
     done({ message: 'Invalid request' });
@@ -196,7 +193,7 @@ async function sendFindProfileConfirmation (data, done) {
         done({ message: 'Unkown error occurred' });
       });
     }).catch(err => {
-      var audit = Audit.createAudit('UNKNOWN_USER_PROFILE_FIND', { id: 0 }, {
+      var audit = Audit.createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
         documentId: account.linkedId,
         email: data.email,
       });
@@ -206,11 +203,17 @@ async function sendFindProfileConfirmation (data, done) {
   }
 }
 
+function logAuthenticationError (ctx, type, auditData) {
+  var audit = Audit.createAudit(type, ctx, auditData);
+  dao.AuditLog.insert(audit).catch(() => {});
+}
+
 module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
   forgotPassword: forgotPassword,
   linkAccount: linkAccount,
+  logAuthenticationError: logAuthenticationError,
   register: register,
   resetPassword: resetPassword,
   sendFindProfileConfirmation: sendFindProfileConfirmation,
