@@ -2,52 +2,135 @@
 
 @import 'media-object';
 
-@mixin alert($color, $icon) {
-  background-color: $color;
-  border-color: $color;
+@mixin alert($dark_color, $light_color, $icon) {
+  background-color: $light_color;
+  border-color: $dark_color;
 
-  &:before {
-    content: none;
+  &::before {
+    background-color: $light_color;
   }
 
-  .usajobs-alert__icon:after {
-    @include icon-content("alerts/#{$icon}", rem(30px), rem(30px));
+  .usajobs-alert__body {
+    background-color: $light_color;
+  }
+
+  .usajobs-alert__icon {
+    background-image: url("../img/alerts/#{$icon}.svg");
+    background-color: $light_color;
   }
 }
 
 .usajobs-alert {
-  @include mediaObject();
+  position: relative;
+  margin: $size-M 0;
+  padding: 0;
+  border: 1px solid;
+  border-left-width: 1rem;
+  padding: 1.5rem 1.5rem 1rem 1rem;
+  @include animation(fadeIn $duration-slow);
+
+  &__icon {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center top;
+    height: 5.2rem;
+    width: 5.2rem;
+  }
+
+  &__body {
+    min-height: rem(77px);  // I no longer recall why this was put here -- taking it out in the next go round
+    padding-left: $size-base;
+
+    &[aria-hidden=true] {
+      display: none;
+    }
+  }
+
+  &__text {
+    margin: 0;
+  }
+
+  &__footer {
+    margin-top: $size-default;
+    text-align: right;
+  }
+
+  &__close {
+    @include makeCloseButton(30px);
+  }
 
   .usa-alert-text {
     max-width: inherit;
   }
 }
 
-.usajobs-alert--success {
-  @include alert($color-green-dark, 'check');
+// Spurious style in the standards that we were inheriting
+.usa-alert-text:only-child {
+  margin: 0;
+  padding: 0;
+}
 
-  .usajobs-alert__icon::after {
-    margin-left: -#{$size-default};
+.no-flexbox .usajobs-alert {
+  @include clearfix();
+  display: table;
+
+  &[aria-hidden=true] {
+    display: none;
+  }
+
+  &__figure,
+  &__body {
+    display: table-cell;
+  }
+
+  &__body {
+    @include calc(width, '100% - ' ($icon-width + $icon-padding + $body-padding));
+  }
+
+  &__body .lt-ie9 & {
+    width: 75%;
   }
 }
 
+.flexbox .usajobs-alert {
+  @include display(flex);
+  @include align-items(flex-start);
+
+  &[aria-hidden=true] {
+    display: none;
+  }
+
+  &__figure {
+    @include flex-shrink(0);
+  }
+
+  &__body {
+    @include flex(1);
+    min-width: 0;
+  }
+}
+
+.usajobs-alert--success {
+  @include alert($color-green-dark, $color-green-lightest, 'success');
+}
+
 .usajobs-alert--info {
-  @include alert($color-primary-darker, 'info');
+  @include alert($color-primary-alt, $color-primary-alt-lightest, 'info');
 }
 
 .usajobs-alert--warning {
-  @include alert($color-gold, 'exclamation-yellow');
+  @include alert($color-gold, $color-gold-lightest, 'warning');
 }
 
 .usajobs-alert--error {
-  @include alert($color-secondary-dark, 'exclamation-red');
+  @include alert($color-secondary-dark, $color-secondary-lightest, 'error');
 }
 
 .usajobs-alert--tip {
-  @include alert($color-primary-alt-dark, 'lightbulb');
+  @include alert($color-primary-alt-dark, $color-primary-alt-lightest, 'lightbulb');
 
-  .usajobs-alert__icon::after {
-    margin-left: -0.8rem;
+  .usajobs-alert__icon {
+    background-size: 75%;
   }
 
   .usajobs-alert__count {

@@ -31,6 +31,7 @@ function createNotification (notification) {
       urlPrefix: openopps.httpProtocol + '://' + openopps.hostName,
       systemName: openopps.systemName,
       systemEmail: openopps.systemEmail,
+      googleAnalytics: openopps.googleAnalytics,
     };
 
     renderTemplate(template, data, function (err, options) {
