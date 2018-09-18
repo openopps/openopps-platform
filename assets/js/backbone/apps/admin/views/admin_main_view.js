@@ -93,10 +93,10 @@ var AdminMainView = Backbone.View.extend({
         this.initializeAdminDashboardView();
         this.adminDashboardView.render(replace);
         break;
-      case 'community':
-        this.initializeAdminCommunityView();
-        this.adminCommunityView.render(replace);
-        break;
+      // case 'community':
+      //   this.initializeAdminCommunityView();
+      //   this.adminCommunityView.render(replace);
+      //   break;
       default:
         break;
     }

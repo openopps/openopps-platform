@@ -318,7 +318,7 @@ async function getOwnerOptions (taskId, done) {
   }
 }
 
-async function changeOwner (user, data, done) {
+async function changeOwner (ctx, data, done) {
   var task = await dao.Task.findOne('id = ?', data.taskId).catch((err) => { 
     return undefined;
   });
@@ -327,7 +327,7 @@ async function changeOwner (user, data, done) {
     task.userId = data.userId;
     task.updatedAt = new Date();
     await dao.Task.update(task).then(async () => {
-      var audit = Audit.createAudit('TASK_CHANGE_OWNER', user, {
+      var audit = Audit.createAudit('TASK_CHANGE_OWNER', ctx, {
         taskId: task.id, 
         originalOwner: originalOwner,
         newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
@@ -345,7 +345,7 @@ async function changeOwner (user, data, done) {
   }
 }
 
-async function assignParticipant (user, data, done) {
+async function assignParticipant (ctx, data, done) {
   var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', data.taskId, data.userId);
   if (volunteer.length > 0) {
     done(undefined, 'Participant already has been added.');
@@ -359,7 +359,7 @@ async function assignParticipant (user, data, done) {
       assigned: false,
       taskComplete: false,
     }).then(async (volunteer) => {
-      var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', user, {
+      var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', ctx, {
         taskId: data.taskId,
         participant: _.pick(await dao.User.findOne('id = ?', volunteer.userId), 'id', 'name', 'username'),
       });
