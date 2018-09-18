@@ -110,6 +110,7 @@ async function createOpportunity (attributes, done) {
       task.tags = tags;
     });
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+    await indexOpportunity(task.id);
     return done(null, task);
   }).catch(err => {
     return done(true);
@@ -163,6 +164,7 @@ async function updateOpportunityState (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     task.previousState = origTask.state;
+    await indexOpportunity(task.id);
     return done(task, origTask.state !== task.state);
   }).catch (err => {
     return done(null, false, {'message':'Error updating task.'});
@@ -189,8 +191,9 @@ async function updateOpportunity (attributes, done) {
     task.tags = [];
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
-        await processTaskTags(task, tags).then(tags => {
+        await processTaskTags(task, tags).then(async tags => {
           task.tags = tags;
+          await indexOpportunity(task.id);
           return done(task, origTask.state !== task.state);
         });
       }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
@@ -205,6 +208,7 @@ async function publishTask (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     sendTaskNotification(task.owner, task, 'task.update.opened');
+    await indexOpportunity(task.id);
     return done(true);
   }).catch (err => {
     return done(false);
@@ -345,6 +349,7 @@ async function copyOpportunity (attributes, user, done) {
           log.info('register: failed to update tag ', attributes.username, tag, err);
         });
       });
+      await indexOpportunity(task.id);
       return done(null, { 'taskId': task.id });
     }).catch (err => { return done({'message':'Error copying task.'}); });
 }
@@ -366,6 +371,7 @@ async function deleteTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
+        await indexOpportunity(id);
         return id;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
@@ -403,7 +409,30 @@ async function getExportData () {
 }
 
 async function reindexOpportunities () {
-  var records = (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
+  var records =  (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
+
+  var bulk_request = [];
+
+  for(i=0; i<records.length; i++){
+    bulk_request.push({index: { _index: "task", _type: "task", _id: records[i].task.id }});
+    bulk_request.push(records[i].task);
+  }
+
+  await openopps.elasticClient.bulk({ body: bulk_request });
+  return records;
+}
+
+async function indexOpportunity (taskId) {
+  var records =  (await dao.Task.db.query(dao.query.taskToIndex, taskId)).rows;
+
+  var bulk_request = [];
+
+  for(i=0; i<records.length; i++){
+    bulk_request.push({index: { _index: "task", _type: "task", _id: records[i].task.id }});
+    bulk_request.push(records[i].task);
+  }
+
+  await openopps.elasticClient.bulk({ body: bulk_request });
   return records;
 }
 
@@ -457,4 +486,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
+  indexOpportunity: indexOpportunity
 };

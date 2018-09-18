@@ -11,6 +11,9 @@ module.exports = async () => {
   // configure session and security
   await require('./security-setup')(app);
 
+  // configure elastic search
+  await require('../elastic/configure-elastic')(global.openopps.elasticClient);
+
   // redirect any request coming other than openopps.hostName
   require('./redirect')(app);
 

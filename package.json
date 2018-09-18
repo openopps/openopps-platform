@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "4.5.8",
+  "version": "4.5.9",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -22,8 +22,9 @@
     "csvtojson": "^1.1.9",
     "d3": "^4.13.0",
     "db-migrate": "^0.10.2",
-    "db-migrate-pg": "^0.3.0",
+    "db-migrate-pg": "^0.4.0",
     "ejs": "^2.5.7",
+    "elasticsearch": "^15.1.1",
     "font-face-mixin": "^1.1.0",
     "fs-extra": "^5.0.0",
     "git-clone": "^0.1.0",
