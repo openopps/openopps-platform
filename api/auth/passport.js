@@ -121,11 +121,7 @@ if(openopps.auth.oidc) {
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
     if(tokenset.claims['usaj:hiringPath'] != 'fed' || !tokenset.claims['usaj:governmentURI']) {
-      var audit = Audit.createAudit('UNAUTHORIZED_APPLICATION_ACCESS', { id: 0 }, {
-        documentId: tokenset.claims.sub,
-      });
-      dao.AuditLog.insert(audit).catch(() => {});
-      done({ message: 'Not authorized' });
+      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub }});
     } else {
       dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
         userFound(user, tokenset, done);
