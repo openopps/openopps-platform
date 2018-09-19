@@ -414,7 +414,7 @@ async function reindexOpportunities () {
   var bulk_request = [];
 
   for(i=0; i<records.length; i++){
-    bulk_request.push({index: { _index: "task", _type: "task", _id: records[i].task.id }});
+    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].task.id }});
     bulk_request.push(records[i].task);
   }
 
@@ -428,7 +428,7 @@ async function indexOpportunity (taskId) {
   var bulk_request = [];
 
   for(i=0; i<records.length; i++){
-    bulk_request.push({index: { _index: "task", _type: "task", _id: records[i].task.id }});
+    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].task.id }});
     bulk_request.push(records[i].task);
   }
 
@@ -486,5 +486,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
-  indexOpportunity: indexOpportunity
+  indexOpportunity: indexOpportunity,
 };
