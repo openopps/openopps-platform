@@ -31,7 +31,7 @@ function generatePasswordReset (user) {
   };
 }
 
-async function register (attributes, done) {
+async function register (ctx, attributes, done) {
   attributes.username = attributes.username.toLowerCase().trim();
   if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
     done({ message: 'The email address provided is not a valid government email address or is already in use.' });
@@ -46,14 +46,17 @@ async function register (attributes, done) {
       await userService.processUserTags(user, tags).then(tags => {
         user.tags = tags;
       });
-      await dao.UserPasswordReset.insert(generatePasswordReset(user)).then((obj) => {
+      await dao.UserPasswordReset.insert(generatePasswordReset(user)).then(async (obj) => {
+        await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'successful' });
         return done(null, _.extend(user, { token: obj.token }));
-      }).catch((err) => {
+      }).catch(async (err) => {
         log.info('Error creating password reset record', err);
+        await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'failed' });
         return done(true);
       });
-    }).catch(err => {
+    }).catch(async (err) => {
       log.info('register: failed to create user ', attributes.username, err);
+      await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'failed' });
       return done(true);
     });
   }
@@ -192,20 +195,25 @@ async function sendFindProfileConfirmation (ctx, data, done) {
         log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
         done({ message: 'Unkown error occurred' });
       });
-    }).catch(err => {
-      var audit = Audit.createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
+    }).catch(async () => {
+      await createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
         documentId: account.linkedId,
         email: data.email,
       });
-      dao.AuditLog.insert(audit).catch(() => {});
       done();
     });
   }
 }
 
-function logAuthenticationError (ctx, type, auditData) {
+async function createAudit (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
-  dao.AuditLog.insert(audit).catch(() => {});
+  await dao.AuditLog.insert(audit).catch(() => {});
+}
+
+async function logAuthenticationError (ctx, type, auditData) {
+  await createAudit(type, ctx, auditData);
+  // var audit = Audit.createAudit(type, ctx, auditData);
+  // dao.AuditLog.insert(audit).catch(() => {});
 }
 
 module.exports = {
