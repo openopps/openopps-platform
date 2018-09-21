@@ -8,5 +8,12 @@ module.exports = {
       // expire password reset tokens after this many milliseconds
       tokenExpiration  : 60 * 60 * 1000,
     },
+    loginGov : {
+      enabled: (process.env.LOGINGOV || '').match(/^true$/i) || false,
+      logoutURL: process.env.LOGOUT_URL,
+      discoveryURL: process.env.DISCOVERY_URL,
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+    },
   },
 };

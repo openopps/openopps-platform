@@ -14,7 +14,7 @@ var Admin = {};
 Admin.ShowController = BaseController.extend({
 
   events: {
-    'click .task-change-owner': 'changeOwner',
+    'click .task-change-owner'   : 'changeOwner',
     'click .task-add-participant': 'addParticipant',
   },
 
@@ -202,13 +202,11 @@ Admin.ShowController = BaseController.extend({
     $('#task-change-owner').focus();
   },
 
-
   // Cleanup controller and views
   cleanup: function () {
     this.adminMainView.cleanup();
     removeView(this);
   },
-
 });
 
 module.exports = Admin.ShowController;

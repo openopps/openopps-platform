@@ -20,7 +20,7 @@ $nav_item_height: 17px + 24px;
 }
 
 .navigation {
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16), 0 -2px 3px rgba(0, 0, 0, 0.16);
+  // box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16), 0 -2px 3px rgba(0, 0, 0, 0.16);
   margin-top: 3px;
   position: relative;
   z-index: 1;
@@ -50,6 +50,10 @@ $nav_item_height: 17px + 24px;
   &__header,
   &__header-container {
     @include clearfix();
+  }
+
+  &__header-container {
+    position: relative;
   }
 
   &__banner-inner {
@@ -957,10 +961,10 @@ ul.ui-autocomplete {
 .usajobs-nav .usajobs-nav-login-gov-banner {
   background-color: $color-gold;
 
-  @include media($L) {
+  @include media(66em) {
     position: absolute;
     top: 0;
-    right: 320px;
+    right: 380px;
     max-width: 400px;
     border-radius: $border-radius;
   }
@@ -978,7 +982,7 @@ ul.ui-autocomplete {
     }
 
     @include media($L) {
-      padding: $size-base $size-default;
+      padding: 0.4rem $size-default;
     }
   }
 
@@ -1017,7 +1021,7 @@ ul.ui-autocomplete {
 	  border-left: 30px solid $color-gold;
 	  border-bottom: 15px solid transparent;
 
-    @include media($L) {
+    @include media(66em) {
       display: inherit;
     }
   }

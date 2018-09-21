@@ -19,6 +19,11 @@ function get (name, cb) {
   this[service].get.apply(this, arguments);
 }
 
+function remove (name, cb) {
+  var service = (config.service || 'local');
+  this[service].get.apply(this, arguments);
+}
+
 local = {
   store: function (name, data, cb) {
     var dir = path.join(openopps.appPath, config.local.dirname || 'assets/uploads');
@@ -30,6 +35,13 @@ local = {
   get: function (name, cb) {
     var dir = path.join(openopps.appPath, config.local.dirname || 'assets/uploads');
     fs.readFile(path.join(dir, name), cb);
+  },
+  remove: function (name, cb) {
+    var dir = path.join(openopps.appPath, config.local.dirname || 'assets/uploads');
+    if(fs.existsSync(dir)) {
+      fs.unlink(path.join(dir, name), cb);
+    }
+    
   },
 };
 
@@ -57,6 +69,14 @@ s3 = {
         cb(null, data.Body);
       }
     });
+  },
+  remove: function (name, cb) {
+    var s3 = new AWS.S3();
+    var params = {
+      Bucket: config.s3.bucket,
+      Key: path.join(config.s3.prefix || '', name),
+    };
+    s3.deleteObject(params, cb);
   },
 };
 
@@ -188,6 +208,23 @@ function findOne (id) {
   });
 }
 
+function removeFile (id) {
+  return new Promise(async (resolve) => {
+    dao.File.findOne('id = ?', id).then(file => {
+      remove(file.fd, async (err, data) => {
+        if(err) {
+          log.info('Error removing file ', file.name, err);
+          resolve(false);
+        }
+        await dao.File.delete(file);
+        resolve(true);
+      });
+    }).catch((err) => {
+      resolve(false);
+    });
+  });
+}
+
 function upload (userId, data) {
   return Promise.all((data['files[]'] || []).map(async (file) => {
     if(validType(data.type, file.type)) {
@@ -210,5 +247,6 @@ async function taskAttachments (taskId) {
 module.exports = {
   findOne: findOne,
   upload: upload,
+  removeFile: removeFile,
   taskAttachments: taskAttachments,
 };

@@ -190,6 +190,9 @@
                 </tr>
               </tbody>
             </table>
+            <% if (globals.googleAnalytics.enabled) { %>
+              <img src="https://www.google-analytics.com/collect?v=1&tid=<%= globals.googleAnalytics.account %>&cid=555&t=event&ec=<%= globals.googleAnalytics.category %>&ea=open&el=<%= _action.replace(/\./g, '_') %>">
+            <% } %>
           </td>
         </tr>
       </tbody>

@@ -2,6 +2,7 @@ const log = require('log')('app:document');
 const Router = require('koa-router');
 const _ = require('lodash');
 const service = require('./service');
+const userService = require('../user/service');
 
 var router = new Router();
 
@@ -27,6 +28,21 @@ router.post('/api/upload/create', async (ctx, next) => {
     ctx.status = 400;
     ctx.body = err.message;
   });
+});
+
+router.post('/api/upload/remove/:id', async (ctx, next) => {
+  if (await userService.canUpdateProfile(ctx)) {
+    ctx.status = 200;
+    var result = await service.removeFile(ctx.state.user.photoId);
+    if(result) {
+      ctx.body = { success: true };
+    } else {
+      ctx.status = 404;
+    }
+  } else {
+    ctx.status = 403;
+    ctx.body = { success: false };
+  }
 });
 
 router.get('/api/attachment/findAllBytaskId/:id', async (ctx, next) => {

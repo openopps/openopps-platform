@@ -1,0 +1,6 @@
+<p>Hi <% if (user.name) { %> <%- user.name %><% } %>,</p>
+<p>You recently requested to link your USAJOBS profile with your Open Opportunties profile. Please click the link below to confirm you want to link your USAJOBS profile with your Open Opportunities profile.</p>
+<p>
+  <a href="<%- globals.urlPrefix %><%- link %>"><%- globals.urlPrefix %><%- link %></a>
+</p>
+<p>Didn't request to link your USAJOBS profile to your Open Opportunities profile? Don't worry, you can just delete this email and your profiles will remain the same.</p>

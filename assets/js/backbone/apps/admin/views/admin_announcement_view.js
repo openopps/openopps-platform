@@ -31,11 +31,10 @@ var AdminAnnouncementView = Backbone.View.extend({
         this.announcement = announcementInfo;
         var template = _.template(AdminAnnouncementTemplate)({ announcement: announcementInfo });
         this.$el.html(template);
-        $('#search-results-loading').hide();
       }.bind(this),
     });
     
-    Backbone.history.navigate('/admin/announcement', { replace: replace });
+    // Backbone.history.navigate('/admin/announcement', { replace: replace });
 
     return this;
   },

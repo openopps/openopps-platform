@@ -4,40 +4,47 @@
     </div>
   </div>
   <div class="usajobs-alert__body">
-    <p class="usa-alert-text">
-    </p>
+    <p class="usa-alert-text"></p>
   </div>
 </div>
-
-<h2>Tasks</h2>
+<p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<h2><%- agency.name %></h2>
+<h3>Opportunities</h3>
 <div class="usajobs-grid-full">
-  <div class="filter usa-width-one-sixth">
-    <input id="submitted" type="checkbox" class="filter-ckbx" checked />
-    <label for="submitted">Submitted: (<%- submitted.length %>)</label>
+    <ul class="usa-unstyled-list__radio--horizontal" id="opp-status">
+        <li>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
+        </li>
+        <li>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
+        </li>
+        <li>
+          <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="notOpen">
+          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- notOpen.length %></label>
+        </li>
+        <li>
+          <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="inProgress">
+          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- inProgress.length %></label>
+        </li>
+        <li>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
+        </li>
+        <li>
+          <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled">
+          <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- canceled.length %></label>
+        </li>
+      </ul>
   </div>
-  <div class="filter usa-width-one-sixth">
-    <input id="open" type="checkbox" class="filter-ckbx" />
-    <label for="open">Open: (<%- open.length %>)</label>
+
+  <div id="task-table" class="table-responsive"></div>
+
+  <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+      title="Download list of tasks as a comma-separated file ready for import into Excel">
+    <a href="/api/task/export" >
+      <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+    </a>
   </div>
-  <div class="filter usa-width-one-sixth">
-    <input id="inProgress" type="checkbox" class="filter-ckbx" />
-    <label for="inProgress">In progress: (<%- inProgress.length %>)</label>
-  </div>
-  <div class="filter usa-width-one-sixth">
-    <input id="completed" type="checkbox" class="filter-ckbx" />
-    <label for="completed">Completed: (<%- completed.length %>)</label>
-  </div>
-  <div class="filter usa-width-one-sixth">
-    <input id="draft" type="checkbox" class="filter-ckbx" />
-    <label for="draft">Draft: (<%- draft.length %>)</label>
-  </div>
-  <div class="filter usa-width-one-sixth">
-    <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
-        title="Download list of tasks as a comma-separated file ready for import into Excel">
-      <a href="/api/task/export" >
-        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
-      </a>
-    </div>
-  </div>
-</div>
-<div id="task-table" class="table-responsive"></div>
+

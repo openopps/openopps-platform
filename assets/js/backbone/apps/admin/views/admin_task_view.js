@@ -6,17 +6,22 @@ var Modal = require('../../../components/modal');
 // templates
 var AdminTaskTemplate = require('../templates/admin_task_template.html');
 var AdminTaskTable = require('../templates/admin_task_table.html');
+
 var AdminTaskView = Backbone.View.extend({
   events: {
     'click .delete-task'            : 'deleteTask',
     'click .task-open'              : 'openTask',
-    'click input[type="checkbox"]'  : 'filterChanged',
+    'click input[type="radio"]'     : 'filterChanged',
   },
 
   initialize: function (options) {
     this.options = options;
     this.data = {
       page: 1,
+    };
+    this.target = 'Sitewide';
+    this.agency = {
+      name: 'Sitewide',
     };
     this.baseModal = {
       el: '#site-modal',
@@ -34,12 +39,27 @@ var AdminTaskView = Backbone.View.extend({
     if (this.options.agencyId) url = url + '/' + this.options.agencyId;
     Backbone.history.navigate(url);
 
+    if (this.options.agencyId) this.target = 'Agencies';
+    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
+
+    if (this.options.agencyId) {
+      // get meta data for agency
+      $.ajax({
+        url: '/api/admin/agency/' + this.options.agencyId,
+        dataType: 'json',
+        success: function (agencyInfo) {
+          this.agency = agencyInfo;
+        }.bind(this),
+      });
+    } 
+
     $.ajax({
       url: '/api' + url,
       data: this.data,
       dataType: 'json',
       success: function (data) {
         this.tasks = data;
+        data.agency = this.agency;
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -52,15 +72,26 @@ var AdminTaskView = Backbone.View.extend({
 
   renderTasks: function (tasks) {
     var data = { tasks: [] };
-    $('.filter-ckbx:checked').each(function (index, item) {
+    $('.filter-radio:checked').each(function (index, item) {
       data.tasks = data.tasks.concat(tasks[item.id]);
     });
     var template = _.template(AdminTaskTable)(data);
-    self.$('#task-table').html(template);
+    this.$('#task-table').html(template);
   },
 
   filterChanged: function () {
     this.renderTasks(this.tasks);
+    var t = $('input[name=opp-status]:checked').val(); 
+    if (t == 'submitted') {
+      $('[data-target=change-add]').addClass('hide');
+      $('[data-target=publish-delete]').removeClass('hide');
+    } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {
+      $('[data-target=change-add]').removeClass('hide');
+      $('[data-target=publish-delete]').addClass('hide');
+    } else if (t == 'completed' || t == 'canceled') {
+      $('[data-target=change-add]').addClass('hide');
+      $('[data-target=publish-delete]').addClass('hide');
+    }
   },
 
   collectEventData: function (event) {

@@ -50,6 +50,7 @@
 // Layouts ------------- //
 @import 'layouts/profile';
 @import 'layouts/admin-dashboard';
+@import 'layouts/internship';
 
 body {
   background-color: $color-gray-lightest;
@@ -147,7 +148,7 @@ h3 {
 [type=checkbox] + label::before,
 [type=radio] + label::before {
   background: #fff;
-  border-radius: .3rem;
+  border-radius: .2rem;
   box-shadow: 0 0 0 1px #757575;
   content: ' ';
   display: inline-block;
@@ -160,7 +161,13 @@ h3 {
 }
 
 [type=radio] + label::before {
-  border-radius: 50%;
+  // border-radius: 50%;
+  border-radius: 100%;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #757575;
+  height: 1.4rem;
+  line-height: 1.4rem;
+  margin-right: 0.75em;
+  width: 1.4rem
 }
 
 input::-ms-clear {

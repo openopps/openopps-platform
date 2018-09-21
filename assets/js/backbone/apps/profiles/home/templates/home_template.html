@@ -1,0 +1,28 @@
+<main class="usajobs-opop" id="main-content" role="main">
+  <div class="usajobs-grid usajobs-opop-dashboard">
+    <h1>Welcome <%- window.cache.currentUser.name %><a href="/auth/logout" class="logout">Sign out</a></h1>
+    <div class="usajobs-opop-dashboard__body">
+      <div class="usajobs-open-opps-participated__body">
+        <h2>Your opportunities</h2>
+        <h3>Participated</h3>
+        <div class="opportunity-participated"></div>
+        <h3>Created</h3>
+        <div class="opportunity-created"></div>
+      </div>
+    </div>
+
+    <div class="usa-width-one-half announcement profile-home">
+      <div data-target="announcement-feed" class="announcement-feed"></div>
+      <a class="announcement read-more" href="#">Read more</a>
+    </div>
+    <div class="usa-width-one-half achievements profile-home">
+      <div data-target="achievements-feed" class="achievements-feed"></div>
+      <a class="achievements read-more" href="#">Read more</a>
+    </div>
+
+    <div class="usajobs-opop-dashboard__body">
+      <div data-target="search" class="search"></div>
+      <div data-target="users" class="users"></div>
+    </div>
+  </div>
+</main>

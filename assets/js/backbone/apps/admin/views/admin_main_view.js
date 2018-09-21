@@ -6,9 +6,10 @@ var AdminUserView = require('./admin_user_view');
 var AdminTagView = require('./admin_tag_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
-var AdminAnnouncementView = require('./admin_announcement_view');
+
 var AdminParticipantsView = require('./admin_participants_view');
 var AdminDashboardView = require('./admin_dashboard_view');
+var AdminCommunityView = require('./admin_community_view');
 var NavSecondaryView = require('./nav_secondary_view');
 
 // templates
@@ -29,7 +30,6 @@ var AdminMainView = Backbone.View.extend({
   render: function () {
     var data = {};
     var template = _.template(AdminMainTemplate)(data);
-    $('#search-results-loading').hide();
     this.$el.html(template);
     this.routeTarget(this.options.action || '', undefined, true);
     return this;
@@ -52,14 +52,14 @@ var AdminMainView = Backbone.View.extend({
   routeTarget: function (target, agencyId, replace) {
     agencyId = agencyId || this.options.agencyId;
     if (!target) {
-      target = 'dashboard';
+      target = 'sitewide';
     }
 
     // If agency admin, display My Agency page
     if (!this.isAdmin() && this.isAgencyAdmin()) {
       this.hideDashboardMenu();
       agencyId = this.userAgencyId();   // restrict access to User agency
-      if (target == 'dashboard') target = 'agencies';
+      if (target == 'sitewide') target = 'agencies';
     }
     var t = $((this.$('[data-target=' + target + ']'))[0]);
     // remove active classes
@@ -68,48 +68,37 @@ var AdminMainView = Backbone.View.extend({
     
     this.initializeNavSecondaryView();
 
-    if (target == 'users') {
-      if (!this.adminUserView) {
+    this.hideOthers();
+    switch (target) {
+      case 'users':
         this.initializeAdminUserView(agencyId);
-      }
-      this.hideOthers();
-      this.adminUserView.render();
-    } else if (target == 'tag') {
-      if (!this.adminTagView) {
+        this.adminUserView.render();
+        break;
+      case 'tag':
         this.initializeAdminTagView();
-      }
-      this.hideOthers();
-      this.adminTagView.render();
-    } else if (target == 'tasks') {
-      if (!this.adminTaskView) {
+        this.adminTagView.render();
+        break;
+      case 'tasks':
         this.initializeAdminTaskView(agencyId);
-      }
-      this.hideOthers();
-      this.adminTaskView.render();
-    } else if (target == 'agencies') {
-      if (!this.adminAgenciesView) {
-        this.initializeAdminAgenciesView();
-      }
-      this.hideOthers();
-      this.adminAgenciesView.render(replace);
-    } else if (target == 'announcement') {
-      if (!this.adminAnnouncementView) {
-        this.initializeAdminAnnouncementView();
-      }
-      this.hideOthers();
-      this.adminAnnouncementView.render(replace);
-    } else if (target == 'participants') {
-      if (!this.adminParticipantsView) {
+        this.adminTaskView.render();
+        break;
+      case 'agencies':
+        this.initializeAdminAgenciesView(agencyId, replace);
+        break;
+      case 'participants':
         this.initializeAdminParticipantsView();
-      }
-      this.hideOthers();
-      this.adminParticipantsView.render();
-    } else if (target == 'dashboard') {
-      if (!this.adminDashboardView) {
+        this.adminParticipantsView.render();
+        break;
+      case 'sitewide':
         this.initializeAdminDashboardView();
-      }
-      this.hideOthers();
-      this.adminDashboardView.render(replace);
+        this.adminDashboardView.render(replace);
+        break;
+      // case 'community':
+      //   this.initializeAdminCommunityView();
+      //   this.adminCommunityView.render(replace);
+      //   break;
+      default:
+        break;
     }
   },
 
@@ -156,26 +145,26 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  initializeAdminAgenciesView: function () {
-    if (this.adminAgenciesView) {
-      this.adminAgenciesView.cleanup();
+  initializeAdminAgenciesView: function (agencyId, replace) {
+    this.adminAgenciesView && this.adminAgenciesView.cleanup();
+    var callback = function (agencies) {
+      this.adminAgenciesView = new AdminAgenciesView({
+        el: '#admin-agencies',
+        agencyId: agencyId,
+        adminMainView: this,
+        agencies: agencies,
+      });
+      this.adminAgenciesView.render(replace);
+    };
+    if(this.isAdmin()) {
+      $.ajax({
+        url: '/api/admin/agencies',
+        dataType: 'json',
+        success: callback.bind(this),
+      });
+    } else {
+      callback();
     }
-    this.adminAgenciesView = new AdminAgenciesView({
-      el: '#admin-agencies',
-      agencyId: this.options.agencyId,
-      adminMainView: this,
-    });
-  },
-
-  initializeAdminAnnouncementView: function () {
-    if (this.adminAnnouncementView) {
-      this.adminAnnouncementView.cleanup();
-    }
-    this.adminAnnouncementView = new AdminAnnouncementView({
-      el: '#admin-announcement',
-      agencyId: this.options.agencyId,
-      adminMainView: this,
-    });
   },
 
   initializeAdminParticipantsView: function () {
@@ -192,7 +181,16 @@ var AdminMainView = Backbone.View.extend({
       this.adminDashboardView.cleanup();
     }
     this.adminDashboardView = new AdminDashboardView({
-      el: '#admin-dashboard',
+      el: '#admin-sitewide',
+    });
+  },
+
+  initializeAdminCommunityView: function () {
+    if (this.adminCommunityView) {
+      this.adminCommunityView.cleanup();
+    }
+    this.adminCommunityView = new AdminCommunityView({
+      el: '#admin-community',
     });
   },
 
@@ -216,7 +214,6 @@ var AdminMainView = Backbone.View.extend({
     if (this.adminUserView) this.adminUserView.cleanup();
     if (this.adminTagView) this.adminTagView.cleanup();
     if (this.adminTaskView) this.adminTaskView.cleanup();
-    if (this.adminAnnouncementView) this.adminAnnouncementView.cleanup();
     if (this.adminDashboardView) this.adminDashboardView.cleanup();
     if (this.navSecondaryView) this.navSecondaryView.cleanup();
     removeView(this);

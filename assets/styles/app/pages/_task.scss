@@ -1,3 +1,11 @@
+.back-link {
+  color: $color-primary;
+
+  .fa-chevron-circle-left {
+    margin-right: $size-base;
+  }
+}
+
 .tips {
   background-color: #e1f3f8;
   padding: 2rem;
@@ -43,18 +51,6 @@
     }
 }
 
-// @media screen and (min-width: $XXXL-screen) {
-//   .tips-left {
-//     background-color: #e1f3f8;
-//     padding: 2rem;
-//     margin-top: 0;
-//     margin-right: 1.5rem;
-//     width: 32rem;
-//     left: calc(100% + 6rem);
-//     position: absolute;
-//   }
-// }
-
 .usa-form-xl, .usa-form-xl label {
     max-width: 56rem;
 }
@@ -68,15 +64,48 @@
     margin-bottom: 0;
     list-style-type: none;
     padding-left: 0;
+    width: 100%;
   }
 
 .usa-unstyled-list__radio > li {
-    margin-left: $size-XS;
+    margin-left: 0;
 }
 
 .usa-unstyled-list__radio > li, .usa-unstyled-list__radio > li > label {
-    margin-top: 0;
+    margin-top: $size-XS;
     margin-bottom: $size-XS;
+}
+
+.status-title {
+  float: left;
+}
+
+.usa-unstyled-list {
+  &__radio--horizontal {
+    padding-left: 0;
+    list-style-type: none;
+
+    li {
+      float: left;
+      margin-left: $size-XS;
+      margin-right: $size-SM;
+    }
+    li,  li > label {
+      margin-top: $size-XS;
+      margin-bottom: $size-XS;
+
+      &::before {
+        margin-bottom: 2px;
+      }      
+
+      span.usajobs-pill--opportunity-status  {
+        margin-right: $size-XS;
+        border-radius: 1.3rem;
+        width: 12rem;
+        display: inline-block;
+      }
+    }
+  }
 }
 
 .select-small {
@@ -143,8 +172,6 @@ button.opportunity-options__button {
   border: 1px solid $color-gray-lightest;
   @include boxShadow(1);
   color: $color-green-light;
-  // display: flex;
-  // flex-direction: column;
   padding: 0 $size-SM $size-S $size-SM;
   float: left;
   margin: 0 $size-default $size-default 0;

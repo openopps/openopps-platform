@@ -61,7 +61,7 @@ var LoginView = Backbone.View.extend({
     $.getJSON('/csrfToken', function (t) {
       $('meta[name="csrf-token"]').attr('content', t._csrf);
       $.ajax({
-        url: '/api/auth/local',
+        url: '/api/auth',
         type: 'POST',
         data: data,
       }).done(function (success) {

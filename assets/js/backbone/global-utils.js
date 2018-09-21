@@ -33,6 +33,16 @@ global.getInitialsColor = function (id) {
 };
 
 /**
+ * Helper function to get values from query string
+ */
+global.getUrlParameter = function (name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  var results = regex.exec(location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
+
+/**
  * Helper function to navigate links within backbone
  * instead of reloading the whole page through a hard link.
  * Typically used with the `events: {}` handler of backbone

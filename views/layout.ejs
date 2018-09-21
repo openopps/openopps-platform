@@ -9,14 +9,15 @@
 
     <script type="text/javascript">
     systemName = <%- JSON.stringify(systemName) %>;
-    draftAdminOnly = <%- JSON.stringify(draftAdminOnly) %>;
+    loginGov = <%- JSON.parse(loginGov) %>;
+    draftAdminOnly = <%- JSON.parse(draftAdminOnly) %>;
     version = <%- JSON.stringify(version) %>;
+    usajobsURL = <%- JSON.stringify(usajobsURL) %>;
     </script>
     <script defer src="/js/fontawesome-all.js"></script>
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-
     <!-- CSRF token -->
     <meta name="csrf-token" content="">
     <link rel="stylesheet" href="/styles/main.css?v=<%- cssHash %>">

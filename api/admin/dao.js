@@ -3,11 +3,40 @@ const dao = require('postgres-gen-dao');
 
 const taskQuery = 'select count(*) as count from task ';
 
-const taskStateQuery = 'select state from task ';
+const taskStateQuery = 'select ' +
+  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
+  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
+  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
+  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
+  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
+  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
+  'from task';
+
+const agencyTaskStateQuery = 'select ' +
+  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
+  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
+  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
+  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
+  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
+  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
+  'from task where lower(restrict->>\'name\') = ?';
 
 const volunteerQuery = 'select count(*) as count from task where exists (select 1 from volunteer where task.id = volunteer."taskId") ';
 
-const userQuery = 'select count(*) from midas_user where disabled = ? ';
+const userQuery = 'select ' +
+  'count(*) as "total", ' +
+  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
+  'sum(case when "isAdmin" then 1 else 0 end) as "admins" ' +
+  'from midas_user';
+
+const agencyUsersQuery = 'select ' +
+  'count(*) as "total", ' +
+  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
+  'sum(case when "isAgencyAdmin" then 1 else 0 end) as "admins" ' +
+  'from midas_user ' + 
+  'join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
+  'join tagentity tag on tags.tagentity_users = tag.id ' +
+  'where tag.type = \'agency\' and tag.id = ?';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
 
@@ -15,7 +44,11 @@ const taskHistoryQuery = 'select "assignedAt", "completedAt", "createdAt", "publ
 
 const postQuery = 'select count(*) from comment ';
 
-const volunteerCountQuery = 'select count(*) from volunteer ';
+const volunteerCountQuery = 'select ' +
+    'count(*) as signups, ' +
+    'sum(case when assigned then 1 else 0 end) as assignments, ' +
+    'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer';
 
 const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
@@ -46,7 +79,7 @@ const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_coun
 const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(data->>'abbr') = ? " +
+  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(tag.name) = ? " +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -75,13 +108,13 @@ const taskStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'where task.state = ? ';
+  'where ';
 
 const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  "where task.state = ? and lower(restrict->>'name') = ? ";
+  "where lower(restrict->>'name') = ? and ";
 
 const activityQuery = 'select comment."createdAt", comment.id, ' + "'comment' as type " + '' +
   'from midas_user ' +
@@ -161,7 +194,7 @@ const options = {
       volunteers: [],
     },
     exclude: {
-      task: [ 'projectId', 'description', 'userId', 'createdAt', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
+      task: [ 'projectId', 'description', 'userId', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
         'completedAt', 'completedBy', 'submittedAt', 'restrict' ],
       owner: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
@@ -218,8 +251,10 @@ module.exports = function (db) {
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
+      agencyTaskStateQuery: agencyTaskStateQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
+      agencyUsersQuery: agencyUsersQuery,
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,

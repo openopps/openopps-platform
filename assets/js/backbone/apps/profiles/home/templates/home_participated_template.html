@@ -1,0 +1,84 @@
+<div class="usajobs-open-opps-participated__section">
+  <div id="usajobs-search-controls">
+    <div class="usajobs-grid usajobs-search-controls">
+      <div class="usajobs-search-controls__results-count-container no-params">
+        <% if (data.length > 0) { %>
+          <h4 id="participated-count" class="usajobs-search-controls__results-count">
+            Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %><%= Math.min(data.length, 5) %><% } %> of <%= data.length %> opportunities
+          </h4>
+        <% } %>
+      </div>
+      <% if (data.length > 0) { %>
+        <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+          <label class="usajobs-search-controls__sort-label" for="sort_attribute">
+            Sort by
+          </label>
+          <select name="sort_attribute" id="sort-participated" class="usajobs-search-controls__sort-control">
+            <option value="" disabled>- Sort By -</option>
+            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
+            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Opportunity</option>
+            <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
+          </select>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <div id="<%- handle %>-tab-open">
+    <div style="overflow-x:auto;">
+      <% if (data.length > 0) { %>
+        <div class="usajobs-show-next" data-object="reveal">
+          <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="participated-table">
+            <thead>
+            <tr class="usajobs-grid open-opps-row header">
+              <th scope="col">Status</th>
+              <th scope="col">Opportunity</th>
+              <th scope="col">Updated date</th>
+            </tr>
+            </thead>
+            <tbody>
+              <% for (var i in data) { %>
+                <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
+                  <td class="your-status">
+                    <%= getStatus(data[i]) %>
+                  </td>
+                  <td class="open-opps-title">
+                    <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
+                      data[ i ].title = 'Untitled draft';
+                    } %>
+                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
+                  </td>
+                  <td>
+                    <% var updated = new Date(data[i].updatedAt); %>
+                    <%- updated.toLocaleDateString() %>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <% if (!showAll && data.length > 5) { %>
+            <a href="#next" class="usa-button usa-button-outline participated-show-all">
+              Show more
+            </a>
+          <% } %>
+        </div>
+
+      <% } else { %>
+
+        <table class="usa-table-borderless" role="presentation">
+        	<thead>
+        	<tr class="usajobs-grid open-opps-row header">
+        		<th scope="col">Your status</th>
+        		<th scope="col">Opportunity</th>
+        		<th scope="col">Updated date</th>
+        	</tr>
+        	</thead>
+          <tbody>
+            <tr>
+              <td colspan="3">No <%- targetsFriendly %></td>
+            </tr>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</div>

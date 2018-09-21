@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "3.3.8",
+  "version": "4.5.10",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -49,6 +49,7 @@
     "koa-better-flash": "^0.0.3",
     "koa-cache-control": "^2.0.0",
     "koa-compress": "^3.0.0",
+    "koa-csp": "^1.0.11",
     "koa-csrf": "^3.0.6",
     "koa-ejs": "^4.1.0",
     "koa-generic-session": "^2.0.1",
@@ -66,6 +67,8 @@
     "nodemailer": "^4.4.2",
     "nodemailer-smtp-pool": "^2.8.3",
     "nodemailer-smtp-transport": "^2.7.4",
+    "numeral": "^2.0.6",
+    "openid-client": "^2.3.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",

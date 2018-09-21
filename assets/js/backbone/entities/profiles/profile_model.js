@@ -60,6 +60,21 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
+    this.listenTo(this, 'profile:removePhoto', function (file) {
+      var _self = this;
+      var data = {
+        photoId: file.id,
+      };
+      _this.remove(data, {
+        success: function (data) {
+          _this.trigger('profile:updatedPhoto', data);
+        },
+        error: function (data) {
+          // an error occurred
+        },
+      });
+    });
+
     this.listenTo(this, 'profile:save', function (form) {
       var data = {
         name: form.name,
@@ -75,6 +90,21 @@ var ProfileModel = Backbone.Model.extend({
         error: function (data) {
           _this.trigger('profile:save:fail', data);
         },
+      });
+    });
+
+    this.listenTo(this, 'skills:save', function (form) {
+      $.ajax({
+        url: this.urlRoot +  '/skills/' + this.id,
+        method: 'PUT',
+        data: {
+          id: +this.id,
+          username: form.username, 
+          tags: form.tags },
+      }).done(function (data) {
+        _this.trigger('skills:save:success', data);
+      }).fail(function (data) {
+        _this.trigger('skills:save:fail', data);
       });
     });
 

@@ -6,7 +6,6 @@
   max-width: 154rem;
   min-height: 84rem;
   margin: auto;
-  margin-top: 3rem;
   background: #ffffff;
   padding: 1rem 3rem 3rem 3rem;
 
@@ -21,6 +20,11 @@
 
   .box-icon-text {
     margin-left: 0.5rem;
+    a {
+      text-decoration: underline;
+      font-size: $base-font-size;
+      font-weight: $font-normal;
+    }
   }
 
   .overflow-x {
@@ -68,12 +72,68 @@
     }
   }
 
-  .agency-details {
-    p {
-      margin: 0.5rem 0rem;
+  .admin-agency-name {
+    margin-top: 0;
+    margin-bottom: $size-M;
+  }
+
+  .back-link {
+    color: $color-primary;
+
+    .fa-chevron-circle-left {
+      margin-right: $size-base;
     }
-    a, a:visited {
-      color: #0071BA;
+  }
+
+  .admin-table-name {
+    padding-left: 0;
+  }
+
+  .user-enable[type=checkbox]:checked, .assign-admin[type=checkbox]:checked {
+    border: none;
+    height: auto;
+
+    + label::before {
+      background-color: transparent;
+      box-shadow: none;
+      display: inline-block;
+      height: 2.4rem;
+      width: 2.7rem;
+      background-image: url(../img/toggle-on-solid.svg);
+    }
+  }
+
+  .user-enable[type=checkbox], .assign-admin[type=checkbox] {
+    border: none;
+    height: auto;
+
+    + label::before {
+      background-color: transparent;
+      box-shadow: none;
+      display: inline-block;
+      height: 2.4rem;
+      width: 2.7rem;
+      background-image: url(../img/toggle-off-solid.svg);
+    }
+  }
+
+  .user-filter {
+
+    @include media($SM) {
+      input {
+        max-width: initial;
+        float: left;
+        width: calc(100% - 12.6rem);
+        border-right: 0;
+      }
+
+      .user-filter-search-button {
+        font-size: 2rem;
+        height: 4.4rem;
+        width: 11.6rem;
+        margin-top: 0.25rem;
+        border-radius: 0 5px 5px 0;
+      }
     }
   }
 
@@ -93,6 +153,7 @@
 
   .user-table {
     width: 100%;
+    margin-top: 0;
 
     th {
       vertical-align: bottom;
@@ -149,26 +210,36 @@
   .task-table {
 
     width: 100%;
+    
+    th.center {
+      text-align: center;
 
-    .metrics-table__label {
-      min-width: 15rem;
+      .left {
+        text-align: left;
+      }
     }
 
-    .metrics-table__button {
-      min-width: 10rem;
+    .metrics-table {
+      &__title {
+        padding-left: 0;
+      }
+
+      &__label {
+        min-width: 15rem;
+      }
+
+      &__button, &__date {
+        min-width: 10rem;
+        text-align: center;
+      }
     }
 
     .task-open {
       color: #487E40;
-      margin-right: $size-M;
     }
 
     .delete-task {
       color: #CD2026;
-    }
-
-    .task-change-owner {
-      margin-right: $size-default;
     }
 
     .task-change-owner:visited, .task-add-participant:visited {
@@ -233,3 +304,55 @@
     width: 5rem;
   }
 }
+
+.enable-internships {
+  margin-top: $size-M;
+  position: relative;
+
+  .enable-internships__toggle {
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    padding: $size-default;
+
+    .enable-internships__toggle-container {
+      position: relative;
+      width: 86px;
+      cursor: pointer;
+
+      &::after {
+        display: inline-block;
+        height: 2.4rem;
+        width: 27.4375px;
+        content: url(../img/toggle-on.svg);
+        position: absolute;
+        right: 2.8rem;
+      }
+
+      .enable-internships__toggle-labelon {
+        float: right;
+        font-weight: 600;
+      }
+    }
+
+    .toggle-off {
+
+      &:after {
+        content: url(../img/toggle-off.svg);
+      }
+
+      .enable-internships__toggle-labeloff {
+        font-weight: 600;
+      }
+
+      .enable-internships__toggle-labelon {
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+#s2id_agencies {
+  margin-bottom: $size-M;
+}
+

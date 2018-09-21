@@ -951,16 +951,6 @@
   }
 }
 
-ul.achievements {
-  border-top: 1px solid #979797;
-  margin-bottom: $size-L;
-}
-
-.usajobs-open-opps-opportunity-achievements  {
-  border-bottom: 1px solid #979797;
-  padding: 1.5rem 1rem;
-}
-
 .usajobs-open-opps-opportunity-requestor.achievements {
   margin-top: 0;
 }
@@ -981,12 +971,12 @@ ul.achievements {
 
 .usajobs-open-opps-opportunity-requestor {
   display: flex;
-  margin-top: 2.5rem;
+  // margin-top: 2.5rem;
   flex-wrap: wrap;
   flex-direction: column;
 
   @include media($L) {
-    margin-top: $size-L;
+    // margin-top: $size-L;
   }
 
   @include media($XL) {
@@ -1017,9 +1007,9 @@ ul.achievements {
     flex-direction: row;
     justify-content: flex-start;
 
-    @include media($XL-down) {
-      margin-bottom: $size-default;
-    }
+    // @include media($XL-down) {
+    //   margin-bottom: $size-default;
+    // }
   }
 
   &__figure {
@@ -1320,6 +1310,10 @@ ul.achievements {
       -moz-box-shadow: inset 0 7px 5px -5px rgba(0,0,0,0.16);
       box-shadow: inset 0 7px 5px -5px rgba(0,0,0,0.16);
     }
+
+    a {
+      text-decoration: none;
+    }
   }
 
   .usajobs-open-opps-opportunity {
@@ -1340,11 +1334,6 @@ ul.achievements {
     @include media($ML-down) {
       border-top: 1px solid $color-gray-light;
     }
-  }
-
-  #rightrail > .usajobs-open-opps-opportunity.usajobs-open-opps-section {
-    box-shadow: none;
-    border: none;
   }
 
   .overview .opportunity-description {

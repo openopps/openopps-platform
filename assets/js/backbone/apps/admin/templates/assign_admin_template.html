@@ -1,0 +1,13 @@
+<div class="assing-admin">
+    <div>Please select the admin permission you would like to assign to <strong><%- user %></strong>.</div>
+        <ul id="assignAdmin" class="usa-unstyled-list">
+            <li>
+                <input type="checkbox" name="assignAdmin" id="assignSitewide" value="sitewide" <% if(isAdmin) { %>checked<% } %>>
+                <label for="assignSitewide" class="sitewide-admin">Sitewide</label>
+            </li>
+            <li>
+                <input type="checkbox" name="assignAdmin" id="assignAgency" value="agency" <% if(isAgencyAdmin) { %>checked<% } %>>
+                <label for="assignAgency" class="agency-admin">Agency</label>
+            </li>
+        </ul>
+  </div>

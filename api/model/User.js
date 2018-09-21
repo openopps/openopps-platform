@@ -24,6 +24,8 @@ module.exports = {
     obj = validateTags(obj, attributes);
     return obj;
   },
+
+  validateTags: validateTags,
 };
 
 function validateUsername (obj, usernameUsed, attributes) {

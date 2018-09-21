@@ -37,12 +37,14 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    AuditLog: dao({ db: db, table: 'audit_log'}),
+    AccountStaging: dao({ db: db, table: 'account_staging'}),
+    Badge: dao({ db: db, table: 'badge'}),
+    Passport: dao({ db: db, table: 'passport' }),
+    TagEntity: dao({ db: db, table: 'tagentity' }),
     User: dao({ db: db, table: 'midas_user' }),
     UserPasswordReset: dao({ db: db, table: 'userpasswordreset' }),
-    Passport: dao({ db: db, table: 'passport' }),
     UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
-    TagEntity: dao({ db: db, table: 'tagentity' }),
-    Badge: dao({ db: db, table: 'badge'}),
     query: {
       user: userQuery,
     },

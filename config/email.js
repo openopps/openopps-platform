@@ -27,21 +27,28 @@ module.exports = {
     // true to use SSL connections
     secure              : isSecure(),
     // 25 (non-secure) or 465 (secure)
-    port                : process.env.EMAIL_PORT || 465,
+    port                : JSON.parse(process.env.EMAIL_PORT || 465),
     // username and password settings for secure connections
     auth                : {
       user              : process.env.EMAIL_USER || '',
       pass              : process.env.EMAIL_PASS || '',
     },
     // ignore server support for STARTTLS (defaults to false)
-    ignoreTLS           : process.env.EMAIL_IGNORE_TLS || false,
+    ignoreTLS           : JSON.parse(process.env.EMAIL_IGNORE_TLS || false),
     // output client and server messages to console
-    debug               : false,
+    debug               : JSON.parse(process.env.EMAIL_DEBUG || false),
     pool                : true,
     // how many connections to keep in the pool (defaults to 5)
     maxConnections      : 5,
     // limit the count of messages to send through a single connection (defaults to 100)
     // maxMessages         :
+  },
+
+  // Google Analytics
+  googleAnalytics: {
+    enabled: JSON.parse(process.env.GOOGLE_ANALYTICS || false),
+    account: process.env.GOOGLE_ANALYTICS_ACCOUNT,
+    category: process.env.GOOGLE_ANALYTICS_EMAIL_CATEGORY || 'email',
   },
 
   // system email address (from address)

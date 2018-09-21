@@ -35,17 +35,19 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
-  var users = {};
-  if (ctx.query.page) {
-    users = await service.getUsers(ctx.query.page, ctx.query.limit);
+  if (!ctx.query.q) {
+    ctx.body = await service.getUsers(ctx.query.page, ctx.query.limit);
   } else {
-    users = await service.getUsersFiltered(ctx.query.q);
+    ctx.body = await service.getUsersFiltered(ctx.query.page || 1, ctx.query.q);
   }
-  ctx.body = users;
 });
 
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getTaskStateMetrics();
+});
+
+router.get('/api/admin/agencies', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getAgencies();
 });
 
 router.get('/api/admin/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
@@ -79,14 +81,11 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/admin/users/*', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  var users = {};
-  var agency = ctx.params[0];
-  if (ctx.query.page) {
-    users = await service.getUsersForAgency(ctx.query.page, ctx.query.limit, agency);
+  if (!ctx.query.q) {
+    ctx.body = await service.getUsersForAgency(ctx.query.page, ctx.query.limit, ctx.params[0]);
   } else {
-    users = await service.getUsersForAgencyFiltered(ctx.query.q, agency);
+    ctx.body = await service.getUsersForAgencyFiltered(ctx.query.page || 1, ctx.query.q, ctx.params[0]);
   }
-  ctx.body = users;
 });
 
 router.get('/api/admin/tasks/*', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
@@ -111,30 +110,24 @@ router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (c
 
 router.post('/api/admin/changeOwner', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.request.body.taskId)) {
-    await service.changeOwner(ctx.state.user, ctx.request.body, function (result, err) {
-      if (err) {
-        ctx.status = 400;
-        ctx.body = err;
-      } else {
-        ctx.status = 200;
-        ctx.body = result;
-      }
-    });
+    await service.changeOwner(ctx, ctx.request.body, processResult.bind(ctx));
   } else {
     ctx.status = 403;
   }
 });
 
 router.post('/api/admin/assign', auth.isAdmin, async (ctx, next) => {
-  await service.assignParticipant(ctx.state.user, ctx.request.body, function (result, err) {
-    if (err) {
-      ctx.status = 400;
-      ctx.body = err;
-    } else {
-      ctx.status = 200;
-      ctx.body = result;
-    }
-  });
+  await service.assignParticipant(ctx, ctx.request.body, processResult.bind(ctx));
 });
+
+function processResult (result, err) {
+  if (err) {
+    this.status = 400;
+    this.body = err;
+  } else {
+    this.status = 200;
+    this.body = result;
+  }
+}
 
 module.exports = router.routes();

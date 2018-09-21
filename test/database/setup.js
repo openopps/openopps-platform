@@ -5,8 +5,8 @@ const pgp = require('pg-promise')();
 const path = require('path');
 
 const config = {
-  user: 'postgres',
-  password: 'postgres',
+  user: 'midas',
+  password: 'midas',
   port: 5432,
   host: 'localhost',
 };

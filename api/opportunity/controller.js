@@ -23,6 +23,11 @@ router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {
   });
 });
 
+router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
+  var numOfOpps = await service.reindexOpportunities();
+  ctx.body = numOfOpps;
+});
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user ? true : false);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {

@@ -43,7 +43,7 @@ log.info('start');
 (function () {
   // Ensure all our dependencies can be located:
   try {
-    require('./app-koa')({});
+    require('./app/openopps')();
   } catch (e) {
     log.error('Error starting app\n');
     log.error(e);

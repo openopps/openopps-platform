@@ -26,7 +26,7 @@
   &__body {
     @include outer-container();
     max-width: $site-max-width;
-    // border-bottom: 1px solid $color-gray-light;
+    border-bottom: 1px solid $color-gray-light;
 
     a {
       // Another override of the base styles just to be certain we don't have
@@ -183,20 +183,9 @@
     &[aria-expanded="false"] {
       display: none;
     }
-  }
 
-  @include media($L) {
-    &__menu:first-child {
-      .usajobs-openopps-secondary-nav__item:last-child {
-        float: right;
-        padding-right: 0;
-
-        .usajobs-openopps-secondary-nav__link {
-          font-size: 1.5rem;
-          text-decoration: underline;
-          padding-bottom: 1.1rem;
-        }
-      }
+    :first-child {
+      padding-left: 0;
     }
   }
 

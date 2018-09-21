@@ -19,6 +19,7 @@ var TagShowView = Backbone.View.extend({
     this.target = options.target;
     this.targetId = options.targetId;
     this.edit = options.edit;
+    this.skills = options.skills;
     this.tagFactory = new TagFactory();
     this.tags = [];
 
@@ -36,6 +37,7 @@ var TagShowView = Backbone.View.extend({
       showTags: this.showTags,
       tags: this.tags,
       edit: this.edit,
+      skills: this.skills,
       user: window.cache.currentUser || {},
     };
 
@@ -57,9 +59,7 @@ var TagShowView = Backbone.View.extend({
     _.each(['skill', 'topic'], function (value) {
       this.tagFactory.createTagDropDown({
         type: value,
-        placeholder: (value == 'skill')
-          ? 'Start typing to select your experience'
-          : 'Start typing to select development goals',
+        placeholder: 'Start typing to select a skill',
         selector:'#tag_' + value,
         width: '100%',
         tokenSeparators: [','],
@@ -91,7 +91,7 @@ var TagShowView = Backbone.View.extend({
   },
 
   renderTag: function (tag) {
-    if(this.edit) {
+    if(this.edit || this.skills) {
       var input = $('#tag_' + tag.type);
       var data = input.select2('data');
       data.push({id:tag.id, name:tag.name, value:tag.name});
@@ -102,6 +102,7 @@ var TagShowView = Backbone.View.extend({
         tags: this.tags,
         tag: tag,
         edit: this.edit,
+        skills: this.skills,
         user: window.cache.currentUser || {},
       };
       var compiledTemplate = _.template(TagTemplate)(templData);
