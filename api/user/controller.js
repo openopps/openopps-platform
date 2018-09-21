@@ -128,7 +128,7 @@ router.put('/api/user/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/user/disable/:id', auth, async (ctx, next) => {
-  await service.updateProfileStatus({
+  await service.updateProfileStatus(ctx, {
     disable: true,
     user: ctx.state.user,
     id: ctx.params.id,
@@ -138,7 +138,7 @@ router.get('/api/user/disable/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/user/enable/:id', auth, async (ctx, next) => {
-  await service.updateProfileStatus({
+  await service.updateProfileStatus(ctx, {
     disable: false,
     user: ctx.state.user,
     id: ctx.params.id,

@@ -84,6 +84,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    AuditLog: dao({ db: db, table: 'audit_log'}),
     User: dao({ db: db, table: 'midas_user' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
     UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),

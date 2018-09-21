@@ -35,7 +35,13 @@ module.exports = {
     action: 'ACCOUNT_ENABLED_DISABLED',
     description: 'An Open Opportunities account has been enabled or disabled.',
     severity: 'info',
-    data: ['userId'],
+    data: ['userId', 'action'],
+  },
+  'UNATHORIZED_ACCOUNT_ENABLED_DISABLED': {
+    action: 'ACCOUNT_ENABLED_DISABLED',
+    description: 'An unauthorzied attempt was made to enable or disable on Open Opportunities account.',
+    severity: 'alert',
+    data: ['userId', 'action'],
   },
   'ACCOUNT_UPDATED': {
     action: 'ACCOUNT_UPDATED',
