@@ -61,6 +61,11 @@ router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
     if (error) {
       log.info(error);
     }
+    service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+      userId: user.id,
+      action: (ctx.query.action === 'true' ? 'Admin permission added' : 'Admin permission removed'),
+      status: (error ? 'failed' : 'successful'),
+    });
     ctx.body = { user };
   });
 });
@@ -73,10 +78,15 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
       if (error) {
         log.info(error);
       }
+      service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+        userId: user.id,
+        action: (ctx.query.action === 'true' ? 'Agency admin permission added' : 'Agency admin permission removed'),
+        status: (error ? 'failed' : 'successful'),
+      });
       ctx.body = { user };
     });
   } else {
-    ctx.status = 401;
+    ctx.status = 403;
   }
 });
 

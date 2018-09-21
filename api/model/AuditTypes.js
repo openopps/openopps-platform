@@ -58,8 +58,8 @@ module.exports = {
   'ACCOUNT_PERMISSION_UPDATED': {
     action: 'ACCOUNT_PERMISSION_UPDATED',
     description: 'An Open Opportunities account permission has been modified.',
-    severity: 'alert',
-    data: ['userId', 'previousPermission', 'newPermission'],
+    severity: 'info',
+    data: ['userId', 'action'],
   },
   // Task events
   'TASK_CHANGE_OWNER': {
