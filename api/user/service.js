@@ -220,6 +220,7 @@ async function createAudit (type, ctx, auditData) {
 }
 
 module.exports = {
+  createAudit: createAudit,
   list: list,
   findOne: findOne,
   findOneByUsername: findOneByUsername,

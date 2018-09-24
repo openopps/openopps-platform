@@ -47,7 +47,7 @@ module.exports = {
     action: 'ACCOUNT_UPDATED',
     description: 'An Open Opportunities account has been modified.',
     severity: 'info',
-    data: ['userId'],
+    data: ['userId', 'section'],
   },
   'UNAUTHORIZED_ACCOUNT_UPDATED': {
     action: 'UNAUTHORIZED_ACCOUNT_UPDATED',
@@ -58,7 +58,7 @@ module.exports = {
   'ACCOUNT_PERMISSION_UPDATED': {
     action: 'ACCOUNT_PERMISSION_UPDATED',
     description: 'An Open Opportunities account permission has been modified.',
-    severity: 'info',
+    severity: 'alert',
     data: ['userId', 'action'],
   },
   // Task events

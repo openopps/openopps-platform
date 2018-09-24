@@ -98,7 +98,12 @@ router.post('/api/user/resetPassword', auth, async (ctx, next) => {
 router.put('/api/user/skills/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
-    await service.updateSkills(ctx.request.body, function (errors, result) {
+    await service.updateSkills(ctx.request.body, async (errors, result) => {
+      await service.createAudit('ACCOUNT_UPDATED', ctx, { 
+        userId: ctx.request.body.id,
+        section: 'skills',
+        status: errors ? 'failed' : 'successful',
+      });
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
@@ -106,6 +111,7 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
       ctx.body = result;
     });
   } else {
+    await service.createAudit('UNAUTHORIZED_ACCOUNT_UPDATED', ctx, { userId: ctx.request.body.id });
     ctx.status = 403;
     ctx.body = { success: false };
   }
@@ -114,7 +120,12 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
 router.put('/api/user/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
-    await service.updateProfile(ctx.request.body, function (errors, result) {
+    await service.updateProfile(ctx.request.body, async (errors, result) => {
+      await service.createAudit('ACCOUNT_UPDATED', ctx, { 
+        userId: ctx.request.body.id,
+        section: 'profile',
+        status: errors ? 'failed' : 'successful',
+      });
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
@@ -122,6 +133,7 @@ router.put('/api/user/:id', auth, async (ctx, next) => {
       ctx.body = result;
     });
   } else {
+    await service.createAudit('UNAUTHORIZED_ACCOUNT_UPDATED', ctx, { userId: ctx.request.body.id });
     ctx.status = 403;
     ctx.body = { success: false };
   }
