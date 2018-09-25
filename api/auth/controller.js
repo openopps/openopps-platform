@@ -140,7 +140,7 @@ router.post('/api/auth/register', async (ctx, next) => {
     return ctx.body = { message: 'The email address provided is not a valid government email address.' };
   }
 
-  await service.register(ctx.request.body, function (err, user) {
+  await service.register(ctx, ctx.request.body, function (err, user) {
     if (err) {
       ctx.status = 400;
       return ctx.body = { message: err.message || 'Registration failed.' };

@@ -234,9 +234,9 @@ async function getProfile (id) {
 async function updateProfile (user, done) {
   user.updatedAt = new Date();
   await dao.User.update(user).then(async () => {
-    return done(true, null);
+    return done(null);
   }).catch (err => {
-    return done(null, err);
+    return done(err);
   });
 }
 
@@ -381,6 +381,11 @@ async function getAgencies () {
   return await dao.TagEntity.find('type = ?', 'agency');
 }
 
+async function createAuditLog (type, ctx, auditData) {
+  var audit = Audit.createAudit(type, ctx, auditData);
+  await dao.AuditLog.insert(audit).catch(() => {});
+}
+
 module.exports = {
   getMetrics: getMetrics,
   getInteractions: getInteractions,
@@ -402,4 +407,5 @@ module.exports = {
   getOwnerOptions: getOwnerOptions,
   changeOwner: changeOwner,
   assignParticipant: assignParticipant,
+  createAuditLog: createAuditLog,
 };
