@@ -241,7 +241,7 @@
   }
 }
 
-.unauthorized, .logout {
+.unauthorized, .signout {
   .usajobs-error {
     padding: 1.5rem;
     background-color: #046b99
@@ -340,7 +340,7 @@
   }
 }
 
-.logout {
+.signout {
   .usajobs-error__img--signed-out {
     background-image: url(../../../../img/errors/signed-out.svg);
     background-image: url(../../../../img/errors/signed-out.png);
