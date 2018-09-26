@@ -1,6 +1,7 @@
 const _ = require ('lodash');
 const log = require('log')('app:opportunity:service');
 const db = require('../../db');
+const elasticClient = require('../../elastic');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
@@ -418,7 +419,7 @@ async function reindexOpportunities () {
     bulk_request.push(records[i].task);
   }
 
-  await openopps.elasticClient.bulk({ body: bulk_request });
+  await elasticClient.bulk({ body: bulk_request });
   return records;
 }
 
@@ -432,7 +433,7 @@ async function indexOpportunity (taskId) {
     bulk_request.push(records[i].task);
   }
 
-  await openopps.elasticClient.bulk({ body: bulk_request });
+  await elasticClient.bulk({ body: bulk_request });
   return records;
 }
 
