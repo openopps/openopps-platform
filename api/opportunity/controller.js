@@ -24,8 +24,8 @@ router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
-  var numOfOpps = await service.reindexOpportunities();
-  ctx.body = numOfOpps;
+  var tasks = await service.reindexOpportunities();
+  ctx.body = tasks.length;
 });
 
 router.get('/api/task/:id', async (ctx, next) => {

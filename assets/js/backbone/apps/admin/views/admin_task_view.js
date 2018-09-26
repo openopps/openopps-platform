@@ -12,6 +12,7 @@ var AdminTaskView = Backbone.View.extend({
     'click .delete-task'            : 'deleteTask',
     'click .task-open'              : 'openTask',
     'click input[type="radio"]'     : 'filterChanged',
+    'click #reindex'                : 'reindex',
   },
 
   initialize: function (options) {
@@ -191,6 +192,46 @@ var AdminTaskView = Backbone.View.extend({
   cleanup: function () {
     removeView(this);
   },
+
+  reindex: function () {
+    var reindexModal = new Modal(_.extend(this.baseModal, {
+      id: 'confirm-reindex',
+      modalTitle: 'Confirm reindex',
+      alert: {
+        type: 'error',
+        text: 'Error reindexing.',
+      },
+      modalBody: 'Are you sure you want to reindex</strong>? <strong>This cannot be undone</strong>.',
+      primary: {
+        text: 'OK',
+        action: function () {
+          if (this.baseModal.primary.text === 'OK')
+          {
+            reindexModal.options.disableClose = true;
+            reindexModal.options.disablePrimary = true;
+            reindexModal.options.secondary = null;
+            reindexModal.options.modalBody = 'Reindexing...';
+            reindexModal.options.primary.text = 'Close';
+            reindexModal.doRender();
+            $.ajax({
+              url: '/api/task/reindex/',
+              data: {},
+              type: 'GET',
+            }).done(function ( model, response, options ) {
+              reindexModal.options.modalBody = 'Finished reindexing ' + model + ' opportunities';
+              reindexModal.options.disablePrimary = false;
+              reindexModal.doRender();
+            }.bind(this)).fail(function (error) {
+              this.displayError('confirm-reindex', 'There was an error attempting to reindex.');
+            }.bind(this));
+          } else {
+            this.cleanupModal();
+          }
+        }.bind(this),
+      }
+    }));
+    this.displayModal(reindexModal);  
+  }
 });
 
 module.exports = AdminTaskView;

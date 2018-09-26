@@ -31,6 +31,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var BaseComponent = require('../base/base_component');
 var ModalTemplate = require('./modal_template.html');
+var CompiledTemplate = null;
 
 var Modal = BaseComponent.extend({
   events: {
@@ -46,17 +47,23 @@ var Modal = BaseComponent.extend({
     this.options.secondary = this.options.secondary || false;
     this.options.modalAlert = this.options.alert || false;
     this.options.disableClose = this.disableClose || false;
+    this.options.disablePrimary = this.disablePrimary || false;
+    this.options.disableSecondary = this.disableSecondary || false;
   },
 
   render: function () {
-    var compiledTemplate = _.template(ModalTemplate)(this.options);
-    this.$el.html(compiledTemplate);
+    CompiledTemplate = _.template(ModalTemplate);
+    this.doRender();
     $('body').addClass('.modal-is-open');
     $('body').append('<div class="usajobs-modal__canvas-blackout" tabindex="-1" aria-hidden="true"></div>');
     setTimeout(function () {
       this.$el.find(':tabbable').first().focus();
     }.bind(this), 100);
     return this;
+  },
+
+  doRender: function () {
+    this.$el.html(CompiledTemplate(this.options));
   },
 
   checkTabbing: function (e) {
@@ -72,12 +79,18 @@ var Modal = BaseComponent.extend({
 
   primaryAction: function (e) {
     if (e.preventDefault) e.preventDefault();
-    this.options.primary.action();
+    if (!this.options.disablePrimary)
+    {
+      this.options.primary.action();
+    }
   },
 
   secondaryAction: function (e) {
     if (e.preventDefault) e.preventDefault();
-    this.options.secondary.action();
+    if (!this.options.disableSecondary)
+    {
+      this.options.secondary.action();
+    }
   },
 
   link: function (e) {
