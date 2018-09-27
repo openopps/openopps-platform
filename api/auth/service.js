@@ -74,7 +74,7 @@ async function sendUserCreateNotification (user, action) {
   notification.createNotification(data);
 }
 
-async function resetPassword (token, password, done) {
+async function resetPassword (ctx, token, password, done) {
   token.deletedAt = new Date();
   var user = { id: token.userId, passwordAttempts: 0, updatedAt: new Date() };
   await dao.Passport.find('"user" = ?', token.userId).then(async (results) => {
@@ -87,12 +87,14 @@ async function resetPassword (token, password, done) {
     passport.protocol = passport.protocol || 'local';
     await dao.Passport.upsert(passport).then(async () => {
       await dao.User.update(user).then(async () => {
-        await dao.UserPasswordReset.update(token).then(() => {
+        await dao.UserPasswordReset.update(token).then(async () => {
+          await createAudit('PASSWORD_RESET', ctx, { userId: token.userId, status: 'successful' });
           done(null);
         });
       });
-    }).catch((err) => {
+    }).catch(async (err) => {
       log.info('reset: failed to create or update passport ', token.email, err);
+      await createAudit('PASSWORD_RESET', ctx, { userId: token.userId, status: 'failed' });
       done({ message: 'Failed to reset password.' });
     });
   });
@@ -212,8 +214,6 @@ async function createAudit (type, ctx, auditData) {
 
 async function logAuthenticationError (ctx, type, auditData) {
   await createAudit(type, ctx, auditData);
-  // var audit = Audit.createAudit(type, ctx, auditData);
-  // dao.AuditLog.insert(audit).catch(() => {});
 }
 
 module.exports = {

@@ -20,6 +20,7 @@ function getMessage (err) {
 async function useLocalAuthentication (ctx, next) {
   await passport.authenticate('local', (err, user, info, status) => {
     if (err || !user) {
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'failed' });
       log.info('Authentication Error: ', err);
       var message;
       if (err && err.originalError === 'invalid domain') {
@@ -35,6 +36,7 @@ async function useLocalAuthentication (ctx, next) {
         return ctx.redirect('/');
       }
     } else {
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'successful' });
       ctx.body = { success: true };
       return ctx.login(user);
     }
@@ -44,7 +46,9 @@ async function useLocalAuthentication (ctx, next) {
 function loginUser (state, user, ctx) {
   ctx.login(user).then(() => {
     ctx.redirect(state.redirect ? ('/' + state.redirect) : ('/home'));
+    service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'successful' });
   }).catch((err) => {
+    service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'failed' });
     ctx.redirect('/');
   });
 }
@@ -194,16 +198,18 @@ router.post('/api/auth/reset', async (ctx, next) => {
   var password = ctx.request.body.password;
 
   if (!token) {
+    service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - no token' });
     ctx.status = 400;
     ctx.body = { message: 'Must provide a token for validation.' };
   } else {
     await service.checkToken(token.toLowerCase().trim(), async (err, validToken) => {
       if (err) {
+        service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - invalid token' });
         ctx.status = 400;
         ctx.body = err;
       } else {
         if(utils.validatePassword(password, validToken.email)) {
-          await service.resetPassword(validToken, password, function (err) {
+          await service.resetPassword(ctx, validToken, password, function (err) {
             if (err) {
               ctx.status = 400;
               ctx.body = { message: err.message || 'Password reset failed.' };
@@ -212,6 +218,7 @@ router.post('/api/auth/reset', async (ctx, next) => {
             }
           });
         } else {
+          service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - rules' });
           ctx.status = 400;
           ctx.body = { message: 'Password does not meet password rules.' };
         }

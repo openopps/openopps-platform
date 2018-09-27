@@ -81,6 +81,7 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
           user.passwordAttempts++;
           dao.User.update(user).then(() => {
             if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
+              service.logAuthenticationError(ctx, 'ACCOUNT_LOCKED', { userId: user.id });
               log.info('max passwordAttempts (2)', user.passwordAttempts, maxAttempts);
               done('locked', false);
             }
