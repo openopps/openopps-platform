@@ -24,15 +24,6 @@ var AdminTaskView = Backbone.View.extend({
     this.agency = {
       name: 'Sitewide',
     };
-    this.baseModal = {
-      el: '#site-modal',
-      secondary: {
-        text: 'Cancel',
-        action: function () {
-          this.modalComponent.cleanup();
-        }.bind(this),
-      },
-    };
   },
 
   render: function () {
@@ -109,84 +100,59 @@ var AdminTaskView = Backbone.View.extend({
    */
   openTask: function (event) {
     var data = this.collectEventData(event);
-    this.displayModal(new Modal(_.extend(this.baseModal, {
+    var displayModal = new Modal({
       id: 'confirm-publish',
       modalTitle: 'Confirm publish',
-      alert: {
-        type: 'error',
-        text: 'Error publishing task.',
-      },
       modalBody: 'Are you sure you want to publish <strong>' + data.title + '</strong>?',
       primary: {
         text: 'Publish',
         action: function () {
-          this.submitPublish.bind(this)(data.id);
+          this.submitPublish.bind(this)(data.id, displayModal);
         }.bind(this),
       },
-    })));
+    });
+    displayModal.render();
   },
 
-  submitPublish: function (id) {
+  submitPublish: function (id, displayModal) {
     $.ajax({
       url: '/api/publishTask/' + id,
       data: {'id': id, 'state': 'open'},
       type: 'PUT',
     }).done(function ( model, response, options ) {
-      this.cleanupModal();
+      displayModal.cleanup();
+      this.render();
     }.bind(this)).fail(function (error) {
-      this.displayError('confirm-publish', 'There was an error attempting to publish this opportunity.');
+      displayModal.displayError('confirm-publish', 'There was an error attempting to publish this opportunity.');
     }.bind(this));
   },
 
   deleteTask: function (event) {
     var data = this.collectEventData(event);
-    this.displayModal(new Modal(_.extend(this.baseModal, {
+    var deleteModal = new Modal({
       id: 'confirm-deletion',
       modalTitle: 'Confirm deletion',
-      alert: {
-        type: 'error',
-        text: 'Error deleting task.',
-      },
       modalBody: 'Are you sure you want to delete <strong>' + data.title + '</strong>? <strong>This cannot be undone</strong>.',
       primary: {
         text: 'Delete',
         action: function () {
-          this.submitDelete.bind(this)(data.id);
+          this.submitDelete.bind(this)(data.id, deleteModal);
         }.bind(this),
       },
-    })));
+    });
+    deleteModal.render();
   },
 
-  submitDelete: function (id) {
+  submitDelete: function (id, deleteModal) {
     $.ajax({
       url: '/api/task/' + id,
       type: 'DELETE',
     }).done(function ( model, response, options ) {
-      this.cleanupModal();
+      deleteModal.cleanup();
+      this.render();
     }.bind(this)).fail(function (error) {
-      this.displayError('confirm-deletion', 'There was an error attempting to delete this opportunity.');
+      deleteModal.displayError('There was an error attempting to delete this opportunity.', 'Error Deleting');
     }.bind(this));
-  },
-
-  displayModal: function (modal) {
-    if (this.modalComponent) this.modalComponent.cleanup();
-    this.modalComponent = modal.render();
-    $('body').addClass('modal-is-open');
-  },
-
-  cleanupModal: function () {
-    $('.usajobs-modal__canvas-blackout').remove();
-    $('.modal-is-open').removeClass();
-    this.render();
-    this.modalComponent.cleanup();
-  },
-
-  displayError: function (modalId, error) {
-    $('#' + modalId).addClass('usajobs-modal--error');
-    $('.usajobs-modal__body').html(error);
-    $('#usajobs-modal-heading').hide();
-    $('#alert-modal__heading').show();
-    $('#primary-btn').hide();
   },
 
   cleanup: function () {
@@ -194,43 +160,39 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   reindex: function () {
-    var reindexModal = new Modal(_.extend(this.baseModal, {
+    var reindexModal = new Modal({
       id: 'confirm-reindex',
       modalTitle: 'Confirm reindex',
-      alert: {
-        type: 'error',
-        text: 'Error reindexing.',
-      },
       modalBody: 'Are you sure you want to reindex</strong>? <strong>This cannot be undone</strong>.',
       primary: {
         text: 'OK',
         action: function () {
-          if (this.baseModal.primary.text === 'OK')
+          if (reindexModal.options.primary.text === 'OK')
           {
             reindexModal.options.disableClose = true;
             reindexModal.options.disablePrimary = true;
             reindexModal.options.secondary = null;
             reindexModal.options.modalBody = 'Reindexing...';
             reindexModal.options.primary.text = 'Close';
-            reindexModal.doRender();
+            reindexModal.refresh();
             $.ajax({
               url: '/api/task/reindex/',
               data: {},
               type: 'GET',
-            }).done(function ( model, response, options ) {
+            }).done(function (model) {
               reindexModal.options.modalBody = 'Finished reindexing ' + model + ' opportunities';
               reindexModal.options.disablePrimary = false;
-              reindexModal.doRender();
+              reindexModal.refresh();
             }.bind(this)).fail(function (error) {
-              this.displayError('confirm-reindex', 'There was an error attempting to reindex.');
+              reindexModal.displayError('There was an error attempting to reindex.', 'Error Reindexing');             
             }.bind(this));
           } else {
-            this.cleanupModal();
+            reindexModal.cleanup();
           }
         }.bind(this),
       }
-    }));
-    this.displayModal(reindexModal);  
+    });
+    reindexModal.render();  
   }
 });
 

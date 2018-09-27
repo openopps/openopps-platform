@@ -424,7 +424,11 @@ async function reindexOpportunities () {
 }
 
 async function indexOpportunity (taskId) {
-  var records =  (await dao.Task.db.query(dao.query.taskToIndex, taskId)).rows;
+  if (!(await elasticClient.IsAlive()))
+  {
+    return null;
+  }
+  var records = (await dao.Task.db.query(dao.query.taskToIndex, taskId)).rows;
 
   var bulk_request = [];
 

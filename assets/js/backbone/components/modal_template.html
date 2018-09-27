@@ -1,32 +1,34 @@
-<div class="usajobs-modal" id="<%- id %>" role="dialog" data-state="is-open" aria-hidden="false" aria-labelledby="usajobs-modal-heading" aria-describedby="usajobs-modal-description">
+<div class="usajobs-modal <%= 'usajobs-modal--' + alert %>" id="<%- id %>" role="dialog" data-state="is-open" aria-hidden="false" aria-labelledby="usajobs-modal-heading" aria-describedby="usajobs-modal-description">
   <div class="usajobs-modal__dialog">
     <div class="usajobs-modal__content">
-
-      <div class="usajobs-modal__header" id="usajobs-modal-heading">
-        <h2 class="usajobs-modal__title"><%- modalTitle %></h2>
-      </div>
-
-      <div class="usajobs-modal__header" id="alert-modal__heading"  style="display:none;">
-        <div class="usa-alert usajobs-alert usajobs-alert--<%- alert.type %>">
-          <div class="usajobs-alert__figure">
-            <div class="usajobs-alert__icon">
+      <% if (alert !== '') { %>
+        <div class="usajobs-modal__header" id="alert-modal__heading">
+          <div class="usa-alert usajobs-alert usajobs-alert--<%- alert %>">
+            <div class="usajobs-alert__figure">
+              <div class="usajobs-alert__icon">
+              </div>
+            </div>
+            <div class="usajobs-alert__body">
+              <h2 class="usajobs-modal__title" id="alert-modal__title"><%- modalTitle %></h2>
             </div>
           </div>
-          <div class="usajobs-alert__body">
-            <h2 class="usajobs-modal__title" id="alert-modal__title"><%- alert.text %></h2>
-          </div>
         </div>
-      </div>
-
+      <% } else { %>
+      <div class="usajobs-modal__header" id="usajobs-modal-heading">
+          <h2 class="usajobs-modal__title"><%- modalTitle %></h2>
+        </div>
+      <% } %>
       <div class="usajobs-modal__body">
         <%= modalBody %>
-      </div>
+      </div>    
 
       <div class="usajobs-modal__footer">
-          <% if (secondary && secondary.text) { %>
+          <% if (secondary && (secondary.text !== null && typeof(secondary.text) !== 'undefined')) { %>
             <button id="secondary-btn" class="usa-button usa-button-secondary" data-behavior="modal.close" <%= disableSecondary ? 'disabled' : '' %>><%- secondary.text %></button>
           <% } %>
-          <button id="primary-btn" class="usa-button usa-button-primary" data-behavior="modal.close" <%= disablePrimary ? 'disabled' : '' %>><%- primary.text %></button>
+          <% if (primary && (primary.text !== null && typeof(primary.text) !== 'undefined')) { %>
+            <button id="primary-btn" class="usa-button usa-button-primary" data-behavior="modal.close" <%= disablePrimary ? 'disabled' : '' %>><%- primary.text %></button>
+          <% } %>
         </div>
 
       <% if (!disableClose) { %>

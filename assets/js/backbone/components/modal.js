@@ -34,6 +34,7 @@ var ModalTemplate = require('./modal_template.html');
 var CompiledTemplate = null;
 
 var Modal = BaseComponent.extend({
+  el: '#site-modal',
   events: {
     'keydown': 'checkTabbing',
     'click .link-backbone': 'link',
@@ -44,8 +45,13 @@ var Modal = BaseComponent.extend({
 
   initialize: function (options) {
     this.options = options;
-    this.options.secondary = this.options.secondary || false;
-    this.options.modalAlert = this.options.alert || false;
+    this.options.secondary = this.options.secondary || {
+        text: 'Cancel',
+        action: function () {
+          this.cleanup();
+        }.bind(this),
+    };   
+    this.options.alert = this.options.alert || '';
     this.options.disableClose = this.disableClose || false;
     this.options.disablePrimary = this.disablePrimary || false;
     this.options.disableSecondary = this.disableSecondary || false;
@@ -53,16 +59,28 @@ var Modal = BaseComponent.extend({
 
   render: function () {
     CompiledTemplate = _.template(ModalTemplate);
-    this.doRender();
-    $('body').addClass('.modal-is-open');
+    $('body').addClass('modal-is-open');
     $('body').append('<div class="usajobs-modal__canvas-blackout" tabindex="-1" aria-hidden="true"></div>');
     setTimeout(function () {
       this.$el.find(':tabbable').first().focus();
     }.bind(this), 100);
+    this.refresh();
     return this;
   },
 
-  doRender: function () {
+  displayError: function (alertText, alertTitle) {
+    this.options.primary = null;
+    if (this.options.secondary) {
+      this.options.secondary = null;
+    }
+    this.options.disableClose = false;
+    this.options.alert = 'error';
+    this.options.modalBody = alertText;
+    this.options.modalTitle = alertTitle || this.options.modalTitle;
+    this.refresh();
+  },
+
+  refresh: function () {
     this.$el.html(CompiledTemplate(this.options));
   },
 
@@ -81,7 +99,7 @@ var Modal = BaseComponent.extend({
     if (e.preventDefault) e.preventDefault();
     if (!this.options.disablePrimary)
     {
-      this.options.primary.action();
+      this.options.primary.action(this);
     }
   },
 
@@ -89,7 +107,7 @@ var Modal = BaseComponent.extend({
     if (e.preventDefault) e.preventDefault();
     if (!this.options.disableSecondary)
     {
-      this.options.secondary.action();
+      this.options.secondary.action(this);
     }
   },
 
@@ -102,8 +120,8 @@ var Modal = BaseComponent.extend({
   },
 
   cleanup: function () {
-    if(this.options.cleanup) {
-      this.options.cleanup();
+    if(this.options.close) {
+      this.options.close();
     }
     $('.usajobs-modal__canvas-blackout').remove();
     $('.modal-is-open').removeClass();
