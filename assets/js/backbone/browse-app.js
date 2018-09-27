@@ -42,6 +42,7 @@ var BrowseRouter = Backbone.Router.extend({
     'apply'                         : 'showApply',
     'unauthorized(/)'               : 'showUnauthorized',
     'expired(/)'                    : 'showExpired',
+    'logout'                        : 'showLogout',
   },
 
   data: { saved: false },
@@ -123,6 +124,18 @@ var BrowseRouter = Backbone.Router.extend({
     }).render();
     var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
     $('#container').html(_.template(UnauthorizedTemplate)());
+    $('#search-results-loading').hide();
+    $('.usa-footer-return-to-top').hide();
+  },
+
+  showLogout: function () {   
+    Backbone.history.navigate('/logout', { replace: true });
+    this.navView = new NavView({
+      el: '.navigation',
+      accessForbidden: true, 
+    }).render();
+    var LogOutTemplate = require('./apps/login/templates/logout.html');
+    $('#container').html(_.template(LogOutTemplate)());
     $('#search-results-loading').hide();
     $('.usa-footer-return-to-top').hide();
   },
