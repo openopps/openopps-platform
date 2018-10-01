@@ -61,6 +61,24 @@ module.exports = {
     severity: 'alert',
     data: ['userId', 'action'],
   },
+  'ACCOUNT_LOGIN': {
+    action: 'ACCOUNT_LOGIN',
+    description: 'An Open Opportunities account successfully or unsuccessfully logged in.',
+    severity: 'info',
+    data: ['userId', 'action'],
+  },
+  'ACCOUNT_LOCKED': {
+    action: 'ACCOUNT_LOCKED',
+    description: 'An Open Opportunities account has been locked.',
+    severity: 'alert',
+    data: ['userId'],
+  },
+  'PASSWORD_RESET': {
+    action: 'PASSWORD_RESET',
+    description: 'An Open Opportunities password has been successfully or unsuccessfully reset.',
+    severity: 'info',
+    data: ['userId', 'action'],
+  },
   // Task events
   'TASK_CHANGE_OWNER': {
     action: 'TASK_CHANGE_OWNER',

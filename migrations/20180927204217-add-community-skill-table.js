@@ -15,17 +15,15 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db, callback) {
-  db.createTable('application_task', {
-    application_task_id: { type: 'bigint', primaryKey: true, autoIncrement: true },
-    application_id: { type: 'bigint', notNull: true },
-    user_id: { type: 'bigint', notNull: true },
-    task_id: { type: 'bigint', notNull: true },
-    sort_order: { type: 'int', notNull: true },
+  db.createTable('community_skill', {
+    community_skill_id: { type: 'bigint', primaryKey: true, autoIncrement: true },
+    community_id: { type: 'bigint', notNull: true },
+    title: { type: 'character varying', notNull: true, defaultValue: '' },
     created_at: { type: 'timestamp with time zone' },
     updated_at: { type: 'timestamp with time zone' },
   }, callback);
 };
 
 exports.down = function (db, callback) {
-  db.dropTable('application_task', callback);
+  db.dropTable('community_skill', callback);
 };
