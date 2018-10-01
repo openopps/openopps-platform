@@ -137,12 +137,12 @@ async function checkToken (token, done) {
   expiry.setTime(expiry.getTime() - openopps.auth.local.tokenExpiration);
   await dao.UserPasswordReset.findOne('token = ? and "createdAt" > ? and "deletedAt" is null', [token, expiry]).then(async (passwordReset) => {
     await dao.User.findOne('id = ?', passwordReset.userId).then((user) => {
-      done(null, _.extend(_.clone(passwordReset), { email: user.username }));
+      return done(null, _.extend(_.clone(passwordReset), { email: user.username }));
     }).catch((err) => {
-      done({ message: 'Not a valid password reset code.'}, null);
+      return done({ message: 'Not a valid password reset code.'}, null);
     });
   }).catch((err) => {
-    done({ message: 'Not a valid password reset code.'}, null);
+    return done({ message: 'Not a valid password reset code.'}, null);
   });
 }
 
