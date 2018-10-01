@@ -20,14 +20,11 @@ function getMessage (err) {
 async function useLocalAuthentication (ctx, next) {
   await passport.authenticate('local', (err, user, info, status) => {
     if (err || !user) {
-      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'failed' });
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', _.extend(err.data, { 
+        status: (err.message == 'locked' ? 'locked' : 'failed'),
+      }));
       log.info('Authentication Error: ', err);
-      var message;
-      if (err && err.originalError === 'invalid domain') {
-        message = getMessage(err.originalError);
-      } else {
-        message = getMessage(err);
-      }
+      var message = getMessage(err.message);
       if (ctx.accepts('json')) {
         ctx.status = 401;
         return ctx.body = { message: message };
@@ -198,13 +195,13 @@ router.post('/api/auth/reset', async (ctx, next) => {
   var password = ctx.request.body.password;
 
   if (!token) {
-    service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - no token' });
+    service.logAuthenticationError(ctx, 'PASSWORD_RESET', { status: 'failed - no token' });
     ctx.status = 400;
     ctx.body = { message: 'Must provide a token for validation.' };
   } else {
     await service.checkToken(token.toLowerCase().trim(), async (err, validToken) => {
       if (err) {
-        service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - invalid token' });
+        service.logAuthenticationError(ctx, 'PASSWORD_RESET', { status: 'failed - invalid token' });
         ctx.status = 400;
         ctx.body = err;
       } else {
@@ -212,13 +209,13 @@ router.post('/api/auth/reset', async (ctx, next) => {
           await service.resetPassword(ctx, validToken, password, function (err) {
             if (err) {
               ctx.status = 400;
-              ctx.body = { message: err.message || 'Password reset failed.' };
+              ctx.body = { message: 'Password reset failed.' };
             } else {
               ctx.body = { success: true };
             }
           });
         } else {
-          service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: user.id, status: 'failed - rules' });
+          service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: validToken.userId, status: 'failed - rules' });
           ctx.status = 400;
           ctx.body = { message: 'Password does not meet password rules.' };
         }
