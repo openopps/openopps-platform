@@ -73,7 +73,7 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
   await dao.User.findOne('username = ?', username.toLowerCase().trim()).then(async (user) => {
     if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
       log.info('max passwordAttempts (1)', user.passwordAttempts, maxAttempts);
-      done('locked', false);
+      done({ message: 'locked', data: { userId: user.id } }, false);
     } else {
       var passport = await fetchPassport(user.id, 'local');
       if (passport) {
@@ -81,12 +81,12 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
           user.passwordAttempts++;
           dao.User.update(user).then(() => {
             if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
-              service.logAuthenticationError(ctx, 'ACCOUNT_LOCKED', { userId: user.id });
               log.info('max passwordAttempts (2)', user.passwordAttempts, maxAttempts);
-              done('locked', false);
+              done({ message: 'locked', data: { userId: user.id } }, false);
+            } else {
+              log.info('Error.Passport.Password.Wrong');
+              done({ data: { userId: user.id } }, false);
             }
-            log.info('Error.Passport.Password.Wrong');
-            done(null, false);
           }).catch(err => {
             done(err, false);
           });
@@ -102,12 +102,12 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
         }
       } else {
         log.info('Error.Passport.Password.NotSet');
-        done(new Error('Passport not found'), false);
+        done({ data: { userId: user.id } }, false);
       }
     }
   }).catch(err => {
     log.info('Error.Passport.Username.NotFound', username, err);
-    done(new Error('Username not found.'), false);
+    done({ message: 'Username not found.' }, false);
   });
 }));
 

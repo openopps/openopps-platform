@@ -139,10 +139,10 @@ async function checkToken (token, done) {
     await dao.User.findOne('id = ?', passwordReset.userId).then((user) => {
       return done(null, _.extend(_.clone(passwordReset), { email: user.username }));
     }).catch((err) => {
-      return ({ message: 'Error looking up user.', err: err }, null);
+      return done({ message: 'Not a valid password reset code.'}, null);
     });
   }).catch((err) => {
-    return ({ message: 'Error looking up token.', err: err }, null);
+    return done({ message: 'Not a valid password reset code.'}, null);
   });
 }
 
