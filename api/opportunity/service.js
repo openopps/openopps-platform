@@ -410,17 +410,79 @@ async function getExportData () {
 }
 
 async function reindexOpportunities () {
-  var records =  (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
+  var records =  _.map((await dao.Task.db.query(dao.query.tasksToIndex)).rows, toElasticOpportunity);
 
   var bulk_request = [];
 
   for(i=0; i<records.length; i++){
-    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].task.id }});
-    bulk_request.push(records[i].task);
+    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
+    bulk_request.push(records[i]);
   }
 
   await elasticClient.bulk({ body: bulk_request });
   return records;
+}
+
+async function searchOpportunities (request) {
+  var results = null;
+  if(request){
+    results = await elasticClient.search({
+      index: 'task',
+      type: 'task',
+      body: JSON.stringify(request),
+    });
+  }
+  else{
+    results = await elasticClient.search({ index: 'task' });
+  }
+  
+  return results;
+}
+
+function convertQueryStringToOpportunitiesSearchRequest (query){
+  var request = {
+    query : {
+      bool : {
+        filter : {
+          bool: {
+            must: [] ,
+            must_not: [],
+          },
+        },
+      },
+    },
+    addTerms: function (filter, field) { 
+      if(filter){
+        filter_must.push({terms: { [field] : asArray(filter) }});
+      }
+    }
+  };
+  var filter_must = request.query.bool.filter.bool.must;
+  var filter_must_not = request.query.bool.filter.bool.must_not;
+  request.addTerms(query.status, 'state' );
+  request.addTerms(query.skill, 'skills.name' );
+  request.addTerms(query.career, 'careers.name' );
+  request.addTerms(query.series, 'series.code' );
+  request.addTerms(query.timerequired, 'timeRequired' );
+  request.addTerms(query.locationtype, 'locationType' );
+  request.addTerms(query.restrictedtoagency, 'restrictedToAgency' );
+  if(!('includerestricted' in query)){
+    filter_must_not.push({exists: { field: 'restrictedToAgency' }});
+  }
+  if(query.keyword){
+    var keyword = '';
+    keyword = Array.isArray(query.keyword) ?query.keyword.join(' ') : query.keyword;
+    request.query.bool.must = {
+      simple_query_string: {
+        query : keyword,
+      }
+    };
+
+  }
+  
+  //f(query.keyword) request.keyword = query.keyword;
+  console.log(request);
+  return request;
 }
 
 async function indexOpportunity (taskId) {
@@ -428,17 +490,48 @@ async function indexOpportunity (taskId) {
   {
     return null;
   }
-  var records = (await dao.Task.db.query(dao.query.taskToIndex, taskId)).rows;
+  var records = _.map((await dao.Task.db.query(dao.query.taskToIndex, taskId)).rows, toElasticOpportunity);
 
   var bulk_request = [];
 
   for(i=0; i<records.length; i++){
-    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].task.id }});
-    bulk_request.push(records[i].task);
+    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
+    bulk_request.push(records[i]);
   }
 
   await elasticClient.bulk({ body: bulk_request });
   return records;
+}
+
+function toElasticOpportunity (value, index, list) {
+  var doc = value.task;
+  return {
+    'id': doc.id,
+    'title': doc.title,
+    'description': doc.description,
+    'state': doc.state,
+    'details': doc.details,
+    'outcome': doc.outcome,
+    'about': doc.about,
+    'restrictedToAgency': doc.restrictedToAgency,
+    'requestor': doc.name,
+    'postingAgency': doc.postingAgency,
+    'acceptingApplicants': doc.acceptingApplicants,
+    'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
+    'timeRequired': (_.first(doc['task-time-required']) || { name: null }).name,
+    'timeEstimate': (_.first(doc['task-time-estimate']) || { name: null }).name,
+    'taskLength': (_.first(doc['task-length']) || { name: null }).name, 
+    'skills': doc.skills,
+    'locationType': Array.isArray(doc.location) && doc.location.length > 0 ? 'In Person' : 'Virtual',
+    'locations': doc.location,
+    'series': _.map(doc.series, (item) => { return  {id: item.id || 0, code: item.name.substring(0,4), name: item.name.replace(/.*\((.*)\).*/,'$1') };}),
+    'careers': doc.career,
+    'keywords': _.map(doc.keywords, (item) => item.name),
+  };
+}
+
+function asArray (value) {
+  return Array.isArray(value) ? value: [value];
 }
 
 async function sendTasksDueNotifications (action, i) {
@@ -492,4 +585,6 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   indexOpportunity: indexOpportunity,
+  convertQueryStringToOpportunitiesSearchRequest: convertQueryStringToOpportunitiesSearchRequest,
+  searchOpportunities: searchOpportunities,
 };

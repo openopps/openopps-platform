@@ -89,7 +89,7 @@ from (
       limit 1
     ),
     (
-      select
+      select  
         array_to_json(array_agg(row_to_json(s)))
       from (
         select

@@ -9,34 +9,22 @@
             "outcome":               { "type": "text" },
             "about":                 { "type": "text" },
             "restrictedToAgency":    { "type": "keyword", "normalizer": "lowercase" },
-            "name":                  { "type": "keyword", "normalizer": "lowercase" },
+            "requestor":             { "type": "keyword", "normalizer": "lowercase" },
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
             "acceptingApplicants":   { "type": "boolean" },
-            "task-people": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
+            "taskPeople":            { "type": "keyword", "normalizer": "lowercase" },
+            "timeRequired":          { "type": "keyword", "normalizer": "lowercase" },
+            "timeEstimate":          { "type": "keyword", "normalizer": "lowercase" },
+            "taskLength":            { "type": "keyword", "normalizer": "lowercase" },
+            "keywords":              { "type": "keyword", "normalizer": "lowercase" },
+            "locationType":          { "type": "keyword", "normalizer": "lowercase" },
             "skills": {
                 "properties": {
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
                 }
             },
-            "task-length": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "location":    { 
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "task-time-estimate": {
+            "locations":    { 
                 "properties": {
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
@@ -48,31 +36,7 @@
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
                 }
             },
-            "task-time-required": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "career": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "task-skills-required": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "keywords": {
-                "properties": {
-                    "id":   { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
-                }
-            },
-            "topic": {
+            "careers": {
                 "properties": {
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }

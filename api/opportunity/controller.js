@@ -28,6 +28,13 @@ router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
   ctx.body = tasks.length;
 });
 
+router.get('/api/task/search', async (ctx, next) => {
+  var request = service.convertQueryStringToOpportunitiesSearchRequest(ctx.query);
+  var results = await service.searchOpportunities(request);
+
+  ctx.body = { results: results };
+});
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user ? true : false);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
