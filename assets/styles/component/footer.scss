@@ -327,26 +327,26 @@
     }
   }
 
-.usa-footer-big-secondary-section {
-  @include media($M) {
-    // Trying to stay consistent with core even though it's an odd size
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+  .usa-footer-big-secondary-section {
+    @include media($M) {
+      // Trying to stay consistent with core even though it's an odd size
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
   }
-}
 
-@media screen and (min-width: 62em) {
-  .usajobs-footer--openopps__container {
-    max-width: 160rem;
+  @media screen and (min-width: 62em) {
+    .usajobs-footer--openopps__container {
+      max-width: 160rem;
+    }
   }
-}
 
-@media screen and (min-width: 37.5em) {
-  .usajobs-footer--openopps__container {
-    padding-left: 3rem;
-    padding-right: 3rem;
+  @media screen and (min-width: 37.5em) {
+    .usajobs-footer--openopps__container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
   }
-}
 
   &__container {
     padding: 0 $size-default;
@@ -401,6 +401,10 @@
 
   &__logo {
     max-width: 32.0rem;
+    height: 4.3rem;
+    display: block;
+    background-image: url('../../img/logo/svg/open-opportunities-white.svg');
+    background-repeat: no-repeat;
   }
 
   &__contact-email {
