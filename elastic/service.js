@@ -1,5 +1,6 @@
 const elasticClient = require('./index');
 const dao = require('./dao');
+const _ = require('lodash');
 
 var service = {};
 
@@ -35,14 +36,17 @@ service.indexOpportunity =  async function (taskId) {
 };
 
 service.searchOpportunities = async function (request) {
-  var results = null;
+  var searchResults = null;
   if(request){
-    results = await elasticClient.search(request);
+    searchResults = await elasticClient.search(request);
   }
   else{
-    results = await elasticClient.search({ index: 'task' });
+    searchResults = await elasticClient.search({ index: 'task' });
   }
-  return results;
+  var result = {};
+  result.totalHits = searchResults.hits.total;
+  result.hits = _.map(searchResults.hits.hits, convertSearchResultsToResultModel);
+  return result;
 };
   
 service.convertQueryStringToOpportunitiesSearchRequest = function (query, index){
@@ -81,7 +85,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   request.addTerms(query.series, 'series.code' );
   request.addTerms(query.timerequired, 'timeRequired' );
   request.addTerms(query.locationtype, 'locationType' );
-  var restrict = query.restrictedtoagency || 'true';
+  var restrict = query.restrictedtoagency || 'false';
   if(restrict === 'false'){
     filter_must_not.push({exists: { field: 'restrictedToAgency' }});
   } else if ( restrict === 'true'){
@@ -105,8 +109,48 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   return request;
 };
 
+function convertSearchResultsToResultModel (searchResult) {
+  var model = {};
+  var source = searchResult._source;
+  model.score = searchResult._score;
+  model.result = {
+    id: source.id,
+    title: source.title,
+    status: source.state,
+    description: source.description,
+    details: source.details,
+    outcome: source.outcome,
+    about: source.about,
+    restrictedToAgency: source.restrictedToAgency,
+    requester: source.requester,
+    updatedAt: source.updatedAt,
+    postingAgency: source.postingAgency,
+    acceptingApplicants: source.acceptingApplicants,
+    taskPeople: source.taskPeople,
+    timeRequired: source.timeRequired,
+    timeEstimate: source.timeEstimate,
+    taskLength: source.taskLength,
+    skills: source.skills,
+    locationType: source.locationType,
+    locations: source.locations,
+    series: source.series,
+    careers: source.careers,
+    keywords: source.keywords,
+  };
+  removeEmpty(model);
+  return model;
+}
+
 function asArray (value) {
   return Array.isArray(value) ? value: [value];
 }
+
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach(key => {
+    if (Array.isArray(obj[key]) && obj[key].length === 0) delete obj[key];
+    if (obj[key] && typeof obj[key] === 'object') removeEmpty(obj[key]);
+    else if (obj[key] == null) delete obj[key];
+  });
+ };
   
 module.exports = service;

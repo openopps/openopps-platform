@@ -38,7 +38,8 @@ function toElasticOpportunity (value, index, list) {
     'outcome': doc.outcome,
     'about': doc.about,
     'restrictedToAgency': doc.isRestricted === 'true' ? doc.restrictedToAgency : null,
-    'requestor': doc.name,
+    'requester': doc.name,
+    'updatedAt': doc.updatedAt,
     'postingAgency': doc.postingAgency,
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
@@ -66,6 +67,7 @@ from (
     t.about,
     t.restrict ->> 'abbr' as "restrictedToAgency",
     t.restrict ->> 'projectNetwork' as "isRestricted",
+    t."updatedAt",
     u.name,
     t.accepting_applicants as "acceptingApplicants",
     (

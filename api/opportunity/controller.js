@@ -33,7 +33,7 @@ router.get('/api/task/search', async (ctx, next) => {
   var request = elasticService.convertQueryStringToOpportunitiesSearchRequest(ctx.query);
   var results = await elasticService.searchOpportunities(request);
 
-  ctx.body = { results: results };
+  ctx.body = results;
 });
 
 router.get('/api/task/:id', async (ctx, next) => {
