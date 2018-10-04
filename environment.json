@@ -4,6 +4,7 @@
     "CLIENT_SECRET": "",
     "CRON_TOKEN": "",
     "DATASTORE": "",
+    "DATA_IMPORT_URL": "",
     "DISCOVERY_URL": "",
     "DRAFT_ADMIN_ONLY": true,
     "EMAIL_HOST": "",

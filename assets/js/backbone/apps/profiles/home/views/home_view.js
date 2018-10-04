@@ -187,18 +187,7 @@ var HomeView = Backbone.View.extend({
 
   logout: function (e) {
     if (e.preventDefault) e.preventDefault();
-    $.ajax({
-      url: '/api/auth/logout?json=true',
-    }).done(function (data) {
-      window.cache.currentUser = null;
-      if(data.redirectURL) {
-        window.location = data.redirectURL;
-      } else {
-        window.cache.userEvents.trigger('user:logout');
-      }
-    }).fail(function (error) {
-      // do nothing
-    });
+    window.cache.userEvents.trigger('user:logout');
   },
 
   cleanup: function () {
