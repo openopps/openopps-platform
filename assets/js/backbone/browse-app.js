@@ -42,7 +42,7 @@ var BrowseRouter = Backbone.Router.extend({
     'apply'                         : 'showApply',
     'unauthorized(/)'               : 'showUnauthorized',
     'expired(/)'                    : 'showExpired',
-    'logout'                        : 'showLogout',
+    'logout'                        : 'logout',
   },
 
   data: { saved: false },
@@ -128,8 +128,24 @@ var BrowseRouter = Backbone.Router.extend({
     $('.usa-footer-return-to-top').hide();
   },
 
-  showLogout: function () {   
-    Backbone.history.navigate('/logout', { replace: true });
+  logout: function () {
+    $.ajax({
+      url: '/api/auth/logout?json=true',
+    }).done(function (data) {
+      if(data.redirectURL) {
+        window.location = data.redirectURL;
+      } else {
+        this.showLogout();
+      }
+    }.bind(this)).fail(function () {
+      this.showLogout();
+    }.bind(this)).always(function () {
+      window.cache.currentUser = null;
+    });
+    
+  },
+
+  showLogout: function () {
     this.navView = new NavView({
       el: '.navigation',
       accessForbidden: true, 
