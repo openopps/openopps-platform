@@ -383,6 +383,8 @@ var TaskListView = Backbone.View.extend({
         $('#main-content').toggleClass('hide', false);
         $('.find-people').toggleClass('hide', false);
         $('#footer').toggleClass('hide', false);
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
       }, 250);
     } else {
       setTimeout(function () {
@@ -398,6 +400,8 @@ var TaskListView = Backbone.View.extend({
         $('.find-people').toggleClass('hide', true);
         $('#footer').toggleClass('hide', true);
         $('#task-filters').css('display', 'block');
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
       }, 250);
     }
   },

@@ -10,7 +10,6 @@ var TaskListView = require('../views/task_list_view');
 TaskController = Backbone.View.extend({
   events: {
     'click .add-opportunity' : 'add',
-    'click .search-people'   : 'search',
   },
 
   initialize: function (options) {
@@ -25,10 +24,6 @@ TaskController = Backbone.View.extend({
 
   add: function (e) {
     Backbone.history.navigate('/tasks/new', { trigger: true });
-  },
-
-  search: function (e) {
-    Backbone.history.navigate('/profiles', { trigger: true });
   },
 
   show: function (e) {

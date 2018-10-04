@@ -257,9 +257,12 @@
   .usajobs-error__container {
     margin-left: auto;
     margin-right: auto;
-    max-width: 62rem
+    max-width: 62rem 
   }
-
+  .usajobs-error__container.signout {
+    max-width: 96rem;
+  } 
+ 
   .usajobs-error__title,.usajobs-error__text,.usajobs-error__text a,.usajobs-error__text a:visited,.usajobs-error__item,.usajobs-error__item a,.usajobs-error__item a:visited {
     color: #fff;
     text-align: center
@@ -277,7 +280,7 @@
     color: #fff;
     font-weight: normal;
     text-transform: uppercase;
-    padding: 0 2rem
+    padding: 0 2rem;
   }
 
   @media screen and (min-width: 37.5em) {
