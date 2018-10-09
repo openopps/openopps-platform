@@ -43,6 +43,7 @@ var BrowseRouter = Backbone.Router.extend({
     'unauthorized(/)'               : 'showUnauthorized',
     'expired(/)'                    : 'showExpired',
     'logout'                        : 'logout',
+    'loggedOut'                     : 'showLogout',
   },
 
   data: { saved: false },
