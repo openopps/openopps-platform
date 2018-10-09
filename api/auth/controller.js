@@ -225,12 +225,15 @@ router.post('/api/auth/reset', async (ctx, next) => {
 });
 
 router.get('/api/auth/logout', async (ctx, next) => {
-  ctx.logout();
+  var response = { success: true };
   if(openopps.auth.oidc) {
-    ctx.body = { redirectURL: openopps.auth.loginGov.logoutURL };
-  } else {
-    ctx.body = { success: true };
+    response.redirectURL = openopps.auth.oidc.endSessionUrl({
+      post_logout_redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/loggedOut',
+      id_token_hint: ctx.session.passport.user.id_token,
+    });
   }
+  ctx.logout();
+  ctx.body = response;
 });
 
 module.exports = router.routes();
