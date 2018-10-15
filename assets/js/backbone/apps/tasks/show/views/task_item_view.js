@@ -389,9 +389,10 @@ var TaskItemView = BaseView.extend({
     });
   },
 
-  complete: function (e) {
+  complete: function (e) {   
+    var btnDisable=$('#complete').hasClass('disabled');  
     var notComplete = _.where(this.data.model.volunteers, { assigned: true, taskComplete: false });
-    if(notComplete.length > 0) {
+    if(notComplete.length > 0 && !btnDisable) {
       var options = _.extend(_.clone(this.modalOptions), {
         modalTitle: 'Not complete',
         modalBody: _.template(NotCompleteTemplate)({ volunteers: notComplete }),
@@ -411,7 +412,9 @@ var TaskItemView = BaseView.extend({
       });
       this.modalComponent = new ModalComponent(options).render();
     } else {
-      this.markComplete();
+      if(!btnDisable){
+        this.markComplete();
+      }
     }
   },
 
