@@ -175,8 +175,10 @@ var HomeView = Backbone.View.extend({
       sortedData = sortedData.reverse();
     }
     if(target.value == 'title'){
-      sortedData = _.sortBy(data, item => item.title.toLowerCase());     
-    }
+      sortedData = _.sortBy(data, function (item){
+        return item.title.toLowerCase();
+      });     
+    } 
     if(target.id == 'sort-participated') {
       this.volView.options.sort = target.value;
       this.volView.options.data = sortedData;
