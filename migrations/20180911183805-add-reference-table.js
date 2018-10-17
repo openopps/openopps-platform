@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('reference', {
-    reference_id: { type: 'bigserial', primaryKey: true, autoIncrement: true },
+    reference_id: { type: 'bigserial', primaryKey: true },
     application_id: { type: 'bigint', notNull: true },
     user_id: { type: 'bigint', notNull: true },
     reference_type_id: { type: 'integer', notNull: true },
