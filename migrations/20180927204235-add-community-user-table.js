@@ -16,9 +16,9 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('community_user', {
-    community_user_id: { type: 'bigint', primaryKey: true, autoIncrement: true },
+    community_user_id: { type: 'bigserial', primaryKey: true },
     community_id: { type: 'bigint', notNull: true },
-    user_id: { type: 'character varying', notNull: true, defaultValue: '' },
+    user_id: { type: 'bigint', notNull: true },
     is_manager: { type: 'boolean' },
     created_at: { type: 'timestamp with time zone' },
     updated_at: { type: 'timestamp with time zone' },

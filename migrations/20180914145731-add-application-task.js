@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('application_task', {
-    application_task_id: { type: 'bigint', primaryKey: true, autoIncrement: true },
+    application_task_id: { type: 'bigserial', primaryKey: true },
     application_id: { type: 'bigint', notNull: true },
     user_id: { type: 'bigint', notNull: true },
     task_id: { type: 'bigint', notNull: true },
