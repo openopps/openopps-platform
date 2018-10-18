@@ -38,7 +38,7 @@ var NavView = Backbone.View.extend({
       this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
       this.idleModal.resetTimeout();
       var referrer = window.location.search.replace('?','') + window.location.hash;
-      Backbone.history.navigate('/home' + referrer, { trigger: true, replaceState: true });
+      Backbone.history.navigate('/' + (referrer || 'home'), { trigger: true, replaceState: true });
     }.bind(this));
 
     this.listenTo(window.cache.userEvents, 'user:login:close', function () {
