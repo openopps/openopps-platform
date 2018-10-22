@@ -357,41 +357,45 @@ var TaskItemView = BaseView.extend({
 
   nextstep: function (e) {
     var state = 'in progress';
-    $.ajax({
-      url: '/api/task/state/' +  this.model.attributes.id,
-      type: 'PUT',
-      data: {
-        id: this.model.attributes.id,
-        state: state,
-        acceptingApplicants: false,
-      },
-      success: function (data) {
-        this.updatePill(state);
-        this.model.attributes.acceptingApplicants = false;
-        this.data.model.acceptingApplicants = false;
-        this.data.accordion.show = true;
-        this.initializeProgress();
-        var options = _.extend(_.clone(this.modalOptions), {
-          modalTitle: 'Let\'s get started',
-          modalBody: NextStepTemplate,
-          primary: {
-            text: 'Okay',
-            action: function () {
-              this.modalComponent.cleanup();
-            }.bind(this),
-          },
-        });
-        this.modalComponent = new ModalComponent(options).render();
-      }.bind(this),
-      error: function (err) {
+    var nxtBtnDisable = $('#nextstep').hasClass('disabled');  
+    if(!nxtBtnDisable){
+      $.ajax({
+        url: '/api/task/state/' +  this.model.attributes.id,
+        type: 'PUT',
+        data: {
+          id: this.model.attributes.id,
+          state: state,
+          acceptingApplicants: false,
+        },
+        success: function (data) {
+          this.updatePill(state);
+          this.model.attributes.acceptingApplicants = false;
+          this.data.model.acceptingApplicants = false;
+          this.data.accordion.show = true;
+          this.initializeProgress();
+          var options = _.extend(_.clone(this.modalOptions), {
+            modalTitle: 'Let\'s get started',
+            modalBody: NextStepTemplate,
+            primary: {
+              text: 'Okay',
+              action: function () {
+                this.modalComponent.cleanup();
+              }.bind(this),
+            },
+          });
+          this.modalComponent = new ModalComponent(options).render();
+        }.bind(this),
+        error: function (err) {
         // display modal alert type error
-      }.bind(this),
-    });
+        }.bind(this),
+      });
+    }
   },
 
-  complete: function (e) {
+  complete: function (e) {   
+    var btnDisable=$('#complete').hasClass('disabled');  
     var notComplete = _.where(this.data.model.volunteers, { assigned: true, taskComplete: false });
-    if(notComplete.length > 0) {
+    if(notComplete.length > 0 && !btnDisable) {
       var options = _.extend(_.clone(this.modalOptions), {
         modalTitle: 'Not complete',
         modalBody: _.template(NotCompleteTemplate)({ volunteers: notComplete }),
@@ -411,7 +415,9 @@ var TaskItemView = BaseView.extend({
       });
       this.modalComponent = new ModalComponent(options).render();
     } else {
-      this.markComplete();
+      if(!btnDisable){
+        this.markComplete();
+      }
     }
   },
 

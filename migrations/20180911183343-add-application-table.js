@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('application', {
-    application_id: { type: 'bigserial', primaryKey: true, autoIncrement: true },
+    application_id: { type: 'bigserial', primaryKey: true },
     user_id: { type: 'bigint', notNull: true },
     statement_of_interest: { type: 'character varying', notNull: true, defaultValue: '' },   
     is_consent_to_share: { type: 'boolean' },

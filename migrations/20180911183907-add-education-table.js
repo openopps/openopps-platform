@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('education', {
-    education_id: { type: 'bigserial', primaryKey: true, autoIncrement: true },
+    education_id: { type: 'bigserial', primaryKey: true },
     application_id: { type: 'bigint', notNull: true },
     user_id: { type: 'bigint',  notNull: true },
     school_name: { type: 'character varying', notNull: true, defaultValue: '' },

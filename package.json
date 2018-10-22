@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "5.1.5",
+  "version": "7.4.1",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -68,7 +68,7 @@
     "nodemailer-smtp-pool": "^2.8.3",
     "nodemailer-smtp-transport": "^2.7.4",
     "numeral": "^2.0.6",
-    "openid-client": "^2.3.0",
+    "openid-client": "^2.4.2",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
