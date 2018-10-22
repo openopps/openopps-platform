@@ -244,8 +244,16 @@ async function getAgency (id) {
   var agency = await dao.TagEntity.findOne('id = ?', id);
   agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, agency.name.toLowerCase())).rows[0];
   agency.tasks.totalCreated = Object.values(agency.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
-  agency.users = await (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
+  agency.users = (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
   return agency;
+}
+
+async function getCommunity (id) {
+  var community = await dao.Community.findOne('community_id = ?', id);
+  community.tasks = {}; // (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
+  community.tasks.totalCreated = Object.values(community.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  community.users = {}; // (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
+  return community;
 }
 
 async function canAdministerAccount (user, id) {
@@ -381,6 +389,10 @@ async function getAgencies () {
   return await dao.TagEntity.find('type = ?', 'agency');
 }
 
+async function getCommunities () {
+  return await dao.Community.find();
+}
+
 async function createAuditLog (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
   await dao.AuditLog.insert(audit).catch(() => {});
@@ -391,6 +403,7 @@ module.exports = {
   getInteractions: getInteractions,
   getUsers: getUsers,
   getAgencies: getAgencies,
+  getCommunities: getCommunities,
   getUsersForAgency: getUsersForAgency,
   getUsersFiltered: getUsersFiltered,
   getUsersForAgencyFiltered: getUsersForAgencyFiltered,
@@ -400,6 +413,7 @@ module.exports = {
   getTaskStateMetrics: getTaskStateMetrics,
   getAgencyTaskStateMetrics: getAgencyTaskStateMetrics,
   getAgency: getAgency,
+  getCommunity: getCommunity,
   getDashboardTaskMetrics: getDashboardTaskMetrics,
   getActivities: getActivities,
   canAdministerAccount: canAdministerAccount,

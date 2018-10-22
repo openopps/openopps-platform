@@ -54,6 +54,14 @@ router.get('/api/admin/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next)
   ctx.body = await service.getAgency(ctx.params.id);
 });
 
+router.get('/api/admin/communities', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getCommunities();
+});
+
+router.get('/api/admin/community/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  ctx.body = await service.getCommunity(ctx.params.id);
+});
+
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   var user = await service.getProfile(ctx.params.id);
   user.isAdmin = ctx.query.action === 'true' ? 't' : 'f';

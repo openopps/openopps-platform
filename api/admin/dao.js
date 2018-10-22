@@ -21,6 +21,15 @@ const agencyTaskStateQuery = 'select ' +
   'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
   'from task where lower(restrict->>\'name\') = ?';
 
+const communityTaskStateQuery = 'select ' +
+  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
+  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
+  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
+  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
+  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
+  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
+  'from task where community_id = ?';
+
 const volunteerQuery = 'select count(*) as count from task where exists (select 1 from volunteer where task.id = volunteer."taskId") ';
 
 const userQuery = 'select ' +
@@ -37,6 +46,14 @@ const agencyUsersQuery = 'select ' +
   'join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'join tagentity tag on tags.tagentity_users = tag.id ' +
   'where tag.type = \'agency\' and tag.id = ?';
+
+const communityUserQuery = 'select ' +
+  'count(*) as "total", ' +
+  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
+  'sum(case when disabled= \'f\' and "is_manager" then 1 else 0 end) as "admins" ' +
+  'from community_user ' +
+  'join midas_user on midas_user.id = user_id ' +
+  'where community_id = ?';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
 
@@ -247,14 +264,18 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
-    AuditLog: dao({ db: db, table: 'audit_log'}),
+    AuditLog: dao({ db: db, table: 'audit_log' }),
+    Community: dao({ db: db, table: 'community' }),
+    CommunityUser: dao({ db: db, table: 'community_user' }),
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
       agencyTaskStateQuery: agencyTaskStateQuery,
+      communityTaskStateQuery: communityTaskStateQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
       agencyUsersQuery: agencyUsersQuery,
+      communityUserQuery: communityUserQuery,
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,

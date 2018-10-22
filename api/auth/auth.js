@@ -50,3 +50,15 @@ module.exports.isAdminOrAgencyAdmin = async (ctx, next) => {
     ctx.state.user.isAdmin || ctx.state.user.isAgencyAdmin ? await next() : ctx.status = 403;
   });
 };
+
+module.exports.isCommunityAdmin = async (ctx, next) => {
+  await baseAuth(ctx, async () => {
+    ctx.state.user.isCommunityAdmin ? await next() : await forbidden(ctx);
+  });
+};
+
+module.exports.isAdminOrCommunityAdmin = async (ctx, next) => {
+  await baseAuth(ctx, async () => {
+    ctx.state.user.isAdmin || ctx.state.user.isCommunityAdmin ? await next() : ctx.status = 403;
+  });
+};

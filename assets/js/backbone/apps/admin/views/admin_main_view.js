@@ -6,17 +6,14 @@ var AdminUserView = require('./admin_user_view');
 var AdminTagView = require('./admin_tag_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
-
 var AdminParticipantsView = require('./admin_participants_view');
 var AdminDashboardView = require('./admin_dashboard_view');
 var AdminCommunityView = require('./admin_community_view');
 var NavSecondaryView = require('./nav_secondary_view');
 
-// templates
 var AdminMainTemplate = require('../templates/admin_main_template.html');
 
 var AdminMainView = Backbone.View.extend({
-
   events: {
     'click .usajobs-nav-secondary__item'  : 'link',
     'click #more-menu'                    : 'moreMenuToggle',
@@ -31,7 +28,7 @@ var AdminMainView = Backbone.View.extend({
     var data = {};
     var template = _.template(AdminMainTemplate)(data);
     this.$el.html(template);
-    this.routeTarget(this.options.action || '', undefined, true);
+    this.routeTarget(this.options.action || '', this.options.agencyId, undefined, true);
     return this;
   },
 
@@ -49,18 +46,34 @@ var AdminMainView = Backbone.View.extend({
               && window.cache.currentUser.agency.id);
   },
 
-  routeTarget: function (target, agencyId, replace) {
+  isCommunityAdmin: function () {
+    return !!(window.cache.currentUser && window.cache.currentUser.isAgencyAdmin);
+  },
+
+  userCommunityId: function () {
+    return (window.cache.currentUser
+              && window.cache.currentUser.agency
+              && window.cache.currentUser.agency.id);
+  },
+
+  routeTarget: function (target, agencyId, communityId, replace) {
     agencyId = agencyId || this.options.agencyId;
+    communityId = communityId || this.options.communityId;
+
     if (!target) {
       target = 'sitewide';
     }
 
     // If agency admin, display My Agency page
-    if (!this.isAdmin() && this.isAgencyAdmin()) {
+    if (target == 'sitewide' && !this.isAdmin() && this.isAgencyAdmin()) {
       this.hideDashboardMenu();
       agencyId = this.userAgencyId();   // restrict access to User agency
       if (target == 'sitewide') target = 'agencies';
+    } else if (target == 'sitewide' && !this.isAdmin && this.isCommunityAdmin()) {
+      this.hideDashboardMenu();
+      if (target == 'sitewide') target = 'communities';
     }
+
     var t = $((this.$('[data-target=' + target + ']'))[0]);
     // remove active classes
     $('.usajobs-nav-secondary__item.is-active').removeClass('is-active');
@@ -93,10 +106,10 @@ var AdminMainView = Backbone.View.extend({
         this.initializeAdminDashboardView();
         this.adminDashboardView.render(replace);
         break;
-      // case 'community':
-      //   this.initializeAdminCommunityView();
-      //   this.adminCommunityView.render(replace);
-      //   break;
+      case 'communities':
+        this.initializeAdminCommunityView(communityId, replace);
+        //this.adminCommunityView.render(replace);
+        break;
       default:
         break;
     }
@@ -185,13 +198,26 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  initializeAdminCommunityView: function () {
-    if (this.adminCommunityView) {
-      this.adminCommunityView.cleanup();
+  initializeAdminCommunityView: function (communityId, replace) {
+    this.adminCommunityView && this.adminCommunityView.cleanup();
+    var callback = function (communities) {
+      this.adminCommunityView = new AdminCommunityView({
+        el: '#admin-communities',
+        communityId: communityId,
+        adminMainView: this,
+        communities: communities,
+      });
+      this.adminCommunityView.render(replace);
+    };
+    if(this.isAdmin()) {
+      $.ajax({
+        url: '/api/admin/communities',
+        dataType: 'json',
+        success: callback.bind(this),
+      });
+    } else {
+      callback();
     }
-    this.adminCommunityView = new AdminCommunityView({
-      el: '#admin-community',
-    });
   },
 
   initializeNavSecondaryView: function () {

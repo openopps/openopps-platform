@@ -2,9 +2,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 
-// templates
 var AdminParticipantsTemplate = require('../templates/admin_participants_template.html');
-
 
 var AdminParticipantsView = Backbone.View.extend({
 
