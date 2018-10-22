@@ -21,7 +21,7 @@ var AdminAgenciesView = Backbone.View.extend({
     this.$el.show();
     this.loadAgencyData();
     $('#search-results-loading').hide();
-    Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
+    Backbone.history.navigate('/admin/agency/' + this.agencyId, { replace: replace });
     return this;
   },
 
@@ -94,7 +94,9 @@ var AdminAgenciesView = Backbone.View.extend({
   },
 
   changeAgency: function (event) {
-    Backbone.history.navigate('/admin/agencies/' + $('#agencies').val(), { trigger: true });
+    if($('#agencies').val()) {
+      Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
+    }
   },
 
   cleanup: function () {

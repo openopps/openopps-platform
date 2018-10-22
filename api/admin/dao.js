@@ -47,7 +47,7 @@ const agencyUsersQuery = 'select ' +
   'join tagentity tag on tags.tagentity_users = tag.id ' +
   'where tag.type = \'agency\' and tag.id = ?';
 
-const communityUserQuery = 'select ' +
+const communityUsersQuery = 'select ' +
   'count(*) as "total", ' +
   'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
   'sum(case when disabled= \'f\' and "is_manager" then 1 else 0 end) as "admins" ' +
@@ -275,7 +275,7 @@ module.exports = function (db) {
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
       agencyUsersQuery: agencyUsersQuery,
-      communityUserQuery: communityUserQuery,
+      communityUsersQuery: communityUsersQuery,
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,

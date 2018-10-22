@@ -20,7 +20,7 @@ var AdminCommunityView = Backbone.View.extend({
     this.$el.show();
     this.loadCommunityData();
     $('#search-results-loading').hide();
-    Backbone.history.navigate('/admin/communities/' + this.communityId, { replace: replace });
+    Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
     return this;
   },
 
@@ -55,7 +55,9 @@ var AdminCommunityView = Backbone.View.extend({
   },
 
   changeCommunity: function (event) {
-    Backbone.history.navigate('/admin/communities/' + $('#communities').val(), { trigger: true });
+    if($('#communities').val()) {
+      Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
+    }
   },
 
   cleanup: function () {

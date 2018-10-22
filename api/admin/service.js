@@ -250,9 +250,9 @@ async function getAgency (id) {
 
 async function getCommunity (id) {
   var community = await dao.Community.findOne('community_id = ?', id);
-  community.tasks = {}; // (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
+  community.tasks = (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
   community.tasks.totalCreated = Object.values(community.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
-  community.users = {}; // (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
+  community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
   return community;
 }
 

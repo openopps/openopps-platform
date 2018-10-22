@@ -37,7 +37,7 @@ var BrowseRouter = Backbone.Router.extend({
     'profile/edit/:id(/)'           : 'editProfile',
     'profile/:action/:key'          : 'resetProfile',
     'admin(/)'                      : 'showAdmin',
-    'admin(/):action(/)(:agencyId)' : 'showAdmin',
+    'admin(/):action(/)(:actionId)(/)'  : 'showAdmin',
     'login(/)'                      : 'showLogin',
     'apply'                         : 'showApply',
     'unauthorized(/)'               : 'showUnauthorized',
@@ -336,16 +336,17 @@ var BrowseRouter = Backbone.Router.extend({
     this.profileShowController = new ProfileShowController({ id: id, data: this.data });
   },
 
-  showAdmin: function (action, agencyId) {
+  showAdmin: function (action, actionId) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?admin', { trigger: true });
     } else {
       this.cleanupChildren();
-      this.adminMainController = new AdminMainController({
+      var options = {
         el: '#container',
         action: action,
-        agencyId: agencyId,
-      });
+      };
+      options[action + 'Id'] = actionId;
+      this.adminMainController = new AdminMainController(options);
     }
   },
 

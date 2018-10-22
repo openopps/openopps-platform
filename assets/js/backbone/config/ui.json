@@ -1,6 +1,6 @@
 {
   "home": {
-    "logged_in_path": "/dashboard"
+    "logged_in_path": "/home"
   },
   "faq" : {
     "show" : false,

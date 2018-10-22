@@ -28,7 +28,7 @@ var AdminMainView = Backbone.View.extend({
     var data = {};
     var template = _.template(AdminMainTemplate)(data);
     this.$el.html(template);
-    this.routeTarget(this.options.action || '', this.options.agencyId, undefined, true);
+    this.routeTarget(this.options.action || '', this.options.agencyId, this.options.communityId, true);
     return this;
   },
 
@@ -47,7 +47,7 @@ var AdminMainView = Backbone.View.extend({
   },
 
   isCommunityAdmin: function () {
-    return !!(window.cache.currentUser && window.cache.currentUser.isAgencyAdmin);
+    return !!(window.cache.currentUser && window.cache.currentUser.isCommunityAdmin);
   },
 
   userCommunityId: function () {
@@ -68,10 +68,10 @@ var AdminMainView = Backbone.View.extend({
     if (target == 'sitewide' && !this.isAdmin() && this.isAgencyAdmin()) {
       this.hideDashboardMenu();
       agencyId = this.userAgencyId();   // restrict access to User agency
-      if (target == 'sitewide') target = 'agencies';
-    } else if (target == 'sitewide' && !this.isAdmin && this.isCommunityAdmin()) {
+      target = 'agency';
+    } else if (target == 'sitewide' && !this.isAdmin() && this.isCommunityAdmin()) {
       this.hideDashboardMenu();
-      if (target == 'sitewide') target = 'communities';
+      target = 'community';
     }
 
     var t = $((this.$('[data-target=' + target + ']'))[0]);
@@ -95,7 +95,7 @@ var AdminMainView = Backbone.View.extend({
         this.initializeAdminTaskView(agencyId);
         this.adminTaskView.render();
         break;
-      case 'agencies':
+      case 'agency':
         this.initializeAdminAgenciesView(agencyId, replace);
         break;
       case 'participants':
@@ -106,7 +106,7 @@ var AdminMainView = Backbone.View.extend({
         this.initializeAdminDashboardView();
         this.adminDashboardView.render(replace);
         break;
-      case 'communities':
+      case 'community':
         this.initializeAdminCommunityView(communityId, replace);
         //this.adminCommunityView.render(replace);
         break;
@@ -209,7 +209,7 @@ var AdminMainView = Backbone.View.extend({
       });
       this.adminCommunityView.render(replace);
     };
-    if(this.isAdmin()) {
+    if(this.isAdmin() || this.isCommunityAdmin()) {
       $.ajax({
         url: '/api/admin/communities',
         dataType: 'json',

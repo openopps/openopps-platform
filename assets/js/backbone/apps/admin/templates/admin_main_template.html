@@ -11,14 +11,16 @@
             </a>
           </li>
           <% } %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin)) { %>
           <li class="usajobs-nav-secondary__container">
-            <a class="usajobs-nav-secondary__item" href="/admin/agencies" data-target="agencies">
+            <a class="usajobs-nav-secondary__item" href="/admin/agency" data-target="agency">
               Agency
             </a>
           </li>
-          <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+          <% } %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isCommunityAdmin)) { %>
           <li class="usajobs-nav-secondary__container">
-            <a class="usajobs-nav-secondary__item" href="/admin/communities" data-target="communities">
+            <a class="usajobs-nav-secondary__item" href="/admin/community" data-target="community">
               Community
             </a>
           </li>
