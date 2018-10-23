@@ -19,10 +19,8 @@ var AdminTaskView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
-    this.target = 'Sitewide';
-    this.agency = {
-      name: 'Sitewide',
-    };
+    this.agency = {};
+    this.community = {};
     this.baseModal = {
       el: '#site-modal',
       secondary: {
@@ -35,26 +33,35 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   render: function () {
-    var url = '/admin/tasks';
-    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
-    Backbone.history.navigate(url);
+    $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
 
-    if (this.options.agencyId) this.target = 'Agencies';
-    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
+    if (this.options.target !== 'sitewide') {
+      this.loadTargetData();
+    } else {
+      this.loadData();
+    }
+    return this;
+  },
 
-    if (this.options.agencyId) {
-      // get meta data for agency
-      $.ajax({
-        url: '/api/admin/agency/' + this.options.agencyId,
-        dataType: 'json',
-        success: function (agencyInfo) {
-          this.agency = agencyInfo;
-        }.bind(this),
-      });
-    } 
-
+  loadTargetData: function () {
     $.ajax({
-      url: '/api' + url,
+      url: '/api/admin/' + this.options.target + '/' + this.options.targetId,
+      dataType: 'json',
+      success: function (targetInfo) {
+        this[this.options.target] = targetInfo;
+        this.loadData();
+      }.bind(this),
+    });
+  },
+
+  loadData: function () {
+    var url = '/api/admin';
+    if (this.options.target !== 'sitewide') {
+      url += '/' + this.options.target + '/' + this.options.targetId;
+    }
+    url += '/tasks';
+    $.ajax({
+      url: url,
       data: this.data,
       dataType: 'json',
       success: function (data) {
@@ -66,6 +73,9 @@ var AdminTaskView = Backbone.View.extend({
         this.$el.show();
         this.renderTasks(this.tasks);
       }.bind(this),
+      error: function () {
+        $('#search-results-loading').hide();
+      },
     });
     return this;
   },
