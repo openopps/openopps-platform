@@ -24,7 +24,9 @@ Admin.ShowController = BaseController.extend({
 
     this.adminMainView = new AdminMainView({
       action: options.action,
+      subAction: options.subAction,
       agencyId: options.agencyId,
+      communityId: options.communityId,
       el: this.el,
     }).render();
   },

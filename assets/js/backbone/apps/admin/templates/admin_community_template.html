@@ -19,7 +19,7 @@
 </div>
 <div class="usajobs-grid-full">
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-user"></i><span class="box-icon-text">Members <a href="/admin/users/<%=community.communityId %>" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Members <a href="/admin/community/<%=community.communityId %>/users" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total users: <%- numeral(community.users.total).format('0,0') %></li>
       <li>Active users: <%- numeral(community.users.active).format('0,0') %></li>
@@ -27,7 +27,7 @@
     </ul>
   </div>
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks/<%=community.communityId %>" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- numeral(community.tasks.totalCreated).format('0,0') %></li>
       <li>Submitted: <%- numeral(community.tasks.submitted).format('0,0') %></li>
