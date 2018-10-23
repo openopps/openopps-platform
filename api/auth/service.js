@@ -13,6 +13,7 @@ const Audit = require('../model/Audit');
 const baseUser = {
   isAdmin: false,
   isAgencyAdmin: false,
+  isCommunityAdmin: false,
   disabled: false,
   passwordAttempts: 0,
   completedTasks: 0,

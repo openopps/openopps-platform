@@ -23,27 +23,27 @@ var Modal = require('./components/modal');
 var BrowseRouter = Backbone.Router.extend({
 
   routes: {
-    ''                              : 'showLanding',
-    'home'                          : 'showHome',
-    'tasks/new(?*queryString)'      : 'newTask',
-    'tasks(/)(?:queryStr)'          : 'listTasks',
-    'tasks/:id(/)'                  : 'showTask',
-    'tasks/:id/:action(/)'          : 'showTask',
-    'profiles(/)(?:queryStr)'       : 'listProfiles',
-    'profile/find(/)'               : 'findProfile',
-    'profile/link(/)'               : 'linkProfile',
-    'profile/:id(/)'                : 'showProfile',
-    'profile/edit/skills/:id(/)'    : 'editSkills',
-    'profile/edit/:id(/)'           : 'editProfile',
-    'profile/:action/:key'          : 'resetProfile',
-    'admin(/)'                      : 'showAdmin',
-    'admin(/):action(/)(:agencyId)' : 'showAdmin',
-    'login(/)'                      : 'showLogin',
-    'apply'                         : 'showApply',
-    'unauthorized(/)'               : 'showUnauthorized',
-    'expired(/)'                    : 'showExpired',
-    'logout'                        : 'logout',
-    'loggedOut'                     : 'showLogout',
+    ''                                              : 'showLanding',
+    'home'                                          : 'showHome',
+    'tasks/new(?*queryString)'                      : 'newTask',
+    'tasks(/)(?:queryStr)'                          : 'listTasks',
+    'tasks/:id(/)'                                  : 'showTask',
+    'tasks/:id/:action(/)'                          : 'showTask',
+    'profiles(/)(?:queryStr)'                       : 'listProfiles',
+    'profile/find(/)'                               : 'findProfile',
+    'profile/link(/)'                               : 'linkProfile',
+    'profile/:id(/)'                                : 'showProfile',
+    'profile/edit/skills/:id(/)'                    : 'editSkills',
+    'profile/edit/:id(/)'                           : 'editProfile',
+    'profile/:action/:key'                          : 'resetProfile',
+    'admin(/)'                                      : 'showAdmin',
+    'admin(/):action(/)(:actionId)(/)(:subAction)'  : 'showAdmin',
+    'login(/)'                                      : 'showLogin',
+    'apply'                                         : 'showApply',
+    'unauthorized(/)'                               : 'showUnauthorized',
+    'expired(/)'                                    : 'showExpired',
+    'logout'                                        : 'logout',
+    'loggedOut'                                     : 'showLogout',
   },
 
   data: { saved: false },
@@ -336,16 +336,18 @@ var BrowseRouter = Backbone.Router.extend({
     this.profileShowController = new ProfileShowController({ id: id, data: this.data });
   },
 
-  showAdmin: function (action, agencyId) {
+  showAdmin: function (action, actionId, subAction) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?admin', { trigger: true });
     } else {
       this.cleanupChildren();
-      this.adminMainController = new AdminMainController({
+      var options = {
         el: '#container',
         action: action,
-        agencyId: agencyId,
-      });
+        subAction: subAction,
+      };
+      options[action + 'Id'] = actionId;
+      this.adminMainController = new AdminMainController(options);
     }
   },
 

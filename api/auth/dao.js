@@ -40,6 +40,7 @@ module.exports = function (db) {
     AuditLog: dao({ db: db, table: 'audit_log'}),
     AccountStaging: dao({ db: db, table: 'account_staging'}),
     Badge: dao({ db: db, table: 'badge'}),
+    CommunityUser: dao({ db: db, table: 'community_user' }),
     Passport: dao({ db: db, table: 'passport' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
     User: dao({ db: db, table: 'midas_user' }),

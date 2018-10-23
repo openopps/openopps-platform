@@ -20,11 +20,13 @@ Admin.ShowController = BaseController.extend({
 
   // Initialize the admin view
   initialize: function (options) {
-    this.options    = options; 
+    this.options = options; 
 
     this.adminMainView = new AdminMainView({
       action: options.action,
+      subAction: options.subAction,
       agencyId: options.agencyId,
+      communityId: options.communityId,
       el: this.el,
     }).render();
   },

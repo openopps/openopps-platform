@@ -54,6 +54,26 @@ router.get('/api/admin/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next)
   ctx.body = await service.getAgency(ctx.params.id);
 });
 
+router.get('/api/admin/agency/:id/users', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  if (!ctx.query.q) {
+    ctx.body = await service.getUsersForAgency(ctx.query.page, ctx.query.limit, ctx.params.id);
+  } else {
+    ctx.body = await service.getUsersForAgencyFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
+  }
+});
+
+router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  ctx.body = await service.getAgencyTaskStateMetrics(ctx.params.id);
+});
+
+router.get('/api/admin/communities', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+  ctx.body = await service.getCommunities();
+});
+
+router.get('/api/admin/community/:id', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+  ctx.body = await service.getCommunity(ctx.params.id);
+});
+
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   var user = await service.getProfile(ctx.params.id);
   user.isAdmin = ctx.query.action === 'true' ? 't' : 'f';
@@ -88,18 +108,6 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
   } else {
     ctx.status = 403;
   }
-});
-
-router.get('/api/admin/users/*', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  if (!ctx.query.q) {
-    ctx.body = await service.getUsersForAgency(ctx.query.page, ctx.query.limit, ctx.params[0]);
-  } else {
-    ctx.body = await service.getUsersForAgencyFiltered(ctx.query.page || 1, ctx.query.q, ctx.params[0]);
-  }
-});
-
-router.get('/api/admin/tasks/*', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  ctx.body = await service.getAgencyTaskStateMetrics(ctx.params[0]);
 });
 
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {

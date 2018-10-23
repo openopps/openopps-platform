@@ -6,14 +6,12 @@ var ModalComponent = require('../../../components/modal');
 var LoginConfig = require('../../../config/login.json');
 var marked = require('marked');
 
-// templates
 var AdminDashboardTemplate = require('../templates/admin_dashboard_template.html');
 var AdminSummaryTemplate = require('../templates/admin_summary_template.html');
 var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.html');
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
 
 var AdminAnnouncementView = require('./admin_announcement_view');
-
 var AdminDashboardView = Backbone.View.extend({
 
   events: {
@@ -42,7 +40,6 @@ var AdminDashboardView = Backbone.View.extend({
     var template = _.template(AdminDashboardTemplate)(data);
     this.$el.html(template);
     this.rendered = true;
-    // fetch data
     this.fetchData(self, this.data);
     return this;
   },
@@ -93,13 +90,11 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.activity-block').html(template);
     _(data).forEach(function (activity) {
 
-      // If activity is missing data, skip it
       if (!activity || !activity.user ||
         (activity.type === 'newVolunteer' && !activity.task) ||
         (activity.comment && typeof activity.comment.value === 'undefined')
       ) return;
 
-      // Render markdown
       if (activity.comment) {
         var value = activity.comment.value;
 
@@ -111,7 +106,7 @@ var AdminDashboardView = Backbone.View.extend({
 
         activity.comment.value = value;
       }
-      // Format timestamp
+
       activity.createdAtFormatted = $.timeago(activity.createdAt);
       var template = self.$('#' + activity.type).text(),
           content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
@@ -119,7 +114,6 @@ var AdminDashboardView = Backbone.View.extend({
     });
 
     this.$el.localize();
-    // hide spinner and show results
     self.$('.spinner').hide();
     self.$('.activity-block').show();
     self.renderTasks(self, this.data);
