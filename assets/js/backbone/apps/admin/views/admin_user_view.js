@@ -27,35 +27,28 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
-    this.target = (this.options.agencyId ? 'Agencies' : 'Sitewide');
-    this.agency = {
-      name: 'Sitewide',
-    };
+    this.agency = {};
+    this.community = {};
   },
 
   render: function () {
-    Backbone.history.navigate('/admin/users' + (this.options.agencyId ? '/' + this.options.agencyId : ''));
     this.$el.show();
-    if (this.rendered === true) {
-      return this;
-    }
+    $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
 
-    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
-
-    if (this.options.agencyId) {
-      this.loadAgencyData();
+    if (this.options.target !== 'sitewide') {
+      this.loadTargetData();
     } else {
       this.loadData();
     }
     return this;
   },
 
-  loadAgencyData: function () {
+  loadTargetData: function () {
     $.ajax({
-      url: '/api/admin/agency/' + this.options.agencyId,
+      url: '/api/admin/' + this.options.target + '/' + this.options.targetId,
       dataType: 'json',
-      success: function (agencyInfo) {
-        this.agency = agencyInfo;
+      success: function (targetInfo) {
+        this[this.options.target] = targetInfo;
         this.loadData();
       }.bind(this),
     });
@@ -66,6 +59,7 @@ var AdminUserView = Backbone.View.extend({
       user: window.cache.currentUser,
       login: LoginConfig,
       agency: this.agency,
+      community: this.community,
     };
 
     var template = _.template(AdminUserTemplate)(data);
@@ -154,8 +148,11 @@ var AdminUserView = Backbone.View.extend({
 
   fetchData: function (data) {
     // perform the ajax request to fetch the user list
-    var url = '/api/admin/users';
-    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
+    var url = '/api/admin';
+    if (this.options.target !== 'sitewide') {
+      url += '/' + this.options.target + '/' + this.options.targetId;
+    }
+    url += '/users';
 
     $.ajax({
       url: url,
