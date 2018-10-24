@@ -19,6 +19,7 @@ var AdminCommunityView = Backbone.View.extend({
   render: function (replace) {
     this.$el.show();
     this.loadCommunityData();
+    //this.loadInteractionsData();
     $('#search-results-loading').hide();
     Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
     return this;
@@ -30,15 +31,31 @@ var AdminCommunityView = Backbone.View.extend({
       url: '/api/admin/community/' + this.communityId,
       dataType: 'json',
       success: function (communityInfo) {
-        var template = _.template(AdminCommunityTemplate)({
-          community: communityInfo,
-          communities: this.options.communities,
-        });
-        this.$el.html(template);
-        if(this.options.communities) {
-          this.initializeCommunitySelect();
-        }
+        this.loadInteractionsData(function (interactions) {
+          communityInfo.interactions = interactions;
+          var template = _.template(AdminCommunityTemplate)({
+            community: communityInfo,
+            communities: this.options.communities,
+          });
+          this.$el.html(template);
+          if(this.options.communities) {
+            this.initializeCommunitySelect();
+          }
+        }.bind(this));
       }.bind(this),
+    });
+  },
+  
+  loadInteractionsData: function (callback) {
+    $.ajax({
+      url: '/api/admin/community/interactions/' + this.communityId,
+      dataType: 'json',
+      success: function (interactions) {
+        interactions.count = _(interactions).reduce(function (sum, value, key) {
+          return sum + value;
+        }, 0);
+        callback(interactions);
+      },
     });
   },
 

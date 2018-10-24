@@ -74,6 +74,10 @@ router.get('/api/admin/community/:id', auth.isAdminOrCommunityAdmin, async (ctx,
   ctx.body = await service.getCommunity(ctx.params.id);
 });
 
+router.get('/api/admin/community/interactions/:id', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
+});
+
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   var user = await service.getProfile(ctx.params.id);
   user.isAdmin = ctx.query.action === 'true' ? 't' : 'f';
