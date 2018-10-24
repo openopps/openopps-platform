@@ -21,7 +21,6 @@
   <div class="usa-width-one-third">
     <h3><i class="fa fa-user"></i><span class="box-icon-text">Members <a href="/admin/community/<%=community.communityId %>/users" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
-      <li>Total users: <%- numeral(community.users.total).format('0,0') %></li>
       <li>Active users: <%- numeral(community.users.active).format('0,0') %></li>
       <li>Admins: <%- numeral(community.users.admins).format('0,0') %></li>
     </ul>
