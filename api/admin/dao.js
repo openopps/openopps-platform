@@ -55,17 +55,30 @@ const communityUsersQuery = 'select ' +
   'join midas_user on midas_user.id = user_id ' +
   'where community_id = ?';
 
+const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
+
 const withTasksQuery = 'select count(distinct "userId") from task ';
 
 const taskHistoryQuery = 'select "assignedAt", "completedAt", "createdAt", "publishedAt", "submittedAt" from task' ;
 
 const postQuery = 'select count(*) from comment ';
 
+const communityPostQuery = 'select count(*) from comment ' +
+'join task on comment."taskId" = task.id ' +
+'where task.community_id = ?';
+
 const volunteerCountQuery = 'select ' +
     'count(*) as signups, ' +
     'sum(case when assigned then 1 else 0 end) as assignments, ' +
     'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer';
+
+const communityVolunteerCountQuery = 'select ' +
+  'count(*) as signups, ' +
+  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer join task on task.id = volunteer."taskId" ' +
+  'where task.community_id = ?';
 
 const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
@@ -279,7 +292,9 @@ module.exports = function (db) {
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,
+      communityPostQuery: communityPostQuery,
       volunteerCountQuery: volunteerCountQuery,
+      communityVolunteerCountQuery: communityVolunteerCountQuery,
       userListQuery: userListQuery,
       ownerListQuery: ownerListQuery,
       userAgencyListQuery: userAgencyListQuery,

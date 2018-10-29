@@ -129,6 +129,18 @@ async function getInteractions () {
   return interactions;
 }
 
+async function getInteractionsForCommunity (communityId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.communityPostQuery, communityId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.communityVolunteerCountQuery, communityId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+}
+
 async function getUsers (page, limit) {
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
@@ -414,6 +426,7 @@ module.exports = {
   getAgencyTaskStateMetrics: getAgencyTaskStateMetrics,
   getAgency: getAgency,
   getCommunity: getCommunity,
+  getInteractionsForCommunity: getInteractionsForCommunity,
   getDashboardTaskMetrics: getDashboardTaskMetrics,
   getActivities: getActivities,
   canAdministerAccount: canAdministerAccount,
