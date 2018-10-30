@@ -65,3 +65,5 @@ module.exports = {
     }
   },
 };
+
+module.exports.import(process.argv[2]);
