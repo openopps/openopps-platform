@@ -9,6 +9,7 @@ var LoginConfig = require('../../../config/login.json');
 
 // templates
 var AdminUserTemplate = require('../templates/admin_user_template.html');
+var AdminCommunityUserTable = require('../templates/admin_community_user_table.html');
 var AdminUserTable = require('../templates/admin_user_table.html');
 var Paginate = require('../templates/admin_paginate.html');
 
@@ -60,6 +61,7 @@ var AdminUserView = Backbone.View.extend({
       login: LoginConfig,
       agency: this.agency,
       community: this.community,
+      target: this.options.target,
     };
 
     var template = _.template(AdminUserTemplate)(data);
@@ -67,7 +69,7 @@ var AdminUserView = Backbone.View.extend({
     this.rendered = true;
     // fetch user data
     this.fetchData(this.data);
-    this.data.target = this.target;
+    this.data.target = this.options.target;
     $('#search-results-loading').hide();
   },
 
@@ -86,7 +88,13 @@ var AdminUserView = Backbone.View.extend({
     data.isAdministrator = this.isAdministrator;
 
     // render the table
-    var template = _.template(AdminUserTable)(data);
+    var template;
+    if (this.options.target === 'community') {
+      template = _.template(AdminCommunityUserTable)(data);
+    }  else {
+      template = _.template(AdminUserTable)(data);
+    } 
+
     // render the pagination
     this.renderPagination(data);
     this.$('#filter-count').html(data.users.length);

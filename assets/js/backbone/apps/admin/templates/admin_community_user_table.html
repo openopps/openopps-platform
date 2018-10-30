@@ -1,0 +1,60 @@
+<% if(countOf) { %>
+  <h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> active members</h4>
+<% } %>
+<table class="usa-table-borderless user-table" role="presentation">
+  <thead>
+    <tr>
+      <th class="admin-user-id">User #</th>
+      <th class="admin-table-name">Name</th>
+      <th>Email</th>
+      <th>Agency</th>
+      <th>Joined date</th>
+      <th>Community<br/>opportunity</th>
+      <% if (user.isAdmin || user.isCommunityAdmin) { %>
+        <th class="admin-user-checkbox"><%= target === 'Communities' ? 'Community' : target %><br /> Admin</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (users.length === 0) { %>
+      <tr class="empty-row">
+        <td colspan="10">
+          No users found.
+        </td>
+      </tr>
+    <% } %>
+    <% _.each(users, function (u) { %>
+      <tr data-id="<%- u.id %>"
+          data-user-name="<%- u.name %>"
+          data-admin="<%- u.isAdmin %>"
+          data-agency-admin="<%- u.isCommunityAdmin %>">
+        <td>
+          <%- u.id %>
+        </td>
+        <td class="admin-table-name">
+          <%- u.name %>
+        </td>
+        <td class="admin-table-username">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+        </td>
+        <td>
+          <%- u.agency %>
+        </td>
+        <td class="admin-table-joineddate">
+          <%- moment(u.joined_at).format('MM/DD/YYYY hh:mma') %>
+        </td>
+       <td>
+          Created: 3 <br/>
+          Participated: 0
+       </td>
+        <td>
+          <% if (user.isAdmin || (user.isCommunityAdmin && !u.isAdmin)) { %>
+            <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
+            <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
