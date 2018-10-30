@@ -4,14 +4,20 @@ const log = require('log')('app:passport');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
-const path = require('path');
-const uuid = require('uuid');
 const _ = require('lodash');
-const Audit = require('../model/Audit');
+const request = require('request');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
   passwordField: 'password',
+};
+
+const requestOptions = {
+  url: openopps.auth.profileURL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 };
 
 function validatePassword (password, hash) {
@@ -38,18 +44,32 @@ async function fetchPassport (user, protocol) {
   return (await dao.Passport.find('"user" = ? and protocol = ? and "deletedAt" is null', user, protocol))[0];
 }
 
+function syncProfile (user, tokenset, callback) {
+  requestOptions.auth = { 'bearer': tokenset.access_token };
+  request(requestOptions, async (err, res) => {
+    console.log(res.body);
+    if(err || res.statusCode !== 200) {
+      callback({ message: 'Error getting user profile.' });
+    } else {
+      var profile = JSON.parse(res.body);
+      user.name = _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' ');
+      if (tokenset.claims) {
+        user.linkedId = tokenset.claims.sub;
+        user.governmentUri = tokenset.claims['usaj:governmentURI'];
+      }
+      await dao.User.update(user);
+      user.access_token = tokenset.access_token,
+      user.id_token = tokenset.id_token,
+      callback(null, user);
+    }
+  });
+}
+
 async function userFound (user, tokenset, done) {
   if(user.disabled) {
     done({ message: 'Not authorized' });
   } else {
-    if(!user.linkedId || user.governmentUri != tokenset.claims['usaj:governmentURI']) {
-      user.linkedId = tokenset.claims.sub;
-      user.governmentUri = tokenset.claims['usaj:governmentURI'];
-      await dao.User.update(user);
-    }
-    user.access_token = tokenset.access_token,
-    user.id_token = tokenset.id_token,
-    done(null, user);
+    syncProfile(user, tokenset, done);
   }
 }
 
@@ -118,7 +138,7 @@ if(openopps.auth.oidc) {
     client: openopps.auth.oidc,
     params: {
       redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
-      scope: 'openid profile email phone address',
+      scope: 'openid profile email phone address opendataread',
     },
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
