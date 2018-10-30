@@ -66,6 +66,10 @@ router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx,
   ctx.body = await service.getAgencyTaskStateMetrics(ctx.params.id);
 });
 
+router.get('/api/admin/community/:id/tasks', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+  ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
+});
+
 router.get('/api/admin/communities', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
   ctx.body = await service.getCommunities();
 });
@@ -113,6 +117,21 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getOwnerOptions(ctx.params.taskId, function (results, err) {
+      if (err) {
+        ctx.status = 400;
+        ctx.body = err;
+      } else {
+        ctx.status = 200;
+        ctx.body = results;
+      }
+    });
+  } else {
+    ctx.status = 403;
+  }
+});
+router.get('/api/admin/community/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
+    await service.getCommunityOwnerOptions(ctx.params.taskId, function (results, err) {
       if (err) {
         ctx.status = 400;
         ctx.body = err;

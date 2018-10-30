@@ -67,6 +67,7 @@ var AdminTaskView = Backbone.View.extend({
       success: function (data) {
         this.tasks = data;
         data.agency = this.agency;
+        data.community= this.community;
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
