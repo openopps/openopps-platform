@@ -14,6 +14,21 @@ async function getMetrics () {
   return { 'tasks': tasks, 'users': users };
 }
 
+
+async function getCommunityTaskStateMetrics (communityId){
+  var states = {};
+  
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId,dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId , dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
+  return states;
+}
+
+
 async function getTaskStateMetrics () {
   var states = {};
   states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", dao.options.task));
@@ -332,7 +347,17 @@ async function getOwnerOptions (taskId, done) {
     return undefined;
   });
   if (task) {
-    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));
+    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));   
+  } else {
+    done(undefined, 'Unable to locate specified task');
+  }
+}
+async function getCommunityOwnerOptions (taskId, done) {
+  var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
+    return undefined;
+  });
+  if (task) {
+    done(await dao.User.query(dao.query.ownerCommunityListQuery));  
   } else {
     done(undefined, 'Unable to locate specified task');
   }
@@ -432,7 +457,9 @@ module.exports = {
   canAdministerAccount: canAdministerAccount,
   canChangeOwner: canChangeOwner,
   getOwnerOptions: getOwnerOptions,
+  getCommunityOwnerOptions:getCommunityOwnerOptions,
   changeOwner: changeOwner,
   assignParticipant: assignParticipant,
   createAuditLog: createAuditLog,
+  getCommunityTaskStateMetrics:getCommunityTaskStateMetrics,
 };

@@ -55,6 +55,12 @@ const communityUsersQuery = 'select ' +
   'join midas_user on midas_user.id = user_id ' +
   'where community_id = ?';
 
+const taskCommunityStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
+  'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
+  'left join volunteer on volunteer."taskId" = task.id ' +
+  'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
+  'where community_id= ? and ';
+
 const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
@@ -98,6 +104,10 @@ const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count 
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
+
+const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
+'from midas_user inner join community_user on midas_user.id= community_user.user_Id ' ;
+ 
 
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
@@ -312,6 +322,8 @@ module.exports = function (db) {
       taskMetricsQuery: taskMetricsQuery,
       volunteerDetailsQuery: volunteerDetailsQuery,
       userAgencyQuery: userAgencyQuery,
+      taskCommunityStateUserQuery:taskCommunityStateUserQuery,
+      ownerCommunityListQuery:ownerCommunityListQuery,
     },
     clean: clean,
     options: options,
