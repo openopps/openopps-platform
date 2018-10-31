@@ -82,6 +82,14 @@ router.get('/api/admin/community/interactions/:id', auth.isAdmin, async (ctx, ne
   ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
 });
 
+router.get('/api/admin/community/:id/users', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+  if (!ctx.query.q) {
+    ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.limit, ctx.params.id);
+  } else {
+    ctx.body = await service.getUsersForCommunityFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
+  }
+});
+
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   var user = await service.getProfile(ctx.params.id);
   user.isAdmin = ctx.query.action === 'true' ? 't' : 'f';
