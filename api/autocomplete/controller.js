@@ -15,4 +15,9 @@ router.get('/api/ac/user', async (ctx, next) => {
   ctx.body = await service.userByName(ctx.query.q);
 });
 
+router.get('/api/ac/agency', async (ctx, next) => {
+  log.info('ctx.query', ctx.query);
+  ctx.body = await service.agency(ctx.query.q);
+});
+
 module.exports = router.routes();

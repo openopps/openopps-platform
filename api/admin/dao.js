@@ -42,10 +42,7 @@ const agencyUsersQuery = 'select ' +
   'count(*) as "total", ' +
   'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
   'sum(case when "isAgencyAdmin" then 1 else 0 end) as "admins" ' +
-  'from midas_user ' + 
-  'join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'join tagentity tag on tags.tagentity_users = tag.id ' +
-  'where tag.type = \'agency\' and tag.id = ?';
+  'from midas_user where agency_id = ?';
 
 const communityUsersQuery = 'select ' +
   'count(*) as "total", ' +
@@ -106,9 +103,7 @@ const ownerListQuery = 'select midas_user.id, midas_user.name ' +
 "where midas_user.disabled = false and tag.type = 'agency' and tag.name = ?";
 
 const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count ' +
-  'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where tag.type = 'agency' and lower(tag.name) = ? " +
+  'from midas_user where agency_id = ?' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -133,9 +128,8 @@ const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_coun
   'offset ((? - 1) * 25) ';
 
 const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
-  'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(tag.name) = ? " +
+  'from midas_user ' +
+  'where (lower(username) like ? or lower(midas_user.name) like ?) and agency_id = ? ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -306,6 +300,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency' }),
     User: dao({ db: db, table: 'midas_user' }),
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),

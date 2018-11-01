@@ -16,13 +16,17 @@ router.get('/api/user/all', auth, async (ctx, next) => {
 
 router.get('/api/user', async (ctx, next) => {
   if(ctx.state.user) {
-    var tokenSet = {
-      access_token: ctx.state.user.access_token,
-      id_token: ctx.state.user.id_token,
-    };
-    await syncProfile(ctx.state.user, tokenSet, (err, user) => {
-      ctx.body = (err ? null : user);
-    });
+    if(openopps.auth.loginGov.enabled) {
+      var tokenSet = {
+        access_token: ctx.state.user.access_token,
+        id_token: ctx.state.user.id_token,
+      };
+      await syncProfile(ctx.state.user, tokenSet, (err, user) => {
+        ctx.body = (err ? null : user);
+      });
+    } else {
+      ctx.body = ctx.state.user;
+    }
   } else {
     ctx.body = null;
   }

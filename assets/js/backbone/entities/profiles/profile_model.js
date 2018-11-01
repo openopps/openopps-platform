@@ -75,14 +75,7 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
-    this.listenTo(this, 'profile:save', function (form) {
-      var data = {
-        name: form.name,
-        username: form.username,
-        title: form.title,
-        bio: form.bio,
-        tags: form.tags,
-      };
+    this.listenTo(this, 'profile:save', function (data) {
       _this.save(data, {
         success: function (data) {
           _this.trigger('profile:save:success', data);

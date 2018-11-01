@@ -110,6 +110,7 @@ async function updateProfile (attributes, done) {
         await processUserTags(user, tags).then(tags => {
           user.tags = tags;
         });
+        user.agency = await dao.Agency.findOne('agency_id = ?', user.agencyId).catch(() => { return undefined; });
         return done(null, user);
       }).catch (err => { return done({'message':'Error updating profile.'}); });
   }).catch (err => { return done({'message':'Error updating profile.'}); });

@@ -61,10 +61,12 @@ function filterPeople ( term, person ) {
   var title = person.title ? person.title.toLowerCase() : '';
   var location = person.location ? person.location.name.toLowerCase() : '';
   var agency = person.agency ? person.agency.name.toLowerCase() : '';
+  var abbreviation = person.agency && person.agency.abbr ? person.agency.abbr.toLowerCase() : '';
   return (name.indexOf(term.toLowerCase()) > -1) ||
     (title.indexOf(term.toLowerCase()) > -1) ||
     (location.indexOf(term.toLowerCase()) > -1) ||
-    (agency.indexOf(term.toLowerCase()) > -1);
+    (agency.indexOf(term.toLowerCase()) > -1) ||
+    (abbreviation.indexOf(term.toLowerCase()) > -1);
 }
 
 module.exports = PeopleListView;
