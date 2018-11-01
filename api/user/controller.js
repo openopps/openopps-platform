@@ -6,6 +6,7 @@ const auth = require('../auth/auth');
 const service = require('./service');
 const documentService = require('../document/service');
 const validGovtEmail = require('../model').ValidGovtEmail;
+const syncProfile = require('../auth/syncProfile');
 
 var router = new Router();
 
@@ -14,7 +15,17 @@ router.get('/api/user/all', auth, async (ctx, next) => {
 });
 
 router.get('/api/user', async (ctx, next) => {
-  ctx.body = ctx.state.user;
+  if(ctx.state.user) {
+    var tokenSet = {
+      access_token: ctx.state.user.access_token,
+      id_token: ctx.state.user.id_token,
+    };
+    await syncProfile(ctx.state.user, tokenSet, (err, user) => {
+      ctx.body = (err ? null : user);
+    });
+  } else {
+    ctx.body = null;
+  }
 });
 
 router.get('/api/user/:id', auth, async (ctx, next) => {

@@ -282,9 +282,9 @@
     "old_name": "Department of Defense (DOD)"
   },
   {
-    "code": "AG03",
+    "code": "AGCR",
     "parent_code": "AG",
-    "name": "Agricultural Research Service",
-    "old_name": "USDA ARS National Agricultural Library (NAL)"
+    "name": "Civil Rights",
+    "old_name": "USDA Office of the Assistant Secretary for Civil Rights (OASCR)"
   }
 ]

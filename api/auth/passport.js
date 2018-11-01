@@ -5,19 +5,10 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
-const request = require('request');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
   passwordField: 'password',
-};
-
-const requestOptions = {
-  url: openopps.auth.profileURL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
 };
 
 function validatePassword (password, hash) {
@@ -44,32 +35,13 @@ async function fetchPassport (user, protocol) {
   return (await dao.Passport.find('"user" = ? and protocol = ? and "deletedAt" is null', user, protocol))[0];
 }
 
-function syncProfile (user, tokenset, callback) {
-  requestOptions.auth = { 'bearer': tokenset.access_token };
-  request(requestOptions, async (err, res) => {
-    console.log(res.body);
-    if(err || res.statusCode !== 200) {
-      callback({ message: 'Error getting user profile.' });
-    } else {
-      var profile = JSON.parse(res.body);
-      user.name = _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' ');
-      if (tokenset.claims) {
-        user.linkedId = tokenset.claims.sub;
-        user.governmentUri = tokenset.claims['usaj:governmentURI'];
-      }
-      await dao.User.update(user);
-      user.access_token = tokenset.access_token,
-      user.id_token = tokenset.id_token,
-      callback(null, user);
-    }
-  });
-}
-
 async function userFound (user, tokenset, done) {
   if(user.disabled) {
     done({ message: 'Not authorized' });
   } else {
-    syncProfile(user, tokenset, done);
+    user.access_token = tokenset.access_token,
+    user.id_token = tokenset.id_token,
+    done(null, user);
   }
 }
 

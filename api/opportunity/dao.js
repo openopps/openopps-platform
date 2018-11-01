@@ -18,8 +18,7 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
 
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
-  'left join tagentity_users__user_tags user_tags on user_tags.user_tags = midas_user.id ' +
-  'left join @tagentity agency on agency.id = user_tags.tagentity_users and agency.type = \'agency\' ' +
+  'left join @agency on agency.agency_id = midas_user.agency_id  ' +
   'where midas_user.id = ? ';
 
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
@@ -215,12 +214,11 @@ const options = {
   },
   user: {
     fetch: {
-      agency: [],
+      agency: '',
     },
     exclude: {
       midas_user: [ 'deletedAt', 'passwordAttempts', 'isAdmin', 'isAgencyAdmin', 'disabled', 'bio',
         'createdAt', 'title', 'updatedAt' ],
-      agency: [ 'deletedAt' ],
     },
   },
   comment: {
@@ -255,7 +253,7 @@ const clean = {
   },
   user: function (record) {
     var cleaned = _.pickBy(record, _.identity);
-    cleaned.agency = _.find(_.pickBy(cleaned.agency, _.identity), { 'type': 'agency' });
+    cleaned.agency = _.pickBy(cleaned.agency, _.identity);
     if (typeof cleaned.agency == 'undefined') {
       delete(cleaned.agency);
     }
@@ -272,6 +270,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency'}),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user' }),
     TaskTags: dao({ db: db, table: 'tagentity_tasks__task_tags' }),

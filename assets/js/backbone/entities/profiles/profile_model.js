@@ -14,7 +14,7 @@ var ProfileModel = Backbone.Model.extend({
   parse: function (res, options) {
     // Remove falsy values (db returns null instead of undefined)
     _(res).each(function (v, k, o) { if (!v) delete o[k]; });
-    res.agency = _(res.tags).findWhere({ type: 'agency' });
+    //res.agency = _(res.tags).findWhere({ type: 'agency' });
     res.location = _(res.tags).findWhere({ type: 'location' });
     return res;
   },

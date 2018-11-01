@@ -25,26 +25,6 @@ var User = function () {
     }
   }
 
-  _createClass(User, [{
-    key: 'agency',
-    get: function get () {
-      var agencyTag = _(this.tags).findWhere({ type: 'agency' });
-
-      if (!agencyTag) agencyTag = {};
-
-      // ideally this would be its own object
-      return {
-        id: agencyTag.id,
-        name: agencyTag.name,
-        abbr: agencyTag.data ? agencyTag.data.abbr : '',
-        parentAbbr: agencyTag.data ? agencyTag.data.parentAbbr : undefined,
-        domain: agencyTag.data ? _.isArray(agencyTag.data.domain) ? agencyTag.data.domain[0] : agencyTag.data.domain : '',
-        slug: agencyTag.data && agencyTag.data.abbr ? agencyTag.data.abbr.toLowerCase() : '',
-        allowRestrictAgency: agencyTag.data ? agencyTag.data.allowRestrictAgency : false,
-      };
-    },
-  }]);
-
   return User;
 }();
 

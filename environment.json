@@ -23,6 +23,7 @@
     "NODE_ENV": "production",
     "NOTIFICATIONS_BCC": "",
     "NOTIFICATIONS_CC": "",
+    "PROFILE_URL": "",
     "PROTOCOL": "https",
     "REDIRECT": true,
     "REQUIRE_AGENCY": true,
@@ -33,6 +34,5 @@
     "SYSTEM_NAME": "Open Opportunities",
     "TASK_STATE": "draft",
     "USAJOBS_URL": "https://www.usajobs.gov",
-    "PROFILE_URL": "",
     "VALIDATE_DOMAINS": true
 }
