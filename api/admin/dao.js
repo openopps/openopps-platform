@@ -55,6 +55,12 @@ const communityUsersQuery = 'select ' +
   'join midas_user on midas_user.id = user_id ' +
   'where community_id = ?';
 
+const taskCommunityStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
+  'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
+  'left join volunteer on volunteer."taskId" = task.id ' +
+  'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
+  'where community_id= ? and ';
+
 const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
@@ -80,6 +86,14 @@ const communityVolunteerCountQuery = 'select ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ?';
 
+const communityTaskCreatedPerUserQuery = 'select count(*) as created from task ' +
+  'inner join community_user on community_user.user_id = task."userId" ' +
+  'where task.community_id = ? and task."userId" = ? ';
+
+const communityTaskVolunteerPerUserQuery = 'select count(*) from volunteer ' +
+  'inner join task on task.id = volunteer."taskId" ' +
+  'where task.community_id = ? and volunteer."userId" = ? ';
+
 const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
   'order by "createdAt" desc ' +
@@ -99,6 +113,18 @@ const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count 
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
+const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_count, tag.name as agency, community_user.created_at as joined_at ' +
+  'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
+  'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
+  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
+  "where community_user.community_id = ? and tag.type = 'agency' " +
+  'order by "createdAt" desc ' +
+  'limit 25 ' +
+  'offset ((? - 1) * 25) ';
+
+const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
+'from midas_user inner join community_user on midas_user.id= community_user.user_Id ' ;
+
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
   'where lower(username) like ? or lower(name) like ? ' +
@@ -110,6 +136,13 @@ const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as ful
   'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
   "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(tag.name) = ? " +
+  'order by "createdAt" desc ' +
+  'limit 25 ' +
+  'offset ((? - 1) * 25) ';
+
+const userCommunityListFilteredQuery = 'select midas_user.*, count(*) over() as full_count, tag.name as agency ' +
+  'from midas_user inner join community_user on midas_user.id = community_user.user_id  ' +
+  'where (lower(username) like ? or lower(midas_user.name) like ?) and community_user.community_id = ? ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -285,6 +318,8 @@ module.exports = function (db) {
       taskStateQuery: taskStateQuery,
       agencyTaskStateQuery: agencyTaskStateQuery,
       communityTaskStateQuery: communityTaskStateQuery,
+      communityTaskCreatedPerUserQuery: communityTaskCreatedPerUserQuery,
+      communityTaskVolunteerPerUserQuery: communityTaskVolunteerPerUserQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
       agencyUsersQuery: agencyUsersQuery,
@@ -298,8 +333,10 @@ module.exports = function (db) {
       userListQuery: userListQuery,
       ownerListQuery: ownerListQuery,
       userAgencyListQuery: userAgencyListQuery,
+      userCommunityListQuery: userCommunityListQuery,
       userListFilteredQuery: userListFilteredQuery,
       userAgencyListFilteredQuery: userAgencyListFilteredQuery,
+      userCommunityListFilteredQuery: userCommunityListFilteredQuery,
       userTaskState: userTaskState,
       participantTaskState: participantTaskState,
       exportUserData: exportUserData,
@@ -312,6 +349,8 @@ module.exports = function (db) {
       taskMetricsQuery: taskMetricsQuery,
       volunteerDetailsQuery: volunteerDetailsQuery,
       userAgencyQuery: userAgencyQuery,
+      taskCommunityStateUserQuery:taskCommunityStateUserQuery,
+      ownerCommunityListQuery:ownerCommunityListQuery,
     },
     clean: clean,
     options: options,
