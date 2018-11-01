@@ -30,9 +30,6 @@ async function findById (id, loggedIn) {
 }
 
 async function list (user) {
-  if(user) {
-    user.agency = _.find(user.tags, {type: 'agency' });
-  }
   var tasks = [];
   if(user && user.isAdmin) {
     tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));

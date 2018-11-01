@@ -17,6 +17,7 @@ var agencyList = [
   { old: 'Administration on Aging (AOA)', new: 'HHS Administration for Community Living (ACL)' },
   { old: 'National Library of Medicine (HHS/NIH)', new: 'HHS National Institutes of Health (NIH)' },
   { old: 'National Cancer Institute (HHS/NIH)', new: 'HHS National Institutes of Health (NIH)' },
+  { old: 'USDA ARS National Agricultural Library (NAL)', new: 'USDA Agricultural Research Service (ARS)' },
   { old: 'DOE Energy Information Administration (EIA)', new: 'Department of Energy (DOE)' },
   { old: 'National Renewable Energy Laboratory (NREL)', new: 'Department of Energy (DOE)' },
 ];

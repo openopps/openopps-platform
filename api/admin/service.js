@@ -167,11 +167,10 @@ async function getUsers (page, limit) {
 }
 
 async function getUsersForAgency (page, limit, agencyId) {
-  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
   result.page = +page;
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agency.name.toLowerCase(), page)).rows;
+  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
   return result;
@@ -201,12 +200,11 @@ async function getUsersFiltered (page, query) {
 }
 
 async function getUsersForAgencyFiltered (page, query, agencyId) {
-  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
   var result = { page: page, q: query, limit: 25 };
   result.users = (await dao.User.db.query(dao.query.userAgencyListFilteredQuery,
     '%' + query.toLowerCase() + '%',
     '%' + query.toLowerCase() + '%',
-    agency.name.toLowerCase(),
+    agencyId,
     page)).rows;
   result = await getUserTaskMetrics (result);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
@@ -302,8 +300,8 @@ async function updateProfile (user, done) {
 }
 
 async function getAgency (id) {
-  var agency = await dao.TagEntity.findOne('id = ?', id);
-  agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, agency.name.toLowerCase())).rows[0];
+  var agency = await dao.Agency.findOne('agency_id = ?', id);
+  agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, (agency.oldName || agency.name).toLowerCase())).rows[0];
   agency.tasks.totalCreated = Object.values(agency.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
   agency.users = (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
   return agency;
@@ -457,7 +455,11 @@ async function assignParticipant (ctx, data, done) {
 }
 
 async function getAgencies () {
-  return await dao.TagEntity.find('type = ?', 'agency');
+  var departments = await dao.Agency.find('code in (select parent_code from agency where parent_code is not null)');
+  await Promise.all(departments.map(async (department) => {
+    department.agencies = await dao.Agency.find('parent_code = ?', department.code);
+  }));
+  return departments;
 }
 
 async function getCommunities () {

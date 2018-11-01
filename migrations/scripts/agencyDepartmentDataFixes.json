@@ -1,0 +1,102 @@
+[
+  {
+    "code": "AG00",
+    "parent_code": "AG",
+    "old_name": "Department of Agriculture (USDA)"
+  },
+  {
+    "code": "CM00",
+    "parent_code": "CM",
+    "old_name": "Department of Commerce (DOC)"
+  },
+  {
+    "code": "DD00",
+    "parent_code": "DD",
+    "old_name": "Department of Defense (DOD)"
+  },
+  {
+    "code": "DJ00",
+    "parent_code": "DJ",
+    "old_name": "Department of Justice (DOJ)"
+  },
+  {
+    "code": "DL00",
+    "parent_code": "DL",
+    "old_name": "Department of Labor (DOL)"
+  },
+  {
+    "code": "DN00",
+    "parent_code": "DN",
+    "old_name": "Department of Energy (DOE)"
+  },
+  {
+    "code": "ED00",
+    "parent_code": "ED",
+    "old_name": "Department of Education (ED)"
+  },
+  {
+    "code": "FQ00",
+    "parent_code": "FQ",
+    "old_name": "Court Services and Offender Supervision Agency for the District of Columbia (CSOSA)"
+  },
+  {
+    "code": "GS00",
+    "parent_code": "GS",
+    "old_name": "General Services Administration (GSA)"
+  },
+  {
+    "code": "HE00",
+    "parent_code": "HE",
+    "old_name": "Department of Health and Human Services (HHS)"
+  },
+  {
+    "code": "HS00",
+    "parent_code": "HS",
+    "old_name": "Department of Homeland Security (DHS)"
+  },
+  {
+    "code": "HU00",
+    "parent_code": "HU",
+    "old_name": "Department of Housing and Urban Development (HUD)"
+  },
+  {
+    "code": "IN00",
+    "parent_code": "IN",
+    "old_name": "Department of the Interior (DOI)"
+  },
+  {
+    "code": "NN00",
+    "parent_code": "NN",
+    "old_name": "National Aeronautics and Space Administration (NASA)"
+  },
+  {
+    "code": "SM03",
+    "parent_code": "SM",
+    "old_name": "Smithsonian Institution (SI)"
+  },
+  {
+    "code": "ST00",
+    "parent_code": "ST",
+    "old_name": "Department of State (DOS)"
+  },
+  {
+    "code": "TB00",
+    "parent_code": "TB",
+    "old_name": "National Transportation Safety Board (NTSB)"
+  },
+  {
+    "code": "TD00",
+    "parent_code": "TD",
+    "old_name": "Department of Transportation (DOT)"
+  },
+  {
+    "code": "TR00",
+    "parent_code": "TR",
+    "old_name": "Department of the Treasury (TREAS)"
+  },
+  {
+    "code": "VA00",
+    "parent_code": "VA",
+    "old_name": "Department of Veterans Affairs (VA)"
+  }
+]

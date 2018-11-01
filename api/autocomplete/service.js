@@ -25,7 +25,20 @@ async function userByName (name) {
   });
 }
 
+async function agency (name) {
+  var abbr =  name ? name.toLowerCase() + '%' : '';
+  name = name ? '%' + name.toLowerCase() + '%' : '';
+  var result = await dao.Agency.query(dao.query.agency, [name, abbr]);
+  return result.map(tag => {
+    tag.id = tag.agencyId;
+    tag.field = 'name';
+    tag.value = tag.name;
+    return tag;
+  });
+}
+
 module.exports = {
   tagByType: tagByType,
   userByName: userByName,
+  agency: agency,
 };

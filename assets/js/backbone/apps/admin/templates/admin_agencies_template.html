@@ -7,13 +7,16 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-<% if (agencies) { %>
+<% if (departments) { %>
   <div class="usajobs-grid-full">
     <div class="usa-width-one-whole">
       <select id="agencies" class="dropdown">
-        <option value=""></option>
-        <% _.each(agencies, function (a) { %>
-            <option value=<%- a.id %> <% if (a.id == agency.id) { %>selected<% } %>><%- a.name %></option>
+        <% _.each(departments, function (d) { %>
+          <optgroup label="<%- d.name %>">
+            <% _.each(d.agencies, function (a) { %>}
+              <option value=<%- a.agencyId %> <% if (a.agencyId == agency.agencyId) { %>selected<% } %>><%- a.name %></option>
+            <% }); %>
+          </optgroup>
         <% }); %>
       </select>
     </div>
@@ -23,7 +26,7 @@
 <% } %>
 <div class="usajobs-grid-full">
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/agency/<%=agency.id%>/users" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/agency/<%=agency.agencyId%>/users" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total users: <%- numeral(agency.users.total).format('0,0') %></li>
       <li>Active users: <%- numeral(agency.users.active).format('0,0') %></li>
@@ -31,7 +34,7 @@
     </ul>
   </div>
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/agency/<%=agency.id%>/tasks" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/agency/<%=agency.agencyId%>/tasks" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- numeral(agency.tasks.totalCreated).format('0,0') %></li>
       <li>Submitted: <%- numeral(agency.tasks.submitted).format('0,0') %></li>
