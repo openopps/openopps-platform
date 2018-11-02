@@ -2,10 +2,11 @@ const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 const badgeDescriptions = require('../../utils').badgeDescriptions;
 
-const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @tags.* ' +
+const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @agency.*, @tags.* ' +
   'from @midas_user m_user ' +
   'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
   'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
+  'left join @agency on agency.agency_id = m_user.agency_id ' +
   'where disabled = false';
 
 const tagQuery = 'select tags.* ' +
@@ -39,6 +40,7 @@ const options = {
   user: {
     fetch: {
       tags: [],
+      agency: '',
     },
     exclude: {
       tags: [ 'deletedAt', 'createdAt', 'updatedAt', 'data' ],
@@ -84,6 +86,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency' }),
     AuditLog: dao({ db: db, table: 'audit_log'}),
     User: dao({ db: db, table: 'midas_user' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),

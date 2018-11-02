@@ -33,6 +33,7 @@ async function getProfile (id) {
   if(profile) {
     profile.badges = dao.clean.badge(await dao.Badge.find('"user" = ?', id));
     profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
+    profile.agency = await dao.Agency.findOne('agency_id = ?', profile.agencyId).catch(() => { return undefined; });
     return dao.clean.profile(profile);
   } else {
     return undefined;
@@ -109,6 +110,7 @@ async function updateProfile (attributes, done) {
         await processUserTags(user, tags).then(tags => {
           user.tags = tags;
         });
+        user.agency = await dao.Agency.findOne('agency_id = ?', user.agencyId).catch(() => { return undefined; });
         return done(null, user);
       }).catch (err => { return done({'message':'Error updating profile.'}); });
   }).catch (err => { return done({'message':'Error updating profile.'}); });

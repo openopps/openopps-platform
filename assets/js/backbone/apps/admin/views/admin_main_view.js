@@ -152,12 +152,12 @@ var AdminMainView = Backbone.View.extend({
 
   initializeAdminAgenciesView: function (agencyId, replace) {
     this.adminAgenciesView && this.adminAgenciesView.cleanup();
-    var callback = function (agencies) {
+    var callback = function (departments) {
       this.adminAgenciesView = new AdminAgenciesView({
         el: '#admin-agencies',
         agencyId: agencyId,
         adminMainView: this,
-        agencies: agencies,
+        departments: departments,
       });
       this.adminAgenciesView.render(replace);
     };

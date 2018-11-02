@@ -81,9 +81,9 @@ async function canManageVolunteers (id, user) {
 }
 
 async function checkAgency (user, ownerId) {
-  var owner = (await dao.Task.db.query(dao.query.user, ownerId)).rows[0];
+  var owner = await dao.User.findOne(dao.query.user, ownerId, dao.options.user).catch(() => { return undefined; });
   if (owner && owner.agency) {
-    return user.tags ? _.find(user.tags, { 'type': 'agency' }).name == owner.agency.name : false;
+    return user.agency ? (user.agency.name == owner.agency.name) : false;
   }
   return false;
 }

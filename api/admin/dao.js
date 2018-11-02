@@ -42,10 +42,7 @@ const agencyUsersQuery = 'select ' +
   'count(*) as "total", ' +
   'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
   'sum(case when "isAgencyAdmin" then 1 else 0 end) as "admins" ' +
-  'from midas_user ' + 
-  'join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'join tagentity tag on tags.tagentity_users = tag.id ' +
-  'where tag.type = \'agency\' and tag.id = ?';
+  'from midas_user where agency_id = ?';
 
 const communityUsersQuery = 'select ' +
   'count(*) as "total", ' +
@@ -54,6 +51,12 @@ const communityUsersQuery = 'select ' +
   'from community_user ' +
   'join midas_user on midas_user.id = user_id ' +
   'where community_id = ?';
+
+const taskCommunityStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
+  'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
+  'left join volunteer on volunteer."taskId" = task.id ' +
+  'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
+  'where community_id= ? and ';
 
 const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
 
@@ -100,9 +103,7 @@ const ownerListQuery = 'select midas_user.id, midas_user.name ' +
 "where midas_user.disabled = false and tag.type = 'agency' and tag.name = ?";
 
 const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count ' +
-  'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where tag.type = 'agency' and lower(tag.name) = ? " +
+  'from midas_user where agency_id = ?' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -116,6 +117,9 @@ const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_cou
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
+const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
+'from midas_user inner join community_user on midas_user.id= community_user.user_Id ' ;
+
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
   'where lower(username) like ? or lower(name) like ? ' +
@@ -124,9 +128,8 @@ const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_coun
   'offset ((? - 1) * 25) ';
 
 const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
-  'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where (lower(username) like ? or lower(midas_user.name) like ?) and tag.type = 'agency' and lower(tag.name) = ? " +
+  'from midas_user ' +
+  'where (lower(username) like ? or lower(midas_user.name) like ?) and agency_id = ? ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -299,6 +302,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency' }),
     User: dao({ db: db, table: 'midas_user' }),
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
@@ -343,6 +347,8 @@ module.exports = function (db) {
       volunteerDetailsQuery: volunteerDetailsQuery,
       userAgencyQuery: userAgencyQuery,
       userCommunityQuery: userCommunityQuery,
+      taskCommunityStateUserQuery:taskCommunityStateUserQuery,
+      ownerCommunityListQuery:ownerCommunityListQuery,
     },
     clean: clean,
     options: options,
