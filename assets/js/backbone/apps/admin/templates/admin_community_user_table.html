@@ -44,8 +44,8 @@
           <%- moment(u.joined_at).format('MM/DD/YYYY hh:mma') %>
         </td>
        <td>
-          Created: 3 <br/>
-          Participated: 0
+          Created: <%- u.communityTaskCreated %> <br/>
+          Participated: <%- u.communityTaskParticipated %>
        </td>
         <td>
           <% if (user.isAdmin || (user.isCommunityAdmin && !u.isAdmin)) { %>

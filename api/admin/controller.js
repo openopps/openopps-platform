@@ -122,6 +122,26 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
   }
 });
 
+router.get('/api/admin/communityAdmin/:id', auth, async (ctx, next) => {
+  if (await service.canAdministerAccount(ctx.state.user, ctx.params.id)) {
+    var user = await service.getProfile(ctx.params.id);
+    user.isCommunityAdmin = ctx.query.action === 'true' ? 't' : 'f';
+    await service.updateProfile(user, function (done, error) {
+      if (error) {
+        log.info(error);
+      }
+      service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+        userId: user.id,
+        action: (ctx.query.action === 'true' ? 'Community admin permission added' : 'Community admin permission removed'),
+        status: (error ? 'failed' : 'successful'),
+      });
+      ctx.body = { user };
+    });
+  } else {
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getOwnerOptions(ctx.params.taskId, function (results, err) {

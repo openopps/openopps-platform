@@ -84,7 +84,7 @@ var AdminUserView = Backbone.View.extend({
     data.firstOf = data.page * data.limit - data.limit + 1;
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
-    data.target = this.target;
+    data.target = this.options.target;
     data.isAdministrator = this.isAdministrator;
 
     // render the table
@@ -211,8 +211,9 @@ var AdminUserView = Backbone.View.extend({
   },
 
   isAdministrator: function (user, target) {
-    return (target == 'Sitewide' && user.isAdmin) ||
-      (target == 'Agencies' && user.isAgencyAdmin);
+    return (target == 'sitewide' && user.isAdmin) ||
+      (target == 'agency' && user.isAgencyAdmin) ||
+      (target == 'community' && user.isCommunityAdmin);
   },
 
   updateUser: function (t, data) {

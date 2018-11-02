@@ -170,7 +170,7 @@ async function getUsersForCommunity (page, limit, communityId) {
   result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
-  // result = await getUserTaskCommunityMetrics (result);
+  result = await getUserTaskCommunityMetrics (result, communityId);
   return result;
 }
 
@@ -207,7 +207,7 @@ async function getUsersForCommunityFiltered (page, query, communityId) {
     agency.name.toLowerCase(),
     page)).rows;
   result = await getUserTaskMetrics (result);
-  result = await getUserTaskCommunityMetrics(result);
+  result = await getUserTaskCommunityMetrics(result, communityId);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 }
@@ -223,10 +223,10 @@ async function getUserMetrics () {
   return (await dao.User.db.query(dao.query.userQuery)).rows[0];
 }
 
-async function getUserTaskCommunityMetrics (result) {
+async function getUserTaskCommunityMetrics (result, communityId) {
   for (var i = 0; i < result.users.length; i++) {
-    communityTaskCreated = await dao.Task.db.query(await dao.query.communityTaskVolunteerPerUserQuery, communityId, result.users[i].id);
-    communityTaskVolunteer = await dao.Task.db.query(await dao.query.communityTaskCreatedPerUserQuery);
+    result.users[i].communityTaskCreated = (await dao.Task.db.query(await dao.query.communityTaskCreatedPerUserQuery, communityId, result.users[i].id)).rows[0].created;
+    result.users[i].communityTaskParticipated = (await dao.Task.db.query(await dao.query.communityTaskVolunteerPerUserQuery, communityId, result.users[i].id)).rows[0].participated;
   }
   return result;
 }
@@ -303,7 +303,7 @@ async function getCommunity (id) {
 }
 
 async function canAdministerAccount (user, id) {
-  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id))) {
+  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id)) || (user.isCommunityAdmin && await checkCommunity(user, id))) {
     return true;
   }
   return false;
@@ -311,6 +311,17 @@ async function canAdministerAccount (user, id) {
 
 async function checkAgency (user, ownerId) {
   var owner = (await dao.User.db.query(dao.query.userAgencyQuery, ownerId)).rows[0];
+  if (owner && owner.isAdmin) {
+    return false;
+  }
+  if (owner && owner.name) {
+    return _.find(user.tags, { 'type': 'agency' }).name == owner.name;
+  }
+  return false;
+}
+
+async function checkCommunity (user, ownerId) {
+  var owner = (await dao.User.db.query(dao.query.userCommunityQuery, ownerId)).rows[0];
   if (owner && owner.isAdmin) {
     return false;
   }
