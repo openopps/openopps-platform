@@ -178,12 +178,12 @@ var AdminUserView = Backbone.View.extend({
     switch (elem.data('action')) {
       case 'user':
         return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
-      case 'Sitewide':
+      case 'sitewide':
         return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
-      case 'Agencies':
+      case 'agency':
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
-      case 'Community':
-        return '/api/admin/communityAdmin/' + id + '?action=' + elem.prop('checked');
+      case 'community':
+        return '/api/admin/communityAdmin/' + id + '/' + this.community.communityId + '?action=' + elem.prop('checked');
     }
   },
 

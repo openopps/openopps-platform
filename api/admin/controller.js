@@ -126,11 +126,11 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/communityAdmin/:id', auth, async (ctx, next) => {
+router.get('/api/admin/communityAdmin/:id/:communityid', auth, async (ctx, next) => {
   if (await service.canAdministerAccount(ctx.state.user, ctx.params.id)) {
     var user = await service.getProfile(ctx.params.id);
-    user.isCommunityAdmin = ctx.query.action === 'true' ? 't' : 'f';
-    await service.updateProfile(user, function (done, error) {
+    user.isCommunityAdmin = ctx.query.action === 'true' ? true : false;
+    await service.updateCommunityAdmin(user, ctx.params.communityid, function (done, error) {
       if (error) {
         log.info(error);
       }

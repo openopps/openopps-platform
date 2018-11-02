@@ -212,12 +212,12 @@ async function getUsersForAgencyFiltered (page, query, agencyId) {
 }
 
 async function getUsersForCommunityFiltered (page, query, communityId) {
-  var agency = (await dao.CommunityUser.find('community_id = ?', communityId))[0];
   var result = { page: page, q: query, limit: 25 };
   result.users = (await dao.User.db.query(dao.query.userCommunityListFilteredQuery,
     '%' + query.toLowerCase() + '%',
     '%' + query.toLowerCase() + '%',
-    agency.name.toLowerCase(),
+    '%' + query.toLowerCase() + '%',
+    communityId,
     page)).rows;
   result = await getUserTaskMetrics (result);
   result = await getUserTaskCommunityMetrics(result, communityId);
@@ -293,6 +293,16 @@ async function getProfile (id) {
 async function updateProfile (user, done) {
   user.updatedAt = new Date();
   await dao.User.update(user).then(async () => {
+    return done(null);
+  }).catch (err => {
+    return done(err);
+  });
+}
+
+async function updateCommunityAdmin (user, communityId, done) {
+  var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
+  communityUser.isManager = user.isCommunityAdmin;
+  await dao.CommunityUser.update(communityUser).then(async () => {
     return done(null);
   }).catch (err => {
     return done(err);
@@ -495,6 +505,7 @@ module.exports = {
   getUsersForCommunityFiltered: getUsersForCommunityFiltered,
   getProfile: getProfile,
   updateProfile: updateProfile,
+  updateCommunityAdmin: updateCommunityAdmin,
   getExportData: getExportData,
   getTaskStateMetrics: getTaskStateMetrics,
   getAgencyTaskStateMetrics: getAgencyTaskStateMetrics,
