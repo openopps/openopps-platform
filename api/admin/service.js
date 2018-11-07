@@ -169,7 +169,7 @@ async function getUsers (page, limit) {
 async function getUsersForAgency (page, limit, agencyId) {
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
+  result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
@@ -180,7 +180,7 @@ async function getUsersForCommunity (page, limit, communityId) {
   var community = (await dao.CommunityUser.find('community_id = ?', communityId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
+  result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
