@@ -169,7 +169,7 @@ async function getUsers (page, limit) {
 async function getUsersForAgency (page, limit, agencyId) {
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
+  result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
@@ -180,11 +180,11 @@ async function getUsersForCommunity (page, limit, communityId) {
   var community = (await dao.CommunityUser.find('community_id = ?', communityId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
+  result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
-  // result = await getUserTaskCommunityMetrics (result);
+  result = await getUserTaskCommunityMetrics (result, communityId);
   return result;
 }
 
@@ -212,15 +212,15 @@ async function getUsersForAgencyFiltered (page, query, agencyId) {
 }
 
 async function getUsersForCommunityFiltered (page, query, communityId) {
-  var agency = (await dao.CommunityUser.find('community_id = ?', communityId))[0];
   var result = { page: page, q: query, limit: 25 };
   result.users = (await dao.User.db.query(dao.query.userCommunityListFilteredQuery,
     '%' + query.toLowerCase() + '%',
     '%' + query.toLowerCase() + '%',
-    agency.name.toLowerCase(),
+    '%' + query.toLowerCase() + '%',
+    communityId,
     page)).rows;
   result = await getUserTaskMetrics (result);
-  result = await getUserTaskCommunityMetrics(result);
+  result = await getUserTaskCommunityMetrics(result, communityId);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 }
@@ -236,10 +236,10 @@ async function getUserMetrics () {
   return (await dao.User.db.query(dao.query.userQuery)).rows[0];
 }
 
-async function getUserTaskCommunityMetrics (result) {
+async function getUserTaskCommunityMetrics (result, communityId) {
   for (var i = 0; i < result.users.length; i++) {
-    communityTaskCreated = await dao.Task.db.query(await dao.query.communityTaskVolunteerPerUserQuery, communityId, result.users[i].id);
-    communityTaskVolunteer = await dao.Task.db.query(await dao.query.communityTaskCreatedPerUserQuery);
+    result.users[i].communityTaskCreated = (await dao.Task.db.query(await dao.query.communityTaskCreatedPerUserQuery, communityId, result.users[i].id)).rows[0].created;
+    result.users[i].communityTaskParticipated = (await dao.Task.db.query(await dao.query.communityTaskVolunteerPerUserQuery, communityId, result.users[i].id)).rows[0].participated;
   }
   return result;
 }
@@ -299,6 +299,16 @@ async function updateProfile (user, done) {
   });
 }
 
+async function updateCommunityAdmin (user, communityId, done) {
+  var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
+  communityUser.isManager = user.isCommunityAdmin;
+  await dao.CommunityUser.update(communityUser).then(async () => {
+    return done(null);
+  }).catch (err => {
+    return done(err);
+  });
+}
+
 async function getAgency (id) {
   var agency = await dao.Agency.findOne('agency_id = ?', id);
   agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, (agency.oldName || agency.name).toLowerCase())).rows[0];
@@ -316,7 +326,7 @@ async function getCommunity (id) {
 }
 
 async function canAdministerAccount (user, id) {
-  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id))) {
+  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id)) || (user.isCommunityAdmin && await checkCommunity(user, id))) {
     return true;
   }
   return false;
@@ -324,6 +334,17 @@ async function canAdministerAccount (user, id) {
 
 async function checkAgency (user, ownerId) {
   var owner = (await dao.User.db.query(dao.query.userAgencyQuery, ownerId)).rows[0];
+  if (owner && owner.isAdmin) {
+    return false;
+  }
+  if (owner && owner.name) {
+    return _.find(user.tags, { 'type': 'agency' }).name == owner.name;
+  }
+  return false;
+}
+
+async function checkCommunity (user, ownerId) {
+  var owner = (await dao.User.db.query(dao.query.userCommunityQuery, ownerId)).rows[0];
   if (owner && owner.isAdmin) {
     return false;
   }
@@ -484,6 +505,7 @@ module.exports = {
   getUsersForCommunityFiltered: getUsersForCommunityFiltered,
   getProfile: getProfile,
   updateProfile: updateProfile,
+  updateCommunityAdmin: updateCommunityAdmin,
   getExportData: getExportData,
   getTaskStateMetrics: getTaskStateMetrics,
   getAgencyTaskStateMetrics: getAgencyTaskStateMetrics,

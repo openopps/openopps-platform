@@ -9,9 +9,9 @@
       <th>Email</th>
       <th>Agency</th>
       <th>Joined date</th>
-      <th>Community<br/>opportunity</th>
+      <th>Community<br/>opportunities</th>
       <% if (user.isAdmin || user.isCommunityAdmin) { %>
-        <th class="admin-user-checkbox"><%= target === 'Communities' ? 'Community' : target %><br /> Admin</th>
+        <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
       <% } %>
     </tr>
   </thead>
@@ -44,8 +44,8 @@
           <%- moment(u.joined_at).format('MM/DD/YYYY hh:mma') %>
         </td>
        <td>
-          Created: 3 <br/>
-          Participated: 0
+          Created: <%- u.communityTaskCreated %> <br/>
+          Participated: <%- u.communityTaskParticipated %>
        </td>
         <td>
           <% if (user.isAdmin || (user.isCommunityAdmin && !u.isAdmin)) { %>

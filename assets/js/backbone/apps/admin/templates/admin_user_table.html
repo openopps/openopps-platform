@@ -15,7 +15,7 @@
         <% } %>
       <% } %>
       <% if (user.isAdmin || user.isAgencyAdmin) { %>
-        <th class="admin-user-checkbox"><%= target === 'Agencies' ? 'Agency' : target %><br /> Admin</th>
+        <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
       <% } %>
     </tr>
   </thead>
