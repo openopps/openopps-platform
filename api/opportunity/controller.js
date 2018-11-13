@@ -53,6 +53,7 @@ router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
 router.post('/api/task', auth, async (ctx, next) => {
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.updatedBy = ctx.state.user.id;
+  ctx.request.body.agencyId = ctx.state.user.agencyId;
   await service.createOpportunity(ctx.request.body, function (errors, task) {
     if (errors) {
       ctx.status = 400;
