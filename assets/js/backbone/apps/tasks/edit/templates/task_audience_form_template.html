@@ -1,0 +1,91 @@
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter opportunity-gutter">
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <h1 class="usajobs-form__title">Create an opportunity</h1>
+        <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
+          <fieldset class="usajobs-fieldset usa-fieldset-inputs">
+            <div class="form-group required-input">
+              <label for="CareerField" class="usajobs-profile-question__title">
+                <h3>Who's your target audience?</h3>
+              </label>
+              <ul class="usa-unstyled-list" id="target-audience">
+                <li class="opportunity-target-audience__item">
+                  <button type="button" class="opportunity-target-audience__button" id="federal-employees" value="Federal employees">
+                    <div class="opportunity-target-audience__figure">
+                      <div class="opportunity-target-audience__icon">
+                        <i class="federal-employees"></i>
+                      </div>
+                    </div>
+                    <div class="opportunity-target-audience__body">
+                      <h4 class="opportunity-target-audience__item-title">
+                        Federal employees
+                        <span class="opportunity-target-audience__subtext">
+                          For developmental opportunities
+                        </span>
+                      </h4>
+                    </div>
+                  </button>
+                  <% if(communities.federal.length > 0) { %>
+                  <label for="federal-programs" class="federal-programs">
+                    <h4>Choose a program <span class="usa-input-optional"></span></h4>
+                  </label>
+                  <div class="form-group required-input federal-programs">
+                    <select id="federal-programs" class="dropdown">
+                      <option></option>
+                      <% _.each(communities.federal, function (community) { %>
+                        <option value=<%- community.community_id %>>
+                              <%- community.community_name %>
+                        </option>
+                      <% }); %>
+                    </select>
+                  </div>
+                <% } %>
+                </li>
+                <% if (communities.student.length > 0) { %>
+                <li class="opportunity-target-audience__item">
+                  <button type="button" class="opportunity-target-audience__button" id="students" value="Students">
+                    <div class="opportunity-target-audience__figure">
+                      <div class="opportunity-target-audience__icon">
+                        <i class="students"></i>
+                      </div>
+                    </div>
+                    <div class="opportunity-target-audience__body">
+                      <h4 class="opportunity-target-audience__item-title">
+                        Students
+                        <span class="opportunity-target-audience__subtext">
+                          For internship opportunities
+                        </span>
+                      </h4>
+                    </div>
+                  </button>
+                  <label for="student-programs" class="student-programs">
+                    <h4>Choose a program</h4>
+                  </label>
+                  <div class="form-group required-input student-programs">
+                    <span class="field-validation-error error-empty" style="display:none;">You must select a program for this opportunity.</span>
+                    <select id="student-programs" class="dropdown validate" data-validate="empty">
+                      <% _.each(communities.student, function (community) { %>
+                        <option value=<%- community.community_id %>>
+                              <%- community.community_name %>
+                        </option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </li>
+                <% } %>
+              </ul>
+            </div>
+          </fieldset>
+
+          <div class="usajobs-button_bar--slim">
+              <div class="usajobs-button_bar__body">
+                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
+                <button class="usa-button usa-button-primary" id="continue" disabled>Continue</a>
+              </div>
+            </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</section>
