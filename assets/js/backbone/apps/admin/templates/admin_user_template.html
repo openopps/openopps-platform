@@ -25,7 +25,13 @@
   <div class="usa-width-one-whole">
     <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
         title="Download list of all users as a comma-separated file ready for import into Excel">
-      <a href="/api/admin/export">
+        <% if (target === 'agency') { %>
+          <a href="/api/admin/export/agency/<%- agency.agencyId %>">
+        <% } else if (target === 'community') { %>
+          <a href="/api/admin/export/community/<%- community.communityId %>">
+        <% } else { %>
+          <a href="/api/admin/export/">
+        <% } %>
         <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
       </a>
     </div>

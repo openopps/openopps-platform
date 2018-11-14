@@ -34,6 +34,26 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
   });
 });
 
+router.get('/api/admin/export/agency/:id', auth.isAdmin, async (ctx, next) => {
+  var exportData = await service.getExportData('agency', ctx.params.id).then(rendered => {
+    ctx.response.set('Content-Type', 'text/csv');
+    ctx.response.set('Content-disposition', 'attachment; filename=users.csv');
+    ctx.body = rendered;
+  }).catch(err => {
+    log.info(err);
+  });
+});
+
+router.get('/api/admin/export/community/:id', auth.isAdmin, async (ctx, next) => {
+  var exportData = await service.getExportData('community', ctx.params.id).then(rendered => {
+    ctx.response.set('Content-Type', 'text/csv');
+    ctx.response.set('Content-disposition', 'attachment; filename=users.csv');
+    ctx.body = rendered;
+  }).catch(err => {
+    log.info(err);
+  });
+});
+
 router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
   if (!ctx.query.q) {
     ctx.body = await service.getUsers(ctx.query.page, ctx.query.limit);
