@@ -28,6 +28,12 @@ router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
   ctx.body = numOfOpps;
 });
 
+router.get('/api/task/communityUser', auth,async (ctx,next)=>{
+  console.log(ctx.params);
+  var data= await service.getCommunityUsersType(ctx.state.user.id) ; 
+  ctx.body = data;
+});
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user ? true : false);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
@@ -68,7 +74,7 @@ router.post('/api/task', auth, async (ctx, next) => {
 
 router.put('/api/task/state/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
-    ctx.request.body.updatedBy = ctx.state.user.id;
+    ctx.request.body.updatedBy = ctx.state.user.id; 
     await service.updateOpportunityState(ctx.request.body, function (task, stateChange, errors) {
       if (errors) {
         ctx.status = 400;
