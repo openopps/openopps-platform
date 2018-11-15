@@ -14,6 +14,7 @@ var TaskModel = require('./entities/tasks/task_model');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
+var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
@@ -25,6 +26,7 @@ var BrowseRouter = Backbone.Router.extend({
   routes: {
     ''                                              : 'showLanding',
     'home'                                          : 'showHome',
+    'tasks/create'                                :'createTask',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'listTasks',
     'tasks/:id(/)'                                  : 'showTask',
@@ -88,6 +90,8 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.profileEditController) { this.profileEditController.cleanup(); }
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
+    if (this.taskEditFormView) { this.taskEditFormView.cleanup(); }
+    if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
     this.data = { saved: false };
@@ -215,6 +219,13 @@ var BrowseRouter = Backbone.Router.extend({
     this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
   },
 
+  createTask: function () {
+    this.cleanupChildren();
+    this.taskAudienceFormView = new TaskAudienceFormView({
+      el: '#container',
+    }).render();
+  },
+
   /*
    * Create a new task. This method first populates and generates a new collection
    * with a single empty model. It also creates a new TaskCreationForm adding the
@@ -241,7 +252,7 @@ var BrowseRouter = Backbone.Router.extend({
         tagTypes: tagTypes,
       }).render();
     });
-
+    
     this.listenTo(model, 'task:save:success', function (data) {
       Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });
       if(data.attributes.state != 'draft') {
@@ -277,7 +288,7 @@ var BrowseRouter = Backbone.Router.extend({
         $('.alert.alert-danger').text(alertText).show();
         $(window).animate({ scrollTop: 0 }, 500);
       }
-    });
+    });  
   },
 
   showHome: function (id) {
