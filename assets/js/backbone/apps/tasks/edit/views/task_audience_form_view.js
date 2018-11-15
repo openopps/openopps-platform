@@ -9,7 +9,7 @@ var TaskAudienceView = require('./task_audience_form_view');
 
 var TaskAudienceFormView = Backbone.View.extend({
   events: { 'click .usa-button' : 'submit',
-    'click .opportunity-target-audience__button' : 'selectAudience',
+    'click .opportunity-target-audience__button' : 'selectAudience',    
   },
 
   initialize: function (options){
@@ -17,15 +17,14 @@ var TaskAudienceFormView = Backbone.View.extend({
   },
 
   render: function () {    
-    this.loadAudienceCommunityData();
-    console.log(this.loadAudienceCommunityData());
+    this.loadAudienceCommunityData();    
   },
 
   loadAudienceCommunityData:function (){
     $.ajax({
       url: '/api/task/communityUser',
       dataType: 'json',
-      success: function (data){
+      success: function (data){        
         if (data.federal.length == 0 && data.student.length == 0) {
           Backbone.history.navigate('/tasks/new', { trigger : true, replace: true });
         } else {
@@ -43,17 +42,19 @@ var TaskAudienceFormView = Backbone.View.extend({
     });
   },
 
-  selectAudience: function (e) {
+  selectAudience: function (e) {   
     if($(e.currentTarget).val() == 'Students') {
       this.target = 'student';
       $('.student-programs').show();
-      $('.federal-programs').hide();
+      $('.federal-programs').hide(); 
+      $('#students').addClass('selected');  
     } else {
       this.target = 'federal';
       $('.student-programs').hide();
       $('.federal-programs').show();
-    }
-    $('#continue').removeAttr('disabled');
+      $('#federal-employees').addClass('selected');      
+    } 
+    $('#continue').removeAttr('disabled');    
   },
 
   submit: function (e) {
