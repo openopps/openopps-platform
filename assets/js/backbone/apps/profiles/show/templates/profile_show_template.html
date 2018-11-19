@@ -47,7 +47,7 @@
           <% if (data.isOwner || (!loginGov && data.canEditProfile)) { %>
           <div class="usajobs-opop-section-edit">             
             <% if (loginGov) { %>
-              <a href="<%- usajobsURL %>/applicant/profile/">Edit</a>
+              <a href="<%- usajobsURL %>/applicant/profile/" class="usa-button usa-button-secondary">Edit at USAJOBS.gov</a>
             <% } else { %>
               <a href="/profile/edit/<%- data.id %>" class="link-backbone">Edit</a>
             <% } %>

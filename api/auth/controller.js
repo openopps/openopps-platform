@@ -82,6 +82,17 @@ async function processState (state, user, ctx) {
   }
 }
 
+router.post('/api/auth/user', async (ctx, next) => {
+  await service.getProfileData(ctx.request.body, async (err, user) => {
+    if(err) {
+      ctx.status = 400;
+    } else {
+      await ctx.login(user);
+      ctx.body = ctx.state.user;
+    }
+  });
+});
+
 router.post('/api/auth', async (ctx, next) => {
   if(openopps.auth.loginGov.enabled) {
     ctx.redirect('/api/auth/oidc');
