@@ -6,7 +6,7 @@ const auth = require('../auth/auth');
 const service = require('./service');
 const documentService = require('../document/service');
 const validGovtEmail = require('../model').ValidGovtEmail;
-const syncProfile = require('../auth/syncProfile');
+const profile = require('../auth/profile');
 
 var router = new Router();
 
@@ -21,7 +21,7 @@ router.get('/api/user', async (ctx, next) => {
         access_token: ctx.state.user.access_token,
         id_token: ctx.state.user.id_token,
       };
-      await syncProfile(ctx.state.user, tokenSet, (err, user) => {
+      await profile.sync(ctx.state.user, tokenSet, (err, user) => {
         ctx.body = (err ? null : user);
       });
     } else {

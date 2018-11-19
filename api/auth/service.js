@@ -9,6 +9,7 @@ const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const userService = require('../user/service');
 const Audit = require('../model/Audit');
+const profile = require('../auth/profile');
 
 const baseUser = {
   isAdmin: false,
@@ -159,6 +160,32 @@ async function createStagingRecord (user, done) {
   });
 }
 
+async function getProfileData (params, done) {
+  await dao.AccountStaging.findOne('linked_id = ? ', params.id).then(async account => {
+    if (bcrypt.compareSync([account.linkedId, account.uuid].join('|'), params.h)) {
+      await profile.get({ access_token: account.accessToken, id_token: account.idToken }).then(async profile => {
+        var user = _.extend(_.clone(baseUser), {
+          username: profile.URI,
+          name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+          title: profile.Profile.JobTitle,
+          governmentUri: profile.Profile.GovernmentURI,
+          linkedId: account.linkedId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        await dao.User.insert(user).then(async (user) => {
+          await dao.AccountStaging.delete(account).catch(() => {});
+          done(null, _.extend(user, { access_token: account.accessToken, id_token: account.idToken }));
+        }).catch(done);
+      }).catch(done);
+    } else {
+      done('Unauthorized');
+    }
+  }).catch(err => {
+    done(err);
+  });
+}
+
 async function linkAccount (user, data, done) {
   var account = await dao.AccountStaging.findOne('linked_id = ?', user.linkedId).catch(() => { return null; });
   if(!account || user.linkedId !== account.linkedId || !validate([account.linkedId, account.uuid, account.username], data.h)) {
@@ -221,6 +248,7 @@ module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
   forgotPassword: forgotPassword,
+  getProfileData: getProfileData,
   linkAccount: linkAccount,
   logAuthenticationError: logAuthenticationError,
   register: register,
