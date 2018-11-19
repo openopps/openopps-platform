@@ -15,6 +15,7 @@ module.exports = (app) => {
   app.use(loadFeature('volunteer'));
   app.use(loadFeature('activity'));
   app.use(loadFeature('comment'));
+  app.use(loadFeature('community'));
   app.use(loadFeature('document'));
   app.use(loadFeature('announcement'));
 };

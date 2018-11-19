@@ -232,27 +232,47 @@ var BrowseRouter = Backbone.Router.extend({
    * collection to it. This collection is then managed by the view using events
    * on the collection.
    */
-  newTask: function ( /*params*/ ) {
+  newTask: function (queryString) {
     if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?tasks/new', { trigger: true });
+      Backbone.history.navigate('/login?tasks/create', { trigger: true });
       return;
     }
-    var self = this;
+    var params = this.parseQueryParams(queryString);
     this.cleanupChildren();
     var model = new TaskModel();
-    var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    model.set('restrict', _.defaults(restrict, model.get('restrict')));
+    //var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
+    model.set('restrict', _.defaults({}, model.get('restrict')));
+    this.initializeTaskListeners(model);
+    if (params.cid) {
+      var communityId = _.defaults(params.cid, model.get('communityId'));
+      model.loadCommunity(communityId, function (community) {
+        model.set('communityId', community.communityId);
+        this.renderTaskView(model, community);
+      }.bind(this));
+    } else {
+      this.renderTaskView(model);
+    }
+  },
+
+  renderTaskView: function (model, community) {
+    var madlibTags = {};
+    if(community && community.communityType && community.communityTypeValue) {
+      madlibTags[community.communityType.toLowerCase()] = [community.communityTypeValue];
+    }
     model.tagTypes(function (tagTypes) {
       this.taskEditFormView = new TaskEditFormView({
         el: '#container',
         edit: false,
         model: model,
+        community: community,
         tags: [],
-        madlibTags: {},
+        madlibTags: madlibTags,
         tagTypes: tagTypes,
       }).render();
-    });
-    
+    }.bind(this));
+  },
+
+  initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
       Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });
       if(data.attributes.state != 'draft') {
