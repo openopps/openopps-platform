@@ -11,7 +11,8 @@ var ProfileFindTemplate = require('../templates/profile_find_template.html');
 var ProfileFindView = Backbone.View.extend({
   events: {
     'click #find-cancel'        : 'cancel',
-    'keydown #email-address'   : 'clearError',
+    'click #create-account'     : 'createAccount',
+    'keydown #email-address'    : 'clearError',
     'submit #form-find-profile' : 'submitEmail',
   },
   
@@ -63,6 +64,26 @@ var ProfileFindView = Backbone.View.extend({
         }.bind(this),
       });
     }
+  },
+
+  createAccount: function () {
+    $('#search-results-loading').show();
+    $.ajax({
+      url: '/api/auth/user',
+      type: 'POST',
+      data: {
+        id: getUrlParameter('id'),
+        h: getUrlParameter('h'),
+      },
+      success: function (data) {
+        window.cache.currentUser = new User(data);
+        Backbone.history.navigate('/home', { trigger: true, replace: true });
+      }.bind(this),
+      error: function (err) {
+        $('#search-results-loading').hide();
+        // display modal error
+      }.bind(this),
+    });
   },
   
   cleanup: function () {

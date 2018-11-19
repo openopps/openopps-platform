@@ -21,6 +21,10 @@ const userQuery = 'select @midas_user.*, @agency.* ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
   'where midas_user.id = ? ';
 
+const communityUserQuery='select * from community_user '+
+'inner join community on community_user.community_id = community.community_id ' + 
+'where community_user.user_id = ?';
+
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'midas_user.username, midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
@@ -277,6 +281,7 @@ module.exports = function (db) {
     TagEntity: dao({ db: db, table: 'tagentity' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     Comment: dao({ db: db, table: 'comment' }),
+    CommunityUser: dao({ db: db, table: 'community_user' }),
     query: {
       task: taskQuery,
       user: userQuery,
@@ -289,6 +294,7 @@ module.exports = function (db) {
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
       tasksToIndex: tasksToIndex,
+      communityUserQuery:communityUserQuery,
     },
     options: options,
     clean: clean,

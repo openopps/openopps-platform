@@ -232,6 +232,91 @@ button.opportunity-options__button {
     margin-right: auto;
   }
 }
+.opportunity-target-audience__item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  width: 95%;
+  vertical-align: middle;
+  border-radius: 5px;
+
+  .opportunity-target-audience__button {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    box-align: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    -o-align-items: center;
+    align-items: center;
+    -ms-flex-align: center;
+    width: 100%;
+    padding: 1rem;
+    color: #212121;
+    text-decoration: none;
+    min-height: 6.7rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+    background-color: #fff;
+
+    .opportunity-target-audience__figure {
+      flex-shrink: 0;
+      -ms-flex-negative: 0;
+
+      .opportunity-target-audience__icon {
+        font-size: 2.4rem;
+        display: inline-block;
+        text-align: center;
+        margin-right: .5rem;
+
+        i {
+          width: 4.4rem;
+          height: 4.4rem;
+          vertical-align: middle;
+          display: inline-block;
+        }
+
+        .federal-employees {
+          background-image: url(../img/icons/hiring-paths/png/federal-employees@2x.png);
+          background-image: url(../img/icons/hiring-paths/svg/federal-employees.svg);
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 4.4rem;
+        }
+
+        .students {
+          background-image: url(../img/icons/hiring-paths/png/students@2x.png);
+          background-image: url(../img/icons/hiring-paths/svg/students.svg);
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 4.4rem;
+        }
+      }
+    }
+  }
+
+  .opportunity-target-audience__body {
+    box-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    min-width: 0;
+    padding: 0 1.5rem;
+
+    .opportunity-target-audience__item-title {
+      margin-top: 0;
+      font-weight: 400;
+      text-align: left;
+
+      .opportunity-target-audience__subtext {
+        display: block;
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
 
 .opportunity-target-audience__item {
   position: relative;

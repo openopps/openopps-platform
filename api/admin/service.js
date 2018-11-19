@@ -354,8 +354,15 @@ async function checkCommunity (user, ownerId) {
   return false;
 }
 
-async function getExportData () {
-  var records = (await dao.User.db.query(dao.query.exportUserData)).rows;
+async function getExportData (target, id) {
+  var records;
+  if (target === 'agency') {
+    records = (await dao.User.db.query(dao.query.exportUserAgencyData, id)).rows;
+  } else if (target === 'community') {
+    records = (await dao.User.db.query(dao.query.exportUserCommunityData, id)).rows;
+  } else {
+    records = (await dao.User.db.query(dao.query.exportUserData)).rows;
+  }
   var fieldNames = _.keys(dao.exportFormat);
   var fields = _.values(dao.exportFormat);
 
