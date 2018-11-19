@@ -164,6 +164,41 @@ const exportUserData = 'select m_user.id, m_user.name, m_user.username, m_user.t
   ') as agency ' +
   'from midas_user m_user ';
 
+const exportUserAgencyData = 'select m_user.id, m_user.name, m_user.username, m_user.title, ' +
+  'm_user.bio, m_user."isAdmin", m_user.disabled, ' +
+  '(' +
+    'select tagentity.name ' +
+    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
+    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'location' " +
+    'limit 1' +
+  ') as location, ' +
+  '(' +
+    'select tagentity.name ' +
+    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
+    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'agency' " +
+    'limit 1' +
+  ') as agency ' +
+  'from midas_user m_user ' +
+  'where m_user.agency_id = ? ';
+
+const exportUserCommunityData = 'select m_user.id, m_user.name, m_user.username, m_user.title, ' +
+  'm_user.bio, m_user."isAdmin", community_user.is_manager, m_user.disabled, ' +
+  '(' +
+    'select tagentity.name ' +
+    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
+    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'location' " +
+    'limit 1' +
+  ') as location, ' +
+  '(' +
+    'select tagentity.name ' +
+    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
+    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'agency' " +
+    'limit 1' +
+  ') as agency ' +
+  'from midas_user m_user ' +
+  'left join community_user on community_user."user_id" = m_user.id ' + 
+  'where community_user."community_id" = ? ';
+
 const taskStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
@@ -241,9 +276,11 @@ var exportFormat = {
   'location': {field: 'location', filter: nullToEmptyString},
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',
+  'manager': 'is_manager',
   'disabled': 'disabled',
   'announcement': {field: 'content', filter: nullToEmptyString},
 };
+
 
 function nullToEmptyString (str) {
   return str ? str : '';
@@ -340,6 +377,8 @@ module.exports = function (db) {
       userTaskState: userTaskState,
       participantTaskState: participantTaskState,
       exportUserData: exportUserData,
+      exportUserAgencyData: exportUserAgencyData,
+      exportUserCommunityData: exportUserCommunityData,
       taskStateUserQuery: taskStateUserQuery,
       taskAgencyStateUserQuery: taskAgencyStateUserQuery,
       activityQuery: activityQuery,
