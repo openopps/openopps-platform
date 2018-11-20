@@ -8,7 +8,8 @@ var TaskAudienceView = require('./task_audience_form_view');
 
 
 var TaskAudienceFormView = Backbone.View.extend({
-  events: { 'click .usa-button' : 'submit',
+  events: {
+    'click .usa-button' : 'submit',
     'click .opportunity-target-audience__button' : 'selectAudience',    
   },
 
@@ -17,7 +18,8 @@ var TaskAudienceFormView = Backbone.View.extend({
   },
 
   render: function () {    
-    this.loadAudienceCommunityData();    
+    this.loadAudienceCommunityData();
+    return this;
   },
 
   loadAudienceCommunityData:function (){
@@ -32,7 +34,7 @@ var TaskAudienceFormView = Backbone.View.extend({
             communities: data,
           });
           this.$el.html(template);
-          setTimeout(() => {
+          setTimeout(function () {
             $('.federal-programs').hide();
             $('.student-programs').hide();
             $('#search-results-loading').hide();
