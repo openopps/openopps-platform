@@ -3,6 +3,7 @@ const Router = require('koa-router');
 const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
+const communityService = require('../community/service');
 
 var router = new Router();
 
@@ -86,27 +87,43 @@ router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx,
   ctx.body = await service.getAgencyTaskStateMetrics(ctx.params.id);
 });
 
-router.get('/api/admin/community/:id/tasks', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
-  ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
+router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
+  } else {
+    ctx.status = 403;
+  }
 });
 
 router.get('/api/admin/communities', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
-  ctx.body = await service.getCommunities();
+  ctx.body = await service.getCommunities(ctx.state.user);
 });
 
-router.get('/api/admin/community/:id', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
-  ctx.body = await service.getCommunity(ctx.params.id);
-});
-
-router.get('/api/admin/community/interactions/:id', auth.isAdmin, async (ctx, next) => {
-  ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
-});
-
-router.get('/api/admin/community/:id/users', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
-  if (!ctx.query.q) {
-    ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.limit, ctx.params.id);
+router.get('/api/admin/community/:id', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    ctx.body = await service.getCommunity(ctx.params.id);
   } else {
-    ctx.body = await service.getUsersForCommunityFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/community/interactions/:id', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    if (!ctx.query.q) {
+      ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.limit, ctx.params.id);
+    } else {
+      ctx.body = await service.getUsersForCommunityFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
+    }
+  } else {
+    ctx.status = 403;
   }
 });
 
@@ -146,11 +163,11 @@ router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/communityAdmin/:id/:communityid', auth, async (ctx, next) => {
-  if (await service.canAdministerAccount(ctx.state.user, ctx.params.id)) {
+router.get('/api/admin/communityAdmin/:id/:communityId', auth, async (ctx, next) => {
+  if (await communityService.isCommunityManager(ctx.state.user, ctx.params.communityId)) {
     var user = await service.getProfile(ctx.params.id);
     user.isCommunityAdmin = ctx.query.action === 'true' ? true : false;
-    await service.updateCommunityAdmin(user, ctx.params.communityid, function (done, error) {
+    await service.updateCommunityAdmin(user, ctx.params.communityId, function (done, error) {
       if (error) {
         log.info(error);
       }

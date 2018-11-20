@@ -1,5 +1,8 @@
 <% if(countOf) { %>
-  <h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> active members</h4>
+  <h4>
+    <span>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</span>
+    <button id="invite-members" class="usa-button usa-button-secondary"><i class="fas fa-plus"></i><span class="text-content">Invite members</span></button>
+  </h4>
 <% } %>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
