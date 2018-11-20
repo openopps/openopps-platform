@@ -41,7 +41,7 @@ exports.up = function (db, callback) {
         'The U.S. Department of State Student Internship Program is an unpaid internship with the opportunity to work in U.S. embassies and consulates throughout the world, as well as in various bureaus located in Washington, D.C. and at Department offices around the United States. This program is designed to provide substantive learning experiences in a foreign affairs environment.',
         2,
         true,
-        3,
+        2,
         2,
         'https://careers.state.gov/intern/student-internships/',
         'studentinternship@state.gov',
