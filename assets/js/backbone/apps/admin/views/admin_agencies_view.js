@@ -59,7 +59,7 @@ var AdminAgenciesView = Backbone.View.extend({
   link: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    this.adminMainView.routeTarget(t.data('target'), this.data.agency.id);
+    this.adminMainView.routeTarget(t.data('target'), this.data.agency.agencyId);
   },
 
   toggleAccept: function (e) {
