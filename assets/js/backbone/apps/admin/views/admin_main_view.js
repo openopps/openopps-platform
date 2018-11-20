@@ -41,7 +41,7 @@ var AdminMainView = Backbone.View.extend({
   userAgencyId: function () {
     return (window.cache.currentUser
               && window.cache.currentUser.agency
-              && window.cache.currentUser.agency.id);
+              && window.cache.currentUser.agency.agencyId);
   },
 
   isCommunityAdmin: function () {

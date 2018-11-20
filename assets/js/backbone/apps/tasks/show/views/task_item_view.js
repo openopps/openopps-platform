@@ -521,11 +521,11 @@ var TaskItemView = BaseView.extend({
       Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '#apply', { trigger: true });
       //window.cache.userEvents.trigger('user:request:login');
     } else {
-      var requiredTags = window.cache.currentUser.tags.filter(function (t) {
-        return t.type === 'location' || t.type === 'agency';
+      var locationTag = window.cache.currentUser.tags.filter(function (t) {
+        return t.type === 'location';
       });
-      if(requiredTags.length < 2) {
-        this.completeProfile(requiredTags);
+      if(locationTag.length == 0 || !window.cache.currentUser.agency) {
+        this.completeProfile(locationTag, window.cache.currentUser.agency);
       } else {
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
@@ -565,15 +565,19 @@ var TaskItemView = BaseView.extend({
     }.bind(this));
   },
 
-  completeProfile: function (tags) {
+  completeProfile: function (locationTag, agency) {
     var options = _.extend(_.clone(this.modalOptions), {
       modalTitle: 'Please complete your profile.',
-      modalBody: _.template(ProfileCheckList)({ tags: tags }),
+      modalBody: _.template(ProfileCheckList)({ locationTag: locationTag, agency: agency }),
       primary: {
-        text: 'Go to profile',
+        text: loginGov ? 'Update profile at USAJOBS.gov' : 'Go to profile',
         action: function () {
           this.modalComponent.cleanup();
-          Backbone.history.navigate('/profile/' + window.cache.currentUser.id, { trigger: true });
+          if (loginGov) { 
+            window.location = usajobsURL + '/Applicant/Profile/';
+          } else {
+            Backbone.history.navigate('/profile/' + window.cache.currentUser.id, { trigger: true });
+          }
         }.bind(this),
       },
     });

@@ -48,7 +48,10 @@ var TaskListView = Backbone.View.extend({
         this.filters.location.push('in-person');
       }
     }.bind(this));
-    this.userAgency = window.cache.currentUser ? window.cache.currentUser.agency : {};
+    this.userAgency =  {};
+    if (window.cache.currentUser && window.cache.currentUser.agency) {
+      this.userAgency = window.cache.currentUser.agency;
+    }
     this.initAgencyFilter();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
