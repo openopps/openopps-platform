@@ -86,4 +86,10 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'participant'],
   },
+  'COMMUNITY_ADD_MEMBER': {
+    action: 'COMMUNITY_ADD_MEMBER',
+    description: 'A new user is added as a member of a community.',
+    severity: 'info',
+    data: ['communityId', 'userId'],
+  },
 };

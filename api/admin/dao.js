@@ -108,17 +108,20 @@ const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count 
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
-const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_count, tag.name as agency, community_user.created_at as joined_at, community_user.is_manager as "isCommunityAdmin" ' +
+const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, community_user.is_manager as "isCommunityAdmin" ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
-  'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  "where community_user.community_id = ? and tag.type = 'agency' " +
-  'order by "created_at" desc ' +
+  'left join agency on agency.agency_id = midas_user.agency_id ' +
+  'where community_user.community_id = ? ' +
+  'order by community_user.created_at desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
 const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
 'from midas_user inner join community_user on midas_user.id= community_user.user_Id ' ;
+
+const communityListQuery = 'select community.* from community ' + 
+  'join community_user on community_user.community_id = community.community_id ' +
+  'where community_user.is_manager = true and community_user.user_id = ?';
 
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
@@ -389,8 +392,9 @@ module.exports = function (db) {
       volunteerDetailsQuery: volunteerDetailsQuery,
       userAgencyQuery: userAgencyQuery,
       userCommunityQuery: userCommunityQuery,
-      taskCommunityStateUserQuery:taskCommunityStateUserQuery,
-      ownerCommunityListQuery:ownerCommunityListQuery,
+      taskCommunityStateUserQuery: taskCommunityStateUserQuery,
+      ownerCommunityListQuery: ownerCommunityListQuery,
+      communityListQuery: communityListQuery,
     },
     clean: clean,
     options: options,
