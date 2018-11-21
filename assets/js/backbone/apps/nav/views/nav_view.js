@@ -39,6 +39,7 @@ var NavView = Backbone.View.extend({
       this.idleModal.resetTimeout();
       var referrer = window.location.search.replace('?','') + window.location.hash;
       Backbone.history.navigate('/' + (referrer || 'home'), { trigger: true, replaceState: true });
+      this.activePage();
     }.bind(this));
 
     this.listenTo(window.cache.userEvents, 'user:login:close', function () {
