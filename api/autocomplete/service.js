@@ -19,8 +19,8 @@ async function userByName (name) {
     dao.query.userByName, name ? '%' + name.toLowerCase() + '%' || name.toLowerCase() + '%' || '%' + name.toLowerCase() : null
   );
   return result.map(tag => {
-    tag.field = 'name';
-    tag.value = tag.name;
+    tag.field = 'value';
+    tag.value = [tag.name, openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username].join(' - ');
     return tag;
   });
 }
