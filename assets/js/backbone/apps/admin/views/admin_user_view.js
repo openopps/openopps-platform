@@ -12,6 +12,7 @@ var AdminUserTemplate = require('../templates/admin_user_template.html');
 var AdminCommunityUserTable = require('../templates/admin_community_user_table.html');
 var AdminUserTable = require('../templates/admin_user_table.html');
 var Paginate = require('../templates/admin_paginate.html');
+var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
 var AdminUserView = Backbone.View.extend({
   events: {
@@ -20,6 +21,7 @@ var AdminUserView = Backbone.View.extend({
     'click .user-enable'        : 'toggleCheckbox',
     'click .assign-admin'       : 'toggleCheckbox',
     'click .user-reset'         : 'resetPassword',
+    'click #invite-members'     : 'inviteMembers',
     'keyup #user-filter'        : 'filter',
   },
 
@@ -71,6 +73,98 @@ var AdminUserView = Backbone.View.extend({
     this.fetchData(this.data);
     this.data.target = this.options.target;
     $('#search-results-loading').hide();
+  },
+
+  inviteMembers: function (e) {
+    e.preventDefault();
+    if (this.modalComponent) this.modalComponent.cleanup();
+    $('body').addClass('modal-is-open');
+    var modalContent = _.template(InviteMembersTemplate)(this.community);
+    this.modalComponent = new Modal({
+      el: '#site-modal',
+      id: 'invite-member-modal',
+      modalTitle: 'Invite member to community',
+      alert: {
+        type: 'error',
+        text: 'Error inviting member to community.',
+      },
+      modalBody: modalContent,
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          $('#community-add-member').select2('destroy');
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add applicant',
+        action: function () {
+          $('#community-add-member-alert').hide();
+          $('#community-add-member').select2('close');
+          if(!validate( { currentTarget: $('#community-add-member') } )) {
+            var data = {
+              communityId: $('#community-add-member').data('communityid'),
+              userId: $('#community-add-member').select2('data').id,
+            };
+            $.ajax({
+              url: '/api/community/member',
+              type: 'POST',
+              data: data,
+              success: function () {
+                $('#community-add-member').select2('destroy');
+                this.modalComponent.cleanup();
+                this.fetchData({ page: 1 });
+              }.bind(this),
+              error: function (err) {
+                if(err.status == 403) {
+                  this.modalComponent.cleanup();
+                } else {
+                  $('#community-add-member-alert-text').text(err.responseText);
+                  $('#community-add-member-alert').show();
+                }
+              }.bind(this),
+            });
+          }
+        }.bind(this),
+      },
+      cleanup: function () {
+        $('#community-add-member').select2('destroy');
+      },
+    }).render();
+
+    setTimeout(function () {
+      this.initializeInviteMemberSearch();
+    }.bind(this), 100);
+  },
+
+  initializeInviteMemberSearch: function () {
+    $('#community-add-member').select2({
+      placeholder: 'Search for a user',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/user',
+        dataType: 'json',
+        data: function (term) {
+          return { q: term };
+        },
+        results: function (data) {
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No user found by that name',
+    });
+    $('#community-add-member').on('change', function (e) {
+      validate({ currentTarget: $('#community-add-member') });
+    }.bind(this));
+    $('#community-add-member').focus();
   },
 
   renderUsers: function (data) {

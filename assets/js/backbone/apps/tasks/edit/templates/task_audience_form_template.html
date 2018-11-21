@@ -34,8 +34,8 @@
                     <select id="federal-programs" class="dropdown">
                       <option></option>
                       <% _.each(communities.federal, function (community) { %>
-                        <option value=<%- community.community_id %>>
-                              <%- community.community_name %>
+                        <option value=<%- community.communityId %>>
+                              <%- community.communityName %>
                         </option>
                       <% }); %>
                     </select>
@@ -66,8 +66,8 @@
                     <span class="field-validation-error error-empty" style="display:none;">You must select a program for this opportunity.</span>
                     <select id="student-programs" class="dropdown validate" data-validate="empty">
                       <% _.each(communities.student, function (community) { %>
-                        <option value=<%- community.community_id %>>
-                              <%- community.community_name %>
+                        <option value=<%- community.communityId %>>
+                              <%- community.communityName %>
                         </option>
                       <% }); %>
                     </select>

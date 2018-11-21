@@ -177,7 +177,6 @@ async function getUsersForAgency (page, limit, agencyId) {
 }
 
 async function getUsersForCommunity (page, limit, communityId) {
-  var community = (await dao.CommunityUser.find('community_id = ?', communityId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
   result.page = +page || 1;
@@ -490,8 +489,12 @@ async function getAgencies () {
   return departments;
 }
 
-async function getCommunities () {
-  return await dao.Community.find();
+async function getCommunities (user) {
+  if(user.isAdmin) {
+    return await dao.Community.find();
+  } else {
+    return await dao.Community.query(dao.query.communityListQuery, user.id);
+  }
 }
 
 async function createAuditLog (type, ctx, auditData) {
