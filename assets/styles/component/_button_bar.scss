@@ -1,0 +1,93 @@
+// Button Bar
+
+@import '../base-shared';
+
+@mixin buttonBar () {
+  @include outer-container();
+
+  &__body {
+    @include clearfix();
+    max-width: $site-max-width;
+    margin: 0 auto;
+    padding: $size-M;
+
+    .usa-button,
+    .usa-button-big {
+      margin-right: 0;
+
+      @include media($SM) {
+        margin: 0;
+      }
+    }
+  }
+
+  &__save,
+  &__edit {
+    float: right;
+  }
+}
+
+// It should have been named button-bar and not button_bar but, I goofed so
+// I added the correct one and kept the underscore version to be backward compatible
+.usajobs-button_bar,
+.usajobs-button-bar {
+  @include buttonBar();
+  max-width: none;
+  margin: $size-XL 0 $size-XXL;
+  background-color: $color-gray-lighter;
+
+  &__instructions {
+    font-style: italic;
+  }
+
+  &__delete {
+    display: inline-block;
+    padding: .6rem $size-default .6rem 2.5rem;
+    font-weight: bold;
+    background-image: url('../img/icons/button-bar/times-circle.svg');
+    background-size: 2rem 2rem;
+    background-position: left center;
+    background-repeat: no-repeat;
+    @include permaLink();
+  }
+}
+
+.usajobs-button_bar--slim,
+.usajobs-button-bar--slim {
+  @include buttonBar();
+  margin: $size-M 0 $size-XL;
+  border-top: 1px solid $color-gray-lighter;
+
+  .usajobs-button_bar__body,
+  .usajobs-button-bar__body {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: right;
+  }
+
+  .usajobs-button_bar__save,
+  .usajobs-button-bar__save {
+    display: inline-block;
+    float: none;
+  }
+}
+
+.usajobs-button_bar--slim-left,
+.usajobs-button-bar--slim-left{
+
+  .usajobs-button_bar__body,
+  .usajobs-button-bar__body {
+    text-align:left;
+  }
+}
+
+.usajobs-button_bar--split,
+.usajobs-button-bar--split {
+  @include buttonBar();
+  margin: $size-M 0;
+
+  .usajobs-button_bar__body,
+  .usajobs-button-bar__body {
+    padding: 0;
+  }
+}

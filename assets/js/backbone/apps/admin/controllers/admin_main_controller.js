@@ -20,11 +20,13 @@ Admin.ShowController = BaseController.extend({
 
   // Initialize the admin view
   initialize: function (options) {
-    this.options    = options; 
+    this.options = options; 
 
     this.adminMainView = new AdminMainView({
       action: options.action,
+      subAction: options.subAction,
       agencyId: options.agencyId,
+      communityId: options.communityId,
       el: this.el,
     }).render();
   },
@@ -131,16 +133,26 @@ Admin.ShowController = BaseController.extend({
   changeOwner: function (event) {
     if (event.preventDefault) event.preventDefault();
     var taskId = $(event.currentTarget).data('task-id');
-    var title = $( event.currentTarget ).data('task-title');
-    $.ajax({
-      url: '/api/admin/changeOwner/' + taskId,
-    }).done(function (data) {
-      this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title });
-    }.bind(this));
+    var title = $( event.currentTarget ).data('task-title'); 
+      
+    if(this.adminMainView.options.communityId){
+      $.ajax({
+        url: '/api/admin/community/changeOwner/' + taskId,
+      }).done(function (data) {
+        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title });
+      }.bind(this));
+    }
+    else{
+      $.ajax({
+        url: '/api/admin/changeOwner/' + taskId,
+      }).done(function (data) {
+        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title });
+      }.bind(this));
+    }
   },
 
   displayChangeOwnerModal: function (event, data) {
-    this.target = $(event.currentTarget).parent();
+    this.target = $(event.currentTarget).parent(); 
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     var modalContent = _.template(ChangeOwnerTemplate)(data);
     $('body').addClass('modal-is-open');

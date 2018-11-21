@@ -98,6 +98,7 @@ var TaskEditFormView = Backbone.View.extend({
 
     this.data = {
       data: this.model.toJSON(),
+      community: this.options.community,
       tagTypes: this.options.tagTypes,
       newTags: [],
       newItemTags: [],
@@ -136,6 +137,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.toggleLocationOptions();
     this.toggleCareerField();
     $('#search-results-loading').hide();
+    return this;
   },
 
   initializeSelect2: function () {
@@ -533,6 +535,7 @@ var TaskEditFormView = Backbone.View.extend({
   getDataFromPage: function () {
     var modelData = {
       id          : this.model.get('id'),
+      communityId : this.model.get('communityId'),
       title       : this.$('#task-title').val(),
       description : this.$('#opportunity-introduction').val(),
       details     : this.$('#opportunity-details').val(),

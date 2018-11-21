@@ -10,7 +10,7 @@
         </div>
         <% if(!accessForbidden) { %>
         <div class="usajobs-nav__menu" id="usajobs-menu">
-          <ul role="menubar">
+          <ul>
             <% if (user) { %>
               <li class="usajobs-nav__menu-container usajobs-nav__account usajobs-nav--openopps__menu-container" data-state="is-closed">
                 <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-one" href="#" title="Account" aria-haspopup="true" aria-controls="section-one">
@@ -92,7 +92,7 @@
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
         <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
       </li>
-      <% if (user.isAdmin === true || user.isAgencyAdmin === true) { %>
+      <% if (user.isAdmin || user.isAgencyAdmin || user.isCommunityAdmin) { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
       <% } %>
     </ul>

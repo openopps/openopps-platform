@@ -14,6 +14,7 @@ var TaskModel = require('./entities/tasks/task_model');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
+var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
@@ -23,25 +24,28 @@ var Modal = require('./components/modal');
 var BrowseRouter = Backbone.Router.extend({
 
   routes: {
-    ''                              : 'showLanding',
-    'home'                          : 'showHome',
-    'tasks/new(?*queryString)'      : 'newTask',
-    'tasks(/)(?:queryStr)'          : 'listTasks',
-    'tasks/:id(/)'                  : 'showTask',
-    'tasks/:id/:action(/)'          : 'showTask',
-    'profiles(/)(?:queryStr)'       : 'listProfiles',
-    'profile/find(/)'               : 'findProfile',
-    'profile/link(/)'               : 'linkProfile',
-    'profile/:id(/)'                : 'showProfile',
-    'profile/edit/skills/:id(/)'    : 'editSkills',
-    'profile/edit/:id(/)'           : 'editProfile',
-    'profile/:action/:key'          : 'resetProfile',
-    'admin(/)'                      : 'showAdmin',
-    'admin(/):action(/)(:agencyId)' : 'showAdmin',
-    'login(/)'                      : 'showLogin',
-    'apply'                         : 'showApply',
-    'unauthorized(/)'               : 'showUnauthorized',
-    'expired(/)'                    : 'showExpired',
+    ''                                              : 'showLanding',
+    'home'                                          : 'showHome',
+    'tasks/create'                                :'createTask',
+    'tasks/new(?*queryString)'                      : 'newTask',
+    'tasks(/)(?:queryStr)'                          : 'listTasks',
+    'tasks/:id(/)'                                  : 'showTask',
+    'tasks/:id/:action(/)'                          : 'showTask',
+    'profiles(/)(?:queryStr)'                       : 'listProfiles',
+    'profile/find(/)'                               : 'findProfile',
+    'profile/link(/)'                               : 'linkProfile',
+    'profile/:id(/)'                                : 'showProfile',
+    'profile/edit/skills/:id(/)'                    : 'editSkills',
+    'profile/edit/:id(/)'                           : 'editProfile',
+    'profile/:action/:key'                          : 'resetProfile',
+    'admin(/)'                                      : 'showAdmin',
+    'admin(/):action(/)(:actionId)(/)(:subAction)'  : 'showAdmin',
+    'login(/)'                                      : 'showLogin',
+    'apply'                                         : 'showApply',
+    'unauthorized(/)'                               : 'showUnauthorized',
+    'expired(/)'                                    : 'showExpired',
+    'logout'                                        : 'logout',
+    'loggedOut'                                     : 'showLogout',
   },
 
   data: { saved: false },
@@ -86,6 +90,8 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.profileEditController) { this.profileEditController.cleanup(); }
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
+    if (this.taskEditFormView) { this.taskEditFormView.cleanup(); }
+    if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
     this.data = { saved: false };
@@ -123,6 +129,34 @@ var BrowseRouter = Backbone.Router.extend({
     }).render();
     var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
     $('#container').html(_.template(UnauthorizedTemplate)());
+    $('#search-results-loading').hide();
+    $('.usa-footer-return-to-top').hide();
+  },
+
+  logout: function () {
+    $.ajax({
+      url: '/api/auth/logout?json=true',
+    }).done(function (data) {
+      if(data.redirectURL) {
+        window.location = data.redirectURL;
+      } else {
+        this.showLogout();
+      }
+    }.bind(this)).fail(function () {
+      this.showLogout();
+    }.bind(this)).always(function () {
+      window.cache.currentUser = null;
+    });
+    
+  },
+
+  showLogout: function () {
+    this.navView = new NavView({
+      el: '.navigation',
+      accessForbidden: true, 
+    }).render();
+    var LogOutTemplate = require('./apps/login/templates/logout.html');
+    $('#container').html(_.template(LogOutTemplate)());
     $('#search-results-loading').hide();
     $('.usa-footer-return-to-top').hide();
   },
@@ -185,33 +219,60 @@ var BrowseRouter = Backbone.Router.extend({
     this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
   },
 
+  createTask: function () {
+    this.cleanupChildren();
+    this.taskAudienceFormView = new TaskAudienceFormView({
+      el: '#container',
+    }).render();
+  },
+
   /*
    * Create a new task. This method first populates and generates a new collection
    * with a single empty model. It also creates a new TaskCreationForm adding the
    * collection to it. This collection is then managed by the view using events
    * on the collection.
    */
-  newTask: function ( /*params*/ ) {
+  newTask: function (queryString) {
     if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?tasks/new', { trigger: true });
+      Backbone.history.navigate('/login?tasks/create', { trigger: true });
       return;
     }
-    var self = this;
+    var params = this.parseQueryParams(queryString);
     this.cleanupChildren();
     var model = new TaskModel();
-    var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    model.set('restrict', _.defaults(restrict, model.get('restrict')));
+    //var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
+    model.set('restrict', _.defaults({}, model.get('restrict')));
+    this.initializeTaskListeners(model);
+    if (params.cid) {
+      var communityId = _.defaults(params.cid, model.get('communityId'));
+      model.loadCommunity(communityId, function (community) {
+        model.set('communityId', community.communityId);
+        this.renderTaskView(model, community);
+      }.bind(this));
+    } else {
+      this.renderTaskView(model);
+    }
+  },
+
+  renderTaskView: function (model, community) {
+    var madlibTags = {};
+    if(community && community.communityType && community.communityTypeValue) {
+      madlibTags[community.communityType.toLowerCase()] = [community.communityTypeValue];
+    }
     model.tagTypes(function (tagTypes) {
       this.taskEditFormView = new TaskEditFormView({
         el: '#container',
         edit: false,
         model: model,
+        community: community,
         tags: [],
-        madlibTags: {},
+        madlibTags: madlibTags,
         tagTypes: tagTypes,
       }).render();
-    });
+    }.bind(this));
+  },
 
+  initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
       Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });
       if(data.attributes.state != 'draft') {
@@ -247,7 +308,7 @@ var BrowseRouter = Backbone.Router.extend({
         $('.alert.alert-danger').text(alertText).show();
         $(window).animate({ scrollTop: 0 }, 500);
       }
-    });
+    });  
   },
 
   showHome: function (id) {
@@ -306,16 +367,18 @@ var BrowseRouter = Backbone.Router.extend({
     this.profileShowController = new ProfileShowController({ id: id, data: this.data });
   },
 
-  showAdmin: function (action, agencyId) {
+  showAdmin: function (action, actionId, subAction) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?admin', { trigger: true });
     } else {
       this.cleanupChildren();
-      this.adminMainController = new AdminMainController({
+      var options = {
         el: '#container',
         action: action,
-        agencyId: agencyId,
-      });
+        subAction: subAction,
+      };
+      options[action + 'Id'] = actionId;
+      this.adminMainController = new AdminMainController(options);
     }
   },
 

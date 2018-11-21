@@ -174,6 +174,11 @@ var HomeView = Backbone.View.extend({
     if(target.value == 'updatedAt') {
       sortedData = sortedData.reverse();
     }
+    if(target.value == 'title'){
+      sortedData = _.sortBy(data, function (item){
+        return item.title.toLowerCase();
+      });     
+    } 
     if(target.id == 'sort-participated') {
       this.volView.options.sort = target.value;
       this.volView.options.data = sortedData;
@@ -187,18 +192,7 @@ var HomeView = Backbone.View.extend({
 
   logout: function (e) {
     if (e.preventDefault) e.preventDefault();
-    $.ajax({
-      url: '/api/auth/logout?json=true',
-    }).done(function (data) {
-      window.cache.currentUser = null;
-      if(data.redirectURL) {
-        window.location = data.redirectURL;
-      } else {
-        window.cache.userEvents.trigger('user:logout');
-      }
-    }).fail(function (error) {
-      // do nothing
-    });
+    window.cache.userEvents.trigger('user:logout');
   },
 
   cleanup: function () {

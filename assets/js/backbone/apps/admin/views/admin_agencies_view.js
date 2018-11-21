@@ -14,14 +14,14 @@ var AdminAgenciesView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.adminMainView = options.adminMainView;
-    this.agencyId = options.agencyId || window.cache.currentUser.agency.id;
+    this.agencyId = options.agencyId || window.cache.currentUser.agency.agencyId;
   },
 
   render: function (replace) {
     this.$el.show();
     this.loadAgencyData();
     $('#search-results-loading').hide();
-    Backbone.history.navigate('/admin/agencies/' + this.agencyId, { replace: replace });
+    Backbone.history.navigate('/admin/agency/' + this.agencyId, { replace: replace });
     return this;
   },
 
@@ -31,14 +31,13 @@ var AdminAgenciesView = Backbone.View.extend({
       url: '/api/admin/agency/' + this.agencyId,
       dataType: 'json',
       success: function (agencyInfo) {
-        agencyInfo.slug = (agencyInfo.data.abbr || '').toLowerCase();
-        agencyInfo.data.domain = agencyInfo.data.domain;
+        agencyInfo.slug = (agencyInfo.abbr || '').toLowerCase();
         var template = _.template(AdminAgenciesTemplate)({
           agency: agencyInfo,
-          agencies: this.options.agencies,
+          departments: this.options.departments,
         });
         this.$el.html(template);
-        if(this.options.agencies) {
+        if(this.options.departments) {
           this.initializeAgencySelect();
         }
       }.bind(this),
@@ -60,7 +59,7 @@ var AdminAgenciesView = Backbone.View.extend({
   link: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    this.adminMainView.routeTarget(t.data('target'), this.data.agency.id);
+    this.adminMainView.routeTarget(t.data('target'), this.data.agency.agencyId);
   },
 
   toggleAccept: function (e) {
@@ -94,7 +93,9 @@ var AdminAgenciesView = Backbone.View.extend({
   },
 
   changeAgency: function (event) {
-    Backbone.history.navigate('/admin/agencies/' + $('#agencies').val(), { trigger: true });
+    if($('#agencies').val()) {
+      Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
+    }
   },
 
   cleanup: function () {

@@ -48,7 +48,10 @@ var TaskListView = Backbone.View.extend({
         this.filters.location.push('in-person');
       }
     }.bind(this));
-    this.userAgency = window.cache.currentUser ? window.cache.currentUser.agency : {};
+    this.userAgency =  {};
+    if (window.cache.currentUser && window.cache.currentUser.agency) {
+      this.userAgency = window.cache.currentUser.agency;
+    }
     this.initAgencyFilter();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
@@ -383,6 +386,8 @@ var TaskListView = Backbone.View.extend({
         $('#main-content').toggleClass('hide', false);
         $('.find-people').toggleClass('hide', false);
         $('#footer').toggleClass('hide', false);
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
       }, 250);
     } else {
       setTimeout(function () {
@@ -398,6 +403,8 @@ var TaskListView = Backbone.View.extend({
         $('.find-people').toggleClass('hide', true);
         $('#footer').toggleClass('hide', true);
         $('#task-filters').css('display', 'block');
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
       }, 250);
     }
   },

@@ -260,6 +260,14 @@
     }
   }
 
+  #invite-members {
+    margin-left: $size-default;
+    
+    .text-content {
+      margin-left: $size-base;
+    }
+  }
+
   @include media($SM-down) {
     .usa-button-secondary {
       margin: 0 0 1.5rem 0;
@@ -352,7 +360,11 @@
   }
 }
 
-#s2id_agencies {
+#s2id_agencies, #s2id_communities {
   margin-bottom: $size-M;
+}
+
+.capitalize-target {
+  text-transform: capitalize;
 }
 

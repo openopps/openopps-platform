@@ -9,10 +9,12 @@ const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const userService = require('../user/service');
 const Audit = require('../model/Audit');
+const profile = require('../auth/profile');
 
 const baseUser = {
   isAdmin: false,
   isAgencyAdmin: false,
+  isCommunityAdmin: false,
   disabled: false,
   passwordAttempts: 0,
   completedTasks: 0,
@@ -31,7 +33,7 @@ function generatePasswordReset (user) {
   };
 }
 
-async function register (attributes, done) {
+async function register (ctx, attributes, done) {
   attributes.username = attributes.username.toLowerCase().trim();
   if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
     done({ message: 'The email address provided is not a valid government email address or is already in use.' });
@@ -46,14 +48,17 @@ async function register (attributes, done) {
       await userService.processUserTags(user, tags).then(tags => {
         user.tags = tags;
       });
-      await dao.UserPasswordReset.insert(generatePasswordReset(user)).then((obj) => {
+      await dao.UserPasswordReset.insert(generatePasswordReset(user)).then(async (obj) => {
+        await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'successful' });
         return done(null, _.extend(user, { token: obj.token }));
-      }).catch((err) => {
+      }).catch(async (err) => {
         log.info('Error creating password reset record', err);
+        await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'failed' });
         return done(true);
       });
-    }).catch(err => {
+    }).catch(async (err) => {
       log.info('register: failed to create user ', attributes.username, err);
+      await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'failed' });
       return done(true);
     });
   }
@@ -71,7 +76,7 @@ async function sendUserCreateNotification (user, action) {
   notification.createNotification(data);
 }
 
-async function resetPassword (token, password, done) {
+async function resetPassword (ctx, token, password, done) {
   token.deletedAt = new Date();
   var user = { id: token.userId, passwordAttempts: 0, updatedAt: new Date() };
   await dao.Passport.find('"user" = ?', token.userId).then(async (results) => {
@@ -84,12 +89,14 @@ async function resetPassword (token, password, done) {
     passport.protocol = passport.protocol || 'local';
     await dao.Passport.upsert(passport).then(async () => {
       await dao.User.update(user).then(async () => {
-        await dao.UserPasswordReset.update(token).then(() => {
+        await dao.UserPasswordReset.update(token).then(async () => {
+          await createAudit('PASSWORD_RESET', ctx, { userId: token.userId, status: 'successful' });
           done(null);
         });
       });
-    }).catch((err) => {
+    }).catch(async (err) => {
       log.info('reset: failed to create or update passport ', token.email, err);
+      await createAudit('PASSWORD_RESET', ctx, { userId: token.userId, status: 'failed' });
       done({ message: 'Failed to reset password.' });
     });
   });
@@ -134,10 +141,10 @@ async function checkToken (token, done) {
     await dao.User.findOne('id = ?', passwordReset.userId).then((user) => {
       return done(null, _.extend(_.clone(passwordReset), { email: user.username }));
     }).catch((err) => {
-      return ({ message: 'Error looking up user.', err: err }, null);
+      return done({ message: 'Not a valid password reset code.'}, null);
     });
   }).catch((err) => {
-    return ({ message: 'Error looking up token.', err: err }, null);
+    return done({ message: 'Not a valid password reset code.'}, null);
   });
 }
 
@@ -148,6 +155,32 @@ function validate (data, hash) {
 async function createStagingRecord (user, done) {
   await dao.AccountStaging.upsert(_.extend(user, { uuid: uuid.v4() })).then(account => {
     done(null, _.extend(account, { hash: bcrypt.hashSync([account.linkedId, account.uuid].join('|'), 10) }));
+  }).catch(err => {
+    done(err);
+  });
+}
+
+async function getProfileData (params, done) {
+  await dao.AccountStaging.findOne('linked_id = ? ', params.id).then(async account => {
+    if (bcrypt.compareSync([account.linkedId, account.uuid].join('|'), params.h)) {
+      await profile.get({ access_token: account.accessToken, id_token: account.idToken }).then(async profile => {
+        var user = _.extend(_.clone(baseUser), {
+          username: profile.URI,
+          name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+          title: profile.Profile.JobTitle,
+          governmentUri: profile.Profile.GovernmentURI,
+          linkedId: account.linkedId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        await dao.User.insert(user).then(async (user) => {
+          await dao.AccountStaging.delete(account).catch(() => {});
+          done(null, _.extend(user, { access_token: account.accessToken, id_token: account.idToken }));
+        }).catch(done);
+      }).catch(done);
+    } else {
+      done('Unauthorized');
+    }
   }).catch(err => {
     done(err);
   });
@@ -192,26 +225,30 @@ async function sendFindProfileConfirmation (ctx, data, done) {
         log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
         done({ message: 'Unkown error occurred' });
       });
-    }).catch(err => {
-      var audit = Audit.createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
+    }).catch(async () => {
+      await createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
         documentId: account.linkedId,
         email: data.email,
       });
-      dao.AuditLog.insert(audit).catch(() => {});
       done();
     });
   }
 }
 
-function logAuthenticationError (ctx, type, auditData) {
+async function createAudit (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
-  dao.AuditLog.insert(audit).catch(() => {});
+  await dao.AuditLog.insert(audit).catch(() => {});
+}
+
+async function logAuthenticationError (ctx, type, auditData) {
+  await createAudit(type, ctx, auditData);
 }
 
 module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
   forgotPassword: forgotPassword,
+  getProfileData: getProfileData,
   linkAccount: linkAccount,
   logAuthenticationError: logAuthenticationError,
   register: register,

@@ -1,5 +1,5 @@
 module.exports = {
-  subject: 'Confirm your account on <%- globals.systemName %>',
+  subject: 'Find my <%- globals.systemName %> Profile',
   to: '<%= user.username %>',
   data: function (model, done) {
     var data = {

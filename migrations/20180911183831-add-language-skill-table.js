@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('language_skill', {
-    language_skill_id: { type: 'bigserial', primaryKey: true, autoIncrement: true },
+    language_skill_id: { type: 'bigserial', primaryKey: true },
     application_id: { type: 'bigint', notNull: true },
     user_id: { type: 'bigint', notNull: true },
     language_id: { type: 'integer', notNull: true },

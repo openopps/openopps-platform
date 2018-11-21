@@ -19,6 +19,18 @@ async function userByName (name) {
     dao.query.userByName, name ? '%' + name.toLowerCase() + '%' || name.toLowerCase() + '%' || '%' + name.toLowerCase() : null
   );
   return result.map(tag => {
+    tag.field = 'value';
+    tag.value = [tag.name, openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username].join(' - ');
+    return tag;
+  });
+}
+
+async function agency (name) {
+  var abbr =  name ? name.toLowerCase() + '%' : '';
+  name = name ? '%' + name.toLowerCase() + '%' : '';
+  var result = await dao.Agency.query(dao.query.agency, [name, abbr]);
+  return result.map(tag => {
+    tag.id = tag.agencyId;
     tag.field = 'name';
     tag.value = tag.name;
     return tag;
@@ -28,4 +40,5 @@ async function userByName (name) {
 module.exports = {
   tagByType: tagByType,
   userByName: userByName,
+  agency: agency,
 };

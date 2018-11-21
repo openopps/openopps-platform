@@ -7,9 +7,45 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-<h2>Federal Acquisition Institute (FAI)</h2>
-<div class="metric-block"></div>
-<hr>
-<div class="task-metrics"></div>
-<div class="activity-block"></div>
+<div class="usajobs-grid-full">
+  <div class="usa-width-one-whole">
+    <select id="communities" class="dropdown">
+      <option value=""></option>
+      <% _.each(communities, function (c) { %>
+          <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
+      <% }); %>
+    </select>
+  </div>
+</div>
+<div class="usajobs-grid-full">
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Members <a href="/admin/community/<%=community.communityId %>/users" class="">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Active users: <%- numeral(community.users.active).format('0,0') %></li>
+      <li>Admins: <%- numeral(community.users.admins).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total created: <%- numeral(community.tasks.totalCreated).format('0,0') %></li>
+      <li>Submitted: <%- numeral(community.tasks.submitted).format('0,0') %></li>
+      <li>Open: <%- numeral(community.tasks.open).format('0,0') %></li>
+      <li>Not open: <%- numeral(community.tasks.notOpen).format('0,0') %></li>
+      <li>In progress: <%- numeral(community.tasks.inProgress).format('0,0') %></li>
+      <li>Completed: <%- numeral(community.tasks.completed).format('0,0') %></li>
+      <li>Canceled: <%- numeral(community.tasks.canceled).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Total applications: <%- numeral(community.interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(community.interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(community.interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(community.interactions.posts).format('0,0') %></li>
+    </ul>
+  </div>
+</div>
+</div>
 

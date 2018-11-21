@@ -20,16 +20,27 @@ const lookupVolunteerQuery = 'select volunteer.id ' +
 'join midas_user on midas_user.id = volunteer."userId" ' +
 'where midas_user.id = ? and volunteer."taskId" = ? ';
 
-const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
-'from midas_user inner join tagentity_users__user_tags on midas_user.id = tagentity_users__user_tags.user_tags ' +
-'inner join tagentity tagentity on tagentity.id = tagentity_users__user_tags.tagentity_users ' +
-'where midas_user.id = ? ' +
-"and tagentity.type = 'agency' ";
+const userAgencyQuery = 'select @midas_user.*, @agency.* ' +
+'from @midas_user ' +
+'inner join @agency on agency.agency_id = midas_user.agency_id ' +
+'where midas_user.id = ? ';
 
+const options = {
+  user: {
+    fetch: {
+      agency: '',
+    },
+    exclude: {
+      midas_user: [ 'deletedAt', 'createdAt', 'updatedAt', 'passwordAttempts', 'disabled' ],
+    },
+  },
+};
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency '}),
     Task: dao({ db: db, table: 'task' }),
+    User: dao({ db: db, table: 'midas_user '}),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     query: {
       volunteer: volunteerQuery,
@@ -37,5 +48,6 @@ module.exports = function (db) {
       user: userAgencyQuery,
       assignedVolunteer: assignedVolunteerQuery,
     },
+    options: options,
   };
 };

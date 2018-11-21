@@ -14,6 +14,21 @@ async function getMetrics () {
   return { 'tasks': tasks, 'users': users };
 }
 
+
+async function getCommunityTaskStateMetrics (communityId){
+  var states = {};
+  
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId,dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId , dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
+  return states;
+}
+
+
 async function getTaskStateMetrics () {
   var states = {};
   states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", dao.options.task));
@@ -28,14 +43,14 @@ async function getTaskStateMetrics () {
 
 async function getAgencyTaskStateMetrics (agencyId) {
   var states = {};
-  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", agency.name.toLowerCase(), dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'completed'", agency.name.toLowerCase(), dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'draft'", agency.name.toLowerCase(), dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", agency.name.toLowerCase(), dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'not open'", agency.name.toLowerCase(), dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'submitted'", agency.name.toLowerCase(), dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'canceled'", agency.name.toLowerCase(), dao.options.task));
+  //var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
+  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", agencyId, dao.options.task));
+  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'completed'", agencyId, dao.options.task));
+  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'draft'", agencyId, dao.options.task));
+  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", agencyId, dao.options.task));
+  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'not open'", agencyId, dao.options.task));
+  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'submitted'", agencyId, dao.options.task));
+  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'canceled'", agencyId, dao.options.task));
   return states;
 }
 
@@ -129,6 +144,18 @@ async function getInteractions () {
   return interactions;
 }
 
+async function getInteractionsForCommunity (communityId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.communityPostQuery, communityId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.communityVolunteerCountQuery, communityId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+}
+
 async function getUsers (page, limit) {
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
@@ -140,13 +167,23 @@ async function getUsers (page, limit) {
 }
 
 async function getUsersForAgency (page, limit, agencyId) {
-  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
   var result = {};
   result.limit = typeof limit !== 'undefined' ? limit : 25;
-  result.page = +page;
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agency.name.toLowerCase(), page)).rows;
+  result.page = +page || 1;
+  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await getUserTaskMetrics (result);
+  return result;
+}
+
+async function getUsersForCommunity (page, limit, communityId) {
+  var result = {};
+  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  result.page = +page || 1;
+  result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
+  result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
+  result = await getUserTaskMetrics (result);
+  result = await getUserTaskCommunityMetrics (result, communityId);
   return result;
 }
 
@@ -162,14 +199,27 @@ async function getUsersFiltered (page, query) {
 }
 
 async function getUsersForAgencyFiltered (page, query, agencyId) {
-  var agency = (await dao.TagEntity.find("type = 'agency' and id = ?", agencyId))[0];
   var result = { page: page, q: query, limit: 25 };
   result.users = (await dao.User.db.query(dao.query.userAgencyListFilteredQuery,
     '%' + query.toLowerCase() + '%',
     '%' + query.toLowerCase() + '%',
-    agency.name.toLowerCase(),
+    agencyId,
     page)).rows;
   result = await getUserTaskMetrics (result);
+  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
+  return result;
+}
+
+async function getUsersForCommunityFiltered (page, query, communityId) {
+  var result = { page: page, q: query, limit: 25 };
+  result.users = (await dao.User.db.query(dao.query.userCommunityListFilteredQuery,
+    '%' + query.toLowerCase() + '%',
+    '%' + query.toLowerCase() + '%',
+    '%' + query.toLowerCase() + '%',
+    communityId,
+    page)).rows;
+  result = await getUserTaskMetrics (result);
+  result = await getUserTaskCommunityMetrics(result, communityId);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 }
@@ -183,6 +233,14 @@ async function getTaskMetrics () {
 
 async function getUserMetrics () {
   return (await dao.User.db.query(dao.query.userQuery)).rows[0];
+}
+
+async function getUserTaskCommunityMetrics (result, communityId) {
+  for (var i = 0; i < result.users.length; i++) {
+    result.users[i].communityTaskCreated = (await dao.Task.db.query(await dao.query.communityTaskCreatedPerUserQuery, communityId, result.users[i].id)).rows[0].created;
+    result.users[i].communityTaskParticipated = (await dao.Task.db.query(await dao.query.communityTaskVolunteerPerUserQuery, communityId, result.users[i].id)).rows[0].participated;
+  }
+  return result;
 }
 
 async function getUserTaskMetrics (result) {
@@ -234,22 +292,40 @@ async function getProfile (id) {
 async function updateProfile (user, done) {
   user.updatedAt = new Date();
   await dao.User.update(user).then(async () => {
-    return done(true, null);
+    return done(null);
   }).catch (err => {
-    return done(null, err);
+    return done(err);
+  });
+}
+
+async function updateCommunityAdmin (user, communityId, done) {
+  var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
+  communityUser.isManager = user.isCommunityAdmin;
+  await dao.CommunityUser.update(communityUser).then(async () => {
+    return done(null);
+  }).catch (err => {
+    return done(err);
   });
 }
 
 async function getAgency (id) {
-  var agency = await dao.TagEntity.findOne('id = ?', id);
-  agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, agency.name.toLowerCase())).rows[0];
+  var agency = await dao.Agency.findOne('agency_id = ?', id);
+  agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, id)).rows[0];
   agency.tasks.totalCreated = Object.values(agency.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
-  agency.users = await (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
+  agency.users = (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
   return agency;
 }
 
+async function getCommunity (id) {
+  var community = await dao.Community.findOne('community_id = ?', id);
+  community.tasks = (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
+  community.tasks.totalCreated = Object.values(community.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
+  return community;
+}
+
 async function canAdministerAccount (user, id) {
-  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id))) {
+  if (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, id)) || (user.isCommunityAdmin && await checkCommunity(user, id))) {
     return true;
   }
   return false;
@@ -266,8 +342,26 @@ async function checkAgency (user, ownerId) {
   return false;
 }
 
-async function getExportData () {
-  var records = (await dao.User.db.query(dao.query.exportUserData)).rows;
+async function checkCommunity (user, ownerId) {
+  var owner = (await dao.User.db.query(dao.query.userCommunityQuery, ownerId)).rows[0];
+  if (owner && owner.isAdmin) {
+    return false;
+  }
+  if (owner && owner.name) {
+    return _.find(user.tags, { 'type': 'agency' }).name == owner.name;
+  }
+  return false;
+}
+
+async function getExportData (target, id) {
+  var records;
+  if (target === 'agency') {
+    records = (await dao.User.db.query(dao.query.exportUserAgencyData, id)).rows;
+  } else if (target === 'community') {
+    records = (await dao.User.db.query(dao.query.exportUserCommunityData, id)).rows;
+  } else {
+    records = (await dao.User.db.query(dao.query.exportUserData)).rows;
+  }
   var fieldNames = _.keys(dao.exportFormat);
   var fields = _.values(dao.exportFormat);
 
@@ -312,7 +406,17 @@ async function getOwnerOptions (taskId, done) {
     return undefined;
   });
   if (task) {
-    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));
+    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));   
+  } else {
+    done(undefined, 'Unable to locate specified task');
+  }
+}
+async function getCommunityOwnerOptions (taskId, done) {
+  var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
+    return undefined;
+  });
+  if (task) {
+    done(await dao.User.query(dao.query.ownerCommunityListQuery));  
   } else {
     done(undefined, 'Unable to locate specified task');
   }
@@ -378,7 +482,24 @@ async function assignParticipant (ctx, data, done) {
 }
 
 async function getAgencies () {
-  return await dao.TagEntity.find('type = ?', 'agency');
+  var departments = await dao.Agency.find('code in (select parent_code from agency where parent_code is not null)');
+  await Promise.all(departments.map(async (department) => {
+    department.agencies = await dao.Agency.find('parent_code = ?', department.code);
+  }));
+  return departments;
+}
+
+async function getCommunities (user) {
+  if(user.isAdmin) {
+    return await dao.Community.find();
+  } else {
+    return await dao.Community.query(dao.query.communityListQuery, user.id);
+  }
+}
+
+async function createAuditLog (type, ctx, auditData) {
+  var audit = Audit.createAudit(type, ctx, auditData);
+  await dao.AuditLog.insert(audit).catch(() => {});
 }
 
 module.exports = {
@@ -386,20 +507,30 @@ module.exports = {
   getInteractions: getInteractions,
   getUsers: getUsers,
   getAgencies: getAgencies,
+  getCommunities: getCommunities,
   getUsersForAgency: getUsersForAgency,
+  getUsersForCommunity: getUsersForCommunity,
   getUsersFiltered: getUsersFiltered,
   getUsersForAgencyFiltered: getUsersForAgencyFiltered,
+  getUsersForCommunityFiltered: getUsersForCommunityFiltered,
   getProfile: getProfile,
   updateProfile: updateProfile,
+  updateCommunityAdmin: updateCommunityAdmin,
   getExportData: getExportData,
   getTaskStateMetrics: getTaskStateMetrics,
   getAgencyTaskStateMetrics: getAgencyTaskStateMetrics,
+  getUserTaskCommunityMetrics: getUserTaskCommunityMetrics,
   getAgency: getAgency,
+  getCommunity: getCommunity,
+  getInteractionsForCommunity: getInteractionsForCommunity,
   getDashboardTaskMetrics: getDashboardTaskMetrics,
   getActivities: getActivities,
   canAdministerAccount: canAdministerAccount,
   canChangeOwner: canChangeOwner,
   getOwnerOptions: getOwnerOptions,
+  getCommunityOwnerOptions:getCommunityOwnerOptions,
   changeOwner: changeOwner,
   assignParticipant: assignParticipant,
+  createAuditLog: createAuditLog,
+  getCommunityTaskStateMetrics:getCommunityTaskStateMetrics,
 };

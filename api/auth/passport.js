@@ -4,10 +4,7 @@ const log = require('log')('app:passport');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
-const path = require('path');
-const uuid = require('uuid');
 const _ = require('lodash');
-const Audit = require('../model/Audit');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -23,6 +20,7 @@ async function fetchUser (id) {
     var user = results[0];
     if(user) {
       user.isOwner = true;
+      user.isCommunityAdmin = (await dao.CommunityUser.find('user_id = ? and is_manager = ?', user.id, true)).length > 0;
       user.badges = await dao.Badge.find('"user" = ?', user.id, dao.options.badge);
       user = dao.clean.user(user);
     }
@@ -41,11 +39,6 @@ async function userFound (user, tokenset, done) {
   if(user.disabled) {
     done({ message: 'Not authorized' });
   } else {
-    if(!user.linkedId || user.governmentUri != tokenset.claims['usaj:governmentURI']) {
-      user.linkedId = tokenset.claims.sub;
-      user.governmentUri = tokenset.claims['usaj:governmentURI'];
-      await dao.User.update(user);
-    }
     user.access_token = tokenset.access_token,
     user.id_token = tokenset.id_token,
     done(null, user);
@@ -73,7 +66,7 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
   await dao.User.findOne('username = ?', username.toLowerCase().trim()).then(async (user) => {
     if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
       log.info('max passwordAttempts (1)', user.passwordAttempts, maxAttempts);
-      done('locked', false);
+      done({ message: 'locked', data: { userId: user.id } }, false);
     } else {
       var passport = await fetchPassport(user.id, 'local');
       if (passport) {
@@ -82,10 +75,11 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
           dao.User.update(user).then(() => {
             if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
               log.info('max passwordAttempts (2)', user.passwordAttempts, maxAttempts);
-              done('locked', false);
+              done({ message: 'locked', data: { userId: user.id } }, false);
+            } else {
+              log.info('Error.Passport.Password.Wrong');
+              done({ data: { userId: user.id } }, false);
             }
-            log.info('Error.Passport.Password.Wrong');
-            done(null, false);
           }).catch(err => {
             done(err, false);
           });
@@ -101,12 +95,12 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
         }
       } else {
         log.info('Error.Passport.Password.NotSet');
-        done(new Error('Passport not found'), false);
+        done({ data: { userId: user.id } }, false);
       }
     }
   }).catch(err => {
     log.info('Error.Passport.Username.NotFound', username, err);
-    done(new Error('Username not found.'), false);
+    done({ message: 'Username not found.' }, false);
   });
 }));
 
@@ -116,7 +110,7 @@ if(openopps.auth.oidc) {
     client: openopps.auth.oidc,
     params: {
       redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
-      scope: 'openid profile email phone address',
+      scope: 'openid profile email phone address opendataread',
     },
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {

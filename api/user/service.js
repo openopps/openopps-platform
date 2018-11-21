@@ -4,6 +4,7 @@ const log = require('log')('app:user:service');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const User = require('../model/User');
+const Audit = require('../model/Audit');
 
 async function list () {
   return dao.clean.users(await dao.User.query(dao.query.user, {}, dao.options.user));
@@ -32,6 +33,7 @@ async function getProfile (id) {
   if(profile) {
     profile.badges = dao.clean.badge(await dao.Badge.find('"user" = ?', id));
     profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
+    profile.agency = await dao.Agency.findOne('agency_id = ?', profile.agencyId).catch(() => { return undefined; });
     return dao.clean.profile(profile);
   } else {
     return undefined;
@@ -108,6 +110,7 @@ async function updateProfile (attributes, done) {
         await processUserTags(user, tags).then(tags => {
           user.tags = tags;
         });
+        user.agency = await dao.Agency.findOne('agency_id = ?', user.agencyId).catch(() => { return undefined; });
         return done(null, user);
       }).catch (err => { return done({'message':'Error updating profile.'}); });
   }).catch (err => { return done({'message':'Error updating profile.'}); });
@@ -129,18 +132,22 @@ async function updateSkills (attributes, done) {
   });
 }
 
-async function updateProfileStatus (opts, done) {
+async function updateProfileStatus (ctx, opts, done) {
   if (await canAdministerAccount(opts.user, { id: opts.id })) {
     var user = await getProfile(opts.id);
     user.disabled = opts.disable ? 't' : 'f';
     user.updatedAt = new Date();
+    var auditData = { userId: opts.id, action: opts.disable ? 'disable' : 'enable' };
     await dao.User.update(user).then(async (result) => {
+      await createAudit('ACCOUNT_ENABLED_DISABLED', ctx, _.extend(auditData, { status: 'successful' }));
       return done(result, null);
-    }).catch (err => {
+    }).catch (async (err) => {
       log.info('Error updating profile status', err);
+      await createAudit('ACCOUNT_ENABLED_DISABLED', ctx, _.extend(auditData, { status: 'failed' }));
       return done(null, { 'message': 'Error updating profile status' });
     });
   } else {
+    await createAudit('UNATHORIZED_ACCOUNT_ENABLED_DISABLED', ctx, _.extend(auditData, { status: 'blocked' }));
     done(null, {'message': 'Forbidden'});
   }
 }
@@ -209,7 +216,13 @@ async function updatePhotoId (id) {
   return dao.User.update(user);
 }
 
+async function createAudit (type, ctx, auditData) {
+  var audit = Audit.createAudit(type, ctx, auditData);
+  await dao.AuditLog.insert(audit).catch(() => {});
+}
+
 module.exports = {
+  createAudit: createAudit,
   list: list,
   findOne: findOne,
   findOneByUsername: findOneByUsername,

@@ -226,7 +226,6 @@ var ProfileEditView = Backbone.View.extend({
     $('#profile-save, #submit').button('loading');
     
     var newTags = [].concat(
-          $('#agency').select2('data'),
           $('#career-field').select2('data'),
           $('#location').select2('data')
         ),
@@ -235,6 +234,7 @@ var ProfileEditView = Backbone.View.extend({
           title: $('#jobtitle').val(),
           bio: $('#bio').val(),
           username: $('#profile-email').val(),
+          agencyId: ($('#agency').select2('data') || {}).agencyId,
         },
         email = this.model.get('username'),
         tags = _(newTags).chain().filter(function (tag) {

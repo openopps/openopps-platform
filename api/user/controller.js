@@ -6,6 +6,7 @@ const auth = require('../auth/auth');
 const service = require('./service');
 const documentService = require('../document/service');
 const validGovtEmail = require('../model').ValidGovtEmail;
+const profile = require('../auth/profile');
 
 var router = new Router();
 
@@ -14,7 +15,21 @@ router.get('/api/user/all', auth, async (ctx, next) => {
 });
 
 router.get('/api/user', async (ctx, next) => {
-  ctx.body = ctx.state.user;
+  if(ctx.state.user) {
+    if(openopps.auth.loginGov.enabled) {
+      var tokenSet = {
+        access_token: ctx.state.user.access_token,
+        id_token: ctx.state.user.id_token,
+      };
+      await profile.sync(ctx.state.user, tokenSet, (err, user) => {
+        ctx.body = (err ? null : user);
+      });
+    } else {
+      ctx.body = ctx.state.user;
+    }
+  } else {
+    ctx.body = null;
+  }
 });
 
 router.get('/api/user/:id', auth, async (ctx, next) => {
@@ -98,7 +113,12 @@ router.post('/api/user/resetPassword', auth, async (ctx, next) => {
 router.put('/api/user/skills/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
-    await service.updateSkills(ctx.request.body, function (errors, result) {
+    await service.updateSkills(ctx.request.body, async (errors, result) => {
+      await service.createAudit('ACCOUNT_UPDATED', ctx, { 
+        userId: ctx.request.body.id,
+        section: 'skills',
+        status: errors ? 'failed' : 'successful',
+      });
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
@@ -106,6 +126,7 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
       ctx.body = result;
     });
   } else {
+    await service.createAudit('UNAUTHORIZED_ACCOUNT_UPDATED', ctx, { userId: ctx.request.body.id });
     ctx.status = 403;
     ctx.body = { success: false };
   }
@@ -114,7 +135,12 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
 router.put('/api/user/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
-    await service.updateProfile(ctx.request.body, function (errors, result) {
+    await service.updateProfile(ctx.request.body, async (errors, result) => {
+      await service.createAudit('ACCOUNT_UPDATED', ctx, { 
+        userId: ctx.request.body.id,
+        section: 'profile',
+        status: errors ? 'failed' : 'successful',
+      });
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
@@ -122,13 +148,14 @@ router.put('/api/user/:id', auth, async (ctx, next) => {
       ctx.body = result;
     });
   } else {
+    await service.createAudit('UNAUTHORIZED_ACCOUNT_UPDATED', ctx, { userId: ctx.request.body.id });
     ctx.status = 403;
     ctx.body = { success: false };
   }
 });
 
 router.get('/api/user/disable/:id', auth, async (ctx, next) => {
-  await service.updateProfileStatus({
+  await service.updateProfileStatus(ctx, {
     disable: true,
     user: ctx.state.user,
     id: ctx.params.id,
@@ -138,7 +165,7 @@ router.get('/api/user/disable/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/user/enable/:id', auth, async (ctx, next) => {
-  await service.updateProfileStatus({
+  await service.updateProfileStatus(ctx, {
     disable: false,
     user: ctx.state.user,
     id: ctx.params.id,
