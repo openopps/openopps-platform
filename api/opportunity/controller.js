@@ -28,9 +28,8 @@ router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
   ctx.body = numOfOpps;
 });
 
-router.get('/api/task/communityUser', auth,async (ctx,next)=>{
-  console.log(ctx.params);
-  var data= await service.getCommunityUsersType(ctx.state.user.id) ; 
+router.get('/api/task/communities', auth, async (ctx, next) => {
+  var data = await service.getCommunities(); 
   ctx.body = data;
 });
 

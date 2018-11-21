@@ -141,11 +141,11 @@ async function canAdministerTask (user, id) {
   }
   return false;
 }
-async function getCommunityUsersType (userId) {
-  var communityUsersType = (await dao.CommunityUser.db.query(dao.query.communityUserQuery, userId)).rows;
+async function getCommunities () {
+  var communities = await dao.Community.find('is_closed_group = ?', false);
   var communityTypes = {
-    federal: _.filter(communityUsersType, { target_audience: 1 }),
-    student: _.filter(communityUsersType, { target_audience: 2 }),
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
   };
   return communityTypes;
 }
@@ -463,5 +463,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
-  getCommunityUsersType:getCommunityUsersType,
+  getCommunities: getCommunities,
 };
