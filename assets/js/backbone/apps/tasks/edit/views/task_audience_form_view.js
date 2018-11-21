@@ -24,7 +24,7 @@ var TaskAudienceFormView = Backbone.View.extend({
 
   loadAudienceCommunityData:function (){
     $.ajax({
-      url: '/api/task/communityUser',
+      url: '/api/task/communities',
       dataType: 'json',
       success: function (data){        
         if (data.federal.length == 0 && data.student.length == 0) {
@@ -35,8 +35,18 @@ var TaskAudienceFormView = Backbone.View.extend({
           });
           this.$el.html(template);
           setTimeout(function () {
-            $('.federal-programs').hide();
-            $('.student-programs').hide();
+            if(data.federal.length > 0 && data.student.length == 0) {
+              $('#federal-employees').addClass('selected');
+              $('.student-programs').hide();
+              $('#continue').removeAttr('disabled'); 
+            } else if (data.federal.length == 0 && data.student.length > 0) {
+              $('#students').addClass('selected'); 
+              $('.federal-programs').hide();
+              $('#continue').removeAttr('disabled'); 
+            } else {
+              $('.federal-programs').hide();
+              $('.student-programs').hide();
+            }
             $('#search-results-loading').hide();
           }, 50);
         }
