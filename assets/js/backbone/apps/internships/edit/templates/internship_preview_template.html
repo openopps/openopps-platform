@@ -1,0 +1,12 @@
+<h2>Step 3 - Review draft and submit</h2>
+<hr>
+<h1 class="usajobs-open-opps-opportunity-item__title">
+  <%- data.title %>
+</h1>
+
+<p><em>Desired skills:</em></p>
+<div class="skills">
+  <% _.each(madlibTags['skill'], function (t) { %>
+    <a class="skill-label" href="javascript:void(0)"><%= t.name %></a>
+  <% }) %>
+</div>
