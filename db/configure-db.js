@@ -1,5 +1,8 @@
+const _ = require('lodash');
 
-var psqlConnection = process.env.DB_CONNECTION ? JSON.parse(process.env.DB_CONNECTION) : {};
+var psqlConnection = process.env.DB_CONNECTION ? 
+  _.isString(process.env.DB_CONNECTION) ? 
+    JSON.parse(process.env.DB_CONNECTION) : process.env.DB_CONNECTION : {};
 
 var config = {
   host: psqlConnection.host || 'localhost',
