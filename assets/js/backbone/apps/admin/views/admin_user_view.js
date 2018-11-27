@@ -98,7 +98,7 @@ var AdminUserView = Backbone.View.extend({
         }.bind(this),
       },
       primary: {
-        text: 'Add applicant',
+        text: 'Add member',
         action: function () {
           $('#community-add-member-alert').hide();
           $('#community-add-member').select2('close');
