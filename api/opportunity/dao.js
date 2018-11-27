@@ -180,7 +180,6 @@ module.exports = function (db) {
       userTasks: userTasksQuery,
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
-      tasksToIndex: tasksToIndex,
       communityUserQuery:communityUserQuery,
     },
     options: options,
