@@ -301,7 +301,6 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#add-languages-fieldset').show();
     $('#add-languages-fieldset').removeAttr('aria-hidden');
     window.scrollTo(0, 0);
-    console.log('Language ON');
   },
 
   toggleLanguagesOff: function (e) {
@@ -321,7 +320,6 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#add-languages-fieldset').hide();
     $('#add-languages-fieldset').attr('aria-hidden');
     window.scrollTo(0, 0);
-    console.log('Language OFF');
   },
 
   validateFields: function () {
