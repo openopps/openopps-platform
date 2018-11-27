@@ -18,6 +18,9 @@ var InternshipEditFormView = Backbone.View.extend({
     'change .validate'                    : 'validateField',
     'click #change-owner'                 : 'displayChangeOwner',
     'click #add-participant'              : 'displayAddParticipant',
+    'click #add-language'                 : 'toggleLanguagesOn',
+    'click #cancel-language'              : 'toggleLanguagesOff',
+    'click #save-language'                : 'toggleLanguagesOff',
     'click .usa-button'                   : 'submit',   
     'click .opportunity-location'         : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
@@ -279,6 +282,44 @@ var InternshipEditFormView = Backbone.View.extend({
     this.data.accordion3.open = !this.data.accordion3.open;
     element.attr('aria-expanded', this.data.accordion3.open);
     element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
+  },
+
+  toggleLanguagesOn: function (e) {
+    var element = $(e.currentTarget);
+    $('.usajobs-form__title').hide();
+    $('.usajobs-form__title').attr('aria-hidden');
+    $('#tips').hide();
+    $('#tips').attr('aria-hidden');
+    $('#step-1').hide();
+    $('#step-1').attr('aria-hidden');
+    $('#step-2').hide();
+    $('#step-2').attr('aria-hidden');
+    $('#step-3').hide();
+    $('#step-3').attr('aria-hidden');
+    $('#button-bar').hide();    
+    $('#button-bar').attr('aria-hidden');
+    $('#add-languages-fieldset').show();
+    $('#add-languages-fieldset').removeAttr('aria-hidden');
+    window.scrollTo(0, 0);
+  },
+
+  toggleLanguagesOff: function (e) {
+    var element = $(e.currentTarget);
+    $('.usajobs-form__title').show();
+    $('.usajobs-form__title').removeAttr('aria-hidden');
+    $('#tips').show();
+    $('#tips').removeAttr('aria-hidden');
+    $('#step-1').show();
+    $('#step-1').removeAttr('aria-hidden');
+    $('#step-2').show();
+    $('#step-2').removeAttr('aria-hidden');
+    $('#step-3').show();
+    $('#step-3').removeAttr('aria-hidden');
+    $('#button-bar').show();
+    $('#button-bar').removeAttr('aria-hidden');
+    $('#add-languages-fieldset').hide();
+    $('#add-languages-fieldset').attr('aria-hidden');
+    window.scrollTo(0, 0);
   },
 
   validateFields: function () {
