@@ -1,6 +1,7 @@
 const _ = require ('lodash');
 const log = require('log')('app:opportunity:service');
 const db = require('../../db');
+const elasticService = require('../../elastic/service');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
@@ -107,6 +108,7 @@ async function createOpportunity (attributes, done) {
       task.tags = tags;
     });
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+    await elasticService.indexOpportunity(task.id);
     return done(null, task);
   }).catch(err => {
     return done(true);
@@ -169,6 +171,7 @@ async function updateOpportunityState (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     task.previousState = origTask.state;
+    await elasticService.indexOpportunity(task.id);
     return done(task, origTask.state !== task.state);
   }).catch (err => {
     return done(null, false, {'message':'Error updating task.'});
@@ -195,8 +198,9 @@ async function updateOpportunity (attributes, done) {
     task.tags = [];
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
-        await processTaskTags(task, tags).then(tags => {
+        await processTaskTags(task, tags).then(async tags => {
           task.tags = tags;
+          await elasticService.indexOpportunity(task.id);
           return done(task, origTask.state !== task.state);
         });
       }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
@@ -211,6 +215,7 @@ async function publishTask (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     sendTaskNotification(task.owner, task, 'task.update.opened');
+    await elasticService.indexOpportunity(task.id);
     return done(true);
   }).catch (err => {
     return done(false);
@@ -351,6 +356,7 @@ async function copyOpportunity (attributes, user, done) {
           log.info('register: failed to update tag ', attributes.username, tag, err);
         });
       });
+      await elasticService.indexOpportunity(task.id);
       return done(null, { 'taskId': task.id });
     }).catch (err => { return done({'message':'Error copying task.'}); });
 }
@@ -372,6 +378,7 @@ async function deleteTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
+        await elasticService.indexOpportunity(id);
         return id;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
@@ -406,11 +413,6 @@ async function getExportData () {
     fields: fields,
     fieldNames: fieldNames,
   });
-}
-
-async function reindexOpportunities () {
-  var records = (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
-  return records;
 }
 
 async function sendTasksDueNotifications (action, i) {
@@ -454,7 +456,6 @@ module.exports = {
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
   getExportData: getExportData,
-  reindexOpportunities: reindexOpportunities,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
   sendTaskStateUpdateNotification: sendTaskStateUpdateNotification,

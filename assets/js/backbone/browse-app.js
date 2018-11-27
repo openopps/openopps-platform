@@ -15,6 +15,7 @@ var TaskListController = require('./apps/tasks/list/controllers/task_list_contro
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
+var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
@@ -26,11 +27,12 @@ var BrowseRouter = Backbone.Router.extend({
   routes: {
     ''                                              : 'showLanding',
     'home'                                          : 'showHome',
-    'tasks/create'                                :'createTask',
+    'tasks/create'                                  : 'createTask',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'listTasks',
     'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id/:action(/)'                          : 'showTask',
+    'internships/new(?*queryString)'                : 'newInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/find(/)'                               : 'findProfile',
     'profile/link(/)'                               : 'linkProfile',
@@ -271,6 +273,21 @@ var BrowseRouter = Backbone.Router.extend({
       }).render();
     }.bind(this));
   },
+  renderInternshipView: function (model) {
+    var madlibTags = {};
+    
+    model.tagTypes(function (tagTypes) {
+      this.internshipEditFormView = new InternshipEditFormView({
+        el: '#container',
+        edit: false,
+        model: model,        
+        tags: [],
+        madlibTags: madlibTags,
+        tagTypes: tagTypes,
+      }).render();
+    }.bind(this));
+  },
+
 
   initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
@@ -309,6 +326,22 @@ var BrowseRouter = Backbone.Router.extend({
         $(window).animate({ scrollTop: 0 }, 500);
       }
     });  
+  },
+
+  newInternship: function (queryString) {
+    if (!window.cache.currentUser) {
+      Backbone.history.navigate('/login?internships/new', { trigger: true });
+      return;
+    }
+    var params = this.parseQueryParams(queryString);
+    this.cleanupChildren();
+    var model = new TaskModel();
+    // var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
+    //model.set('restrict', _.defaults(restrict, model.get('restrict')));
+    this.initializeTaskListeners(model);
+   
+    this.renderInternshipView(model);
+    
   },
 
   showHome: function (id) {
