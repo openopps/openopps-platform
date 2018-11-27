@@ -1,0 +1,88 @@
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter opportunity-gutter">
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <h1 class="usajobs-form__title">Step 3 - Review draft and submit</h1>
+        <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+          <div class="usajobs-width-two-thirds">
+            <h1 class="usajobs-open-opps-opportunity-item__title">UX Researchers Needed to Map Government Innovator Experiences!</h1>
+            <div class="skills">
+              <div>Desired skills:</div>
+              <% _.each(madlibTags['skill'], function (t) { %>
+                <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+              <% }) %>
+            </div>
+          </div>
+          <div class="usajobs-width-one-third">
+            <div>
+              Logo goes here
+            </div>
+          </div>
+        </div>
+        <div class="usajobs-grid-full">
+          <div class="usa-width-one-third personnel-needed mobile">
+            <div class="usajobs-opop__task-intro">
+              <h4>Bureau</h4>
+              <div>Foreign Service Institute (FSI)</div>
+              <h4>Office</h4>
+              <div>School of Applied Information Technology (SAIT)</div>
+              <h4>Location</h4>
+              <div>Anywhere</div>
+              <h4>Country</h4>
+              <div>United States</div>
+              <h4>Language Requirements</h4>
+              <div>Yes</div>
+              <h4>Time Commitment</h4>
+              <div>May 2019-July 2019 32-40 hrs per week</div>
+              <h4>Number of Interns</h4>
+              <div>1</div>                      
+            </div>
+          </div>
+          <div class="usa-width-two-thirds opportunity-description">
+            <div class="usajobs-open-opps-opportunity__desc">
+              <h3>Who we are</h3>
+              <p>Test</p>
+              <h3>What you'll do</h3>
+              <p>Test</p>
+              <h3>Language requirements</h3>
+              <h4>French</h4>
+              Spoken language skill level
+              Novice
+              Written language skill level
+              Advanced
+              Reading language skill level
+              Intermediate
+            </div>
+          </div>
+          <div class="usa-width-one-third personnel-needed desktop">
+            <div class="usajobs-opop__task-intro">
+              <h4>Bureau</h4>
+              <div>Foreign Service Institute (FSI)</div>
+              <h4>Office</h4>
+              <div>School of Applied Information Technology (SAIT)</div>
+              <h4>Location</h4>
+              <div>Anywhere</div>
+              <h4>Country</h4>
+              <div>United States</div>
+              <h4>Language Requirements</h4>
+              <div>Yes</div>
+              <h4>Time Commitment</h4>
+              <div>May 2019-July 2019 32-40 hrs per week</div>
+              <h4>Number of Interns</h4>
+              <div>1</div>          
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="usajobs-button_bar--slim task-footer">
+        <div class="usajobs-button_bar__body">
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="edit" id="edit" style="display:none">Make changes</button>
+          <button class="usa-button usa-button-primary" data-state="save" id="save">Save for later</button>
+          <button class="usa-button usa-button-primary" data-state="submit" id="submit" style="display:none">Submit</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>

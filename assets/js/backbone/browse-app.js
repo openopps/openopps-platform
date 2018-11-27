@@ -16,6 +16,7 @@ var TaskShowController = require('./apps/tasks/show/controllers/task_show_contro
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
 var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
+var InternshipController = require('./apps/internships/edit/controllers/internship_controller');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
@@ -33,6 +34,7 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id/:action(/)'                          : 'showTask',
     'internships/new(?*queryString)'                : 'newInternship',
+    'internships/preview/:id(/)'                    : 'previewInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/find(/)'                               : 'findProfile',
     'profile/link(/)'                               : 'linkProfile',
@@ -333,6 +335,14 @@ var BrowseRouter = Backbone.Router.extend({
     } else {
       this.renderTaskView(model);
     }
+  },
+
+  previewInternship: function (id) {
+    this.cleanupChildren();
+    this.internshipController = new InternshipController({ 
+      id: id, 
+      data: this.data, 
+    });
   },
 
   showHome: function (id) {
