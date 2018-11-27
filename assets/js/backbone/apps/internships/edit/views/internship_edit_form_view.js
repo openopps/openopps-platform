@@ -18,6 +18,9 @@ var InternshipEditFormView = Backbone.View.extend({
     'change .validate'                    : 'validateField',
     'click #change-owner'                 : 'displayChangeOwner',
     'click #add-participant'              : 'displayAddParticipant',
+    'click #add-language'                 : 'toggleLanguagesOn',
+    'click #cancel-language'              : 'toggleLanguagesOff',
+    'click #save-language'                : 'toggleLanguagesOff',
     'click .usa-button'                   : 'submit',   
     'click .opportunity-location'         : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
@@ -281,6 +284,44 @@ var InternshipEditFormView = Backbone.View.extend({
     element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
+  toggleLanguagesOn: function (e) {
+    var element = $(e.currentTarget);
+    $('.usajobs-form__title').hide();
+    $('.usajobs-form__title').attr('aria-hidden');
+    $('#tips').hide();
+    $('#tips').attr('aria-hidden');
+    $('#step-1').hide();
+    $('#step-1').attr('aria-hidden');
+    $('#step-2').hide();
+    $('#step-2').attr('aria-hidden');
+    $('#step-3').hide();
+    $('#step-3').attr('aria-hidden');
+    $('#button-bar').hide();    
+    $('#button-bar').attr('aria-hidden');
+    $('#add-languages-fieldset').show();
+    $('#add-languages-fieldset').removeAttr('aria-hidden');
+    window.scrollTo(0, 0);
+  },
+
+  toggleLanguagesOff: function (e) {
+    var element = $(e.currentTarget);
+    $('.usajobs-form__title').show();
+    $('.usajobs-form__title').removeAttr('aria-hidden');
+    $('#tips').show();
+    $('#tips').removeAttr('aria-hidden');
+    $('#step-1').show();
+    $('#step-1').removeAttr('aria-hidden');
+    $('#step-2').show();
+    $('#step-2').removeAttr('aria-hidden');
+    $('#step-3').show();
+    $('#step-3').removeAttr('aria-hidden');
+    $('#button-bar').show();
+    $('#button-bar').removeAttr('aria-hidden');
+    $('#add-languages-fieldset').hide();
+    $('#add-languages-fieldset').attr('aria-hidden');
+    window.scrollTo(0, 0);
+  },
+
   validateFields: function () {
    
     // check all of the field validation before submitting
@@ -336,7 +377,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if(showPreview) {
       var data = this.getDataFromPage();
       console.log(data);
-      _.each(['description', 'details', 'outcome', 'about'], function (part) {
+      _.each(['description', 'details', 'about','outcome'], function (part) {
         if(data[part]) {
           data[part + 'Html'] = marked(data[part]);
         }
@@ -429,7 +470,8 @@ var InternshipEditFormView = Backbone.View.extend({
     var modelData = {
       id          : this.model.get('id'),
       title       : this.$('#intern-title').val(),
-      details     : this.$('#opportunity-details').val(),   
+      description : this.$('#opportunity-details').val(),  
+      details     : this.$('#opportunity-details').val(),  
       about       : this.$('#opportunity-team').val(),
       submittedAt : this.$('#js-edit-date-submitted').val() || null,
       publishedAt : this.$('#publishedAt').val() || null,
