@@ -377,7 +377,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if(showPreview) {
       var data = this.getDataFromPage();
       console.log(data);
-      _.each(['description', 'details', 'outcome', 'about'], function (part) {
+      _.each(['description', 'details', 'about','outcome'], function (part) {
         if(data[part]) {
           data[part + 'Html'] = marked(data[part]);
         }
@@ -470,7 +470,8 @@ var InternshipEditFormView = Backbone.View.extend({
     var modelData = {
       id          : this.model.get('id'),
       title       : this.$('#intern-title').val(),
-      details     : this.$('#opportunity-details').val(),   
+      description : this.$('#opportunity-details').val(),  
+      details     : this.$('#opportunity-details').val(),  
       about       : this.$('#opportunity-team').val(),
       submittedAt : this.$('#js-edit-date-submitted').val() || null,
       publishedAt : this.$('#publishedAt').val() || null,
