@@ -436,6 +436,7 @@ async function changeOwner (ctx, data, done) {
         originalOwner: originalOwner,
         newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
       });
+      await opportunityService.indexOpportunity(task.id);
       await dao.AuditLog.insert(audit).then(() => {
         done(audit.data.newOwner);
       }).catch((err) => {
