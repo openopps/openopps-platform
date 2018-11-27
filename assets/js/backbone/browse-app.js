@@ -273,6 +273,21 @@ var BrowseRouter = Backbone.Router.extend({
       }).render();
     }.bind(this));
   },
+  renderInternshipView: function (model) {
+    var madlibTags = {};
+    
+    model.tagTypes(function (tagTypes) {
+      this.internshipEditFormView = new InternshipEditFormView({
+        el: '#container',
+        edit: false,
+        model: model,        
+        tags: [],
+        madlibTags: madlibTags,
+        tagTypes: tagTypes,
+      }).render();
+    }.bind(this));
+  },
+
 
   initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
@@ -322,17 +337,11 @@ var BrowseRouter = Backbone.Router.extend({
     this.cleanupChildren();
     var model = new TaskModel();
     // var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    model.set('restrict', _.defaults(restrict, model.get('restrict')));
+    //model.set('restrict', _.defaults(restrict, model.get('restrict')));
     this.initializeTaskListeners(model);
-    if (params.cid) {
-      var communityId = _.defaults(params.cid, model.get('communityId'));
-      model.loadCommunity(communityId, function (community) {
-        model.set('communityId', community.communityId);
-        this.renderTaskView(model, community);
-      }.bind(this));
-    } else {
-      this.renderTaskView(model);
-    }
+   
+    this.renderInternshipView(model);
+    
   },
 
   showHome: function (id) {
