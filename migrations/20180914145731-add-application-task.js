@@ -16,16 +16,16 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db, callback) {
   db.createTable('application_task', {
-    application_task_id: { type: 'bigserial', primaryKey: true, autoIncrement: true },
+    application_task_id: { type: 'bigserial', primaryKey: true },
     application_id: { type: 'bigint', notNull: true },
     user_id: { type: 'bigint', notNull: true },
     task_id: { type: 'bigint', notNull: true },
-    sort_order: { type: 'integer', notNull: true },
+    sort_order: { type: 'int', notNull: true },
     created_at: { type: 'timestamp with time zone' },
     updated_at: { type: 'timestamp with time zone' },
   }, callback);
 };
 
 exports.down = function (db, callback) {
-  db.dropTable('application_opportunity', callback);
+  db.dropTable('application_task', callback);
 };

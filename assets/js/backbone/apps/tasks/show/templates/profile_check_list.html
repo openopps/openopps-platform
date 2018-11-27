@@ -1,19 +1,19 @@
 <p>You must complete your profile in order to apply for opportunities.</p>
 <div class="check-list">
-    <% if (_.where(tags, { type: 'agency' }).length > 0) { %>
+    <% if (!_.isEmpty(agency)) { %>
       <div class="check"><span class="fa fa-check"></span></div>
       <div>You have selected your agency.</div>
     <% } else { %>
       <div class="times"><span class="fa fa-times"></span></div>
-      <div>You have not selected your agency.</div>
+      <div>You have not selected your agency<% if (loginGov) { %> on the federal service page of your USAJOBS profile<% } %>.</div>
     <% } %>
 </div>
 <div class="check-list">
-  <% if (_.where(tags, { type: 'location' }).length > 0) { %>
+  <% if (locationTag.length > 0) { %>
     <div class="check"><span class="fa fa-check"></span></div>
     <div>You have selected your location.</div>
   <% } else { %>
     <div class="times"><span class="fa fa-times"></span></div>
-    <div>You have not selected your location.</div>
+    <div>You have not specified your location<% if (loginGov) { %> on the contact page of your USAJOBS profile<% } %>.</div>
   <% } %>
 </div>

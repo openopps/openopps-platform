@@ -20,13 +20,11 @@ function getMessage (err) {
 async function useLocalAuthentication (ctx, next) {
   await passport.authenticate('local', (err, user, info, status) => {
     if (err || !user) {
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', _.extend(err.data, { 
+        status: (err.message == 'locked' ? 'locked' : 'failed'),
+      }));
       log.info('Authentication Error: ', err);
-      var message;
-      if (err && err.originalError === 'invalid domain') {
-        message = getMessage(err.originalError);
-      } else {
-        message = getMessage(err);
-      }
+      var message = getMessage(err.message);
       if (ctx.accepts('json')) {
         ctx.status = 401;
         return ctx.body = { message: message };
@@ -35,6 +33,7 @@ async function useLocalAuthentication (ctx, next) {
         return ctx.redirect('/');
       }
     } else {
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'successful' });
       ctx.body = { success: true };
       return ctx.login(user);
     }
@@ -44,7 +43,9 @@ async function useLocalAuthentication (ctx, next) {
 function loginUser (state, user, ctx) {
   ctx.login(user).then(() => {
     ctx.redirect(state.redirect ? ('/' + state.redirect) : ('/home'));
+    service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'successful' });
   }).catch((err) => {
+    service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'failed' });
     ctx.redirect('/');
   });
 }
@@ -80,6 +81,17 @@ async function processState (state, user, ctx) {
     });
   }
 }
+
+router.post('/api/auth/user', async (ctx, next) => {
+  await service.getProfileData(ctx.request.body, async (err, user) => {
+    if(err) {
+      ctx.status = 400;
+    } else {
+      await ctx.login(user);
+      ctx.body = ctx.state.user;
+    }
+  });
+});
 
 router.post('/api/auth', async (ctx, next) => {
   if(openopps.auth.loginGov.enabled) {
@@ -140,7 +152,7 @@ router.post('/api/auth/register', async (ctx, next) => {
     return ctx.body = { message: 'The email address provided is not a valid government email address.' };
   }
 
-  await service.register(ctx.request.body, function (err, user) {
+  await service.register(ctx, ctx.request.body, function (err, user) {
     if (err) {
       ctx.status = 400;
       return ctx.body = { message: err.message || 'Registration failed.' };
@@ -194,24 +206,27 @@ router.post('/api/auth/reset', async (ctx, next) => {
   var password = ctx.request.body.password;
 
   if (!token) {
+    service.logAuthenticationError(ctx, 'PASSWORD_RESET', { status: 'failed - no token' });
     ctx.status = 400;
     ctx.body = { message: 'Must provide a token for validation.' };
   } else {
     await service.checkToken(token.toLowerCase().trim(), async (err, validToken) => {
       if (err) {
+        service.logAuthenticationError(ctx, 'PASSWORD_RESET', { status: 'failed - invalid token' });
         ctx.status = 400;
         ctx.body = err;
       } else {
         if(utils.validatePassword(password, validToken.email)) {
-          await service.resetPassword(validToken, password, function (err) {
+          await service.resetPassword(ctx, validToken, password, function (err) {
             if (err) {
               ctx.status = 400;
-              ctx.body = { message: err.message || 'Password reset failed.' };
+              ctx.body = { message: 'Password reset failed.' };
             } else {
               ctx.body = { success: true };
             }
           });
         } else {
+          service.logAuthenticationError(ctx, 'PASSWORD_RESET', { userId: validToken.userId, status: 'failed - rules' });
           ctx.status = 400;
           ctx.body = { message: 'Password does not meet password rules.' };
         }
@@ -221,12 +236,15 @@ router.post('/api/auth/reset', async (ctx, next) => {
 });
 
 router.get('/api/auth/logout', async (ctx, next) => {
-  ctx.logout();
+  var response = { success: true };
   if(openopps.auth.oidc) {
-    ctx.body = { redirectURL: openopps.auth.loginGov.logoutURL };
-  } else {
-    ctx.body = { success: true };
+    response.redirectURL = openopps.auth.oidc.endSessionUrl({
+      post_logout_redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/loggedOut',
+      id_token_hint: ctx.session.passport.user.id_token,
+    });
   }
+  ctx.logout();
+  ctx.body = response;
 });
 
 module.exports = router.routes();

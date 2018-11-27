@@ -14,7 +14,7 @@ var ProfileModel = Backbone.Model.extend({
   parse: function (res, options) {
     // Remove falsy values (db returns null instead of undefined)
     _(res).each(function (v, k, o) { if (!v) delete o[k]; });
-    res.agency = _(res.tags).findWhere({ type: 'agency' });
+    //res.agency = _(res.tags).findWhere({ type: 'agency' });
     res.location = _(res.tags).findWhere({ type: 'location' });
     return res;
   },
@@ -75,14 +75,7 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
-    this.listenTo(this, 'profile:save', function (form) {
-      var data = {
-        name: form.name,
-        username: form.username,
-        title: form.title,
-        bio: form.bio,
-        tags: form.tags,
-      };
+    this.listenTo(this, 'profile:save', function (data) {
       _this.save(data, {
         success: function (data) {
           _this.trigger('profile:save:success', data);

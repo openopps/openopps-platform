@@ -4,6 +4,10 @@ var BaseController = require('../../../../base/base_controller');
 var HomeView = require('../views/home_view');
 
 var HomeController = BaseController.extend({
+  events: {
+    'click .add-opportunity' : 'add',
+  },
+
   initialize: function (options) {
     this.options - options;
     if(!window.cache.currentUser) {
@@ -15,6 +19,10 @@ var HomeController = BaseController.extend({
       }).render();
     }
     return this;
+  },
+
+  add: function (e) {
+    Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 
   cleanup: function () {

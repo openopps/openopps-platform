@@ -31,9 +31,6 @@ async function findById (id, loggedIn) {
 }
 
 async function list (user) {
-  if(user) {
-    user.agency = _.find(user.tags, {type: 'agency' });
-  }
   var tasks = [];
   if(user && user.isAdmin) {
     tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));
@@ -146,6 +143,15 @@ async function canAdministerTask (user, id) {
   }
   return false;
 }
+async function getCommunities () {
+  var communities = await dao.Community.find('is_closed_group = ?', false);
+  var communityTypes = {
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
+  };
+  return communityTypes;
+}
+
 
 async function checkAgency (user, ownerId) {
   var owner = await dao.clean.user((await dao.User.query(dao.query.user, ownerId, dao.options.user))[0]);
@@ -458,4 +464,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
+  getCommunities: getCommunities,
 };

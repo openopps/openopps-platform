@@ -9,8 +9,10 @@ var LoginConfig = require('../../../config/login.json');
 
 // templates
 var AdminUserTemplate = require('../templates/admin_user_template.html');
+var AdminCommunityUserTable = require('../templates/admin_community_user_table.html');
 var AdminUserTable = require('../templates/admin_user_table.html');
 var Paginate = require('../templates/admin_paginate.html');
+var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
 var AdminUserView = Backbone.View.extend({
   events: {
@@ -19,6 +21,7 @@ var AdminUserView = Backbone.View.extend({
     'click .user-enable'        : 'toggleCheckbox',
     'click .assign-admin'       : 'toggleCheckbox',
     'click .user-reset'         : 'resetPassword',
+    'click #invite-members'     : 'inviteMembers',
     'keyup #user-filter'        : 'filter',
   },
 
@@ -27,35 +30,28 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: 1,
     };
-    this.target = (this.options.agencyId ? 'Agencies' : 'Sitewide');
-    this.agency = {
-      name: 'Sitewide',
-    };
+    this.agency = {};
+    this.community = {};
   },
 
   render: function () {
-    Backbone.history.navigate('/admin/users' + (this.options.agencyId ? '/' + this.options.agencyId : ''));
     this.$el.show();
-    if (this.rendered === true) {
-      return this;
-    }
+    $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
 
-    $('[data-target=' + (this.target).toLowerCase() + ']').addClass('is-active');
-
-    if (this.options.agencyId) {
-      this.loadAgencyData();
+    if (this.options.target !== 'sitewide') {
+      this.loadTargetData();
     } else {
       this.loadData();
     }
     return this;
   },
 
-  loadAgencyData: function () {
+  loadTargetData: function () {
     $.ajax({
-      url: '/api/admin/agency/' + this.options.agencyId,
+      url: '/api/admin/' + this.options.target + '/' + this.options.targetId,
       dataType: 'json',
-      success: function (agencyInfo) {
-        this.agency = agencyInfo;
+      success: function (targetInfo) {
+        this[this.options.target] = targetInfo;
         this.loadData();
       }.bind(this),
     });
@@ -66,6 +62,8 @@ var AdminUserView = Backbone.View.extend({
       user: window.cache.currentUser,
       login: LoginConfig,
       agency: this.agency,
+      community: this.community,
+      target: this.options.target,
     };
 
     var template = _.template(AdminUserTemplate)(data);
@@ -73,8 +71,100 @@ var AdminUserView = Backbone.View.extend({
     this.rendered = true;
     // fetch user data
     this.fetchData(this.data);
-    this.data.target = this.target;
+    this.data.target = this.options.target;
     $('#search-results-loading').hide();
+  },
+
+  inviteMembers: function (e) {
+    e.preventDefault();
+    if (this.modalComponent) this.modalComponent.cleanup();
+    $('body').addClass('modal-is-open');
+    var modalContent = _.template(InviteMembersTemplate)(this.community);
+    this.modalComponent = new Modal({
+      el: '#site-modal',
+      id: 'invite-member-modal',
+      modalTitle: 'Invite member to community',
+      alert: {
+        type: 'error',
+        text: 'Error inviting member to community.',
+      },
+      modalBody: modalContent,
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          $('#community-add-member').select2('destroy');
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add applicant',
+        action: function () {
+          $('#community-add-member-alert').hide();
+          $('#community-add-member').select2('close');
+          if(!validate( { currentTarget: $('#community-add-member') } )) {
+            var data = {
+              communityId: $('#community-add-member').data('communityid'),
+              userId: $('#community-add-member').select2('data').id,
+            };
+            $.ajax({
+              url: '/api/community/member',
+              type: 'POST',
+              data: data,
+              success: function () {
+                $('#community-add-member').select2('destroy');
+                this.modalComponent.cleanup();
+                this.fetchData({ page: 1 });
+              }.bind(this),
+              error: function (err) {
+                if(err.status == 403) {
+                  this.modalComponent.cleanup();
+                } else {
+                  $('#community-add-member-alert-text').text(err.responseText);
+                  $('#community-add-member-alert').show();
+                }
+              }.bind(this),
+            });
+          }
+        }.bind(this),
+      },
+      cleanup: function () {
+        $('#community-add-member').select2('destroy');
+      },
+    }).render();
+
+    setTimeout(function () {
+      this.initializeInviteMemberSearch();
+    }.bind(this), 100);
+  },
+
+  initializeInviteMemberSearch: function () {
+    $('#community-add-member').select2({
+      placeholder: 'Search for a user',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/user',
+        dataType: 'json',
+        data: function (term) {
+          return { q: term };
+        },
+        results: function (data) {
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No user found by that name',
+    });
+    $('#community-add-member').on('change', function (e) {
+      validate({ currentTarget: $('#community-add-member') });
+    }.bind(this));
+    $('#community-add-member').focus();
   },
 
   renderUsers: function (data) {
@@ -88,11 +178,17 @@ var AdminUserView = Backbone.View.extend({
     data.firstOf = data.page * data.limit - data.limit + 1;
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
-    data.target = this.target;
+    data.target = this.options.target;
     data.isAdministrator = this.isAdministrator;
 
     // render the table
-    var template = _.template(AdminUserTable)(data);
+    var template;
+    if (this.options.target === 'community') {
+      template = _.template(AdminCommunityUserTable)(data);
+    }  else {
+      template = _.template(AdminUserTable)(data);
+    } 
+
     // render the pagination
     this.renderPagination(data);
     this.$('#filter-count').html(data.users.length);
@@ -154,8 +250,11 @@ var AdminUserView = Backbone.View.extend({
 
   fetchData: function (data) {
     // perform the ajax request to fetch the user list
-    var url = '/api/admin/users';
-    if (this.options.agencyId) url = url + '/' + this.options.agencyId;
+    var url = '/api/admin';
+    if (this.options.target !== 'sitewide') {
+      url += '/' + this.options.target + '/' + this.options.targetId;
+    }
+    url += '/users';
 
     $.ajax({
       url: url,
@@ -173,12 +272,12 @@ var AdminUserView = Backbone.View.extend({
     switch (elem.data('action')) {
       case 'user':
         return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
-      case 'Sitewide':
+      case 'sitewide':
         return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
-      case 'Agencies':
+      case 'agency':
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
-      case 'Community':
-        return '/api/admin/communityAdmin/' + id + '?action=' + elem.prop('checked');
+      case 'community':
+        return '/api/admin/communityAdmin/' + id + '/' + this.community.communityId + '?action=' + elem.prop('checked');
     }
   },
 
@@ -206,8 +305,9 @@ var AdminUserView = Backbone.View.extend({
   },
 
   isAdministrator: function (user, target) {
-    return (target == 'Sitewide' && user.isAdmin) ||
-      (target == 'Agencies' && user.isAgencyAdmin);
+    return (target == 'sitewide' && user.isAdmin) ||
+      (target == 'agency' && user.isAgencyAdmin) ||
+      (target == 'community' && user.isCommunityAdmin);
   },
 
   updateUser: function (t, data) {

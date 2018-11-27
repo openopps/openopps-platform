@@ -34,6 +34,48 @@ SET default_tablespace = '';
 
 SET default_with_oids = false;
 
+
+--
+-- Name: agency; Type: TABLE; Schema: public; Owner: midas
+--
+
+CREATE TABLE agency (
+  agency_id integer,
+  name character varying NOT NULL DEFAULT ''::character varying,
+  abbr character varying NOT NULL DEFAULT ''::character varying,
+  domain character varying NOT NULL DEFAULT ''::character varying,
+  slug character varying NOT NULL DEFAULT ''::character varying,
+  allow_restrict_agency boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone,
+  parent_code character varying,
+  code character varying NOT NULL DEFAULT ''::character varying,
+  is_disabled boolean NOT NULL DEFAULT false,
+  old_name character varying
+);
+
+ALTER TABLE agency OWNER TO midas;
+
+--
+-- Name: agency_id_seq; Type: SEQUENCE; Schema: public; Owner: midas
+--
+
+CREATE SEQUENCE agency_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE agency_id_seq OWNER TO midas;
+
+--
+-- Name: agency_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: midas
+--
+
+ALTER SEQUENCE agency_id_seq OWNED BY agency.agency_id;
+
 --
 -- Name: attachment; Type: TABLE; Schema: public; Owner: midas
 --
@@ -214,7 +256,8 @@ CREATE TABLE midas_user (
     "updatedAt" timestamp with time zone,
     "deletedAt" timestamp with time zone,
     "completedTasks" integer DEFAULT 0 NOT NULL,
-    "isAgencyAdmin" boolean DEFAULT false NOT NULL
+    "isAgencyAdmin" boolean DEFAULT false NOT NULL,
+    agency_id integer
 );
 
 
@@ -596,6 +639,11 @@ ALTER TABLE volunteer_id_seq OWNER TO midas;
 
 ALTER SEQUENCE volunteer_id_seq OWNED BY volunteer.id;
 
+--
+-- Name: agency agency_id; Type: DEFAULT; Schema: public; Owner: midas
+--
+
+ALTER TABLE ONLY agency ALTER COLUMN agency_id SET DEFAULT nextval('agency_id_seq'::regclass);
 
 --
 -- Name: attachment id; Type: DEFAULT; Schema: public; Owner: midas
@@ -699,7 +747,11 @@ ALTER TABLE ONLY volunteer ALTER COLUMN id SET DEFAULT nextval('volunteer_id_seq
 -- Data for Name: attachment; Type: TABLE DATA; Schema: public; Owner: midas
 --
 
+--
+-- Name: agency_id_seq; Type: SEQUENCE SET; Schema: public; Owner: midas
+--
 
+SELECT pg_catalog.setval('agency_id_seq', 1, false);
 
 --
 -- Name: attachment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: midas
@@ -5558,6 +5610,13 @@ SELECT pg_catalog.setval('userpasswordreset_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('volunteer_id_seq', 1, false);
+
+--
+-- Name: agency agency_pkey; Type: CONSTRAINT; Schema: public; Owner: midas
+--
+
+ALTER TABLE ONLY agency
+    ADD CONSTRAINT agency_pkey PRIMARY KEY (agency_id);
 
 
 --

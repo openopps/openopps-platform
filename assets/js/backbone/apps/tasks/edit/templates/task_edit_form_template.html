@@ -70,22 +70,23 @@
             <div class="form-group">
               <label for="time-required" class="no-margin-top">What is the time commitment?</label>
               <ul class="usa-unstyled-list opportunity-options__list">
-                  <li>
-                    <button type="button" class="opportunity-options__button time-options-time-required" id="one-time" value="One time">
-                      <span class="opportunity-options__icon">
-                        1
-                      </span>
-                      <span class="opportunity-options__text">One time</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" class="opportunity-options__button time-options-time-required" id="ongoing" value="Ongoing">
-                      <span class="opportunity-options__icon">
-                        <i class="fas fa-redo"></i>
-                      </span>
-                      <span class="opportunity-options__text">Ongoing</span>
-                    </button>
-                  </li>
+                <li>
+                  <button type="button" class="opportunity-options__button time-options-time-required" id="one-time" value="One time">
+                    <span class="opportunity-options__icon">
+                      1
+                    </span>
+                    <span class="opportunity-options__text">One time</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="opportunity-options__button time-options-time-required" id="ongoing" value="Ongoing">
+                    <span class="opportunity-options__icon">
+                      <i class="fas fa-redo"></i>
+                    </span>
+                    <span class="opportunity-options__text">Ongoing</span>
+                  </button>
+                </li>
+                <% if (!community) { %>
                   <li>
                     <button type="button" class="opportunity-options__button time-options-time-required" id="full-time" value="Full Time Detail">
                       <span class="opportunity-options__icon">
@@ -94,14 +95,15 @@
                       <span class="opportunity-options__text">Full time detail</span>
                     </button>
                   </li>
+                <% } %>
               </ul>
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-              <!-- <% if ( agency ) { %> -->
+              <% if (!community && agency ) { %>
                 <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency" value="task-restrict-agency" <% if (data.restrict.projectNetwork ) { %> checked="checked" <% } %> >
                 <label for="task-restrict-agency">Limit participation to <%- agency.abbr ? agency.parentAbbr ? agency.parentAbbr : agency.abbr : agency.name %> employees</label>
-              <!-- <% } %> -->
+              <% } %>
             </div>
 
             <div class="form-group required-input" id="time-options-time-required">

@@ -19,9 +19,12 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
 
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
-  'left join tagentity_users__user_tags user_tags on user_tags.user_tags = midas_user.id ' +
-  'left join @tagentity agency on agency.id = user_tags.tagentity_users and agency.type = \'agency\' ' +
+  'left join @agency on agency.agency_id = midas_user.agency_id  ' +
   'where midas_user.id = ? ';
+
+const communityUserQuery='select * from community_user '+
+'inner join community on community_user.community_id = community.community_id ' + 
+'where community_user.user_id = ?';
 
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'midas_user.username, midas_user.name, midas_user.bounced ' +
@@ -101,12 +104,11 @@ const options = {
   },
   user: {
     fetch: {
-      agency: [],
+      agency: '',
     },
     exclude: {
       midas_user: [ 'deletedAt', 'passwordAttempts', 'isAdmin', 'isAgencyAdmin', 'disabled', 'bio',
         'createdAt', 'title', 'updatedAt' ],
-      agency: [ 'deletedAt' ],
     },
   },
   comment: {
@@ -141,7 +143,7 @@ const clean = {
   },
   user: function (record) {
     var cleaned = _.pickBy(record, _.identity);
-    cleaned.agency = _.find(_.pickBy(cleaned.agency, _.identity), { 'type': 'agency' });
+    cleaned.agency = _.pickBy(cleaned.agency, _.identity);
     if (typeof cleaned.agency == 'undefined') {
       delete(cleaned.agency);
     }
@@ -158,12 +160,15 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency'}),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user' }),
     TaskTags: dao({ db: db, table: 'tagentity_tasks__task_tags' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     Comment: dao({ db: db, table: 'comment' }),
+    Community: dao({ db: db, table: 'community' }),
+    CommunityUser: dao({ db: db, table: 'community_user' }),
     query: {
       task: taskQuery,
       user: userQuery,
@@ -175,6 +180,8 @@ module.exports = function (db) {
       userTasks: userTasksQuery,
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
+      tasksToIndex: tasksToIndex,
+      communityUserQuery:communityUserQuery,
     },
     options: options,
     clean: clean,
