@@ -9,5 +9,6 @@ services:
 - psql-openopps
 - redis-openopps
 - s3-midas-assets
+- elastic56-openopps
 env:
   OPTIMIZE_MEMORY: true
