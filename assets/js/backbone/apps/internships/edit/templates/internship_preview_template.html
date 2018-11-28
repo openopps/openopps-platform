@@ -1,26 +1,22 @@
-<section class="usajobs-canvas">
-  <div class="usajobs-content-gutter opportunity-gutter">
-    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-        <h1 class="usajobs-form__title">Step 3 - Review draft and submit</h1>
         <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+          <h2 class="usajobs-form__title">Step 3 - Review draft and submit</h2>
           <div class="usajobs-width-two-thirds">
-            <h1 class="usajobs-open-opps-opportunity-item__title">UX Researchers Needed to Map Government Innovator Experiences!</h1>
+            <h1 class="usajobs-open-opps-opportunity-item__title"><%- data.title %></h1>
             <div class="skills">
               <div>Desired skills:</div>
-              <!-- <% _.each(madlibTags['skill'], function (t) { %>
+              <% _.each(madlibTags['skill'], function (t) { %>
                 <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
-              <% }) %> -->
+              <% }) %>
             </div>
           </div>
           <div class="usajobs-width-one-third">
-            <div>
+            <div class="logo">
               Logo goes here
             </div>
           </div>
         </div>
         <div class="usajobs-grid-full">
-          <div class="usa-width-one-third personnel-needed mobile">
+          <!-- <div class="usa-width-one-third personnel-needed mobile">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div>Foreign Service Institute (FSI)</div>
@@ -37,24 +33,24 @@
               <h4>Number of Interns</h4>
               <div>1</div>                      
             </div>
-          </div>
-          <div class="usa-width-two-thirds opportunity-description">
+          </div> -->
+          <div class="usa-width-three-fourths opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
               <h3>Who we are</h3>
-              <p>Test</p>
+              <p><%- data.about %></p>
               <h3>What you'll do</h3>
-              <p>Test</p>
+              <p><%- data.details %></p>
               <h3>Language requirements</h3>
               <h4>French</h4>
-              Spoken language skill level
+              <p class="internship-preview__field-label">Spoken language skill level</p>
               Novice
-              Written language skill level
+              <p class="internship-preview__field-label">Written language skill level</p>
               Advanced
-              Reading language skill level
+              <p class="internship-preview__field-label">Reading language skill level</p>
               Intermediate
             </div>
           </div>
-          <div class="usa-width-one-third personnel-needed desktop">
+          <div class="usa-width-one-fourth personnel-needed desktop">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div>Foreign Service Institute (FSI)</div>
@@ -73,7 +69,6 @@
             </div>
           </div>
         </div>
-        </form>
       </div>
       <div class="usajobs-button_bar--slim task-footer">
         <div class="usajobs-button_bar__body">
@@ -83,6 +78,4 @@
           <button class="usa-button usa-button-primary" data-state="submit" id="submit" style="display:none">Submit</button>
         </div>
       </div>
-    </main>
-  </div>
-</section>
+
