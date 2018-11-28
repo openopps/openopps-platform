@@ -4,7 +4,8 @@
       <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
         <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
-          <fieldset class="usajobs-fieldset">
+
+          <fieldset class="usajobs-fieldset" id="tips">
             <div class="tips">
               First time creating an opportunity? Read our
               <a href="https://usajobs.github.io/openopps-help/getting-started/top-10-tips/"
@@ -153,7 +154,7 @@
               </label>
               <p>Please list the required languages and the level of proficiency with this language.</p>
               <div><!-- (Placeholder for languages shown after adding.) --></div>
-              <button class="usa-button usa-button-secondary">Add language</button>
+              <button class="usa-button-secondary" id="add-language">Add language</button>
             </div>
             <div class="required-input">
               <label for="opportunity-team">
@@ -219,7 +220,122 @@
               </li>
             </ul> -->
           </fieldset>
-          <fieldset class="usajobs-fieldset">
+
+          <fieldset id="add-languages-fieldset" class="usajobs-fieldset">
+            <h2>Languages <span class="usajobs-form__legend">All fields are required</span></h2>
+
+            <label for="spoken-skill-level">
+              <h4>Spoken language skill level</h4>
+            </label>
+            <div class="form-group required-input">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Spoken language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <li>
+                    <input id="spoken-none" type="radio" name="spoken-skill-level" value="spoken-none">
+                    <label for="spoken-none">None</label>                    
+                  </li>
+                  <li>
+                    <input id="spoken-novice" type="radio" name="spoken-skill-level" value="spoken-novice">
+                    <label for="spoken-novice">Novice</label>                    
+                  </li>
+                  <li>
+                    <input id="spoken-intermediate" type="radio" name="spoken-skill-level" value="spoken-intermediate">
+                    <label for="spoken-intermediate">Intermediate</label>                    
+                  </li>
+                  <li>
+                    <input id="spoken-advanced" type="radio" name="spoken-skill-level" value="spoken-advanced">
+                    <label for="spoken-advanced">Advanced</label>                    
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+
+            <label for="written-skill-level">
+              <h4>Written language skill level</h4>
+            </label>
+            <div class="form-group required-input">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Written language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <li>
+                    <input id="written-none" type="radio" name="written-skill-level" value="written-none">
+                    <label for="written-none">None</label>                    
+                  </li>
+                  <li>
+                    <input id="written-novice" type="radio" name="written-skill-level" value="written-novice">
+                    <label for="written-novice">Novice</label>                    
+                  </li>
+                  <li>
+                    <input id="written-intermediate" type="radio" name="written-skill-level" value="written-intermediate">
+                    <label for="written-intermediate">Intermediate</label>                    
+                  </li>
+                  <li>
+                    <input id="written-advanced" type="radio" name="written-skill-level" value="written-advanced">
+                    <label for="written-advanced">Advanced</label>                    
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+            
+            <label for="read-skill-level">
+              <h4>Read language skill level</h4>
+            </label>
+            <div class="form-group required-input">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Read language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <li>
+                    <input id="read-none" type="radio" name="read-skill-level" value="read-none">
+                    <label for="read-none">None</label>                    
+                  </li>
+                  <li>
+                    <input id="read-novice" type="radio" name="read-skill-level" value="read-novice">
+                    <label for="read-novice">Novice</label>                    
+                  </li>
+                  <li>
+                    <input id="read-intermediate" type="radio" name="read-skill-level" value="read-intermediate">
+                    <label for="read-intermediate">Intermediate</label>                    
+                  </li>
+                  <li>
+                    <input id="read-advanced" type="radio" name="read-skill-level" value="read-advanced">
+                    <label for="read-advanced">Advanced</label>                    
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+            
+            <label for="language-requirement">
+              <h4>Requirement</h4>
+            </label>
+            <div class="form-group required-input">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Requirement</legend>
+                <ul class="usa-unstyled-list">
+                  <li>
+                    <input id="requirement-good" type="radio" name="language-requirement" value="requirement-good">
+                    <label for="requirement-good">Good to have</label>                    
+                  </li>
+                  <li>
+                    <input id="requirement-required" type="radio" name="language-requirement" value="requirement-required">
+                    <label for="requirement-required">Required to have</label>                    
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+
+            <p class="usajobs-form__help-brief"><a href="https://www.usajobs.gov/Help/how-to/account/profile/languages/" target="_blank" rel="noopener noreferrer">What does novice, intermediate and advanced mean?</a></p>
+
+            <div class="usajobs-button_bar--slim task-footer">
+              <div class="usajobs-button_bar__body">
+                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel-language" id="cancel-language">Cancel and return</button>
+                <button class="usa-button usa-button-primary" data-state="save-language" id="save-language">Save language</button>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset id="step-3" class="usajobs-fieldset" style="display:none"></fieldset>
+          <fieldset class="usajobs-fieldset" id="button-bar">
             <div class="usajobs-button_bar--slim task-footer">
               <div class="usajobs-button_bar__body">
                 <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
