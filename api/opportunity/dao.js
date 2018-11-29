@@ -22,9 +22,28 @@ const userQuery = 'select @midas_user.*, @agency.* ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
   'where midas_user.id = ? ';
 
-const communityUserQuery='select * from community_user '+
+const communityUserQuery = 'select * from community_user '+
 'inner join community on community_user.community_id = community.community_id ' + 
 'where community_user.user_id = ?';
+
+const communitiesQuery = 'SELECT ' +
+    'community.community_id, ' +
+    'community.community_name, ' +
+    'community.target_audience ' +
+  'FROM community ' +
+  'WHERE ' +
+    'community.is_closed_group = false ' +
+  'UNION ' +
+  'SELECT ' +
+    'community.community_id, ' +
+    'community.community_name, ' +
+    'community.target_audience ' +
+  'FROM community ' +
+  'JOIN community_user ' +
+    'ON community_user.community_id = community.community_id ' +
+  'WHERE ' +
+    'community.is_closed_group = true ' +
+    'AND community_user.user_id = ?';
 
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'midas_user.username, midas_user.name, midas_user.bounced ' +
@@ -180,7 +199,8 @@ module.exports = function (db) {
       userTasks: userTasksQuery,
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
-      communityUserQuery:communityUserQuery,
+      communityUserQuery: communityUserQuery,
+      communitiesQuery: communitiesQuery,
     },
     options: options,
     clean: clean,
