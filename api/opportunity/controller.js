@@ -37,7 +37,7 @@ router.get('/api/task/search', async (ctx, next) => {
 });
 
 router.get('/api/task/communities', auth, async (ctx, next) => {
-  var data = await service.getCommunities(); 
+  var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
 });
 
