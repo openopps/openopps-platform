@@ -96,8 +96,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
-    if (this.internshipController) { this.internshipController.cleanup(); }
-    
+    if (this.internshipEditFormView) { this.internshipEditFormView.cleanup(); }
     this.data = { saved: false };
   },
 
@@ -250,8 +249,12 @@ var BrowseRouter = Backbone.Router.extend({
     if (params.cid) {
       var communityId = _.defaults(params.cid, model.get('communityId'));
       model.loadCommunity(communityId, function (community) {
-        model.set('communityId', community.communityId);
-        this.renderTaskView(model, community);
+        if (_.isEmpty(community) || community.targetAudience == 'Students') {
+          Backbone.history.navigate('/tasks/create', { trigger: true, replaceState: true });
+        } else {
+          model.set('communityId', community.communityId);
+          this.renderTaskView(model, community);
+        }
       }.bind(this));
     } else {
       this.renderTaskView(model);
@@ -277,15 +280,13 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   renderInternshipView: function (model) {
-    var madlibTags = {};
-    
     model.tagTypes(function (tagTypes) {
       this.internshipEditFormView = new InternshipEditFormView({
         el: '#container',
         edit: false,
         model: model,        
         tags: [],
-        madlibTags: madlibTags,
+        madlibTags: {},
         tagTypes: tagTypes,
       }).render();
     }.bind(this));
@@ -336,15 +337,23 @@ var BrowseRouter = Backbone.Router.extend({
       Backbone.history.navigate('/login?internships/new', { trigger: true });
       return;
     }
-    var params = this.parseQueryParams(queryString);
     this.cleanupChildren();
     var model = new TaskModel();
-    // var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    //model.set('restrict', _.defaults(restrict, model.get('restrict')));
     this.initializeTaskListeners(model);
-   
-    this.renderInternshipView(model);
-    
+    var params = this.parseQueryParams(queryString);
+    if (params.cid) {
+      var communityId = _.defaults(params.cid, model.get('communityId'));
+      model.loadCommunity(communityId, function (community) {
+        if (_.isEmpty(community) || community.targetAudience !== 'Students') {
+          Backbone.history.navigate('/tasks/create', { trigger: true, replaceState: true });
+        } else {
+          model.set('communityId', community.communityId);
+          this.renderInternshipView(model, community);
+        }
+      }.bind(this));
+    } else {
+      Backbone.history.navigate('/tasks/create', { trigger: true, replaceState: true });
+    }
   },
 
   showHome: function (id) {
