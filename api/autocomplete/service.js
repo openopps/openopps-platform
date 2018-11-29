@@ -25,6 +25,17 @@ async function userByName (name) {
   });
 }
 
+async function languageByValue (value) {
+  var result = await dao.Language.query(
+    dao.query.language, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
+  return result.map(tag=>{
+    tag.id=tag.languageId;
+    tag.field='value';
+    tag.value= tag.value;
+    return tag;
+  });
+}
+
 async function agency (name) {
   var abbr =  name ? name.toLowerCase() + '%' : '';
   name = name ? '%' + name.toLowerCase() + '%' : '';
@@ -41,4 +52,5 @@ module.exports = {
   tagByType: tagByType,
   userByName: userByName,
   agency: agency,
+  language:languageByValue,
 };
