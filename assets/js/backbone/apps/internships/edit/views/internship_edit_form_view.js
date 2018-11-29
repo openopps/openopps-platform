@@ -146,6 +146,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.$( '.js-success-message' ).hide();
     this.toggleInternLocationOptions();  
     $('#search-results-loading').hide();
+    return this;
   },
 
   initializeSelect2: function () {
