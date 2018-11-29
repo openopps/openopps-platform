@@ -505,17 +505,19 @@ var InternshipEditFormView = Backbone.View.extend({
         madlibTags:this.organizeTags(tags),
       });
   
-      $('#step-3').html(compiledTemplate);
+      $('#internship-preview').html(compiledTemplate);
     }
-    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3'], function (id) {
+    _.each(['#cancel', '#edit', '#preview', '#save', '#internship-edit', '#internship-preview'], function (id) {
       $(id).toggle();
     });
     window.scrollTo(0, 0);
   },
+
   organizeTags: function (tags) {
     // put the tags into their types
     return _(tags).groupBy('type');
   },
+
   save: function ( e ) {
     if ( e.preventDefault ) { e.preventDefault(); }
     var abort = this.validateFields();
@@ -563,7 +565,6 @@ var InternshipEditFormView = Backbone.View.extend({
     }
   },
 
-
   displayChangeOwner: function (e) {
     e.preventDefault();
     this.$('.project-owner').hide();
@@ -571,6 +572,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
     return this;
   },
+
   displayAddParticipant: function (e) {
     e.preventDefault();
     this.$('.project-no-people').hide();

@@ -1,7 +1,7 @@
 <section class="usajobs-canvas">
   <div class="usajobs-content-gutter opportunity-gutter">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
         <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
 
@@ -306,6 +306,8 @@
             </div>
           </fieldset>
         </form>
+      </div>
+      <div id="internship-preview" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display:none">
       </div>
     </main>
   </div>
