@@ -96,6 +96,8 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
+    if (this.internshipController) { this.internshipController.cleanup(); }
+    
     this.data = { saved: false };
   },
 
@@ -273,6 +275,7 @@ var BrowseRouter = Backbone.Router.extend({
       }).render();
     }.bind(this));
   },
+
   renderInternshipView: function (model) {
     var madlibTags = {};
     
