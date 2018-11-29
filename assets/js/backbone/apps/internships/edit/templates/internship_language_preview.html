@@ -1,0 +1,28 @@
+
+ <div id="langdisplay" class="usajobs-drawer-content">
+    <div class="usajobs-grid">
+      <div class="usajobs-width-one-half">
+        <ul class="usajobs-drawer-content__list">
+          <li class="usajobs-drawer-content__item">
+            <b><label><%- data.selectLanguage %></label></b>
+            <h5 class="usajobs-drawer-content__item-label">Spoken language skill level</h5>
+            <p><%- data.spokenskillLevel %></p>
+          </li>
+          <li class="usajobs-drawer-content__item">
+            <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
+            <p><%- data.readSkillLevel %></p>
+          </li>
+        </ul>
+      </div>
+      <div class="usajobs-width-one-half">
+        <ul class="usajobs-drawer-content__list">
+          <li class="usajobs-drawer-content__item">
+            <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
+            <p><%- data.writtenskillLevel %></p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <a id="deleteLink" class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
+      data-id="116" data-section="language" data-record="language">Delete</a>
+  </div> 
