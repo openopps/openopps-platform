@@ -173,7 +173,7 @@ var InternshipEditFormView = Backbone.View.extend({
     }
     else{
       $('span#lang-id-val.field-validation-error').hide();
-      abort=false;
+      
     }
     return abort; 
   },
