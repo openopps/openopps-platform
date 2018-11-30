@@ -46,6 +46,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.agency                 = this.owner ? this.owner.agency.data : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
+    this.dataLanguageArray              =  [];
 
    
     this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
@@ -101,11 +102,7 @@ var InternshipEditFormView = Backbone.View.extend({
   validateField: function (e) {
     return validate(e);
   },
-  changedInternsNeed: function (e){  
-    if($('[name=needed-interns]:checked').length>0){      
-      $('#intern-need>.field-validation-error').hide();
-    }
-  },
+  
   changedInternsTimeFrame: function (e){
     if($('[name=internship-timeframe]:checked').length>0){     
       $('#internship-start-End>.field-validation-error').hide();
@@ -137,8 +134,17 @@ var InternshipEditFormView = Backbone.View.extend({
     }
   },
 
-  deleteLanguage:function (e){   
-    $('#langdisplay').remove();    
+  deleteLanguage:function (e){
+    var dataAttr=$(e.currentTarget).attr('data-id');
+    $('.usajobs-drawer-content[data-id='+ dataAttr +']').remove();  
+    var newLanguageArray = _.reject(this.dataLanguageArray, 
+      function (num){ 
+        return !num[dataAttr];
+      });
+    this.dataLanguageArray= newLanguageArray;
+    
+
+
   },
   validateLanguage:function (e){
     var abort=false;
@@ -167,7 +173,7 @@ var InternshipEditFormView = Backbone.View.extend({
     }
     else{
       $('span#lang-id-val.field-validation-error').hide();
-      abort=false;
+      
     }
     return abort; 
   },
@@ -183,13 +189,14 @@ var InternshipEditFormView = Backbone.View.extend({
     return modelData;
   },
   saveLanguage:function (){
+   
     if(!this.validateLanguage()){
       this.toggleLanguagesOff();
       var data =this.getDataFromLanguagePage();
-    
+      this.dataLanguageArray.push(data);
+      
       var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
-        data: data,
-     
+        data: this.dataLanguageArray,     
       });
       $('#lang-1').html(languageTemplate);
     }
@@ -207,9 +214,7 @@ var InternshipEditFormView = Backbone.View.extend({
       madlibTags: this.options.madlibTags,
       ui: UIConfig,
       agency: this.agency,
-      language:this.getDataFromLanguagePage(),
-     
-      
+              
     },
     
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
@@ -422,7 +427,7 @@ var InternshipEditFormView = Backbone.View.extend({
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
     } );
-
+    
     
     return abort;
   },
@@ -434,12 +439,10 @@ var InternshipEditFormView = Backbone.View.extend({
       ajax: {
         url: '/api/ac/languages',
         dataType: 'json',
-        data: function (term) {
-          console.log(term);
+        data: function (term) {       
           return { q: term };
         },
-        results: function (data) {
-          console.log(data);
+        results: function (data) {         
           return { results: data };
         },
       },
