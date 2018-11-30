@@ -306,12 +306,9 @@ var InternshipEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'Who we are',
       rows: 6,
-      validate: ['html'],
+      validate: ['empty','html'],
     }).render();
-    if(this.model.toJSON().about) {
-      $('#team').siblings('.expandorama-button').attr('aria-expanded', true);
-      $('#team').attr('aria-hidden', false);
-    }
+    
   },
 
   /*
