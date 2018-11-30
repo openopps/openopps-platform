@@ -148,20 +148,7 @@ var InternshipEditFormView = Backbone.View.extend({
   },
   validateLanguage:function (e){
     var abort=false;
-    
-    if($('[name=written-skill-level]:checked').length==0){     
-      $('#written-skill>.field-validation-error').show();
-      abort=true;
      
-    }
-    if($('[name=spoken-skill-level]:checked').length==0){     
-      $('#spoken-skill>.field-validation-error').show();
-      abort=true;    
-    }
-    if($('[name=read-skill-level]:checked').length==0){     
-      $('#read-skill>.field-validation-error').show();
-      abort=true;   
-    }
     if($('[name=language-requirement]:checked').length==0){     
       $('#language-requirement>.field-validation-error').show();
       abort=true;   
@@ -372,9 +359,17 @@ var InternshipEditFormView = Backbone.View.extend({
     element.attr('aria-expanded', this.data.accordion3.open);
     element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
   },
+  resetLanguages:function (e){
+    $('#languageId').select2('data', null);  
+    $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
+    $("input[name='written-skill-level'][value='None']").prop('checked', true);
+    $("input[name='read-skill-level'][value='None']").prop('checked', true);
+    $('input[name="language-requirement"]').prop('checked', false);
+  },
 
   toggleLanguagesOn: function (e) {
-    var element = $(e.currentTarget);
+   
+    this.resetLanguages();
     $('.usajobs-form__title').hide();
     $('.usajobs-form__title').attr('aria-hidden');
     $('#tips').hide();
@@ -427,7 +422,9 @@ var InternshipEditFormView = Backbone.View.extend({
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
     } );
-    
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
     
     return abort;
   },
@@ -643,7 +640,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if (this.md1) { this.md1.cleanup(); }
     if (this.md2) { this.md2.cleanup(); }
     if (this.md3) { this.md3.cleanup(); }
-    if (this.md4) { this.md4.cleanup(); }
+    if (this.md4) { this.md4.cleanup(); }  
     removeView(this);
   },
 });
