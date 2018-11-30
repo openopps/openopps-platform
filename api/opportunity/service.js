@@ -143,8 +143,8 @@ async function canAdministerTask (user, id) {
   }
   return false;
 }
-async function getCommunities () {
-  var communities = await dao.Community.find('is_closed_group = ?', false);
+async function getCommunities (userId) {
+  var communities = await dao.Community.query(dao.query.communitiesQuery, userId);
   var communityTypes = {
     federal: _.filter(communities, { targetAudience: 1 }),
     student: _.filter(communities, { targetAudience: 2 }),

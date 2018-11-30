@@ -1,7 +1,7 @@
 <section class="usajobs-canvas">
   <div class="usajobs-content-gutter opportunity-gutter">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
         <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
 
@@ -19,33 +19,14 @@
             <label for="DefineWho">
               <h3>Who</h3>
             </label>
-            <div class="form-group required-input " id="intern-need" >
-              <label for="people" class="no-margin-top">How many interns do you need?</label>            
-              <fieldset class="usa-fieldset-inputs usa-sans">
-                <legend class="usa-sr-only">Number of needed interns</legend>
-                <ul class="usa-unstyled-list" >
-                  <li>
-                      
-                    <input id="1intern" type="radio" name="needed-interns"  value="1">
-                    <label for="1intern">1 intern</label>                  
-                  </li>
-                  <li>
-                    <input id="2interns" type="radio" name="needed-interns" value="2">
-                    <label for="2interns">2 interns</label>
-                  </li>
-                  <li>
-                    <input id="3interns" type="radio" name="needed-interns" value="3">
-                    <label for="3interns">3 interns</label>
-                  </li>
-                  <li>
-                    <input id="4interns" type="radio" name="needed-interns" value="4">
-                    <label for="4interns">4 interns</label>
-                  </li>
-                </ul>               
-              </fieldset>
-              <span class="field-validation-error error-empty" style="display:none;">You must select number of needed interns.</span>
+            
+            <div class="required-input form-group">
+              <label for="needed-interns">How many interns do you need?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a number of interns.</span>
+              <input type="number" id="needed-interns" class="fullwidth form-control validate"  maxlength="2" data-validate="empty,html" />
+            
+        
             </div>
-
             <label for="DefineWhen">
               <h3>When</h3>
             </label>
@@ -96,7 +77,7 @@
                   </button>
                 </li>
               </ul>
-             <!-- <input type="hidden" id="task_tag_location" name="location" /> -->
+             
               <div id="intern-tag-address" class="intern-tag-address">
                 <div class="required-input task_tag_city">
                   <label for="city">City</label>
@@ -156,6 +137,8 @@
               <div><!-- (Placeholder for languages shown after adding.) --></div>
               <button class="usa-button-secondary" id="add-language">Add language</button>
             </div>
+            <div id="lang-1">
+            </div>  
             <div class="required-input">
               <label for="opportunity-team">
                 <h3>Who we are</h3>
@@ -182,133 +165,102 @@
                 <option>office test</option>
               </select>
             </div>
-            <!-- <ul class="expandorama">
-              <li>
-                <label for="opportunity-skills" class="expandorama-button expandorama-button-skills" aria-controls="skills">
-                  <h3>What you'll learn <span class="usa-input-optional"></span></h3>
-                </label>
-                <div class="required-input expandorama-content" id="skills">
-                  <span class="field-validation-error error-html" style="display:none;">The special characters '
-                    < ' or '>' are not allowed.</span>
-                  <p>List the types of skills the participant will learn and other benefits.</p>
-                  <span class="show-markdown-skills"></span>
-                  <div class="markdown-edit markdown-edit-skills"></div>
-                </div>
-              </li>
-              <li>
-                <label for="opportunity-team" class="expandorama-button expandorama-button-team" aria-controls="team">
-                  <h3>Who we are <span class="usa-input-optional"></span></h3>
-                </label>
-                <div class="required-input expandorama-content" id="team">
-                  <span class="field-validation-error error-html" style="display:none;">The special characters '
-                    < ' or '>' are not allowed.</span>
-                  <p>Briefly describe your team, department, or agency.</p>
-                  <span class="show-markdown-team"></span>
-                  <div class="markdown-edit markdown-edit-team"></div>
-                </div>
-              </li>
-              <li>
-                <label for="task_tag_keywords" class="expandorama-button expandorama-button-keywords" aria-controls="keywords">
-                  <h3>Related keyword <span class="usa-input-optional"></span></h3>
-                </label>
-                <div class="required-input expandorama-content" id="keywords">
-                  <span class="field-validation-error error-html" style="display:none;">The special characters '
-                    < ' or '>' are not allowed.</span>
-                  <p>List the keywords to help describe an opportunity.</p>
-                  <input type="hidden" id="task_tag_keywords" name="task_tag_keywords" class="fullwidth" />
-                </div>
-              </li>
-            </ul> -->
+            
           </fieldset>
 
-          <fieldset id="add-languages-fieldset" class="usajobs-fieldset">
+          <fieldset id="add-languages-fieldset" class="usajobs-fieldset" style="display:none">
             <h2>Languages <span class="usajobs-form__legend">All fields are required</span></h2>
-
+            <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select atleast one language.</span>
+             <input  id="languageId" class="dropdown" data-validate="empty" /> 
+            
             <label for="spoken-skill-level">
               <h4>Spoken language skill level</h4>
             </label>
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="spoken-skill">
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Spoken language skill level</legend>
                 <ul class="usa-unstyled-list">
                   <li>
-                    <input id="spoken-none" type="radio" name="spoken-skill-level" value="spoken-none">
+                    <input id="spoken-none" type="radio" name="spoken-skill-level" value="None">
                     <label for="spoken-none">None</label>                    
                   </li>
                   <li>
-                    <input id="spoken-novice" type="radio" name="spoken-skill-level" value="spoken-novice">
+                    <input id="spoken-novice" type="radio" name="spoken-skill-level" value="Novice">
                     <label for="spoken-novice">Novice</label>                    
                   </li>
                   <li>
-                    <input id="spoken-intermediate" type="radio" name="spoken-skill-level" value="spoken-intermediate">
+                    <input id="spoken-intermediate" type="radio" name="spoken-skill-level" value="Intermediate">
                     <label for="spoken-intermediate">Intermediate</label>                    
                   </li>
                   <li>
-                    <input id="spoken-advanced" type="radio" name="spoken-skill-level" value="spoken-advanced">
+                    <input id="spoken-advanced" type="radio" name="spoken-skill-level" value="Advanced">
                     <label for="spoken-advanced">Advanced</label>                    
                   </li>
                 </ul>
               </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select spoken language skill level.</span>
             </div>
 
             <label for="written-skill-level">
               <h4>Written language skill level</h4>
             </label>
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="written-skill">
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Written language skill level</legend>
                 <ul class="usa-unstyled-list">
                   <li>
-                    <input id="written-none" type="radio" name="written-skill-level" value="written-none">
+                    <input id="written-none" type="radio" name="written-skill-level" value="None">
                     <label for="written-none">None</label>                    
                   </li>
                   <li>
-                    <input id="written-novice" type="radio" name="written-skill-level" value="written-novice">
+                    <input id="written-novice" type="radio" name="written-skill-level" value="Novice">
                     <label for="written-novice">Novice</label>                    
                   </li>
                   <li>
-                    <input id="written-intermediate" type="radio" name="written-skill-level" value="written-intermediate">
+                    <input id="written-intermediate" type="radio" name="written-skill-level" value="Intermediate">
                     <label for="written-intermediate">Intermediate</label>                    
                   </li>
                   <li>
-                    <input id="written-advanced" type="radio" name="written-skill-level" value="written-advanced">
+                    <input id="written-advanced" type="radio" name="written-skill-level" value="Advanced">
                     <label for="written-advanced">Advanced</label>                    
                   </li>
                 </ul>
               </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select written language skill level.</span>
             </div>
             
             <label for="read-skill-level">
               <h4>Read language skill level</h4>
             </label>
-            <div class="form-group required-input">
+            <div class="form-group required-input"id="read-skill">
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Read language skill level</legend>
                 <ul class="usa-unstyled-list">
                   <li>
-                    <input id="read-none" type="radio" name="read-skill-level" value="read-none">
+                    <input id="read-none" type="radio" name="read-skill-level" value="None">
                     <label for="read-none">None</label>                    
                   </li>
                   <li>
-                    <input id="read-novice" type="radio" name="read-skill-level" value="read-novice">
+                    <input id="read-novice" type="radio" name="read-skill-level" value="Novice">
                     <label for="read-novice">Novice</label>                    
                   </li>
                   <li>
-                    <input id="read-intermediate" type="radio" name="read-skill-level" value="read-intermediate">
+                    <input id="read-intermediate" type="radio" name="read-skill-level" value="Intermediate">
                     <label for="read-intermediate">Intermediate</label>                    
                   </li>
                   <li>
-                    <input id="read-advanced" type="radio" name="read-skill-level" value="read-advanced">
+                    <input id="read-advanced" type="radio" name="read-skill-level" value="Advanced">
                     <label for="read-advanced">Advanced</label>                    
                   </li>
                 </ul>
               </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select read language skill level.</span>
             </div>
             
             <label for="language-requirement">
               <h4>Requirement</h4>
             </label>
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="language-requirement">
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Requirement</legend>
                 <ul class="usa-unstyled-list">
@@ -322,6 +274,7 @@
                   </li>
                 </ul>
               </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select requirement.</span>
             </div>
 
             <p class="usajobs-form__help-brief"><a href="https://www.usajobs.gov/Help/how-to/account/profile/languages/" target="_blank" rel="noopener noreferrer">What does novice, intermediate and advanced mean?</a></p>
@@ -333,7 +286,7 @@
               </div>
             </div>
           </fieldset>
-
+         
           <fieldset id="step-3" class="usajobs-fieldset" style="display:none"></fieldset>
           <fieldset class="usajobs-fieldset" id="button-bar">
             <div class="usajobs-button_bar--slim task-footer">
@@ -353,6 +306,8 @@
             </div>
           </fieldset>
         </form>
+      </div>
+      <div id="internship-preview" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display:none">
       </div>
     </main>
   </div>
