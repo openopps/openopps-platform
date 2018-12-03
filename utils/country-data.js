@@ -16,8 +16,8 @@ const queries = {
 };
 
 function updateRecord (record, newValues) {
-  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
-    console.log('Error updating record for id ' + record.id, err);
+  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.country_id]).catch(err => {
+    console.log('Error updating record for id ' + record.country_id, err);
   });
 }
 

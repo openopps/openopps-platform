@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db,callback) {
   db.createTable('country_subdivision', {
-    countrysub_id: {type: 'bigserial', primaryKey: true }, 
+    country_subdivision_id: {type: 'bigserial', primaryKey: true }, 
     code: { type: 'character varying', notNull: true, defaultValue:'' },
     value: { type: 'character varying', notNull: true,defaultValue:'' },
     is_disabled: { type: 'boolean', notNull: true, defaultValue: false },
