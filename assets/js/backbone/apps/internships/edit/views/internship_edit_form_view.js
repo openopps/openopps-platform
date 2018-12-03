@@ -26,12 +26,8 @@ var InternshipEditFormView = Backbone.View.extend({
     'click .opportunity-location'         : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
     'click .expandorama-button-team'      : 'toggleAccordion2',
-    'click .expandorama-button-keywords'  : 'toggleAccordion3', 
-    'change input[name=written-skill-level]'   : 'changedWrittenSkill',
-    'change input[name=spoken-skill-level]'  :'changedSpokenSkill',
-    'change input[name=read-skill-level]'  :'changedReadSkill',
+    'click .expandorama-button-keywords'  : 'toggleAccordion3',   
     'change input[name=language-requirement]'  :'changedRequirement',
-
     'click #deleteLink'                    :'deleteLanguage',
     'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
   },
@@ -109,24 +105,7 @@ var InternshipEditFormView = Backbone.View.extend({
      
     }
   },
-  changedWrittenSkill:function (e){
-    if($('[name=written-skill-level]:checked').length>0){     
-      $('#written-skill>.field-validation-error').hide();
-     
-    }
-  },
-  changedSpokenSkill:function (e){
-    if($('[name=spoken-skill-level]:checked').length>0){     
-      $('#spoken-skill>.field-validation-error').hide();
-     
-    }
-  },
-  changedReadSkill:function (e){
-    if($('[name=read-skill-level]:checked').length>0){     
-      $('#read-skill>.field-validation-error').hide();
-        
-    }
-  },
+  
   changedRequirement:function (e){
     if($('[name=language-requirement]:checked').length>0){     
       $('#language-requirement>.field-validation-error').hide();
