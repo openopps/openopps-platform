@@ -1,23 +1,23 @@
 <% _.each(data, function (d,index) { %>
- <div  data-id="<%- index %>" class="usajobs-drawer-content">
+ <div  data-id="<%- index %>" class="languages-drawer-content">
     <div class="usajobs-grid">
+      <h4><%- d.selectLanguage %></h4>
       <div class="usajobs-width-one-half">
-        <ul class="usajobs-drawer-content__list">
-          <li class="usajobs-drawer-content__item">
-            <h4><%- d.selectLanguage %></h4>
-            <h5 class="usajobs-drawer-content__item-label">Spoken language skill level</h5>
+        <ul class="languages-drawer-content__list">
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Spoken language skill level</h5>
             <p><%- d.spokenskillLevel %></p>
           </li>
-          <li class="usajobs-drawer-content__item">
-            <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Read language skill level</h5>
             <p><%- d.readSkillLevel %></p>
           </li>
         </ul>
       </div>
       <div class="usajobs-width-one-half">
-        <ul class="usajobs-drawer-content__list">
-          <li class="usajobs-drawer-content__item">
-            <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
+        <ul class="languages-drawer-content__list">
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Written language skill level</h5>
             <p><%- d.writtenskillLevel %></p>
           </li>
         </ul>

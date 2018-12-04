@@ -107,7 +107,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   deleteLanguage:function (e){
     var dataAttr=$(e.currentTarget).attr('data-id');
-    $('.usajobs-drawer-content[data-id='+ dataAttr +']').remove();  
+    $('.languages-drawer-content[data-id='+ dataAttr +']').remove();  
     var newLanguageArray = _.reject(this.dataLanguageArray, 
       function (num){ 
         return !num[dataAttr];
@@ -121,7 +121,7 @@ var InternshipEditFormView = Backbone.View.extend({
     var abort=false;   
     
     if($('#languageId').val() ==''){
-      $('#s2id_languageId').addClass('usa-input-error'); 
+      $('#language-select').addClass('usa-input-error'); 
       $('span#lang-id-val.field-validation-error').show();
       abort=true;
     }
@@ -372,6 +372,8 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#button-bar').removeAttr('aria-hidden');
     $('#add-languages-fieldset').hide();
     $('#add-languages-fieldset').attr('aria-hidden');
+    $('span#lang-id-val.field-validation-error').hide();
+    $('#language-select').removeClass('usa-input-error');
     window.scrollTo(0, 0);
   },
 
@@ -425,7 +427,7 @@ var InternshipEditFormView = Backbone.View.extend({
       validate({ currentTarget: $('#languageId') });
       if($('#languageId').val() !=''){
         $('span#lang-id-val.field-validation-error').hide();
-        $('#s2id_languageId').removeClass('usa-input-error'); 
+        $('#language-select').removeClass('usa-input-error'); 
         
       }
     }.bind(this));
