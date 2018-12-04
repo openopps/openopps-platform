@@ -20,11 +20,10 @@
               <h3>Who</h3>
             </label>  
             <div class="form-group required-input">
-                <label for="needed-interns" class="no-margin-top">How many interns do you need?</label>
-                <span class="field-validation-error error-empty" style="display:none;">You must enter number of interns.</span>
-                            
+              <label for="needed-interns" class="no-margin-top">How many interns do you need?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter number of interns.</span>
               <input type="text" id="needed-interns"  class="fullwidth validate" maxlength="2" data-validate="empty" />
-              </div>          
+            </div>
             
             <label for="DefineWhen">
               <h3>When</h3>
@@ -50,14 +49,17 @@
                   </li>                 
                 </ul>                            
               </fieldset>
-              <div class="required-input intern-form-year intern-form-yearbox">
-               
-                <label for="Year" class="no-margin-top">Year</label>
-                <span class="field-validation-error error-empty" style="display:none;">You must select Year.</span>  
-                  <input class="usa-input-inline intern-form-year validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2043" placeholder="YYYY" data-validate="empty" style>  
-                </div>   
-                <p>How many hours per week do you need?</p>
-                <p>32-40 hours <span class="usajobs-form__help-brief">(Student internship requires min. of 32 hrs and max. of 40 hrs)</span></p>
+            </div>
+
+            <div class="form-group required-input intern-form-year intern-form-yearbox">
+              <label for="Year">Year</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select Year.</span>  
+              <input class="intern-form-year validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2043" placeholder="YYYY" data-validate="empty" style>  
+            </div>
+
+            <div class="needed-hours">
+              <p>How many hours per week do you need?</p>
+              <p>32-40 hours <span class="usajobs-form__help-brief">(Student internship requires min. of 32 hrs and max. of 40 hrs)</span></p>
             </div>
           
             
@@ -121,7 +123,8 @@
               <input type="text" id="intern-title" class="fullwidth form-control validate" value="<%- data.title %>" data-validate="empty,count100,html" />
               <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
             </div>
-            <div class="required-input" id="details">
+
+            <div class="form-group required-input" id="details">
               <label for="opportunity-details">
                 <h3>What you'll do</h3>
               </label>
@@ -132,11 +135,12 @@
               knows what's involved.</p>
               <span class="show-markdown-details"></span>
               <div class="markdown-edit markdown-edit-details"></div>
-              <div id="form-group" class= "required-input">
-                <label for="skills">What skills are you looking for?</label>
-                <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
-                <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
-              </div>
+            </div>
+            
+            <div id="form-group" class="form-group required-input">
+              <label for="skills">What skills are you looking for?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
+              <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
             </div>
             
             <div>
@@ -176,14 +180,14 @@
                 <option>office test</option>
               </select>
             </div>
-            
           </fieldset>
-
           <fieldset id="add-languages-fieldset" class="usajobs-fieldset" style="display:none">
-            <h2>Languages <span class="usajobs-form__legend">All fields are required</span></h2>
-            <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select at least one language.</span>
-             <input  id="languageId" class="dropdown" data-validate="empty" /> 
-            
+            <h2 class="no-margin-top">Languages <span class="usajobs-form__legend">All fields are required</span></h2>
+            <div class="form-group required-input" id="language-select">
+              <label for="languageId">Language</label>
+              <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select at least one language.</span>
+              <input id="languageId" class="dropdown" data-validate="empty" />
+            </div>
             <label for="spoken-skill-level">
               <h4>Spoken language skill level</h4>
             </label>
@@ -211,7 +215,6 @@
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select spoken language skill level.</span>
             </div>
-
             <label for="written-skill-level">
               <h4>Written language skill level</h4>
             </label>
@@ -239,7 +242,6 @@
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select written language skill level.</span>
             </div>
-            
             <label for="read-skill-level">
               <h4>Read language skill level</h4>
             </label>
@@ -267,7 +269,6 @@
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select read language skill level.</span>
             </div>
-            
             <label for="language-requirement">
               <h4>Requirement</h4>
             </label>
@@ -287,17 +288,14 @@
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select requirement.</span>
             </div>
-
             <p class="usajobs-form__help-brief"><a href="https://www.usajobs.gov/Help/how-to/account/profile/languages/" target="_blank" rel="noopener noreferrer">What does novice, intermediate and advanced mean?</a></p>
-
             <div class="usajobs-button_bar--slim task-footer">
               <div class="usajobs-button_bar__body">
                 <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel-language" id="cancel-language">Cancel and return</button>
                 <button class="usa-button-primary" data-state="save-language" id="save-language">Save language</button>
               </div>
             </div>
-          </fieldset>
-         
+          </fieldset>        
           <fieldset id="step-3" class="usajobs-fieldset" style="display:none"></fieldset>
           <fieldset class="usajobs-fieldset" id="button-bar">
             <div class="usajobs-button_bar--slim task-footer">
