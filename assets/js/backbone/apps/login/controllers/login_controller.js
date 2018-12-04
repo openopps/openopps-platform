@@ -23,7 +23,7 @@ var LoginController = BaseController.extend({
 
   initialize: function (options) {
     if(window.cache.currentUser) {
-      Backbone.history.navigate(UIConfig.home.logged_in_path, { trigger: true, replaceState: true });
+      Backbone.history.navigate(UIConfig.home.logged_in_path, { trigger: true, replace: true });
     } else {
       this.options = options;
       this.cleanupViews();

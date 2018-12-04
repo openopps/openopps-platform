@@ -198,7 +198,7 @@ var InternshipEditFormView = Backbone.View.extend({
       newTags: [],
       newItemTags: [],
       tags: this.options.tags,
-      madlibTags: this.options.madlibTags,
+      madlibTags: organizeTags(this.model.toJSON().tags),
       ui: UIConfig,
       agency: this.agency,
               
@@ -582,6 +582,7 @@ var InternshipEditFormView = Backbone.View.extend({
   getDataFromPage: function () {
     var modelData = {
       id          : this.model.get('id'),
+      communityId : this.model.get('communityId'),
       title       : this.$('#intern-title').val(),
       description : this.$('#opportunity-details').val(),  
       details     : this.$('#opportunity-details').val(),  
