@@ -619,19 +619,49 @@ button.opportunity-options__button {
     }
   }
 }
-.usajobs-drawer {
 
+#add-languages-fieldset>h2.no-margin-top {
+  margin-top: 0;
+
+  .usajobs-form__legend {
+    position: absolute;
+    right: 3rem;
+  }
+}
+
+.intern-form-year {
+    clear: none;
+    margin-right: 1.5rem;
+
+    label {
+      margin-top: $size-default;
+    }
+}
+
+.intern-form-yearbox {
+  width: 18rem;
+}
+
+.needed-hours {
+  margin-top: $size-M;
+
+  p:first-child {
+    margin-bottom: 0;
+  }
+
+  p:last-child {
+    margin-top: 0;
+  }
+}
+
+.languages-drawer {
 
   &-content {
     background-color: $color-white;
     overflow: auto;
-    padding: $size-default $size-default $size-M $size-default;
+    padding: 0 0 $size-S 0;
     border-top:1px solid $color-gray-lighter;
     border-bottom:1px solid $color-gray-lighter;
-   
-    @include media($L) {
-      padding: $size-default $size-M $size-M $size-M;
-    }
 
     .usajobs-grid {
       padding: 0;
@@ -655,10 +685,8 @@ button.opportunity-options__button {
       p, dd {
         margin: 0;
       }
-    }
 
-    &__item {
-      p {
+      .languages-drawer-content__item p {
         margin:0;
       }
     }
