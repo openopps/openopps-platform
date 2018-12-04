@@ -35,6 +35,27 @@ async function languageByValue (value) {
     return tag;
   });
 }
+async function countryByValue (value) {
+  var result = await dao.Country.query(
+    dao.query.country, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
+  return result.map(tag=>{
+    tag.id=tag.countryId;
+    tag.field='value';
+    tag.value= tag.value;
+    return tag;
+  });
+}
+async function stateByValue (value) {
+  var result = await dao.CountrySubdivision.query(
+    dao.query.state, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
+  return result.map(tag=>{
+    tag.id =tag.countrySubdivisionId;
+    tag.field='value';
+    tag.value= tag.value;
+    return tag;
+  });
+}
+
 
 async function agency (name) {
   var abbr =  name ? name.toLowerCase() + '%' : '';
@@ -53,4 +74,6 @@ module.exports = {
   userByName: userByName,
   agency: agency,
   language:languageByValue,
+  country:countryByValue,
+  state:stateByValue,
 };

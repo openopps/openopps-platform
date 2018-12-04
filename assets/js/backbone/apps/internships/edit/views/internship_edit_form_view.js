@@ -31,9 +31,8 @@ var InternshipEditFormView = Backbone.View.extend({
     'change input[name=spoken-skill-level]'   : 'changedSpokenSkill',
     'change input[name=read-skill-level]'     : 'changedReadSkill',
     'change input[name=language-requirement]' : 'changedRequirement',
-
-    'click #deleteLink'                    :'deleteLanguage',
-    'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
+    'click #deleteLink'                       :'deleteLanguage',
+    'change input[name=internship-timeframe]' : 'changedInternsTimeFrame',
   },
 
   initialize: function (options) {
@@ -109,30 +108,6 @@ var InternshipEditFormView = Backbone.View.extend({
      
     }
   },
-  changedWrittenSkill:function (e){
-    if($('[name=written-skill-level]:checked').length>0){     
-      $('#written-skill>.field-validation-error').hide();
-     
-    }
-  },
-  changedSpokenSkill:function (e){
-    if($('[name=spoken-skill-level]:checked').length>0){     
-      $('#spoken-skill>.field-validation-error').hide();
-     
-    }
-  },
-  changedReadSkill:function (e){
-    if($('[name=read-skill-level]:checked').length>0){     
-      $('#read-skill>.field-validation-error').hide();
-        
-    }
-  },
-  changedRequirement:function (e){
-    if($('[name=language-requirement]:checked').length>0){     
-      $('#language-requirement>.field-validation-error').hide();
-      abort=true;   
-    }
-  },
 
   deleteLanguage:function (e){
     var dataAttr=$(e.currentTarget).attr('data-id');
@@ -147,20 +122,19 @@ var InternshipEditFormView = Backbone.View.extend({
 
   },
   validateLanguage:function (e){
-    var abort=false;
-     
-    if($('[name=language-requirement]:checked').length==0){     
-      $('#language-requirement>.field-validation-error').show();
-      abort=true;   
-    }
+    var abort=false;   
     
     if($('#languageId').val() ==''){
+      $('#s2id_languageId').addClass('usa-input-error'); 
       $('span#lang-id-val.field-validation-error').show();
       abort=true;
     }
     else{
-      $('span#lang-id-val.field-validation-error').hide();
-      
+      $('span#lang-id-val.field-validation-error').hide(); 
+    }
+
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
     }
     return abort; 
   },
@@ -208,6 +182,8 @@ var InternshipEditFormView = Backbone.View.extend({
     this.$el.html(compiledTemplate);
     this.$el.localize();
     // DOM now exists, begin select2 init
+    this.initializeCountriesSelect();
+    this.initializeStateSelect();
     this.initializeLanguagesSelect();
     this.initializeSelect2(); 
     this.initializeTextAreaDetails();
@@ -306,12 +282,9 @@ var InternshipEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'Who we are',
       rows: 6,
-      validate: ['html'],
+      validate: ['empty','html'],
     }).render();
-    if(this.model.toJSON().about) {
-      $('#team').siblings('.expandorama-button').attr('aria-expanded', true);
-      $('#team').attr('aria-hidden', false);
-    }
+    
   },
 
   /*
@@ -364,7 +337,7 @@ var InternshipEditFormView = Backbone.View.extend({
     $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
     $("input[name='written-skill-level'][value='None']").prop('checked', true);
     $("input[name='read-skill-level'][value='None']").prop('checked', true);
-    $('input[name="language-requirement"]').prop('checked', false);
+    $("input[name='language-requirement'][value='requirement-good']").prop('checked', true);
   },
 
   toggleLanguagesOn: function (e) {
@@ -456,11 +429,74 @@ var InternshipEditFormView = Backbone.View.extend({
       validate({ currentTarget: $('#languageId') });
       if($('#languageId').val() !=''){
         $('span#lang-id-val.field-validation-error').hide();
+        $('#s2id_languageId').removeClass('usa-input-error'); 
         
       }
     }.bind(this));
     $('#languageId').focus();
   },
+
+  initializeCountriesSelect: function () {
+    $('#task_tag_country').select2({
+      placeholder: 'Select Country',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/country',
+        dataType: 'json',
+        data: function (term) {       
+          return { q: term };
+        },
+        results: function (data) {         
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No country found ',
+    });
+    $('#task_tag_country').on('change', function (e) {
+      validate({ currentTarget: $('#task_tag_country') });
+      
+    }.bind(this));
+    $('#task_tag_country').focus();
+  },
+
+  initializeStateSelect: function () {
+    $('#task_tag_state').select2({
+      placeholder: 'Select State',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/state',
+        dataType: 'json',
+        data: function (term) {       
+          return { q: term };
+        },
+        results: function (data) {         
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No state found ',
+    });
+    $('#task_tag_state').on('change', function (e) {
+      validate({ currentTarget: $('#task_tag_state') });
+      
+    }.bind(this));
+    $('#task_tag_state').focus();
+  },
+
+
 
   submit: function (e) {
     if ( e.preventDefault ) { e.preventDefault(); }
