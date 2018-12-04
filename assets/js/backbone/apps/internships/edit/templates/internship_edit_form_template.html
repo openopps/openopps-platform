@@ -123,7 +123,8 @@
               <input type="text" id="intern-title" class="fullwidth form-control validate" value="<%- data.title %>" data-validate="empty,count100,html" />
               <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
             </div>
-            <div class="required-input" id="details">
+
+            <div class="form-group required-input" id="details">
               <label for="opportunity-details">
                 <h3>What you'll do</h3>
               </label>
@@ -134,11 +135,12 @@
               knows what's involved.</p>
               <span class="show-markdown-details"></span>
               <div class="markdown-edit markdown-edit-details"></div>
-              <div id="form-group" class= "required-input">
-                <label for="skills">What skills are you looking for?</label>
-                <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
-                <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
-              </div>
+            </div>
+            
+            <div id="form-group" class="form-group required-input">
+              <label for="skills">What skills are you looking for?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
+              <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
             </div>
             
             <div>
