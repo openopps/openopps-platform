@@ -183,7 +183,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.$el.localize();
     // DOM now exists, begin select2 init
     this.initializeCountriesSelect();
-    this.initializeStateSelect();
+    this.initializeCountrySubdivisionSelect();
     this.initializeLanguagesSelect();
     this.initializeSelect2(); 
     this.initializeTextAreaDetails();
@@ -466,8 +466,8 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#task_tag_country').focus();
   },
 
-  initializeStateSelect: function () {
-    $('#task_tag_state').select2({
+  initializeCountrySubdivisionSelect: function () {
+    $('#task_tag_countrySubdivision').select2({
       placeholder: 'Select State',
       minimumInputLength: 3,
       ajax: {
@@ -489,11 +489,11 @@ var InternshipEditFormView = Backbone.View.extend({
       },
       formatNoMatches: 'No state found ',
     });
-    $('#task_tag_state').on('change', function (e) {
-      validate({ currentTarget: $('#task_tag_state') });
+    $('#task_tag_countrySubdivision').on('change', function (e) {
+      validate({ currentTarget: $('#task_tag_countrySubdivision') });
       
     }.bind(this));
-    $('#task_tag_state').focus();
+    $('#task_tag_countrySubdivision').focus();
   },
 
 
