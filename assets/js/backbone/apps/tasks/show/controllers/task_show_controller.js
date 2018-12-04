@@ -49,8 +49,8 @@ var TaskShowController = BaseView.extend({
   initialize: function (options) {
     this.options = options;
 
+    this.initializeRenderListener();
     this.initializeTaskItemView();
-    this.initializeChildren();
 
     this.tagFactory = new TagFactory();
   },
@@ -91,7 +91,7 @@ var TaskShowController = BaseView.extend({
     this.$('.task-container').hide();
   },
 
-  initializeChildren: function () {
+  initializeRenderListener: function () {
     var self = this;
 
     this.listenTo(this.model, 'task:show:render:done', function () {
