@@ -107,7 +107,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   deleteLanguage:function (e){
     var dataAttr=$(e.currentTarget).attr('data-id');
-    $('.usajobs-drawer-content[data-id='+ dataAttr +']').remove();  
+    $('.languages-drawer-content[data-id='+ dataAttr +']').remove();  
     var newLanguageArray = _.reject(this.dataLanguageArray, 
       function (num){ 
         return !num[dataAttr];
