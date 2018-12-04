@@ -296,14 +296,14 @@ var InternshipEditFormView = Backbone.View.extend({
       var modelData = this.getDataFromPage();
       // README: Check if draft is being saved or if this is a submission.
       // If the state isn't a draft and it isn't simply being saved, then it will
-      // be submitted for review. `event.savestate` is true if the task is not a
+      // be submitted for review. `event.saveState` is true if the task is not a
       // `draft` and assumes that the task is simply being updated rather than
       // there being a need to "Submit for Review".
       //
       if (event.draft) {
         modelData.state = 'draft';
         modelData.acceptingApplicants = true;
-      } else if (!event.savestate) {
+      } else if (!event.saveState) {
         modelData.state = 'submitted';
         modelData.acceptingApplicants = true;
       }
@@ -568,10 +568,10 @@ var InternshipEditFormView = Backbone.View.extend({
         this.trigger( 'task:tags:save:done', { draft: true } );
         break;
       case 'submit':
-        this.trigger( 'task:tags:save:done', { draft: false, savestate: false } );
+        this.trigger( 'task:tags:save:done', { draft: false, saveState: false } );
         break;
       default:
-        this.trigger( 'task:tags:save:done', { draft: false, savestate: true } );
+        this.trigger( 'task:tags:save:done', { draft: false, saveState: true } );
         break;
     }
   },
