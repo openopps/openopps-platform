@@ -21,14 +21,13 @@ var InternshipEditFormView = Backbone.View.extend({
     'click #add-participant'              : 'displayAddParticipant',
     'click #add-language'                 : 'toggleLanguagesOn',
     'click #cancel-language'              : 'toggleLanguagesOff',  
-    'click #save-language'                :'saveLanguage',
+    'click #save-language'                : 'saveLanguage',
     'click .usa-button'                   : 'submit',   
     'click .opportunity-location'         : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
     'click .expandorama-button-team'      : 'toggleAccordion2',
-    'click .expandorama-button-keywords'  : 'toggleAccordion3',   
-    'change input[name=language-requirement]'  :'changedRequirement',
-    'click #deleteLink'                    :'deleteLanguage',
+    'click .expandorama-button-keywords'  : 'toggleAccordion3',
+    'click #deleteLink'                   : 'deleteLanguage',
     'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
   },
 
@@ -105,14 +104,6 @@ var InternshipEditFormView = Backbone.View.extend({
      
     }
   },
-  
-  changedRequirement:function (e){
-    if($('[name=language-requirement]:checked').length>0){ 
-      $('#language-requirement').removeClass('usa-input-error');     
-      $('#language-requirement>.field-validation-error').hide();
-     
-    }
-  },
 
   deleteLanguage:function (e){
     var dataAttr=$(e.currentTarget).attr('data-id');
@@ -127,14 +118,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   },
   validateLanguage:function (e){
-    var abort=false;
-     
-    if($('[name=language-requirement]:checked').length==0){ 
-      $('#language-requirement').addClass('usa-input-error');    
-      $('#language-requirement>.field-validation-error').show();
-      abort =true;   
-    }
-   
+    var abort=false;   
     
     if($('#languageId').val() ==''){
       $('#s2id_languageId').addClass('usa-input-error'); 
@@ -349,7 +333,7 @@ var InternshipEditFormView = Backbone.View.extend({
     $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
     $("input[name='written-skill-level'][value='None']").prop('checked', true);
     $("input[name='read-skill-level'][value='None']").prop('checked', true);
-    $('input[name="language-requirement"]').prop('checked', false);
+    $("input[name='language-requirement'][value='requirement-good']").prop('checked', true);
   },
 
   toggleLanguagesOn: function (e) {
