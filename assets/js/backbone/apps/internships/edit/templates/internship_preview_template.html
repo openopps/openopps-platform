@@ -39,40 +39,54 @@
               <h3>Who we are</h3>
               <div><%- data.aboutHtml %></div>
               <h3>What you'll do</h3>
-              <div><%- data.details %></div>
+              <div><%- data.detailsHtml %></div>
               <h3>Language requirements</h3>
-              <h4>French</h4>
-              <div>
-                <p class="field-label">Spoken language skill level</p>
-                Novice
+              <% _.each(data.language, function (l,index) { %>
+              <div class="usajobs-grid-full">
+                <h4><%- l.selectLanguage %></h4>
+                <div class="usajobs-width-one-half">
+                  <ul class="usajobs-drawer-content__list">
+                    <li class="usajobs-drawer-content__item">
+                      <h5 class="usajobs-drawer-content__item-label">Spoken language skill level</h5>
+                      <p><%- l.spokenskillLevel %></p>
+                    </li>
+                    <li class="usajobs-drawer-content__item">
+                      <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
+                      <p><%- l.readSkillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
+                <div class="usajobs-width-one-half">
+                  <ul class="usajobs-drawer-content__list">
+                    <li class="usajobs-drawer-content__item">
+                      <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
+                      <p><%- l.writtenskillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div>
-                <p class="field-label">Written language skill level</p>
-                Advanced
-              </div>
-              <div>
-                <p class="field-label">Reading language skill level</p>
-                Intermediate
-              </div>
-              
-            </div>
-          </div>
+            </div> 
+            <% }); %>
+        </div>
           <div class="usa-width-one-fourth personnel-needed desktop">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
-              <div>Foreign Service Institute (FSI)</div>
+              <div><%- data.bureau %></div>
               <h4>Office</h4>
-              <div>School of Applied Information Technology (SAIT)</div>
+              <div><%- data.office %></div>
               <h4>Location</h4>
-              <div>Anywhere</div>
-              <h4>Country</h4>
-              <div>United States</div>
+              <div><%= (data.city) ? data.city + ', ' + data.countrySubdivision : 'Virtual' %></div>
+              <% if (data.country) { %>
+                <h4>Country</h4>
+                <div><%- data.country %></div>
+              <% } %>
               <h4>Language Requirements</h4>
-              <div>Yes</div>
+              <div><%- data.languageRequirement %></div>
               <h4>Time Commitment</h4>
-              <div>May 2019-July 2019 32-40 hrs per week</div>
+              <div><%- data.timeframe %></div>
+              <div>32-40 hrs per week</div>
               <h4>Number of Interns</h4>
-              <div>1</div>          
+              <div><%- data.internNumber %></div>          
             </div>
           </div>
         </div>

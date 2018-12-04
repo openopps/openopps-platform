@@ -83,10 +83,10 @@
                   <span class="field-validation-error error-empty" style="display:none;">You must enter a city for this internship.</span>
                   <input type="text" id="task_tag_city" name="city" class="fullwidth validate" data-validate="empty" />
                 </div>
-                <div class="required-input task_tag_state">
+                <div class="required-input task_tag_countrySubdivision">
                   <label for="state">State</label>
                   <span class="field-validation-error error-empty" style="display:none;">You must enter a state for this internship.</span>
-                  <input type="text" id="task_tag_state" name="state" class="fullwidth validate" data-validate="empty" />
+                  <input type="text" id="task_tag_countrySubdivision" name="state" class="fullwidth validate" data-validate="empty" />
                 </div>
                 <div class="required-input task_tag_country">
                   <label for="country">Country</label>
@@ -290,16 +290,16 @@
           <fieldset class="usajobs-fieldset" id="button-bar">
             <div class="usajobs-button_bar--slim task-footer">
               <div class="usajobs-button_bar__body">
-                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
-                <button class="usa-button usa-button-secondary usa-button-left" data-state="edit" id="edit" style="display:none">Make changes</button>
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="cancel" id="cancel">Cancel</button>
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit" style="display:none">Make changes</button>
                 <% if (data.state === 'draft' || data.state === 'canceled') { %>
-                  <button class="usa-button usa-button-secondary" data-state="draft">Save for later</button>
+                  <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button>
                 <% } %>
-                <button class="usa-button usa-button-primary" data-state="preview" id="preview">Preview</button>
+                <button class="usa-button usa-button-primary internship-button" data-state="preview" id="preview">Preview</button>
                 <% if (_.contains(['draft', 'canceled', 'submitted'], data.state)) { %>
-                  <button class="usa-button usa-button-primary" data-state="submit" id="save" style="display:none">Submit</button>
+                  <button class="usa-button usa-button-primary internship-button" data-state="submit" id="save" style="display:none">Submit</button>
                 <% } else { %>
-                  <button class="usa-button usa-button-primary" data-state="save" id="save" style="display:none">Save</button>
+                  <button class="usa-button usa-button-primary internship-button" data-state="save" id="save" style="display:none">Save</button>
                 <% } %>
               </div>
             </div>
