@@ -4,16 +4,6 @@
       <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
         <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
-
-          <fieldset class="usajobs-fieldset" id="tips">
-            <div class="tips">
-              First time creating an opportunity? Read our
-              <a href="https://usajobs.github.io/openopps-help/getting-started/top-10-tips/"
-                target="_blank">
-                Top 10 tips for creating an ideal opportunity<span class="sr-only">Opens in a new window</span></a>.
-            </div>
-          </fieldset>
-
           <fieldset id="step-1" class="usajobs-fieldset">
             <h2>Step 1 - Define who, when, and where</h2>
             <label for="DefineWho">
@@ -54,14 +44,8 @@
             <div class="form-group required-input intern-form-year">
               <label for="Year">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select Year.</span>  
-              <input class="intern-form-yearbox validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2043" placeholder="YYYY" data-validate="empty" style>  
-            </div>
-
-            <!-- <div class="needed-hours">
-              <p>How many hours per week do you need?</p>
-              <p>32-40 hours <span class="usajobs-form__help-brief">(Student internship requires min. of 32 hrs and max. of 40 hrs)</span></p>
-            </div> -->
-          
+              <input class="intern-form-yearbox validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2043" placeholder="YYYY" data-validate="empty">  
+            </div>          
             
             <label for="WhereLocated">
               <h3>Where</h3>
@@ -166,7 +150,7 @@
             </div>
             <div class="required-input task_tag_bureau">
               <label for="bureau">Bureau</label>
-              <span class="field-validation-error error-empty" style="display:none;">You must select bureau for this internship.</span>
+              <span class="field-validation-error error-empty" style="display:none;">You must select a bureau for this internship.</span>
               <select id="task_tag_bureau" name="bureau" class="dropdown validate" data-validate="empty">
                 <option></option>
                 <option>Bureau Test</option>
@@ -174,7 +158,7 @@
             </div>
             <div class="required-input task_tag_office">
               <label for="office">Office</label>
-              <span class="field-validation-error error-empty" style="display:none;">You must select office for this internship.</span>
+              <span class="field-validation-error error-empty" style="display:none;">You must select an office for this internship.</span>
               <select id="task_tag_office" name="office" class="dropdown validate" data-validate="empty">
                 <option></option>
                 <option>office test</option>
@@ -301,7 +285,7 @@
             <div class="usajobs-button_bar--slim task-footer">
               <div class="usajobs-button_bar__body">
                 <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel-language" id="cancel-language">Cancel and return</button>
-                <button class="usa-button-primary" data-state="save-language" id="save-language">Save language</button>
+                <button class="usa-button usa-button-primary" data-state="save-language" id="save-language">Save language</button>
               </div>
             </div>
           </fieldset>
@@ -310,16 +294,16 @@
           <fieldset class="usajobs-fieldset" id="button-bar">
             <div class="usajobs-button_bar--slim task-footer">
               <div class="usajobs-button_bar__body">
-                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
-                <button class="usa-button usa-button-secondary usa-button-left" data-state="edit" id="edit" style="display:none">Make changes</button>
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="cancel" id="cancel">Cancel</button>
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit" style="display:none">Make changes</button>
                 <% if (data.state === 'draft' || data.state === 'canceled') { %>
-                  <button class="usa-button usa-button-secondary" data-state="draft">Save for later</button>
+                  <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button>
                 <% } %>
-                <button class="usa-button usa-button-primary" data-state="preview" id="preview">Preview</button>
+                <button class="usa-button usa-button-primary internship-button" data-state="preview" id="preview">Preview</button>
                 <% if (_.contains(['draft', 'canceled', 'submitted'], data.state)) { %>
-                  <button class="usa-button usa-button-primary" data-state="submit" id="save" style="display:none">Submit</button>
+                  <button class="usa-button usa-button-primary internship-button" data-state="submit" id="save" style="display:none">Submit</button>
                 <% } else { %>
-                  <button class="usa-button usa-button-primary" data-state="save" id="save" style="display:none">Save</button>
+                  <button class="usa-button usa-button-primary internship-button" data-state="save" id="save" style="display:none">Save</button>
                 <% } %>
               </div>
             </div>
