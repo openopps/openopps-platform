@@ -22,7 +22,7 @@
             <div class="form-group required-input">
               <label for="needed-interns" class="no-margin-top">How many interns do you need?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter number of interns.</span>
-              <input type="text" id="needed-interns"  class="fullwidth validate" maxlength="2" data-validate="empty" />
+              <input type="number" id="needed-interns"  class="fullwidth validate" maxlength="2"  min="1" max="99" data-validate="empty" onkeypress="if(this.value.length==2) return false;"/>
             </div>
             
             <label for="DefineWhen">
@@ -54,7 +54,7 @@
             <div class="form-group required-input intern-form-year">
               <label for="Year">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select Year.</span>  
-              <input class="intern-form-yearbox validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2043" placeholder="YYYY" data-validate="empty" style>  
+              <input class="intern-form-yearbox validate" aria-describedby="dateHint" id="intern-year" name="year" type="number" min="2018" max="2053" placeholder="YYYY" onkeypress="if(this.value.length==4) return false;" data-validate="empty" style>  
             </div>
 
             <!-- <div class="needed-hours">
