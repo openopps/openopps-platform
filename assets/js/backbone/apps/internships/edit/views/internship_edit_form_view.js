@@ -462,7 +462,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeCountrySubdivisionSelect: function () {
     $('#task_tag_countrySubdivision').select2({
-      placeholder: 'Select State',
+      placeholder: '- Select -',
       minimumInputLength: 3,
       ajax: {
         url: '/api/ac/state',
@@ -615,6 +615,7 @@ var InternshipEditFormView = Backbone.View.extend({
   getDataFromPage: function () {
     var modelData = {
       id                  : this.model.get('id'),
+      description         : this.$('#opportunity-details').val(),
       communityId         : this.model.get('communityId'),
       title               : this.$('#intern-title').val(),
       detailsHtml         : this.$('#opportunity-details').val(),  
@@ -659,7 +660,7 @@ var InternshipEditFormView = Backbone.View.extend({
       timeFrameId = $(this).attr('id');
     });
 
-    return $("label[for='" + timeFrameId + "']").find('span.label-second-line').text();;
+    return $("label[for='" + timeFrameId + "']").find('span.label-second-line').text();
   },
 
   getLanguageRequirement: function () {
