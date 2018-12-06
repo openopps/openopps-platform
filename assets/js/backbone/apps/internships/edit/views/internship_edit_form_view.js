@@ -15,24 +15,20 @@ var ModalComponent = require('../../../../components/modal');
 var InternshipEditFormView = Backbone.View.extend({
 
   events: {
-    'blur .validate'                          : 'validateField',
-    'change .validate'                        : 'validateField',
-    'click #change-owner'                     : 'displayChangeOwner',
-    'click #add-participant'                  : 'displayAddParticipant',
-    'click #add-language'                     : 'toggleLanguagesOn',
-    'click #cancel-language'                  : 'toggleLanguagesOff',  
-    'click #save-language'                    : 'saveLanguage',
-    'click .internship-button'                : 'submit',   
-    'click .opportunity-location'             : 'toggleInternLocationOptions',
-    'click .expandorama-button-skills'        : 'toggleAccordion1',
-    'click .expandorama-button-team'          : 'toggleAccordion2',
-    'click .expandorama-button-keywords'      : 'toggleAccordion3', 
-    'change input[name=written-skill-level]'  : 'changedWrittenSkill',
-    'change input[name=spoken-skill-level]'   : 'changedSpokenSkill',
-    'change input[name=read-skill-level]'     : 'changedReadSkill',
-    'change input[name=language-requirement]' : 'changedRequirement',
-    'click #deleteLink'                       :'deleteLanguage',
-    'change input[name=internship-timeframe]' : 'changedInternsTimeFrame',
+    'blur .validate'                      : 'validateField',
+    'change .validate'                    : 'validateField',
+    'click #change-owner'                 : 'displayChangeOwner',
+    'click #add-participant'              : 'displayAddParticipant',
+    'click #add-language'                 : 'toggleLanguagesOn',
+    'click #cancel-language'              : 'toggleLanguagesOff',  
+    'click #save-language'                : 'saveLanguage',
+    'click .internship-button'            : 'submit',   
+    'click .opportunity-location'         : 'toggleInternLocationOptions',
+    'click .expandorama-button-skills'    : 'toggleAccordion1',
+    'click .expandorama-button-team'      : 'toggleAccordion2',
+    'click .expandorama-button-keywords'  : 'toggleAccordion3',
+    'click #deleteLink'                   : 'deleteLanguage',
+    'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
   },
 
   initialize: function (options) {
@@ -345,8 +341,6 @@ var InternshipEditFormView = Backbone.View.extend({
     this.resetLanguages();
     $('.usajobs-form__title').hide();
     $('.usajobs-form__title').attr('aria-hidden');
-    $('#tips').hide();
-    $('#tips').attr('aria-hidden');
     $('#step-1').hide();
     $('#step-1').attr('aria-hidden');
     $('#step-2').hide();
@@ -364,8 +358,6 @@ var InternshipEditFormView = Backbone.View.extend({
     //var element = $(e.currentTarget);
     $('.usajobs-form__title').show();
     $('.usajobs-form__title').removeAttr('aria-hidden');
-    $('#tips').show();
-    $('#tips').removeAttr('aria-hidden');
     $('#step-1').show();
     $('#step-1').removeAttr('aria-hidden');
     $('#step-2').show();
@@ -406,7 +398,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeLanguagesSelect: function () {
     $('#languageId').select2({
-      placeholder: 'Select Language',
+      placeholder: '- Select -',
       minimumInputLength: 3,
       ajax: {
         url: '/api/ac/languages',
@@ -440,7 +432,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeCountriesSelect: function () {
     $('#task_tag_country').select2({
-      placeholder: 'Select Country',
+      placeholder: '- Select -',
       minimumInputLength: 3,
       ajax: {
         url: '/api/ac/country',

@@ -629,21 +629,23 @@ button.opportunity-options__button {
   }
 }
 
-.intern-form-year {
-    clear: none;
-    margin-right: 1.5rem;
+#needed-interns, .usa-input-error #needed-interns {
+  width: 6rem;
+}
 
+.intern-form-year {
     label {
       margin-top: $size-default;
     }
 }
 
-.intern-form-yearbox {
-  width: 18rem;
+.intern-form-yearbox, .usa-input-error .intern-form-yearbox {
+  width: 8rem;
 }
 
 .needed-hours {
   margin-top: $size-M;
+  width: 6rem;
 
   p:first-child {
     margin-bottom: 0;
