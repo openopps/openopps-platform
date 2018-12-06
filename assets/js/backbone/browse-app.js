@@ -12,6 +12,7 @@ var ProfileListController = require('./apps/profiles/list/controllers/profile_li
 var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
 var TaskModel = require('./entities/tasks/task_model');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
+var TaskSearchController = require('./apps/tasks/search/controllers/task_search_controller');
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
@@ -194,7 +195,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   listTasks: function (queryStr) {
     this.cleanupChildren();
-    this.taskListController = new TaskListController({
+    this.TaskSearchController = new TaskSearchController({
       el: '#container',
       router: this,
       queryParams: this.parseQueryParams(queryStr),

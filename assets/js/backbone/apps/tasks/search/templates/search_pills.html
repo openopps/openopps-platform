@@ -1,0 +1,65 @@
+<div class="usajobs-search-pills" data-object="search-pills" id="search-pills">
+  <ul class="usajobs-search-pills__list">
+    <% _.each(filters, function(value, key) { %>
+      <% if(_.isArray(value)) { %>
+        <% _.each(value, function (v) { %>
+          <% if(_.isObject(v)) { %>
+            <li class="usajobs-search-pills__item" data-type="<%- key %>" data-value="<%- JSON.stringify(v) %>" data-behavior="search-pills.remove">
+                <a class="usajobs-search-pills__pill" title="Remove <%- v.name %> filter" tabindex="0">
+                  <span class="search-pill-name"><%- v.name %></span>
+                  <span class="usajobs-search-pills__remove-icon">
+                    <span class="fas fa-times" title="Remove filter"></span>
+                  </span>
+                </a>
+            </li>
+          <% } else { %>
+            <li class="usajobs-search-pills__item" data-type="<%- key %>" data-value="<%- v %>" data-behavior="search-pills.remove">
+                <a class="usajobs-search-pills__pill" title="Remove <%- v %> filter" tabindex="0">
+                  <span class="search-pill-name"><%- v.charAt(0).toUpperCase() + v.substr(1) %></span>
+                  <span class="usajobs-search-pills__remove-icon">
+                    <span class="fas fa-times" title="Remove filter"></span>
+                  </span>
+                </a>
+            </li>
+          <% } %>
+        <% }) %>
+      <% } else { %>
+        <% if(_.isObject(value)) { %>
+          <li class="usajobs-search-pills__item" data-type="<%- key %>" data-value="<%- JSON.stringify(value) %>" data-behavior="search-pills.remove">
+              <a class="usajobs-search-pills__pill" title="Remove <%- value.name %> filter" tabindex="0">
+                <span class="search-pill-name"><%- value.name %></span>
+                <span class="usajobs-search-pills__remove-icon">
+                  <span class="fas fa-times" title="Remove filter"></span>
+                </span>
+              </a>
+          </li>
+        <% } else { %>
+          <li class="usajobs-search-pills__item" data-type="<%- key %>" data-value="<%- value %>" data-behavior="search-pills.remove">
+              <a class="usajobs-search-pills__pill" title="Remove <%- value %> filter" tabindex="0">
+                <span class="search-pill-name"><%- value.charAt(0).toUpperCase() + value.substr(1) %></span>
+                <span class="usajobs-search-pills__remove-icon">
+                  <span class="fas fa-times" title="Remove filter"></span>
+                </span>
+              </a>
+          </li>
+        <% } %>
+      <% } %>
+    <% }) %>
+    <% if(!_.isEmpty(agency.data)) { %>
+      <li class="usajobs-search-pills__item" data-type="agency" data-value="" data-behavior="search-pills.remove">
+        <a class="usajobs-search-pills__pill" title="Remove restrict agency filter" tabindex="0">
+          <span class="search-pill-name">Participation limited to <%- agency.data.abbr ? agency.data.parentAbbr ? agency.data.parentAbbr : agency.data.abbr : agency.data.name %> employees</span>
+          <span class="usajobs-search-pills__remove-icon">
+            <span class="fas fa-times" title="Remove filter"></span>
+          </span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+  <% if(appliedFilterCount) { %>
+    <a id="search-pills-remove-all" class="usajobs-search-pills__remove-all" title="Remove all filters" data-behavior="search-pills.remove-all" aria-hidden="false" tabindex="0">
+      <span class="fas fa-times usajobs-search-pills__remove-all-icon" title="Remove all filters"></span>
+      <span class="text">Remove all filters</span>
+    </a>
+  <% } %>
+</div>
