@@ -76,7 +76,7 @@ var InternshipEditFormView = Backbone.View.extend({
           }
         }
       } else if (error) {
-        var alertText = response.statusText + '. Please try again.';
+        var alertText = response.stateText + '. Please try again.';
         $('.alert.alert-danger').text(alertText).show();
         $(window).animate({ scrollTop: 0 }, 500);
       }
@@ -179,7 +179,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.$el.localize();
     // DOM now exists, begin select2 init
     this.initializeCountriesSelect();
-    this.initializeStateSelect();
+    this.initializeCountrySubdivisionSelect();
     this.initializeLanguagesSelect();
     this.initializeSelect2(); 
     this.initializeTextAreaDetails();
@@ -460,9 +460,9 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#task_tag_country').focus();
   },
 
-  initializeStateSelect: function () {
-    $('#task_tag_state').select2({
-      placeholder: '- Select -',
+  initializeCountrySubdivisionSelect: function () {
+    $('#task_tag_countrySubdivision').select2({
+      placeholder: 'Select State',
       minimumInputLength: 3,
       ajax: {
         url: '/api/ac/state',
@@ -483,11 +483,11 @@ var InternshipEditFormView = Backbone.View.extend({
       },
       formatNoMatches: 'No state found ',
     });
-    $('#task_tag_state').on('change', function (e) {
-      validate({ currentTarget: $('#task_tag_state') });
+    $('#task_tag_countrySubdivision').on('change', function (e) {
+      validate({ currentTarget: $('#task_tag_countrySubdivision') });
       
     }.bind(this));
-    $('#task_tag_state').focus();
+    $('#task_tag_countrySubdivision').focus();
   },
 
 
@@ -581,17 +581,17 @@ var InternshipEditFormView = Backbone.View.extend({
     }
     var target = $('.opportunity-location.selected')[0]  || {};
     if(target.id != 'anywhere') {
-      console.log(target.id);
+      // console.log(target.id);
       $('#s2id_task_tag_location').show();
       $('.intern-tag-address').show();
       $('#task_tag_country').addClass('validate');
-      $('#task_tag_state').addClass('validate');
+      $('#task_tag_countrySubdivision').addClass('validate');
       $('#task_tag_city').addClass('validate');
     } else {
       $('#s2id_task_tag_location').hide();
       $('.intern-tag-address').hide();
       $('#task_tag_country').removeClass('validate');
-      $('#task_tag_state').removeClass('validate');
+      $('#task_tag_countrySubdivision').removeClass('validate');
       $('#task_tag_city').removeClass('validate');
     }
   },
@@ -614,23 +614,33 @@ var InternshipEditFormView = Backbone.View.extend({
 
   getDataFromPage: function () {
     var modelData = {
-      id          : this.model.get('id'),
-      communityId : this.model.get('communityId'),
-      title       : this.$('#intern-title').val(),
-      description : this.$('#opportunity-details').val(),  
-      details     : this.$('#opportunity-details').val(),  
-      about       : this.$('#opportunity-team').val(),
-      submittedAt : this.$('#js-edit-date-submitted').val() || null,
-      publishedAt : this.$('#publishedAt').val() || null,
-      assignedAt  : this.$('#assignedAt').val() || null,
-      completedAt : this.$('#completedAt').val() || null,
-      state       : this.model.get('state'),
-      restrict    : this.model.get('restrict'),
+      id                  : this.model.get('id'),
+      communityId         : this.model.get('communityId'),
+      title               : this.$('#intern-title').val(),
+      detailsHtml         : this.$('#opportunity-details').val(),  
+      aboutHtml           : this.$('#opportunity-team').val(),
+      submittedAt         : this.$('#js-edit-date-submitted').val() || null,
+      publishedAt         : this.$('#publishedAt').val() || null,
+      assignedAt          : this.$('#assignedAt').val() || null,
+      completedAt         : this.$('#completedAt').val() || null,
+      state               : this.model.get('state'),
+      restrict            : this.model.get('restrict'),
+      language            : this.dataLanguageArray,
+      languageRequirement : this.getLanguageRequirement(),
+      location            : this.$('.opportunity-location .selected').attr('id'),
+      country             : this.$('#task_tag_country').val() || null,
+      countrySubdivision  : this.$('#task_tag_countrySubdivision').val() || null,
+      city                : this.$('#task_tag_city').val() || null,
+      bureau              : this.$('#task_tag_bureau').val(),
+      office              : this.$('#task_tag_office').val(),
+      internNumber        : this.$('#needed-interns').val(),
+      timeframe           : this.getTimeFrame(),
     };
 
-    
+    console.log(modelData);
+
     modelData.tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
-      console.log(tag);
+      // console.log(tag);
       if (!tag || !tag.id) { return; }
       return (tag.id && tag.id !== tag.name) ? parseInt(tag.id, 10) : {
         name: tag.name,
@@ -643,6 +653,22 @@ var InternshipEditFormView = Backbone.View.extend({
     return modelData;
   },
 
+  getTimeFrame: function () {
+    var timeFrameId;
+    this.$('input[name=internship-timeframe]:checked').each(function () {
+      timeFrameId = $(this).attr('id');
+    });
+
+    return $("label[for='" + timeFrameId + "']").find('span.label-second-line').text();;
+  },
+
+  getLanguageRequirement: function () {
+    // return (jQuery.inArray('requirement-required', this.dataLanguageArray) !== -1) ? 'Yes' : 'No' ;
+    var result = $.grep(this.dataLanguageArray, function (n) { return n.languageRequirement === 'requirement-required'; });
+  
+    return result.length > 0 ? 'Yes' : 'No';
+  },
+
   getTagsFromInternPage: function () {
     // Gather tags for submission after the task is created
     var tags = [];
@@ -651,7 +677,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if($('.opportunity-location.selected').val() !== 'anywhere') {
       tags.push.apply(tags,this.$('#task_tag_location').select2('data'));
     }
-    console.log(tags);  
+    // console.log(tags);  
     return tags;
   },
 
