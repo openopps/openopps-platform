@@ -41,8 +41,12 @@ var InternshipEditFormView = Backbone.View.extend({
     this.agency                 = this.owner ? this.owner.agency.data : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
-    this.dataLanguageArray              =  [];
-
+    this.dataLanguageArray       =  [];
+    this.internData              =sessionStorage.getItem('example');
+    console.log(this.internData);
+   
+    this.model.attributes.attrArray= JSON.parse(this.internData);
+   
    
     this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
 
@@ -629,17 +633,19 @@ var InternshipEditFormView = Backbone.View.extend({
       language            : this.dataLanguageArray,
       languageRequirement : this.getLanguageRequirement(),
       location            : this.$('.opportunity-location .selected').attr('id'),
-      country             : this.$('#task_tag_country').val() || null,
-      countrySubdivision  : this.$('#task_tag_countrySubdivision').val() || null,
-      city                : this.$('#task_tag_city').val() || null,
-      bureau              : this.$('#task_tag_bureau').val(),
+      countryId             : this.$('#task_tag_country').val() || null,
+      countrySubdivisionId  : this.$('#task_tag_countrySubdivision').val() || null,
+      cityName             : this.$('#task_tag_city').val() || null,
+      bureau               : this.$('#task_tag_bureau').val(),
       office              : this.$('#task_tag_office').val(),
-      internNumber        : this.$('#needed-interns').val(),
+      interns             : this.$('#needed-interns').val(),
       timeframe           : this.getTimeFrame(),
+      cycleYear           :this.$('#intern-year').val(),
+      cycleSemester       :this.$('[name=internship-timeframe]:checked').val(),
+      
     };
 
-    console.log(modelData);
-
+    
     modelData.tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
       // console.log(tag);
       if (!tag || !tag.id) { return; }
