@@ -168,22 +168,12 @@
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Spoken language skill level</legend>
                 <ul class="usa-unstyled-list">
-                  <li>
-                    <input id="spoken-none" type="radio" name="spoken-skill-level"checked value="None">
-                    <label for="spoken-none">None</label>                    
-                  </li>
-                  <li>
-                    <input id="spoken-novice" type="radio" name="spoken-skill-level" value="Novice">
-                    <label for="spoken-novice">Novice</label>                    
-                  </li>
-                  <li>
-                    <input id="spoken-intermediate" type="radio" name="spoken-skill-level" value="Intermediate">
-                    <label for="spoken-intermediate">Intermediate</label>                    
-                  </li>
-                  <li>
-                    <input id="spoken-advanced" type="radio" name="spoken-skill-level" value="Advanced">
-                    <label for="spoken-advanced">Advanced</label>                    
-                  </li>
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="spoken-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="spoken-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="spoken-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
                 </ul>
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select spoken language skill level.</span>
@@ -195,22 +185,12 @@
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Written language skill level</legend>
                 <ul class="usa-unstyled-list">
-                  <li>
-                    <input id="written-none" type="radio" name="written-skill-level" checked value="None">
-                    <label for="written-none">None</label>                    
-                  </li>
-                  <li>
-                    <input id="written-novice" type="radio" name="written-skill-level" value="Novice">
-                    <label for="written-novice">Novice</label>                    
-                  </li>
-                  <li>
-                    <input id="written-intermediate" type="radio" name="written-skill-level" value="Intermediate">
-                    <label for="written-intermediate">Intermediate</label>                    
-                  </li>
-                  <li>
-                    <input id="written-advanced" type="radio" name="written-skill-level" value="Advanced">
-                    <label for="written-advanced">Advanced</label>                    
-                  </li>
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="written-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="written-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="written-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
                 </ul>
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select written language skill level.</span>
@@ -222,22 +202,12 @@
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Read language skill level</legend>
                 <ul class="usa-unstyled-list">
-                  <li>
-                    <input id="read-none" type="radio" name="read-skill-level" checked value="None">
-                    <label for="read-none">None</label>                    
-                  </li>
-                  <li>
-                    <input id="read-novice" type="radio" name="read-skill-level" value="Novice">
-                    <label for="read-novice">Novice</label>                    
-                  </li>
-                  <li>
-                    <input id="read-intermediate" type="radio" name="read-skill-level" value="Intermediate">
-                    <label for="read-intermediate">Intermediate</label>                    
-                  </li>
-                  <li>
-                    <input id="read-advanced" type="radio" name="read-skill-level" value="Advanced">
-                    <label for="read-advanced">Advanced</label>                    
-                  </li>
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="read-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="read-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="read-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
                 </ul>
               </fieldset>
               <span class="field-validation-error error-empty" style="display:none;">You must select read language skill level.</span>
