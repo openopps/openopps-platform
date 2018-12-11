@@ -525,9 +525,10 @@ var InternshipEditFormView = Backbone.View.extend({
     if(showPreview) {
       var data = this.getDataFromPage();
       console.log(data);
-      _.each(['description', 'details', 'about','outcome'], function (part) {
+      _.each(['description', 'details', 'about'], function (part) {
         if(data[part]) {
           data[part + 'Html'] = marked(data[part]);
+         
         }
       });
       var tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
@@ -536,7 +537,7 @@ var InternshipEditFormView = Backbone.View.extend({
       }).compact().value();
 
       var compiledTemplate = _.template(InternshipPreviewTemplate)({
-        data: data,
+        data:data,
         madlibTags:this.organizeTags(tags),
       });
   
@@ -622,8 +623,8 @@ var InternshipEditFormView = Backbone.View.extend({
       description         : this.$('#opportunity-details').val(),
       communityId         : this.model.get('communityId'),
       title               : this.$('#intern-title').val(),
-      detailsHtml         : this.$('#opportunity-details').val(),  
-      aboutHtml           : this.$('#opportunity-team').val(),
+      details             : this.$('#opportunity-details').val(),  
+      about               : this.$('#opportunity-team').val(),
       submittedAt         : this.$('#js-edit-date-submitted').val() || null,
       publishedAt         : this.$('#publishedAt').val() || null,
       assignedAt          : this.$('#assignedAt').val() || null,
