@@ -175,7 +175,7 @@ var InternshipEditFormView = Backbone.View.extend({
       madlibTags: organizeTags(this.model.toJSON().tags),
       ui: UIConfig,
       agency: this.agency,
-              
+      languageProficiencies: this.options.languageProficiencies,
     },
     
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      

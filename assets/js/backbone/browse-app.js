@@ -313,7 +313,13 @@ var BrowseRouter = Backbone.Router.extend({
         Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
       } else {
         model.set('communityId', community.communityId);
-        view.bind(this)(model, community);
+        $.ajax({
+          url: '/api/lookup/languageProficiencies',
+        }).done(function (languageProficiencies) {
+          view.bind(this)(model, community, languageProficiencies);
+        }.bind(this)).fail(function () {
+          // throw error;
+        });
       }
     }.bind(this));
   },
@@ -341,7 +347,7 @@ var BrowseRouter = Backbone.Router.extend({
       this.internshipView = new InternshipView({
         el: '#container',
         model: model,
-        community: community,        
+        community: community,
         tags: [],
         madlibTags: {},
         tagTypes: tagTypes,
@@ -349,13 +355,14 @@ var BrowseRouter = Backbone.Router.extend({
     }.bind(this));
   },
 
-  renderInternshipEdit: function (model, community) {
+  renderInternshipEdit: function (model, community, languageProficiencies) {
     model.tagTypes(function (tagTypes) {
       this.internshipEditFormView = new InternshipEditFormView({
         el: '#container',
         edit: false,
         model: model,
-        community: community,        
+        community: community,
+        languageProficiencies: languageProficiencies,    
         tags: [],
         madlibTags: {},
         tagTypes: tagTypes,
