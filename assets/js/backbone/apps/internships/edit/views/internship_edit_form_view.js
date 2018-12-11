@@ -25,9 +25,9 @@ var InternshipEditFormView = Backbone.View.extend({
     'click .internship-button'            : 'submit',   
     'click .opportunity-location'         : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
-    'click .expandorama-button-team'      : 'toggleAccordion2',
-    'click .expandorama-button-keywords'  : 'toggleAccordion3',
-    'click #deleteLink'                   : 'deleteLanguage',
+    'click .expandorama-button-team'            : 'toggleAccordion2',
+    'click .expandorama-button-keywords'        : 'toggleAccordion3',
+    'click #deleteLink'                         : 'deleteLanguage',
     'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
   },
 
@@ -41,10 +41,12 @@ var InternshipEditFormView = Backbone.View.extend({
     this.agency                 = this.owner ? this.owner.agency.data : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
-    this.dataLanguageArray              =  [];
-
+    this.dataLanguageArray       =  [];
+    this.internData              =sessionStorage.getItem('example');
+    console.log(this.internData);
    
-    this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
+    this.model.attributes.attrArray= JSON.parse(this.internData);
+    this.tagSources = options.tagTypes;  
 
     this.initializeListeners();
 
@@ -83,9 +85,6 @@ var InternshipEditFormView = Backbone.View.extend({
     });
   },
 
-  /*
-   * Render modal for the Task Creation Form ViewController
-   */
   renderSaveSuccessModal: function () {
     var $modal = this.$( '.js-success-message' );
     $modal.slideDown( 'slow' );
@@ -140,7 +139,7 @@ var InternshipEditFormView = Backbone.View.extend({
       spokenskillLevel:$('[name=spoken-skill-level]:checked').val(),
       writtenskillLevel:$('[name=written-skill-level]:checked').val(),
       readSkillLevel:$('[name=read-skill-level]:checked').val(),
-      languageRequirement:$('[name=language-requirement]:checked').val(),
+      languageRequirement:$('[name=language-requirement]:checked + label').text(),
       selectLanguage:$('#languageId').select2('data').value,
     };
     return modelData;
@@ -177,7 +176,6 @@ var InternshipEditFormView = Backbone.View.extend({
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize();
-    // DOM now exists, begin select2 init
     this.initializeCountriesSelect();
     this.initializeCountrySubdivisionSelect();
     this.initializeLanguagesSelect();
@@ -355,7 +353,6 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   toggleLanguagesOff: function (e) {
-    //var element = $(e.currentTarget);
     $('.usajobs-form__title').show();
     $('.usajobs-form__title').removeAttr('aria-hidden');
     $('#step-1').show();
@@ -462,7 +459,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeCountrySubdivisionSelect: function () {
     $('#task_tag_countrySubdivision').select2({
-      placeholder: 'Select State',
+      placeholder: '- Select -',
       minimumInputLength: 3,
       ajax: {
         url: '/api/ac/state',
@@ -520,8 +517,7 @@ var InternshipEditFormView = Backbone.View.extend({
   preview: function (showPreview) {
     if(showPreview) {
       var data = this.getDataFromPage();
-      console.log(data);
-      _.each(['description', 'details', 'about','outcome'], function (part) {
+      _.each(['description', 'details', 'about'], function (part) {
         if(data[part]) {
           data[part + 'Html'] = marked(data[part]);
         }
@@ -532,7 +528,7 @@ var InternshipEditFormView = Backbone.View.extend({
       }).compact().value();
 
       var compiledTemplate = _.template(InternshipPreviewTemplate)({
-        data: data,
+        data:data,
         madlibTags:this.organizeTags(tags),
       });
   
@@ -581,7 +577,6 @@ var InternshipEditFormView = Backbone.View.extend({
     }
     var target = $('.opportunity-location.selected')[0]  || {};
     if(target.id != 'anywhere') {
-      // console.log(target.id);
       $('#s2id_task_tag_location').show();
       $('.intern-tag-address').show();
       $('#task_tag_country').addClass('validate');
@@ -614,38 +609,40 @@ var InternshipEditFormView = Backbone.View.extend({
 
   getDataFromPage: function () {
     var modelData = {
-      id                  : this.model.get('id'),
-      communityId         : this.model.get('communityId'),
-      title               : this.$('#intern-title').val(),
-      detailsHtml         : this.$('#opportunity-details').val(),  
-      aboutHtml           : this.$('#opportunity-team').val(),
-      submittedAt         : this.$('#js-edit-date-submitted').val() || null,
-      publishedAt         : this.$('#publishedAt').val() || null,
-      assignedAt          : this.$('#assignedAt').val() || null,
-      completedAt         : this.$('#completedAt').val() || null,
-      state               : this.model.get('state'),
-      restrict            : this.model.get('restrict'),
-      language            : this.dataLanguageArray,
-      languageRequirement : this.getLanguageRequirement(),
-      location            : this.$('.opportunity-location .selected').attr('id'),
-      country             : null,
-      countrySubdivision  : null,
-      city                : null,
-      bureau              : this.$('#task_tag_bureau').val(),
-      office              : this.$('#task_tag_office').val(),
-      internNumber        : this.$('#needed-interns').val(),
-      timeframe           : this.$('input[name=internship-timeframe]:checked').attr('id'),
-      year                : this.$('#intern-year').val(),
+      id                    : this.model.get('id'),
+      description           : this.$('#opportunity-details').val(),
+      communityId           : this.model.get('communityId'),
+      title                 : this.$('#intern-title').val(),
+      details               : this.$('#opportunity-details').val(),  
+      about                 : this.$('#opportunity-team').val(),
+      submittedAt           : this.$('#js-edit-date-submitted').val() || null,
+      publishedAt           : this.$('#publishedAt').val() || null,
+      assignedAt            : this.$('#assignedAt').val() || null,
+      completedAt           : this.$('#completedAt').val() || null,
+      state                 : this.model.get('state'),
+      restrict              : this.model.get('restrict'),
+      language              : this.dataLanguageArray,
+      languageRequirement   : this.getLanguageRequirement(),
+      location              : this.$('.opportunity-location .selected').attr('id'),
+      countryId             : this.$('#task_tag_country').val() || null,
+      countrySubdivisionId  : this.$('#task_tag_countrySubdivision').val() || null,
+      country               : null,
+      countrySubdivision    : null,
+      cityName              : null,
+      bureau                : this.$('#task_tag_bureau').val(),
+      office                : this.$('#task_tag_office').val(),
+      interns               : this.$('#needed-interns').val(),
+      timeframe             : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      cycleYear             : this.$('#intern-year').val(),
+      cycleSemester         : this.$('[name=internship-timeframe]:checked').val(),
     };
 
     if($('.opportunity-location.selected').val() !== 'anywhere') {
       modelData.country             = this.$('#task_tag_country').select2('data').value;
       modelData.countrySubdivision  = this.$('#task_tag_countrySubdivision').select2('data').value;
-      modelData.city                = this.$('#task_tag_city').val();
+      modelData.cityName            = this.$('#task_tag_city').val();
     }
-
-    console.log(modelData);
-
+    
     modelData.tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
       console.log(tag);
       if (!tag || !tag.id) { return; }
@@ -667,14 +664,13 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   getTagsFromInternPage: function () {
-    // Gather tags for submission after the task is created
     var tags = [];
     
     tags.push.apply(tags,this.$('#task_tag_skills').select2('data'));
     if($('.opportunity-location.selected').val() !== 'anywhere') {
       tags.push.apply(tags,this.$('#task_tag_location').select2('data'));
     }
-    // console.log(tags);  
+
     return tags;
   },
 

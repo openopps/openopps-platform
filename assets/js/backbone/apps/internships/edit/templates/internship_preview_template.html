@@ -12,12 +12,14 @@
             </div>
           </div>
           <div class="usajobs-width-one-fourth">
-            <div class="logo">
-              <!-- <% if (data.photoId) { %>
-              <img src="/api/user/photo/<%- model.photoId %>" alt="Logo for <%- data.office %>">
-              <% } %> -->
+            <div class="logo__header">
+              <div class="logo">
+                <!-- <% if (data.photoId) { %>
+                <img src="/api/user/photo/<%- model.photoId %>" alt="Logo for <%- data.office %>">
+                <% } %> -->
+              </div>
+              <div>Department of State</div>
             </div>
-            <div>Department of State</div>
           </div>
         </div>
         <div class="usajobs-grid-full preview">
@@ -28,7 +30,7 @@
               <h4>Office</h4>
               <div><%- data.office %></div>
               <h4>Location</h4>
-              <div><%= (data.city) ? data.city + ', ' + data.countrySubdivision : 'Virtual' %></div>
+              <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
               <% if (data.country) { %>
                 <h4>Country</h4>
                 <div><%- data.country %></div>
@@ -36,20 +38,20 @@
               <h4>Language Requirements</h4>
               <div><%- data.languageRequirement %></div>
               <h4>Time Commitment</h4>
-              <div><%- data.timeframe + ' ' + data.year %></div>
+              <div><%- data.cycleSemester + ' ' + data.cycleYear %></div>
               <div>32-40 hrs per week</div>
               <h4>Number of Interns</h4>
-              <div><%- data.internNumber %></div>                       
+              <div><%- data.interns %></div>                       
             </div>
           </div>
           <div class="usa-width-three-fourths opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
               <h3>Who we are</h3>
-              <div><%- data.aboutHtml %></div>
+              <div><%= data.aboutHtml %></div>
             </div>
             <div class="usajobs-open-opps-opportunity__desc">
               <h3>What you'll do</h3>
-              <div><%- data.detailsHtml %></div>
+              <div><%= data.detailsHtml %></div>
             </div>
             <% if (data.language.length > 0) { %>
             <div class="usajobs-open-opps-opportunity__desc">
@@ -93,7 +95,7 @@
               <h4>Office</h4>
               <div><%- data.office %></div>
               <h4>Location</h4>
-              <div><%= (data.city) ? data.city + ', ' + data.countrySubdivision : 'Virtual' %></div>
+              <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
               <% if (data.country) { %>
                 <h4>Country</h4>
                 <div><%- data.country %></div>
@@ -101,10 +103,10 @@
               <h4>Language Requirements</h4>
               <div><%- data.languageRequirement %></div>
               <h4>Time Commitment</h4>
-              <div><%- data.timeframe + ' ' + data.year %></div>
+              <div><%- data.cycleSemester + ' ' + data.cycleYear %></div>
               <div>32-40 hrs per week</div>
               <h4>Number of Interns</h4>
-              <div><%- data.internNumber %></div>          
+              <div><%- data.interns %></div>         
             </div>
           </div>
         </div>

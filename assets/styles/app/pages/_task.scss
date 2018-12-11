@@ -516,15 +516,16 @@ button.opportunity-options__button {
     border-bottom: 1px solid $color-gray-lighter;
   }
 
+  .skills {
+    padding-top: 1.5rem;
+  }
+
   .skill-label:first-of-type {
     margin: 0.5rem 0rem 0.5rem;
   }
 
-  .logo {
-    float: right;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 1.5rem;
+  .usajobs-open-opps-opportunity-item__title {
+    padding-top: 1.5rem;
   }
 
   .field-label {
@@ -535,16 +536,28 @@ button.opportunity-options__button {
     color: #5b616b;
   }
 
+  .logo__header {
+    width: rem(100px);
+    float: right;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    text-align: center;
+  }
+
   .logo {
     display: inline-block;
-    height: rem(65px);
-    width: rem(65px);
+    margin-left: auto;
+    margin-right: auto;
+    height: rem(75px);
+    width: rem(75px);
     background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+    background-size: rem(75px);
     background-repeat: no-repeat;
 
     @include media($ML) {
-      height: rem(45px);
-      width: rem(45px);
+      background-size: rem(85px);
+      height: rem(85px);
+      width: rem(85px);
     }
   }
 }
