@@ -27,7 +27,7 @@
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureau %></div>
-              <h4>Office</h4>
+              <h4>Office/post</h4>
               <div><%- data.office %></div>
               <h4>Location</h4>
               <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
@@ -35,8 +35,6 @@
                 <h4>Country</h4>
                 <div><%- data.country %></div>
               <% } %>
-              <h4>Language Requirements</h4>
-              <div><%- data.languageRequirement %></div>
               <h4>Time Commitment</h4>
               <div><%- data.cycleSemester + ' ' + data.cycleYear %></div>
               <div>32-40 hrs per week</div>
@@ -55,7 +53,7 @@
             </div>
             <% if (data.language.length > 0) { %>
             <div class="usajobs-open-opps-opportunity__desc">
-              <h3>Language requirements</h3>
+              <h3>Language(s)</h3>
               <% _.each(data.language, function (l,index) { %>
               <div class="usajobs-grid-full">
                 <h4><%- l.selectLanguage %></h4>
@@ -77,10 +75,6 @@
                       <h5 class="languages-drawer-content__item-label">Written language skill level</h5>
                       <p><%- l.writtenskillLevel %></p>
                     </li>
-                    <li class="languages-drawer-content__item">
-                      <h5 class="languages-drawer-content__item-label">Requirement</h5>
-                      <p><%- l.languageRequirement %></p>
-                    </li>
                   </ul>
                 </div>
               </div>
@@ -92,7 +86,7 @@
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureau %></div>
-              <h4>Office</h4>
+              <h4>Office/post</h4>
               <div><%- data.office %></div>
               <h4>Location</h4>
               <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
@@ -100,8 +94,6 @@
                 <h4>Country</h4>
                 <div><%- data.country %></div>
               <% } %>
-              <h4>Language Requirements</h4>
-              <div><%- data.languageRequirement %></div>
               <h4>Time Commitment</h4>
               <div><%- data.cycleSemester + ' ' + data.cycleYear %></div>
               <div>32-40 hrs per week</div>

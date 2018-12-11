@@ -622,7 +622,6 @@ var InternshipEditFormView = Backbone.View.extend({
       state                 : this.model.get('state'),
       restrict              : this.model.get('restrict'),
       language              : this.dataLanguageArray,
-      languageRequirement   : this.getLanguageRequirement(),
       location              : this.$('.opportunity-location .selected').attr('id'),
       countryId             : this.$('#task_tag_country').val() || null,
       countrySubdivisionId  : this.$('#task_tag_countrySubdivision').val() || null,
@@ -655,12 +654,6 @@ var InternshipEditFormView = Backbone.View.extend({
 
     
     return modelData;
-  },
-
-  getLanguageRequirement: function () {
-    var result = $.grep(this.dataLanguageArray, function (n) { return n.languageRequirement === 'requirement-required'; });
-  
-    return result.length > 0 ? 'Yes' : 'No';
   },
 
   getTagsFromInternPage: function () {
