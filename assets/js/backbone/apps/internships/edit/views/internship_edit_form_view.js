@@ -628,19 +628,26 @@ var InternshipEditFormView = Backbone.View.extend({
       language            : this.dataLanguageArray,
       languageRequirement : this.getLanguageRequirement(),
       location            : this.$('.opportunity-location .selected').attr('id'),
-      country             : this.$('#task_tag_country').val() || null,
-      countrySubdivision  : this.$('#task_tag_countrySubdivision').val() || null,
-      city                : this.$('#task_tag_city').val() || null,
+      country             : null,
+      countrySubdivision  : null,
+      city                : null,
       bureau              : this.$('#task_tag_bureau').val(),
       office              : this.$('#task_tag_office').val(),
       internNumber        : this.$('#needed-interns').val(),
-      timeframe           : this.getTimeFrame(),
+      timeframe           : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      year                : this.$('#intern-year').val(),
     };
+
+    if($('.opportunity-location.selected').val() !== 'anywhere') {
+      modelData.country             = this.$('#task_tag_country').select2('data').value;
+      modelData.countrySubdivision  = this.$('#task_tag_countrySubdivision').select2('data').value;
+      modelData.city                = this.$('#task_tag_city').val();
+    }
 
     console.log(modelData);
 
     modelData.tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
-      // console.log(tag);
+      console.log(tag);
       if (!tag || !tag.id) { return; }
       return (tag.id && tag.id !== tag.name) ? parseInt(tag.id, 10) : {
         name: tag.name,
@@ -653,17 +660,7 @@ var InternshipEditFormView = Backbone.View.extend({
     return modelData;
   },
 
-  getTimeFrame: function () {
-    var timeFrameId;
-    this.$('input[name=internship-timeframe]:checked').each(function () {
-      timeFrameId = $(this).attr('id');
-    });
-
-    return $("label[for='" + timeFrameId + "']").find('span.label-second-line').text();;
-  },
-
   getLanguageRequirement: function () {
-    // return (jQuery.inArray('requirement-required', this.dataLanguageArray) !== -1) ? 'Yes' : 'No' ;
     var result = $.grep(this.dataLanguageArray, function (n) { return n.languageRequirement === 'requirement-required'; });
   
     return result.length > 0 ? 'Yes' : 'No';

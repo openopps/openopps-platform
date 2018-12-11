@@ -516,6 +516,10 @@ button.opportunity-options__button {
     border-bottom: 1px solid $color-gray-lighter;
   }
 
+  .skill-label:first-of-type {
+    margin: 0.5rem 0rem 0.5rem;
+  }
+
   .logo {
     float: right;
     margin-left: auto;
@@ -529,6 +533,19 @@ button.opportunity-options__button {
     font-size: 1.5rem;
     font-weight: normal;
     color: #5b616b;
+  }
+
+  .logo {
+    display: inline-block;
+    height: rem(65px);
+    width: rem(65px);
+    background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+    background-repeat: no-repeat;
+
+    @include media($ML) {
+      height: rem(45px);
+      width: rem(45px);
+    }
   }
 }
 
