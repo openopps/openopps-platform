@@ -1345,7 +1345,7 @@
     }
   }
 
-  .overview .personnel-needed.mobile {
+  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile {
     width: 100%;
     margin-bottom: $size-M;
     float: none;
@@ -1355,7 +1355,7 @@
     }
   }
 
-  .overview .personnel-needed.desktop {
+  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop {
     @include media($ML-down) {
       display: none;
     }
