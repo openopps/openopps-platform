@@ -15,16 +15,16 @@ var ModalComponent = require('../../../../components/modal');
 var InternshipEditFormView = Backbone.View.extend({
 
   events: {
-    'blur .validate'                      : 'validateField',
-    'change .validate'                    : 'validateField',
-    'click #change-owner'                 : 'displayChangeOwner',
-    'click #add-participant'              : 'displayAddParticipant',
-    'click #add-language'                 : 'toggleLanguagesOn',
-    'click #cancel-language'              : 'toggleLanguagesOff',  
-    'click #save-language'                : 'saveLanguage',
-    'click .internship-button'            : 'submit',   
-    'click .opportunity-location'         : 'toggleInternLocationOptions',
-    'click .expandorama-button-skills'    : 'toggleAccordion1',
+    'blur .validate'                            : 'validateField',
+    'change .validate'                          : 'validateField',
+    'click #change-owner'                       : 'displayChangeOwner',
+    'click #add-participant'                    : 'displayAddParticipant',
+    'click #add-language'                       : 'toggleLanguagesOn',
+    'click #cancel-language'                    : 'toggleLanguagesOff',  
+    'click #save-language'                      : 'saveLanguage',
+    'click .internship-button'                  : 'submit',   
+    'click .opportunity-location'               : 'toggleInternLocationOptions',
+    'click .expandorama-button-skills'          : 'toggleAccordion1',
     'click .expandorama-button-team'            : 'toggleAccordion2',
     'click .expandorama-button-keywords'        : 'toggleAccordion3',
     'click #deleteLink'                         : 'deleteLanguage',
@@ -51,7 +51,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.initializeListeners();
 
     this.listenTo(this.options.model, 'task:update:success', function (data) {
-      Backbone.history.navigate('tasks/' + data.attributes.id, { trigger: true });
+      Backbone.history.navigate('internships/' + data.attributes.id, { trigger: true });
       if(data.attributes.state == 'submitted') {
         this.modalComponent = new ModalComponent({
           el: '#site-modal',
@@ -116,6 +116,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
 
   },
+
   validateLanguage:function (e){
     var abort=false;   
     
@@ -144,6 +145,7 @@ var InternshipEditFormView = Backbone.View.extend({
     };
     return modelData;
   },
+
   saveLanguage:function (){
    
     if(!this.validateLanguage()){
@@ -205,7 +207,6 @@ var InternshipEditFormView = Backbone.View.extend({
       return formatted;
     };
 
-   
     this.tagFactory.createTagDropDown({
       type: 'skill',
       placeholder: 'Start typing to select a skill',
@@ -233,8 +234,6 @@ var InternshipEditFormView = Backbone.View.extend({
       maximumSelectionSize: 5,
       maximumInputLength: 35,
     });
-
-    
   },
 
   initializeTextAreaDetails: function () {
@@ -261,6 +260,7 @@ var InternshipEditFormView = Backbone.View.extend({
       rows: 6,
       validate: ['html'],
     }).render();
+
     if(this.model.toJSON().outcome) {
       $('#skills').siblings('.expandorama-button').attr('aria-expanded', true);
       $('#skills').attr('aria-hidden', false);
@@ -278,22 +278,11 @@ var InternshipEditFormView = Backbone.View.extend({
       rows: 6,
       validate: ['empty','html'],
     }).render();
-    
   },
 
-  /*
-   * Initialize the `task:tags:save:done` listener for this view.
-   * The event is triggered from the `submit` & `saveDraft` methods.
-   */
   initializeListeners: function () {
-    this.on( 'task:tags:save:done', function (event) {
+    this.on( 'internship:tags:save:done', function (event) {
       var modelData = this.getDataFromPage();
-      // README: Check if draft is being saved or if this is a submission.
-      // If the state isn't a draft and it isn't simply being saved, then it will
-      // be submitted for review. `event.saveState` is true if the task is not a
-      // `draft` and assumes that the task is simply being updated rather than
-      // there being a need to "Submit for Review".
-      //
       if (event.draft) {
         modelData.state = 'draft';
         modelData.acceptingApplicants = true;
@@ -326,6 +315,7 @@ var InternshipEditFormView = Backbone.View.extend({
     element.attr('aria-expanded', this.data.accordion3.open);
     element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
   },
+
   resetLanguages:function (e){
     $('#languageId').select2('data', null);  
     $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
@@ -335,7 +325,6 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   toggleLanguagesOn: function (e) {
-   
     this.resetLanguages();
     $('.usajobs-form__title').hide();
     $('.usajobs-form__title').attr('aria-hidden');
@@ -371,21 +360,19 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   validateFields: function () {
-   
-    // check all of the field validation before submitting
     var children = this.$el.find( '.validate' );
     var abort = false;
-    // eslint-disable-next-line no-empty
     
     if($('[name=internship-timeframe]:checked').length==0){     
       $('#internship-start-End>.field-validation-error').show();
       abort=true;
     }
-  
+
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
     } );
+
     if(abort) {
       $('.usa-input-error').get(0).scrollIntoView();
     }
@@ -416,12 +403,12 @@ var InternshipEditFormView = Backbone.View.extend({
       },
       formatNoMatches: 'No languages found ',
     });
+
     $('#languageId').on('change', function (e) {
       validate({ currentTarget: $('#languageId') });
       if($('#languageId').val() !=''){
         $('span#lang-id-val.field-validation-error').hide();
-        $('#language-select').removeClass('usa-input-error'); 
-        
+        $('#language-select').removeClass('usa-input-error');   
       }
     }.bind(this));
     $('#languageId').focus();
@@ -487,15 +474,13 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#task_tag_countrySubdivision').focus();
   },
 
-
-
   submit: function (e) {
     if ( e.preventDefault ) { e.preventDefault(); }
     if ( e.stopPropagation ) { e.stopPropagation(); }
     switch ($(e.currentTarget).data('state')) {
       case 'cancel':
         if(this.model.attributes.id) {
-          Backbone.history.navigate('tasks/' + this.model.attributes.id, { trigger: true });
+          Backbone.history.navigate('internships/' + this.model.attributes.id, { trigger: true });
         } else {
           window.history.back();
         }
@@ -541,7 +526,6 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   organizeTags: function (tags) {
-    // put the tags into their types
     return _(tags).groupBy('type');
   },
 
@@ -553,13 +537,13 @@ var InternshipEditFormView = Backbone.View.extend({
     }
     switch ($(e.currentTarget).data('state')) {
       case 'draft':
-        this.trigger( 'task:tags:save:done', { draft: true } );
+        this.trigger( 'internship:tags:save:done', { draft: true } );
         break;
       case 'submit':
-        this.trigger( 'task:tags:save:done', { draft: false, saveState: false } );
+        this.trigger( 'internship:tags:save:done', { draft: false, saveState: false } );
         break;
       default:
-        this.trigger( 'task:tags:save:done', { draft: false, saveState: true } );
+        this.trigger( 'internship:tags:save:done', { draft: false, saveState: true } );
         break;
     }
   },
@@ -652,7 +636,6 @@ var InternshipEditFormView = Backbone.View.extend({
       };
     }).compact().value();
 
-    
     return modelData;
   },
 
@@ -676,6 +659,7 @@ var InternshipEditFormView = Backbone.View.extend({
         type: this.options.tags[i].tag.type,
       });
     }
+
     return oldTags;
   },
 
