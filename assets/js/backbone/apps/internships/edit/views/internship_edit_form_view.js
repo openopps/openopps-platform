@@ -112,9 +112,6 @@ var InternshipEditFormView = Backbone.View.extend({
         return !num[dataAttr];
       });
     this.dataLanguageArray= newLanguageArray;
-    
-
-
   },
 
   validateLanguage:function (e){
