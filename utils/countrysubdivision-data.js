@@ -15,39 +15,91 @@ const queries = {
       'VALUES ($1, $2, $3, $4,$5)',
 };
 
-function updateRecord (record, newValues) {
-  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified,newValues.ParentCode, record.country_subdivision_id ]).catch(err => {
+async function updateRecord (record, newValues) {
+  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, newValues.ParentCode, record.country_subdivision_id ]).catch(err => {
     console.log('Error updating record for id ' + record.country_subdivision_id, err);
   });
 }
 
-function insertRecord (newRecord) {
-  db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified,newRecord.ParentCode]).catch(err => {
-    console.log('Error creating record for code' + newRecord.code, err);
+async function insertRecord (newRecord) {
+  await db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified, newRecord.ParentCode]).catch(err => {
+    console.log('Error creating record for code' + newRecord.Code, err);
   });
 }
 
-module.exports = (() => {
-  request(process.env.DATA_IMPORT_URL + 'countrysubdivisions', (error, response, body) => {
-    console.log('Importing data for country subdivisions');
-    if(error || !response || response.statusCode != 200) {
-      console.log('Error importing data for country subdivisions' +  error, (response || {}).statusCode);
-    } else {
-      var values = JSON.parse(body).CodeList[0].ValidValue;
-      values.forEach(value => {
-        value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
-        db.oneOrNone(queries.findRecord,[value.Code]).then(async (record) => {
-          if(record) {
-      
-            updateRecord(record, value);
-          } else {          
-            insertRecord(value);
-          }
-        }).catch(() => {
-          console.log('Found multiple records for code ' + value.Code);
-        });
-      });
-      console.log('Got ' + values.length + ' values for country subdivisions');
-    }
+async function findRecord (countrySubdivision) {
+  return new Promise(resolve => {
+    db.oneOrNone(queries.findRecord, [countrySubdivision.Code]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Found multiple records for code ' + countrySubdivision.Code);
+      resolve();
+    });
   });
-})();
+}
+
+/**
+ * @param {Array} countries
+ * @param {function} callback
+ */
+async function processCountrySubdivisions (countrySubdivisions, callback) {
+  var countrySubdivision = countrySubdivisions.pop();
+  countrySubdivision.IsDisabled = (countrySubdivision.IsDisabled == 'Yes'); // change from string to boolean
+  var record = await findRecord(countrySubdivision); //, async (record, err) => {
+  if (record) {
+    await updateRecord(record, countrySubdivision);
+  } else {
+    await insertRecord(countrySubdivision);
+  }
+  if (countrySubdivisions.length > 0) {
+    processCountrySubdivisions(countrySubdivisions, callback);
+  } else {
+    callback();
+  }
+}
+
+module.exports = {
+  /**
+   * @param {function=} callback
+   */
+  import: function (callback) {
+    request(process.env.DATA_IMPORT_URL + 'countrysubdivisions', (error, response, body) => {
+      console.log('Importing data for countries');
+      if(error || !response || response.statusCode != 200) {
+        console.log('Error importing data for country subdivisions' +  error, (response || {}).statusCode);
+      } else {
+        var countrySubdivisions = JSON.parse(body).CodeList[0].ValidValue;
+        var numberOfCountrySubdivisions = countrySubdivisions.length;
+        processCountrySubdivisions(countrySubdivisions, () => {
+          console.log('Completed import of ' + numberOfCountrySubdivisions + ' records for country subdivisions.');
+          callback && callback();
+        });
+      }
+    });
+  },
+};
+
+// module.exports = (() => {
+//   request(process.env.DATA_IMPORT_URL + 'countrysubdivisions', (error, response, body) => {
+//     console.log('Importing data for country subdivisions');
+//     if(error || !response || response.statusCode != 200) {
+//       console.log('Error importing data for country subdivisions' +  error, (response || {}).statusCode);
+//     } else {
+//       var values = JSON.parse(body).CodeList[0].ValidValue;
+//       values.forEach(value => {
+//         value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
+//         db.oneOrNone(queries.findRecord,[value.Code]).then(async (record) => {
+//           if(record) {
+      
+//             updateRecord(record, value);
+//           } else {          
+//             insertRecord(value);
+//           }
+//         }).catch(() => {
+//           console.log('Found multiple records for code ' + value.Code);
+//         });
+//       });
+//       console.log('Got ' + values.length + ' values for country subdivisions');
+//     }
+//   });
+// })();
