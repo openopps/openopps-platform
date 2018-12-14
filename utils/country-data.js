@@ -15,38 +15,66 @@ const queries = {
       'VALUES ($1, $2, $3, $4)',
 };
 
-function updateRecord (record, newValues) {
-  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.country_id]).catch(err => {
+async function updateRecord (record, newValues) {
+  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.country_id]).catch(err => {
     console.log('Error updating record for id ' + record.country_id, err);
   });
 }
 
-function insertRecord (newRecord) {
-  db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
+async function insertRecord (newRecord) {
+  await db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
     console.log('Error creating record for code' + newRecord.code, err);
   });
 }
 
-module.exports = (() => {
-  request(process.env.DATA_IMPORT_URL + 'countries', (error, response, body) => {
-    console.log('Importing data for countries');
-    if(error || !response || response.statusCode != 200) {
-      console.log('Error importing data for countries' +  error, (response || {}).statusCode);
-    } else {
-      var values = JSON.parse(body).CodeList[0].ValidValue;
-      values.forEach(value => {
-        value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
-        db.oneOrNone(queries.findRecord,[value.Code]).then(async (record) => {
-          if(record) {
-            updateRecord(record, value);
-          } else {
-            insertRecord(value);
-          }
-        }).catch(() => {
-          console.log('Found multiple records for code ' + value.Code);
-        });
-      });
-      console.log('Got ' + values.length + ' values for countries');
-    }
+async function findRecord (country) {
+  return new Promise(resolve => {
+    db.oneOrNone(queries.findRecord, [country.Code]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Found multiple records for code ' + country.Code);
+      resolve();
+    });
   });
-})();
+}
+
+/**
+ * @param {Array} countries
+ * @param {function} callback
+ */
+async function processCountries (countries, callback) {
+  var country = countries.pop();
+  country.IsDisabled = (country.IsDisabled == 'Yes'); // change from string to boolean
+  var record = await findRecord(country); //, async (record, err) => {
+  if (record) {
+    await updateRecord(record, country);
+  } else {
+    await insertRecord(country);
+  }
+  if (countries.length > 0) {
+    processCountries(countries, callback);
+  } else {
+    callback();
+  }
+}
+
+module.exports = {
+  /**
+   * @param {function=} callback
+   */
+  import: function (callback) {
+    request(process.env.DATA_IMPORT_URL + 'countries', (error, response, body) => {
+      console.log('Importing data for countries');
+      if(error || !response || response.statusCode != 200) {
+        console.log('Error importing data for countries' +  error, (response || {}).statusCode);
+      } else {
+        var countries = JSON.parse(body).CodeList[0].ValidValue;
+        var numberOfCountries = countries.length;
+        processCountries(countries, () => {
+          console.log('Completed import of ' + numberOfCountries + ' records for countries.');
+          callback && callback();
+        });
+      }
+    });
+  },
+};
