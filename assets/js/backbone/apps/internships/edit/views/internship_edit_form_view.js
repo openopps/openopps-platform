@@ -148,9 +148,9 @@ var InternshipEditFormView = Backbone.View.extend({
   
   getDataFromLanguagePage: function (){
     var modelData = {
-      spokenskillLevel:$('[name=spoken-skill-level]:checked + label').val(),
-      writtenskillLevel:$('[name=written-skill-level]:checked + label').val(),
-      readSkillLevel:$('[name=read-skill-level]:checked + label').val(),     
+      spokenskillLevel:$('[name=spoken-skill-level]:checked + label').text(),
+      writtenskillLevel:$('[name=written-skill-level]:checked + label').text(),
+      readSkillLevel:$('[name=read-skill-level]:checked + label').text(),     
       selectLanguage:$('#languageId').select2('data').value,
       // data for language skill save
       applicationId:null,
