@@ -1,5 +1,10 @@
 .back-link {
   color: $color-primary;
+  margin-top: $size-default;
+  
+  a {
+    text-decoration: none;
+  }
 
   .fa-chevron-circle-left {
     margin-right: $size-base;
