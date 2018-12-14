@@ -188,6 +188,7 @@ module.exports = function (db) {
     Comment: dao({ db: db, table: 'comment' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
+    LanguageSkill:dao({ db: db, table: 'language_skill' }),
     query: {
       task: taskQuery,
       user: userQuery,

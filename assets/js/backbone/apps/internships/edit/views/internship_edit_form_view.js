@@ -42,13 +42,27 @@ var InternshipEditFormView = Backbone.View.extend({
     this.data                   = {};
     this.data.newTag            = {};
     this.dataLanguageArray       =  [];
-    this.internData              =sessionStorage.getItem('example');
-    console.log(this.internData);
+    
    
-    this.model.attributes.attrArray= JSON.parse(this.internData);
+    
     this.tagSources = options.tagTypes;  
 
     this.initializeListeners();
+
+    this.listenTo(this.options.model, 'task:save:success', function (data) { 
+      this.updateArray  =[];  
+      var obj= {
+        taskId:data.attributes.id,
+      };
+      this.updateArray.push(obj);
+      
+      var object= JSON.stringify(this.dataLanguageArray) + JSON.stringify(this.updateArray);     
+      this.dataLanguageArray= object.replace(/\}]\[{/,',');
+      if(this.dataLanguageArray.length > 0)  {  
+        this.saveLanguageDisplay();
+      }
+    });
+
 
     this.listenTo(this.options.model, 'task:update:success', function (data) {
       Backbone.history.navigate('internships/' + data.attributes.id, { trigger: true });
@@ -134,11 +148,16 @@ var InternshipEditFormView = Backbone.View.extend({
   
   getDataFromLanguagePage: function (){
     var modelData = {
-      spokenskillLevel:$('[name=spoken-skill-level]:checked').val(),
-      writtenskillLevel:$('[name=written-skill-level]:checked').val(),
-      readSkillLevel:$('[name=read-skill-level]:checked').val(),
-      languageRequirement:$('[name=language-requirement]:checked + label').text(),
+      spokenskillLevel:$('[name=spoken-skill-level]:checked + label').val(),
+      writtenskillLevel:$('[name=written-skill-level]:checked + label').val(),
+      readSkillLevel:$('[name=read-skill-level]:checked + label').val(),     
       selectLanguage:$('#languageId').select2('data').value,
+      // data for language skill save
+      applicationId:null,
+      languageId:$('#languageId').val(),
+      speakingProficiencyId:$('[name=spoken-skill-level]:checked').val(),
+      writingProficiencyId:$('[name=written-skill-level]:checked').val(),
+      readingProficiencyId:$('[name=read-skill-level]:checked').val(),   
     };
     return modelData;
   },
@@ -586,6 +605,16 @@ var InternshipEditFormView = Backbone.View.extend({
     this.$('.add-participant').show();
 
     return this;
+  },
+  saveLanguageDisplay: function (){
+    $.ajax({
+      url: '/api/internship/processlanguage' ,
+      method: 'POST',
+      contentType: 'application/json',        
+      data: this.dataLanguageArray,            
+      success: function (data) {       
+      },
+    });
   },
 
   getDataFromPage: function () {

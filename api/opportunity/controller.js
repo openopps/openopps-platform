@@ -63,6 +63,18 @@ router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
   }
 });
 
+
+router.post('/api/internship/processlanguage', auth, async (ctx, next) => {
+  ctx.request.body.userId = ctx.state.user.id;
+  await service.insertLanguage(ctx.request.body,ctx.state.user.id,function (errors,result){
+    if (errors) {
+      ctx.status = 400;
+      return ctx.body = errors;
+    }
+    ctx.body = result;  
+  });
+});
+
 router.post('/api/task', auth, async (ctx, next) => {
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.updatedBy = ctx.state.user.id;

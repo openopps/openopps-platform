@@ -94,7 +94,7 @@ async function createTaskTag (tagId, task) {
   });
 }
 
-async function createOpportunity (attributes, done) {
+async function createOpportunity (attributes, done) { 
   var errors = await Task.validateOpportunity(attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(errors, null);
@@ -112,6 +112,20 @@ async function createOpportunity (attributes, done) {
     return done(null, task);
   }).catch(err => {
     return done(true);
+  });
+}
+
+async function insertLanguage (language,userId,done){
+   
+  language.forEach(async (value) => {
+    value.updatedAt= new Date();
+    value.createdAt= new Date();
+    value.userId= userId;
+    await dao.LanguageSkill.insert(value).then(async () => {
+      done(null, true);     
+    }).catch (err => {
+      done(err);
+    });  
   });
 }
 
@@ -465,4 +479,5 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  insertLanguage:insertLanguage,
 };
