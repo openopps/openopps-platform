@@ -337,7 +337,6 @@ var InternshipEditFormView = Backbone.View.extend({
     $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
     $("input[name='written-skill-level'][value='None']").prop('checked', true);
     $("input[name='read-skill-level'][value='None']").prop('checked', true);
-    $("input[name='language-requirement'][value='requirement-good']").prop('checked', true);
   },
 
   toggleLanguagesOn: function (e) {
