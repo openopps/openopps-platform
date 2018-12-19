@@ -15,7 +15,7 @@ TaskController = Backbone.View.extend({
   initialize: function (options) {
     var self = this;
     self.options = options;
-    new TaskListView({
+    this.taskListView = new TaskListView({
       collection: new TasksCollection(),
       el: self.el,
       queryParams: self.options.queryParams,
@@ -38,7 +38,8 @@ TaskController = Backbone.View.extend({
   },
 
   cleanup: function () {
-    removeView(this);
+    this.taskListView.cleanup();
+    removeView(this.taskListView);
   },
 
 });

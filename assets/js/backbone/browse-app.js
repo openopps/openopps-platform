@@ -31,6 +31,7 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/create'                                  : 'createTask',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'listTasks',
+    'search(/)(?:queryStr)'                          :'searchTasks',
     'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id/:action(/)'                          : 'showTask',
     'internships/new(?*queryString)'                : 'newInternship',
@@ -92,6 +93,8 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.profileFindController) { this.profileFindController.cleanup(); }
     if (this.profileEditController) { this.profileEditController.cleanup(); }
     if (this.taskShowController) { this.taskShowController.cleanup(); }
+    if (this.taskSearchController) { this.taskSearchController.cleanup(); }
+    if (this.TaskListController) { this.TaskListController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
     if (this.taskEditFormView) { this.taskEditFormView.cleanup(); }
     if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
@@ -184,7 +187,14 @@ var BrowseRouter = Backbone.Router.extend({
       for (var i = 0; i < terms.length; i++) {
         var nameValue = terms[i].split('=');
         if (nameValue.length == 2) {
-          params[nameValue[0]] = nameValue[1];
+          if (nameValue[0] in params) {
+            if (!_.isArray(params[nameValue[0]])) {
+              params[nameValue[0]] = [params[nameValue[0]]];
+            }
+            params[nameValue[0]].push(nameValue[1]);
+          } else {
+            params[nameValue[0]] = nameValue[1];
+          }
         } else {
           params[terms[i]] = '';
         }
@@ -195,7 +205,17 @@ var BrowseRouter = Backbone.Router.extend({
 
   listTasks: function (queryStr) {
     this.cleanupChildren();
-    this.TaskSearchController = new TaskSearchController({
+    this.TaskListController = new TaskListController({
+      el: '#container',
+      router: this,
+      queryParams: this.parseQueryParams(queryStr),
+      data: this.data,
+    });
+  },
+
+  searchTasks: function (queryStr) {
+    this.cleanupChildren();
+    this.taskSearchController = new TaskSearchController({
       el: '#container',
       router: this,
       queryParams: this.parseQueryParams(queryStr),
