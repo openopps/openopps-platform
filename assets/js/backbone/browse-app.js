@@ -17,6 +17,7 @@ var TaskShowController = require('./apps/tasks/show/controllers/task_show_contro
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
 var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
+var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
@@ -35,6 +36,7 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id/:action(/)'                          : 'showTask',
     'internships/new(?*queryString)'                : 'newInternship',
+    'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/find(/)'                               : 'findProfile',
     'profile/link(/)'                               : 'linkProfile',
@@ -100,8 +102,8 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.taskAudienceFormView) { this.taskAudienceFormView.cleanup(); }
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
-    if (this.internshipController) { this.internshipController.cleanup(); }
-    
+    if (this.internshipEditFormView) { this.internshipEditFormView.cleanup(); }
+    if (this.internshipView) { this.internshipView.cleanup(); }
     this.data = { saved: false };
   },
 
@@ -240,8 +242,41 @@ var BrowseRouter = Backbone.Router.extend({
   showTask: function (id, action) {
     this.cleanupChildren();
     var model = new TaskModel();
-    model.set({ id: id });
-    this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
+    this.listenTo(model, 'task:model:fetch:success', function (model) {
+      model.loadCommunity(model.get('communityId'), function (community) {
+        if (!_.isEmpty(community) && community.targetAudience == 'Students') {
+          Backbone.history.navigate('/internships/' + id + (action ? '/' + action : ''), { replace: true });
+          if (action && action == 'edit') {
+            this.renderInternshipEdit(model, community);
+          } else {
+            this.renderInternshipView(model, community);
+          }
+        } else {
+          this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
+        }
+      }.bind(this));
+    }.bind(this));
+    model.trigger('task:model:fetch', id);
+  },
+
+  showInternship: function (id, action) {
+    this.cleanupChildren();
+    var model = new TaskModel();
+    this.listenTo(model, 'task:model:fetch:success', function (model) {
+      model.loadCommunity(model.get('communityId'), function (community) {
+        if (_.isEmpty(community) || community.targetAudience !== 'Students') {
+          Backbone.history.navigate('/tasks/' + id + (action ? '/' + action : ''), { replace: true });
+          this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
+        } else {
+          if (action && action == 'edit') {
+            this.renderInternshipEdit(model, community);
+          } else {
+            this.renderInternshipView(model, community);
+          }
+        }
+      }.bind(this));
+    }.bind(this));
+    model.trigger('task:model:fetch', id);
   },
 
   createTask: function () {
@@ -264,19 +299,50 @@ var BrowseRouter = Backbone.Router.extend({
     }
     var params = this.parseQueryParams(queryString);
     this.cleanupChildren();
-    var model = new TaskModel();
-    //var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    model.set('restrict', _.defaults({}, model.get('restrict')));
-    this.initializeTaskListeners(model);
     if (params.cid) {
-      var communityId = _.defaults(params.cid, model.get('communityId'));
-      model.loadCommunity(communityId, function (community) {
-        model.set('communityId', community.communityId);
-        this.renderTaskView(model, community);
-      }.bind(this));
+      this.renderViewWithCommunity(params.cid, 'Federal Employees', this.renderTaskView);
     } else {
-      this.renderTaskView(model);
+      this.renderTaskView(this.initializeTaskModel());
     }
+  },
+
+  initializeTaskModel: function () {
+    var model = new TaskModel();
+    model.set('restrict', {});
+    this.initializeTaskListeners(model);
+    return model;
+  },
+
+  newInternship: function (queryString) {
+    if (!window.cache.currentUser) {
+      Backbone.history.navigate('/login?internships/new', { trigger: true });
+      return;
+    }
+    this.cleanupChildren();
+    var params = this.parseQueryParams(queryString);
+    if (params.cid) {
+      this.renderViewWithCommunity(params.cid, 'Students', this.renderInternshipEdit);
+    } else {
+      Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
+    }
+  },
+
+  renderViewWithCommunity: function (communityId, target, view) {
+    var model = this.initializeTaskModel();
+    model.loadCommunity(communityId, function (community) {
+      if (_.isEmpty(community) || community.targetAudience !== target) {
+        Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
+      } else {
+        model.set('communityId', community.communityId);
+        $.ajax({
+          url: '/api/lookup/languageProficiencies',
+        }).done(function (languageProficiencies) {
+          view.bind(this)(model, community, languageProficiencies);
+        }.bind(this)).fail(function () {
+          // throw error;
+        });
+      }
+    }.bind(this));
   },
 
   renderTaskView: function (model, community) {
@@ -297,16 +363,29 @@ var BrowseRouter = Backbone.Router.extend({
     }.bind(this));
   },
 
-  renderInternshipView: function (model) {
-    var madlibTags = {};
-    
+  renderInternshipView: function (model, community) {
+    model.tagTypes(function (tagTypes) {
+      this.internshipView = new InternshipView({
+        el: '#container',
+        model: model,
+        community: community,
+        tags: [],
+        madlibTags: {},
+        tagTypes: tagTypes,
+      }).render();
+    }.bind(this));
+  },
+
+  renderInternshipEdit: function (model, community, languageProficiencies) {
     model.tagTypes(function (tagTypes) {
       this.internshipEditFormView = new InternshipEditFormView({
         el: '#container',
         edit: false,
-        model: model,        
+        model: model,
+        community: community,
+        languageProficiencies: languageProficiencies,    
         tags: [],
-        madlibTags: madlibTags,
+        madlibTags: {},
         tagTypes: tagTypes,
       }).render();
     }.bind(this));
@@ -350,22 +429,6 @@ var BrowseRouter = Backbone.Router.extend({
         $(window).animate({ scrollTop: 0 }, 500);
       }
     });  
-  },
-
-  newInternship: function (queryString) {
-    if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?internships/new', { trigger: true });
-      return;
-    }
-    var params = this.parseQueryParams(queryString);
-    this.cleanupChildren();
-    var model = new TaskModel();
-    // var restrict = _.pick(window.cache.currentUser.agency, 'name', 'abbr', 'parentAbbr', 'domain', 'slug');
-    //model.set('restrict', _.defaults(restrict, model.get('restrict')));
-    this.initializeTaskListeners(model);
-   
-    this.renderInternshipView(model);
-    
   },
 
   showHome: function (id) {

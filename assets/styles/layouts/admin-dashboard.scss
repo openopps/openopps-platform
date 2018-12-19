@@ -260,9 +260,11 @@
     }
   }
 
-  #invite-members {
-    margin-left: $size-default;
-    
+  #view-count {
+    margin-right: $size-default;
+  }
+
+  #invite-members {    
     .text-content {
       margin-left: $size-base;
     }

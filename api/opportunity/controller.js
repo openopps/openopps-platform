@@ -37,7 +37,7 @@ router.get('/api/task/search', async (ctx, next) => {
 });
 
 router.get('/api/task/communities', auth, async (ctx, next) => {
-  var data = await service.getCommunities(); 
+  var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
 });
 
@@ -61,6 +61,18 @@ router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
   } else {
     ctx.body = { 'comments': [] };
   }
+});
+
+
+router.post('/api/internship/processlanguage', auth, async (ctx, next) => {
+  ctx.request.body.userId = ctx.state.user.id;
+  await service.insertLanguage(ctx.request.body,ctx.state.user.id,function (errors,result){
+    if (errors) {
+      ctx.status = 400;
+      return ctx.body = errors;
+    }
+    ctx.body = result;  
+  });
 });
 
 router.post('/api/task', auth, async (ctx, next) => {

@@ -15,9 +15,25 @@ router.get('/api/ac/user', async (ctx, next) => {
   ctx.body = await service.userByName(ctx.query.q);
 });
 
+router.get('/api/ac/languages', async (ctx, next) => {
+  log.info('ctx.query', ctx.query);
+  ctx.body = await service.language(ctx.query.q);
+});
+
+
+
 router.get('/api/ac/agency', async (ctx, next) => {
   log.info('ctx.query', ctx.query);
   ctx.body = await service.agency(ctx.query.q);
+});
+
+router.get('/api/ac/country', async (ctx, next) => {
+  log.info('ctx.query', ctx.query);
+  ctx.body = await service.country(ctx.query.q);
+});
+router.get('/api/ac/state', async (ctx, next) => {
+  log.info('ctx.query', ctx.query);
+  ctx.body = await service.state(ctx.query.q);
 });
 
 module.exports = router.routes();

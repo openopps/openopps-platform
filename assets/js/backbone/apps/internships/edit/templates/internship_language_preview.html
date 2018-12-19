@@ -1,0 +1,29 @@
+<% _.each(data, function (d,index) { %>
+ <div  data-id="<%- index %>" class="languages-drawer-content">
+    <div class="usajobs-grid">
+      <h4><%- d.selectLanguage %></h4>
+      <div class="usajobs-width-one-half">
+        <ul class="languages-drawer-content__list">
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Speaking language skill level</h5>
+            <p><%- d.spokenskillLevel %></p>
+          </li>
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Reading language skill level</h5>
+            <p><%- d.readSkillLevel %></p>
+          </li>
+        </ul>
+      </div>
+      <div class="usajobs-width-one-half">
+        <ul class="languages-drawer-content__list">
+          <li class="languages-drawer-content__item">
+            <h5 class="languages-drawer-content__item-label">Writing language skill level</h5>
+            <p><%- d.writtenskillLevel %></p>
+          </li>        
+        </ul>
+      </div>
+    </div>
+    <a id="deleteLink" class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
+      data-id="<%- index %>" data-section="language" data-record="language">Delete</a>
+  </div> 
+  <% }); %>
