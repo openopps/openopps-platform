@@ -22,24 +22,78 @@ const dataTypes = {
   securityClearanceCodes: { value: 'securityclearances', type: 'SECURITY_CLEARANCE' },
 };
 
-function updateRecord (record, newValues) {
-  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
+async function updateRecord (record, newValues) {
+  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
     console.log('Error updating record for ' + type + ' id ' + record.id, err);
   });
 }
 
-function insertRecord (type, newRecord) {
-  db.none(queries.insertRecord, [type, newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
+async function insertRecord (type, newRecord) {
+  await db.none(queries.insertRecord, [type, newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
     console.log('Error creating record for ' + type + ' code ' + newRecord.code, err);
   });
 }
 
+async function findRecord (dataType, value) {
+  return new Promise(resolve => {
+    db.oneOrNone(queries.findRecord, [dataType.type, value.Code]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Found multiple records for code ' + value.Code);
+      resolve();
+    });
+  });
+}
+
+/**
+ * @param {Object} dataType
+ * @param {Array} values
+ * @param {function} callback
+ */
+async function processValues (dataType, values, callback) {
+  var value = values.pop();
+  value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
+  var record =  await findRecord(dataType, value);
+  if(record) {
+    await updateRecord(record, value);
+  } else {
+    await insertRecord(dataType.type, value);
+  }
+  if (values.length > 0) {
+    processValues(dataType, values, callback);
+  } else {
+    callback();
+  }
+}
+
+/**
+ * @param {Array<string>} keys
+ * @param {function=} callback
+ */
+function processDataTypes (keys, callback) {
+  var key = keys.pop();
+  var dataType = dataTypes[key];
+  module.exports.import(dataType, () => {
+    if (keys.length > 0) {
+      processDataTypes(keys, callback);
+    } else {
+      pgp.end();
+      callback && callback();
+    }
+  });
+}
+
 module.exports = {
-  import: (dataType) => {
+  /**
+   * @param {string} dataType
+   * @param {function=} callback
+   */
+  import: function (dataType, callback) {
     if (dataType == 'all') {
-      Object.keys(dataTypes).forEach(function (key) {
-        this.import(dataTypes[key]);
-      }.bind(module.exports));
+      processDataTypes(Object.keys(dataTypes), callback);
+      // Object.keys(dataTypes).forEach(function (key) {
+      //   this.import(dataTypes[key]);
+      // }.bind(module.exports));
     } else {
       request(process.env.DATA_IMPORT_URL + dataType.value, (error, response, body) => {
         console.log('Importing data for ' + dataType.value);
@@ -47,23 +101,13 @@ module.exports = {
           console.log('Error importing data for ' + dataType.value, error, (response || {}).statusCode);
         } else {
           var values = JSON.parse(body).CodeList[0].ValidValue;
-          values.forEach(value => {
-            value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
-            db.oneOrNone(queries.findRecord, [dataType.type, value.Code]).then(async (record) => {
-              if(record) {
-                updateRecord(record, value);
-              } else {
-                insertRecord(dataType.type, value);
-              }
-            }).catch(() => {
-              console.log('Found multiple records for ' + dataType.value + ' code ' + value.Code);
-            });
+          var numberOfValues = values.length;
+          processValues(dataType, values, () => {
+            console.log('Completed import of ' + numberOfValues + ' records for ' + dataType.value + '.');
+            callback && callback();
           });
-          console.log('Got ' + values.length + ' values for ' + dataType.value);
         }
       });
     }
   },
 };
-
-module.exports.import(process.argv[2]);
