@@ -72,6 +72,7 @@ module.exports = {
         var numberOfCountries = countries.length;
         processCountries(countries, () => {
           console.log('Completed import of ' + numberOfCountries + ' records for countries.');
+          pgp.end();
           callback && callback();
         });
       }

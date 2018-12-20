@@ -6,12 +6,12 @@ const db = pgp(connection);
 
 
 const queries = {
-  findRecord: 'SELECT * FROM country_subdivision WHERE code = $1',
+  findRecord: 'SELECT * FROM country_subdivision WHERE code = $1 and parent_code = $2',
   updateRecord: 'UPDATE country_subdivision ' +
-      'SET value = $1, is_disabled = $2, last_modified = $3,parent_code = $4 ' +
+      'SET value = $1, is_disabled = $2, last_modified = $3, parent_code = $4 ' +
       'WHERE country_subdivision_id = $5',
   insertRecord: 'INSERT INTO country_subdivision ' +
-      '(code, value, is_disabled, last_modified,parent_code) ' +
+      '(code, value, is_disabled, last_modified, parent_code) ' +
       'VALUES ($1, $2, $3, $4,$5)',
 };
 
@@ -29,10 +29,10 @@ async function insertRecord (newRecord) {
 
 async function findRecord (countrySubdivision) {
   return new Promise(resolve => {
-    db.oneOrNone(queries.findRecord, [countrySubdivision.Code]).then(async (record) => {
+    db.oneOrNone(queries.findRecord, [countrySubdivision.Code, countrySubdivision.ParentCode]).then(async (record) => {
       resolve(record);
     }).catch(() => {
-      console.log('Found multiple records for code ' + countrySubdivision.Code);
+      console.log('Found multiple records for code ' + countrySubdivision.Code + ', ' + countrySubdivision.ParentCode);
       resolve();
     });
   });
@@ -64,7 +64,7 @@ module.exports = {
    */
   import: function (callback) {
     request(process.env.DATA_IMPORT_URL + 'countrysubdivisions', (error, response, body) => {
-      console.log('Importing data for countries');
+      console.log('Importing data for country subdivisions');
       if(error || !response || response.statusCode != 200) {
         console.log('Error importing data for country subdivisions' +  error, (response || {}).statusCode);
       } else {
@@ -72,34 +72,10 @@ module.exports = {
         var numberOfCountrySubdivisions = countrySubdivisions.length;
         processCountrySubdivisions(countrySubdivisions, () => {
           console.log('Completed import of ' + numberOfCountrySubdivisions + ' records for country subdivisions.');
+          pgp.end();
           callback && callback();
         });
       }
     });
   },
 };
-
-// module.exports = (() => {
-//   request(process.env.DATA_IMPORT_URL + 'countrysubdivisions', (error, response, body) => {
-//     console.log('Importing data for country subdivisions');
-//     if(error || !response || response.statusCode != 200) {
-//       console.log('Error importing data for country subdivisions' +  error, (response || {}).statusCode);
-//     } else {
-//       var values = JSON.parse(body).CodeList[0].ValidValue;
-//       values.forEach(value => {
-//         value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
-//         db.oneOrNone(queries.findRecord,[value.Code]).then(async (record) => {
-//           if(record) {
-      
-//             updateRecord(record, value);
-//           } else {          
-//             insertRecord(value);
-//           }
-//         }).catch(() => {
-//           console.log('Found multiple records for code ' + value.Code);
-//         });
-//       });
-//       console.log('Got ' + values.length + ' values for country subdivisions');
-//     }
-//   });
-// })();

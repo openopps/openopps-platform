@@ -15,38 +15,67 @@ const queries = {
       'VALUES ($1, $2, $3, $4)',
 };
 
-function updateRecord (record, newValues) {
-  db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
+async function updateRecord (record, newValues) {
+  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
     console.log('Error updating record for id ' + record.id, err);
   });
 }
 
-function insertRecord (newRecord) {
-  db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
+async function insertRecord (newRecord) {
+  await db.none(queries.insertRecord, [newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
     console.log('Error creating record for code' + newRecord.code, err);
   });
 }
 
-module.exports = (() => {
-  request(process.env.DATA_IMPORT_URL + 'languagecodes', (error, response, body) => {
-    console.log('Importing data for language codes');
-    if(error || !response || response.statusCode != 200) {
-      console.log('Error importing data for language codes' +  error, (response || {}).statusCode);
-    } else {
-      var values = JSON.parse(body).CodeList[0].ValidValue;
-      values.forEach(value => {
-        value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
-        db.oneOrNone(queries.findRecord,[value.Code]).then(async (record) => {
-          if(record) {
-            updateRecord(record, value);
-          } else {
-            insertRecord(value);
-          }
-        }).catch(() => {
-          console.log('Found multiple records for code ' + value.Code);
-        });
-      });
-      console.log('Got ' + values.length + ' values for language');
-    }
+async function findRecord (languageCode) {
+  return new Promise(resolve => {
+    db.oneOrNone(queries.findRecord, [languageCode.Code]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Found multiple records for code ' + languageCode.Code);
+      resolve();
+    });
   });
-})();
+}
+
+/**
+ * @param {Array} countries
+ * @param {function} callback
+ */
+async function processLanguageCodes (languageCodes, callback) {
+  var languageCode = languageCodes.pop();
+  languageCode.IsDisabled = (languageCode.IsDisabled == 'Yes'); // change from string to boolean
+  var record = await findRecord(languageCode); //, async (record, err) => {
+  if (record) {
+    await updateRecord(record, languageCode);
+  } else {
+    await insertRecord(languageCode);
+  }
+  if (languageCodes.length > 0) {
+    processLanguageCodes(languageCodes, callback);
+  } else {
+    callback();
+  }
+}
+
+module.exports = {
+  /**
+   * @param {function=} callback
+   */
+  import: function (callback) {
+    request(process.env.DATA_IMPORT_URL + 'languagecodes', (error, response, body) => {
+      console.log('Importing data for language codes');
+      if(error || !response || response.statusCode != 200) {
+        console.log('Error importing data for language codes' +  error, (response || {}).statusCode);
+      } else {
+        var languageCodes = JSON.parse(body).CodeList[0].ValidValue;
+        var numberOfLanguageCodes = languageCodes.length;
+        processLanguageCodes(languageCodes, () => {
+          console.log('Completed import of ' + numberOfLanguageCodes + ' records for language codes.');
+          pgp.end();
+          callback && callback();
+        });
+      }
+    });
+  },
+};

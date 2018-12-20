@@ -518,14 +518,14 @@ var TaskListView = Backbone.View.extend({
     removeView(this);
   },
 
-  addFiltersToURL() {
+  addFiltersToURL: function () {
     var urlObject = {};
     
     for (var key in this.filters) {
-      if (this.filters[key] != null && this.filters[key] != "") {
+      if (this.filters[key] != null && this.filters[key] != '') {
         if (_.isArray(this.filters[key])) {
           urlObject[key] = [];
-          $.each(this.filters[key], function(k, skey) {
+          $.each(this.filters[key], function (k, skey) {
             if (_.isObject(skey)) {
               urlObject[key].push(formatObjectForURL(skey));
             } else {
@@ -538,18 +538,18 @@ var TaskListView = Backbone.View.extend({
           urlObject[key] = this.filters[key];
         }
       }
-    };
+    }
 
     if (this.firstFilter) {
-      history.replaceState({}, document.title, window.location.href.split('?')[0] + "?" + $.param(urlObject, true));
+      history.replaceState({}, document.title, window.location.href.split('?')[0] + '?' + $.param(urlObject, true));
       this.firstFilter = false;
     } else {
-      history.pushState({}, document.title, window.location.href.split('?')[0] + "?" + $.param(urlObject, true));
+      history.pushState({}, document.title, window.location.href.split('?')[0] + '?' + $.param(urlObject, true));
     }
 
   },
 
-  parseURLToFilters() {
+  parseURLToFilters: function () {
     _.each(_.omit(this.queryParams, 'search'), function (value, key) {
       if (_.isArray(value)) {
         values = value;
@@ -577,23 +577,23 @@ var TaskListView = Backbone.View.extend({
         this.filters.location.push('in-person');
       }
     }.bind(this));
-  }
+  },
 });
 
-function formatObjectForURL(value) {
+function formatObjectForURL (value) {
   if (value.type && !value.id) {
-    return value.name + ":" + 0;
+    return value.name + ':' + 0;
   } else if (value.id) {
-    return value.id ? value.name + ":" + value.id : value.name;
+    return value.id ? value.name + ':' + value.id : value.name;
   }
 
-  return value.id ? value.name + ":" + value.id : value.name;
+  return value.id ? value.name + ':' + value.id : value.name;
 }
 
 function getAppliedFiltersCount (filters, agency) {
   var count = 0;
   _.each(filters, function ( value, key ) {
-    if (key != "term") {
+    if (key != 'term') {
       count += (_.isArray(value) ? value.length : 1);
     }
   });
