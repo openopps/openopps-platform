@@ -54,7 +54,9 @@ var InternshipEditFormView = Backbone.View.extend({
       var obj= {
         taskId:data.attributes.id,
       };
-      this.updateArray.push(obj);
+      if(this.dataLanguageArray.length>0){
+        this.updateArray.push(obj);
+      }
       
       var object= JSON.stringify(this.dataLanguageArray) + JSON.stringify(this.updateArray);     
       this.dataLanguageArray= object.replace(/\}]\[{/,',');
@@ -301,10 +303,10 @@ var InternshipEditFormView = Backbone.View.extend({
       var modelData = this.getDataFromPage();
       if (event.draft) {
         modelData.state = 'draft';
-        modelData.acceptingApplicants = true;
+        modelData.acceptingApplicants = true;      
       } else if (!event.saveState) {
         modelData.state = 'submitted';
-        modelData.acceptingApplicants = true;
+        modelData.acceptingApplicants = true;      
       }
       this.cleanup();
       this.options.model.trigger( modelData.id ? 'task:update' : 'task:save', modelData );
@@ -337,7 +339,6 @@ var InternshipEditFormView = Backbone.View.extend({
     $("input[name='spoken-skill-level'][value='None']").prop('checked', true);
     $("input[name='written-skill-level'][value='None']").prop('checked', true);
     $("input[name='read-skill-level'][value='None']").prop('checked', true);
-    $("input[name='language-requirement'][value='requirement-good']").prop('checked', true);
   },
 
   toggleLanguagesOn: function (e) {
