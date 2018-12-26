@@ -26,6 +26,18 @@ async function findById (id, loggedIn) {
   }
   var task = dao.clean.task(results[0]);
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+
+  if(await isStudent(task.userId,task.id)){
+    var countrydata=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
+    if(countrydata !=null){
+      task.country=countrydata.value;
+    }  
+    var countrySubData=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
+    if(countrySubData !=null){
+      task.countrySubdivision=countrySubData.value;
+    } 
+    task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
+  }
   task.volunteers = loggedIn ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
 }
@@ -49,7 +61,7 @@ async function list (user) {
   tasks = await Promise.all(tasks.map(async (task) => {
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     return task;
-  }));
+  })); 
   return tasks;
 }
 
@@ -102,32 +114,36 @@ async function createOpportunity (attributes, done) {
   attributes.submittedAt = attributes.state === 'submitted' ? new Date : null;
   attributes.createdAt = new Date();
   attributes.updatedAt = new Date();
+ 
   await dao.Task.insert(attributes).then(async (task) => {
     var tags = attributes.tags || attributes['tags[]'] || [];
     await processTaskTags(task, tags).then(tags => {
       task.tags = tags;
     });
+    
+    if(attributes.language && attributes.language.length >0){
+      attributes.language.forEach(async (value) => {
+        value.updatedAt= new Date();
+        value.createdAt= new Date();
+        value.userId= task.userId;
+        value.taskId= task.id;
+        await dao.LanguageSkill.insert(value).then(async () => {
+          done(null, true);     
+        }).catch (err => {
+          done(err);
+        });  
+      });
+    }
+
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     await elasticService.indexOpportunity(task.id);
+   
     return done(null, task);
   }).catch(err => {
     return done(true);
   });
 }
 
-async function insertLanguage (language,userId,done){
-   
-  language.forEach(async (value) => {
-    value.updatedAt= new Date();
-    value.createdAt= new Date();
-    value.userId= userId;
-    await dao.LanguageSkill.insert(value).then(async () => {
-      done(null, true);     
-    }).catch (err => {
-      done(err);
-    });  
-  });
-}
 
 async function sendTaskNotification (user, task, action) {
   var data = {
@@ -164,6 +180,20 @@ async function getCommunities (userId) {
     student: _.filter(communities, { targetAudience: 2 }),
   };
   return communityTypes;
+}
+async function isStudent (userId,taskId) {
+  var taskCommunities = await dao.Community.query(dao.query.taskCommunitiesQuery, userId,taskId);
+  var communityTypes = {
+    federal: _.filter(taskCommunities, { targetAudience: 1 }),
+    student: _.filter(taskCommunities, { targetAudience: 2 }),
+  };
+  if(communityTypes.student.length>0){
+    return true;
+  }
+  else{
+    return false;
+  }
+  
 }
 
 
@@ -479,5 +509,5 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
-  insertLanguage:insertLanguage,
+  
 };

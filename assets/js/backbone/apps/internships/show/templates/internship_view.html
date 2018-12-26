@@ -71,37 +71,31 @@
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div>
-                <i>Bureau goes here</i>
+                <%- model.bureau %>
               </div>
               <h4>Office</h4>
               <div>
-                <i>Office goes here</i>
+                <%- model.office %>
               </div>
               <h4>Location</h4>
               <div>
-                <% if (madlibTags.location) { %>
-                  <% _.each(madlibTags.location, function (s, i) { %>
-                    <% if (i > 0) { %>, <% } %><%- s.name %>
-                  <% }) %>
-                <% } else { %>
-                  Anywhere
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
+              </div>
+              <% if (model.country) { %>
+                <h4>Country</h4>
+                <div>
+                  <%- model.country %>
+                </div>
                 <% } %>
-              </div>
-              <h4>Country</h4>
-              <div>
-                <i>Country goes here</i>
-              </div>
-              <h4>Language requirements</h4>
-              <div>
-                <i>Yes or No goes here</i>
-              </div>
+             
               <h4>Time commitment</h4>
               <div>
-                <i>Start date - end date</i> 32-40 hours per week
-              </div>           
+                <%- model.cycleSemester + ' ' + model.cycleYear %> 
+              </div>  
+              <div>32-40 hours per week</div>         
               <h4>Number of interns</h4>
               <div>
-                <i>Intern number goes here</i>
+                <%- model.interns %>
               </div>
             </div>
           </div>
@@ -111,68 +105,65 @@
               <%= model.detailsHtml %>
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
-              <!-- only show if have language requirements -->
+              <% _.each(model.language, function (l,index) { %>
               <h3>Foreign languages</h3>
-              <p class="usajobs-form__help-brief">These languages may be helpful in the internship.</p>
-              <!-- need a loop for each language -->
+              <p class="usajobs-form__help-brief">These languages may be helpful in the internship.</p>           
               <div class="usajobs-grid-full">
-                <h4>French</h4>
+                <h4><%- l.value %></h4>
                 <div class="usajobs-width-one-half">
                   <ul class="languages-drawer-content__list">
                     <li class="languages-drawer-content__item">
-                      <h5 class="languages-drawer-content__item-label">Spoken language skill level</h5>
-                      <p>Novice</p>
+                      <h5 class="languages-drawer-content__item-label">Speaking language skill level</h5>
+                      <p><%- l.speaking %></p>
                     </li>
                     <li class="languages-drawer-content__item">
-                      <h5 class="languages-drawer-content__item-label">Read language skill level</h5>
-                      <p>Intermediate</p>
+                      <h5 class="languages-drawer-content__item-label">Reading language skill level</h5>
+                      <p><%- l.reading %></p>
                     </li>
                   </ul>
                 </div>
                 <div class="usajobs-width-one-half">
                   <ul class="languages-drawer-content__list">
                     <li class="languages-drawer-content__item">
-                      <h5 class="languages-drawer-content__item-label">Written language skill level</h5>
-                      <p>Advanced</p>
+                      <h5 class="languages-drawer-content__item-label">Writing language skill level</h5>
+                      <p><%- l.writing %></p>
                     </li>
                   </ul>
                 </div>
               </div>
+              <% }); %>
               <!-- end language item -->
-              <!-- end language requirements -->
+              
             </div>
           </div>
           <div class="usa-width-one-third personnel-needed desktop">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div>
-                <i>Bureau goes here</i>
+                <%- model.bureau %>
               </div>
               <h4>Office</h4>
               <div>
-                <i>Office goes here</i>
+                <%- model.office %>
               </div>
               <h4>Location</h4>
               <div>
-                <% if (madlibTags.location) { %>
-                  <% _.each(madlibTags.location, function (s, i) { %>
-                    <% if (i > 0) { %>, <% } %><%- s.name %>
-                  <% }) %>
-                <% } else { %>
-                  Anywhere
-                <% } %>
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
               </div>
+              <% if (model.country) { %>
               <h4>Country</h4>
               <div>
-                <i>Country goes here</i>
+                <%- model.country %>
               </div>
+              <% } %>
               <h4>Time commitment</h4>
               <div>
-                <i>Start date - end date</i> 32-40 hours per week
-              </div>           
+                <%- model.cycleSemester + ' ' + model.cycleYear %>
+              </div>    
+              <div> 32-40 hours per week</div>       
               <h4>Number of interns</h4>
               <div>
-                <i>Intern number goes here</i>
+                <%- model.interns %>
               </div>
             </div>
           </div>

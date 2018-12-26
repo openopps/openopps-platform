@@ -49,21 +49,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
     this.initializeListeners();
 
-    this.listenTo(this.options.model, 'task:save:success', function (data) { 
-      this.updateArray  =[];  
-      var obj= {
-        taskId:data.attributes.id,
-      };
-      if(this.dataLanguageArray.length>0){
-        this.updateArray.push(obj);
-      }
-      
-      var object= JSON.stringify(this.dataLanguageArray) + JSON.stringify(this.updateArray);     
-      this.dataLanguageArray= object.replace(/\}]\[{/,',');
-      if(this.dataLanguageArray.length > 0)  {  
-        this.saveLanguageDisplay();
-      }
-    });
+    
 
 
     this.listenTo(this.options.model, 'task:update:success', function (data) {
@@ -192,7 +178,7 @@ var InternshipEditFormView = Backbone.View.extend({
       agency: this.agency,
       languageProficiencies: this.options.languageProficiencies,
     },
-    
+   
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize();
@@ -570,7 +556,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if(e) {
       $(e.currentTarget).addClass('selected');
     } else {
-      if(this.options.madlibTags['location']) {
+      if(this.data['madlibTags'].location) {
         $('#specific-location').addClass('selected');
       } else {
         $('#anywhere').addClass('selected');
@@ -607,16 +593,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
     return this;
   },
-  saveLanguageDisplay: function (){
-    $.ajax({
-      url: '/api/internship/processlanguage' ,
-      method: 'POST',
-      contentType: 'application/json',        
-      data: this.dataLanguageArray,            
-      success: function (data) {       
-      },
-    });
-  },
+  
 
   getDataFromPage: function () {
     var modelData = {
@@ -670,9 +647,8 @@ var InternshipEditFormView = Backbone.View.extend({
     var tags = [];
     
     tags.push.apply(tags,this.$('#task_tag_skills').select2('data'));
-    if($('.opportunity-location.selected').val() !== 'anywhere') {
-      tags.push.apply(tags,this.$('#task_tag_location').select2('data'));
-    }
+    
+    
 
     return tags;
   },
