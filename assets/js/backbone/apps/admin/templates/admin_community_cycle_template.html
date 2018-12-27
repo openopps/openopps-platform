@@ -11,115 +11,120 @@
             <span class="field-validation-error error-count100" style="display:none;">The headline must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '
                 < ' or '>' are not allowed</span>
-            <input type="text" id="cycle-title" class="fullwidth form-control validate" value="<%- cycleName %>" data-validate="empty,count100,html" />
+            <input type="text" id="cycle-title" class="fullwidth form-control validate" value="<%= cycle.name %>" data-validate="empty,count100,html" />
             <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
         </div>
     </fieldset>
     <fieldset class="usajobs-fieldset">
-        <div class="form-group" id="first-day-date">
-            <h3>Date range to create opportunities</h3>
+        <h3>Date range to create internship</h3>
+        <div class="form-group required-input" id="first-day-date">
             <label class="first-day-date-label">
                 <h4>First day</h4>
             </label>
-            <span class="field-validation-error" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Please enter a valid completion date</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must select first date to create internship.</span>
+            <span class="field-validation-error" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Please enter a valid completion date.</span>
             <div class="first-day-date">
                 <div class="usa-form-group usa-form-group-month">
                 <label for="first-day-date-1">Month</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-1" name="first-day-date-1" type="number" min="1" max="12" <% if (postingStartDate) { %> value="<%- moment(postingStartDate).format('MM') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-1" name="first-day-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                 <label for="first-day-date-2">Day</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-2" name="first-day-date-2" type="number" min="1" max="31" <% if (postingStartDate) { %> value="<%- moment(postingStartDate).format('DD') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-2" name="first-day-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                 <label for="first-day-date-3">Year</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-3" name="first-day-date-3" type="number" min="2008" max="2043" <% if (postingStartDate) { %> value="<%- moment(postingStartDate).format('YYYY') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-3" name="first-day-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
-        <div class="form-group" id="last-day-date">
+        <div class="form-group required-input" id="last-day-date">
             <label class="last-day-date-label">
                 <h4>Last day</h4>
             </label>
-            <span class="field-validation-error" style="display:none;" data-valmsg-for="last-day-date" data-valmsg-replace="true">Please enter a valid completion date</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must select last date to create internship.</span>
+            <span class="field-validation-error" style="display:none;" data-valmsg-for="last-day-date" data-valmsg-replace="true">Please enter a valid completion date.</span>
             <div class="last-day-date">
                 <div class="usa-form-group usa-form-group-month">
                 <label for="last-day-date-1">Month</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-1" name="last-day-date-1" type="number" min="1" max="12" <% if (postingEndDate) { %> value="<%- moment(postingEndDate).format('MM') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-1" name="last-day-date-1" type="number" min="1" max="12" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                 <label for="last-day-date-2">Day</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-2" name="last-day-date-2" type="number" min="1" max="31" <% if (postingEndDate) { %> value="<%- moment(postingEndDate).format('DD') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-2" name="last-day-date-2" type="number" min="1" max="31" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                 <label for="last-day-date-3">Year</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-3" name="last-day-date-3" type="number" min="2008" max="2043" <% if (postingEndDate) { %> value="<%- moment(postingEndDate).format('YYYY') %>" <% } %> >
+                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-3" name="last-day-date-3" type="number" min="2008" max="2043" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
     </fieldset>
     <fieldset class="usajobs-fieldset">
-        <div class="form-group" id="start-application-date">
-            <h3>Date range for accepting applications</h3>
+        <h3>Date range for accepting applications</h3>
+        <div class="form-group required-input" id="start-application-date">
             <label class="start-application-date-label">
                 <h4>Start date</h4>
             </label>
-            <span class="field-validation-error" style="display:none;" data-valmsg-for="start-application-date" data-valmsg-replace="true">Please enter a valid completion date</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must select start date to accept applications.</span>
+            <span class="field-validation-error" style="display:none;" data-valmsg-for="start-application-date" data-valmsg-replace="true">Please enter a valid completion date.</span>
             <div class="start-application-date">
                 <div class="usa-form-group usa-form-group-month">
                     <label for="start-application-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-1" name="start-application-date-1" type="number" min="1" max="12" <% if (applyStartDate) { %> value="<%- moment(applyStartDate).format('MM') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-1" name="start-application-date-1" type="number" min="1" max="12" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('MM') %>" <% } %> >
                 </div>
                     <div class="usa-form-group usa-form-group-day">
                     <label for="start-application-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-2" name="start-application-date-2" type="number" min="1" max="31" <% if (applyStartDate) { %> value="<%- moment(applyStartDate).format('DD') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-2" name="start-application-date-2" type="number" min="1" max="31" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                     <label for="start-application-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-3" name="start-application-date-3" type="number" min="2008" max="2043" <% if (applyStartDate) { %> value="<%- moment(applyStartDate).format('YYYY') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-3" name="start-application-date-3" type="number" min="2008" max="2043" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
-        <div class="form-group" id="stop-application-date">
+        <div class="form-group required-input" id="stop-application-date">
             <label class="stop-application-date-label">
                 <h4>Stop date</h4>
             </label>
-            <span class="field-validation-error" style="display:none;" data-valmsg-for="stop-application-date" data-valmsg-replace="true">Please enter a valid completion date</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must select stop date to accept applications.</span>
+            <span class="field-validation-error" style="display:none;" data-valmsg-for="stop-application-date" data-valmsg-replace="true">Please enter a valid completion date.</span>
             <div class="stop-application-date">
                 <div class="usa-form-group usa-form-group-month">
                     <label for="stop-application-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-1" name="stop-application-date-1" type="number" min="1" max="12" <% if (applyEndDate) { %> value="<%- moment(applyEndDate).format('MM') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-1" name="stop-application-date-1" type="number" min="1" max="12" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                     <label for="stop-application-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-2" name="stop-application-date-2" type="number" min="1" max="31" <% if (applyEndDate) { %> value="<%- moment(applyEndDate).format('DD') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-2" name="stop-application-date-2" type="number" min="1" max="31" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                     <label for="stop-application-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-3" name="stop-application-date-3" type="number" min="2008" max="2043" <% if (applyEndDate) { %> value="<%- moment(applyEndDate).format('YYYY') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-3" name="stop-application-date-3" type="number" min="2008" max="2043" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
     </fieldset>
     <fieldset class="usajobs-fieldset">
-        <div class="form-group" id="start-internship-date">
-            <h3>Date range of internship</h3>
+        <h3>Date range of internship</h3>
+        <div class="form-group required-input" id="start-internship-date">
             <label class="start-internship-date-label">
                 <h4>Start date</h4>
             </label>
-            <span class="field-validation-error" style="display:none;" data-valmsg-for="start-internship-date" data-valmsg-replace="true">Please enter a valid completion date</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must select start date for internship.</span>
+            <span class="field-validation-error" style="display:none;" data-valmsg-for="start-internship-date" data-valmsg-replace="true">Please enter a valid completion date.</span>
             <div class="start-internship-date">
                 <div class="usa-form-group usa-form-group-month">
                     <label for="start-internship-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-1" name="start-internship-date-1" type="number" min="1" max="12" <% if (cycleStartDate) { %> value="<%- moment(cycleStartDate).format('MM') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-1" name="start-internship-date-1" type="number" min="1" max="12" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                     <label for="start-internship-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-2" name="start-internship-date-2" type="number" min="1" max="31" <% if (cycleStartDate) { %> value="<%- moment(cycleStartDate).format('DD') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-2" name="start-internship-date-2" type="number" min="1" max="31" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                     <label for="start-internship-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-3" name="start-internship-date-3" type="number" min="2008" max="2043" <% if (cycleStartDate) { %> value="<%- moment(cycleStartDate).format('YYYY') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-3" name="start-internship-date-3" type="number" min="2008" max="2043" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
@@ -127,27 +132,28 @@
             <label class="stop-internship-date-label">
                 <h4>End date</h4>
             </label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select stop date for internship.</span>
             <span class="field-validation-error" style="display:none;" data-valmsg-for="stop-internship-date" data-valmsg-replace="true">Please enter a valid completion date</span>
             <div class="stop-internship-date">
                 <div class="usa-form-group usa-form-group-month">
                     <label for="stop-internship-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-1" name="stop-internship-date-1" type="number" min="1" max="12" <% if (cycleEndDate) { %> value="<%- moment(cycleEndDate).format('MM') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-1" name="stop-internship-date-1" type="number" min="1" max="12" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                     <label for="stop-internship-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-2" name="stop-internship-date-2" type="number" min="1" max="31" <% if (cycleEndDate) { %> value="<%- moment(cycleEndDate).format('DD') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-2" name="stop-internship-date-2" type="number" min="1" max="31" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                     <label for="stop-internship-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-3" name="stop-internship-date-3" type="number" min="2008" max="2043" <% if (cycleEndDate) { %> value="<%- moment(cycleEndDate).format('YYYY') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-3" name="stop-internship-date-3" type="number" min="2008" max="2043" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
     </fieldset>
     <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
-            <a href="javascript:history.back()" class="usa-button usa-button-secondary usa-button-left" id="skills-cancel">Cancel</a>
-            <button id="skills-save" type="submit" class="usa-button" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Saving..." data-success-text="Saved!" data-fail-text="Save Failed.">Save</button>
+            <a href="#" class="usa-button usa-button-secondary usa-button-left" id="cycle-cancel">Cancel</a>
+            <a href="#" class="usa-button" id="cycle-save">Save</a>
         </div>
     </div>
 </form>

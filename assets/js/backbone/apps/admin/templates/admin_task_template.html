@@ -11,8 +11,8 @@
 <h2><%- agency.name || community.communityName || 'Sitewide' %>
 </h2>
 <h3>Opportunities
-  <% if (community.communityName) { %>
-    <a href="/admin/community/<%-community.communityId %>/cycles" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
+  <% if (community.duration == 'Cyclical') { %>
+    <a href="/admin/community/<%-community.communityId %>/cycle" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
   <% } %>
 </h3>
 <div class="usajobs-grid-full">
