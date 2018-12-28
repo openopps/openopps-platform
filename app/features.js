@@ -13,6 +13,7 @@ module.exports = (app) => {
   app.use(loadFeature('autocomplete'));
   app.use(loadFeature('comment'));
   app.use(loadFeature('community'));
+  app.use(loadFeature('cycle'));
   app.use(loadFeature('document'));
   app.use(loadFeature('location'));
   app.use(loadFeature('lookup'));

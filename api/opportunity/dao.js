@@ -17,6 +17,18 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
 
+const internQuery= 'select country.value ' +
+  'from country ' + 'join task on country.country_id = task.country_id ' + 
+  'where task."userId" = ? and task.id = ? ';
+
+const countrySubdivisionQuery = 'select country_subdivision.value ' +
+  'from country_subdivision ' + 'join task on country_subdivision.country_subdivision_id = task.country_subdivision_id ' + 
+  'where task."userId" = ? and task.id = ? ';
+
+const languageListQuery= 'select l1.value as speaking ,r.value, l2.value as reading, l3.value as writing ' + 
+  'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r ' + 
+  ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ';
+  
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
@@ -45,6 +57,9 @@ const communitiesQuery = 'SELECT ' +
     'community.is_closed_group = true ' +
     'AND community_user.user_id = ?';
 
+const taskCommunitiesQuery='SELECT community.community_id, community.community_name, community.target_audience ' +
+  'FROM community JOIN task  ON community.community_id = task.community_id ' + 'where task."userId"= ? and task.id = ? ';  
+   
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'midas_user.username, midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
@@ -115,6 +130,7 @@ const options = {
       owner: '',
       agency: '',
       tags: [],
+      
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -189,6 +205,10 @@ module.exports = function (db) {
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
     LanguageSkill:dao({ db: db, table: 'language_skill' }),
+    Country:dao({ db: db, table: 'country' }),
+    CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    LookupCode:dao({ db: db, table: 'lookup_code' }),
+
     query: {
       task: taskQuery,
       user: userQuery,
@@ -202,6 +222,10 @@ module.exports = function (db) {
       tasksDueDetailQuery: tasksDueDetailQuery,
       communityUserQuery: communityUserQuery,
       communitiesQuery: communitiesQuery,
+      taskCommunitiesQuery:taskCommunitiesQuery,
+      intern:internQuery,
+      countrySubdivision:countrySubdivisionQuery,
+      languageList:languageListQuery,
     },
     options: options,
     clean: clean,

@@ -381,3 +381,12 @@ input[type=number]::-webkit-inner-spin-button,
     display: block;
   }
 }
+
+#form-community-cycles {
+  .usa-form-group-day,
+  .usa-form-group-month,
+  .usa-form-group-year {
+    display: inline-block;
+    float: none;
+  }
+}
