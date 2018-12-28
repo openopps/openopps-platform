@@ -50,9 +50,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   routeTarget: function (target, agencyId, communityId, replace) {
-    //agencyId = agencyId || this.options.agencyId;
-    //communityId = communityId || this.options.communityId;
-
     if (!target) {
       target = 'sitewide';
     }
@@ -81,7 +78,7 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminUserView(target, this.options[target + 'Id']);
           this.adminUserView.render();
           break;
-        case 'cycles':
+        case 'cycle':
           this.initializeAdminCommunityCycleView(target, this.options[target + 'Id']);
           this.adminCommunityCycleView.render();
           break;
