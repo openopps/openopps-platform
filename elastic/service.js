@@ -79,25 +79,53 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   };
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
-  request.addTerms(query.status, 'state' , 'open');
+  
+  var formatParamTypes = ["skill", "career", "series", "location"];
+
+  for(i=0; i<formatParamTypes.length; i++){
+    var formatParam = query[formatParamTypes[i]];
+    if (formatParam && _.isArray(formatParam)) {
+      var newList = [];
+      _.each(formatParam, function(item) {
+        if (formatParamTypes[i] === "location" && (item === "virtual" || item === "in person")) {
+          if (!query.locationType) {
+            query.locationType = [];
+          }
+          query.locationType.push(item);
+        } else if (formatParamTypes[i] === "series") {
+          newList.push(item.split("(")[0].trim());
+        } else {
+          newList.push(item.split(":")[0].trim());
+        }
+      });
+      if (newList.length === 0 && formatParamTypes[i] === "location") {
+        delete query.location;
+      } else {
+        query[formatParamTypes[i]] = newList;
+      }
+    } else if (formatParam) {
+      if (formatParamTypes[i] === "location" && (formatParam === "virtual" || formatParam === "in person")) {
+        query.locationType = formatParam;
+        delete query.location;
+      } else if (formatParamTypes[i] === "series") {
+        query[formatParamTypes[i]] = formatParam.split("(")[0].trim();
+      } else {
+        query[formatParamTypes[i]] = formatParam.split(":")[0].trim();
+      }
+    }
+  }
+
+  request.addTerms(query.state, 'state' , 'open');
   request.addTerms(query.skill, 'skills.name' );
   request.addTerms(query.career, 'careers.name' );
   request.addTerms(query.series, 'series.code' );
-  request.addTerms(query.timerequired, 'timeRequired' );
-  request.addTerms(query.locationtype, 'locationType' );
-  var restrict = query.restrictedtoagency || 'false';
-  if(restrict === 'false'){
-    filter_must_not.push({exists: { field: 'restrictedToAgency' }});
-  } else if ( restrict === 'true'){
-    filter_must.push({exists: { field: 'restrictedToAgency' }});
-  }
-  else{
-    request.addTerms(restrict, 'restrictedToAgency' );
-  }
+  request.addTerms(query.time, 'timeRequired' );
+  request.addTerms(query.location, 'locations.name' );
+  request.addTerms(query.locationType, 'locationType');
   
-  if(query.keyword){
+  if(query.term){
     var keyword = '';
-    keyword = Array.isArray(query.keyword) ?query.keyword.join(' ') : query.keyword;
+    keyword = Array.isArray(query.term) ?query.term.join(' ') : query.term;
     request.query.bool.must = {
       simple_query_string: {
         query : keyword,
@@ -105,7 +133,6 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
     };
   }
   delete request.addTerms;
-  console.log(request);
   return request;
 };
 
@@ -136,6 +163,7 @@ function convertSearchResultsToResultModel (searchResult) {
     series: source.series,
     careers: source.careers,
     keywords: source.keywords,
+    owner: source.owner
   };
   removeEmpty(model);
   return model;
