@@ -31,19 +31,17 @@ module.exports.createAudit = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
-module.exports.findById = async function (id, callback) {
-  return dao.Community.findOne('community_id = ?', id).then(async (community) => {
+module.exports.findById = async function (id) {
+  var community = await dao.Community.findOne('community_id = ?', id).catch(() => { return null; });
+  if(community) { 
     community.communityType = communityTypes[community.communityType - 1];
     if(community.communityType && community.communityTypeValue) {
       community.communityTypeValue = await dao.TagEntity.findOne('id = ? and type = ?', [community.communityTypeValue, community.communityType.toLowerCase()]).catch(() => { return null; });
     }
     community.duration = durationTypes[community.duration - 1];
     community.targetAudience = audienceTypes[community.targetAudience - 1];
-    callback(community);
-  }).catch(err => {
-    log.info('Cannot find community by id ' + id, err);
-    callback(null);
-  });
+  }
+  return community;
 };
 
 module.exports.isCommunityManager = async function (user, communityId) {

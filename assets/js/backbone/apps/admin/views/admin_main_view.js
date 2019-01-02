@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var AdminUserView = require('./admin_user_view');
+var AdminCommunityCycleView = require('./admin_community_cycle_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
 var AdminDashboardView = require('./admin_dashboard_view');
@@ -49,9 +50,6 @@ var AdminMainView = Backbone.View.extend({
   },
 
   routeTarget: function (target, agencyId, communityId, replace) {
-    //agencyId = agencyId || this.options.agencyId;
-    //communityId = communityId || this.options.communityId;
-
     if (!target) {
       target = 'sitewide';
     }
@@ -79,6 +77,10 @@ var AdminMainView = Backbone.View.extend({
         case 'users':
           this.initializeAdminUserView(target, this.options[target + 'Id']);
           this.adminUserView.render();
+          break;
+        case 'cycle':
+          this.initializeAdminCommunityCycleView(target, this.options[target + 'Id']);
+          this.adminCommunityCycleView.render();
           break;
         case 'tasks':
           this.initializeAdminTaskView(target, this.options[target + 'Id']);
@@ -134,6 +136,17 @@ var AdminMainView = Backbone.View.extend({
     }
     this.adminUserView = new AdminUserView({
       el: '#admin-user',
+      target: target,
+      targetId: targetId,
+    });
+  },
+
+  initializeAdminCommunityCycleView: function (target, targetId) {
+    if (this.adminCommunityCycleView) {
+      this.adminCommunityCycleView.cleanup();
+    }
+    this.adminCommunityCycleView = new AdminCommunityCycleView({
+      el: '#admin-cycle',
       target: target,
       targetId: targetId,
     });

@@ -15,7 +15,7 @@ exports.setup = function (options, seedLink) {
 };
 
 exports.up = function (db, callback) {
-  db.all('SELECT agency_id as id FROM agency WHERE name LIKE \'General Services Administration%\'', (err, agency) => {
+  db.all('SELECT id as id FROM agency WHERE name LIKE \'General Services Administration%\'', (err, agency) => {
     if(err || agency.length == 0) {
       callback(err);
     } else {

@@ -331,6 +331,12 @@ select[disabled] {
   cursor: not-allowed;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+ input[type=number]::-webkit-outer-spin-button{
+   -webkit-appearance: none;
+   margin:0;
+ }
+ 
 .usajobs-input-large {
   max-width: 100%;
 }
@@ -373,5 +379,14 @@ select[disabled] {
     clear: both;
     content: "";
     display: block;
+  }
+}
+
+#form-community-cycles {
+  .usa-form-group-day,
+  .usa-form-group-month,
+  .usa-form-group-year {
+    display: inline-block;
+    float: none;
   }
 }
