@@ -67,15 +67,15 @@
         <% } %>
         <ul id="timeFilters" class="usa-unstyled-list">
             <li>
-                <input id="one-time" type="checkbox" name="time" value="One time"  <% if(_.find(filters.time, { name: 'One time' })) { %>checked<% } %> />
+                <input id="one-time" type="checkbox" name="time" value="One time"  <% if(_.contains(filters.time, 'One time' )) { %>checked<% } %> />
                 <label for="one-time">One time</label>
             </li>
             <li>
-                <input id="ongoing" class="restrict-participation" type="checkbox" name="time" value="Ongoing" <% if(_.find(filters.time, { name: 'Ongoing' })) { %>checked<% } %> />
+                <input id="ongoing" class="restrict-participation" type="checkbox" name="time" value="Ongoing" <% if(_.contains(filters.time, 'Ongoing' )) { %>checked<% } %> />
                 <label for="ongoing">Ongoing</label>
             </li>
             <li>
-                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.find(filters.time, { name: 'Full Time Detail' })) { %>checked<% } %> />
+                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.contains(filters.time, 'Full Time Detail' )) { %>checked<% } %> />
                 <label for="full-time">Full time detail</label>
             </li>
         </ul>
@@ -92,7 +92,7 @@
                 <label for="virtual">Virtual</label>
             </li>
             <li>
-                <input id="in-person" type="checkbox" name="location" value="in-person" <% if (_.contains(filters.location, 'in-person')) { %>checked<% } %>>
+                <input id="in-person" type="checkbox" name="location" value="in person" <% if (_.contains(filters.location, 'in person')) { %>checked<% } %>>
                 <label for="in-person">In person</label>
                 <input type="text" id="location" title="Location" />
             </li>

@@ -3,7 +3,7 @@ const db = require('../db/client');
 const moment = require('moment');
 const util = require('util');
 
-var dao = {};
+var dao = {}; 
 
 dao.tasksToIndex = async function (){
   var query = util.format(tasksToIndexQuery,'order by t.id');
@@ -38,7 +38,7 @@ function toElasticOpportunity (value, index, list) {
     'outcome': doc.outcome,
     'about': doc.about,
     'restrictedToAgency': doc.isRestricted === 'true' ? doc.restrictedToAgency : null,
-    'requester': doc.name,
+    'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'updatedAt': doc.updatedAt,
     'postingAgency': doc.postingAgency,
     'acceptingApplicants': doc.acceptingApplicants,
@@ -61,7 +61,7 @@ from (
     t.id,
     t.title,
     t.description,
-    case when t.state = 'in progress' and t.accepting_applicants then 'open' else t.state end as "state",
+    case when t.state = 'in progress' and t.accepting_applicants = true then 'open' else t.state end as "state",
     t.details,
     t.outcome,
     t.about,
@@ -69,6 +69,8 @@ from (
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."updatedAt",
     u.name,
+    u.id as "ownerId",
+    u."photoId",
     t.accepting_applicants as "acceptingApplicants",
     (
       select

@@ -35,7 +35,7 @@ var TaskListView = Backbone.View.extend({
     this.collection = options.collection;
     this.queryParams = options.queryParams;
 
-    this.filters = { state: 'open', term: this.queryParams.search };
+    this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
     this.parseURLToFilters();
     this.userAgency =  {};
@@ -61,21 +61,10 @@ var TaskListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
-    this.fetchData();
+    this.filter()
     this.initializeKeywordSearch();
-    $('.usajobs-open-opps-search__box').hide();
+    this.$('.usajobs-open-opps-search__box').show();
     return this;
-  },
-
-  fetchData: function () {
-    var self = this;
-    self.collection.fetch({
-      success: function (collection) {
-        self.collection = collection;
-        self.filter(self.filters, self.agency);
-        self.$('.usajobs-open-opps-search__box').show();
-      },
-    });
   },
 
   initializeKeywordSearch: function () {
@@ -100,7 +89,8 @@ var TaskListView = Backbone.View.extend({
       select: function (event, ui) {
         event.preventDefault();
         this.filters['keywords'] = _.union(this.filters['keywords'], [_.pick(ui.item, 'type', 'name', 'id')]);
-        this.filter(this.filters, this.agency);
+        this.filters.page = 1;
+        this.filter();
         $('#search').val('');
       }.bind(this),
     });
@@ -130,13 +120,14 @@ var TaskListView = Backbone.View.extend({
             this.filters.location.push('virtual');
           }
           if($('#in-person').is(':checked')) {
-            this.filters.location.push('in-person');
+            this.filters.location.push('in person');
           }
         }
-        this.filter(this.filters, this.agency);
+        this.filters.page = 1;
+        this.filter();
       }.bind(this));
     }.bind(this));
-    if(!_.contains(this.filters.location, 'in-person')) {
+    if(!_.contains(this.filters.location, 'in person')) {
       $('#location').siblings('.select2-container').hide();
     }
     
@@ -155,7 +146,8 @@ var TaskListView = Backbone.View.extend({
       } else {
         this.filters.career = [];
       }
-      this.filter(this.filters, this.agency);
+      this.filters.page = 1;
+      this.filter();
     }.bind(this));
   },
 
@@ -194,18 +186,19 @@ var TaskListView = Backbone.View.extend({
     } else if (_.isEqual(this.filters[type], value)) {
       this.filters[type] = [];
     }
-    this.filter(this.filters, this.agency);
+    this.filters.page = 1;
+    this.filter();
   },
 
   removeAllFilters: function (event) {
     event.preventDefault();
     if(this.filters.career && this.filters.career.name == 'Acquisition') {
-      this.filters = { state: [ 'open' ] };
+      this.filters = { state: [ 'open' ], page: 1 };
     } else {
-      this.filters = { state: [] };
+      this.filters = { state: [], page: 1 };
     }
     this.agency = { data: {} };
-    this.filter(this.filters, this.agency);
+    this.filter();
   },
 
   renderFilters: function () {
@@ -238,10 +231,10 @@ var TaskListView = Backbone.View.extend({
     this.intializeAcquisition();
   },
 
-  renderList: function (page) {
+  renderList: function (searchResults, page) {
     $('#search-results-loading').hide();
     $('#task-list').html('');
-    this.taskFilteredCount = this.tasks.length;
+    this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
     $.ajax({
       url: '/api/ac/tag?type=career&list',
@@ -253,15 +246,15 @@ var TaskListView = Backbone.View.extend({
       }.bind(this),
     });
 
-    if (this.tasks.length === 0) {
+    if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 10;
-      this.renderPage(page, pageSize);
+      this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
         page: page,
-        numberOfPages: Math.ceil(this.tasks.length/pageSize),
+        numberOfPages: Math.ceil(searchResults.totalHits/pageSize),
         pages: [],
       });
     }
@@ -277,51 +270,57 @@ var TaskListView = Backbone.View.extend({
     $('#results-count').hide();
   },
 
-  renderPage: function (page, pageSize) {
+  renderPage: function (searchResults, page, pageSize) {
+    var self = this;
     var start = (page - 1) * pageSize;
     var stop = page * pageSize;
-    $('#task-list').append(this.tasks.slice(start, stop).map(function (task) {
-      task.owner.initials = getInitials(task.owner.name);
-      return this.renderItem(task);
-    }.bind(this)));
-    this.renderResultsCount(start, stop, pageSize);
+
+    _.each(searchResults.hits, function (value, key) {
+      $('#task-list').append(self.renderItem(value.result))
+    });
+    this.renderResultsCount(start, stop, pageSize, searchResults.totalHits, searchResults.hits.length);
   },
 
-  renderResultsCount: function (start, stop, pageSize) {
-    var tasksToDisplay = this.tasks.slice(start, stop);
-    if (this.tasks.length <= pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + this.tasks.length + ' of ' + this.tasks.length + ' opportunities');
-    } else if (tasksToDisplay.length < pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + tasksToDisplay.length) + ' of ' + this.tasks.length + ' opportunities');
+  renderResultsCount: function (start, stop, pageSize, numResults, pagedNumResults) {
+    if (numResults <= pageSize) {
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
+    } else if (pagedNumResults < pageSize) {
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
     } else {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + this.tasks.length + ' opportunities');
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
     }
     $('#results-count').show();
   },
 
-  renderItem: function (task) {
-    var obj = task;
-    obj.userId = obj.owner.id;
+  renderItem: function (searchResult) {
+    searchResult.tags = {};
+    if (searchResult.locations && searchResult.locations.length > 0) {
+      searchResult.tags["location"] = [searchResult.locations[0]];
+    }
+    if (searchResult.timeEstimate && searchResult.timeEstimate !== "") {
+      searchResult.tags["task-time-estimate"] = [{ name: searchResult.timeEstimate }];
+    }
+    if (searchResult.timeRequired && searchResult.timeRequired !== "") {
+      searchResult.tags["task-time-required"] = [{ name: searchResult.timeRequired }];
+    }
+
     var item = {
-      item: obj,
+      item: searchResult,
       user: window.cache.currentUser,
       tagConfig: TagConfig,
-      tagShow: ['location', 'skill', 'topic', 'task-time-estimate', 'task-time-required'],
+      tagShow: ['location', 'skills', 'topic', 'task-time-estimate', 'task-time-required']
     };
-    if (task.tags) {
-      item.tags = this.organizeTags(task.tags);
-    } else {
-      item.tags = [];
-    }
-    if (task.description) {
-      item.item.descriptionHtml = marked(task.description).replace(/<\/?a(|\s+[^>]+)>/g, '');
+ 
+    if (searchResult.description) {
+      item.item.descriptionHtml = marked(searchResult.description).replace(/<\/?a(|\s+[^>]+)>/g, '');
     }
     return _.template(TaskListItem)(item);
   },
 
   clickPage: function (e) {
     if (e.preventDefault) e.preventDefault();
-    this.renderList($(e.currentTarget).data('page'));
+    this.filters.page = $(e.currentTarget).data('page')
+    this.filter();
     window.scrollTo(0, 0);
   },
 
@@ -341,11 +340,6 @@ var TaskListView = Backbone.View.extend({
     var pagination = _.template(Pagination)(data);
     $('#task-page').html(pagination);
     $('#task-page').show();
-  },
-
-  organizeTags: function (tags) {
-    // put the tags into their types
-    return _(tags).groupBy('type');
   },
 
   isAgencyChecked: function () {
@@ -409,8 +403,8 @@ var TaskListView = Backbone.View.extend({
       this.filters.term = '';
       $('#search').val('');
     }
-
-    this.filter(this.filters, this.agency);
+    this.filters.page = 1;
+    this.filter();
   },
 
   toggleStateFilters: function (event) {
@@ -436,18 +430,16 @@ var TaskListView = Backbone.View.extend({
 
   stateFilter: function (event) {
     this.filters.state = _($('#stateFilters input:checked')).pluck('value');
-    if ( this.isAgencyChecked() ) {
-      this.filter(this.filters, this.agency );
-    } else {
-      this.filter(this.filters, { data: {} });
-    }
+    this.filters.page = 1;
+    this.filter();
   },
 
   timeFilter: function (event) {
     this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
-      return { type: 'task-time-required', name: value };
+      return value;
     });
-    this.filter(this.filters, this.agency);
+    this.filters.page = 1;
+    this.filter();
   },
 
   locationFilter: function (event) {
@@ -464,9 +456,10 @@ var TaskListView = Backbone.View.extend({
       this.filters.location.push('virtual');
     }
     if($('#in-person').is(':checked')) {
-      this.filters.location.push('in-person');
+      this.filters.location.push('in person');
     }
-    this.filter(this.filters, this.agency);
+    this.filters.page = 1;
+    this.filter();
   },
 
   agencyFilter: function (event) {
@@ -474,40 +467,25 @@ var TaskListView = Backbone.View.extend({
     this.filters.state = _( $( '#stateFilters input:checked' ) ).pluck( 'value' );
     this.initAgencyFilter();
     if ( isChecked ) {
-      this.filter(this.filters, this.agency );
+      this.filter();
     } else {
-      this.filter(this.filters, { data: {} });
+      this.filter();
     }
   },
 
-  filter: function (filters, agency) {
-    if (typeof filters !== 'undefined') this.filters = filters;
-    if (typeof agency !== 'undefined') this.agency = agency;
-    this.tasks = this.collection.chain()
-      .pluck('attributes')
-      .map( _.bind( parseTaskStatus, this ) )
-      .filter( _.bind( filterTaskByAgency, this, this.agency ) )
-      .filter( _.bind( filterTaskByTerm, this, this.filters.term ) )
-      .value();
-
-    _.each(filters, function ( value, key ) {
-      if(key == 'state') {
-        this.tasks = this.tasks.filter(_.bind(filterTaskByState, this, value));
-      } else if (key == 'location') {
-        filter = _.filter(value, function (v) { return v != 'in-person'; });
-        if(!_.isEmpty(filter)) {
-          this.tasks = this.tasks.filter(_.bind(filterTaskByLocation, this, filter));
-        }
-      } else if (!_.isEmpty(value)) {
-        this.tasks = this.tasks.filter(_.bind(filterTaskByTag, this, value));
-      }
-    }.bind(this));
-    this.renderList(1);
-
-    if ($('#search-tab-bar-filter').attr('aria-expanded') === 'true') {
-      $('.usajobs-search-filter-nav').attr('aria-hidden', 'false');
-    }
+  filter: function () {
     this.addFiltersToURL();
+    $.ajax({
+      url: '/api/task/search' + location.search,
+      type: 'GET',
+      async: true,
+      success: function (data) {
+        this.renderList(data, this.filters.page || 1);
+        if ($('#search-tab-bar-filter').attr('aria-expanded') === 'true') {
+          $('.usajobs-search-filter-nav').attr('aria-hidden', 'false');
+        }
+      }.bind(this),
+    });
   },
 
   empty: function () {
@@ -556,7 +534,11 @@ var TaskListView = Backbone.View.extend({
       } else {
         values = value.split(';');
       }
-      if (key != 'term') {
+      if (key == 'term') {
+        this.filters.term = value;
+      } else if (key == 'page') {
+        this.filters.page = value;
+      } else {
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {
             return value;
@@ -569,12 +551,6 @@ var TaskListView = Backbone.View.extend({
             }
           }
         });
-      } else {
-        this.filters.term = value;
-      }
-
-      if(key == 'location' && value != 'virtual') {
-        this.filters.location.push('in-person');
       }
     }.bind(this));
   }
@@ -593,72 +569,12 @@ function formatObjectForURL(value) {
 function getAppliedFiltersCount (filters, agency) {
   var count = 0;
   _.each(filters, function ( value, key ) {
-    if (key != "term") {
+    if (key != "term" && key != "page") {
       count += (_.isArray(value) ? value.length : 1);
     }
   });
   return count + (_.isEqual(agency, { data: {} }) ? 0 : 1);
 }
 
-function parseTaskStatus (task) {
-  task.state = (task.state == 'in progress' && task.acceptingApplicants) ? 'open' : task.state;
-  return task;
-}
-
-function filterTaskByAgency ( agency, task ) {
-  if (_.isEmpty(agency.data)) {
-    return true;
-  } else if (agency.data.abbr === task.restrict.abbr) {
-    return _.property( 'projectNetwork' )( task.restrict );
-  } else if (agency.data.parentAbbr && _.contains([task.restrict.abbr, task.restrict.parentAbbr], agency.data.parentAbbr)) {
-    return _.property( 'projectNetwork' )( task.restrict );
-  } else if (task.restrict.parentAbbr && _.contains([agency.data.abbr, agency.data.parentAbbr], task.restrict.parentAbbr)) {
-    return _.property( 'projectNetwork' )( task.restrict );
-  } else {
-    return false;
-  }
-}
-
-function filterTaskByTerm ( term, task ) {
-  var searchBody = JSON.stringify( _.values( task ) ).toLowerCase();
-  return ( ! term ) || ( searchBody.indexOf( term.toLowerCase() ) >= 0 );
-}
-
-function filterTaskByState ( filters, task ) {
-  var test = [];
-  if (_.isArray(filters)) {
-    test.push(_.some(filters, function (val) {
-      return task.state === val || _.contains(task.state, val);
-    }));
-  } else {
-    test.push(task.state === filters || _.contains(task.state, filters));
-  }
-  return test.length === _.compact(test).length;
-}
-
-function filterTaskByTag (filters, task) {
-  var test = [];
-  if (_.isArray(filters)) {
-    test.push(_.some(filters,function (val) {
-      return _.find(task.tags, val.id ? val : _.omit(val, 'id'));
-    }));
-  } else {
-    test.push(_.find(task.tags, filters.id ? filters : _.omit(filters, 'id')));
-  }
-  return test.length === _.compact(test).length;
-}
-
-function filterTaskByLocation (filters, task) {
-  var test = [];
-  taskHasLocation = _.find(task.tags, { type: 'location'});
-  if (_.isArray(filters)) {
-    test.push(_.some(filters, function (val) {
-      return ((val == 'virtual' && !taskHasLocation) || _.find(task.tags, val));
-    }));
-  } else {
-    test.push((filters == 'virtual' && !taskHasLocation) || _.find(task.tags, filters));
-  }
-  return test.length === _.compact(test).length;
-}
 
 module.exports = TaskListView;
