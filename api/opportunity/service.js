@@ -124,8 +124,7 @@ async function createOpportunity (attributes, done) {
     if(attributes.language && attributes.language.length >0){
       attributes.language.forEach(async (value) => {
         value.updatedAt= new Date();
-        value.createdAt= new Date();
-        value.userId= task.userId;
+        value.createdAt= new Date();      
         value.taskId= task.id;
         await dao.LanguageSkill.insert(value).then(async () => {
           done(null, true);     
@@ -236,10 +235,15 @@ async function updateOpportunity (attributes, done) {
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
+  //  task.language1= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
     task.tags = [];
+    // var languageArray=JSON.stringify(task.language1);
+    // var attributesLang= JSON.stringify(attributes.language);
+    // var difference=_.differenceBy(languageArray, attributesLang, 'languageId');     
+   
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
         await processTaskTags(task, tags).then(async tags => {

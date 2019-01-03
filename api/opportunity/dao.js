@@ -25,8 +25,8 @@ const countrySubdivisionQuery = 'select country_subdivision.value ' +
   'from country_subdivision ' + 'join task on country_subdivision.country_subdivision_id = task.country_subdivision_id ' + 
   'where task."userId" = ? and task.id = ? ';
 
-const languageListQuery= 'select l1.value as speaking ,r.value, l2.value as reading, l3.value as writing ' + 
-  'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r ' + 
+const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skill_id as "languageSkillId", l3.value as "writtenSkillLevel", l2.value as "readSkillLevel", r.value as "selectLanguage", g.speaking_proficiency_id as "speakingProficiencyId",g.writing_proficiency_id as "writingProficiencyId",g.reading_proficiency_id as "readingProficiencyId",g.language_id as "languageId" ' + 
+  'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r' + 
   ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ';
   
 const userQuery = 'select @midas_user.*, @agency.* ' +
