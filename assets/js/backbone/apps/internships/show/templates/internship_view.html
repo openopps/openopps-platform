@@ -105,20 +105,21 @@
               <%= model.detailsHtml %>
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
-              <% _.each(model.language, function (l,index) { %>
+              <% if (model.language.length > 0) { %>
               <h3>Foreign language</h3>
-              <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>           
+              <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>  
+              <% _.each(model.language, function (l,index) { %>         
               <div class="usajobs-grid-full">
-                <h4><%- l.value %></h4>
+                <h4><%- l.selectLanguage %></h4>
                 <div class="usajobs-width-one-half">
                   <ul class="languages-drawer-content__list">
                     <li class="languages-drawer-content__item">
                       <h5 class="languages-drawer-content__item-label">Speaking language skill level</h5>
-                      <p><%- l.speaking %></p>
+                      <p><%- l.spokenSkillLevel %></p>
                     </li>
                     <li class="languages-drawer-content__item">
                       <h5 class="languages-drawer-content__item-label">Reading language skill level</h5>
-                      <p><%- l.reading %></p>
+                      <p><%- l.readSkillLevel %></p>
                     </li>
                   </ul>
                 </div>
@@ -126,12 +127,13 @@
                   <ul class="languages-drawer-content__list">
                     <li class="languages-drawer-content__item">
                       <h5 class="languages-drawer-content__item-label">Writing language skill level</h5>
-                      <p><%- l.writing %></p>
+                      <p><%- l.writtenSkillLevel %></p>
                     </li>
                   </ul>
                 </div>
               </div>
               <% }); %>
+              <% } %>
               <!-- end language item -->
               
             </div>

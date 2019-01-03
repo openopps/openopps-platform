@@ -268,11 +268,17 @@ var BrowseRouter = Backbone.Router.extend({
           Backbone.history.navigate('/tasks/' + id + (action ? '/' + action : ''), { replace: true });
           this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
         } else {
-          if (action && action == 'edit') {
-            this.renderInternshipEdit(model, community);
-          } else {
-            this.renderInternshipView(model, community);
-          }
+          $.ajax({
+            url: '/api/lookup/languageProficiencies',
+          }).done(function (languageProficiencies) {
+            if (action && action == 'edit') {
+              this.renderInternshipEdit(model, community, languageProficiencies);
+            } else {
+              this.renderInternshipView(model, community, languageProficiencies);
+            }
+          }.bind(this)).fail(function () {
+            // throw error;
+          });
         }
       }.bind(this));
     }.bind(this));
@@ -369,6 +375,7 @@ var BrowseRouter = Backbone.Router.extend({
         el: '#container',
         model: model,
         community: community,
+       
         tags: [],
         madlibTags: {},
         tagTypes: tagTypes,
