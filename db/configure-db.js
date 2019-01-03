@@ -1,3 +1,4 @@
+const cfenv = require('cfenv');
 const psqlConnection = cfenv.getAppEnv().getServiceCreds('psql-openopps') || {};
   
 module.exports.dbConfig = {
