@@ -152,8 +152,7 @@ var InternshipEditFormView = Backbone.View.extend({
       this.toggleLanguagesOff();
       var data = this.getDataFromLanguagePage();
       this.dataLanguageArray.push(data);
-      this.renderLanguages();   
-          
+      this.renderLanguages();
     }
   },
 
@@ -162,6 +161,7 @@ var InternshipEditFormView = Backbone.View.extend({
       data: this.dataLanguageArray,     
     });
     $('#lang-1').html(languageTemplate);
+    $('#lang-1').get(0).scrollIntoView();
   },  
   render: function () {
     var compiledTemplate;

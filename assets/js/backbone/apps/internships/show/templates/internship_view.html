@@ -105,10 +105,9 @@
               <%= model.detailsHtml %>
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
-             
-                <% if (model.language.length > 0) { %>
-              <h3>Foreign languages</h3>
-              <p class="usajobs-form__help-brief">These languages may be helpful in the internship.</p>  
+              <% if (model.language.length > 0) { %>
+              <h3>Foreign language</h3>
+              <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>  
               <% _.each(model.language, function (l,index) { %>         
               <div class="usajobs-grid-full">
                 <h4><%- l.selectLanguage %></h4>
