@@ -10,7 +10,7 @@ var ModalComponent = require('../../../../components/modal');
 var AlertTemplate = require('../../../../components/alert_template.html');
 var InternshipEditFormView = require('../../edit/views/internship_edit_form_view');
 var InternshipShowTemplate = require('../templates/internship_view.html');
-
+var ShareTemplate = require('../templates/internship_share_template.txt');
 var InternshipView = BaseView.extend({
   events: {
     'click #apply'  : 'apply',
@@ -20,6 +20,23 @@ var InternshipView = BaseView.extend({
   initialize: function (options) {
    
     this.options = options;
+  },
+  updateInternshipEmail: function () {
+    var subject = 'Take A Look At This Opportunity',
+        data = {
+          opportunityTitle: this.model.get('title'),
+          opportunityLink: window.location.protocol +
+          '//' + window.location.host + '' + window.location.pathname,
+          opportunityDescription: this.model.get('description'),
+          opportunityMadlibs: $('<div />', {
+            html: this.$('#task-show-madlib-description').html(),
+          }).text().replace(/\s+/g, ' '),
+        },
+        body = _.template(ShareTemplate)(data),
+        link = 'mailto:?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+
+    this.$('#email').attr('href', link);
   },
   organizeTags: function (tags) {
     // put the tags into their types
@@ -38,12 +55,12 @@ var InternshipView = BaseView.extend({
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }
     }.bind(this));
-   
+    
     var compiledTemplate = _.template(InternshipShowTemplate)(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();
     $('#search-results-loading').hide();
-    
+    this.updateInternshipEmail();
     return this;
   },
   

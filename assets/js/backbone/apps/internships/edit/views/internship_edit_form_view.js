@@ -41,17 +41,13 @@ var InternshipEditFormView = Backbone.View.extend({
     this.agency                 = this.owner ? this.owner.agency.data : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
-    this.dataLanguageArray       =  [];
-    
+    this.dataLanguageArray      = [];
+   
    
     
     this.tagSources = options.tagTypes;  
 
     this.initializeListeners();
-
-    
-
-
     this.listenTo(this.options.model, 'task:update:success', function (data) {
       Backbone.history.navigate('internships/' + data.attributes.id, { trigger: true });
       if(data.attributes.state == 'submitted') {
@@ -110,10 +106,11 @@ var InternshipEditFormView = Backbone.View.extend({
     var dataAttr=$(e.currentTarget).attr('data-id');
     $('.languages-drawer-content[data-id='+ dataAttr +']').remove();  
     var newLanguageArray = _.reject(this.dataLanguageArray, 
-      function (num){ 
-        return !num[dataAttr];
+      function (num,index){             
+        return index==dataAttr;
       });
-    this.dataLanguageArray= newLanguageArray;
+   
+    this.dataLanguageArray= newLanguageArray;   
   },
 
   validateLanguage:function (e){
@@ -136,35 +133,36 @@ var InternshipEditFormView = Backbone.View.extend({
   
   getDataFromLanguagePage: function (){
     var modelData = {
-      spokenskillLevel:$('[name=spoken-skill-level]:checked + label').text(),
-      writtenskillLevel:$('[name=written-skill-level]:checked + label').text(),
-      readSkillLevel:$('[name=read-skill-level]:checked + label').text(),     
-      selectLanguage:$('#languageId').select2('data').value,
-      // data for language skill save
-      applicationId:null,
+         
       languageId:$('#languageId').val(),
+      readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
+      readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
+      selectLanguage:$('#languageId').select2('data').value,      
       speakingProficiencyId:$('[name=spoken-skill-level]:checked').val(),
+      spokenSkillLevel:$('[name=spoken-skill-level]:checked + label').text(),
       writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-      readingProficiencyId:$('[name=read-skill-level]:checked').val(),   
+      writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
+      
     };
     return modelData;
   },
 
   saveLanguage:function (){
-   
     if(!this.validateLanguage()){
       this.toggleLanguagesOff();
-      var data =this.getDataFromLanguagePage();
+      var data = this.getDataFromLanguagePage();
       this.dataLanguageArray.push(data);
-      
-      var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
-        data: this.dataLanguageArray,     
-      });
-      $('#lang-1').html(languageTemplate);
-      $('#lang-1').get(0).scrollIntoView();
+      this.renderLanguages();
     }
   },
 
+  renderLanguages: function () {
+    var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
+      data: this.dataLanguageArray,     
+    });
+    $('#lang-1').html(languageTemplate);
+    $('#lang-1').get(0).scrollIntoView();
+  },  
   render: function () {
     var compiledTemplate;
    
@@ -183,6 +181,12 @@ var InternshipEditFormView = Backbone.View.extend({
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize();
+   
+    if(this.model.attributes.language && this.model.attributes.language.length>0){
+      this.dataLanguageArray = this.model.attributes.language;
+    }
+    this.renderLanguages(); 
+    this.initializeFormFields();
     this.initializeCountriesSelect();
     this.initializeCountrySubdivisionSelect();
     this.initializeLanguagesSelect();
@@ -200,7 +204,13 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#search-results-loading').hide();
     return this;
   },
-
+  initializeFormFields: function (){
+    $('#needed-interns').val(this.model.attributes.interns);
+    $('#intern-year').val(this.model.attributes.cycleYear);
+    $('input[name=internship-timeframe][value=' + this.model.attributes.cycleSemester +']').prop('checked', true);    
+    $('#task_tag_bureau').val(this.model.attributes.bureau);
+    $('#task_tag_office').val(this.model.attributes.office);
+  },
   initializeSelect2: function () {
     var formatResult = function (object) {
       var formatted = '<div class="select2-result-title">';
@@ -211,7 +221,7 @@ var InternshipEditFormView = Backbone.View.extend({
       }
       return formatted;
     };
-
+   
     this.tagFactory.createTagDropDown({
       type: 'skill',
       placeholder: 'Start typing to select a skill',
@@ -419,19 +429,21 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   initializeCountriesSelect: function () {
-    $('#task_tag_country').select2({
+    $('#task_tag_country').select2({         
       placeholder: '- Select -',
-      minimumInputLength: 3,
+      minimumInputLength: 3,  
       ajax: {
         url: '/api/ac/country',
         dataType: 'json',
         data: function (term) {       
           return { q: term };
         },
-        results: function (data) {         
+        results: function (data) {          
           return { results: data };
+         
         },
       },
+     
       dropdownCssClass: 'select2-drop-modal',
       formatResult: function (obj, container, query) {
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
@@ -475,7 +487,7 @@ var InternshipEditFormView = Backbone.View.extend({
       validate({ currentTarget: $('#task_tag_countrySubdivision') });
       
     }.bind(this));
-    $('#task_tag_countrySubdivision').focus();
+    $('#task_tag_countrySubdivision').focus();    
   },
 
   submit: function (e) {
@@ -557,8 +569,11 @@ var InternshipEditFormView = Backbone.View.extend({
     if(e) {
       $(e.currentTarget).addClass('selected');
     } else {
-      if(this.data['madlibTags'].location) {
+      if(this.model.attributes.country&&this.model.attributes.countrySubdivision&&this.model.attributes.cityName) {
         $('#specific-location').addClass('selected');
+        $('#task_tag_city').val(this.model.attributes.cityName);
+      
+       
       } else {
         $('#anywhere').addClass('selected');
       }
@@ -572,6 +587,8 @@ var InternshipEditFormView = Backbone.View.extend({
       $('#task_tag_city').addClass('validate');
     } else {
       $('#s2id_task_tag_location').hide();
+      $('#task_tag_country').select2('data', null); 
+      $('#task_tag_countrySubdivision').select2('data',null);
       $('.intern-tag-address').hide();
       $('#task_tag_country').removeClass('validate');
       $('#task_tag_countrySubdivision').removeClass('validate');
@@ -623,6 +640,7 @@ var InternshipEditFormView = Backbone.View.extend({
       timeframe             : this.$('input[name=internship-timeframe]:checked').attr('id'),
       cycleYear             : this.$('#intern-year').val(),
       cycleSemester         : this.$('[name=internship-timeframe]:checked').val(),
+     
     };
 
     if($('.opportunity-location.selected').val() !== 'anywhere') {
