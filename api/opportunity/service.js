@@ -262,7 +262,7 @@ async function updateOpportunity (attributes, done) {
         });
       }
       //if languages array is empty and have language skill data in table removing data from table based on task-id
-      else if(attrubutes.language && attributes.language.length==0){
+      else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
       // eslint-disable-next-line no-empty
