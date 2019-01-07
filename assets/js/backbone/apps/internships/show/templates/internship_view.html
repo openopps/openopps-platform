@@ -73,12 +73,12 @@
               </div>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>
                 <div>
-                  <%- model.country %>
+                  <%- model.country.value %>
                 </div>
                 <% } %>
              
@@ -144,12 +144,12 @@
               </div>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
               </div>
               <% if (model.country) { %>
               <h4>Country</h4>
               <div>
-                <%- model.country %>
+                <%- model.country.value %>
               </div>
               <% } %>
               <h4>Time commitment</h4>

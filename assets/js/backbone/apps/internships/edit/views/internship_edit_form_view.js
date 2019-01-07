@@ -427,10 +427,10 @@ var InternshipEditFormView = Backbone.View.extend({
     }.bind(this));
     $('#languageId').focus();
   },
-
-  initializeCountriesSelect: function () {
-    $('#task_tag_country').select2({         
-      placeholder: '- Select -',
+  initializeCountriesSelect: function () {  
+    var country= this.model.attributes.country;
+    $('#task_tag_country').select2({    
+      placeholder: '- Select -',    
       minimumInputLength: 3,  
       ajax: {
         url: '/api/ac/country',
@@ -438,12 +438,12 @@ var InternshipEditFormView = Backbone.View.extend({
         data: function (term) {       
           return { q: term };
         },
-        results: function (data) {          
+        results: function (data) {              
           return { results: data };
          
         },
       },
-     
+      
       dropdownCssClass: 'select2-drop-modal',
       formatResult: function (obj, container, query) {
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
@@ -452,15 +452,30 @@ var InternshipEditFormView = Backbone.View.extend({
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
       },
       formatNoMatches: 'No country found ',
-    });
+
+      initSelection:function (element,callback){
+        if(country){
+          var data= {code: country.code,
+            countryId: country.countryId,
+            field: 'value',
+            id: country.id,
+            value: country.value };
+         
+          callback(data);
+        }
+      },
+
+    }).select2('val', []);
+
     $('#task_tag_country').on('change', function (e) {
       validate({ currentTarget: $('#task_tag_country') });
       
     }.bind(this));
     $('#task_tag_country').focus();
   },
-
+ 
   initializeCountrySubdivisionSelect: function () {
+    var countrySubdivision= this.model.attributes.countrySubdivision;
     $('#task_tag_countrySubdivision').select2({
       placeholder: '- Select -',
       minimumInputLength: 3,
@@ -470,7 +485,7 @@ var InternshipEditFormView = Backbone.View.extend({
         data: function (term) {       
           return { q: term };
         },
-        results: function (data) {         
+        results: function (data) {                  
           return { results: data };
         },
       },
@@ -482,13 +497,27 @@ var InternshipEditFormView = Backbone.View.extend({
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
       },
       formatNoMatches: 'No state found ',
-    });
+      initSelection:function (element,callback){
+        if(countrySubdivision){
+          var data= {code: countrySubdivision.code,
+            countryId: countrySubdivision.countrySubdivisionId,
+            field: 'value',
+            id: countrySubdivision.id,
+            value: countrySubdivision.value };
+         
+          callback(data);
+        }
+      },
+
+    }).select2('val', []);
+  
     $('#task_tag_countrySubdivision').on('change', function (e) {
       validate({ currentTarget: $('#task_tag_countrySubdivision') });
       
     }.bind(this));
     $('#task_tag_countrySubdivision').focus();    
   },
+ 
 
   submit: function (e) {
     if ( e.preventDefault ) { e.preventDefault(); }

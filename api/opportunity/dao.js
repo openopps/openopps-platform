@@ -17,17 +17,18 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
 
-const internQuery= 'select country.value ' +
+const internQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join task on country.country_id = task.country_id ' + 
   'where task."userId" = ? and task.id = ? ';
 
-const countrySubdivisionQuery = 'select country_subdivision.value ' +
+const countrySubdivisionQuery = 'select country_subdivision.country_subdivision_id as "countrySubdivisionId",country_subdivision.country_subdivision_id as "id", country_subdivision.code, country_subdivision.value ' +
   'from country_subdivision ' + 'join task on country_subdivision.country_subdivision_id = task.country_subdivision_id ' + 
   'where task."userId" = ? and task.id = ? ';
 
 const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skill_id as "languageSkillId", l3.value as "writtenSkillLevel", l2.value as "readSkillLevel", r.value as "selectLanguage", g.speaking_proficiency_id as "speakingProficiencyId",g.writing_proficiency_id as "writingProficiencyId",g.reading_proficiency_id as "readingProficiencyId",g.language_id as "languageId" ' + 
   'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r' + 
-  ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ';
+  ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ' +
+  'order by g.language_skill_id ';
   
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
