@@ -124,7 +124,7 @@ var NavView = Backbone.View.extend({
       this.showSubMenu2();
       this.activateProfiles();
     }
-    else if (window.location.pathname.match(/tasks\/?$/)) {
+    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?$/)) {
       this.showSubMenu2();
       this.activateTasks();
     }

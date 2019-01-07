@@ -246,7 +246,7 @@ var TaskListView = Backbone.View.extend({
       }.bind(this),
     });
 
-    if (searchResults.totalHits === 0) {
+    if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
@@ -303,7 +303,7 @@ var TaskListView = Backbone.View.extend({
     if (searchResult.timeRequired && searchResult.timeRequired !== "") {
       searchResult.tags["task-time-required"] = [{ name: searchResult.timeRequired }];
     }
-
+    searchResult.owner.initials = getInitials(searchResult.owner.name)
     var item = {
       item: searchResult,
       user: window.cache.currentUser,
