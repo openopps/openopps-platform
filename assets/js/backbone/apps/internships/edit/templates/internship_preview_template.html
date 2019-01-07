@@ -1,6 +1,6 @@
         <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
           <h2 class="usajobs-form__title">Step 3 - Review draft and submit</h2>
-          <div class="usajobs-width-three-fourths">
+          <div class="usajobs-width-two-thirds">
             <h1 class="usajobs-open-opps-opportunity-item__title"><%- data.title %></h1>
             <div class="usajobs-open-opps-opportunity__desc">
               <div class="skills">
@@ -11,19 +11,25 @@
               </div>
             </div>
           </div>
-          <div class="usajobs-width-one-fourth">
-            <div class="logo__header">
-              <div class="logo">
-                <!-- <% if (data.photoId) { %>
-                <img src="/api/user/photo/<%- model.photoId %>" alt="Logo for <%- data.office %>">
-                <% } %> -->
+          <div class="usajobs-width-one-third">
+            <div class="usajobs-open-opps-opportunity-requestor__wrapper">
+              <div class="usajobs-open-opps-opportunity-requestor">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure dos">
+                    
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name dos">
+                      Department of State
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div>Department of State</div>
             </div>
           </div>
         </div>
         <div class="usajobs-grid-full preview">
-          <div class="usa-width-one-fourth personnel-needed mobile">
+          <div class="usa-width-one-third personnel-needed mobile">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureau %></div>
@@ -42,7 +48,7 @@
               <div><%- data.interns %></div>                       
             </div>
           </div>
-          <div class="usa-width-three-fourths opportunity-description">
+          <div class="usa-width-two-thirds opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
               <h3>Who we are</h3>
               <div><%= data.aboutHtml %></div>
@@ -83,7 +89,7 @@
             </div> 
             <% } %>
           </div>
-          <div class="usa-width-one-fourth personnel-needed desktop">
+          <div class="usa-width-one-third personnel-needed desktop">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureau %></div>
