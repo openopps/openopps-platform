@@ -439,13 +439,13 @@ async function copyOpportunity (attributes, user, done) {
 }
 
 function getRestrictValues (user) {
-  var record = _.find(user.tags, { 'type': 'agency' });
+  
   var restrict = {
-    name: record.name,
-    abbr: record.data.abbr,
-    parentAbbr: record.data.parentAbbr,
-    slug: record.data.slug,
-    domain: record.data.domain,
+    name: user.agency.name,
+    abbr: user.agency.abbr,
+    parentAbbr: '',
+    slug: user.agency.slug,
+    domain: user.agency.domain,
     projectNetwork: false,
   };
   return restrict;
