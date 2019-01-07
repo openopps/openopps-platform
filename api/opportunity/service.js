@@ -28,13 +28,15 @@ async function findById (id, loggedIn) {
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
 
   if(await isStudent(task.userId,task.id)){
-    var countrydata=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
-    if(countrydata !=null){
-      task.country=countrydata.value;
+    var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
+  
+    if(country !=null){
+      task.country= country;
+     
     }  
-    var countrySubData=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
-    if(countrySubData !=null){
-      task.countrySubdivision=countrySubData.value;
+    var countrySubData=(await dao.CountrySubdivision.db.query(dao.query.countrySubdivision,task.userId,task.id)).rows[0];    
+    if(countrySubData !=null){     
+      task.countrySubdivision=countrySubData;
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
   }
@@ -235,15 +237,40 @@ async function updateOpportunity (attributes, done) {
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
-  //  task.language1= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
+    
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
     task.tags = [];
-    // var languageArray=JSON.stringify(task.language1);
-    // var attributesLang= JSON.stringify(attributes.language);
-    // var difference=_.differenceBy(languageArray, attributesLang, 'languageId');     
    
+    if(await isStudent(task.userId,task.id)){
+      if(attributes.language && attributes.language.length >0){
+        await dao.LanguageSkill.delete('task_id = ?',task.id).then(async () => {
+          attributes.language.forEach(async (value) => {
+            value.updatedAt= new Date();
+            value.createdAt= new Date();        
+            value.taskId= task.id;
+            await dao.LanguageSkill.insert(value).then(async () => {
+              done(null, true);     
+            }).catch (err => {
+              done(err);
+            });  
+          });
+        }).catch (err => {
+          log.info('delete: failed to delete languageskill ', err);
+          done(err);
+        });
+      }
+      //if languages array is empty and have language skill data in table removing data from table based on task-id
+      else if(attrubutes.language && attributes.language.length==0){
+        await dao.LanguageSkill.delete('task_id = ?',task.id);    
+      }
+      // eslint-disable-next-line no-empty
+      else{
+
+      }
+
+    }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
         await processTaskTags(task, tags).then(async tags => {
