@@ -72,10 +72,10 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
     },
     addTerms (filter, field, defaultFilter) { 
       filter = filter || defaultFilter;
-      if(filter && filter !== '_all'){
+      if((filter && filter !== '_all')){
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
-    },
+    }
   };
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
