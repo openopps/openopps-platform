@@ -33,22 +33,16 @@
           <div class="usajobs-width-one-third">
             <div class="usajobs-open-opps-opportunity-requestor__wrapper">
               <div class="usajobs-open-opps-opportunity-requestor">
-                <a href="/profile/<%- model.owner.id %>">
-                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-                    <div class="usajobs-open-opps-opportunity-requestor__figure <% if (user) { %><%- getInitialsColor(model.owner.id) %><% } %>" <% if (user) { %> data-userid="<%- model.userId %>" <% } %>>
-                      <% if (model.owner.photoId) { %>
-                        <img src="/api/user/photo/<%- model.owner.id %>" alt="Profile picture of <%- model.owner.name %>">
-                      <% } else { %>
-                        <div class="usajobs-open-opps-opportunity-requestor__initials" title="<%- model.owner.name %>"><%- getInitials(model.owner.name) %></div>
-                      <% } %>
-                    </div>
-                    <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <p class="usajobs-open-opps-opportunity-requestor__name">
-                        Department of State
-                      </p>
-                    </div>
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure dos">
+                    
                   </div>
-                </a>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name dos">
+                      Department of State
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">
@@ -79,12 +73,12 @@
               </div>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>
                 <div>
-                  <%- model.country %>
+                  <%- model.country.value %>
                 </div>
                 <% } %>
              
@@ -150,12 +144,12 @@
               </div>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision : 'Virtual' %>
+                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
               </div>
               <% if (model.country) { %>
               <h4>Country</h4>
               <div>
-                <%- model.country %>
+                <%- model.country.value %>
               </div>
               <% } %>
               <h4>Time commitment</h4>
