@@ -10,11 +10,6 @@ const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
 
-const baseTask = {
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
 }
@@ -356,13 +351,17 @@ async function sendTaskAppliedNotification (user, task) {
 
 async function sendTaskSubmittedNotification (user, task) {
   var baseData = await getNotificationTemplateData(user, task, 'task.update.submitted.admin');
-  _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), (admin) => {
+  var updateBaseData = (admin) => {
     var data = _.cloneDeep(baseData);
     data.model.admin = admin;
     if(!data.model.admin.bounced) {
       notification.createNotification(data);
     }
-  });
+  };
+  _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
+  if (task.communityId) {
+    _.forEach((await dao.User.db.query(dao.query.communityAdminsQuery, task.communityId)).rows, updateBaseData);
+  }
 }
 
 async function sendTaskCompletedNotification (user, task) {
@@ -386,6 +385,8 @@ async function copyOpportunity (attributes, user, done) {
     return {};
   }
   var task = {
+    createdAt: new Date(),
+    updatedAt: new Date(),
     title: attributes.title,
     userId: user.id,
     restrict: getRestrictValues(user),
@@ -394,10 +395,11 @@ async function copyOpportunity (attributes, user, done) {
     details: results.details,
     outcome: results.outcome,
     about: results.about,
+    agencyId: results.agencyId,
+    communityId: results.communityId,
   };
 
-  var newTask = _.extend(_.clone(baseTask), task);
-  await dao.Task.insert(newTask)
+  await dao.Task.insert(task)
     .then(async (task) => {
       tags.map(tag => {
         dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: task.id }).catch(err => {
