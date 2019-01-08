@@ -30,7 +30,7 @@ router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/task/search', async (ctx, next) => {
-  var request = elasticService.convertQueryStringToOpportunitiesSearchRequest(ctx.query);
+  var request = elasticService.convertQueryStringToOpportunitiesSearchRequest(ctx);
   var results = await elasticService.searchOpportunities(request);
 
   ctx.body = results;

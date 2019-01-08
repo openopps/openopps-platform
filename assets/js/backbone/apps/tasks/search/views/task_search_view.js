@@ -173,6 +173,7 @@ var TaskListView = Backbone.View.extend({
     var value = element.data('value');
     if(type == 'agency') {
       this.agency = { data: {} };
+      delete this.filters.restrict;
     } else if(_.isArray(this.filters[type])) {
       if(type == 'location' && value == 'in-person') {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
@@ -348,7 +349,7 @@ var TaskListView = Backbone.View.extend({
 
   initAgencyFilter: function () {
     this.agency = { data: {} };
-    if (this.isAgencyChecked()) {
+    if (_.contains(this.filters.restrict, 'true')) {
       this.agency.data = this.userAgency;
     }
   },
@@ -465,6 +466,10 @@ var TaskListView = Backbone.View.extend({
   agencyFilter: function (event) {
     var isChecked = event.target.checked;
     this.filters.state = _( $( '#stateFilters input:checked' ) ).pluck( 'value' );
+    if (isChecked) {
+      this.filters.restrict = ['true'];
+    } else { delete this.filters.restrict; }
+    
     this.initAgencyFilter();
     if ( isChecked ) {
       this.filter();
