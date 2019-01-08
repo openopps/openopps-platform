@@ -7,5 +7,6 @@ module.exports = function (db) {
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
+    User: dao({ db: db, table: 'midas_user' }),
   };
 };

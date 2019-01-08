@@ -28,6 +28,7 @@ router.post('/api/community/member', auth, async (ctx, next) => {
         ctx.status = 400;
         ctx.body = err.message;
       } else {
+        service.sendCommunityInviteNotification(ctx.state.user, ctx.request.body);
         service.createAudit('COMMUNITY_ADD_MEMBER', ctx, _.extend(ctx.request.body, { role: ctx.state.user.isAdmin ? 'Admin' : 'Community Manager' }));
         ctx.status = 200;
       }
