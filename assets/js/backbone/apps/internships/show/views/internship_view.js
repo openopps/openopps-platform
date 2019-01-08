@@ -11,9 +11,11 @@ var AlertTemplate = require('../../../../components/alert_template.html');
 var InternshipEditFormView = require('../../edit/views/internship_edit_form_view');
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
+var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
 var InternshipView = BaseView.extend({
   events: {
     'click #apply'  : 'apply',
+    'click #task-copy': 'copy',
    
   },
 
@@ -21,6 +23,50 @@ var InternshipView = BaseView.extend({
    
     this.options = options;
   },
+
+
+  copy: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var self = this;
+
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+
+    var modalContent = _.template(CopyTaskTemplate)({ title: 'COPY ' + self.model.attributes.title});
+
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'check-copy',
+      modalTitle: 'Copy this opportunity',
+      modalBody: modalContent,
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Copy opportunity',
+        action: function () {
+          $.ajax({
+            url: '/api/task/copy',
+            method: 'POST',
+            data: {
+              taskId: self.model.attributes.id,
+              title: $('#task-copy-title').val(),
+            },
+          }).done(function (data) {
+            console.log(data);
+            self.modalComponent.cleanup();
+            
+            Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+          });
+        },
+      },
+    }).render();
+  },
+
+
   updateInternshipEmail: function () {
     var subject = 'Take A Look At This Opportunity',
         data = {
@@ -49,7 +95,7 @@ var InternshipView = BaseView.extend({
       madlibTags: this.organizeTags(this.model.attributes.tags),
       
     };
-       
+   
     _.each(['details', 'about'], function (part) {
       if(this.data.model[part]) {
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
