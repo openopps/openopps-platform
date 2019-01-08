@@ -39,7 +39,7 @@ function toElasticOpportunity (value, index, list) {
     'about': doc.about,
     'restrictedToAgency': doc.isRestricted === 'true' ? doc.agencyName : 'null',
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
-    'updatedAt': doc.updatedAt,
+    'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
@@ -51,7 +51,7 @@ function toElasticOpportunity (value, index, list) {
     'locations': doc.location,
     'series': _.map(doc.series, (item) => { return  {id: item.id || 0, code: item.name.substring(0,4), name: item.name.replace(/.*\((.*)\).*/,'$1') };}),
     'careers': doc.career,
-    'keywords': _.map(doc.keywords, (item) => item.name),
+    'keywords': _.map(doc.keywords, (item) => item.name)
   };
 }
     
@@ -67,7 +67,7 @@ from (
     t.about,
     a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
-    t."updatedAt",
+    t."publishedAt",
     u.name,
     u.id as "ownerId",
     u."photoId",
