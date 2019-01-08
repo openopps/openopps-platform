@@ -49,7 +49,8 @@ service.searchOpportunities = async function (request) {
   return result;
 };
   
-service.convertQueryStringToOpportunitiesSearchRequest = function (query, index){
+service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
+  var query = ctx.query;
   var page = query.page || 1;
   var resultsperpage =  query.resultsperpage || 10;
   var from = (page - 1) * resultsperpage;
@@ -80,7 +81,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   
-  var formatParamTypes = ["skill", "career", "series", "location"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -114,6 +115,18 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
       }
     }
   }
+  var agencies = ["null"];
+  if (ctx.state.user) {
+    if (query.restrict == "true") {
+      agencies = [ctx.state.user.agency.name];
+    } else {
+      if (ctx.state.user.isAdmin) {
+        agencies = [];
+      } else {
+        agencies.push(ctx.state.user.agency.name)
+      }
+    }
+  }
 
   request.addTerms(query.state, 'state' , 'open');
   request.addTerms(query.skill, 'skills.name' );
@@ -122,16 +135,32 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   request.addTerms(query.time, 'timeRequired' );
   request.addTerms(query.location, 'locations.name' );
   request.addTerms(query.locationType, 'locationType');
-  
-  if(query.term){
+  if (agencies.length > 0) {
+    request.addTerms(agencies, 'restrictedToAgency');
+  }
+
+  var keywords = []
+  if (query.term) {
+    keywords = Array.isArray(query.term) ? query.term : [query.term];
+  }
+  if (query.keywords) {
+    if (Array.isArray(query.keywords)) {
+      keywords = _.union(keywords, query.keywords);
+    }
+    else {
+      keywords.push(query.keywords);
+    }
+  }
+  if (keywords.length > 0) {
     var keyword = '';
-    keyword = Array.isArray(query.term) ?query.term.join(' ') : query.term;
-    request.query.bool.must = {
+    keyword = keywords.join(' ');
+    request.body.query.bool.must = {
       simple_query_string: {
         query : keyword,
       },
     };
   }
+
   delete request.addTerms;
   return request;
 };
@@ -150,7 +179,7 @@ function convertSearchResultsToResultModel (searchResult) {
     about: source.about,
     restrictedToAgency: source.restrictedToAgency,
     requester: source.requester,
-    updatedAt: source.updatedAt,
+    publishedAt: source.publishedAt,
     postingAgency: source.postingAgency,
     acceptingApplicants: source.acceptingApplicants,
     taskPeople: source.taskPeople,

@@ -385,9 +385,10 @@ async function sendTaskSubmittedNotification (user, task) {
       notification.createNotification(data);
     }
   };
-  _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
   if (task.communityId) {
     _.forEach((await dao.User.db.query(dao.query.communityAdminsQuery, task.communityId)).rows, updateBaseData);
+  } else {
+    _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
   }
 }
 
