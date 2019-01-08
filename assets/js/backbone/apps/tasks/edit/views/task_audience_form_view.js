@@ -33,10 +33,12 @@ var TaskAudienceFormView = Backbone.View.extend({
           this.$el.html(template);
           setTimeout(function () {
             if(data.federal.length > 0 && data.student.length == 0) {
+              this.target = 'federal';
               $('#federal-employees').addClass('selected');
               $('.student-programs').hide();
               $('#continue').removeAttr('disabled'); 
             } else if (data.federal.length == 0 && data.student.length > 0) {
+              this.target = 'student';
               $('#students').addClass('selected'); 
               $('.federal-programs').hide();
               $('#continue').removeAttr('disabled'); 
@@ -45,7 +47,7 @@ var TaskAudienceFormView = Backbone.View.extend({
               $('.student-programs').hide();
             }
             $('#search-results-loading').hide();
-          }, 50);
+          }.bind(this), 50);
         }
       }.bind(this),
     });
