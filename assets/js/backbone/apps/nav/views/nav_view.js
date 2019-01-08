@@ -38,7 +38,7 @@ var NavView = Backbone.View.extend({
       this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
       this.idleModal.resetTimeout();
       var referrer = window.location.search.replace('?','') + window.location.hash;
-      Backbone.history.navigate('/' + (referrer || 'home'), { trigger: true, replaceState: true });
+      Backbone.history.navigate('/' + (referrer || 'home'), { trigger: true, replace: true });
       this.activePage();
     }.bind(this));
 
@@ -124,7 +124,7 @@ var NavView = Backbone.View.extend({
       this.showSubMenu2();
       this.activateProfiles();
     }
-    else if (window.location.pathname.match(/tasks\/?$/)) {
+    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?$/)) {
       this.showSubMenu2();
       this.activateTasks();
     }

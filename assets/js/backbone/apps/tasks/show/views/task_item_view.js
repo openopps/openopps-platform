@@ -50,30 +50,21 @@ var TaskItemView = BaseView.extend({
   },
 
   initialize: function (options) {
-    var self = this;
     this.options = options;
-    this.model.trigger('task:model:fetch', options.id);
-    this.listenTo(this.model, 'task:model:fetch:success', function (model) {
-      self.model = model;
-      self.initializeTags(self);
-    });
-    this.listenTo(this.model, 'task:model:fetch:error', function (model, xhr) {
-      var template = _.template(AlertTemplate)();
-      self.$el.html(template);
-    });
+    this.initializeTags();
   },
 
-  render: function (self) {
-    var taskState = self.model.attributes.state;
+  render: function () {
+    var taskState = this.model.attributes.state;
 
     if (_.isString(taskState)) {
       taskState = taskState.charAt(0).toUpperCase() + taskState.slice(1);
     }
 
-    self.data = {
+    this.data = {
       user: window.cache.currentUser,
-      model: self.model.toJSON(),
-      tags: self.model.toJSON().tags,
+      model: this.model.toJSON(),
+      tags: this.model.toJSON().tags,
       state: {
         humanReadable: taskState,
         value: taskState.toLowerCase(),
@@ -86,40 +77,40 @@ var TaskItemView = BaseView.extend({
     };
 
     if (['in progress', 'completed', 'canceled'].indexOf(taskState.toLowerCase()) > -1) {
-      self.data.accordion.show = true;
+      this.data.accordion.show = true;
     }
 
-    self.data['madlibTags'] = organizeTags(self.data.tags);
+    this.data['madlibTags'] = organizeTags(this.data.tags);
     _.each(['description', 'details', 'outcome', 'about'], function (part) {
-      if(self.data.model[part]) {
-        self.data.model[part + 'Html'] = marked(self.data.model[part]);
+      if(this.data.model[part]) {
+        this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }
-    });
-    self.model.trigger('task:tag:data', self.tags, self.data['madlibTags']);
+    }.bind(this));
+    this.model.trigger('task:tag:data', this.tags, this.data['madlibTags']);
 
-    var d = self.data,
+    var d = this.data,
         vol = ((!d.user || d.user.id !== d.model.userId) &&
         (d.model.volunteer || 'open' === d.model.state));
 
-    self.data.ui = UIConfig;
-    self.data.vol = vol;
-    self.data.model.userId = self.data.model.owner.id;
-    self.data.model.owner.initials = getInitials(self.data.model.owner.name);
-    var compiledTemplate = _.template(TaskShowTemplate)(self.data);
+    this.data.ui = UIConfig;
+    this.data.vol = vol;
+    this.data.model.userId = this.data.model.owner.id;
+    this.data.model.owner.initials = getInitials(this.data.model.owner.name);
+    var compiledTemplate = _.template(TaskShowTemplate)(this.data);
 
-    self.$el.html(compiledTemplate);
+    this.$el.html(compiledTemplate);
     
     // $('#search-results-loading').hide();
-    self.$el.localize();
-    if(taskState.toLowerCase() == 'in progress' && self.data.model.acceptingApplicants) {
+    this.$el.localize();
+    if(taskState.toLowerCase() == 'in progress' && this.data.model.acceptingApplicants) {
       this.updatePill('in progress', true);
     }
     $('time.timeago').timeago();
-    self.updateTaskEmail();
-    self.model.trigger('task:show:render:done');
+    this.updateTaskEmail();
+    this.model.trigger('task:show:render:done');
     this.initializeProgress();
 
-    if ('#apply' === window.location.hash && !self.model.attributes.volunteer) {
+    if ('#apply' === window.location.hash && !this.model.attributes.volunteer) {
       $('#apply').click();
 
       Backbone.history.navigate(window.location.pathname, {
@@ -183,10 +174,10 @@ var TaskItemView = BaseView.extend({
     this.$('#email').attr('href', link);
   },
 
-  initializeTags: function (self) {
+  initializeTags: function () {
     var types = ['task-skills-required', 'task-time-required', 'task-people', 'task-length', 'task-time-estimate', 'career'];
 
-    self.tagSources = {};
+    this.tagSources = {};
 
     var requestAllTagsByType = function (type, cb) {
       $.ajax({
@@ -194,16 +185,16 @@ var TaskItemView = BaseView.extend({
         type: 'GET',
         async: false,
         success: function (data) {
-          self.tagSources[type] = data;
+          this.tagSources[type] = data;
           return cb();
-        },
+        }.bind(this),
       });
-    };
+    }.bind(this);
 
     async.each(types, requestAllTagsByType, function (err) {
-      self.model.trigger('task:tag:types', self.tagSources);
-      self.render(self);
-    });
+      this.model.trigger('task:tag:types', this.tagSources);
+      this.render();
+    }.bind(this));
   },
 
   toggleAccordion: function (e) {
@@ -585,20 +576,19 @@ var TaskItemView = BaseView.extend({
   },
 
   volunteer: function () {
-    var self = this;
     $.ajax({
       url: '/api/volunteer/',
       type: 'POST',
       data: {
-        taskId: self.model.attributes.id,
+        taskId: this.model.attributes.id,
       },
-    }).done( function (data) {
-      if(!_.findWhere(self.data.model.volunteers, { userId: data.userId })) {
-        self.data.model.volunteers.push(data);
-        self.initializeProgress();
+    }.bind(this)).done( function (data) {
+      if(!_.findWhere(this.data.model.volunteers, { userId: data.userId })) {
+        this.data.model.volunteers.push(data);
+        this.initializeProgress();
       }
-      self.modalComponent.cleanup();
-    });
+      this.modalComponent.cleanup();
+    }.bind(this));
   },
 
   cleanup: function () {

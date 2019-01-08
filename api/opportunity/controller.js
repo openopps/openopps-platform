@@ -6,6 +6,7 @@ const service = require('./service');
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
 const Badge = require('../model/Badge');
+const elasticService = require('../../elastic/service');
 
 var router = new Router();
 
@@ -24,12 +25,19 @@ router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
-  var numOfOpps = await service.reindexOpportunities();
-  ctx.body = numOfOpps;
+  var tasks = await elasticService.reindexOpportunities();
+  ctx.body = tasks.length;
+});
+
+router.get('/api/task/search', async (ctx, next) => {
+  var request = elasticService.convertQueryStringToOpportunitiesSearchRequest(ctx);
+  var results = await elasticService.searchOpportunities(request);
+
+  ctx.body = results;
 });
 
 router.get('/api/task/communities', auth, async (ctx, next) => {
-  var data = await service.getCommunities(); 
+  var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
 });
 
@@ -54,6 +62,9 @@ router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
     ctx.body = { 'comments': [] };
   }
 });
+
+
+
 
 router.post('/api/task', auth, async (ctx, next) => {
   ctx.request.body.userId = ctx.state.user.id;

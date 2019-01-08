@@ -1,0 +1,247 @@
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter opportunity-gutter">
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+      <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> internship opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
+        <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
+          <fieldset id="step-1" class="usajobs-fieldset">
+            <h2>Step 1 - Define who, when, and where</h2>
+            <label for="DefineWho">
+              <h3>Who</h3>
+            </label>  
+            <div class="form-group required-input">
+              <label for="needed-interns" class="no-margin-top">How many interns do you need?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter number of interns.</span>
+              <input type="number" id="needed-interns"  class="fullwidth validate " maxlength="2"  min="1" max="99" data-validate="empty" onkeypress="if(this.value.length==2) return false;"/>
+            </div>
+            <label for="DefineWhen">
+              <h3>When</h3>
+            </label>
+            <div class="form-group required-input" id="internship-start-End">
+              <label for="people" class="no-margin-top">When would the internship start and end?</label>
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Start and end of internship</legend>
+                <ul class="usa-unstyled-list">
+                  <li>
+                    <input id="Fall" type="radio" name="internship-timeframe" value="Fall" checked>
+                    <label for="Fall">Fall</label> 
+                    
+                  </li>
+                  <li>
+                    <input id="Spring" type="radio" name="internship-timeframe" value="Spring">
+                    <label for="Spring">Spring</label> 
+                    
+                  </li>
+                  <li>
+                    <input id="Summer" type="radio" name="internship-timeframe" value="Summer">
+                    <label for="Summer">Summer</label>                   
+                  </li>                 
+                </ul>                            
+              </fieldset>
+            </div>
+            <div class="form-group required-input intern-form-year">
+              <label for="Year">Year</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter Year.</span>           
+              <input type="number" class="intern-form-yearbox validate" aria-describedby="dateYearHint" id="intern-year" name="year"  min="0" max="9999" placeholder="YYYY" onkeypress="if(this.value.length==4) return false;"  data-validate="empty" style>  
+            </div>
+            <label for="WhereLocated">
+              <h3>Where</h3>
+            </label>
+            <div class="form-group">
+              <label for="time-required" class="no-margin-top">Where is the internship located?</label>
+              <ul class="usa-unstyled-list opportunity-options__list">
+                <li>
+                  <button type="button" class="opportunity-options__button opportunity-location" id="anywhere" value="anywhere">
+                    <span class="opportunity-options__icon">
+                      <i class="fas fa-tv"></i>
+                    </span>
+                    <span class="opportunity-options__text">Virtual</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="opportunity-options__button opportunity-location" id="specific-location" value="specific-location">
+                    <span class="opportunity-options__icon">
+                      <i class="fas fa-users"></i>
+                    </span>
+                    <span class="opportunity-options__text">In person</span>
+                  </button>
+                </li>
+              </ul>
+              <div id="intern-tag-address" class="intern-tag-address">
+                  <div class="required-input task_tag_country">
+                      <label for="country">Country</label>
+                      <span class="field-validation-error error-empty" style="display:none;">You must enter a country for this internship.</span>              
+                      <input  id="task_tag_country" class="dropdown" data-validate="empty" />
+                    </div>
+                    <div class="required-input task_tag_countrySubdivision">
+                        <label for="countrySubdivision">State</label>
+                        <span class="field-validation-error error-empty" style="display:none;">You must enter a state for this internship.</span>
+                        <input  id="task_tag_countrySubdivision" class="dropdown" data-validate="empty" /> 
+                      </div>
+                <div class="required-input task_tag_city">
+                  <label for="city">City</label>
+                  <span class="field-validation-error error-empty" style="display:none;">You must enter a city for this internship.</span>
+                  <input type="text" id="task_tag_city" name="city" class="fullwidth validate" data-validate="empty" />
+                </div>            
+              </div>
+            </div>
+          </fieldset>
+          <fieldset id="step-2" class="usajobs-fieldset">
+            <h2>Step 2 - Describe the internship</h2>
+            <div class="required-input" id="headline">
+              <label for="intern-title">
+                <h3>Internship title</h3>
+              </label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a headline for this internship.</span>
+              <span class="field-validation-error error-count100" style="display:none;">The headline must be no more than 100 characters.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '
+                < ' or '>' are not allowed</span>
+              <p>Write a catchy, but descriptive title to entice participants to click on the internship.</p>
+              <input type="text" id="intern-title" class="fullwidth form-control validate" value="<%- data.title %>" data-validate="empty,count100,html" />
+              <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
+            </div>
+            <div class="form-group required-input" id="details">
+              <label for="opportunity-details">
+                <h3>What you'll do</h3>
+              </label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter details for this internship.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '
+                < ' or '>' are not allowed.</span>
+              <p>List specific tasks the participant will work on. Be concise, but offer enough details so the participant
+              knows what's involved.</p>
+              <span class="show-markdown-details"></span>
+              <div class="markdown-edit markdown-edit-details"></div>
+              </div>
+            <div id="form-group" class="form-group required-input">
+              <label for="skills">What skills are you looking for?</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this internship.</span>
+              <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
+            </div>
+            <div>
+              <label for="languages">
+                <h3 class="usa-input-optional">Foreign language</h3>
+              </label>
+              <p>Please list the desired language(s) and the proficiency level for each language.</p>
+              <div id="lang-1">
+                </div>  
+              <button class="usa-button-secondary" id="add-language">Add language</button>
+            </div> 
+            <div class="required-input" id="description">
+              <label for="opportunity-team">
+                <h3>Who we are</h3>
+              </label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a description for this internship.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '
+                < ' or '>' are not allowed.</span>
+              <p>Briefly describe your team, bureau, or office.</p>
+              <span class="show-markdown-team"></span>
+              <div class="markdown-edit markdown-edit-team"></div>
+            </div>
+            <div class="required-input task_tag_bureau">
+              <label for="bureau">Bureau</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select a bureau for this internship.</span>
+              <select id="task_tag_bureau" name="bureau" class="dropdown validate" data-validate="empty">
+                <option></option>
+                <option>Bureau Test</option>
+              </select>
+            </div>
+            <div class="required-input task_tag_office">
+              <label for="office">Office/post</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select an office for this internship.</span>
+              <select id="task_tag_office" name="office" class="dropdown validate" data-validate="empty">
+                <option></option>
+                <option>office test</option>
+              </select>
+            </div>
+          </fieldset>
+          <fieldset id="add-languages-fieldset" class="usajobs-fieldset" style="display:none">
+            <h2 class="no-margin-top">Foreign language <span class="usajobs-form__legend">All fields are required</span></h2>
+            <div class="form-group required-input" id="language-select">
+              <label for="languageId">Language</label>
+              <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select at least one language.</span>
+              <input id="languageId" class="dropdown" data-validate="empty" />
+            </div>
+            <label for="spoken-skill-level">
+              <h4>Speaking language skill level</h4>
+            </label>
+            <div class="form-group required-input" id="spoken-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Spoken language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="spoken-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="spoken-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="spoken-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select spoken language skill level.</span>
+            </div>
+            <label for="written-skill-level">
+              <h4>Writing language skill level</h4>
+            </label>
+            <div class="form-group required-input" id="written-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Written language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="written-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="written-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="written-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select written language skill level.</span>
+            </div>
+            <label for="read-skill-level">
+              <h4>Reading language skill level</h4>
+            </label>
+            <div class="form-group required-input"id="read-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Read language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="read-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="read-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="read-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select read language skill level.</span>
+            </div>
+            <p class="usajobs-form__help-brief"><a href="https://www.usajobs.gov/Help/how-to/account/profile/languages/" target="_blank" rel="noopener noreferrer">What does novice, intermediate and advanced mean?</a></p>
+            <div class="usajobs-button_bar--slim task-footer">
+              <div class="usajobs-button_bar__body">
+                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel-language" id="cancel-language">Cancel and return</button>
+                <button class="usa-button usa-button-primary" data-state="save-language" id="save-language">Save language</button>
+              </div>
+            </div>
+          </fieldset>        
+          <fieldset id="step-3" class="usajobs-fieldset" style="display:none"></fieldset>
+          <fieldset class="usajobs-fieldset" id="button-bar">
+            <div class="usajobs-button_bar--slim task-footer">
+              <div class="usajobs-button_bar__body">
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="cancel" id="cancel">Cancel</button>
+                <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit" style="display:none">Make changes</button>
+                <% if (data.state === 'draft' || data.state === 'canceled') { %>
+                  <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button>
+                <% } %>
+                <button class="usa-button usa-button-primary internship-button" data-state="preview" id="preview">Preview</button>
+                <% if (_.contains(['draft', 'canceled', 'submitted'], data.state)) { %>
+                  <button class="usa-button usa-button-primary internship-button" data-state="submit" id="save" style="display:none">Submit</button>
+                <% } else { %>
+                  <button class="usa-button usa-button-primary internship-button" data-state="save" id="save" style="display:none">Save</button>
+                <% } %>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div id="internship-preview" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display:none">
+      </div>
+    </main>
+  </div>
+</section>

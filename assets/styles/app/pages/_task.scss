@@ -1,5 +1,10 @@
 .back-link {
   color: $color-primary;
+  margin-top: $size-default;
+  
+  a {
+    text-decoration: none;
+  }
 
   .fa-chevron-circle-left {
     margin-right: $size-base;
@@ -430,6 +435,11 @@ button.opportunity-options__button {
   }
 }
 
+.label-second-line {
+  display: block;
+  margin-left: 2.8rem;
+}
+
 .expandorama {
   list-style: none;
   padding-left: 0;
@@ -502,17 +512,57 @@ button.opportunity-options__button {
   float: left;
 }
 
-#step-3 {
-  h3 {
-    margin-top: $size-default;
+#internship-preview {
+  h2 {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid $color-gray-lighter;
+  }
 
-    &:first-child {
-      @include media($ML) {
-        margin-top: 0;
-      }
-      @include media($L) {
-        margin-top: $size-default;
-      }
+  .skills {
+    padding-top: 1.5rem;
+  }
+
+  .skill-label:first-of-type {
+    margin: 0.5rem 0rem 0.5rem;
+  }
+
+  .usajobs-open-opps-opportunity-item__title {
+    padding-top: 1.5rem;
+  }
+
+  .field-label {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: #5b616b;
+  }
+
+  .logo__header {
+    width: rem(100px);
+    float: right;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .logo {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    height: rem(75px);
+    width: rem(75px);
+    background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+    background-size: rem(75px);
+    background-repeat: no-repeat;
+
+    @include media($ML) {
+      background-size: rem(85px);
+      height: rem(85px);
+      width: rem(85px);
     }
   }
 }
@@ -604,3 +654,124 @@ button.opportunity-options__button {
     }
   }
 }
+
+#add-languages-fieldset>h2.no-margin-top {
+  margin-top: 0;
+
+  .usajobs-form__legend {
+    position: absolute;
+    right: 3rem;
+  }
+}
+
+#needed-interns, .usa-input-error #needed-interns {
+  width: 6rem;
+}
+
+.intern-form-year {
+    label {
+      margin-top: $size-default;
+    }
+}
+
+.intern-form-yearbox, .usa-input-error .intern-form-yearbox {
+  width: 8rem;
+}
+
+.needed-hours {
+  margin-top: $size-M;
+  width: 6rem;
+
+  p:first-child {
+    margin-bottom: 0;
+  }
+
+  p:last-child {
+    margin-top: 0;
+  }
+}
+
+.languages-drawer {
+
+  &-content {
+    background-color: $color-white;
+    overflow: auto;
+    padding: 0 0 $size-S 0;
+    border-top:1px solid $color-gray-lighter;
+    border-bottom:1px solid $color-gray-lighter;
+
+    .usajobs-grid {
+      padding: 0;
+    }
+
+    &__list {
+      display: block;
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+
+      @include media($M) {
+        padding-bottom: $size-default;
+      }
+
+      & > li {
+        display: list-item;
+        margin: 0;
+      }
+
+      p, dd {
+        margin: 0;
+      }
+
+      .languages-drawer-content__item p {
+        margin:0;
+      }
+    }
+
+    &__item-label {
+      margin-top: $size-default;
+      margin-bottom: 0;
+      font-size: $size-default;
+      font-weight: normal;
+      color: $color-gray;
+    }
+
+    &__item-content {
+      margin-top: 0;
+    }
+
+    & > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .has-no-face {
+    padding-bottom: $size-default;
+  }
+ 
+  .usajobs-button-bar {
+    &--split {
+      border-top: 0;
+    }
+
+    &__body {
+      padding: 0;
+    }
+
+    &__delete {
+      display: inline-block;
+      padding: 0.6rem $size-default 0.6rem 2.5rem;
+      font-weight: bold;
+      background-image: url(../img/icons/button-bar/times-circle.svg);
+      background-size: $size-SM $size-SM;
+      background-position: left center;
+      background-repeat: no-repeat;
+      color: $color-primary;
+    }
+
+    &__save, &__edit {
+      float: right;
+    }
+  }
+}
+

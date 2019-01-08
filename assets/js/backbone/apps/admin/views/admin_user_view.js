@@ -84,10 +84,6 @@ var AdminUserView = Backbone.View.extend({
       el: '#site-modal',
       id: 'invite-member-modal',
       modalTitle: 'Invite member to community',
-      alert: {
-        type: 'error',
-        text: 'Error inviting member to community.',
-      },
       modalBody: modalContent,
       validateBeforeSubmit: true,
       secondary: {
@@ -120,8 +116,7 @@ var AdminUserView = Backbone.View.extend({
                 if(err.status == 403) {
                   this.modalComponent.cleanup();
                 } else {
-                  $('#community-add-member-alert-text').text(err.responseText);
-                  $('#community-add-member-alert').show();
+                  this.modalComponent.displayError(err.responseText);
                 }
               }.bind(this),
             });
@@ -321,9 +316,6 @@ var AdminUserView = Backbone.View.extend({
         url: data.url,
         dataType: 'json',
         success: function (d) {
-          $('.usajobs-modal__canvas-blackout').remove();
-          $('.modal-is-open').removeClass();
-
           // Hide spinner and show checkbox
           spinner.hide();
           t.siblings('label').show();
@@ -334,17 +326,9 @@ var AdminUserView = Backbone.View.extend({
   },
 
   confirmAdminAssign: function (t, data) {
-    if (this.modalComponent) this.modalComponent.cleanup();
-    $('body').addClass('modal-is-open');
-
     this.modal = new Modal({
-      el: '#site-modal',
       id: 'confirm-assign',
       modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
-      alert: {
-        type: 'error',
-        text: 'Error assigning as administrator.',
-      },
       modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
                   + data.name + '</strong> as <strong>' + (data.agency ? data.agency : this.data.target) + '</strong> administrator?',
       primary: {
@@ -360,7 +344,8 @@ var AdminUserView = Backbone.View.extend({
           this.modal.cleanup();
         }.bind(this),
       },
-    }).render();
+    });
+    this.modal.render();
   },
 
   resetPassword: function (e) {
@@ -381,10 +366,6 @@ var AdminUserView = Backbone.View.extend({
       el: '#site-modal',
       id: 'reset-password',
       modalTitle: 'Reset Password',
-      alert: {
-        type: 'error',
-        text: 'Error sending email.',
-      },
       modalBody: 'Click <strong>Send email</strong> below to send an email to <strong>' + user.name + '</strong> to reset their password.',
       primary: {
         text: 'Send email',
@@ -414,11 +395,7 @@ var AdminUserView = Backbone.View.extend({
       $('.modal-is-open').removeClass();
       this.modal.cleanup();
     }.bind(this)).fail(function (error) {
-      var d = JSON.parse(error.responseText);
-      $('#reset-password').addClass('usajobs-modal--error');
-      $('.usajobs-modal__body').html('There was an error sending the Reset password email.');
-      $('#usajobs-modal-heading').hide();
-      $('#alert-modal__heading').show();
+      this.displayError('confirm-publish', 'There was an error sending the Reset password email.');
       $('#primary-btn').hide();
     }.bind(this));
   },

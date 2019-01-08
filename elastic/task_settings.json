@@ -1,0 +1,16 @@
+{
+    "analysis": {
+        "normalizer": {
+            "lowercase": {
+                "type": "custom",
+                "char_filter": [],
+                "filter": [
+                    "lowercase",
+                    "asciifolding"
+                ]
+            }
+        }
+    },
+    "number_of_shards": 4,
+    "number_of_replicas": 1
+}

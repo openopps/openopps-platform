@@ -6,16 +6,18 @@ loadFeature = function (name) {
 };
 
 module.exports = (app) => {
-  app.use(loadFeature('auth'));
-  app.use(loadFeature('opportunity'));
-  app.use(loadFeature('user'));
-  app.use(loadFeature('autocomplete'));
-  app.use(loadFeature('location'));
-  app.use(loadFeature('admin'));
-  app.use(loadFeature('volunteer'));
   app.use(loadFeature('activity'));
+  app.use(loadFeature('admin'));
+  app.use(loadFeature('announcement'));
+  app.use(loadFeature('auth'));
+  app.use(loadFeature('autocomplete'));
   app.use(loadFeature('comment'));
   app.use(loadFeature('community'));
+  app.use(loadFeature('cycle'));
   app.use(loadFeature('document'));
-  app.use(loadFeature('announcement'));
+  app.use(loadFeature('location'));
+  app.use(loadFeature('lookup'));
+  app.use(loadFeature('opportunity'));
+  app.use(loadFeature('user'));
+  app.use(loadFeature('volunteer'));
 };

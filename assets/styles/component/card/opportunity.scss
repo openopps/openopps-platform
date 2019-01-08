@@ -818,7 +818,7 @@
     color: #000;
   }
 
-  #apply {
+  #apply, #gotosaved {
     display: block;
     margin-right: 0;
   }
@@ -949,6 +949,13 @@
     text-align: right;
     color: $color-secondary;
   }
+
+  &.internship {
+    #apply, #gotosaved {
+      display: block;
+      margin: $size-M 0 0 0;
+    }
+  }
 }
 
 .usajobs-open-opps-opportunity-requestor.achievements {
@@ -1059,6 +1066,14 @@
     }
   }
 
+  & &__name.dos {
+    line-height: 2.5;
+
+    @include media($L) {
+      line-height: 1.5;
+    }
+  }
+
   &__status {
 
     @include media($XL) {
@@ -1133,6 +1148,30 @@
         width: 6.5rem;
         height: 6.5rem;
       }  
+    }
+  }
+
+  &__figure.dos {
+    flex-shrink: 0;
+    width: 4.6rem;
+    height: 4.6rem;
+    display: flex;
+    background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+    background-size: 4.6rem;
+    background-repeat: no-repeat;
+
+    @include media($M) {
+      width: 6.5rem;
+      height: 6.5rem;
+      background-size: 6.5rem;
+    }
+
+    @include media($L) {
+      padding-bottom: 0;
+    }
+
+    img {
+      border-radius: 50%;
     }
   }
 
@@ -1345,7 +1384,7 @@
     }
   }
 
-  .overview .personnel-needed.mobile {
+  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile {
     width: 100%;
     margin-bottom: $size-M;
     float: none;
@@ -1355,7 +1394,7 @@
     }
   }
 
-  .overview .personnel-needed.desktop {
+  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop {
     @include media($ML-down) {
       display: none;
     }

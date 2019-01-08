@@ -1,10 +1,7 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var UIConfig = require('../../../../config/ui.json');
-var marked = require('marked');
 var TaskAudienceFormTemplate = require('../templates/task_audience_form_template.html');
-var TaskAudienceView = require('./task_audience_form_view');
 
 
 var TaskAudienceFormView = Backbone.View.extend({
@@ -80,7 +77,8 @@ var TaskAudienceFormView = Backbone.View.extend({
         break;
       default:
         var communityId = $('#' + this.target + '-programs').val();
-        Backbone.history.navigate('/tasks/new' + (communityId ? '?cid=' + communityId : ''), { trigger: true });
+        var baseURL = (this.target == 'student' ? '/internships/new' : 'tasks/new');
+        Backbone.history.navigate(baseURL + (communityId ? '?cid=' + communityId : ''), { trigger: true });
         break;
     }
   },
@@ -89,4 +87,4 @@ var TaskAudienceFormView = Backbone.View.extend({
     removeView(this);
   },
 });
-module.exports= TaskAudienceFormView;
+module.exports = TaskAudienceFormView;

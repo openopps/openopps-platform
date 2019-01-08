@@ -77,6 +77,7 @@ module.exports = {
         var numberOfAgencies = values.length;
         processValues(initalRun, values, () => {
           console.log('Completed import of ' + numberOfAgencies + ' records for agencies.');
+          pgp.end();
           callback && callback();
         });
       }

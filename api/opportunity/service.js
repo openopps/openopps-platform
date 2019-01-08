@@ -1,6 +1,7 @@
 const _ = require ('lodash');
 const log = require('log')('app:opportunity:service');
 const db = require('../../db');
+const elasticService = require('../../elastic/service');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
@@ -8,11 +9,6 @@ const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
-
-const baseTask = {
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
 
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
@@ -25,6 +21,20 @@ async function findById (id, loggedIn) {
   }
   var task = dao.clean.task(results[0]);
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+
+  if(await isStudent(task.userId,task.id)){
+    var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
+  
+    if(country !=null){
+      task.country= country;
+     
+    }  
+    var countrySubData=(await dao.CountrySubdivision.db.query(dao.query.countrySubdivision,task.userId,task.id)).rows[0];    
+    if(countrySubData !=null){     
+      task.countrySubdivision=countrySubData;
+    } 
+    task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
+  }
   task.volunteers = loggedIn ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
 }
@@ -48,7 +58,7 @@ async function list (user) {
   tasks = await Promise.all(tasks.map(async (task) => {
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     return task;
-  }));
+  })); 
   return tasks;
 }
 
@@ -93,7 +103,7 @@ async function createTaskTag (tagId, task) {
   });
 }
 
-async function createOpportunity (attributes, done) {
+async function createOpportunity (attributes, done) { 
   var errors = await Task.validateOpportunity(attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(errors, null);
@@ -101,17 +111,35 @@ async function createOpportunity (attributes, done) {
   attributes.submittedAt = attributes.state === 'submitted' ? new Date : null;
   attributes.createdAt = new Date();
   attributes.updatedAt = new Date();
+ 
   await dao.Task.insert(attributes).then(async (task) => {
     var tags = attributes.tags || attributes['tags[]'] || [];
     await processTaskTags(task, tags).then(tags => {
       task.tags = tags;
     });
+    
+    if(attributes.language && attributes.language.length >0){
+      attributes.language.forEach(async (value) => {
+        value.updatedAt= new Date();
+        value.createdAt= new Date();      
+        value.taskId= task.id;
+        await dao.LanguageSkill.insert(value).then(async () => {
+          done(null, true);     
+        }).catch (err => {
+          done(err);
+        });  
+      });
+    }
+
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+    await elasticService.indexOpportunity(task.id);
+   
     return done(null, task);
   }).catch(err => {
     return done(true);
   });
 }
+
 
 async function sendTaskNotification (user, task, action) {
   var data = {
@@ -141,13 +169,27 @@ async function canAdministerTask (user, id) {
   }
   return false;
 }
-async function getCommunities () {
-  var communities = await dao.Community.find('is_closed_group = ?', false);
+async function getCommunities (userId) {
+  var communities = await dao.Community.query(dao.query.communitiesQuery, userId);
   var communityTypes = {
     federal: _.filter(communities, { targetAudience: 1 }),
     student: _.filter(communities, { targetAudience: 2 }),
   };
   return communityTypes;
+}
+async function isStudent (userId,taskId) {
+  var taskCommunities = await dao.Community.query(dao.query.taskCommunitiesQuery, userId,taskId);
+  var communityTypes = {
+    federal: _.filter(taskCommunities, { targetAudience: 1 }),
+    student: _.filter(taskCommunities, { targetAudience: 2 }),
+  };
+  if(communityTypes.student.length>0){
+    return true;
+  }
+  else{
+    return false;
+  }
+  
 }
 
 
@@ -169,6 +211,7 @@ async function updateOpportunityState (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     task.previousState = origTask.state;
+    await elasticService.indexOpportunity(task.id);
     return done(task, origTask.state !== task.state);
   }).catch (err => {
     return done(null, false, {'message':'Error updating task.'});
@@ -189,14 +232,45 @@ async function updateOpportunity (attributes, done) {
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
+    
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
     task.tags = [];
+   
+    if(await isStudent(task.userId,task.id)){
+      if(attributes.language && attributes.language.length >0){
+        await dao.LanguageSkill.delete('task_id = ?',task.id).then(async () => {
+          attributes.language.forEach(async (value) => {
+            value.updatedAt= new Date();
+            value.createdAt= new Date();        
+            value.taskId= task.id;
+            await dao.LanguageSkill.insert(value).then(async () => {
+              done(null, true);     
+            }).catch (err => {
+              done(err);
+            });  
+          });
+        }).catch (err => {
+          log.info('delete: failed to delete languageskill ', err);
+          done(err);
+        });
+      }
+      //if languages array is empty and have language skill data in table removing data from table based on task-id
+      else if(attributes.language && attributes.language.length==0){
+        await dao.LanguageSkill.delete('task_id = ?',task.id);    
+      }
+      // eslint-disable-next-line no-empty
+      else{
+
+      }
+
+    }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
-        await processTaskTags(task, tags).then(tags => {
+        await processTaskTags(task, tags).then(async tags => {
           task.tags = tags;
+          await elasticService.indexOpportunity(task.id);
           return done(task, origTask.state !== task.state);
         });
       }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
@@ -211,6 +285,7 @@ async function publishTask (attributes, done) {
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
     sendTaskNotification(task.owner, task, 'task.update.opened');
+    await elasticService.indexOpportunity(task.id);
     return done(true);
   }).catch (err => {
     return done(false);
@@ -303,13 +378,18 @@ async function sendTaskAppliedNotification (user, task) {
 
 async function sendTaskSubmittedNotification (user, task) {
   var baseData = await getNotificationTemplateData(user, task, 'task.update.submitted.admin');
-  _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), (admin) => {
+  var updateBaseData = (admin) => {
     var data = _.cloneDeep(baseData);
     data.model.admin = admin;
     if(!data.model.admin.bounced) {
       notification.createNotification(data);
     }
-  });
+  };
+  if (task.communityId) {
+    _.forEach((await dao.User.db.query(dao.query.communityAdminsQuery, task.communityId)).rows, updateBaseData);
+  } else {
+    _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
+  }
 }
 
 async function sendTaskCompletedNotification (user, task) {
@@ -333,6 +413,8 @@ async function copyOpportunity (attributes, user, done) {
     return {};
   }
   var task = {
+    createdAt: new Date(),
+    updatedAt: new Date(),
     title: attributes.title,
     userId: user.id,
     restrict: getRestrictValues(user),
@@ -341,28 +423,30 @@ async function copyOpportunity (attributes, user, done) {
     details: results.details,
     outcome: results.outcome,
     about: results.about,
+    agencyId: results.agencyId,
+    communityId: results.communityId,
   };
 
-  var newTask = _.extend(_.clone(baseTask), task);
-  await dao.Task.insert(newTask)
+  await dao.Task.insert(task)
     .then(async (task) => {
       tags.map(tag => {
         dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: task.id }).catch(err => {
           log.info('register: failed to update tag ', attributes.username, tag, err);
         });
       });
+      await elasticService.indexOpportunity(task.id);
       return done(null, { 'taskId': task.id });
     }).catch (err => { return done({'message':'Error copying task.'}); });
 }
 
 function getRestrictValues (user) {
-  var record = _.find(user.tags, { 'type': 'agency' });
+  
   var restrict = {
-    name: record.name,
-    abbr: record.data.abbr,
-    parentAbbr: record.data.parentAbbr,
-    slug: record.data.slug,
-    domain: record.data.domain,
+    name: user.agency.name,
+    abbr: user.agency.abbr,
+    parentAbbr: '',
+    slug: user.agency.slug,
+    domain: user.agency.domain,
     projectNetwork: false,
   };
   return restrict;
@@ -372,6 +456,7 @@ async function deleteTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
+        await elasticService.indexOpportunity(id);
         return id;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
@@ -406,11 +491,6 @@ async function getExportData () {
     fields: fields,
     fieldNames: fieldNames,
   });
-}
-
-async function reindexOpportunities () {
-  var records = (await dao.Task.db.query(dao.query.tasksToIndex)).rows;
-  return records;
 }
 
 async function sendTasksDueNotifications (action, i) {
@@ -454,7 +534,6 @@ module.exports = {
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
   getExportData: getExportData,
-  reindexOpportunities: reindexOpportunities,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
   sendTaskStateUpdateNotification: sendTaskStateUpdateNotification,
@@ -464,4 +543,5 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  
 };

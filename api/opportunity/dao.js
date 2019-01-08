@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 const moment = require('moment');
+const util = require('util');
 
 const tasksDueQuery = 'select task.* ' +
   'from task ' +
@@ -16,15 +17,55 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
 
+const internQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
+  'from country ' + 'join task on country.country_id = task.country_id ' + 
+  'where task."userId" = ? and task.id = ? ';
+
+const countrySubdivisionQuery = 'select country_subdivision.country_subdivision_id as "countrySubdivisionId",country_subdivision.country_subdivision_id as "id", country_subdivision.code, country_subdivision.value ' +
+  'from country_subdivision ' + 'join task on country_subdivision.country_subdivision_id = task.country_subdivision_id ' + 
+  'where task."userId" = ? and task.id = ? ';
+
+const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skill_id as "languageSkillId", l3.value as "writtenSkillLevel", l2.value as "readSkillLevel", r.value as "selectLanguage", g.speaking_proficiency_id as "speakingProficiencyId",g.writing_proficiency_id as "writingProficiencyId",g.reading_proficiency_id as "readingProficiencyId",g.language_id as "languageId" ' + 
+  'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r' + 
+  ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ' +
+  'order by g.language_skill_id ';
+  
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
   'where midas_user.id = ? ';
 
-const communityUserQuery='select * from community_user '+
-'inner join community on community_user.community_id = community.community_id ' + 
-'where community_user.user_id = ?';
+const communityUserQuery = 'select * from community_user '+
+  'inner join community on community_user.community_id = community.community_id ' + 
+  'where community_user.user_id = ?';
 
+const communityAdminsQuery = 'select midas_user.* from midas_user ' +
+  'inner join community_user on community_user.user_id = midas_user.id '+
+  'inner join community on community_user.community_id = community.community_id ' + 
+  'where community_user.is_manager and midas_user.disabled = false and community.community_id = ?';
+
+const communitiesQuery = 'SELECT ' +
+    'community.community_id, ' +
+    'community.community_name, ' +
+    'community.target_audience ' +
+  'FROM community ' +
+  'WHERE ' +
+    'community.is_closed_group = false ' +
+  'UNION ' +
+  'SELECT ' +
+    'community.community_id, ' +
+    'community.community_name, ' +
+    'community.target_audience ' +
+  'FROM community ' +
+  'JOIN community_user ' +
+    'ON community_user.community_id = community.community_id ' +
+  'WHERE ' +
+    'community.is_closed_group = true ' +
+    'AND community_user.user_id = ?';
+
+const taskCommunitiesQuery='SELECT community.community_id, community.community_name, community.target_audience ' +
+  'FROM community JOIN task  ON community.community_id = task.community_id ' + 'where task."userId"= ? and task.id = ? ';  
+   
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'midas_user.username, midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
@@ -66,121 +107,6 @@ const taskExportQuery = 'select task.id, task.title, description, task."createdA
   ') as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ';
 
-const tasksToIndex = `select row_to_json(row)
-from (
-  select t.id, t.title, t.description, t.state, t.details, t.outcome, t.about, t.restrict ->> 'abbr' as "restrictedToAgency", u.name,
-  (
-    select tags.data ->> 'abbr' as "postingAgency"
-    from tagentity_users__user_tags utags
-    inner join tagentity tags on utags.tagentity_users = tags.id
-    where tags.type = 'agency' and utags.user_tags = u.id
-    order by "updatedAt" desc
-    limit 1
-  ),
-  (
-    select array_to_json(array_agg(row_to_json(s)))
-    from (
-                    select skilltags.id, skilltags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity skilltags on skilltags.id = tt.tagentity_tasks
-                    where skilltags.type = 'task-people' and tt."task_tags" = t.id
-    ) s
-  ) as "task-people",
-  (
-    select array_to_json(array_agg(row_to_json(s)))
-    from (
-                    select taskpeopletags.id, taskpeopletags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity taskpeopletags on taskpeopletags.id = tt.tagentity_tasks
-                    where taskpeopletags.type = 'skill' and tt."task_tags" = t.id
-    ) s 
-  ) as skills,
-  (
-    select array_to_json(array_agg(row_to_json(s)))
-    from (
-                    select tasklengthtags.id, tasklengthtags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity tasklengthtags on tasklengthtags.id = tt.tagentity_tasks
-                    where tasklengthtags.type = 'task-length' and tt."task_tags" = t.id
-    ) s 
-  ) as "task-length",
-  (
-    select array_to_json(array_agg(row_to_json(l)))
-    from (
-                    select languagetags.id, languagetags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity languagetags on languagetags.id = tt.tagentity_tasks
-                    where languagetags.type = 'location' and tt."task_tags" = t.id
-    ) l
-  ) as "location",
-  (
-    select array_to_json(array_agg(row_to_json(l)))
-    from (
-                    select locationtags.id, locationtags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity locationtags on locationtags.id = tt.tagentity_tasks
-                    where locationtags.type = 'task-time-estimate' and tt."task_tags" = t.id
-    ) l
-  ) as "task-time-estimate",
-  (
-    select array_to_json(array_agg(row_to_json(l)))
-    from (
-                    select ltags.id, ltags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity ltags on ltags.id = tt.tagentity_tasks
-                    where ltags.type = 'series' and tt."task_tags" = t.id
-    ) l
-  ) as series,
-  (
-    select array_to_json(array_agg(row_to_json(l)))
-    from (
-                    select timetags.id, timetags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity timetags on timetags.id = tt.tagentity_tasks
-                    where timetags.type = 'task-time-required' and tt."task_tags" = t.id
-    ) l
-  ) as "task-time-required",
-  (
-    select array_to_json(array_agg(row_to_json(l)))
-    from (
-                    select careertags.id, careertags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity careertags on careertags.id = tt.tagentity_tasks
-                    where careertags.type = 'career' and tt."task_tags" = t.id
-    ) l
-  ) as "career",
-  (
-    select array_to_json(array_agg(row_to_json(s)))
-    from (
-                    select skilltags.id, skilltags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity skilltags on skilltags.id = tt.tagentity_tasks
-                    where skilltags.type = 'task-skills-required' and tt."task_tags" = t.id
-    ) s
-  ) as "task-skills-required",
-  (
-    select array_to_json(array_agg(row_to_json(k)))
-    from (
-                    select keytags.id, keytags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity keytags on keytags.id = tt.tagentity_tasks
-                    where keytags.type = 'keywords' and tt."task_tags" = t.id
-    ) k
-  ) as keywords,
-  (
-    select array_to_json(array_agg(row_to_json(k)))
-    from (
-                    select topictags.id, topictags.name
-                    from tagentity_tasks__task_tags tt
-                    left join tagentity topictags on topictags.id = tt.tagentity_tasks
-                    where topictags.type = 'topic' and tt."task_tags" = t.id
-    ) k
-  ) as topic
-  from task t
-  inner join midas_user u on t."userId" = u.id         
-  order by t.id
-) row`;
-
 var exportFormat = {
   'task_id': 'id',
   'name': {field: 'title', filter: nullToEmptyString},
@@ -210,6 +136,7 @@ const options = {
       owner: '',
       agency: '',
       tags: [],
+      
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -283,6 +210,11 @@ module.exports = function (db) {
     Comment: dao({ db: db, table: 'comment' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
+    LanguageSkill:dao({ db: db, table: 'language_skill' }),
+    Country:dao({ db: db, table: 'country' }),
+    CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    LookupCode:dao({ db: db, table: 'lookup_code' }),
+
     query: {
       task: taskQuery,
       user: userQuery,
@@ -294,8 +226,13 @@ module.exports = function (db) {
       userTasks: userTasksQuery,
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
-      tasksToIndex: tasksToIndex,
-      communityUserQuery:communityUserQuery,
+      communityUserQuery: communityUserQuery,
+      communityAdminsQuery: communityAdminsQuery,
+      communitiesQuery: communitiesQuery,
+      taskCommunitiesQuery:taskCommunitiesQuery,
+      intern:internQuery,
+      countrySubdivision:countrySubdivisionQuery,
+      languageList:languageListQuery,
     },
     options: options,
     clean: clean,

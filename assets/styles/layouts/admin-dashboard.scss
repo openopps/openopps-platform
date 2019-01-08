@@ -242,6 +242,10 @@
       color: #CD2026;
     }
 
+    .task-open, .delete-task, .task-change-owner, .task-add-participant {
+      padding: 7px 10px;
+    }
+
     .task-change-owner:visited, .task-add-participant:visited {
       color: $color-primary;
     }
@@ -368,5 +372,15 @@
 
 .capitalize-target {
   text-transform: capitalize;
+}
+
+#form-community-cycles {
+  label {
+    margin-top: 0;
+  }
+}
+
+.new-cycle {
+  margin-left: 1.5rem;
 }
 
