@@ -3,6 +3,7 @@ const log = require('log')('app:community:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const Audit = require('../model/Audit');
+const Notification = require('../notification/service');
 
 const communityTypes = [ 'Career', 'Program' ];
 const durationTypes = [ 'Ad Hoc', 'Cyclical' ];
@@ -50,5 +51,24 @@ module.exports.isCommunityManager = async function (user, communityId) {
   } else {
     var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', [user.id, communityId]).catch(() => { return null; });
     return communityUser && communityUser.isManager;
+  }
+};
+
+module.exports.sendCommunityInviteNotification = async function (admin, data) {
+  try {
+    var community = await dao.Community.findOne('community_id = ?', data.communityId);
+    var user = await dao.User.findOne('id = ?', data.userId);
+    if(!user.bounced) {
+      Notification.createNotification({
+        action: 'community.user.invite',
+        model: {
+          community: community,
+          user: user,
+          admin: admin,
+        },
+      });
+    }
+  } catch (err) {
+    log.error('Unable to email community invitation notification', err);
   }
 };
