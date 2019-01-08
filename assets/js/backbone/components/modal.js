@@ -46,10 +46,10 @@ var Modal = BaseComponent.extend({
   initialize: function (options) {
     this.options = options;
     this.options.secondary = this.options.secondary || {
-        text: 'Cancel',
-        action: function () {
-          this.cleanup();
-        }.bind(this),
+      text: 'Cancel',
+      action: function () {
+        this.cleanup();
+      }.bind(this),
     };   
     this.options.alert = this.options.alert || '';
     this.options.disableClose = this.disableClose || false;
