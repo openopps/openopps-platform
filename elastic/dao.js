@@ -37,10 +37,10 @@ function toElasticOpportunity (value, index, list) {
     'details': doc.details,
     'outcome': doc.outcome,
     'about': doc.about,
-    'restrictedToAgency': doc.isRestricted === 'true' ? doc.restrictedToAgency : null,
+    'restrictedToAgency': doc.isRestricted === 'true' ? doc.agencyName : 'null',
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'updatedAt': doc.updatedAt,
-    'postingAgency': doc.postingAgency,
+    'postingAgency': doc.agencyName,
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
     'timeRequired': (_.first(doc['task-time-required']) || { name: null }).name,
@@ -65,24 +65,13 @@ from (
     t.details,
     t.outcome,
     t.about,
-    t.restrict ->> 'abbr' as "restrictedToAgency",
+    a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."updatedAt",
     u.name,
     u.id as "ownerId",
     u."photoId",
     t.accepting_applicants as "acceptingApplicants",
-    (
-      select
-        tags.data ->> 'abbr' as "postingAgency"
-      from tagentity_users__user_tags utags
-        inner join tagentity tags on utags.tagentity_users = tags.id
-      where
-        tags.type = 'agency' and
-        utags.user_tags = u.id
-      order by "updatedAt" desc
-      limit 1
-    ),
     (
       select  
         array_to_json(array_agg(row_to_json(s)))
@@ -237,7 +226,8 @@ from (
       ) k
     ) as topic
   from task t
-    inner join midas_user u on t."userId" = u.id         
+    inner join midas_user u on t."userId" = u.id  
+	left join agency a on t.agency_id = a.agency_id    
   %s
 ) row`;
 

@@ -49,7 +49,8 @@ service.searchOpportunities = async function (request) {
   return result;
 };
   
-service.convertQueryStringToOpportunitiesSearchRequest = function (query, index){
+service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
+  var query = ctx.query;
   var page = query.page || 1;
   var resultsperpage =  query.resultsperpage || 10;
   var from = (page - 1) * resultsperpage;
@@ -114,6 +115,18 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
       }
     }
   }
+  var agencies = ["null"];
+  if (ctx.state.user) {
+    if (query.restrict == "true") {
+      agencies = [ctx.state.user.agency.name];
+    } else {
+      if (ctx.state.user.isAdmin) {
+        agencies = [];
+      } else {
+        agencies.push(ctx.state.user.agency.name)
+      }
+    }
+  }
 
   request.addTerms(query.state, 'state' , 'open');
   request.addTerms(query.skill, 'skills.name' );
@@ -122,6 +135,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (query, index)
   request.addTerms(query.time, 'timeRequired' );
   request.addTerms(query.location, 'locations.name' );
   request.addTerms(query.locationType, 'locationType');
+  if (agencies.length > 0) {
+    request.addTerms(agencies, 'restrictedToAgency');
+  }
   
   if(query.term){
     var keyword = '';
