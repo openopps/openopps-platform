@@ -179,7 +179,7 @@ function convertSearchResultsToResultModel (searchResult) {
     about: source.about,
     restrictedToAgency: source.restrictedToAgency,
     requester: source.requester,
-    updatedAt: source.updatedAt,
+    publishedAt: source.publishedAt,
     postingAgency: source.postingAgency,
     acceptingApplicants: source.acceptingApplicants,
     taskPeople: source.taskPeople,
