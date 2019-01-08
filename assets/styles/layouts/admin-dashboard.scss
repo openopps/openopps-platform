@@ -236,11 +236,13 @@
 
     .task-open {
       color: #487E40;
-      padding: 7px 10px;
     }
 
     .delete-task {
       color: #CD2026;
+    }
+
+    .task-open, .delete-task, .task-change-owner, .task-add-participant {
       padding: 7px 10px;
     }
 
