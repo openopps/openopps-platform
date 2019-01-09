@@ -408,6 +408,7 @@ async function sendTaskCompletedNotificationParticipant (user, task) {
 
 async function copyOpportunity (attributes, user, done) {
   var results = await dao.Task.findOne('id = ?', attributes.taskId);
+  var language= await dao.LanguageSkill.find('task_id = ?',attributes.taskId);
   var tags = await dao.TaskTags.find('task_tags = ?', attributes.taskId);
   if(results === null) {
     return {};
@@ -426,17 +427,71 @@ async function copyOpportunity (attributes, user, done) {
     agencyId: results.agencyId,
     communityId: results.communityId,
   };
+  var intern = {
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    title: attributes.title,
+    userId: user.id,
+    restrict: getRestrictValues(user),
+    state: 'draft',
+    description: results.description,
+    details: results.details,
+    outcome: results.outcome,
+    about: results.about,
+    agencyId: results.agencyId,
+    communityId: results.communityId,
+    office:results.office,
+    bureau:results.bureau,
+    cityName:results.cityName,
+    cycleSemester:results.cycleSemester,
+    cycleYear:results.cycleYear,
+    countryId:results.countryId,
+    countrySubdivisionId:results.countrySubdivisionId,
+    interns:results.interns,
+    language:language,
 
-  await dao.Task.insert(task)
-    .then(async (task) => {
-      tags.map(tag => {
-        dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: task.id }).catch(err => {
-          log.info('register: failed to update tag ', attributes.username, tag, err);
+  };
+  if(await isStudent(results.userId,results.id)){
+    await dao.Task.insert(intern)
+      .then(async (intern) => {
+        if(language && language.length >0){
+          language.forEach(async (value) => {
+            var newValue= _.omit(value,'languageSkillId');
+            
+            newValue.updatedAt= new Date();
+            newValue.createdAt= new Date();      
+            newValue.taskId = intern.id;
+            await dao.LanguageSkill.insert(newValue).then(async () => {
+              done(null, true);     
+            }).catch (err => {
+              done(err);
+            });  
+          });
+        }
+
+        tags.map(tag => {
+          dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: intern.id }).catch(err => {
+            log.info('register: failed to update tag ', attributes.username, tag, err);
+          });
         });
-      });
-      await elasticService.indexOpportunity(task.id);
-      return done(null, { 'taskId': task.id });
-    }).catch (err => { return done({'message':'Error copying task.'}); });
+        await elasticService.indexOpportunity(intern.id);
+        return done(null, { 'taskId': intern.id });
+      }).catch (err => { return done({'message':'Error copying task.'}); });
+
+  }
+
+  else{
+    await dao.Task.insert(task)
+      .then(async (task) => {
+        tags.map(tag => {
+          dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: task.id }).catch(err => {
+            log.info('register: failed to update tag ', attributes.username, tag, err);
+          });
+        });
+        await elasticService.indexOpportunity(task.id);
+        return done(null, { 'taskId': task.id });
+      }).catch (err => { return done({'message':'Error copying task.'}); });
+  }
 }
 
 function getRestrictValues (user) {

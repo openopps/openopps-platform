@@ -193,8 +193,9 @@ var InternshipEditFormView = Backbone.View.extend({
    
     if(this.model.attributes.language && this.model.attributes.language.length>0){
       this.dataLanguageArray = this.model.attributes.language;
+       
     }
-    this.renderLanguages(); 
+    this.renderLanguages();
     this.initializeFormFields();
     this.initializeCountriesSelect();
     this.initializeCountrySubdivisionSelect();
