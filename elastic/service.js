@@ -116,7 +116,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   }
   var agencies = ["null"];
-  if (ctx.state.user) {
+  if (ctx.state.user && ctx.state.user.agency) {
     if (query.restrict == "true") {
       agencies = [ctx.state.user.agency.name];
     } else {
