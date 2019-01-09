@@ -98,10 +98,12 @@
           </div>
           <div class="usa-width-two-thirds opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
-              <h3>What you'll do</h3>
-              <%= model.detailsHtml %>
+
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
+              
+              <h3>What you'll do</h3>
+              <%= model.detailsHtml %>             
               <% if (model.language.length > 0) { %>
               <h3>Foreign language</h3>
               <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>  
