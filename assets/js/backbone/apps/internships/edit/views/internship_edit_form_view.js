@@ -42,6 +42,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.data                   = {};
     this.data.newTag            = {};
     this.dataLanguageArray      = [];
+    this.deleteLanguageArray  =[];
    
    
     
@@ -103,14 +104,12 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   deleteLanguage:function (e){
+    
     var dataAttr=$(e.currentTarget).attr('data-id');
-    $('.languages-drawer-content[data-id='+ dataAttr +']').remove();  
-    var newLanguageArray = _.reject(this.dataLanguageArray, 
-      function (num,index){             
-        return index==dataAttr;
-      });
-   
-    this.dataLanguageArray= newLanguageArray;   
+    $('.languages-drawer-content[data-id='+ dataAttr +']').remove();      
+    this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
+    var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
+    this.dataLanguageArray= updateArray;
   },
 
   validateLanguage:function (e){
