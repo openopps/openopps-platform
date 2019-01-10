@@ -104,12 +104,13 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   deleteLanguage:function (e){
-    
+   
     var dataAttr=$(e.currentTarget).attr('data-id');
-    $('.languages-drawer-content[data-id='+ dataAttr +']').remove();      
+      
     this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
     var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
     this.dataLanguageArray= updateArray;
+    this.renderLanguages(); 
   },
 
   validateLanguage:function (e){
