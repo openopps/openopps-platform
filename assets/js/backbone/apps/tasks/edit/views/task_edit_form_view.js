@@ -34,7 +34,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.options                = options;
     this.tagFactory             = new TagFactory();
     this.owner                  = this.model.get( 'owner' );
-    this.agency                 = this.owner ? this.owner.agency.data : window.cache.currentUser.agency;
+    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
 
