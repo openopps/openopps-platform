@@ -504,9 +504,8 @@ var TaskListView = Backbone.View.extend({
       if(key == 'state') {
         this.tasks = this.tasks.filter(_.bind(filterTaskByState, this, value));
       } else if (key == 'location') {
-        filter = _.filter(value, function (v) { return v != 'in-person'; });
-        if(!_.isEmpty(filter)) {
-          this.tasks = this.tasks.filter(_.bind(filterTaskByLocation, this, filter));
+        if(!_.isEmpty(value)) {
+          this.tasks = this.tasks.filter(_.bind(filterTaskByLocation, this, value));
         }
       } else if (!_.isEmpty(value)) {
         this.tasks = this.tasks.filter(_.bind(filterTaskByTag, this, value));
@@ -589,11 +588,12 @@ function filterTaskByLocation (filters, task) {
   var test = [];
   taskHasLocation = _.find(task.tags, { type: 'location'});
   if (_.isArray(filters)) {
+    filtersHasLocation = _.filter(filters, function (v) { return v != 'in-person' && v != 'virtual'; });
     test.push(_.some(filters, function (val) {
-      return ((val == 'virtual' && !taskHasLocation) || _.find(task.tags, val));
+      return ((val == 'in-person' && taskHasLocation && filtersHasLocation.length == 0) || (val == 'virtual' && !taskHasLocation) || _.find(task.tags, val));
     }));
   } else {
-    test.push((filters == 'virtual' && !taskHasLocation) || _.find(task.tags, filters));
+    test.push((val == 'in-person' && taskHasLocation) || (filters == 'virtual' && !taskHasLocation) || _.find(task.tags, filters));
   }
   return test.length === _.compact(test).length;
 }
