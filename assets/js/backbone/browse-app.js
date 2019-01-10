@@ -252,7 +252,14 @@ var BrowseRouter = Backbone.Router.extend({
             this.renderInternshipView(model, community);
           }
         } else {
-          this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
+          this.taskShowController = new TaskShowController({
+            model: model,
+            community: community,
+            router: this,
+            id: id,
+            action: action,
+            data: this.data,
+          });
         }
       }.bind(this));
     }.bind(this));
@@ -266,7 +273,14 @@ var BrowseRouter = Backbone.Router.extend({
       model.loadCommunity(model.get('communityId'), function (community) {
         if (_.isEmpty(community) || community.targetAudience !== 'Students') {
           Backbone.history.navigate('/tasks/' + id + (action ? '/' + action : ''), { replace: true });
-          this.taskShowController = new TaskShowController({ model: model, router: this, id: id, action: action, data: this.data });
+          this.taskShowController = new TaskShowController({
+            model: model,
+            community: community,
+            router: this,
+            id: id,
+            action: action,
+            data: this.data,
+          });
         } else {
           $.ajax({
             url: '/api/lookup/languageProficiencies',
