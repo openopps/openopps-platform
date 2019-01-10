@@ -542,7 +542,9 @@ var TaskListView = Backbone.View.extend({
       if (key == 'term') {
         this.filters.term = value;
       } else if (key == 'page') {
-        this.filters.page = value;
+        if (!isNaN(value)) {
+          this.filters.page = parseInt(value);
+        }
       } else {
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {

@@ -46,6 +46,9 @@
               </div>
             </div>
             <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">
+                <% if (user) { %>
+                  <div><a class="usajobs-opop-actions__duplicate" href="#duplicate" id="task-copy"><i class="fa fa-copy"></i> Duplicate</a></div>
+                <% } %>
               <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
               <% if (model.canEditTask && model.state != 'completed') { %>
                 <div><a class="usajobs-opop-actions__save" href="<%- model.id %>/edit" id="task-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
@@ -95,10 +98,12 @@
           </div>
           <div class="usa-width-two-thirds opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
-              <h3>What you'll do</h3>
-              <%= model.detailsHtml %>
+
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
+              
+              <h3>What you'll do</h3>
+              <%= model.detailsHtml %>             
               <% if (model.language.length > 0) { %>
               <h3>Foreign language</h3>
               <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>  

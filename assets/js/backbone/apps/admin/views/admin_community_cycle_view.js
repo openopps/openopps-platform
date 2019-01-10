@@ -4,6 +4,7 @@ var $ = require('jquery');
 
 var AdminCommunityCycleTemplate = require('../templates/admin_community_cycle_template.html');
 var CycleModel = require('../../../entities/cycles/cycle_model');
+var ModalComponent = require('../../../components/modal');
 
 var AdminCommunityCycleView = Backbone.View.extend({
 
@@ -22,6 +23,36 @@ var AdminCommunityCycleView = Backbone.View.extend({
     };
     this.community = {};
     this.cycle = new CycleModel();
+    this.initializeListeners();
+  },
+
+  initializeListeners: function () {
+    this.listenTo(this.cycle, 'cycle:save:success', function (data) {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'create-cycle',
+        modalTitle: 'New cycle created',
+        modalBody: 'The new cycle ' + data.name + ' has been successfully created.',
+        primary: {
+          text: 'Close',
+          action: function () {
+            this.modalComponent.cleanup();
+            window.history.back();
+          }.bind(this),
+        },
+        secondary: {},
+      }).render();
+    });
+    this.listenTo(this.cycle, 'cycle:save:error', function (model, response, options) {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'create-cycle',
+        alert: 'error',
+        primary: null,
+        modalTitle: 'An error has occurred',
+        modalBody: response.responseText,
+      }).render();
+    });
   },
 
   render: function (replace) {
@@ -48,15 +79,7 @@ var AdminCommunityCycleView = Backbone.View.extend({
   renderTemplate: function () {
     _.extend(this.data, {
       community: this.community,
-      cycle: {
-        applyEndDate: '04/26/2019',
-        applyStartDate: '03/04/2019',
-        cycleEndDate: '08/09/2019',
-        cycleStartDate: '05/20/2019',
-        name: 'Summer 2019',
-        postingEndDate: '03/01/2019',
-        postingStartDate: '01/07/2019',
-      },
+      cycle: { },
     });
 
     var template = _.template(AdminCommunityCycleTemplate)(this.data);
@@ -79,7 +102,7 @@ var AdminCommunityCycleView = Backbone.View.extend({
     } else {
       var data = {
         cycleId: this.cycle.get('cycleId'),
-        community: this.community.communityId,
+        communityId: this.community.communityId,
         name: $('#cycle-title').val(),
         postingStartDate: this.getDateFromFormGroup('first-day-date'),
         postingEndDate: this.getDateFromFormGroup('last-day-date'),
@@ -125,28 +148,6 @@ var AdminCommunityCycleView = Backbone.View.extend({
         return true;
       }
     }.bind(this), false);
-    // if(completedBy) {
-    //   var iAbort = false;
-    //   try {
-    //     iAbort = (new Date(completedBy).toISOString().split('T')[0]) !== completedBy;
-    //   } catch (err) {
-    //     iAbort = true;
-    //   }
-    //   if(iAbort) {
-    //     $('#first-day-date').addClass('usa-input-error');
-    //     $('#first-day-date input').toggleClass('usa-input-inline usa-input-inline-error');
-    //     $('#first-day-date > .field-validation-error').show();
-    //   } else {
-    //     $('#first-day-date').removeClass('usa-input-error');
-    //     $('#first-day-date input').toggleClass('usa-input-inline-error usa-input-inline');
-    //     $('#first-day-date > .field-validation-error').hide();
-    //   }
-    //   abort = abort || iAbort;
-    // }
-
-    // if(abort) {
-    //   $('.usa-input-error').get(0).scrollIntoView();
-    // }
 
     return _.reduce(this.$el.find('.validate'), function (abort, child) {
       return abort || validate({ currentTarget: child });
