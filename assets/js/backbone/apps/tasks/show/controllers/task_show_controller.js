@@ -78,12 +78,17 @@ var TaskShowController = BaseView.extend({
 
     if (this.taskItemView) this.taskItemView.cleanup();
     if (this.taskEditFormView) this.taskEditFormView.cleanup();
+    if(this.options.community && this.options.community.communityType && this.options.community.communityTypeValue) {
+      this.madlibTags = this.madlibTags || {};
+      this.madlibTags[this.options.community.communityType.toLowerCase()] = [this.options.community.communityTypeValue];
+    }
     this.taskEditFormView = new TaskEditFormView({
       el: this.el,
       elVolunteer: '#task-volunteers',
       edit: true,
       taskId: this.model.attributes.id,
       model: this.model,
+      community: this.options.community,
       tags: this.tags,
       madlibTags: this.madlibTags,
       tagTypes: this.tagTypes,

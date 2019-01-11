@@ -20,7 +20,6 @@ var InternshipView = BaseView.extend({
   },
 
   initialize: function (options) {
-   
     this.options = options;
   },
 
@@ -93,7 +92,6 @@ var InternshipView = BaseView.extend({
       user: window.cache.currentUser,
       model: this.model.toJSON(),
       madlibTags: this.organizeTags(this.model.attributes.tags),
-      
     };
    
     _.each(['details', 'about'], function (part) {
