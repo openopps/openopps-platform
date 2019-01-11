@@ -27,12 +27,12 @@ var AdminCommunityCycleView = Backbone.View.extend({
   },
 
   initializeListeners: function () {
-    this.listenTo(this.cycle, 'cycle:save:success', function (data) {
+    this.listenTo(this.cycle, 'cycle:save:success', function (cycle) {
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
         id: 'create-cycle',
         modalTitle: 'New cycle created',
-        modalBody: 'The new cycle ' + data.name + ' has been successfully created.',
+        modalBody: 'The new cycle ' + cycle.get('name') + ' has been successfully created.',
         primary: {
           text: 'Close',
           action: function () {
@@ -127,30 +127,59 @@ var AdminCommunityCycleView = Backbone.View.extend({
     return validate(e);
   },
 
+  validDateGroup: function (dateGroup) {
+    var dateValue = this.getDateFromFormGroup(dateGroup);
+    if(dateValue.match(/^(0?[1-9]|1[0-2])\/(0?[1-9]|[1-2][0-9]|3[01])\/([2]\d{3}|\d{2})$/)) {
+      $('#' + dateGroup).removeClass('usa-input-error');
+      $('#' + dateGroup + ' input').removeClass('usa-input-inline-error usa-input-inline');
+      $('#' + dateGroup + ' > .error-date').hide();
+      return true;
+    } else {
+      $('#' + dateGroup).addClass('usa-input-error');
+      $('#' + dateGroup + ' input').addClass('usa-input-inline-error usa-input-inline');
+      $('#' + dateGroup + ' > .error-date').show();
+      return false;
+    }
+  },
+
+  validDateRange: function (dateRange) {
+    var validDates = _.reduce(dateRange, function (valid, dateGroup) {
+      return this.validDateGroup(dateGroup) && valid;
+    }.bind(this), true);
+    if(validDates) {
+      var startDate = new Date(this.getDateFromFormGroup(dateRange[0]));
+      var endDate = new Date(this.getDateFromFormGroup(dateRange[1]));
+      if(startDate < endDate) {
+        _.each(dateRange, function (dateGroup) {
+          $('#' + dateGroup).removeClass('usa-input-error');
+          $('#' + dateGroup + ' input').removeClass('usa-input-inline-error usa-input-inline');
+          $('#' + dateGroup + ' > .error-date-range').hide();
+        });
+        return true;
+      } else {
+        _.each(dateRange, function (dateGroup) {
+          $('#' + dateGroup).addClass('usa-input-error');
+          $('#' + dateGroup + ' input').addClass('usa-input-inline-error usa-input-inline');
+          $('#' + dateGroup + ' > .error-date-range').show();
+        });
+        return false;
+      }
+    } else {
+      return false;
+    }
+  },
+
   validateFields: function () {
     var invalidDates = _.reduce([
-      'first-day-date',
-      'last-day-date',
-      'start-application-date',
-      'stop-application-date',
-      'start-internship-date',
-      'stop-internship-date',
-    ], function (abort, dateGroup) {
-      if(this.getDateFromFormGroup(dateGroup).match(/\d{2}\/\d{2}\/\d{4}/) && new Date(this.getDateFromFormGroup(dateGroup)) != 'Invalid Date') {
-        $('#' + dateGroup).removeClass('usa-input-error');
-        $('#' + dateGroup + ' input').removeClass('usa-input-inline-error usa-input-inline');
-        $('#' + dateGroup + ' > .field-validation-error').hide();
-        return abort || false;
-      } else {
-        $('#' + dateGroup).addClass('usa-input-error');
-        $('#' + dateGroup + ' input').addClass('usa-input-inline-error usa-input-inline');
-        $('#' + dateGroup + ' > .field-validation-error').show();
-        return true;
-      }
+      ['first-day-date', 'last-day-date'],
+      ['start-application-date', 'stop-application-date'],
+      ['start-internship-date', 'stop-internship-date'],
+    ], function (abort, dateRange) {
+      return !this.validDateRange(dateRange) || abort;
     }.bind(this), false);
 
     return _.reduce(this.$el.find('.validate'), function (abort, child) {
-      return abort || validate({ currentTarget: child });
+      return validate({ currentTarget: child }) || abort;
     }, invalidDates);
 
   },
