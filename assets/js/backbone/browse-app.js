@@ -10,6 +10,7 @@ var ProfileEditController = require('./apps/profiles/edit/controllers/profile_ed
 var ProfileResetController = require('./apps/profiles/reset/controllers/profile_reset_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
 var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
+var StudentHomeController = require('./apps/profiles/home/internships/controllers/internships_controller');
 var TaskModel = require('./entities/tasks/task_model');
 var TaskListController = require('./apps/tasks/list/controllers/task_list_controller');
 var TaskSearchController = require('./apps/tasks/search/controllers/task_search_controller');
@@ -457,11 +458,27 @@ var BrowseRouter = Backbone.Router.extend({
     if (id) {
       id = id.toLowerCase();
     }
-    this.profileHomeController = new ProfileHomeController({
-      target: 'home',
-      el: '#container',
-      router: this,
-      data: this.data,
+    $.ajax({
+      url: '/api/task/communities',
+      dataType: 'json',
+      success: function (data) {
+        if(data.student.length > 0) {
+          this.studentHomeController = new StudentHomeController({
+            target: 'home',
+            el: '#container',
+            router: this,
+            data: this.data,
+          });
+        }
+        else {
+          this.profileHomeController = new ProfileHomeController({
+            target: 'home',
+            el: '#container',
+            router: this,
+            data: this.data,
+          });
+        }
+      },
     });
   },
 
