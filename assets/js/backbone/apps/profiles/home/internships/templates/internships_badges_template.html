@@ -1,0 +1,14 @@
+<div class="usajobs-opop-badges__body">
+  <h2>Badges</h2>
+  <% if (data.badges.length > 0) { %>
+    <ul class="profile-badges">
+      <% _.map(data.badges, function (b) { %>
+      <li class="profile-badge">
+        <% var filename = b.type.replace(' ', '-'); %>
+        <img src="/images/badges/<%- filename %>.png" alt="The <%- b.type %> badge is awarded when you <%- b.description %>" title="The <%- b.type %> badge is awarded when you <%- b.description %>">
+        <p><%- b.type %></p>
+      </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</div>
