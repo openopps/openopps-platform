@@ -176,7 +176,7 @@ padding: $size-default $size-default $size-M $size-default;
 
 
 .usajobs-grid.usajobs-open-opps-search__box {
-
+  background: $color-primary-darker;
   margin: 0 0 $size-M 0;
   padding: $size-default $size-default $size-M $size-default;
   color: $color-white;
@@ -372,7 +372,7 @@ padding: $size-default $size-default $size-M $size-default;
   padding: 1rem 0 0 0;
   color: $color-primary-darkest;
 
-  &.agency, &.skill, &.career, &.time, &.location, &.bureau, &.Office, &.language {
+  &.agency, &.skill, &.career, &.time, &.location {
     border-top: 0.5px solid #c8c8c8;
     padding-top: 1.5rem;
     margin-top: 3rem;
