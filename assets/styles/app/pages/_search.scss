@@ -148,6 +148,33 @@
   }
 }
 
+.usajobs-grid.usajobs-open-opps-intern-search__box {
+display: block;
+
+background-color: #fdb81e;
+padding: $size-default $size-default $size-M $size-default;
+}
+
+
+
+.logo {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  height: rem(75px);
+  width: rem(75px);
+  background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+  background-size: rem(75px);
+  background-repeat: no-repeat;
+
+  @include media($ML) {
+    background-size: rem(85px);
+    height: rem(85px);
+    width: rem(85px);
+  }
+}
+
+
 .usajobs-grid.usajobs-open-opps-search__box {
   background: $color-primary-darker;
   margin: 0 0 $size-M 0;
