@@ -203,7 +203,7 @@ var NavView = Backbone.View.extend({
 
   menuClick2: function (e) {
     if (e.preventDefault) e.preventDefault();
-    Backbone.history.navigate('/tasks', {trigger: true});
+    Backbone.history.navigate('/search', {trigger: true});
     this.activePage();
   },
 

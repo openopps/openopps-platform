@@ -23,7 +23,6 @@ TaskController = Backbone.View.extend({
   },
 
   add: function (e) {
-    this.navigate()
     Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 
