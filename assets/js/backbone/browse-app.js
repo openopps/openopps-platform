@@ -458,28 +458,22 @@ var BrowseRouter = Backbone.Router.extend({
     if (id) {
       id = id.toLowerCase();
     }
-    $.ajax({
-      url: '/api/task/communities',
-      dataType: 'json',
-      success: function (data) {
-        if(data.student.length > 0) {
-          this.studentHomeController = new StudentHomeController({
-            target: 'home',
-            el: '#container',
-            router: this,
-            data: this.data,
-          });
-        }
-        else {
-          this.profileHomeController = new ProfileHomeController({
-            target: 'home',
-            el: '#container',
-            router: this,
-            data: this.data,
-          });
-        }
-      },
-    });
+
+    if (window.cache.currentUser.hiringPath == 'student') {
+      this.studentHomeController = new StudentHomeController({
+        target: 'home',
+        el: '#container',
+        router: this,
+        data: this.data,
+      });
+    } else {
+      this.profileHomeController = new ProfileHomeController({
+        target: 'home',
+        el: '#container',
+        router: this,
+        data: this.data,
+      });
+    }
   },
 
   showApply: function () {
