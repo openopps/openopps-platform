@@ -390,7 +390,8 @@ padding: $size-default $size-default $size-M $size-default;
 #stateFilters label,
 #timeFilters label,
 #locationFilters label,
-#agencyFilters label {
+#agencyFilters label, 
+#intern-program-list label {
   margin: 0px 2px 6px; // because IE
 }
 
@@ -403,4 +404,284 @@ padding: $size-default $size-default $size-M $size-default;
   max-width: 100%;
   margin-right: 0;
   padding: 1.5rem 3rem 3rem;
+}
+
+.student-internships {
+  margin-bottom: $size-M;
+}
+
+.student-internships-search {
+  padding-left: 1em;
+  padding-right: 1em;
+
+  @include media($L) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  &__box {
+    display: block;
+    background-color: $color-gold-light;
+    padding-top: $size-default;
+
+    h1 {
+      color: $color-base;
+
+      @include media($L-down) {
+        margin-left: $size-default;
+      }
+    }
+  }
+
+  .usajobs-nav__search form {
+    max-width: inherit;
+  }
+
+  .usajobs-nav__search label {
+    max-width: inherit;
+    color: #ffffff;
+  }
+
+  &-keywords-container {
+
+    @include media($M) {
+      float: left;
+      display: block;
+      margin-right: 4.8291579146%;
+      width: 47.5854210427%;
+    }
+
+    @include media($L) {
+      float: left;
+      display: block;
+      margin-right: 2.3576515979%;
+      width: 48.821174201%;
+    }
+
+    &:last-child {
+      @include media($M) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &-location-container {
+
+    @include media($M) {
+      float: left;
+      display: block;
+      margin-right: 4.8291579146%;
+      width: 47.5854210427%;
+      margin-right: 0;
+    }
+
+    @include media($L) {
+      float: left;
+      display: block;
+      margin-right: 2.3576515979%;
+      width: 31.7615656014%;
+    }
+
+    &:last-child {
+      @include media($M) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &-button-container {
+    text-align: right;
+
+    @include media($M) {
+      float: left;
+      display: block;
+      margin-right: 4.8291579146%;
+      width: 100%;
+    }
+
+    @include media($L) {
+      float: left;
+      display: block;
+      margin-right: 2.3576520234%;
+      width: 14.7019566472%;
+      margin-right: 0;
+      margin-top: 4.5rem;
+      text-align: left;
+    }
+
+    &:last-child {
+      @include media($M) {
+        margin-right: 0;
+      }
+    }
+    
+    .student-internships-search-button {
+      width: 100%;
+      margin-top: 1.1rem;
+      padding-top: 1.3rem;
+      padding-bottom: 1.3rem;    
+    }
+  }
+
+  &-keywords-input[type="text"], &-location-input[type="text"] {
+    position: relative;
+    max-width: inherit;
+  }
+
+  &-keywords-icon, &-location-icon {
+    color: #00a6d2;
+  }
+}
+
+.student-internships-search-opportunity-requestor {
+  display: flex;
+  margin-top: 0;
+  // align-items: center;
+  flex-wrap: wrap;
+  flex-direction: column;
+
+  @include media($L) {
+    align-items: flex-end;
+    // flex-direction: row;
+  }
+
+  &__wrapper {
+    position: relative;
+    width: auto;
+    margin-top: 0;
+
+    @include media($L-down) {
+      margin-left: $size-default;
+      margin-right: $size-default;
+      padding-top: $size-default;
+    }
+
+    @include media($L) {
+      bottom: $size-default;
+    }
+  }
+
+  &__figure-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    @include media($M-down) {
+      margin-bottom: $size-default;
+      flex-wrap: nowrap;
+      flex-direction: row;
+    }
+
+    @include media($M) {
+      justify-content: center;
+      align-items: center;
+      margin-top: 4rem;
+      margin-bottom: 0;
+      width: 10.25rem;
+      text-align: center;
+    }
+  }
+
+  &__figure {
+    flex-shrink: 0;
+    width: 4.6rem;
+    height: 4.6rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @include media($M) {
+      width: 6.5rem;
+      height: 6.5rem;
+    }
+
+    @include media($L) {
+      padding-bottom: 0;
+    }
+
+    img {
+      @include media($M) {
+        width: 6.5rem;
+        height: 6.5rem;
+      }  
+    }
+  }
+
+  &__figure.dos {
+    flex-shrink: 0;
+    width: 4.6rem;
+    height: 4.6rem;
+    display: flex;
+    background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+    background-size: 4.6rem;
+    background-repeat: no-repeat;
+
+    @include media($M) {
+      width: 6.5rem;
+      height: 6.5rem;
+      background-size: 6.5rem;
+    }
+
+    @include media($L) {
+      padding-bottom: 0;
+    }
+
+    img {
+      border-radius: 50%;
+    }
+  }
+
+  &__initials {
+    font-weight: bold;
+
+    @include media($M) {
+      font-size: $h3-font-size;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    padding: 0 $size-S;
+
+    @include media($M) {
+      padding: 0;
+    }
+  }
+
+  &__on {
+    margin: 0;
+    font-size: $small-font-size;
+    color: $color-base;
+    display: block;
+
+    @include media($M) {
+      text-align: center;
+    }
+  }
+
+  & &__name {
+    margin: 0;
+
+    @include media($M-down) {
+      line-height: 2.5;
+    }    
+
+    a {
+      color: $color-primary;
+      text-decoration: none;
+    }
+  }
+
+  &__status {
+
+    @include media($XL) {
+      flex: 1;
+    }
+
+    .usajobs-pill--opportunity-status {
+      margin: 0 0 0 auto;
+    }
+  }
 }
