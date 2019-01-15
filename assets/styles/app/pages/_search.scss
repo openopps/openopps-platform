@@ -148,8 +148,35 @@
   }
 }
 
+.usajobs-grid.usajobs-open-opps-intern-search__box {
+display: block;
+
+background-color: #fdb81e;
+padding: $size-default $size-default $size-M $size-default;
+}
+
+
+
+.logo {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  height: rem(75px);
+  width: rem(75px);
+  background-image: url('../img/logo/png/dos-student-internship-program-logo.png');
+  background-size: rem(75px);
+  background-repeat: no-repeat;
+
+  @include media($ML) {
+    background-size: rem(85px);
+    height: rem(85px);
+    width: rem(85px);
+  }
+}
+
+
 .usajobs-grid.usajobs-open-opps-search__box {
-  background: $color-primary-darker;
+
   margin: 0 0 $size-M 0;
   padding: $size-default $size-default $size-M $size-default;
   color: $color-white;
@@ -345,7 +372,7 @@
   padding: 1rem 0 0 0;
   color: $color-primary-darkest;
 
-  &.agency, &.skill, &.career, &.time, &.location {
+  &.agency, &.skill, &.career, &.time, &.location, &.bureau, &.Office, &.language {
     border-top: 0.5px solid #c8c8c8;
     padding-top: 1.5rem;
     margin-top: 3rem;
