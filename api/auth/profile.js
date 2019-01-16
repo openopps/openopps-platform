@@ -52,7 +52,7 @@ async function updateProfileData (user, profile, tokenset) {
 }
 
 module.exports = {
-  get: async (tokenset, callback) => {
+  get: async (tokenset) => {
     return new Promise((resolve, reject) => {
       request(_.extend(requestOptions, { auth: { 'bearer': tokenset.access_token } }), async (err, res) => {
         if(err || res.statusCode !== 200) {
