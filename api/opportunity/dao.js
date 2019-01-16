@@ -210,6 +210,7 @@ module.exports = function (db) {
     Comment: dao({ db: db, table: 'comment' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
+    Cycle: dao({ db: db, table: 'cycle' }),
     LanguageSkill:dao({ db: db, table: 'language_skill' }),
     Country:dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
