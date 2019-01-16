@@ -14,11 +14,8 @@ function initializeAuditData (ctx) {
 
 var router = new Router();
 
-router.get('/api/community/:id', auth, async (ctx, next) => {
+router.get('/api/community/:id', async (ctx, next) => {
   ctx.body = await service.findById(ctx.params.id);
-  // await service.findById(ctx.params.id, (community) => {
-  //   ctx.body = community;
-  // });
 });
 
 router.post('/api/community/member', auth, async (ctx, next) => {
