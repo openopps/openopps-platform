@@ -74,6 +74,7 @@ function processUserTags (user, tags) {
 }
 
 async function createNewUserTag (tag, user) {
+  tag.name = tag.name.trim();
   return await dao.TagEntity.insert(tag).then(async (t) => {
     return await createUserTag(t.id, user);
   }).catch(err => {
