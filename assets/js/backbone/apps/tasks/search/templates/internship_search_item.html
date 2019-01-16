@@ -1,0 +1,100 @@
+<div class="usajobs-open-opps-opportunity" data-id="<%- item.id %>">
+  <a href="/tasks/<%- item.id %>">  
+    <div class="usajobs-open-opps-opportunity__body">
+      <span class="usajobs-open-opps-opportunity__title" itemprop="title">
+        <%- item.title %>
+      </span>
+      <div class="usajobs-open-opps-opportunity__desc">
+        <%= item.descriptionHtml %>
+      </div>
+      <!-- <% if (item.restrict) { %>
+      <p class="usajobs-open-opps-opportunity__agency-only">
+        <%- item.restrict.name %>
+      </p>
+      <% } %> -->
+      <ul class="usajobs-open-opps-opportunity__details">
+        <% if (!item.locations) { %>
+        <li class="usajobs-open-opps-opportunity__detail-item">
+          <svg class="svg-inline--fa fa-map-marker fa-w-12" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="map-marker" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"></path></svg><!-- <span class="fas fa-map-marker"></span> --> Virtual
+        </li>
+        <% } %>
+        <% _.each(tagShow, function (tagType) { %>
+        <% if (item.tags[tagType]) { %>
+          <% _.each(item.tags[tagType], function (t, i) { %>
+            <% if (t.type !== 'skill') { %>
+        <li class="usajobs-open-opps-opportunity__detail-item">
+          <span class="fas <%- tagConfig.tags[tagType].icon %> fa-w-16"></span>
+              <%- t.name %><% if (i + 1 < item.tags[tagType].length) { %>,<% } %>
+            <% } %>
+          <% }); %>
+        </li>
+        <% } %>
+        <% }); %>
+      </ul>
+      <div class="skills">
+        <% _.each(_.first(item.skills, 5), function (t) { %>
+          <span class="skill-label clickable-filter"><%- t.name %></span>
+        <% }); %>
+        <% if (_.size(item.skills) > 5) { %>
+          <span class="skill-label">+ <%- _.size(item.skills) - 5 %></span>
+        <% } %>
+      </div>
+      <div class="career-field-card">
+        <% if (!_.isEmpty(item.careers)) { %>
+          <p>Career field:
+          <% _.each(item.careers, function (t, index, list) { %>
+            <%- t.name %>
+          <% }); %>
+          </p>
+        <% } %>
+        <% if (!_.isEmpty(item.series)) { %>
+          <p>Series:
+          <% _.each(item.series, function (t, index, list) { %>
+            <%- t.name %>
+          <% }); %>
+          </p>
+        <% } %>    
+        <% if (!_.isEmpty(item.keywords)) { %>
+          <p>Related keyword:
+          <% _.each(_.first(item.keywords, 5), function (t, index, list) { %>
+            <%- t %>
+          <% }); %>
+          <% if (_.size(item.keywords) > 5) { %>
+            <span>+ <%- _.size(item.keywords) - 5 %></span>
+          <% } %>
+          </p>
+        <% } %>
+      </div>
+      <div class="usajobs-open-opps-opportunity-requestor__wrapper">
+        <div class="usajobs-open-opps-opportunity-requestor">
+          <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+            <!-- <div class="usajobs-open-opps-opportunity-requestor__figure <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>> -->
+            <div class="usajobs-open-opps-opportunity-requestor__figure">
+              <!-- <% if (item.owner.photoId) { %>
+                <img src="/api/user/photo/<%- item.owner.id %>" alt="<%- item.owner.name %>">
+              <% } else { %>
+                <div class="usajobs-open-opps-opportunity-requestor__initials"><%- item.owner.initials %></div>
+              <% } %> -->
+              <img src="/img/logo/png/dos-student-internship-program-logo.png" alt="Student Internship Program (Unpaid)">
+            </div>
+            <div class="usajobs-open-opps-opportunity-requestor__body">
+              <p class="usajobs-open-opps-opportunity-requestor__name">
+                <!-- <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %> -->
+                U.S. Department of State
+              </p>
+              <span class="usajobs-open-opps-opportunity-requestor__on">
+                  <!-- Posted on <%- moment(item.publishedAt).format('MM/DD/YY') %> -->
+                  Student Internship Program (Unpaid)
+              </span>
+            </div>
+          </div>
+          <!-- <div class="usajobs-open-opps-opportunity-requestor__status">
+            <div class="usajobs-pill--opportunity-status status-<%= item.status.toLowerCase().replace(' ', '-') %>">
+              <%= item.status.charAt( 0 ).toUpperCase() + item.status.slice( 1 ) %>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
