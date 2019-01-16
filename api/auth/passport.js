@@ -5,6 +5,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
+const Profile = require('./profile');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -43,6 +44,54 @@ async function userFound (user, tokenset, done) {
     user.id_token = tokenset.id_token,
     done(null, user);
   }
+}
+
+function processFederalEmployeeLogin (tokenset, done) {
+  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
+    userFound(user, tokenset, done);
+  }).catch(async () => {
+    var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => { 
+      return { 
+        linkedId: tokenset.claims.sub,
+        governmentUri: tokenset.claims['usaj:governmentURI'],
+      };
+    });
+    done(null, _.extend(account, { 
+      type: 'staging',
+      access_token: tokenset.access_token,
+      id_token: tokenset.id_token,
+    }));
+  });
+}
+
+function processStudentLogin (tokenset, done) {
+  //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
+  dao.User.findOne('linked_id = ? ', tokenset.claims.sub).then(user => {
+    userFound(user, tokenset, done);
+  }).catch(async () => {
+    // create new account
+    await Profile.get(tokenset).then(async (profile) => {
+      var user = {
+        name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+        givenName: profile.GivenName,
+        middleName: profile.MiddleName,
+        lastName: profile.LastName,
+        linkedId: tokenset.claims.sub,
+        username: profile.URI,
+        hiringPath: 'student',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        disabled: false,
+        isAdmin: false,
+      };
+      await dao.User.insert(user).then(user => {
+        done(null, _.extend(user, {
+          access_token: tokenset.access_token,
+          id_token: tokenset.id_token,
+        }));
+      });
+    });
+  });
 }
 
 passport.serializeUser(function (user, done) {
@@ -114,24 +163,12 @@ if(openopps.auth.oidc) {
     },
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
-    if(tokenset.claims['usaj:hiringPath'] != 'fed' || !tokenset.claims['usaj:governmentURI']) {
-      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub }});
+    if (tokenset.claims['usaj:hiringPath'] == 'fed' && tokenset.claims['usaj:governmentURI']) {
+      processFederalEmployeeLogin(tokenset, done);
+    } else if (tokenset.claims['usaj:hiringPath'] == 'student') {
+      processStudentLogin(tokenset, done);
     } else {
-      dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
-        userFound(user, tokenset, done);
-      }).catch(async () => {
-        var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => { 
-          return { 
-            linkedId: tokenset.claims.sub,
-            governmentUri: tokenset.claims['usaj:governmentURI'],
-          };
-        });
-        done(null, _.extend(account, { 
-          type: 'staging',
-          access_token: tokenset.access_token,
-          id_token: tokenset.id_token,
-        }));
-      });
+      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub }});
     }
   }));
 }

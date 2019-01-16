@@ -6,6 +6,7 @@ var Bootstrap = require('bootstrap');
 var TasksCollection = require('../../../../entities/tasks/tasks_collection');
 var TaskModel = require('../../../../entities/tasks/task_model');
 var TaskListView = require('../views/task_search_view');
+var InternshipListView = require('../views/internship_search_view');
 
 TaskController = Backbone.View.extend({
   events: {
@@ -15,15 +16,24 @@ TaskController = Backbone.View.extend({
   initialize: function (options) {
     var self = this;
     self.options = options;
-    this.taskListView = new TaskListView({
-      collection: new TasksCollection(),
-      el: self.el,
-      queryParams: self.options.queryParams,
-    }).render();
+  
+    if (window.cache.currentUser.hiringPath == 'student') {
+      this.taskListView = new InternshipListView({
+        collection: new TasksCollection(),
+        el: self.el,
+        queryParams: self.options.queryParams,
+      }).render();
+    }
+    else{
+      this.taskListView = new TaskListView({
+        collection: new TasksCollection(),
+        el: self.el,
+        queryParams: self.options.queryParams,
+      }).render();
+    }
   },
 
   add: function (e) {
-    this.navigate()
     Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 

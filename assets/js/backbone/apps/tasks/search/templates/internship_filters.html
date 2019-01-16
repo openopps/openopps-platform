@@ -1,0 +1,66 @@
+<div class="usajobs-open-opps-opportunity ">
+        <div class="usajobs-search-filter-nav" aria-hidden="true">
+            <div class="usajobs-search-filter-nav__body">
+                <span class="fas fa-sliders-h"></span> Filters
+                <span class="usajobs-search-filter-nav__results"><%= taskFilteredCount %> opportunities found</span>
+                <a href="javascript:void(0);" class="usajobs-search-filter-nav__back" title="Filters">
+                    <span class="sr-only">Close</span><span class="fas fa-times" title="Close"></span>
+                </a>
+            </div>
+        </div>
+        <div class="usajobs-search-filters__container" id="filters-container">
+            <a href="https://usajobs.github.io/openopps-help/opportunity/search/" class="usajobs-opop-section__help" target="_blank">
+            <span class="fas fa-question-circle" title="Help"></span> Help
+            <span class="sr-only">Opens in a new window</span>
+            </a>
+            <h3>Filters</h3>
+            <h4 class="usajobs-search-filters__title">Program</h4>  				 
+        <ul class="usa-unstyled-list">                           
+                  <li>
+                    <input id="intern-dos" type="radio" name="internship-program" value="dos" >
+                    <label for="intern-dos">U.S.Department of State Student Internship Program(Unpaid)</label> 
+                    
+                  </li>
+                  <li>
+                    <input id="intern-sfs" type="radio" name="internship-program" value="sfs">
+                    <label for="intern-sfs">Virtual Student Federal Service(VSFS)</label> 
+                    
+                  </li>
+                </ul>
+
+            <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
+            </ul>
+            <ul id="search-tags" class="nav nav-pills nav-stacked nav-search">
+            </ul>
+    
+            <div class="search-clear" style="display: none;">
+                <div class="align-right">
+                <a href="#" id="search-clear" class="btn btn-sm btn-c0"><i class="fa fa-remove"></i> Clear Search Criteria</a>
+                </div>
+            </div>
+    
+            <h4 class="usajobs-search-filters__title skill">Skill</h4>
+            <input type="text" id="skill" title="Skill" />
+
+            <h4 class="usajobs-search-filters__title career">Language</h4>
+            <input id="languageId" class="dropdown"/>
+            <div class="agencyselect">
+                    <h4 class="usajobs-search-filters__title career ">Agency</h4>
+                    <input id="agencyId" class="dropdown "/>
+            </div>           
+            
+             <div id="dossection" class="dossection">
+                    <h4 class="usajobs-search-filters__title career">Bureau</h4>
+                    <select id="bureau" class="dropdown">
+                        <option>Bureau Test</option>         
+                    </select>
+        
+                    <h4 class="usajobs-search-filters__title career">Office/post</h4>
+                    <select id="office" class="dropdown">
+                        <option>Office Test</option>           
+                    </select>  
+             </div>  
+                     
+        </div>
+    </div>
+    
