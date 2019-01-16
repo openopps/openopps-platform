@@ -257,7 +257,8 @@ CREATE TABLE midas_user (
     "deletedAt" timestamp with time zone,
     "completedTasks" integer DEFAULT 0 NOT NULL,
     "isAgencyAdmin" boolean DEFAULT false NOT NULL,
-    agency_id integer
+    agency_id integer,
+    hiring_path character varying NOT NULL DEFAULT 'fed'::character varying
 );
 
 
