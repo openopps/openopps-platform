@@ -35,9 +35,14 @@ router.get('/api/user', async (ctx, next) => {
 router.get('/api/user/:id', auth, async (ctx, next) => {
   if(ctx.params.id == ctx.state.user.id) {
     ctx.body = await service.populateBadgeDescriptions(ctx.state.user);
+  } else if (ctx.state.user.hiringPath != 'fed') {
+    ctx.status = 403;
   } else {
     var profile = await service.getProfile(ctx.params.id);
-    if(profile) {
+    if(profile && profile.hiringPath != 'fed') {
+      // Log unauthorized data access
+      ctx.status = 403;
+    } else if (profile) {
       profile.canEditProfile = await service.canAdministerAccount(ctx.state.user, ctx.params);
       ctx.body = profile;
     } else {

@@ -74,28 +74,7 @@ var Profile = BaseController.extend({
     // if the profile fetch fails, check if it is due to the user
     // not being logged in
     this.listenTo(this.model, 'profile:fetch:error', function (model, response) {
-      // if the user isn't logged in, trigger the login window
-      if (response.status === 401 || response.status === 403) {
-        window.cache.userEvents.trigger('user:request:login', {
-          message: 'You must be logged in to view profiles',
-          disableClose: false,
-        });
-      } else {
-        var data = {
-          alert: {
-            message: '<strong>Unable to load profile.  Please reload this page to try again.</strong><br/>Error: ',
-          },
-        };
-        // check if the response provided an error
-        if (response.responseText) {
-          var err = JSON.parse(response.responseText);
-          if (err.message) {
-            data.alert.message += _.escape(err.message);
-          }
-        }
-        var template = _.template(AlertTemplate)(data);
-        self.$el.html(template);
-      }
+      Backbone.history.navigate('/home', { trigger: true, replace: true });
     });
   },
 
