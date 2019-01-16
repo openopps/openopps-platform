@@ -446,7 +446,6 @@ async function copyOpportunity (attributes, user, done) {
     bureau:results.bureau,
     cityName:results.cityName,
     cycleId:results.cycleId,
-    cycleName:results.cycleName,
     countryId:results.countryId,
     countrySubdivisionId:results.countrySubdivisionId,
     interns:results.interns,
