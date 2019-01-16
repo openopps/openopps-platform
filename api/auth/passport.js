@@ -5,6 +5,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
+const Profile = require('./profile');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -64,7 +65,33 @@ function processFederalEmployeeLogin (tokenset, done) {
 }
 
 function processStudentLogin (tokenset, done) {
-  done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
+  //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
+  dao.User.findOne('linked_id = ? ', tokenset.claims.sub).then(user => {
+    userFound(user, tokenset, done);
+  }).catch(async () => {
+    // create new account
+    await Profile.get(tokenset).then(async (profile) => {
+      var user = {
+        name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+        givenName: profile.GivenName,
+        middleName: profile.MiddleName,
+        lastName: profile.LastName,
+        linkedId: tokenset.claims.sub,
+        username: profile.URI,
+        hiringPath: 'student',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        disabled: false,
+        isAdmin: false,
+      };
+      await dao.User.insert(user).then(user => {
+        done(null, _.extend(user, {
+          access_token: tokenset.access_token,
+          id_token: tokenset.id_token,
+        }));
+      });
+    });
+  });
 }
 
 passport.serializeUser(function (user, done) {
