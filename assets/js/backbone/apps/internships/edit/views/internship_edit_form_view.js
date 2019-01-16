@@ -42,13 +42,12 @@ var InternshipEditFormView = Backbone.View.extend({
     this.data                   = {};
     this.data.newTag            = {};
     this.dataLanguageArray      = [];
-    this.deleteLanguageArray  =[];
-   
-   
-    
+    this.deleteLanguageArray    = [];
+    this.cycles                 = [];
     this.tagSources = options.tagTypes;  
 
     this.initializeListeners();
+
     this.listenTo(this.options.model, 'task:update:success', function (data) {
       Backbone.history.navigate('internships/' + data.attributes.id, { trigger: true });
       if(data.attributes.state == 'submitted') {
@@ -99,14 +98,11 @@ var InternshipEditFormView = Backbone.View.extend({
   changedInternsTimeFrame: function (e){
     if($('[name=internship-timeframe]:checked').length>0){     
       $('#internship-start-End>.field-validation-error').hide();
-     
     }
   },
 
   deleteLanguage:function (e){
-   
     var dataAttr=$(e.currentTarget).attr('data-id');
-      
     this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
     var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
     this.dataLanguageArray= updateArray;
@@ -133,7 +129,6 @@ var InternshipEditFormView = Backbone.View.extend({
   
   getDataFromLanguagePage: function (){
     var modelData = {
-         
       languageId:$('#languageId').val(),
       readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
       readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
@@ -142,7 +137,6 @@ var InternshipEditFormView = Backbone.View.extend({
       spokenSkillLevel:$('[name=spoken-skill-level]:checked + label').text(),
       writingProficiencyId:$('[name=written-skill-level]:checked').val(),
       writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
-      
     };
     return modelData;
   },
@@ -171,9 +165,11 @@ var InternshipEditFormView = Backbone.View.extend({
       data: this.dataLanguageArray,     
     });
     $('#lang-1').html(languageTemplate);
-  },  
+  }, 
+
   render: function () {
     var compiledTemplate;
+    this.initializeCycle();
    
     this.data = {
       data: this.model.toJSON(),
@@ -185,16 +181,17 @@ var InternshipEditFormView = Backbone.View.extend({
       ui: UIConfig,
       agency: this.agency,
       languageProficiencies: this.options.languageProficiencies,
+      cycles: this.cycles,
     },
-   
+
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize();
    
     if(this.model.attributes.language && this.model.attributes.language.length>0){
-      this.dataLanguageArray = this.model.attributes.language;
-       
+      this.dataLanguageArray = this.model.attributes.language; 
     }
+
     this.renderLanguages();
     this.initializeFormFields();
     this.initializeCountriesSelect();
@@ -204,6 +201,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.initializeTextAreaDetails();
     this.initializeTextAreaSkills();
     this.initializeTextAreaTeam();
+    
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
       $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
       $('#keywords').attr('aria-hidden', false);
@@ -214,13 +212,15 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#search-results-loading').hide();
     return this;
   },
+
   initializeFormFields: function (){
     $('#needed-interns').val(this.model.attributes.interns);
-    $('#intern-year').val(this.model.attributes.cycleYear);
-    $('input[name=internship-timeframe][value=' + this.model.attributes.cycleSemester +']').prop('checked', true);    
+    // $('#intern-year').val(this.model.attributes.cycleYear);
+    $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);    
     $('#task_tag_bureau').val(this.model.attributes.bureau);
     $('#task_tag_office').val(this.model.attributes.office);
   },
+
   initializeSelect2: function () {
     var formatResult = function (object) {
       var formatted = '<div class="select2-result-title">';
@@ -303,6 +303,17 @@ var InternshipEditFormView = Backbone.View.extend({
       rows: 6,
       validate: ['empty','html'],
     }).render();
+  },
+
+  initializeCycle: function () {
+    $.ajax({
+      url: '/api/cycle/community/' + this.options.community.communityId,
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.cycles = data;
+      }.bind(this),
+    });
   },
 
   initializeListeners: function () {
@@ -437,6 +448,7 @@ var InternshipEditFormView = Backbone.View.extend({
     }.bind(this));
     $('#languageId').focus();
   },
+  
   initializeCountriesSelect: function () {  
     var country= this.model.attributes.country;
     $('#task_tag_country').select2({    
@@ -528,7 +540,6 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#task_tag_countrySubdivision').focus();    
   },
  
-
   submit: function (e) {
     if ( e.preventDefault ) { e.preventDefault(); }
     if ( e.stopPropagation ) { e.stopPropagation(); }
@@ -676,10 +687,9 @@ var InternshipEditFormView = Backbone.View.extend({
       bureau                : this.$('#task_tag_bureau').val(),
       office                : this.$('#task_tag_office').val(),
       interns               : this.$('#needed-interns').val(),
-      timeframe             : this.$('input[name=internship-timeframe]:checked').attr('id'),
-      cycleYear             : this.$('#intern-year').val(),
-      cycleSemester         : this.$('[name=internship-timeframe]:checked').val(),
-     
+      // timeframe             : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      cycleName             : this.$('input[name=internship-timeframe]:checked').val(),
     };
 
     if($('.opportunity-location.selected').val() !== 'anywhere') {
@@ -703,11 +713,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   getTagsFromInternPage: function () {
     var tags = [];
-    
     tags.push.apply(tags,this.$('#task_tag_skills').select2('data'));
-    
-    
-
     return tags;
   },
 

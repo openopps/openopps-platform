@@ -34,6 +34,7 @@ async function findById (id, loggedIn) {
       task.countrySubdivision=countrySubData;
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
+    task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
   }
   task.volunteers = loggedIn ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
@@ -443,13 +444,12 @@ async function copyOpportunity (attributes, user, done) {
     office:results.office,
     bureau:results.bureau,
     cityName:results.cityName,
-    cycleSemester:results.cycleSemester,
-    cycleYear:results.cycleYear,
+    cycleId:results.cycleId,
+    cycleName:results.cycleName,
     countryId:results.countryId,
     countrySubdivisionId:results.countrySubdivisionId,
     interns:results.interns,
     language:language,
-
   };
   if(await isStudent(results.userId,results.id)){
     await dao.Task.insert(intern)
@@ -598,5 +598,4 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
-  
 };
