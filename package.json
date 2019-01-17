@@ -81,6 +81,7 @@
     "select2": "3.5.2-browserify",
     "stringify": "^5.2.0",
     "underscore": "^1.8.3",
+    "url-search-params-polyfill": "^5.0.0",
     "uswds": "^1.4.5",
     "uuid": "^3.2.1",
     "validator": "^9.4.0"

@@ -14,21 +14,21 @@ TaskController = Backbone.View.extend({
   },
 
   initialize: function (options) {
-    var self = this;
-    self.options = options;
-  
-    if (window.cache.currentUser.hiringPath == 'student') {
+    this.options = options;
+    var hiringPath = window.cache.currentUser ? window.cache.currentUser.hiringPath : '';
+    if (hiringPath == 'student' && this.options.action != 'internships') {
+      Backbone.history.navigate('/search/internships', { trigger: true, replace: true });
+    } else if (this.options.action == 'internships') {
       this.taskListView = new InternshipListView({
         collection: new TasksCollection(),
-        el: self.el,
-        queryParams: self.options.queryParams,
+        el: this.el,
+        queryParams: this.options.queryParams,
       }).render();
-    }
-    else{
+    } else {
       this.taskListView = new TaskListView({
         collection: new TasksCollection(),
-        el: self.el,
-        queryParams: self.options.queryParams,
+        el: this.el,
+        queryParams: this.options.queryParams,
       }).render();
     }
   },
@@ -48,8 +48,8 @@ TaskController = Backbone.View.extend({
   },
 
   cleanup: function () {
-    this.taskListView.cleanup();
-    removeView(this.taskListView);
+    this.taskListView && this.taskListView.cleanup();
+    removeView(this);
   },
 
 });
