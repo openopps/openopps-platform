@@ -33,8 +33,8 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'searchTasks',
     'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
-    'tasks/:id(/)'                                  : 'showTask',
-    'tasks/:id/:action(/)'                          : 'showTask',
+    //'tasks/:id(/)'                                  : 'showTask',
+    'tasks/:id(/:action)(/)(?:queryStr)'            : 'showTask',
     'internships/new(?*queryString)'                : 'newInternship',
     'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
@@ -231,17 +231,17 @@ var BrowseRouter = Backbone.Router.extend({
     }
   },
 
-  showTask: function (id, action) {
+  showTask: function (id, action, queryStr) {
     this.cleanupChildren();
     var model = new TaskModel();
     this.listenTo(model, 'task:model:fetch:success', function (model) {
       model.loadCommunity(model.get('communityId'), function (community) {
         if (!_.isEmpty(community) && community.targetAudience == 'Students') {
-          Backbone.history.navigate('/internships/' + id + (action ? '/' + action : ''), { replace: true });
+          Backbone.history.navigate('/internships/' + id + (action ? '/' + action : '') + (queryStr ? '?' + queryStr : ''), { replace: true });
           if (action && action == 'edit') {
             this.renderInternshipEdit(model, community);
           } else {
-            this.renderInternshipView(model, community);
+            this.renderInternshipView(model, community, queryStr);
           }
         } else {
           this.taskShowController = new TaskShowController({
@@ -258,13 +258,13 @@ var BrowseRouter = Backbone.Router.extend({
     model.trigger('task:model:fetch', id);
   },
 
-  showInternship: function (id, action) {
+  showInternship: function (id, action, queryStr) {
     this.cleanupChildren();
     var model = new TaskModel();
     this.listenTo(model, 'task:model:fetch:success', function (model) {
       model.loadCommunity(model.get('communityId'), function (community) {
         if (_.isEmpty(community) || community.targetAudience !== 'Students') {
-          Backbone.history.navigate('/tasks/' + id + (action ? '/' + action : ''), { replace: true });
+          Backbone.history.navigate('/tasks/' + id + (action ? '/' + action : '') + (queryStr ? '?' + queryStr : ''), { replace: true });
           this.taskShowController = new TaskShowController({
             model: model,
             community: community,
@@ -381,7 +381,6 @@ var BrowseRouter = Backbone.Router.extend({
         el: '#container',
         model: model,
         community: community,
-       
         tags: [],
         madlibTags: {},
         tagTypes: tagTypes,

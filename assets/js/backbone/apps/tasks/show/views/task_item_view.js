@@ -51,6 +51,7 @@ var TaskItemView = BaseView.extend({
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
     this.initializeTags();
   },
 
@@ -74,6 +75,7 @@ var TaskItemView = BaseView.extend({
         show: false,
         open: false,
       },
+      fromSearch: this.params.has('fromSearch'),
     };
 
     if (['in progress', 'completed', 'canceled'].indexOf(taskState.toLowerCase()) > -1) {

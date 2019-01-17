@@ -21,6 +21,7 @@ var InternshipView = BaseView.extend({
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
   },
 
 
@@ -92,6 +93,7 @@ var InternshipView = BaseView.extend({
       user: window.cache.currentUser,
       model: this.model.toJSON(),
       madlibTags: this.organizeTags(this.model.attributes.tags),
+      fromSearch: this.params.has('fromSearch'),
     };
    
     _.each(['details', 'about'], function (part) {
