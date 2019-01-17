@@ -32,7 +32,7 @@ var BrowseRouter = Backbone.Router.extend({
     'tasks/create'                                  : 'createTask',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'searchTasks',
-    'search(/)(?:queryStr)'                          :'searchTasks',
+    'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
     'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id/:action(/)'                          : 'showTask',
     'internships/new(?*queryString)'                : 'newInternship',
@@ -204,11 +204,12 @@ var BrowseRouter = Backbone.Router.extend({
     return params;
   },
 
-  searchTasks: function (queryStr) {
+  searchTasks: function (action, queryStr) {
     this.cleanupChildren();
     this.taskSearchController = new TaskSearchController({
       el: '#container',
       router: this,
+      action: action,
       queryParams: this.parseQueryParams(queryStr),
       data: this.data,
     });
@@ -217,6 +218,8 @@ var BrowseRouter = Backbone.Router.extend({
   listProfiles: function (queryStr) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?profiles', { trigger: true });
+    } else if (window.cache.currentUser.hiringPath != 'fed') {
+      Backbone.history.navigate('/home', { trigger: true, replace: true });
     } else {
       this.cleanupChildren();
       this.profileListController = new ProfileListController({

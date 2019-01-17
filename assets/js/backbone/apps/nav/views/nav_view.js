@@ -99,7 +99,9 @@ var NavView = Backbone.View.extend({
     var template = _.template(NavTemplate)(data);
     this.$el.html(template);
     this.$el.localize();
-    this.activePage();
+    setTimeout(function () {
+      this.activePage();
+    }.bind(this), 100);
     if (sessionStorage.dismissLoginGovBanner) {
       $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
     }
@@ -124,7 +126,7 @@ var NavView = Backbone.View.extend({
       this.showSubMenu2();
       this.activateProfiles();
     }
-    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?$/)) {
+    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?(internships\/?)?$/)) {
       this.showSubMenu2();
       this.activateTasks();
     }
@@ -135,18 +137,18 @@ var NavView = Backbone.View.extend({
     if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
       //set Profile to active
       $('a[title="Profile"]').addClass('is-active');
-    }
-    else if (window.location.pathname.match(/admin/)) {
+    } else if (window.location.pathname.match(/admin/)) {
       //set Administration to active
       $('a[title="Administration"]').addClass('is-active');
-    }
-    else if (window.location.pathname.match(/profiles\/?$/)) {
+    } else if (window.location.pathname.match(/profiles\/?$/)) {
       //set People to active
       $('a[title="People"]').addClass('is-active');
-    }
-    else if (window.location.pathname.match(/tasks\/?$/)) {
+    } else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?$/)) {
       //set Opportunities to active
       $('a[title="Opportunities"]').addClass('is-active');
+    } else if (window.location.pathname.match(/search\/internships\/?$/)) {
+      //set Internships to active
+      $('a[title="Internships"]').addClass('is-active');
     }
   },
 
@@ -189,10 +191,17 @@ var NavView = Backbone.View.extend({
     $('a[title="Search Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
     $('a[title="Search Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
 
-    //set Opportunities to active
-    $('a[title="Opportunities"]').addClass('is-active');
-    $('a[title="Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
-    $('a[title="Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
+    if (window.location.pathname.match(/search\/internships\/?$/)) {
+      //set Internships to active
+      $('a[title="Internships"]').addClass('is-active');
+      $('a[title="Internships"] > span').removeClass('usajobs-nav--openopps__section');
+      $('a[title="Internships"] > span').addClass('usajobs-nav--openopps__section-active');
+    } else {
+      //set Opportunities to active
+      $('a[title="Opportunities"]').addClass('is-active');
+      $('a[title="Opportunities"] > span').removeClass('usajobs-nav--openopps__section');
+      $('a[title="Opportunities"] > span').addClass('usajobs-nav--openopps__section-active');
+    }
   },
 
   menuClick: function (e) {
