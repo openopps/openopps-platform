@@ -117,7 +117,7 @@ var InternshipsView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     
-    if (t.hasClass('participated-show-all')) {
+    if (t.hasClass('applied-show-all')) {
       this.appliedView.options.showAll = true;
       this.appliedView.render();
     } else {
@@ -128,9 +128,9 @@ var InternshipsView = Backbone.View.extend({
 
   sortInternships: function (e) {
     var target = $(e.currentTarget)[0];
-    var data = this.data.tasks[target.id == 'sort-participated' ? 'applied' : 'saved'];
+    var data = this.data.tasks[target.id == 'sort-applied' ? 'applied' : 'saved'];
     var sortedData = [];
-    if(target.id == 'sort-participated' && target.value == 'state') {
+    if(target.id == 'sort-applied' && target.value == 'state') {
       sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
         return this.getStatus(item);
       }.bind(this));
@@ -145,7 +145,7 @@ var InternshipsView = Backbone.View.extend({
     if(target.value == 'updatedAt') {
       sortedData = sortedData.reverse();
     }
-    if(target.id == 'sort-participated') {
+    if(target.id == 'sort-applied') {
       this.appliedView.options.sort = target.value;
       this.appliedView.options.data = sortedData;
       this.appliedView.render();
