@@ -17,7 +17,7 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
 
-const internQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
+const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join task on country.country_id = task.country_id ' + 
   'where task."userId" = ? and task.id = ? ';
 
@@ -231,7 +231,7 @@ module.exports = function (db) {
       communityAdminsQuery: communityAdminsQuery,
       communitiesQuery: communitiesQuery,
       taskCommunitiesQuery:taskCommunitiesQuery,
-      intern:internQuery,
+      intern:countryQuery,
       countrySubdivision:countrySubdivisionQuery,
       languageList:languageListQuery,
     },

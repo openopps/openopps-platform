@@ -234,10 +234,16 @@ var InternshipListView = Backbone.View.extend({
     this.initializeSelect2();
     this.initializeLanguagesList();
     this.initializeAgencyList();
+    this.initializeHideFields();
    
     
   },
-    
+  initializeHideFields:function (){
+    $('.dossection').hide();
+    $('.agencyselect').hide();
+  },
+
+
   renderList: function (searchResults, page) {
     $('#search-results-loading').hide();
     $('#task-list').html('');
