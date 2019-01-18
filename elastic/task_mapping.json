@@ -19,6 +19,7 @@
             "taskLength":            { "type": "keyword", "normalizer": "lowercase" },
             "keywords":              { "type": "keyword", "normalizer": "lowercase" },
             "locationType":          { "type": "keyword", "normalizer": "lowercase" },
+            "targetAudience":        { "type": "long" },
             "skills": {
                 "properties": {
                     "id":   { "type": "long" },
@@ -40,6 +41,18 @@
             "careers": {
                 "properties": {
                     "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "languages": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "community": {
+                "properties": {
+                    "id": { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
                 }
             }

@@ -51,7 +51,10 @@ function toElasticOpportunity (value, index, list) {
     'locations': doc.location,
     'series': _.map(doc.series, (item) => { return  {id: item.id || 0, code: item.name.substring(0,4), name: item.name.replace(/.*\((.*)\).*/,'$1') };}),
     'careers': doc.career,
-    'keywords': _.map(doc.keywords, (item) => item.name)
+    'keywords': _.map(doc.keywords, (item) => item.name),
+    'targetAudience': doc.target_audience,
+    'languages': doc.languages,
+    'communityId': { id: doc.community_id, name: doc.community_name }
   };
 }
     
@@ -71,6 +74,9 @@ from (
     u.name,
     u.id as "ownerId",
     u."photoId",
+    c.target_audience,
+    c.community_id,
+    c.community_name,
     t.accepting_applicants as "acceptingApplicants",
     (
       select  
@@ -224,10 +230,23 @@ from (
           topictags.type = 'topic' and
           tt."task_tags" = t.id
       ) k
-    ) as topic
+    ) as topic,
+    (
+      select
+       array_to_json(array_agg(row_to_json(l)))
+      from (
+        select
+          language.language_id as "id",
+          language.value as "name"
+        from language
+          inner join language_skill ls on ls.language_id = language.language_id
+        where t.id = ls.task_id
+      ) l
+    ) as languages
   from task t
     inner join midas_user u on t."userId" = u.id  
-	left join agency a on t.agency_id = a.agency_id    
+  left join agency a on t.agency_id = a.agency_id
+  left join community c on c.community_id = t.community_id
   %s
 ) row`;
 

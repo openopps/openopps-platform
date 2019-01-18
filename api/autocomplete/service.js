@@ -29,9 +29,12 @@ async function languageByValue (value) {
   var result = await dao.Language.query(
     dao.query.language, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
   return result.map(tag=>{
-    tag.id=tag.languageId;
-    tag.field='value';
-    tag.value= tag.value;
+    tag.field = 'name';
+    tag.id = tag.languageId;
+    tag.type = 'language';
+    tag.name = tag.value;
+    tag.value = tag.value;
+    
     return tag;
   });
 }
@@ -65,6 +68,8 @@ async function agency (name) {
     tag.id = tag.agencyId;
     tag.field = 'name';
     tag.value = tag.name;
+    tag.name = tag.name;
+    tag.type = 'agency';
     return tag;
   });
 }

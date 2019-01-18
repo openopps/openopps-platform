@@ -6,6 +6,7 @@ var TagConfig = require('../../../../config/tag');
 var TagFactory = require('../../../../components/tag_factory');
 var InternshipListItem = require('../templates/internship_search_item.html');
 var InternshipListTemplate = require('../templates/internship_search_template.html');
+var SearchPills = require('../templates/search_pills.html');
 var NoListItem = require('../templates/no_search_results.html');
 var Pagination = require('../../../../components/pagination.html');
 var InternshipFilters = require('../templates/internship_filters.html');
@@ -28,7 +29,7 @@ var InternshipListView = Backbone.View.extend({
     this.collection = options.collection;
     this.queryParams = options.queryParams;
     
-    this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
+    this.filters = { term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
     this.parseURLToFilters();
     this.userAgency =  {};
@@ -58,62 +59,6 @@ var InternshipListView = Backbone.View.extend({
     this.initializeKeywordSearch();
     this.$('.usajobs-open-opps-search__box').show();
     return this;
-  },
-    
-  initializeLanguagesList: function () {
-    $('#languageId').select2({
-      placeholder: 'Start typing to select a language',
-      minimumInputLength: 3,
-      ajax: {
-        url: '/api/ac/languages',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) { 
-          this.language=data;        
-          return { results: data };
-        },
-      },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatNoMatches: 'No languages found ',
-    });
-
-    $('#languageId').focus();
-  },
-
-  initializeAgencyList: function () {
-    $('#agencyId').select2({
-      placeholder: 'Select Agency',
-      minimumInputLength: 3,
-      ajax: {
-        url: '/api/ac/agency',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) { 
-          this.agency=data;        
-          return { results: data };
-        },
-      },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatNoMatches: 'No Agency found ',
-    });
-
-    $('#agencyId').focus();
   },
 
   changedInternsPrograms: function (e){
@@ -159,7 +104,7 @@ var InternshipListView = Backbone.View.extend({
   },
     
   initializeSelect2: function () {
-    [ 'skill'].forEach(function (tag) {
+    ['skill', 'language', 'agency'].forEach(function (tag) {
       var data = this.filters[tag] ? [].concat(this.filters[tag]) : [];
       if(tag == 'location') {
         data = _.filter(data, _.isObject);
@@ -170,7 +115,7 @@ var InternshipListView = Backbone.View.extend({
         width: '100%',
         tokenSeparators: [','],
         allowCreate: false,
-        maximumSelectionSize: (tag == 'skill' ? 5 : undefined),
+        maximumSelectionSize: 5,
         data: data,
       });
       $('#' + tag).on('change', function (e) {
@@ -192,22 +137,20 @@ var InternshipListView = Backbone.View.extend({
     var element = $(event.target).closest('.usajobs-search-pills__item');
     var type = element.data('type');
     var value = element.data('value');
-    if(type == 'agency') {
-      this.agency = { data: {} };
-      delete this.filters.restrict;
-    } 
-    
+    if(_.isArray(this.filters[type])) {
+      this.filters[type] = _.filter(this.filters[type], function (filter) {
+        return !_.isEqual(filter, value);
+      });
+    } else if (_.isEqual(this.filters[type], value)) {
+      this.filters[type] = [];
+    }
     this.filters.page = 1;
     this.filter();
   },
     
   removeAllFilters: function (event) {
     event.preventDefault();
-    if(this.filters.career && this.filters.career.name == 'Acquisition') {
-      this.filters = { state: [ 'open' ], page: 1 };
-    } else {
-      this.filters = { state: [], page: 1 };
-    }
+    this.filters = { state: [], page: 1 };    
     this.agency = { data: {} };
     this.filter();
   },
@@ -230,13 +173,13 @@ var InternshipListView = Backbone.View.extend({
       appliedFilterCount: this.appliedFilterCount,
     });
     $('#task-filters').html(compiledTemplate);
-    
+    compiledTemplate = _.template(SearchPills)({
+      filters: this.filters,
+      appliedFilterCount: this.appliedFilterCount,
+    });
+    $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
-    this.initializeLanguagesList();
-    this.initializeAgencyList();
     this.initializeHideFields();
-   
-    
   },
   initializeHideFields:function (){
     $('.dossection').hide();
@@ -259,7 +202,7 @@ var InternshipListView = Backbone.View.extend({
       }.bind(this),
     });
     
-    if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
+    if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
@@ -399,15 +342,7 @@ var InternshipListView = Backbone.View.extend({
   },
     
   search: function () {
-    this.filters.term = this.$('#search').val().trim();
-    if (this.filters.term.toLowerCase() == 'acquisition') {
-      var item = _.find(this.tagTypes.career, function (t) { 
-        return t.name.toLowerCase() == 'acquisition';
-      });
-      this.filters.career = _.pick(item, 'type', 'name', 'id');
-      this.filters.term = '';
-      $('#search').val('');
-    }
+    this.filters.term = this.$('#nav-keyword').val().trim();
     this.filters.page = 1;
     this.filter();
   },
