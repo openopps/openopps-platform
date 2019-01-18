@@ -28,7 +28,6 @@ var InternshipListView = Backbone.View.extend({
     this.tagFactory = new TagFactory();
     this.collection = options.collection;
     this.queryParams = options.queryParams;
-    
     this.filters = { term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
     this.parseURLToFilters();
@@ -62,7 +61,13 @@ var InternshipListView = Backbone.View.extend({
   },
 
   changedInternsPrograms: function (e){
-    // eslint-disable-next-line no-empty
+    this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val() };
+    this.checkInternsPrograms();
+    this.filters.page = 1;
+    this.filter();
+  },
+
+  checkInternsPrograms: function() {
     if($('[name=internship-program]:checked').val()=='sfs'){         
       $('.dossection').hide();
       $('.agencyselect').show();
@@ -70,9 +75,8 @@ var InternshipListView = Backbone.View.extend({
     if($('[name=internship-program]:checked').val()=='dos'){         
       $('.dossection').show();
       $('.agencyselect').hide();
-    }     
+    }
   },
-
 
   initializeKeywordSearch: function () {
     $('#search').autocomplete({
@@ -122,7 +126,6 @@ var InternshipListView = Backbone.View.extend({
         this.filters[tag] = _.map($(e.target).select2('data'), function (item) {
           return _.pick(item, 'type', 'name', 'id');
         });
-       
         this.filters.page = 1;
         this.filter();
       }.bind(this));
@@ -180,6 +183,7 @@ var InternshipListView = Backbone.View.extend({
     $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
     this.initializeHideFields();
+    this.checkInternsPrograms();
   },
   initializeHideFields:function (){
     $('.dossection').hide();
@@ -430,18 +434,19 @@ var InternshipListView = Backbone.View.extend({
           this.filters.page = parseInt(value);
         }
       } else {
-        this.filters[key] = _.map(values, function (value) {
-          if (key == 'location' && value == 'virtual') {
-            return value;
-          } else {
-            var splitValue = value.split(':');
+        var splitValue = value.split(':');
+        if (key == 'program')
+        {
+          this.filters[key] = { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
+        } else { 
+          this.filters[key] = _.map(values, function (value) {
             if (splitValue[1]) {
               return { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
             } else {
               return value;
             }
-          }
-        });
+          });
+        }
       }
     }.bind(this));
   },

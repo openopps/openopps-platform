@@ -18,11 +18,11 @@
         <h4 class="usajobs-search-filters__title">Program</h4>
         <ul id="intern-program-list" class="usa-unstyled-list">
             <li>
-                <input id="intern-dos" type="radio" name="internship-program" value="dos">
+                <input id="intern-dos" type="radio" name="internship-program" value="dos" <% if(filters.program && filters.program.name === 'dos') { %>checked<% } %>>
                 <label for="intern-dos">U.S.Department of State Student Internship Program(Unpaid)</label>
             </li>
             <li>
-                <input id="intern-sfs" type="radio" name="internship-program" value="sfs">
+                <input id="intern-sfs" type="radio" name="internship-program" value="sfs" <% if(filters.program && filters.program.name === 'sfs') { %>checked<% } %>>
                 <label for="intern-sfs">Virtual Student Federal Service(VSFS)</label>
             </li>
         </ul>
