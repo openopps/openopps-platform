@@ -36,4 +36,8 @@ router.post('/api/community/member', auth, async (ctx, next) => {
   }
 });
 
+router.get('/api/communities/:audienceType/details', async (ctx, next) => {
+  ctx.body = await service.detailsByAudienceType(ctx.params.audienceType);
+});
+
 module.exports = router.routes();
