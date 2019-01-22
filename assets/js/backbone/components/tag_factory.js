@@ -77,8 +77,18 @@ var TagFactory = BaseComponent.extend({
     //location tags get special treatment
     var isLocation = (options.type === 'location');
 
-    var url = (options.type == 'agency') ? '/api/ac/agency' : '/api/ac/tag';
-
+    var url = "";
+    switch (options.type) {
+      case 'agency':
+        url = '/api/ac/agency';
+        break;
+      case 'language':
+        url = '/api/ac/languages';
+        break;
+      default:
+        url = '/api/ac/tag';
+        break;
+    }
     //have to check these beforehand to allow False values to override the default True
     options.multiple = (options.multiple !== undefined ? options.multiple : true);
     options.allowCreate = (options.allowCreate !== undefined ? options.allowCreate : true);
