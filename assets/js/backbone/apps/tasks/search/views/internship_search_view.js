@@ -369,7 +369,7 @@ var InternshipListView = Backbone.View.extend({
   filter: function () {
     this.addFiltersToURL();
     $.ajax({
-      url: '/api/task/search' + location.search,
+      url: '/api/task/search' + location.search + '&audience=2',
       type: 'GET',
       async: true,
       success: function (data) {
