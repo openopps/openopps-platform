@@ -43,6 +43,7 @@ service.searchOpportunities = async function (request) {
   else{
     searchResults = await elasticClient.search({ index: 'task' });
   }
+  
   var result = {};
   result.totalHits = searchResults.hits.total;
   result.hits = _.map(searchResults.hits.hits, convertSearchResultsToResultModel);
@@ -81,7 +82,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -128,13 +129,18 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   }
 
-  request.addTerms(query.state, 'state' , 'open');
-  request.addTerms(query.skill, 'skills.name' );
-  request.addTerms(query.career, 'careers.name' );
-  request.addTerms(query.series, 'series.code' );
-  request.addTerms(query.time, 'timeRequired' );
-  request.addTerms(query.location, 'locations.name' );
+  if (!isNaN(query.audience)) {
+    request.addTerms(query.audience, 'targetAudience');
+  } else {
+    request.addTerms(query.state, 'state', 'open');
+  }
+  request.addTerms(query.skill, 'skills.name');
+  request.addTerms(query.career, 'careers.name');
+  request.addTerms(query.series, 'series.code');
+  request.addTerms(query.time, 'timeRequired');
+  request.addTerms(query.location, 'locations.name');
   request.addTerms(query.locationType, 'locationType');
+  request.addTerms(query.language, 'languages.name');
   if (agencies.length > 0) {
     request.addTerms(agencies, 'restrictedToAgency');
   }
