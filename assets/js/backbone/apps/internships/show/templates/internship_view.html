@@ -85,13 +85,14 @@
                 <div>
                   <%- model.country.value %>
                 </div>
-                <% } %>
-             
-              <h4>Time commitment</h4>
-              <div>
-                <%- model.cycle.name %> 
-              </div>  
-              <div>32-40 hours per week</div>         
+              <% } %>
+              <% if (model.cycle) { %>
+                <h4>Time commitment</h4>
+                <div>
+                  <%- model.cycle.name %> 
+                </div>  
+                <div>32-40 hours per week</div>
+              <% } %>   
               <h4>Number of interns</h4>
               <div>
                 <%- model.interns %>
@@ -154,16 +155,18 @@
                 <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
               </div>
               <% if (model.country) { %>
-              <h4>Country</h4>
-              <div>
-                <%- model.country.value %>
-              </div>
+                <h4>Country</h4>
+                <div>
+                  <%- model.country.value %>
+                </div>
               <% } %>
-              <h4>Time commitment</h4>
-              <div>
-                <%- model.cycle.name %>
-              </div>    
-              <div> 32-40 hours per week</div>       
+              <% if (model.cycle) { %>
+                <h4>Time commitment</h4>
+                <div>
+                  <%- model.cycle.name %>
+                </div>    
+                <div> 32-40 hours per week</div>
+              <% } %>
               <h4>Number of interns</h4>
               <div>
                 <%- model.interns %>
