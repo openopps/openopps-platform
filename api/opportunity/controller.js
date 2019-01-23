@@ -63,7 +63,9 @@ router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
   }
 });
 
-
+router.get('/api/internships/cycle/:id', async (ctx, next) => {
+  ctx.body = await service.getCycles(ctx.params.id);
+});
 
 
 router.post('/api/task', auth, async (ctx, next) => {
