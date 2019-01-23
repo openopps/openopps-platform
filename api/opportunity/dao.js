@@ -29,7 +29,12 @@ const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skil
   'from lookup_code l1,language_skill g,lookup_code l2,  lookup_code l3, language r' + 
   ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ' +
   'order by g.language_skill_id ';
-  
+
+
+const cycleInternQuery= 'select cycle.name, to_char(to_timestamp (date_part(\'month\', cycle.apply_end_date)::text, \'MM\'), \'Month\') as "applyEndMonth", date_part(\'day\', cycle.apply_end_date) as "applyEndDay", EXTRACT(YEAR from cycle.apply_end_date) as "applyEndYear",EXTRACT(YEAR from cycle.cycle_start_date) as "cycleStartYear" ' + 
+'from cycle ' + 'where cast(cycle.apply_start_date as date)<=cast(Now() as date) and cast(cycle.apply_end_date as date)>= cast(Now() as date) and cycle.community_id =? ';
+
+ 
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
@@ -234,6 +239,7 @@ module.exports = function (db) {
       intern:countryQuery,
       countrySubdivision:countrySubdivisionQuery,
       languageList:languageListQuery,
+      cyceIntern:cycleInternQuery,
     },
     options: options,
     clean: clean,
