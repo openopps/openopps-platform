@@ -12,6 +12,13 @@
             "requester":             { "type": "keyword", "normalizer": "lowercase" },
             "updatedAt":             { "type": "date", "format": "strict_date_optional_time||epoch_millis"},
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
+            "postingLocation":       { 
+                "properties": {
+                    "cityName": { "type": "keyword", "normalizer": "lowercase" },
+                    "countrySubdivision": { "type": "keyword", "normalizer": "lowercase" },
+                    "country": { "type": "keyword", "normalizer": "lowercase" }
+                }
+            },
             "acceptingApplicants":   { "type": "boolean" },
             "taskPeople":            { "type": "keyword", "normalizer": "lowercase" },
             "timeRequired":          { "type": "keyword", "normalizer": "lowercase" },

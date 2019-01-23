@@ -66,9 +66,11 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
           filter : {
             bool: {
               must: [] ,
-              must_not: [],
+              must_not: []
             },
           },
+          should : [],
+          minimum_should_match : 0
         },
       },
     },
@@ -82,7 +84,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -117,6 +119,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   }
   var agencies = ["null"];
+  
   if (ctx.state.user && ctx.state.user.agency) {
     if (query.restrict == "true") {
       agencies = [ctx.state.user.agency.name];
