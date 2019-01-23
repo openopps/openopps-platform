@@ -7,6 +7,7 @@ const TaskMetrics = require('./taskmetrics');
 const Audit = require('../model/Audit');
 const volunteerService = require('../volunteer/service');
 const opportunityService = require('../opportunity/service');
+const elasticService = require('../../elastic/service');
 const communityService = require('../community/service');
 
 async function getMetrics () {
@@ -437,7 +438,7 @@ async function changeOwner (ctx, data, done) {
         originalOwner: originalOwner,
         newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
       });
-      await opportunityService.indexOpportunity(task.id);
+      elasticService.indexOpportunity(task.id);
       await dao.AuditLog.insert(audit).then(() => {
         done(audit.data.newOwner);
       }).catch((err) => {

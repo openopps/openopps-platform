@@ -32,6 +32,16 @@ module.exports.createAudit = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
+module.exports.detailsByAudienceType = async function (audienceType) {
+  var targetAudience = _.findIndex(audienceTypes, (type) => { return type.toLowerCase() == audienceType.toLowerCase(); }) + 1;
+  return await dao.Community.query(dao.query.communityDetails, targetAudience, { 
+    fetch: { cycles: [] },
+    exclude: { cycles: ['posting_start_date', 'posting_end_date', 'cycle_start_date', 'cycle_end_date', 'created_at', 'updated_at', 'updated_by'] },
+  }).catch(err => {
+    log.error(err);
+  });
+};
+
 module.exports.findById = async function (id) {
   var community = await dao.Community.findOne('community_id = ?', id).catch(() => { return null; });
   if(community) { 
@@ -43,6 +53,11 @@ module.exports.findById = async function (id) {
     community.targetAudience = audienceTypes[community.targetAudience - 1];
   }
   return community;
+};
+
+module.exports.getActiveCycles = async function (communityId) {
+  var currentDate = new Date();
+  return await dao.Cycle.find('community_id = ? and posting_start_date >= ? and posting_end_date <= ?', [communityId, currentDate, currentDate]);
 };
 
 module.exports.isCommunityManager = async function (user, communityId) {

@@ -9,9 +9,9 @@
           </div>
           <div class="usajobs-alert__body">
             <p class="usa-alert-text">
-              You are an <% if (user.isAgencyAdmin) { %> agency <% } %> administrator.
+              You are an <% if (user.isAgencyAdmin && !user.isAdmin) { %> agency <% } %> administrator.
               <% if (user.id !== data.id) { %>
-                You are viewing another user's profile.
+                You are viewing <% if (data.hiringPath == 'student') { %>a student's<% } else { %>another user's<% } %> profile.
               <% } %>
             </p>
           </div>
@@ -107,9 +107,11 @@
               <%= data.bioHtml %>
               <% } %>
             </div>
-            <div class="profile-share <% if (data.isOwner || user.isAdmin) { %>border-bottom<% } %>">
-                <a href="#" id="email"><i class="fas fa-share-alt"></i> <span>Share Profile</span></a>
-            </div>
+            <% if (data.hiringPath == 'fed') { %>
+              <div class="profile-share <% if (data.isOwner || user.isAdmin) { %>border-bottom<% } %>">
+                  <a href="#" id="email"><i class="fas fa-share-alt"></i> <span>Share Profile</span></a>
+              </div>
+            <% } %>
           </div>
         </div>
       </div>
@@ -141,7 +143,7 @@
                   <% }) %>
                 </div>
               <% } %>
-            <% } else { %>
+            <% } else if (data.canEditProfile) { %>
               <div>List all of your relevant skills.</div>
               <a href="/profile/edit/skills/<%- data.id %>/" class="usa-button add-skills">
                 <i class="fas fa-plus-circle"></i> Add skills

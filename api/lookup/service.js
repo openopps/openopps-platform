@@ -14,5 +14,7 @@ const codeTypes = {
 module.exports = {};
 
 module.exports.lookupCodesByCodeType = function (codeType) {
-  return dao.Lookup.find('lookup_code_type = ?', codeTypes[codeType] || '');
+  return dao.Lookup.find('is_disabled = false and lookup_code_type = ?', codeTypes[codeType] || '', {
+    exclude: ['is_disabled', 'sort_order', 'last_modified'],
+  });
 };

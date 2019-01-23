@@ -39,11 +39,11 @@ router.get('/api/user/:id', auth, async (ctx, next) => {
     ctx.status = 403;
   } else {
     var profile = await service.getProfile(ctx.params.id);
-    if(profile && profile.hiringPath != 'fed') {
+    if(profile && (profile.hiringPath != 'fed' && !ctx.state.user.isAdmin)) {
       // Log unauthorized data access
       ctx.status = 403;
     } else if (profile) {
-      profile.canEditProfile = await service.canAdministerAccount(ctx.state.user, ctx.params);
+      profile.canEditProfile = (profile.hiringPath == 'fed' && await service.canAdministerAccount(ctx.state.user, ctx.params));
       ctx.body = profile;
     } else {
       ctx.status = 404;
