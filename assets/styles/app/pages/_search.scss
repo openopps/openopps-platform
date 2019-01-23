@@ -685,3 +685,19 @@ padding: $size-default $size-default $size-M $size-default;
     }
   }
 }
+.open-opps--info {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background-color: $color-cool-blue-lightest;
+
+  .open-opps--info__body {
+    flex: 1;
+
+    p {
+      margin: 0;
+    }
+  }
+}
