@@ -307,7 +307,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeCycle: function () {
     $.ajax({
-      url: '/api/cycle/community/' + this.options.community.communityId,
+      url: '/api/community/' + this.options.community.communityId + '/cycles', 
       type: 'GET',
       async: false,
       success: function (data) {
