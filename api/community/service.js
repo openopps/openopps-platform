@@ -55,6 +55,11 @@ module.exports.findById = async function (id) {
   return community;
 };
 
+module.exports.getActiveCycles = async function (communityId) {
+  var currentDate = new Date();
+  return await dao.Cycle.find('community_id = ? and posting_start_date >= ? and posting_end_date <= ?', [communityId, currentDate, currentDate]);
+};
+
 module.exports.isCommunityManager = async function (user, communityId) {
   if(user.isAdmin) {
     return true;
