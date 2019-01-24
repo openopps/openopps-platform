@@ -589,9 +589,8 @@ padding: $size-default $size-default $size-M $size-default;
     @include media($M) {
       justify-content: center;
       align-items: center;
-      margin-top: 4rem;
+      margin-top: 3.5rem;
       margin-bottom: 0;
-      width: 10.25rem;
       text-align: center;
     }
   }
@@ -661,7 +660,7 @@ padding: $size-default $size-default $size-M $size-default;
 
     @include media($M) {
       padding: 0;
-      width: 10.25rem;
+      width: 13rem;
     }
   }
 
@@ -678,6 +677,7 @@ padding: $size-default $size-default $size-M $size-default;
 
   & &__name {
     margin: 0;
+    font-weight: bold;
 
     @include media($M-down) {
       line-height: 2.5;
@@ -718,9 +718,8 @@ padding: $size-default $size-default $size-M $size-default;
 }
 
 .ui-autocomplete-loading {
-  background: #fff url('/Content/images/gif/ui-anim_basic_16x16.gif') right center no-repeat
+  background: #fff url('../../../img/ui-anim_basic_16x16.gif') calc(100% - 0.7em) center no-repeat;
 }
-
 
 .usajobs-search-location-autocomplete {
 
@@ -731,7 +730,7 @@ padding: $size-default $size-default $size-M $size-default;
     width: 40.291369653%;
     
     &:last-child {
-      margin-right: 0
+      margin-right: 0;
     }
   }
 
@@ -739,11 +738,11 @@ padding: $size-default $size-default $size-M $size-default;
     font-size: 1.4rem;
     padding: .5rem 3rem .5rem 0;
     background-color: #e4e2e0;
-    text-align: right
+    text-align: right;
   }
 
   .ui-autocomplete-close-header.ui-menu-item .fa {
-    text-align: right
+    text-align: right;
   }
 
   .ui-autocomplete-category {
@@ -765,7 +764,7 @@ padding: $size-default $size-default $size-M $size-default;
     }
   }
 
-  .ui-autocomplete-category.Cities {
+  .ui-autocomplete-category.cities {
     position: relative;
 
     &::before {
@@ -777,7 +776,7 @@ padding: $size-default $size-default $size-M $size-default;
     }
   }
 
-  .ui-autocomplete-category.Countries {
+  .ui-autocomplete-category.countries {
 
     &::before {
       display: inline-block;
