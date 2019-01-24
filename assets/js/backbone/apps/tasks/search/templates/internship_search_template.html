@@ -3,7 +3,11 @@
     <div class="usajobs-content-gutter usajobs-open-opps-search">
       <div class="usajobs-grid-full">
         <div class="usa-width-two-thirds">
-          <h1>Student internships</h1>
+          <h1>Student internships
+            <% if (user && user.community.student.length > 0) { %>
+            <a href="/tasks/create?target=students" id="create-internship" class="usa-button usa-button-secondary add-internship"><i class="fa fa-plus"></i> <span>Create internship</span></a>
+            <% }%>
+          </h1>
           <div class="usajobs-grid-full">
             
               <fieldset class="student-internships-search">

@@ -431,6 +431,14 @@ padding: $size-default $size-default $size-M $size-default;
         margin-left: $size-default;
       }
     }
+
+    .usa-button.usa-button-secondary.add-internship {
+      color: $color-base;
+      box-shadow: inset 0 0 0 2px $color-base;
+      background-color: transparent;
+      position: absolute;
+      margin: 1.5rem;
+    }
   }
 
   .usajobs-nav__search form {

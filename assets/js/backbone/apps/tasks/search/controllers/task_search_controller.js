@@ -9,10 +9,6 @@ var TaskListView = require('../views/task_search_view');
 var InternshipListView = require('../views/internship_search_view');
 
 TaskController = Backbone.View.extend({
-  events: {
-    'click .add-opportunity' : 'add',
-  },
-
   initialize: function (options) {
     this.options = options;
     var hiringPath = window.cache.currentUser ? window.cache.currentUser.hiringPath : '';
@@ -31,10 +27,6 @@ TaskController = Backbone.View.extend({
         queryParams: this.options.queryParams,
       }).render();
     }
-  },
-
-  add: function (e) {
-    Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 
   show: function (e) {
