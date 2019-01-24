@@ -16,7 +16,15 @@ service.reindexOpportunities = async function () {
   await elasticClient.bulk({ body: bulk_request });
   return records;
 };
-  
+
+service.remapOpportunities = async function () {
+  if (await elasticClient.indices.exists({ index: 'task'})) {
+    await elasticClient.indices.delete({ index: 'task' });
+  }
+
+  return service.reindexOpportunities();
+}
+
 service.indexOpportunity =  async function (taskId) {
   if (!(await elasticClient.IsAlive()))
   {
@@ -55,6 +63,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var page = query.page || 1;
   var resultsperpage =  query.resultsperpage || 10;
   var from = (page - 1) * resultsperpage;
+  
   var request = {
     index: index || 'task',
     type: 'task',
@@ -70,7 +79,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
             },
           },
           should : [],
-          minimum_should_match : 0
+          minimum_should_match : query.audience && query.location ? 1 : 0
         },
       },
     },
@@ -79,11 +88,14 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       if((filter && filter !== '_all')){
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
+    },
+    addLocations (location) { 
+      should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
     }
   };
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
-  
+  var should_match = request.body.query.bool.should;
   var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
 
   for(i=0; i<formatParamTypes.length; i++){
@@ -134,14 +146,23 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
 
   if (!isNaN(query.audience)) {
     request.addTerms(query.audience, 'targetAudience');
+    if (query.location) {
+      if (_.isArray(query.location)) {
+        _.each(query.location, function(location) {
+          request.addLocations(location);
+        });
+      } else {
+        request.addLocations(query.location);
+      }
+    }
   } else {
     request.addTerms(query.state, 'state', 'open');
+    request.addTerms(query.location, 'locations.name');
   }
   request.addTerms(query.skill, 'skills.name');
   request.addTerms(query.career, 'careers.name');
   request.addTerms(query.series, 'series.code');
   request.addTerms(query.time, 'timeRequired');
-  request.addTerms(query.location, 'locations.name');
   request.addTerms(query.locationType, 'locationType');
   request.addTerms(query.language, 'languages.name');
   if (agencies.length > 0) {
@@ -171,6 +192,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   }
 
   delete request.addTerms;
+  delete request.addLocations;
   return request;
 };
 
@@ -198,6 +220,7 @@ function convertSearchResultsToResultModel (searchResult) {
     skills: source.skills,
     locationType: source.locationType,
     locations: source.locations,
+    postingLocation: source.postingLocation.cityName,
     series: source.series,
     careers: source.careers,
     keywords: source.keywords,

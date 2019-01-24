@@ -201,6 +201,7 @@ var InternshipListView = Backbone.View.extend({
             var results = [];
 
             for (var key in data) {
+              if (key != 'continents' && key != 'counties') {
                 for (var i = 0; i < data[key].length; i++) {
                     var label = data[key][i].Name;
                     var code = data[key][i].Code;
@@ -216,6 +217,7 @@ var InternshipListView = Backbone.View.extend({
 
                     results.push(autocompleteItem);
                 }
+              }
             }
 
             response(results);
@@ -226,6 +228,14 @@ var InternshipListView = Backbone.View.extend({
       minLength: 2,
       select: function (event, ui) {
         event.preventDefault();
+        console.log(ui);
+        if (this.filters.location && _.isArray(this.filters.location)) {
+          this.filters.location.push(ui.item.actualValue.trim())
+        } else {
+          this.filters.location = [ui.item.actualValue.trim()];
+        }
+        $('#nav-location').val('');
+        this.filter();
       }.bind(this),
     });
   },
@@ -471,10 +481,12 @@ var InternshipListView = Backbone.View.extend({
     
   search: function () {
     this.filters.term = this.$('#nav-keyword').val().trim();
-    if (this.filters.location && _.isArray(this.filters.location)) {
-      this.filters.location.push(this.$('#nav-location').val().trim())
-    } else {
-      this.filters.location = [this.$('#nav-location').val().trim()];
+    if (this.$('#nav-location').val().trim() != "") {
+      if (this.filters.location && _.isArray(this.filters.location)) {
+        this.filters.location.push(this.$('#nav-location').val().trim())
+      } else {
+        this.filters.location = [this.$('#nav-location').val().trim()];
+      }
     }
     this.$('#nav-location').val("");
     this.filters.page = 1;

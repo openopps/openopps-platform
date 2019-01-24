@@ -61,7 +61,7 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'targetAudience': doc.target_audience,
     'languages': doc.languages,
-    'communityId': { id: doc.community_id, name: doc.community_name }
+    'community': { id: doc.community_id, name: doc.community_name }
   };
 }
     

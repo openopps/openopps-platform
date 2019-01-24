@@ -14,9 +14,9 @@
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
             "postingLocation":       { 
                 "properties": {
-                    "cityName": { "type": "keyword", "normalizer": "lowercase" },
-                    "countrySubdivision": { "type": "keyword", "normalizer": "lowercase" },
-                    "country": { "type": "keyword", "normalizer": "lowercase" }
+                    "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+                    "countrySubdivision": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+                    "country": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" }
                 }
             },
             "acceptingApplicants":   { "type": "boolean" },
