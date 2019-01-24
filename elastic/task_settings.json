@@ -9,6 +9,46 @@
                     "asciifolding"
                 ]
             }
+        },
+        "analyzer": {
+            "engram_analyzer": {
+                "type": "custom",
+                "tokenizer": "engram_tokenizer",
+                "filter": [
+                    "lowercase",
+                    "asciifolding"
+                ]
+            },
+            "whitespace_analyzer": {
+                "tokenizer": "whitespace",
+                "filter": [
+                    "lowercase",
+                    "asciifolding"
+                ]
+            },
+            "lowercase": {
+                "type": "custom",
+                "char_filter": [],
+                "tokenizer": "keyword",
+                "filter": [
+                    "lowercase",
+                    "asciifolding"
+                ]
+            }
+        },
+        "tokenizer": {
+            "engram_tokenizer": {
+                "type": "edge_ngram",
+                "min_gram": 2,
+                "max_gram": 60,
+                "token_chars": [
+                    "letter",
+                    "digit",
+                    "symbol",
+                    "punctuation",
+                    "whitespace"
+                ]
+            }
         }
     },
     "number_of_shards": 4,

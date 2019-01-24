@@ -32,12 +32,13 @@ var TaskAudienceFormView = Backbone.View.extend({
           });
           this.$el.html(template);
           setTimeout(function () {
-            if(data.federal.length > 0 && data.student.length == 0) {
+            var params = new URLSearchParams(window.location.search);
+            if(data.federal.length > 0 && (params.get('target') == 'feds' || data.student.length == 0)) {
               this.target = 'federal';
               $('#federal-employees').addClass('selected');
               $('.student-programs').hide();
               $('#continue').removeAttr('disabled'); 
-            } else if (data.federal.length == 0 && data.student.length > 0) {
+            } else if (data.student.length > 0 && (params.get('target') == 'students' || data.federal.length == 0)) {
               this.target = 'student';
               $('#students').addClass('selected'); 
               $('.federal-programs').hide();
@@ -58,11 +59,13 @@ var TaskAudienceFormView = Backbone.View.extend({
       this.target = 'student';
       $('.student-programs').show();
       $('.federal-programs').hide(); 
-      $('#students').addClass('selected');  
+      $('#students').addClass('selected');
+      $('#federal-employees').removeClass('selected');  
     } else {
       this.target = 'federal';
       $('.student-programs').hide();
       $('.federal-programs').show();
+      $('#students').removeClass('selected');  
       $('#federal-employees').addClass('selected');      
     } 
     $('#continue').removeAttr('disabled');    
