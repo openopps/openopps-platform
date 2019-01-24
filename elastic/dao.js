@@ -29,6 +29,12 @@ dao.taskToIndex = async function (id){
 
 function toElasticOpportunity (value, index, list) {
   var doc = value.task;
+  var locationType = 'Virtual';
+  if (Array.isArray(doc.location) && doc.location.length > 0) {
+    locationType = 'In Person';
+  } else if (doc.country != null && doc.country != "") {
+    locationType = 'In Person';
+  }
   return {
     'id': doc.id,
     'title': doc.title,
@@ -41,20 +47,21 @@ function toElasticOpportunity (value, index, list) {
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
+    'postingLocation': { cityName: doc.city_name, countrySubdivision: doc.country_subdivision, country: doc.country },
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
     'timeRequired': (_.first(doc['task-time-required']) || { name: null }).name,
     'timeEstimate': (_.first(doc['task-time-estimate']) || { name: null }).name,
     'taskLength': (_.first(doc['task-length']) || { name: null }).name, 
     'skills': doc.skills,
-    'locationType': Array.isArray(doc.location) && doc.location.length > 0 ? 'In Person' : 'Virtual',
+    'locationType': locationType,
     'locations': doc.location,
     'series': _.map(doc.series, (item) => { return  {id: item.id || 0, code: item.name.substring(0,4), name: item.name.replace(/.*\((.*)\).*/,'$1') };}),
     'careers': doc.career,
     'keywords': _.map(doc.keywords, (item) => item.name),
     'targetAudience': doc.target_audience,
     'languages': doc.languages,
-    'communityId': { id: doc.community_id, name: doc.community_name }
+    'community': { id: doc.community_id, name: doc.community_name }
   };
 }
     
@@ -77,6 +84,9 @@ from (
     c.target_audience,
     c.community_id,
     c.community_name,
+    t.city_name || ', ' || cs.value as city_name,
+    cs.value as "country_subdivision",
+    ct.value as "country",
     t.accepting_applicants as "acceptingApplicants",
     (
       select  
@@ -247,6 +257,8 @@ from (
     inner join midas_user u on t."userId" = u.id  
   left join agency a on t.agency_id = a.agency_id
   left join community c on c.community_id = t.community_id
+  left join country_subdivision cs on cs.country_subdivision_id = t.country_subdivision_id
+  left join country ct on ct.country_id = t.country_id
   %s
 ) row`;
 
