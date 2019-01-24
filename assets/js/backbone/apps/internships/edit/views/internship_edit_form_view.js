@@ -96,7 +96,8 @@ var InternshipEditFormView = Backbone.View.extend({
   },
   
   changedInternsTimeFrame: function (e){
-    if($('[name=internship-timeframe]:checked').length>0){     
+    if($('[name=internship-timeframe]:checked').length>0){ 
+      $('#internship-start-End').removeClass('usa-input-error');        
       $('#internship-start-End>.field-validation-error').hide();
     }
   },
@@ -307,7 +308,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeCycle: function () {
     $.ajax({
-      url: '/api/cycle/community/' + this.options.community.communityId,
+      url: '/api/community/' + this.options.community.communityId + '/cycles', 
       type: 'GET',
       async: false,
       success: function (data) {
@@ -398,7 +399,8 @@ var InternshipEditFormView = Backbone.View.extend({
     var children = this.$el.find( '.validate' );
     var abort = false;
     
-    if($('[name=internship-timeframe]:checked').length==0){     
+    if($('[name=internship-timeframe]:checked').length==0){ 
+      $('#internship-start-End').addClass('usa-input-error');    
       $('#internship-start-End>.field-validation-error').show();
       abort=true;
     }

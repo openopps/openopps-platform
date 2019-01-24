@@ -78,7 +78,10 @@ var InternshipListView = Backbone.View.extend({
   checkInternsPrograms: function () {
     var studentProgram= $('[name=internship-program]:checked + label').text();
     var communityId= $('[name=internship-program]:checked').attr('id');
-    this.initializeCycle(communityId);
+    
+    if(typeof communityId !=='undefined'){
+      this.initializeCycle(communityId);
+    }
    
     if($('[name=internship-program]:checked').val()=='U.S Department of State Student Internship Program (Unpaid)'){         
       $('.dossection').show();
@@ -387,8 +390,7 @@ var InternshipListView = Backbone.View.extend({
   },
     
   renderItem: function (searchResult) {
-    searchResult.tags = {};
-   
+    searchResult.tags = {};   
     searchResult.owner.initials = getInitials(searchResult.owner.name);
     var item = {
       item: searchResult,
@@ -514,7 +516,7 @@ var InternshipListView = Backbone.View.extend({
       url: '/api/task/search' + location.search + '&audience=2',
       type: 'GET',
       async: true,
-      success: function (data) {
+      success: function (data) {      
         this.renderList(data, this.filters.page || 1);
         if ($('#search-tab-bar-filter').attr('aria-expanded') === 'true') {
           $('.usajobs-search-filter-nav').attr('aria-hidden', 'false');

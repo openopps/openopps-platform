@@ -2,6 +2,20 @@
   <div class="usajobs-content-gutter opportunity-gutter">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div id="internship-edit" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <% if (cycles.length == 0) { %>
+          <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert">
+            <div class="usajobs-alert__figure">
+              <div class="usajobs-alert__icon">
+              </div>
+            </div>
+            <div class="usajobs-alert__body">
+              <h3 class="usa-alert-heading">
+                <% if(data.id) { %>Cannot edit<% } else {%>Cannot create an<% } %> internship opportunity
+              </h3>
+              <p class="usa-alert-text">There are no current cycle dates set.  Please contact your administrator to request the cycle times be added.</p>
+            </div>
+          </div>
+        <% } else { %>
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> internship opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
         <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
           <fieldset id="step-1" class="usajobs-fieldset">
@@ -19,6 +33,7 @@
             </label>
             <div class="form-group required-input" id="internship-start-End">
               <label for="people" class="no-margin-top">When would the internship start and end?</label>
+              <span class="field-validation-error" style="display:none;" >Please select internship start and end date</span>
               <fieldset class="usa-fieldset-inputs usa-sans">
                 <legend class="usa-sr-only">Start and end of internship</legend>
                 <ul class="usa-unstyled-list">
@@ -231,6 +246,7 @@
             </div>
           </fieldset>
         </form>
+        <% } %>
       </div>
       <div id="internship-preview" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display:none">
       </div>

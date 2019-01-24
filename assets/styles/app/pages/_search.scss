@@ -647,6 +647,7 @@ padding: $size-default $size-default $size-M $size-default;
 
     @include media($M) {
       padding: 0;
+      width: 10.25rem;
     }
   }
 
