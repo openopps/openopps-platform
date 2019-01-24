@@ -23,6 +23,8 @@ async function fetchUser (id) {
       user.isOwner = true;
       user.isCommunityAdmin = (await dao.CommunityUser.find('user_id = ? and is_manager = ?', user.id, true)).length > 0;
       user.badges = await dao.Badge.find('"user" = ?', user.id, dao.options.badge);
+      var GetCommunities = require('../opportunity/service').getCommunities;
+      user.communities = await GetCommunities(user.id);
       user = dao.clean.user(user);
     }
     return user;
