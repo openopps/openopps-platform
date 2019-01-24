@@ -702,3 +702,88 @@ padding: $size-default $size-default $size-M $size-default;
     }
   }
 }
+
+.ui-autocomplete-loading {
+  background: #fff url('/Content/images/gif/ui-anim_basic_16x16.gif') right center no-repeat
+}
+
+
+.usajobs-search-location-autocomplete {
+
+  @include media($L) {
+    float:left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 40.291369653%;
+    
+    &:last-child {
+      margin-right: 0
+    }
+  }
+
+  .ui-autocomplete-close-header.ui-menu-item {
+    font-size: 1.4rem;
+    padding: .5rem 3rem .5rem 0;
+    background-color: #e4e2e0;
+    text-align: right
+  }
+
+  .ui-autocomplete-close-header.ui-menu-item .fa {
+    text-align: right
+  }
+
+  .ui-autocomplete-category {
+    font-family: "Source Sans Pro","Helvetica Neue","Helvetica","Roboto","Arial",sans-serif;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: .5rem;
+    margin-top: 1.5rem;
+    font-size: 16px;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: .5rem 1.5rem;
+    text-transform: uppercase;
+    font-weight: normal;
+    background-color: #f1f1f1;
+
+    @include media($M) {
+      padding:1rem 1.5rem;
+    }
+  }
+
+  .ui-autocomplete-category.Cities {
+    position: relative;
+
+    &::before {
+      display: inline-block;
+      width: 2.2rem;
+      height: 1.6rem;
+      content: url("../../../img/building.svg");
+      padding-right: 1rem;
+    }
+  }
+
+  .ui-autocomplete-category.Countries {
+
+    &::before {
+      display: inline-block;
+      width: 2.2rem;
+      height: 1.6rem;
+      content: url("../../../img/globe.svg");
+      padding-right: 1rem;
+    }
+  }
+
+  .ui-menu-item {
+    padding: .5rem 1.5rem;
+
+    @include media($M) {
+      padding:1rem 1.5rem;
+    }
+
+    &-wrapper {
+      text-decoration: none!important;
+      color: #000!important;
+    }
+  }
+}

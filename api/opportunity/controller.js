@@ -24,6 +24,11 @@ router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {
   });
 });
 
+router.get('/api/task/remap', auth.isAdmin, async (ctx, next) => {
+  var tasks = await elasticService.remapOpportunities();
+  ctx.body = tasks.length;
+});
+
 router.get('/api/task/reindex', auth.isAdmin, async (ctx, next) => {
   var tasks = await elasticService.reindexOpportunities();
   ctx.body = tasks.length;
