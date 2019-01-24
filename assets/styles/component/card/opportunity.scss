@@ -469,6 +469,13 @@
       }
     }
   }
+
+  &.student-internship {
+    
+    .usajobs-open-opps-opportunity__detail-item {
+      float: none;
+    }
+  }
 }
 
 .usajobs-rightrail {
