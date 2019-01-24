@@ -575,9 +575,8 @@ padding: $size-default $size-default $size-M $size-default;
     @include media($M) {
       justify-content: center;
       align-items: center;
-      margin-top: 4rem;
+      margin-top: 3.5rem;
       margin-bottom: 0;
-      width: 10.25rem;
       text-align: center;
     }
   }
@@ -647,7 +646,7 @@ padding: $size-default $size-default $size-M $size-default;
 
     @include media($M) {
       padding: 0;
-      width: 10.25rem;
+      width: 13rem;
     }
   }
 
@@ -664,6 +663,7 @@ padding: $size-default $size-default $size-M $size-default;
 
   & &__name {
     margin: 0;
+    font-weight: bold;
 
     @include media($M-down) {
       line-height: 2.5;
