@@ -80,7 +80,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
           },
           should : [],
           minimum_should_match : query.audience && query.location ? 1 : 0
-        },
+        }
       },
     },
     addTerms (filter, field, defaultFilter) { 
@@ -89,12 +89,15 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
     },
+    addCycleDate () {
+      filter_must.push({range: { "cycle.postingEndDate" : { gte: Date.now() } }});
+      filter_must.push({range: { "cycle.postingStartDate" : { lte: Date.now() } }});
+    },
     addLocations (location) { 
       should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
     }
   };
   var filter_must = request.body.query.bool.filter.bool.must;
-  var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
   var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
 
@@ -143,28 +146,6 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     }
   }
-
-  if (!isNaN(query.audience)) {
-    request.addTerms(query.audience, 'targetAudience');
-    if (query.location) {
-      if (_.isArray(query.location)) {
-        _.each(query.location, function(location) {
-          request.addLocations(location);
-        });
-      } else {
-        request.addLocations(query.location);
-      }
-    }
-  } else {
-    request.addTerms(query.state, 'state', 'open');
-    request.addTerms(query.location, 'locations.name');
-  }
-  request.addTerms(query.skill, 'skills.name');
-  request.addTerms(query.career, 'careers.name');
-  request.addTerms(query.series, 'series.code');
-  request.addTerms(query.time, 'timeRequired');
-  request.addTerms(query.locationType, 'locationType');
-  request.addTerms(query.language, 'languages.name');
   if (agencies.length > 0) {
     request.addTerms(agencies, 'restrictedToAgency');
   }
@@ -191,8 +172,34 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     };
   }
 
+  if (!isNaN(query.audience)) {
+    request.addTerms(query.audience, 'targetAudience');
+    request.addCycleDate();
+    if (query.location) {
+      if (_.isArray(query.location)) {
+        _.each(query.location, function(location) {
+          request.addLocations(location);
+        });
+      } else {
+        request.addLocations(query.location);
+      }
+    }
+  } else {
+    request.addTerms(query.state, 'state', 'open');
+    request.addTerms(query.location, 'locations.name');
+  }
+  
+  request.addTerms(query.skill, 'skills.name');
+  request.addTerms(query.career, 'careers.name');
+  request.addTerms(query.series, 'series.code');
+  request.addTerms(query.time, 'timeRequired');
+  request.addTerms(query.locationType, 'locationType');
+  request.addTerms(query.language, 'languages.name');
+
   delete request.addTerms;
   delete request.addLocations;
+  delete request.addCycleDate;
+
   return request;
 };
 
