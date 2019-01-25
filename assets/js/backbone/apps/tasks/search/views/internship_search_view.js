@@ -578,13 +578,14 @@ var InternshipListView = Backbone.View.extend({
         if (!isNaN(value)) {
           this.filters.page = parseInt(value);
         }
-      } else {
-        var splitValue = value.split(':');
+      } else {    
         if (key == 'program')
         {
+          var splitValue = value.split(':');
           this.filters[key] = { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
         } else { 
           this.filters[key] = _.map(values, function (value) {
+            var splitValue = value.split(':');
             if (splitValue[1]) {
               return { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
             } else {
