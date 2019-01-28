@@ -181,7 +181,7 @@
   &-container {
     margin-left: auto;
     margin-right: auto;
-    padding: $size-default;
+    padding: $size-base $size-default;
     max-width: 90rem;
     font-size: $h1-font-size;
     color: $color-base;
@@ -195,15 +195,15 @@
       padding-bottom: $size-S;
     }
 
-    svg {
-      margin-top: $size-base;
+    span.logo {
+      height: 2.5rem;
+      width: 2.5rem;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: center;
 
-      @include media ($M) {
-        margin-top: 0;
-      }
-
-      @include media ($L) {
-        margin-top: $size-base;
+      &.dos {
+        background-image: url(../../../img/logo/png/dos-student-internship-program-logo.png);
       }
     }
 
@@ -902,7 +902,7 @@
         font-size: 1.9rem;
         font-weight: normal;
         background-color: $color-white;
-        background-image: url(../img/icons/drawer/plus-circle.svg);
+        background-image: url(../../../img/plus-circle.svg);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -914,7 +914,7 @@
         }
 
         &[aria-expanded="true"] {
-          background-image: url(../img/icons/drawer/minus-circle.svg);
+          background-image: url(../../../img/minus-circle.svg);
           background-size: 2rem;
         }
       }
