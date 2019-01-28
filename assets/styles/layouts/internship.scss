@@ -523,6 +523,10 @@
   .usajobs-open-opps-opportunity.saved-internship-opportunities {
     padding: $size-default $size-S;
     background-color: $color-gray-lighter;
+
+    @include media($M-down) {
+      padding: $size-default;
+    }
   }
 
   // &.opportunity-gutter .usajobs-open-opps-opportunity.usajobs-open-opps-section {
@@ -674,7 +678,16 @@
     // padding-left: $size-base;
     margin-bottom: $size-default;
 
+    @include media($M-down) {
+      padding-right: 0;
+    }
+
     .usajobs-card--large {
+
+      @include media($M-down) {
+        margin-left: 0;
+        margin-right: 0;
+      }
 
       &:first-child {
         margin-top: $size-base;
@@ -689,7 +702,7 @@
         width: 70%;
         display: inline-block;
 
-        @include media($M) {
+        @include media($XXL) {
           width: 80%;
         }
       }
