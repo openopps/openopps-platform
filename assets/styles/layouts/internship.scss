@@ -207,6 +207,23 @@
       }
     }
 
+    span.logo {
+      margin-top: $size-base;
+      height: 2.5rem;
+      width: 2.5rem;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: center;
+
+      @include media ($M) {
+        margin-top: 0;
+      }
+
+      &.dos {
+        background-image: url(../../../img/logo/png/dos-student-internship-program-logo.png);
+      }
+    }
+
     span {
       color: $color-base;
       margin: 0;
@@ -902,7 +919,7 @@
         font-size: 1.9rem;
         font-weight: normal;
         background-color: $color-white;
-        background-image: url(../img/icons/drawer/plus-circle.svg);
+        background-image: url(../../../img/plus-circle.svg);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -914,7 +931,7 @@
         }
 
         &[aria-expanded="true"] {
-          background-image: url(../img/icons/drawer/minus-circle.svg);
+          background-image: url(../../../img/minus-circle.svg);
           background-size: 2rem;
         }
       }
