@@ -69,7 +69,7 @@ var InternshipListView = Backbone.View.extend({
   },
 
   changedInternsPrograms: function (e){
-    this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val() };
+    this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
     this.checkInternsPrograms();
     this.filters.page = 1;
     this.filter();
@@ -86,15 +86,14 @@ var InternshipListView = Backbone.View.extend({
     if($('[name=internship-program]:checked').val()=='U.S Department of State Student Internship Program (Unpaid)'){         
       $('.dossection').show();
       $('.agencyselect').hide();
-      this.selected= studentProgram;
+
       
     }
-    else {          
+    else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service') {          
       $('.dossection').hide();
-      // $('.agencyselect').show();
-      this.selected= studentProgram;
-        
+      $('.agencyselect').show();
     } 
+    this.selected= studentProgram;
     this.renderCycle();
   },
 

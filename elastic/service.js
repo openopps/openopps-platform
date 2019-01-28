@@ -99,7 +99,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   };
   var filter_must = request.body.query.bool.filter.bool.must;
   var should_match = request.body.query.bool.should;
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -128,6 +128,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         delete query.location;
       } else if (formatParamTypes[i] === "series") {
         query[formatParamTypes[i]] = formatParam.split("(")[0].trim();
+      } else if (formatParamTypes[i] === "program") {
+        query[formatParamTypes[i]] = formatParam.split(":")[1].trim();
       } else {
         query[formatParamTypes[i]] = formatParam.split(":")[0].trim();
       }
@@ -174,6 +176,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
 
   if (!isNaN(query.audience)) {
     request.addTerms(query.audience, 'targetAudience');
+    request.addTerms(query.program, 'community.id');
     request.addCycleDate();
     if (query.location) {
       if (_.isArray(query.location)) {
