@@ -500,7 +500,7 @@
 
   .usajobs-form__label-header {
     margin-top: $size-M;
-}
+  }
 
   a.question, a.question:visited {
     color: $color-primary;
@@ -517,6 +517,15 @@
     a.question, a.question:visited {
       color: $color-primary;
       text-decoration: underline;
+    }
+  }
+
+  .usajobs-open-opps-opportunity.saved-internship-opportunities {
+    padding: $size-default $size-S;
+    background-color: $color-gray-lighter;
+
+    @include media($M-down) {
+      padding: $size-default;
     }
   }
 
@@ -642,7 +651,6 @@
       font-weight: normal;
       float: right;
       color: $color-secondary;
-      float: right;
 
       span {
         margin-left: $size-base;
@@ -660,6 +668,64 @@
       font-size: 1.5rem;
       font-weight: normal;
       color: $color-gray;
+    }
+  }
+
+  .saved-internships-list {
+    overflow-y: scroll;
+    height: 33rem;
+    padding-right: $size-S;
+    // padding-left: $size-base;
+    margin-bottom: $size-default;
+
+    @include media($M-down) {
+      padding-right: 0;
+    }
+
+    .usajobs-card--large {
+
+      @include media($M-down) {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      &:first-child {
+        margin-top: $size-base;
+      }
+
+      &:last-child {
+        margin-bottom: $size-base;
+      }
+
+      .usajobs-card__title {
+        font-size: 1.9rem;
+        width: 70%;
+        display: inline-block;
+
+        @include media($XXL) {
+          width: 80%;
+        }
+      }
+
+      .program-select {
+        font-size: $small-font-size;
+        font-weight: normal;
+        float: right;
+        color: $color-primary;
+
+        &.selected {
+          color: $color-green;
+        }
+  
+        span {
+          margin-left: $size-base;
+          text-decoration: underline;
+        }
+      }
+
+      .program-label {
+        margin-top: $size-S;
+      }
     }
   }
 
