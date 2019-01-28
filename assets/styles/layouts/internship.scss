@@ -181,7 +181,7 @@
   &-container {
     margin-left: auto;
     margin-right: auto;
-    padding: $size-default;
+    padding: $size-base $size-default;
     max-width: 90rem;
     font-size: $h1-font-size;
     color: $color-base;
@@ -195,29 +195,12 @@
       padding-bottom: $size-S;
     }
 
-    svg {
-      margin-top: $size-base;
-
-      @include media ($M) {
-        margin-top: 0;
-      }
-
-      @include media ($L) {
-        margin-top: $size-base;
-      }
-    }
-
     span.logo {
-      margin-top: $size-base;
       height: 2.5rem;
       width: 2.5rem;
       background-repeat: no-repeat;
       background-size: 100%;
       background-position: center;
-
-      @include media ($M) {
-        margin-top: 0;
-      }
 
       &.dos {
         background-image: url(../../../img/logo/png/dos-student-internship-program-logo.png);
