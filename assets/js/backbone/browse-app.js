@@ -47,7 +47,7 @@ var BrowseRouter = Backbone.Router.extend({
     'admin(/)'                                      : 'showAdmin',
     'admin(/):action(/)(:actionId)(/)(:subAction)'  : 'showAdmin',
     'login(/)'                                      : 'showLogin',
-    'apply'                                         : 'showApply',
+    'apply/:id(/)'                                  : 'showApply',
     'unauthorized(/)'                               : 'showUnauthorized',
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
@@ -466,7 +466,7 @@ var BrowseRouter = Backbone.Router.extend({
     }
   },
 
-  showApply: function () {
+  showApply: function (id) {
     this.cleanupChildren();
     // if (id) {
     //   id = id.toLowerCase();
@@ -475,7 +475,7 @@ var BrowseRouter = Backbone.Router.extend({
       target: 'apply',
       el: '#container',
       router: this,
-      data: this.data,
+      data: { applicationId: id },
     });
   },
   

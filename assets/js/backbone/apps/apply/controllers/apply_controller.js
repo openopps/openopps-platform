@@ -7,7 +7,7 @@ var ApplyController = BaseController.extend({
   initialize: function (options) {
     this.options = options;
     if(!window.cache.currentUser) {
-      Backbone.history.navigate('/login?apply', { trigger: true });
+      Backbone.history.navigate('/login?apply/' + this.options.data.applicationId, { trigger: true });
     } else {
       this.applyView = new ApplyView({
         el: '#container',
