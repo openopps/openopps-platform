@@ -1071,4 +1071,131 @@
       color: $color-primary-darker;
     }
   }
+
+  .transcript-card-buttons {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    .transcript-card-button {
+      position: relative;
+      background-color: #ffffff;
+      margin: 1.5rem 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+      @include media($L) {
+        width: 46rem;
+      }
+
+      label {
+        width: 100%;
+        height: 100%;
+        max-width: inherit;
+        margin: 0;
+        padding: 1.2rem;
+        font-size: 1.9rem;
+        position: relative;
+
+        &::before {
+          vertical-align: baseline;
+          float: left;
+          margin-top: 2.8rem;
+          margin-right: 4rem;
+          display: none;
+        }
+
+        .radio-button {
+          text-align: center;
+          margin-top: 1.7rem;
+
+          @include media($L-down) {
+            width: 100%;
+            margin-bottom: $size-default;
+          }
+
+          @include media($L) {
+            text-align: left;
+          }
+
+          &::before {
+            text-indent: 0.15em;
+            content: ' ';
+            display: inline-block;
+            border-radius: 100%;
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #757575;
+            height: 1.4rem;
+            line-height: 1.4rem;
+            width: 1.4rem;
+          }
+        }
+
+        .transcript-info {
+          word-break: break-all;
+          width: 100%;
+          float: left;
+          font-size: 1.7rem;
+          
+          @include media($M-down) {
+            margin-bottom: $size-default;
+            text-align: center;
+          }
+
+          @include media($M) {
+            width: 52%;
+          }
+
+          @include media($L) {
+            width: 68%;
+            margin-top: 0.7rem
+          }
+        }
+
+        .transcript-card-button__sub-text {
+          display: block;
+          font-size: 1.4rem;
+        }
+      }
+
+      .transcript-icon {
+        width: 8rem;
+        display: block;
+        margin-left: auto;
+        text-align: center;
+        color: $color-gray-light;
+
+        @include media($M-down) {
+          margin-right: auto;
+        }
+        
+        @include media($M) {
+          right: 2rem;
+        }
+
+        svg {
+          width: 3rem;
+          height: auto;
+          display: block;
+          margin: 0 auto;
+        }
+
+        h6 {
+          margin-top: 0.7rem;
+          margin-bottom: 0;
+          line-height: 1;
+        }
+      }
+
+      [type=radio]:checked + label {
+        border: 1px inset #2e8540;
+        background-color: #e7f4e4;
+        margin: -2px 0;
+
+        .radio-button::before {
+          background-color: #0071bc;
+          box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0071bc;
+        }
+      }
+    }
+  }  
 }
