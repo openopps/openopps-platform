@@ -14,12 +14,14 @@ async function createUnpaidApplication (data, callback) {
       updatedAt: new Date(),
     });
   }
-  var applicationTasks = await dao.applicationTasks.find('application_id = ?', application.applicationId);
+  var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
   if (applicationTasks.length >= 3) {
     callback({ message: 'You have already picked the maximum of 3 programs. ' + 
     'To apply to this internship please remove at least 1 of your already chosen programs from your application.' });
+  } else if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
+    callback(null, application.applicationId);
   } else {
-    await dao.applicationTasks.insert({
+    await dao.ApplicationTask.insert({
       applicationId: application.applicationId,
       userId: application.userId,
       taskId: data.task.id,
