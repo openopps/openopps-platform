@@ -98,6 +98,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   };
   var filter_must = request.body.query.bool.filter.bool.must;
+  var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
   var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program"];
 
@@ -150,6 +151,10 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   }
   if (agencies.length > 0) {
     request.addTerms(agencies, 'restrictedToAgency');
+  }
+
+  if (!ctx.state.user || !ctx.state.user.isAdmin) {
+    filter_must_not.push({terms: { ['state'] : ['submitted', 'draft'] }});
   }
 
   var keywords = []
