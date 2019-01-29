@@ -3,7 +3,7 @@ const log = require('log')('app:application:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 
-async function createUnpaidApplication (data, callback) {
+async function findOrCreateApplication (data) {
   var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [data.userId, data.community.communityId, data.task.cycleId]))[0];
   if (!application) {
     application = await dao.Application.insert({
@@ -14,6 +14,11 @@ async function createUnpaidApplication (data, callback) {
       updatedAt: new Date(),
     });
   }
+  return application;
+}
+
+async function processUnpaidApplication (data, callback) {
+  var application = await findOrCreateApplication(data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
   if (applicationTasks.length >= 3) {
     callback({ message: 'You have already picked the maximum of 3 programs. ' + 
@@ -40,7 +45,7 @@ module.exports.apply = async function (userId, taskId, callback) {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
       // need a way to determine DoS Unpaid vs VSFS
       if (community.applicationProcess == 'dos') {
-        await createUnpaidApplication({ userId: userId, task: task, community: community }, callback);
+        await processUnpaidApplication({ userId: userId, task: task, community: community }, callback);
       } else {
         // We don't know yet how to handle this type of application
         log.error('User attempted to apply to a community task that is not defined.', taskId);
