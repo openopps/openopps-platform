@@ -177,6 +177,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   if (!isNaN(query.audience)) {
     request.addTerms(query.audience, 'targetAudience');
     request.addTerms(query.program, 'community.id');
+    request.addTerms(query.agency, 'postingAgency');
     request.addCycleDate();
     if (query.location) {
       if (_.isArray(query.location)) {
@@ -234,7 +235,8 @@ function convertSearchResultsToResultModel (searchResult) {
     series: source.series,
     careers: source.careers,
     keywords: source.keywords,
-    owner: source.owner
+    owner: source.owner,
+    community: source.community
   };
   removeEmpty(model);
   return model;
