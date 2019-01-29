@@ -43,19 +43,43 @@ var InternshipView = BaseView.extend({
     this.$el.localize();
     $('#search-results-loading').hide();
     this.updateInternshipEmail();
+    if (window.location.hash == '#apply') {
+      Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
+      this.apply({});
+    }
     return this;
+  },
+
+  displayError: function (error) {
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'internship-apply-error',
+      alert: 'error',
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();
+          window.history.back();
+        }.bind(this),
+      },
+      secondary: null,
+      modalTitle: 'You are not eligible',
+      modalBody: error.responseText,
+    }).render();
   },
 
   apply: function (e) {
     e.preventDefault && e.preventDefault();
-    $.ajax({
-      url: '/api/application/apply/' + this.model.attributes.id,
-      method: 'POST',
-    }).done(function (applicationId) {
-      Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
-    }).fail(function (error) {
-      // TODO: Display proper error message
-    });
+    if (!window.cache.currentUser) {
+      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '#apply', { trigger: true });
+    } else {
+      $.ajax({
+        url: '/api/application/apply/' + this.model.attributes.id,
+        method: 'POST',
+      }).done(function (applicationId) {
+        Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
+      }).fail(this.displayError.bind(this));
+    }
   },
 
   copy: function (e) {

@@ -13,10 +13,15 @@ router.get('/api/application/:userId/:communityId', auth, async (ctx, next) => {
 });
 
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
-  await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
-    ctx.status = err ? 400 : 200;
-    ctx.body = err ? err : applicationId;
-  });
+  if(ctx.state.user.hiringPath == 'student') {
+    await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
+      ctx.status = err ? 400 : 200;
+      ctx.body = err ? err.message : applicationId;
+    });
+  } else {
+    ctx.status = 400;
+    ctx.body = 'You must be a student to apply for this internship';
+  }
 });
 
 module.exports = router.routes();

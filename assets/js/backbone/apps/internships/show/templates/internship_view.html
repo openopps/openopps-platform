@@ -188,10 +188,10 @@
           <li>Be able to receive and maintain a security clearance.</li>
         </ul>
         <h4>For more information</h4>
-        
-
         <p>Visit <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (unpaid)'s</a> website.</p>
-        <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+        <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
+          <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+        <% } %>
       </div>
 
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
