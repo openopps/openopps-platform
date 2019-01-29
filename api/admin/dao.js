@@ -19,7 +19,9 @@ const agencyTaskStateQuery = 'select ' +
   'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
   'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
   'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
-  'from task where agency_id = ?';
+  'from task '  +
+  'where community_id is null ' +
+  'and agency_id = ? ';
 
 const communityTaskStateQuery = 'select ' +
   'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
@@ -212,7 +214,7 @@ const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'where task.agency_id = ? and ';
+  'where task.agency_id = ? and community_id is null and ';
 
 const activityQuery = 'select comment."createdAt", comment.id, ' + "'comment' as type " + '' +
   'from midas_user ' +
