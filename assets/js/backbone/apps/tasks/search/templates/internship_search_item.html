@@ -87,11 +87,19 @@
             <div class="usajobs-open-opps-opportunity-requestor__body">
               <p class="usajobs-open-opps-opportunity-requestor__name">
                 <!-- <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %> -->
-                U.S. Department of State
+                <% if (item.community.shortName == 'Student Internship Program (Unpaid)') { %>
+                  Department of State
+                <% } else { %>
+                  <%- item.postingAgency %>
+                <% } %>
               </p>
               <span class="usajobs-open-opps-opportunity-requestor__on">
                   <!-- Posted on <%- moment(item.publishedAt).format('MM/DD/YY') %> -->
-                  Student Internship Program (Unpaid)
+                <% if (item.community.shortName) { %>
+                  <%- item.community.shortName %>
+                <% } else { %>
+                  <%- item.community.name %>
+                <% } %>
               </span>
             </div>
           </div>

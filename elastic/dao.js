@@ -61,7 +61,7 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'targetAudience': doc.target_audience,
     'languages': doc.languages,
-    'community': { id: doc.community_id, name: doc.community_name },
+    'community': { id: doc.community_id, name: doc.community_name, shortName: doc.community_short_name },
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, postingStartDate: doc.posting_start_date, postingEndDate: doc.posting_end_date }
   };
 }
@@ -85,6 +85,7 @@ from (
     c.target_audience,
     c.community_id,
     c.community_name,
+    c.community_short_name,
     t.city_name || ', ' || cs.value as city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
