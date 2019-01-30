@@ -45,6 +45,7 @@ var TaskListView = Backbone.View.extend({
     this.initAgencyFilter();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+
   },
 
   render: function () {
@@ -61,7 +62,7 @@ var TaskListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
-    this.filter()
+    this.filter();
     this.initializeKeywordSearch();
     this.$('.usajobs-open-opps-search__box').show();
     return this;
@@ -277,7 +278,7 @@ var TaskListView = Backbone.View.extend({
     var stop = page * pageSize;
 
     _.each(searchResults.hits, function (value, key) {
-      $('#task-list').append(self.renderItem(value.result))
+      $('#task-list').append(self.renderItem(value.result));
     });
     this.renderResultsCount(start, stop, pageSize, searchResults.totalHits, searchResults.hits.length);
   },
@@ -296,20 +297,15 @@ var TaskListView = Backbone.View.extend({
   renderItem: function (searchResult) {
     searchResult.tags = {};
     if (searchResult.locations && searchResult.locations.length > 0) {
-      searchResult.tags["location"] = [searchResult.locations[0]];
+      searchResult.tags['location'] = [searchResult.locations[0]];
     }
-    if (searchResult.timeEstimate && searchResult.timeEstimate !== "") {
-      searchResult.tags["task-time-estimate"] = [{ name: searchResult.timeEstimate }];
-    }
-    if (searchResult.timeRequired && searchResult.timeRequired !== "") {
-      searchResult.tags["task-time-required"] = [{ name: searchResult.timeRequired }];
-    }
-    searchResult.owner.initials = getInitials(searchResult.owner.name)
+    
+    searchResult.owner.initials = getInitials(searchResult.owner.name);
     var item = {
       item: searchResult,
       user: window.cache.currentUser,
       tagConfig: TagConfig,
-      tagShow: ['location', 'skills', 'topic', 'task-time-estimate', 'task-time-required']
+      tagShow: ['location', 'skills', 'topic', 'task-time-estimate', 'task-time-required'],
     };
  
     if (searchResult.description) {
@@ -320,7 +316,7 @@ var TaskListView = Backbone.View.extend({
 
   clickPage: function (e) {
     if (e.preventDefault) e.preventDefault();
-    this.filters.page = $(e.currentTarget).data('page')
+    this.filters.page = $(e.currentTarget).data('page');
     this.filter();
     window.scrollTo(0, 0);
   },
@@ -576,7 +572,7 @@ function formatObjectForURL (value) {
 function getAppliedFiltersCount (filters, agency) {
   var count = 0;
   _.each(filters, function ( value, key ) {
-    if (key != "term" && key != "page") {
+    if (key != 'term' && key != 'page') {
       count += (_.isArray(value) ? value.length : 1);
     }
   });
