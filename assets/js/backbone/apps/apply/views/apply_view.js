@@ -106,6 +106,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   cleanup: function () {
+    $('.apply-hide').show();
     removeView(this);
   },
 });
