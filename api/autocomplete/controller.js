@@ -17,7 +17,7 @@ router.get('/api/ac/user', async (ctx, next) => {
 
 router.get('/api/ac/languages', async (ctx, next) => {
   log.info('ctx.query', ctx.query);
-  ctx.body = await service.language(ctx.query.q);
+  ctx.body = await service.languageByValue(ctx.query.q);
 });
 
 router.get('/api/ac/agency', async (ctx, next) => {
@@ -27,11 +27,16 @@ router.get('/api/ac/agency', async (ctx, next) => {
 
 router.get('/api/ac/country', async (ctx, next) => {
   log.info('ctx.query', ctx.query);
-  ctx.body = await service.country(ctx.query.q);
+  ctx.body = await service.countryByValue(ctx.query.q);
 });
+
 router.get('/api/ac/state', async (ctx, next) => {
   log.info('ctx.query', ctx.query);
-  ctx.body = await service.state(ctx.query.q);
+  ctx.body = await service.stateByValue(ctx.query.q);
+});
+
+router.get('/api/ac/countrySubdivision/:code', async (ctx, next) => {
+  ctx.body = await service.getCountrySubdivisions(ctx.params.code);
 });
 
 module.exports = router.routes();

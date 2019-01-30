@@ -45,6 +45,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.deleteLanguageArray    = [];
     this.cycles                 = [];
     this.tagSources = options.tagTypes;  
+    this.countryCode            = '';
 
     this.initializeListeners();
 
@@ -196,7 +197,6 @@ var InternshipEditFormView = Backbone.View.extend({
     this.renderLanguages();
     this.initializeFormFields();
     this.initializeCountriesSelect();
-    this.initializeCountrySubdivisionSelect();
     this.initializeLanguagesSelect();
     this.initializeSelect2(); 
     this.initializeTextAreaDetails();
@@ -216,7 +216,6 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeFormFields: function (){
     $('#needed-interns').val(this.model.attributes.interns);
-    // $('#intern-year').val(this.model.attributes.cycleYear);
     $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);    
     $('#task_tag_bureau').val(this.model.attributes.bureau);
     $('#task_tag_office').val(this.model.attributes.office);
@@ -464,7 +463,6 @@ var InternshipEditFormView = Backbone.View.extend({
         },
         results: function (data) {              
           return { results: data };
-         
         },
       },
       
@@ -472,76 +470,82 @@ var InternshipEditFormView = Backbone.View.extend({
       formatResult: function (obj, container, query) {
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
       },
+
       formatSelection: function (obj, container, query) {
         return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
       },
+
       formatNoMatches: 'No country found ',
 
       initSelection:function (element,callback){
         if(country){
-          var data= {code: country.code,
+          var data= {
+            code: country.code,
             countryId: country.countryId,
             field: 'value',
             id: country.id,
-            value: country.value };
-         
+            value: country.value, 
+          };
+          this.countryCode = country.code;
+          this.loadCountrySubivisionData();
           callback(data);
         }
-      },
+      }.bind(this),
 
     }).select2('val', []);
 
     $('#task_tag_country').on('change', function (e) {
       validate({ currentTarget: $('#task_tag_country') });
-      
+      this.countryCode = $('#task_tag_country').select2('data').code;
+      this.countryCode && this.loadCountrySubivisionData();
     }.bind(this));
+
     $('#task_tag_country').focus();
   },
- 
-  initializeCountrySubdivisionSelect: function () {
-    var countrySubdivision= this.model.attributes.countrySubdivision;
-    $('#task_tag_countrySubdivision').select2({
-      placeholder: '- Select -',
-      minimumInputLength: 3,
-      ajax: {
-        url: '/api/ac/state',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) {                  
-          return { results: data };
-        },
-      },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatNoMatches: 'No state found ',
-      initSelection:function (element,callback){
-        if(countrySubdivision){
-          var data= {code: countrySubdivision.code,
-            countryId: countrySubdivision.countrySubdivisionId,
-            field: 'value',
-            id: countrySubdivision.id,
-            value: countrySubdivision.value };
-         
-          callback(data);
-        }
-      },
 
-    }).select2('val', []);
-  
-    $('#task_tag_countrySubdivision').on('change', function (e) {
-      validate({ currentTarget: $('#task_tag_countrySubdivision') });
-      
+  loadCountrySubivisionData: function () {
+    $.ajax({
+      url: '/api/ac/countrySubdivision/' + this.countryCode,
+      dataType: 'json',
+    }).done(function (data) {
+      this.initializeCountrySubdivisionSelect(data);
     }.bind(this));
-    $('#task_tag_countrySubdivision').focus();    
   },
  
+  initializeCountrySubdivisionSelect: function (data) {
+    var countrySubdivision = this.model.attributes.countrySubdivision;
+    $('#task_tag_countrySubdivision').select2({
+      placeholder: '- Select -',
+      data: { results: data, text: 'value' },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (item) {
+        return item.value;
+      },
+      formatSelection: function (item) {
+        return item.value;
+      },
+      formatNoMatches: 'No state found ',
+    });
+    if (data.length) {
+      $('#task_tag_countrySubdivision').removeAttr('disabled', true);
+      $('#task_tag_countrySubdivision').addClass('validate');
+      if(countrySubdivision) {
+        $('#task_tag_countrySubdivision').val(countrySubdivision.id).trigger('change.select2');
+      }
+    } else {
+      $('#task_tag_countrySubdivision').attr('disabled', true);
+      $('#task_tag_countrySubdivision').removeClass('validate');
+      $('.task_tag_countrySubdivision').removeClass('usa-input-error');
+      $('.task_tag_countrySubdivision > .field-validation-error').hide();
+    }
+  
+    $('#task_tag_countrySubdivision').on('change', function (e) {
+      if ($('#task_tag_country').val() == 'United States') {
+        validate({ currentTarget: $('#task_tag_countrySubdivision') });
+      }  
+    });
+  },
+  
   submit: function (e) {
     if ( e.preventDefault ) { e.preventDefault(); }
     if ( e.stopPropagation ) { e.stopPropagation(); }
@@ -624,8 +628,6 @@ var InternshipEditFormView = Backbone.View.extend({
       if(this.model.attributes.country&&this.model.attributes.countrySubdivision&&this.model.attributes.cityName) {
         $('#specific-location').addClass('selected');
         $('#task_tag_city').val(this.model.attributes.cityName);
-      
-       
       } else {
         $('#anywhere').addClass('selected');
       }
@@ -635,7 +637,7 @@ var InternshipEditFormView = Backbone.View.extend({
       $('#s2id_task_tag_location').show();
       $('.intern-tag-address').show();
       $('#task_tag_country').addClass('validate');
-      $('#task_tag_countrySubdivision').addClass('validate');
+      // $('#task_tag_countrySubdivision').addClass('validate');
       $('#task_tag_city').addClass('validate');
     } else {
       $('#s2id_task_tag_location').hide();
@@ -643,7 +645,7 @@ var InternshipEditFormView = Backbone.View.extend({
       $('#task_tag_countrySubdivision').select2('data',null);
       $('.intern-tag-address').hide();
       $('#task_tag_country').removeClass('validate');
-      $('#task_tag_countrySubdivision').removeClass('validate');
+      // $('#task_tag_countrySubdivision').removeClass('validate');
       $('#task_tag_city').removeClass('validate');
     }
   },
@@ -664,7 +666,6 @@ var InternshipEditFormView = Backbone.View.extend({
     return this;
   },
   
-
   getDataFromPage: function () {
     var modelData = {
       id                    : this.model.get('id'),
@@ -689,7 +690,6 @@ var InternshipEditFormView = Backbone.View.extend({
       bureau                : this.$('#task_tag_bureau').val(),
       office                : this.$('#task_tag_office').val(),
       interns               : this.$('#needed-interns').val(),
-      // timeframe             : this.$('input[name=internship-timeframe]:checked').attr('id'),
       cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
       cycleName             : this.$('input[name=internship-timeframe]:checked').val(),
     };
