@@ -61,6 +61,7 @@ module.exports.apply = async function (userId, taskId, callback) {
   });
 };
 
-module.exports.findById = function (applicationId) {
-  return dao.Application.find('id = ?', applicationId);
+module.exports.findById = async function (applicationId) {
+  var application = await dao.Application.find('id = ?', applicationId);
+  
 };
