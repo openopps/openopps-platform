@@ -80,7 +80,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
           },
           should : [],
           minimum_should_match : query.audience && query.location ? 1 : 0
-        },
+        }
       },
     },
     addTerms (filter, field, defaultFilter) { 
@@ -89,6 +89,10 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
     },
+    addCycleDate () {
+      filter_must.push({range: { "cycle.postingEndDate" : { gte: Date.now() } }});
+      filter_must.push({range: { "cycle.postingStartDate" : { lte: Date.now() } }});
+    },
     addLocations (location) { 
       should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
     }
@@ -96,7 +100,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -125,6 +129,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         delete query.location;
       } else if (formatParamTypes[i] === "series") {
         query[formatParamTypes[i]] = formatParam.split("(")[0].trim();
+      } else if (formatParamTypes[i] === "program") {
+        query[formatParamTypes[i]] = formatParam.split(":")[1].trim();
       } else {
         query[formatParamTypes[i]] = formatParam.split(":")[0].trim();
       }
@@ -143,30 +149,12 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     }
   }
-
-  if (!isNaN(query.audience)) {
-    request.addTerms(query.audience, 'targetAudience');
-    if (query.location) {
-      if (_.isArray(query.location)) {
-        _.each(query.location, function(location) {
-          request.addLocations(location);
-        });
-      } else {
-        request.addLocations(query.location);
-      }
-    }
-  } else {
-    request.addTerms(query.state, 'state', 'open');
-    request.addTerms(query.location, 'locations.name');
-  }
-  request.addTerms(query.skill, 'skills.name');
-  request.addTerms(query.career, 'careers.name');
-  request.addTerms(query.series, 'series.code');
-  request.addTerms(query.time, 'timeRequired');
-  request.addTerms(query.locationType, 'locationType');
-  request.addTerms(query.language, 'languages.name');
   if (agencies.length > 0) {
     request.addTerms(agencies, 'restrictedToAgency');
+  }
+
+  if (!ctx.state.user || !ctx.state.user.isAdmin) {
+    filter_must_not.push({terms: { ['state'] : ['submitted', 'draft'] }});
   }
 
   var keywords = []
@@ -191,8 +179,36 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     };
   }
 
+  if (!isNaN(query.audience)) {
+    request.addTerms(query.audience, 'targetAudience');
+    request.addTerms(query.program, 'community.id');
+    request.addTerms(query.agency, 'postingAgency');
+    request.addCycleDate();
+    if (query.location) {
+      if (_.isArray(query.location)) {
+        _.each(query.location, function(location) {
+          request.addLocations(location);
+        });
+      } else {
+        request.addLocations(query.location);
+      }
+    }
+  } else {
+    request.addTerms(query.state, 'state', 'open');
+    request.addTerms(query.location, 'locations.name');
+  }
+  
+  request.addTerms(query.skill, 'skills.name');
+  request.addTerms(query.career, 'careers.name');
+  request.addTerms(query.series, 'series.code');
+  request.addTerms(query.time, 'timeRequired');
+  request.addTerms(query.locationType, 'locationType');
+  request.addTerms(query.language, 'languages.name');
+
   delete request.addTerms;
   delete request.addLocations;
+  delete request.addCycleDate;
+
   return request;
 };
 
@@ -220,11 +236,12 @@ function convertSearchResultsToResultModel (searchResult) {
     skills: source.skills,
     locationType: source.locationType,
     locations: source.locations,
-    postingLocation: source.postingLocation.cityName,
+    postingLocation: source.postingLocation,
     series: source.series,
     careers: source.careers,
     keywords: source.keywords,
-    owner: source.owner
+    owner: source.owner,
+    community: source.community
   };
   removeEmpty(model);
   return model;

@@ -61,7 +61,8 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'targetAudience': doc.target_audience,
     'languages': doc.languages,
-    'community': { id: doc.community_id, name: doc.community_name }
+    'community': { id: doc.community_id, name: doc.community_name, shortName: doc.community_short_name },
+    'cycle': { id: doc.cycle_id, name: doc.cycle_name, postingStartDate: doc.posting_start_date, postingEndDate: doc.posting_end_date }
   };
 }
     
@@ -84,9 +85,14 @@ from (
     c.target_audience,
     c.community_id,
     c.community_name,
+    c.community_short_name,
     t.city_name || ', ' || cs.value as city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
+	  cy.cycle_id,
+	  cy.name as "cycle_name",
+	  cy.posting_start_date,
+	  cy.posting_end_date,
     t.accepting_applicants as "acceptingApplicants",
     (
       select  
@@ -259,6 +265,7 @@ from (
   left join community c on c.community_id = t.community_id
   left join country_subdivision cs on cs.country_subdivision_id = t.country_subdivision_id
   left join country ct on ct.country_id = t.country_id
+  left join cycle cy on cy.cycle_id = t.cycle_id
   %s
 ) row`;
 

@@ -13,6 +13,16 @@ var templates = {
 };
 
 var ApplyView = Backbone.View.extend({
+
+  events: {
+    'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
+    'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
+    'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
+    'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
+    'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
+    'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
+  },
+
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
@@ -23,8 +33,23 @@ var ApplyView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.localize();
 
+    this.data = {
+      accordion1: {
+        open: false,
+      },
+      accordion2: {
+        open: false,
+      },
+      accordion3: {
+        open: false,
+      },
+    };
+
     // initialize sub components
     this.renderProcessFlowTemplate();
+    this.toggleOverseasExperienceDetails();
+    this.toggleOverseasExperienceFilterOther();
+    this.toggleSecurityClearanceDetails();
 
     $('.apply-hide').hide();
 
@@ -35,7 +60,53 @@ var ApplyView = Backbone.View.extend({
     $('#process-title-banners').html(_.template(ProcessFlowTemplate)());
   },
 
+  toggleAccordion: function (e) {
+    var element = $(e.currentTarget);
+    this.data.accordion1.open = !this.data.accordion1.open;
+    element.attr('aria-expanded', this.data.accordion1.open);
+    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion1.open);
+
+    this.data.accordion2.open = !this.data.accordion2.open;
+    element.attr('aria-expanded', this.data.accordion2.open);
+    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion2.open);
+
+    this.data.accordion3.open = !this.data.accordion3.open;
+    element.attr('aria-expanded', this.data.accordion3.open);
+    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
+  },
+
+  toggleOverseasExperienceDetails: function () {
+    $('#overseas-experience-details').hide();
+
+    if($('input#overseas-experience-yes').is(':checked')) {
+      $('#overseas-experience-details').show();
+    } else {
+      $('#overseas-experience-details').hide();
+    }
+  },
+
+  toggleOverseasExperienceFilterOther: function () {
+    $('#overseas-experience-filter-other').hide();
+
+    if($('input#overseasExperienceOther').is(':checked')) {
+      $('#overseas-experience-filter-other').show();
+    } else {
+      $('#overseas-experience-filter-other').hide();
+    }
+  },
+
+  toggleSecurityClearanceDetails: function () {
+    $('#security-clearance-details').hide();
+
+    if($('input#SecurityClearanceYes').is(':checked')) {
+      $('#security-clearance-details').show();
+    } else {
+      $('#security-clearance-details').hide();
+    }
+  },
+
   cleanup: function () {
+    $('.apply-hide').show();
     removeView(this);
   },
 });

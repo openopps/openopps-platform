@@ -60,7 +60,16 @@
             "community": {
                 "properties": {
                     "id": { "type": "long" },
-                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                    "name": { "type": "keyword", "normalizer": "lowercase"  },
+                    "shortName": { "type": "keyword", "normalizer": "lowercase" }
+                }
+            },
+            "cycle": {
+                "properties": {
+                    "id": { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  },
+                    "postingStartDate": { "type": "date" },
+                    "postingEndDate": { "type": "date" }
                 }
             }
         }

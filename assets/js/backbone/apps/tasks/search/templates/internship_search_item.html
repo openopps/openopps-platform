@@ -20,9 +20,13 @@
         <li class="usajobs-open-opps-opportunity__detail-item">
           <svg class="svg-inline--fa fa-map-marker fa-w-12" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="map-marker" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"></path></svg><!-- <span class="fas fa-map-marker"></span> --> Virtual
         </li>
+        <% } else if (item.postingLocation.country == 'United States') { %>
+          <li class="usajobs-open-opps-opportunity__detail-item">
+            <svg class="svg-inline--fa fa-map-marker fa-w-12" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="map-marker" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"></path></svg> <%= item.postingLocation.cityName %>
+          </li>
         <% } else { %>
           <li class="usajobs-open-opps-opportunity__detail-item">
-            <svg class="svg-inline--fa fa-map-marker fa-w-12" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="map-marker" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"></path></svg> <%= item.postingLocation %>
+            <svg class="svg-inline--fa fa-map-marker fa-w-12" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="map-marker" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"></path></svg> <%= item.postingLocation.cityName + ', ' + item.postingLocation.country %>
           </li>
         <% } %>
         <% _.each(tagShow, function (tagType) { %>
@@ -87,11 +91,19 @@
             <div class="usajobs-open-opps-opportunity-requestor__body">
               <p class="usajobs-open-opps-opportunity-requestor__name">
                 <!-- <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %> -->
-                U.S. Department of State
+                <% if (item.community.shortName == 'Student Internship Program (Unpaid)') { %>
+                  U.S. Department of State
+                <% } else { %>
+                  <%- item.postingAgency %>
+                <% } %>
               </p>
               <span class="usajobs-open-opps-opportunity-requestor__on">
                   <!-- Posted on <%- moment(item.publishedAt).format('MM/DD/YY') %> -->
-                  Student Internship Program (Unpaid)
+                <% if (item.community.shortName) { %>
+                  <%- item.community.shortName %>
+                <% } else { %>
+                  <%- item.community.name %>
+                <% } %>
               </span>
             </div>
           </div>

@@ -12,11 +12,11 @@ var InternshipEditFormView = require('../../edit/views/internship_edit_form_view
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
 var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
+
 var InternshipView = BaseView.extend({
   events: {
     'click #apply'  : 'apply',
     'click #task-copy': 'copy',
-   
   },
 
   initialize: function (options) {
@@ -24,6 +24,63 @@ var InternshipView = BaseView.extend({
     this.params = new URLSearchParams(window.location.search);
   },
 
+  render: function () {
+    this.data = {
+      user: window.cache.currentUser,
+      model: this.model.toJSON(),
+      madlibTags: this.organizeTags(this.model.attributes.tags),
+      fromSearch: this.params.has('fromSearch'),
+    };
+   
+    _.each(['details', 'about'], function (part) {
+      if(this.data.model[part]) {
+        this.data.model[part + 'Html'] = marked(this.data.model[part]);
+      }
+    }.bind(this));
+    
+    var compiledTemplate = _.template(InternshipShowTemplate)(this.data);
+    this.$el.html(compiledTemplate);
+    this.$el.localize();
+    $('#search-results-loading').hide();
+    this.updateInternshipEmail();
+    if (window.location.hash == '#apply') {
+      Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
+      this.apply({});
+    }
+    return this;
+  },
+
+  displayError: function (error) {
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'internship-apply-error',
+      alert: 'error',
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();
+          window.history.back();
+        }.bind(this),
+      },
+      secondary: null,
+      modalTitle: 'You are not eligible',
+      modalBody: error.responseText,
+    }).render();
+  },
+
+  apply: function (e) {
+    e.preventDefault && e.preventDefault();
+    if (!window.cache.currentUser) {
+      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '#apply', { trigger: true });
+    } else {
+      $.ajax({
+        url: '/api/application/apply/' + this.model.attributes.id,
+        method: 'POST',
+      }).done(function (applicationId) {
+        Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
+      }).fail(this.displayError.bind(this));
+    }
+  },
 
   copy: function (e) {
     if (e.preventDefault) e.preventDefault();
@@ -66,7 +123,6 @@ var InternshipView = BaseView.extend({
     }).render();
   },
 
-
   updateInternshipEmail: function () {
     var subject = 'Take A Look At This Opportunity',
         data = {
@@ -84,32 +140,11 @@ var InternshipView = BaseView.extend({
 
     this.$('#email').attr('href', link);
   },
+
   organizeTags: function (tags) {
     // put the tags into their types
     return _(tags).groupBy('type');
   },
-  render: function () {
-    this.data = {
-      user: window.cache.currentUser,
-      model: this.model.toJSON(),
-      madlibTags: this.organizeTags(this.model.attributes.tags),
-      fromSearch: this.params.has('fromSearch'),
-    };
-   
-    _.each(['details', 'about'], function (part) {
-      if(this.data.model[part]) {
-        this.data.model[part + 'Html'] = marked(this.data.model[part]);
-      }
-    }.bind(this));
-    
-    var compiledTemplate = _.template(InternshipShowTemplate)(this.data);
-    this.$el.html(compiledTemplate);
-    this.$el.localize();
-    $('#search-results-loading').hide();
-    this.updateInternshipEmail();
-    return this;
-  },
-  
 });
 
 module.exports = InternshipView;
