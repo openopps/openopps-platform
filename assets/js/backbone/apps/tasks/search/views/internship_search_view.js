@@ -43,6 +43,7 @@ var InternshipListView = Backbone.View.extend({
     this.initializeHideFields();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+   
   },
     
   render: function () {
@@ -63,11 +64,17 @@ var InternshipListView = Backbone.View.extend({
     this.initializeKeywordSearch();
     this.initializeLocationSearch(); 
     this.initializeCommunityDetails();
-  
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     this.$('.usajobs-open-opps-search__box').show();
     return this;
   },
 
+  cleanup: function () {
+    $('.usa-footer-search--intern-hide').show();
+    $('.usa-footer-search--intern').hide();
+    removeView(this);
+  },
   changedInternsPrograms: function (e){
     this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
     this.checkInternsPrograms();
@@ -515,7 +522,8 @@ var InternshipListView = Backbone.View.extend({
       url: '/api/task/search' + location.search + '&audience=2',
       type: 'GET',
       async: true,
-      success: function (data) {      
+      success: function (data) {  
+          
         this.renderList(data, this.filters.page || 1);
         if ($('#search-tab-bar-filter').attr('aria-expanded') === 'true') {
           $('.usajobs-search-filter-nav').attr('aria-hidden', 'false');
