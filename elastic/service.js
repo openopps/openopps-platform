@@ -236,7 +236,7 @@ function convertSearchResultsToResultModel (searchResult) {
     skills: source.skills,
     locationType: source.locationType,
     locations: source.locations,
-    postingLocation: source.postingLocation.cityName,
+    postingLocation: source.postingLocation,
     series: source.series,
     careers: source.careers,
     keywords: source.keywords,
