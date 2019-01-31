@@ -34,7 +34,7 @@ var TaskListView = Backbone.View.extend({
     this.tagFactory = new TagFactory();
     this.collection = options.collection;
     this.queryParams = options.queryParams;
-
+    this.careers = [];
     this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
     this.parseURLToFilters();
@@ -43,6 +43,7 @@ var TaskListView = Backbone.View.extend({
       this.userAgency = window.cache.currentUser.agency;
     }
     this.initAgencyFilter();
+    this.initializeCareerField();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
 
@@ -167,6 +168,17 @@ var TaskListView = Backbone.View.extend({
     $('#footer').addClass('filter-margin');
   },
 
+  initializeCareerField: function () {
+    $.ajax({
+      url: '/api/ac/tag?type=career&list',
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.careers = data;
+      }.bind(this),
+    });
+  },
+
   removeFilter: function (event) {
     event.preventDefault();
     var element = $(event.target).closest('.usajobs-search-pills__item');
@@ -238,15 +250,8 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    $.ajax({
-      url: '/api/ac/tag?type=career&list',
-      type: 'GET',
-      async: false,
-      success: function (data) {
-        this.tagTypes = { career: data };
-        this.renderFilters();
-      }.bind(this),
-    });
+    this.tagTypes = { career: this.careers };
+    this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
       this.renderNoResults();

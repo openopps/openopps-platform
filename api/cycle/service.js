@@ -23,6 +23,10 @@ module.exports.createAudit = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
+module.exports.getAll = function () {
+  return dao.Cycle.find();
+}
+
 module.exports.findById = function (cycleId) {
   return dao.Cycle.find('cycle_id = ?', cycleId);
 };

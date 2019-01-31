@@ -68,11 +68,6 @@ async function commentsByTaskId (id) {
   return { comments: dao.clean.comments(comments) };
 }
 
-async function getCycles (communityId){
-  var cycledata= (await dao.Cycle.db.query(dao.query.cyceIntern,communityId)).rows;
-  return cycledata;
-}
-
 function processTaskTags (task, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(_.isNumber(tag)) {
@@ -602,6 +597,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
-  getCommunities: getCommunities,
-  getCycles:getCycles,
+  getCommunities: getCommunities
 };

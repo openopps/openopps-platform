@@ -30,9 +30,9 @@ var InternshipListView = Backbone.View.extend({
     this.collection = options.collection;
     this.queryParams = options.queryParams;
     this.filters = { term: this.queryParams.search, page: 1 };
-    this.options      = options;
-    this.cycles        = [];
-    this.programs   =    [];
+    this.options = options;
+    this.cycles = {};
+    this.programs = [];
     this.firstFilter = true;
     this.parseURLToFilters();
     this.userAgency =  {};
@@ -41,6 +41,7 @@ var InternshipListView = Backbone.View.extend({
     }
     this.initAgencyFilter();
     this.initializeHideFields();
+    this.initializeCycle();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
    
@@ -87,10 +88,6 @@ var InternshipListView = Backbone.View.extend({
     var studentProgram= $('[name=internship-program]:checked + label').text();
     var communityId= $('[name=internship-program]:checked').attr('id');
     
-    if(typeof communityId !=='undefined'){
-      this.initializeCycle(communityId);
-    }
-   
     if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
       delete this.filters.agency;        
       $('.dossection').show();
@@ -101,24 +98,48 @@ var InternshipListView = Backbone.View.extend({
       $('.agencyselect').show();
     } 
     this.selected= studentProgram;
-    this.renderCycle();
+    this.renderCycle(communityId);
   },
 
-  renderCycle:function (){
+  renderCycle:function (communityId){
+    var cycleData = [];
+    if (communityId in this.cycles) {
+      cycleData = this.cycles[communityId];
+    }
     var  cycleTemplate= _.template(InternshipCycle)({
-      selected:this.selected,
-      cycles:this.cycles,
+      selected: this.selected,
+      cycles: cycleData,
     });
     $('#cycleId').html(cycleTemplate);
   },
 
   initializeCycle: function (communityId) {   
     $.ajax({
-      url: '/api/internships/cycle/' + communityId ,
+      url: '/api/cycle/',
       type: 'GET',
       async: false,
-      success: function (data) {    
-        this.cycles = data;
+      success: function (data) {
+        this.cycles = {};
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        for (var i = 0; i < data.length; i++) {
+          var communityId = data[i].communityId;
+          var cycleStartDate = new Date(data[i].cycleStartDate);
+          var startDate = new Date(data[i].applyStartDate);
+          var endDate = new Date(data[i].applyEndDate);
+          var today = new Date();
+          if (!(communityId in this.cycles)) {
+            this.cycles[communityId] = [];
+          }
+          if (today >= startDate && endDate >= today) {
+            this.cycles[communityId].push({ 
+              name: data[i].name,
+              applyEndMonth: months[endDate.getMonth()],
+              applyEndDay: endDate.getDate(), 
+              applyEndYear: endDate.getFullYear(),
+              cycleStartYear: cycleStartDate.getFullYear()
+            });
+          }
+        } 
       }.bind(this),
     });
   },
@@ -270,8 +291,6 @@ var InternshipListView = Backbone.View.extend({
     }.bind(this));
          
   },
-
-
       
   removeFilter: function (event) {
     event.preventDefault();
@@ -297,9 +316,6 @@ var InternshipListView = Backbone.View.extend({
   },
     
   renderFilters: function () {
-    if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
-      this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
-    }
     var compiledTemplate = _.template(InternshipFilters)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -335,15 +351,7 @@ var InternshipListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    $.ajax({
-      url: '/api/ac/tag?type=career&list',
-      type: 'GET',
-      async: false,
-      success: function (data) {
-        this.tagTypes = { career: data };
-        this.renderFilters();
-      }.bind(this),
-    });
+    this.renderFilters();
     
     if (searchResults.totalHits === 0) {
       this.renderNoResults();
