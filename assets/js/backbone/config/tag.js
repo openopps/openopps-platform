@@ -36,7 +36,7 @@ module.exports = {
     },
 
     'location': {
-      'icon': 'fa fa-map-marker',
+      'icon': 'fas fa-map-marker-alt',
       'class': 'location',
       'id': 'location',
       'type': 'location',
@@ -48,7 +48,7 @@ module.exports = {
     // Task-specific tags
     // ---
     'task-skills-required': {
-      'icon': 'fa fa-map-marker',
+      'icon': 'fas fa-map-marker-alt',
       'class': 'task-skills-required',
       'id': 'task-skills-required',
       'type': 'task-skills-required',
