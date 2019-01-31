@@ -88,12 +88,12 @@ var InternshipListView = Backbone.View.extend({
     var studentProgram= $('[name=internship-program]:checked + label').text();
     var communityId= $('[name=internship-program]:checked').attr('id');
     
-    if($('[name=internship-program]:checked').val()=='U.S Department of State Student Internship Program (Unpaid)'){ 
+    if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
       delete this.filters.agency;        
       $('.dossection').show();
       $('.agencyselect').hide();
     }
-    else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service') {          
+    else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service (VSFS)') {          
       $('.dossection').hide();
       $('.agencyselect').show();
     } 
