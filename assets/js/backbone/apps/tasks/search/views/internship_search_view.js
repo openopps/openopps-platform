@@ -130,7 +130,6 @@ var InternshipListView = Backbone.View.extend({
           if (!(communityId in this.cycles)) {
             this.cycles[communityId] = [];
           }
-          console.log(data[i]);
           if (today >= startDate && endDate >= today) {
             this.cycles[communityId].push({ 
               name: data[i].name,
