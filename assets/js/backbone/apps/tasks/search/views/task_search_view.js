@@ -482,7 +482,7 @@ var TaskListView = Backbone.View.extend({
   filter: function () {
     this.addFiltersToURL();
     $.ajax({
-      url: '/api/task/search' + location.search,
+      url: '/api/task/search' + location.search + '&isInternship=0',
       type: 'GET',
       async: true,
       success: function (data) {

@@ -179,8 +179,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     };
   }
 
-  if (!isNaN(query.audience)) {
-    request.addTerms(query.audience, 'targetAudience');
+  if (!isNaN(query.isInternship) && query.isInternship == 1) {
     request.addTerms(query.program, 'community.id');
     request.addTerms(query.agency, 'postingAgency');
     request.addCycleDate();
@@ -198,6 +197,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     request.addTerms(query.location, 'locations.name');
   }
   
+  request.addTerms(query.isInternship, 'isInternship');
   request.addTerms(query.skill, 'skills.name');
   request.addTerms(query.career, 'careers.name');
   request.addTerms(query.series, 'series.code');
