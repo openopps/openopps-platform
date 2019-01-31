@@ -11,7 +11,7 @@ const languageQuery=' select language.language_id,language.value from language w
 
 const countryQuery='select country.country_id,country.code,country.value from country where LOWER(value) like ?';
 
-const stateQuery='select country_subdivision.country_subdivision_id,country_subdivision.code,country_subdivision.value from country_subdivision where LOWER(value) like ?';
+const stateQuery='select country_subdivision.country_subdivision_id,country_subdivision.code,country_subdivision.value from country_subdivision where LOWER(value) like ? and parent_code = ?';
 
 const options = {
   tagByType: {

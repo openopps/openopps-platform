@@ -3,29 +3,33 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
 
-async function tagByType (type, name) {
+module.exports = { };
+
+module.exports.tagByType = async function (type, name) {
   var query = dao.query.tagByType;
   query += name ? ' and lower(name) like ?' : '';
   var result = await dao.TagEntity.query(query, type, name ? '%' + name.toLowerCase() + '%' : '');
   return _.sortBy(result, 'data.sort', 'name').map(tag => {
     tag.field = 'name';
     tag.value = tag.name;
+    
     return tag;
   });
-}
+};
 
-async function userByName (name) {
+module.exports.userByName =  async function (name) {
   var result = await dao.User.query(
     dao.query.userByName, name ? '%' + name.toLowerCase() + '%' || name.toLowerCase() + '%' || '%' + name.toLowerCase() : null
   );
   return result.map(tag => {
     tag.field = 'value';
     tag.value = [tag.name, openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username].join(' - ');
+    
     return tag;
   });
-}
+};
 
-async function languageByValue (value) {
+module.exports.languageByValue = async function (value) {
   var result = await dao.Language.query(
     dao.query.language, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
   return result.map(tag=>{
@@ -37,30 +41,40 @@ async function languageByValue (value) {
     
     return tag;
   });
-}
-async function countryByValue (value) {
+};
+
+module.exports.countryByValue = async function (value) {
   var result = await dao.Country.query(
     dao.query.country, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
   return result.map(tag=>{
     tag.id=tag.countryId;
     tag.field='value';
     tag.value= tag.value;
+
     return tag;
   });
-}
-async function stateByValue (value) {
+};
+
+module.exports.stateByValue = async function (parentCode, value) {
   var result = await dao.CountrySubdivision.query(
-    dao.query.state, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
+    dao.query.state, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null, parentCode);
   return result.map(tag=>{
-    tag.id =tag.countrySubdivisionId;
-    tag.field='value';
-    tag.value= tag.value;
+    tag.id = tag.countrySubdivisionId;
+    tag.field ='value';
+    tag.value = tag.value;
+
     return tag;
   });
-}
+};
 
+module.exports.getCountrySubdivisions = async function (countryCode) {
+  return _.sortBy((await dao.CountrySubdivision.find('parent_code = ?', [countryCode])).map(item => {
+    item.id = item.countrySubdivisionId;
+    return item;
+  }), [ 'value' ]);
+};
 
-async function agency (name) {
+module.exports.agency = async function (name) {
   var abbr =  name ? name.toLowerCase() + '%' : '';
   name = name ? '%' + name.toLowerCase() + '%' : '';
   var result = await dao.Agency.query(dao.query.agency, [name, abbr]);
@@ -70,15 +84,8 @@ async function agency (name) {
     tag.value = tag.name;
     tag.name = tag.name;
     tag.type = 'agency';
+
     return tag;
   });
-}
-
-module.exports = {
-  tagByType: tagByType,
-  userByName: userByName,
-  agency: agency,
-  language:languageByValue,
-  country:countryByValue,
-  state:stateByValue,
 };
+
