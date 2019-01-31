@@ -10,27 +10,25 @@ var InternshipListView = require('../views/internship_search_view');
 
 TaskController = Backbone.View.extend({
   initialize: function (options) {
-    this.test='Testing';
     this.options = options;
     var hiringPath = window.cache.currentUser ? window.cache.currentUser.hiringPath : '';
     if (hiringPath == 'student' && this.options.action != 'internships') {
-      Backbone.history.navigate('/search/internships', { trigger: true, replace: true });
-    } else if (this.options.action == 'internships') {
+      Backbone.history.navigate('/search/internships', { trigger: false, replace: true });
+    }
+    if (hiringPath == 'student' || this.options.action == 'internships') {
       this.taskListView = new InternshipListView({
         collection: new TasksCollection(),
         el: this.el,
         queryParams: this.options.queryParams,
       }).render();
-      return this;
     } else {
       this.taskListView = new TaskListView({
         collection: new TasksCollection(),
         el: this.el,
         queryParams: this.options.queryParams,
       }).render();
-      return this;
     }
-   
+    return this;
   },
 
   show: function (e) {
