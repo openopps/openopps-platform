@@ -59,7 +59,7 @@ function toElasticOpportunity (value, index, list) {
     'series': _.map(doc.series, (item) => { return  {id: item.id || 0, code: item.name.substring(0,4), name: item.name.replace(/.*\((.*)\).*/,'$1') };}),
     'careers': doc.career,
     'keywords': _.map(doc.keywords, (item) => item.name),
-    'targetAudience': doc.target_audience,
+    'isInternship': doc.target_audience == 2 ? 1 : 0,
     'languages': doc.languages,
     'community': { id: doc.community_id, name: doc.community_name, shortName: doc.community_short_name },
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date }
