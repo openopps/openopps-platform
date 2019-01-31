@@ -15,6 +15,10 @@ function initializeAuditData (ctx) {
 
 var router = new Router();
 
+router.get('/api/cycle', async (ctx, next) => {
+  ctx.body = await service.getAll();
+});
+
 router.get('/api/cycle/:id', async (ctx, next) => {
   ctx.body = await service.findById(ctx.params.id);
 });

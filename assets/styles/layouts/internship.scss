@@ -628,13 +628,21 @@
     }
 
     @include media($L) {
-      padding: $size-default;
+      padding: $size-default $size-M;
     }
 
     &.review-application {
       margin: 0;
       box-shadow: none;
       border-bottom: 0.1rem solid $color-gray-light;
+
+      &:first-child {
+        border-top: 0.1rem solid $color-gray-light;
+      }
+
+      h4 {
+        margin-top: 0;
+      }
     }
 
     .usajobs-card__title {
@@ -658,12 +666,12 @@
       }
     }
 
-    .usajobs-card__body p {
+    .usajobs-card__body p:last-child {
       margin: 0;
     }
 
     .program-label {
-      margin-top: $size-M;
+      margin-top: $size-S;
       margin-bottom: 0;
       font-size: 1.5rem;
       font-weight: normal;
@@ -761,8 +769,12 @@
     }
 
     @include media($L) {
-      padding: 0;
-      margin: $size-M 0 0 0;
+      padding: 0 0 $size-M 0;
+      margin: $size-default 0 0 0;
+
+      &:first-child {
+        margin: $size-M 0 0 0;
+      }
     }
 
     .add-record:visited, .transcript-title:visited {
@@ -774,7 +786,7 @@
       padding: $size-default $size-default 0;
   
       @include media($L) {
-        padding: $size-default $size-M 0;
+        padding: $size-M $size-M 0;
       }
     }
 
@@ -885,6 +897,25 @@
       text-decoration: none;
     }
   }
+
+    .consent-to-share {
+      background-color: #dce4ef;
+      padding: $size-S $size-default $size-default $size-default;
+      margin-bottom: 0;
+
+      @include media($M) {
+        margin: $size-default;
+      }
+
+      @include media($L) {
+        margin: $size-default 0 0 0;
+        padding: 0 $size-M $size-default $size-M;
+      }
+
+      #share-consent {
+        margin-top: $size-S;
+      }
+    }
 
   .usajobs-profile-question--spacer {
     margin-top: $size-M;
@@ -1197,5 +1228,21 @@
         }
       }
     }
-  }  
+  }
+
+  .skill-list {
+    margin-top: $size-default;
+
+    @include media($L-down) {
+      margin-bottom: $size-M;
+    }
+  }
+  
+  .usajobs-button_bar--slim.submit-application {
+    margin: 0;
+
+    @include media($L-down) {
+      margin: 0 $size-default;
+    }
+  }
 }
