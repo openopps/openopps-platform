@@ -62,7 +62,7 @@ function toElasticOpportunity (value, index, list) {
     'targetAudience': doc.target_audience,
     'languages': doc.languages,
     'community': { id: doc.community_id, name: doc.community_name, shortName: doc.community_short_name },
-    'cycle': { id: doc.cycle_id, name: doc.cycle_name, postingStartDate: doc.posting_start_date, postingEndDate: doc.posting_end_date }
+    'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date }
   };
 }
     
@@ -91,8 +91,8 @@ from (
     ct.value as "country",
 	  cy.cycle_id,
 	  cy.name as "cycle_name",
-	  cy.posting_start_date,
-	  cy.posting_end_date,
+	  cy.apply_start_date,
+	  cy.apply_end_date,
     t.accepting_applicants as "acceptingApplicants",
     (
       select  

@@ -597,6 +597,5 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
-  getCommunities: getCommunities,
-  getCycles:getCycles,
+  getCommunities: getCommunities
 };

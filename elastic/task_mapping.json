@@ -68,8 +68,8 @@
                 "properties": {
                     "id": { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  },
-                    "postingStartDate": { "type": "date" },
-                    "postingEndDate": { "type": "date" }
+                    "applyStartDate": { "type": "date" },
+                    "applyEndDate": { "type": "date" }
                 }
             }
         }

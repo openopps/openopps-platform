@@ -90,8 +90,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     },
     addCycleDate () {
-      filter_must.push({range: { "cycle.postingEndDate" : { gte: Date.now() } }});
-      filter_must.push({range: { "cycle.postingStartDate" : { lte: Date.now() } }});
+      filter_must.push({range: { "cycle.applyEndDate" : { gte: Date.now() } }});
+      filter_must.push({range: { "cycle.applyStartDate" : { lte: Date.now() } }});
     },
     addLocations (location) { 
       should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
