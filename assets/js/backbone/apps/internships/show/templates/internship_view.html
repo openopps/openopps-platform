@@ -62,8 +62,6 @@
 
         </div>
       </div>
-
-
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile overview">
         <div class="usajobs-grid-full">
           <div class="usa-width-one-third personnel-needed mobile">
@@ -89,7 +87,7 @@
               <% if (model.cycle) { %>
                 <h4>Time commitment</h4>
                 <div>
-                  <%- model.cycle.name %> 
+                  <%-moment(model.cycle.cycleStartDate).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate).format('MMMM YYYY')%> 
                 </div>  
                 <div>32-40 hours per week</div>
               <% } %>   
@@ -101,10 +99,8 @@
           </div>
           <div class="usa-width-two-thirds opportunity-description">
             <div class="usajobs-open-opps-opportunity__desc">
-
               <h3>Who we are</h3>
               <%= model.aboutHtml %>
-              
               <h3>What you'll do</h3>
               <%= model.detailsHtml %>             
               <% if (model.language.length > 0) { %>
@@ -136,8 +132,6 @@
               </div>
               <% }); %>
               <% } %>
-              <!-- end language item -->
-              
             </div>
           </div>
           <div class="usa-width-one-third personnel-needed desktop">
@@ -163,7 +157,7 @@
               <% if (model.cycle) { %>
                 <h4>Time commitment</h4>
                 <div>
-                  <%- model.cycle.name %>
+                  <%-moment(model.cycle.cycleStartDate).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate).format('MMMM YYYY')%>
                 </div>    
                 <div> 32-40 hours per week</div>
               <% } %>
@@ -176,7 +170,6 @@
         </div>
       </div>
     </main>
-
     <aside class="usajobs-rightrail internship" id="rightrail">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h3>Before you apply</h3>
@@ -193,12 +186,10 @@
           <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
         <% } %>
       </div>
-
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h3>Saved internships (#)</h3>
         <a href="javascript:void(0);" id="gotosaved" class="usa-button-big usa-button-primary"><span class="box-icon-text">Go to saved</span></a>
       </div>
     </aside>
-
   </div>
 </section>
