@@ -15,6 +15,8 @@ var templates = {
 var ApplyView = Backbone.View.extend({
 
   events: {
+    'blur .validate'                                              : 'validateField',
+    'change .validate'                                            : 'validateField',
     'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
@@ -58,6 +60,10 @@ var ApplyView = Backbone.View.extend({
 
   renderProcessFlowTemplate: function () {
     $('#process-title-banners').html(_.template(ProcessFlowTemplate)());
+  },
+
+  validateField: function (e) {
+    return validate(e);
   },
 
   toggleAccordion: function (e) {
