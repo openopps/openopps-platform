@@ -6,6 +6,7 @@ const service = require('./service');
 const passport = require('koa-passport');
 const utils = require('../../utils');
 const validGovtEmail = require('../model').ValidGovtEmail;
+const authenticated = require('../auth/auth').authenticated;
 
 const router = new Router();
 
@@ -115,6 +116,14 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
       loginUser(JSON.parse(ctx.query.state), user, ctx);
     }
   })(ctx, next);
+});
+
+router.get('/api/auth/jwt', async (ctx, next) => {
+  await passport.authenticate('jwt', { session: false }, async (err, user) => {
+    await ctx.login(user);
+    ctx.body = user;
+  })(ctx, next);
+  return await next();
 });
 
 router.post('/api/auth/find', async (ctx, next) => {

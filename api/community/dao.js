@@ -8,6 +8,25 @@ const communityDetailsQuery = 'SELECT ' +
   'LEFT JOIN @cycle cycles ON cycles.community_id = community.community_id ' +
   'WHERE community.target_audience = ?';
 
+const communitiesQuery = 'SELECT ' +
+  'community.community_id, ' +
+  'community.community_name, ' +
+  'community.target_audience ' +
+  'FROM community ' +
+  'WHERE ' +
+    'community.is_closed_group = false ' +
+  'UNION ' +
+  'SELECT ' +
+    'community.community_id, ' +
+    'community.community_name, ' +
+    'community.target_audience ' +
+  'FROM community ' +
+  'JOIN community_user ' +
+    'ON community_user.community_id = community.community_id ' +
+  'WHERE ' +
+    'community.is_closed_group = true ' +
+    'AND community_user.user_id = ?';
+
 module.exports = function (db) {
   return {
     AuditLog: dao({ db: db, table: 'audit_log' }),
@@ -18,6 +37,7 @@ module.exports = function (db) {
     User: dao({ db: db, table: 'midas_user' }),
     query: {
       communityDetails: communityDetailsQuery,
+      communitiesQuery: communitiesQuery,
     },
   };
 };
