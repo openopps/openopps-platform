@@ -1,0 +1,76 @@
+<div id="process-title-banners"></div>
+
+<div class="usajobs-content-gutter opportunity-gutter internship">
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+    <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <h2>Experience &amp; References</h2>
+      <form class="usa-form-xl">
+        <fieldset class="usajobs-fieldset">
+          <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
+          <h3 class="usajobs-profile-home-section__sub-section">References</h3>
+          <div class="required-input">
+            <label for="name" class="no-margin-top">Name</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a name.</span>
+            <span class="field-validation-error error-count100" style="display:none;">The name must be no more than 100 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <input type="text" class="fullwidth form-control validate" id="name" name="name" value="" data-validate="empty,count100,html">
+          </div>
+          <div class="required-input">
+            <label for="telephone">Phone</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a phone.</span>
+            <span class="field-validation-error error-count100" style="display:none;">The phone must be no more than 100 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <input type="text" class="fullwidth form-control validate" id="telephone" name="telephone" data-validate="empty,count100,html">
+          </div>
+          <div class="required-input">
+            <label for="email">Email</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter an email.</span>
+            <span class="field-validation-error error-count100" style="display:none;">The email must be no more than 100 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <input type="text" class="fullwidth form-control validate" id="email" name="email" value="" data-validate="empty,count100,html">
+          </div>
+          <div class="form-group required-input">
+            <h5><label for="ReferenceType" class="usajobs-profile-question__title">Reference type</label></h5>
+            <ul class="usa-unstyled-list" id="reference-type">
+              <li>
+                <input id="reference-type-professional" name="ReferenceType" type="radio" value="professional" checked="checked">
+                <label for="reference-type-professional">Professional</label>
+              </li>
+              <li>
+                <input id="reference-type-personal" name="ReferenceType" type="radio" value="personal">
+                <label for="reference-type-personal">Personal</label>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <label for="employer" class="usa-input-optional">Employer</label>
+            <input type="text" class="fullwidth form-control" id="employer" name="employer">
+          </div>
+          <div>
+            <label for="title" class="usa-input-optional">Title</label>
+            <input type="text" class="fullwidth form-control" id="title" name="title">
+          </div>
+          <div class="form-group required-input">
+            <h5><label for="Contact" class="usajobs-profile-question__title">May we contact this person about you?</label></h5>
+            <ul class="usa-unstyled-list" id="contact">
+              <li>
+                <input id="contact-yes" name="Contact" type="radio" value="yes" checked="checked">
+                <label for="contact-yes">Yes</label>
+              </li>
+              <li>
+                <input id="contact-no" name="Contact" type="radio" value="no">
+                <label for="contact-no">No</label>
+              </li>
+            </ul>
+          </div>
+        </fieldset>
+      </form>
+      <div class="usajobs-button_bar--slim">
+        <div class="usajobs-button_bar__body">
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
+          <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save reference</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
