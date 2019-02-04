@@ -775,6 +775,10 @@
       &:first-child {
         margin: $size-M 0 0 0;
       }
+
+      &:only-child {
+        padding-bottom: 0;
+      }
     }
 
     .add-record:visited, .transcript-title:visited {
@@ -1228,6 +1232,11 @@
         }
       }
     }
+  }
+
+  .usa-unstyled-list [type=radio] + label, 
+  .usa-unstyled-list [type=checkbox] + label {
+    margin: 0px 2px 6px;
   }
 
   .skill-list {
