@@ -6,7 +6,6 @@ const service = require('./service');
 const passport = require('koa-passport');
 const utils = require('../../utils');
 const validGovtEmail = require('../model').ValidGovtEmail;
-const authenticated = require('../auth/auth').authenticated;
 
 const router = new Router();
 
