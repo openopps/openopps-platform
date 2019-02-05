@@ -44,6 +44,9 @@ var InternshipEditFormView = Backbone.View.extend({
     this.dataLanguageArray      = [];
     this.deleteLanguageArray    = [];
     this.cycles                 = [];
+    this.bureaus                = [];
+    this.offices                = {};
+    this.currentOffices         = [];
     this.tagSources = options.tagTypes;  
     this.countryCode            = '';
 
@@ -172,6 +175,7 @@ var InternshipEditFormView = Backbone.View.extend({
   render: function () {
     var compiledTemplate;
     this.initializeCycle();
+    this.initializeBureaus();
    
     this.data = {
       data: this.model.toJSON(),
@@ -184,6 +188,7 @@ var InternshipEditFormView = Backbone.View.extend({
       agency: this.agency,
       languageProficiencies: this.options.languageProficiencies,
       cycles: this.cycles,
+      bureaus: this.bureaus
     },
 
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
@@ -259,6 +264,33 @@ var InternshipEditFormView = Backbone.View.extend({
       maximumSelectionSize: 5,
       maximumInputLength: 35,
     });
+
+    $('#task_tag_bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });
+    $('#task_tag_bureau').on('change', function (e) {
+      if($('#task_tag_bureau').select2('data')) {
+        var selectData = $('#task_tag_bureau').select2('data');
+        this.currentOffices = this.offices[selectData.id];
+        $('.task_tag_office').show();
+      } else {
+        $('.task_tag_office').hide();
+      }
+      $('#task_tag_office').val(null).trigger('change');
+    }.bind(this));
+
+    //adding this for select 2 as binding messed with it
+    var parentScope = this;
+    $('#task_tag_office').select2({
+      placeholder: 'Select an office',
+      width: '100%',
+      allowClear: true,
+      data: function() { 
+        return {results: parentScope.currentOffices}; 
+      }
+    });
   },
 
   initializeTextAreaDetails: function () {
@@ -312,6 +344,24 @@ var InternshipEditFormView = Backbone.View.extend({
       async: false,
       success: function (data) {
         this.cycles = data;
+      }.bind(this),
+    });
+  },
+
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        for (var i = 0; i < data.length; i++) {
+          this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+        }
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        })
       }.bind(this),
     });
   },
@@ -687,8 +737,10 @@ var InternshipEditFormView = Backbone.View.extend({
       country               : null,
       countrySubdivision    : null,
       cityName              : null,
-      bureau                : this.$('#task_tag_bureau').val(),
-      office                : this.$('#task_tag_office').val(),
+      bureau                : this.$('#task_tag_bureau').select2('data').id,
+      office                : this.$('#task_tag_office').select2('data').id,
+      bureauName            : this.$('#task_tag_bureau').select2('data').text,
+      officeName            : this.$('#task_tag_office').select2('data').text,
       interns               : this.$('#needed-interns').val(),
       cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
       cycleName             : this.$('input[name=internship-timeframe]:checked').val(),

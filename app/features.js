@@ -18,6 +18,7 @@ module.exports = (app) => {
   app.use(loadFeature('document'));
   app.use(loadFeature('location'));
   app.use(loadFeature('lookup'));
+  app.use(loadFeature('enumerations'));
   app.use(loadFeature('opportunity'));
   app.use(loadFeature('user'));
   app.use(loadFeature('volunteer'));
