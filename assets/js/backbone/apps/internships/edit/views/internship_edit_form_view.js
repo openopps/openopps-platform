@@ -743,6 +743,8 @@ var InternshipEditFormView = Backbone.View.extend({
       officeName            : this.$('#task_tag_office').select2('data').text,
       interns               : this.$('#needed-interns').val(),
       cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      cycleStartDate        : this.$('input[name=internship-timeframe]:checked').attr('data-cycleStartDate'),
+      cycleEndDate          : this.$('input[name=internship-timeframe]:checked').attr('data-cycleEndDate'),
       cycleName             : this.$('input[name=internship-timeframe]:checked').val(),
     };
 

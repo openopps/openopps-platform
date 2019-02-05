@@ -27,6 +27,15 @@ module.exports.addCommunityMember = async function (data, callback) {
   });
 };
 
+module.exports.getCommunities = async function (userId) {
+  var communities = await dao.Community.query(dao.query.communitiesQuery, userId);
+  var communityTypes = {
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
+  };
+  return communityTypes;
+}
+
 module.exports.createAudit = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
   await dao.AuditLog.insert(audit).catch(() => {});
