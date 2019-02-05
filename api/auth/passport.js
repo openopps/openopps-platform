@@ -1,5 +1,9 @@
+const jwt = require('jsonwebtoken');
 const passport = require('koa-passport');
 const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwksRsa = require('jwks-rsa');
 const log = require('log')('app:passport');
 const db = require('../../db');
 const dao = require('./dao')(db);
@@ -19,7 +23,7 @@ function validatePassword (password, hash) {
 async function fetchUser (id) {
   return await dao.User.query(dao.query.user, id, dao.options.user).then(async results => {
     var user = results[0];
-    if(user) {
+    if (user) {
       user.isOwner = true;
       user.isCommunityAdmin = (await dao.CommunityUser.find('user_id = ? and is_manager = ?', user.id, true)).length > 0;
       user.badges = await dao.Badge.find('"user" = ?', user.id, dao.options.badge);
@@ -39,7 +43,7 @@ async function fetchPassport (user, protocol) {
 }
 
 async function userFound (user, tokenset, done) {
-  if(user.disabled) {
+  if (user.disabled) {
     done({ message: 'Not authorized' });
   } else {
     user.access_token = tokenset.access_token,
@@ -52,13 +56,13 @@ function processFederalEmployeeLogin (tokenset, done) {
   dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => { 
-      return { 
+    var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
+      return {
         linkedId: tokenset.claims.sub,
         governmentUri: tokenset.claims['usaj:governmentURI'],
       };
     });
-    done(null, _.extend(account, { 
+    done(null, _.extend(account, {
       type: 'staging',
       access_token: tokenset.access_token,
       id_token: tokenset.id_token,
@@ -97,7 +101,7 @@ function processStudentLogin (tokenset, done) {
 }
 
 passport.serializeUser(function (user, done) {
-  done(null, { 
+  done(null, {
     id: user.id,
     access_token: user.access_token,
     id_token: user.id_token,
@@ -155,7 +159,7 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
   });
 }));
 
-if(openopps.auth.oidc) {
+if (openopps.auth.oidc) {
   const { Strategy } = require('openid-client');
   var OpenIDStrategyOptions = {
     client: openopps.auth.oidc,
@@ -170,7 +174,74 @@ if(openopps.auth.oidc) {
     } else if (tokenset.claims['usaj:hiringPath'] == 'student') {
       processStudentLogin(tokenset, done);
     } else {
-      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub }});
+      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub } });
     }
   }));
+
+  const handleSigningKeyError = (err, cb) => {
+    // If we didn't find a match, can't provide a key.
+    if (err && err.name === 'SigningKeyNotFoundError') {
+      return cb(null);
+    }
+
+    // If an error occured like rate limiting or HTTP issue, we'll bubble up the error.
+    if (err) {
+      return cb(err);
+    }
+  };
+
+  var passportJwtSecret = function (options) {
+    if (options === null || options === undefined) {
+      throw new Error('An options object must be provided when initializing passportJwtSecret');
+    }
+
+    const client = new jwksRsa(options);
+    const onError = options.handleSigningKeyError || handleSigningKeyError;
+
+    return function secretProvider (req, rawJwtToken, cb) {
+      const decoded = jwt.decode(rawJwtToken, { complete: true });
+
+      // Only RS256 is supported.
+      if (!decoded || !decoded.header || decoded.header.alg !== 'RS256') {
+        return cb(null, null);
+      }
+
+      client.getSigningKey(decoded.header.kid, (err, key) => {
+        if (err) {
+          return onError(err, (newError) => cb(newError, null));
+        }
+
+        // Provide the key.
+        return cb(null, key.publicKey || key.rsaPublicKey);
+      });
+    };
+  };
+
+  var opts = {};
+  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+  opts.secretOrKeyProvider = passportJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: openopps.auth.oidc.issuer.jwks_uri,
+    strictSsl: false,
+  });
+  opts.issuer = openopps.auth.oidc.issuer.issuer;
+  //opts.audience = 'openopps';
+  passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
+    try {
+      // dao.User.findById
+      dao.User.findOne('linked_id = ?', jwt_payload.sub).then(user => {
+        if (user) {
+          console.log('user found', user);
+          return done(null, user);
+        } else {
+          return done(new Error('User not found'), null);
+        }
+      });
+    } catch (err) {
+      return done(err, null);
+    }
+  }),
+  );
 }

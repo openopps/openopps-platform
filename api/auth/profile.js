@@ -36,6 +36,7 @@ async function updateProfileData (user, profile, tokenset) {
   user.givenName = profile.GivenName;
   user.middleName = profile.MiddleName;
   user.lastName = profile.LastName;
+  user.isUsCitizen = profile.Profile.IsUSCitizen;
   user.title = profile.Profile.JobTitle;
   user.bio = profile.Profile.Biography;
   if (tokenset.claims) {

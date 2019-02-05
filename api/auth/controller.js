@@ -117,6 +117,14 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
   })(ctx, next);
 });
 
+router.get('/api/auth/jwt', async (ctx, next) => {
+  await passport.authenticate('jwt', { session: false }, async (err, user) => {
+    await ctx.login(user);
+    ctx.body = user;
+  })(ctx, next);
+  return await next();
+});
+
 router.post('/api/auth/find', async (ctx, next) => {
   await service.sendFindProfileConfirmation(ctx, ctx.request.body, (err) => {
     if(err) {

@@ -2,6 +2,7 @@ const _ = require ('lodash');
 const Audit = require('../model/Audit');
 const db = require('../../db');
 const dao = require('./dao')(db);
+const passport = require('koa-passport');
 
 function initializeAuditData (ctx) { 
   return {
@@ -61,4 +62,22 @@ module.exports.isAdminOrCommunityAdmin = async (ctx, next) => {
   await baseAuth(ctx, async () => {
     ctx.state.user.isAdmin || ctx.state.user.isCommunityAdmin ? await next() : ctx.status = 403;
   });
+};
+
+module.exports.bearer = async (ctx, next) => {
+  await passport.authenticate('jwt', { session: false }, async (err, user) => {
+    if (err)
+    {
+      console.log(err);
+      return next(err);
+    }
+    if (!user)
+    {
+      ctx.status = 403;
+      ctx.body = { message: 'You must be logged in to view this page' };
+      return ctx;
+    }
+    await ctx.login(user);
+    return await next();
+  })(ctx, next);
 };
