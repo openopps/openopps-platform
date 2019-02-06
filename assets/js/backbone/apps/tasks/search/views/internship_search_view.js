@@ -326,7 +326,7 @@ var InternshipListView = Backbone.View.extend({
     }.bind(this));
 
     $('#office').select2({
-      placeholder: 'Select an office',
+      placeholder: 'Select an office/post',
       width: '100%',
       allowClear: true,
       data: function() { 
