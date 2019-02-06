@@ -62,6 +62,6 @@ module.exports.apply = async function (userId, taskId, callback) {
 };
 
 module.exports.findById = async function (applicationId) {
-  var application = await dao.Application.find('id = ?', applicationId);
-  
+  var application = await dao.Application.query(dao.query.application, applicationId);
+  application.tasks = (await dao.Application.db.query(dao.query.applicationTasks, applicationId)).rows;
 };

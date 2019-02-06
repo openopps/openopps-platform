@@ -7,6 +7,7 @@ const service = require('./service');
 var router = new Router();
 
 router.get('/api/application/:id', auth, async (ctx, next) => {
+  ctx.body = await service.findById(ctx.params.id);
 });
 
 router.get('/api/application/:userId/:communityId', auth, async (ctx, next) => {
