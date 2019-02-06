@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 // templates
-var ApplyTemplate = require('../templates/apply_language_template.html');
+var ApplyTemplate = require('../templates/apply_summary_template.html');
 var ProcessFlowTemplate = require('../templates/process_flow_template.html');
 var ApplyAddEducationTemplate = require('../templates/apply_add_education_template.html');
 var ApplyEducationTemplate = require('../templates/apply_education_template.html');

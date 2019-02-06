@@ -37,7 +37,6 @@ var InternshipView = BaseView.extend({
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }
     }.bind(this));
-    
     var compiledTemplate = _.template(InternshipShowTemplate)(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();

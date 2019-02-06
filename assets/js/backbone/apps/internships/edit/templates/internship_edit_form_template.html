@@ -147,18 +147,19 @@
             <div class="required-input task_tag_bureau">
               <label for="bureau">Bureau</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select a bureau for this internship.</span>
-              <select id="task_tag_bureau" name="bureau" class="dropdown validate" data-validate="empty">
+              <select id="task_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty">
                 <option></option>
-                <option>Bureau Test</option>
+                <% if (bureaus.length) { %>
+                  <% _(bureaus).forEach(function (bureau, i) { %>
+                    <option value="<%= bureau.bureauId %>" data-offices="<%= JSON.stringify(bureau.offices) %>"><%= bureau.name %></option>
+                  <% }); %>
+                <% } %>
               </select>
             </div>
-            <div class="required-input task_tag_office">
+            <div class="required-input task_tag_office" style="display: none;">
               <label for="office">Office/post</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select an office for this internship.</span>
-              <select id="task_tag_office" name="office" class="dropdown validate" data-validate="empty">
-                <option></option>
-                <option>office test</option>
-              </select>
+              <input type="hidden" id="task_tag_office" name="office_id" class="dropdown validate" data-validate="empty">
             </div>
           </fieldset>
           <fieldset id="add-languages-fieldset" class="usajobs-fieldset" style="display:none">
