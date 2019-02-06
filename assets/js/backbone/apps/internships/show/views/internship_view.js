@@ -12,6 +12,7 @@ var InternshipEditFormView = require('../../edit/views/internship_edit_form_view
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
 var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
+var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_citizenship_template.html');
 
 var InternshipView = BaseView.extend({
   events: {
@@ -71,13 +72,16 @@ var InternshipView = BaseView.extend({
     e.preventDefault && e.preventDefault();
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '#apply', { trigger: true });
-    } else {
+    } else if (window.cache.currentUser.isUsCitizen) {
       $.ajax({
         url: '/api/application/apply/' + this.model.attributes.id,
         method: 'POST',
       }).done(function (applicationId) {
         Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
       }).fail(this.displayError.bind(this));
+    } else {
+      Backbone.history.navigate('/ineligible_citizenship', { trigger: true, replace: true });
+      window.scrollTo(0, 0);
     }
   },
 

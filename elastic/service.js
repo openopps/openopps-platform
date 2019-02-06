@@ -79,7 +79,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
             },
           },
           should : [],
-          minimum_should_match : query.audience && query.location ? 1 : 0
+          minimum_should_match : query.isInternship == "1" && query.location ? 1 : 0
         }
       },
     },
@@ -243,7 +243,9 @@ function convertSearchResultsToResultModel (searchResult) {
     careers: source.careers,
     keywords: source.keywords,
     owner: source.owner,
-    community: source.community
+    community: source.community,
+    bureau: source.bureau,
+    office: source.office
   };
   removeEmpty(model);
   return model;
