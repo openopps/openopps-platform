@@ -62,7 +62,9 @@ function toElasticOpportunity (value, index, list) {
     'isInternship': doc.target_audience == 2 ? 1 : 0,
     'languages': doc.languages,
     'community': { id: doc.community_id, name: doc.community_name, shortName: doc.community_short_name },
-    'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date }
+    'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
+    'bureau': { id: doc.bureau_id, name: doc.bureau_name },
+    'office': { id: doc.office_id, name: doc.office_name }
   };
 }
     
@@ -92,7 +94,11 @@ from (
 	  cy.cycle_id,
 	  cy.name as "cycle_name",
 	  cy.apply_start_date,
-	  cy.apply_end_date,
+    cy.apply_end_date,
+    b.bureau_id,
+    b.name as bureau_name,
+    o.office_id,
+    o.name as office_name,
     t.accepting_applicants as "acceptingApplicants",
     (
       select  
@@ -266,6 +272,8 @@ from (
   left join country_subdivision cs on cs.country_subdivision_id = t.country_subdivision_id
   left join country ct on ct.country_id = t.country_id
   left join cycle cy on cy.cycle_id = t.cycle_id
+  left join bureau b on b.bureau_id = t.bureau_id
+  left join office o on o.office_id = t.office_id
   %s
 ) row`;
 

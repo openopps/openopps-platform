@@ -11,11 +11,13 @@ const tasksDueDetailQuery = 'select owner.name, owner.username, owner.bounced ' 
   'from task join midas_user owner on task."userId" = owner.id ' +
   'where task.id = ? ';
 
-const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photoId ' +
+const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photoId, @bureau.*, @office.* ' +
   'from @task task ' +
   'join @midas_user owner on owner.id = task."userId" ' +
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
-  'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
+  'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+  'left join @bureau bureau on bureau.bureau_id = task.bureau_id ' +
+  'left join @office office on office.office_id = task.office_id';
 
 const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join task on country.country_id = task.country_id ' + 
@@ -137,7 +139,8 @@ const options = {
       owner: '',
       agency: '',
       tags: [],
-      
+      bureau: '',
+      office: ''
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -216,6 +219,8 @@ module.exports = function (db) {
     Country:dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     LookupCode:dao({ db: db, table: 'lookup_code' }),
+    Office:dao({ db: db, table: 'office' }),
+    Bureau:dao({ db: db, table: 'bureau' }),
 
     query: {
       task: taskQuery,

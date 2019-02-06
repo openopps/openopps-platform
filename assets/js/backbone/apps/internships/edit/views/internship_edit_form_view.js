@@ -221,9 +221,13 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeFormFields: function (){
     $('#needed-interns').val(this.model.attributes.interns);
-    $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);    
-    $('#task_tag_bureau').val(this.model.attributes.bureau);
-    $('#task_tag_office').val(this.model.attributes.office);
+    $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);
+    if (this.model.attributes.bureau) {
+      $('#task_tag_bureau').val(this.model.attributes.bureau.bureauId);
+    }
+    if (this.model.attributes.office) {
+      $('#task_tag_office').val(this.model.attributes.officeId);
+    }
   },
 
   initializeSelect2: function () {
@@ -270,27 +274,33 @@ var InternshipEditFormView = Backbone.View.extend({
       width: '100%',
       allowClear: true,
     });
+    if($('#task_tag_bureau').select2('data')) {
+      this.showOfficeDropdown();
+    }
     $('#task_tag_bureau').on('change', function (e) {
-      if($('#task_tag_bureau').select2('data')) {
-        var selectData = $('#task_tag_bureau').select2('data');
-        this.currentOffices = this.offices[selectData.id];
-        $('.task_tag_office').show();
-      } else {
-        $('.task_tag_office').hide();
-      }
+      this.showOfficeDropdown();
       $('#task_tag_office').val(null).trigger('change');
     }.bind(this));
 
     //adding this for select 2 as binding messed with it
-    var parentScope = this;
     $('#task_tag_office').select2({
       placeholder: 'Select an office',
       width: '100%',
       allowClear: true,
       data: function() { 
-        return {results: parentScope.currentOffices}; 
-      }
+        return {results: this.currentOffices}; 
+      }.bind(this)
     });
+  },
+
+  showOfficeDropdown: function () {
+    if($('#task_tag_bureau').select2('data')) {
+      var selectData = $('#task_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      $('.task_tag_office').show();
+    } else {
+      $('.task_tag_office').hide();
+    }
   },
 
   initializeTextAreaDetails: function () {
@@ -737,8 +747,8 @@ var InternshipEditFormView = Backbone.View.extend({
       country               : null,
       countrySubdivision    : null,
       cityName              : null,
-      bureau                : this.$('#task_tag_bureau').select2('data').id,
-      office                : this.$('#task_tag_office').select2('data').id,
+      bureau_id             : this.$('#task_tag_bureau').select2('data').id,
+      office_id             : this.$('#task_tag_office').select2('data').id,
       bureauName            : this.$('#task_tag_bureau').select2('data').text,
       officeName            : this.$('#task_tag_office').select2('data').text,
       interns               : this.$('#needed-interns').val(),

@@ -49,14 +49,17 @@
             <h4 class="usajobs-search-filters__title career">Bureau</h4>
             <select id="bureau" class="dropdown">
                 <option></option>
-                <option>Bureau Test</option>
+            <% if (bureaus.length) { %>
+                <% _(bureaus).forEach(function (bureau, i) { %>
+                    <% var selected = filters.bureau && bureau.bureauId == filters.bureau.id %>
+                    <option value="<%= bureau.bureauId %>" <% if (selected) { %>selected<% } %>><%= bureau.name %></option>
+                <% }); %>
+            <% } %>
             </select>
-
-            <h4 class="usajobs-search-filters__title career">Office/post</h4>
-            <select id="office" class="dropdown">
-                <option></option>
-                <option>Office Test</option>
-            </select>
+            <div class="office_section" style="display: none;">
+                <h4 class="usajobs-search-filters__title career">Office/post</h4>
+                <input type="hidden" id="office" name="office_id" value="<% if (filters.office) { %><%= filters.office.id %><% } %>" class="dropdown">
+            </div>
         </div>
     </div>
 </div>

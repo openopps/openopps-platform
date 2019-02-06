@@ -100,7 +100,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program"];
+  
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program", "bureau", "office"];
 
   for(i=0; i<formatParamTypes.length; i++){
     var formatParam = query[formatParamTypes[i]];
@@ -129,7 +130,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         delete query.location;
       } else if (formatParamTypes[i] === "series") {
         query[formatParamTypes[i]] = formatParam.split("(")[0].trim();
-      } else if (formatParamTypes[i] === "program") {
+      } else if (formatParamTypes[i] === "program" || formatParamTypes[i] === "office" || formatParamTypes[i] === "bureau") {
         query[formatParamTypes[i]] = formatParam.split(":")[1].trim();
       } else {
         query[formatParamTypes[i]] = formatParam.split(":")[0].trim();
@@ -153,9 +154,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     request.addTerms(agencies, 'restrictedToAgency');
   }
 
-  if (!ctx.state.user || !ctx.state.user.isAdmin) {
-    filter_must_not.push({terms: { ['state'] : ['submitted', 'draft'] }});
-  }
+    
 
   var keywords = []
   if (query.term) {
@@ -180,8 +179,11 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   }
 
   if (!isNaN(query.isInternship) && query.isInternship == 1) {
+    filter_must_not.push({terms: { ['state'] : ['submitted', 'draft'] }});
     request.addTerms(query.program, 'community.id');
     request.addTerms(query.agency, 'postingAgency');
+    request.addTerms(query.bureau, 'bureau.id');
+    request.addTerms(query.office, 'office.id');
     request.addCycleDate();
     if (query.location) {
       if (_.isArray(query.location)) {

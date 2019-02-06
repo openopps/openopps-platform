@@ -66,14 +66,18 @@
         <div class="usajobs-grid-full">
           <div class="usa-width-one-third personnel-needed mobile">
             <div class="usajobs-opop__task-intro">
+              <% if (model.bureau) { %>
               <h4>Bureau</h4>
               <div>
-                <%- model.bureau %>
+                <%- model.bureau.name %>
               </div>
+              <% } %>
+              <% if (model.office) { %>
               <h4>Office/Post</h4>
               <div>
-                <%- model.office %>
+                <%- model.office.name %>
               </div>
+              <% } %>
               <h4>Location</h4>
               <div>
                 <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
@@ -136,14 +140,18 @@
           </div>
           <div class="usa-width-one-third personnel-needed desktop">
             <div class="usajobs-opop__task-intro">
+              <% if (model.bureau) { %>
               <h4>Bureau</h4>
               <div>
-                <%- model.bureau %>
+                <%- model.bureau.name %>
               </div>
+              <% } %>
+              <% if (model.office) { %>
               <h4>Office/Post</h4>
               <div>
-                <%- model.office %>
+                <%- model.office.name %>
               </div>
+              <% } %>
               <h4>Location</h4>
               <div>
                 <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>

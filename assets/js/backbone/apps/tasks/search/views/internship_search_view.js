@@ -33,6 +33,9 @@ var InternshipListView = Backbone.View.extend({
     this.options = options;
     this.cycles = {};
     this.programs = [];
+    this.bureaus = [];
+    this.offices = {};
+    this.currentOffices = [];
     this.firstFilter = true;
     this.parseURLToFilters();
     this.userAgency =  {};
@@ -42,6 +45,7 @@ var InternshipListView = Backbone.View.extend({
     this.initAgencyFilter();
     this.initializeHideFields();
     this.initializeCycle();
+    this.initializeBureaus();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
    
@@ -140,6 +144,24 @@ var InternshipListView = Backbone.View.extend({
             });
           }
         } 
+      }.bind(this),
+    });
+  },
+
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        for (var i = 0; i < data.length; i++) {
+          this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+        }
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        })
       }.bind(this),
     });
   },
@@ -289,7 +311,51 @@ var InternshipListView = Backbone.View.extend({
         this.filter();
       }.bind(this));
     }.bind(this));
-         
+
+    $('#bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });
+    if($('#bureau').select2('data')) {
+      this.showOfficeDropdown();
+    }
+    $('#bureau').on('change', function (e) {
+      this.showOfficeDropdown();
+      $('#office').val(null).trigger('change');
+      this.filter();
+    }.bind(this));
+
+    $('#office').select2({
+      placeholder: 'Select an office',
+      width: '100%',
+      allowClear: true,
+      data: function() { 
+        return {results: this.currentOffices}; 
+      }.bind(this)
+    });
+
+    $('#office').on('change', function (e) {
+      if($('#office').select2('data')) {
+        var selectData = $('#office').select2('data');
+        this.filters.office = { type: 'office', id: selectData.id, name: selectData.text };
+      } else {
+        delete this.filters.office;
+      }
+      this.filter();
+    }.bind(this));
+  },
+
+  showOfficeDropdown: function () {
+    if($('#bureau').select2('data')) {
+      var selectData = $('#bureau').select2('data');
+      this.filters.bureau = { type: 'bureau', id: selectData.id, name: selectData.text };
+      this.currentOffices = this.offices[selectData.id];
+      $('.office_section').show();
+    } else {
+      delete this.filters.bureau;
+      $('.office_section').hide();
+    }
   },
       
   removeFilter: function (event) {
@@ -329,6 +395,7 @@ var InternshipListView = Backbone.View.extend({
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
       programs :this.programs,
+      bureaus: this.bureaus
     });
     $('#task-filters').html(compiledTemplate);
     compiledTemplate = _.template(SearchPills)({
@@ -590,7 +657,7 @@ var InternshipListView = Backbone.View.extend({
           this.filters.page = parseInt(value);
         }
       } else {    
-        if (key == 'program')
+        if (key == 'program' || key == 'bureau' || key == 'office')
         {
           var splitValue = value.split(':');
           this.filters[key] = { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };

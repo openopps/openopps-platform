@@ -71,6 +71,18 @@
                     "applyStartDate": { "type": "date" },
                     "applyEndDate": { "type": "date" }
                 }
+            },
+            "bureau": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "office": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
             }
         }
     }
