@@ -16,11 +16,11 @@ const localStrategyOptions = {
   passwordField: 'password',
 };
 
-function validatePassword(password, hash) {
+function validatePassword (password, hash) {
   return bcrypt.compareSync(password, hash);
 }
 
-async function fetchUser(id) {
+async function fetchUser (id) {
   return await dao.User.query(dao.query.user, id, dao.options.user).then(async results => {
     var user = results[0];
     if (user) {
@@ -38,21 +38,21 @@ async function fetchUser(id) {
   });
 }
 
-async function fetchPassport(user, protocol) {
+async function fetchPassport (user, protocol) {
   return (await dao.Passport.find('"user" = ? and protocol = ? and "deletedAt" is null', user, protocol))[0];
 }
 
-async function userFound(user, tokenset, done) {
+async function userFound (user, tokenset, done) {
   if (user.disabled) {
     done({ message: 'Not authorized' });
   } else {
     user.access_token = tokenset.access_token,
-      user.id_token = tokenset.id_token,
-      done(null, user);
+    user.id_token = tokenset.id_token,
+    done(null, user);
   }
 }
 
-function processFederalEmployeeLogin(tokenset, done) {
+function processFederalEmployeeLogin (tokenset, done) {
   dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
@@ -70,7 +70,7 @@ function processFederalEmployeeLogin(tokenset, done) {
   });
 }
 
-function processStudentLogin(tokenset, done) {
+function processStudentLogin (tokenset, done) {
   //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
   dao.User.findOne('linked_id = ? ', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
@@ -111,8 +111,8 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async function (userObj, done) {
   var user = await fetchUser(userObj.id);
   user.access_token = userObj.access_token,
-    user.id_token = userObj.id_token,
-    done(null, user);
+  user.id_token = userObj.id_token,
+  done(null, user);
 });
 
 passport.use(new LocalStrategy(localStrategyOptions, async (username, password, done) => {
@@ -198,8 +198,8 @@ if (openopps.auth.oidc) {
     const client = new jwksRsa(options);
     const onError = options.handleSigningKeyError || handleSigningKeyError;
 
-    return function secretProvider(req, rawJwtToken, cb) {
-      const decoded = jwt.decode(rawJwtToken, { complete: true })
+    return function secretProvider (req, rawJwtToken, cb) {
+      const decoded = jwt.decode(rawJwtToken, { complete: true });
 
       // Only RS256 is supported.
       if (!decoded || !decoded.header || decoded.header.alg !== 'RS256') {
@@ -217,7 +217,7 @@ if (openopps.auth.oidc) {
     };
   };
 
-  var opts = {}
+  var opts = {};
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
   opts.secretOrKeyProvider = passportJwtSecret({
     cache: true,
