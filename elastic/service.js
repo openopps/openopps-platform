@@ -79,7 +79,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
             },
           },
           should : [],
-          minimum_should_match : query.audience && query.location ? 1 : 0
+          minimum_should_match : query.isInternship == "1" && query.location ? 1 : 0
         }
       },
     },
