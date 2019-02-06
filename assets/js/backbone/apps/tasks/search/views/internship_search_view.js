@@ -48,7 +48,6 @@ var InternshipListView = Backbone.View.extend({
     this.initializeBureaus();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-   
   },
     
   render: function () {
@@ -58,7 +57,7 @@ var InternshipListView = Backbone.View.extend({
       user: window.cache.currentUser,
       ui: UIConfig,
       agencyName: this.userAgency.name,
-      term: this.filters.term,
+      term: this.filters.term ? this.filters.term : "",
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,    
