@@ -11,11 +11,9 @@ var ApplyEducationTemplate = require('../templates/apply_education_template.html
 var ApplyAddExperienceTemplate = require('../templates/apply_add_experience_template.html');
 var ApplyExperienceTemplate = require('../templates/apply_experience_template.html');
 var ApplyAddLanguageTemplate = require('../templates/apply_add_language_template.html');
-var ApplyLanguageTemplate = require('../templates/apply_lnaguage_template.html');
+var ApplyLanguageTemplate = require('../templates/apply_language_template.html');
 var ApplyAddReferenceTemplate = require('../templates/apply_add_reference_template.html');
-var ApplyReferenceTemplate = require('../templates/apply_reference_template.html');
 var ApplyAddSkillTemplate = require('../templates/apply_add_skill_template.html');
-var ApplySkillTemplate = require('../templates/apply_skill_template.html');
 var ApplyIneligibleCitizenshipTemplate = require('../templates/apply_ineligible_citizenship_template.html');
 var ApplyIneligibleGPATemplate = require('../templates/apply_ineligible_gpa_template.html');
 var ApplyProgramTemplate = require('../templates/apply_program_template.html');
@@ -33,9 +31,7 @@ var templates = {
   applyAddLanguage: _.template(ApplyAddLanguageTemplate),
   applyLanguage: _.template(ApplyLanguageTemplate),
   applyAddReference: _.template(ApplyAddReferenceTemplate),
-  applyReference: _.template(ApplyReferenceTemplate),
   applyAddSkill: _.template(ApplyAddSkillTemplate),
-  applySkill: _.template(ApplySkillTemplate),
   applyIneligibleCitizenship: _.template(ApplyIneligibleCitizenshipTemplate),
   applyIneligibleGPA: _.template(ApplyIneligibleGPATemplate),
   applyProgram: _.template(ApplyProgramTemplate),
