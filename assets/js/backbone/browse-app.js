@@ -48,6 +48,7 @@ var BrowseRouter = Backbone.Router.extend({
     'admin(/):action(/)(:actionId)(/)(:subAction)'  : 'showAdmin',
     'login(/)'                                      : 'showLogin',
     'apply/:id(/)'                                  : 'showApply',
+    'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'unauthorized(/)'                               : 'showUnauthorized',
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
@@ -141,6 +142,15 @@ var BrowseRouter = Backbone.Router.extend({
     $('#container').html(_.template(UnauthorizedTemplate)());
     $('#search-results-loading').hide();
     $('.usa-footer-return-to-top').hide();
+  },
+
+  showIneligibleCitizenship: function () {
+    var IneligibleCitizenship = require('./apps/apply/templates/apply_ineligible_citizenship_template.html');
+    var IneligibleCitizenshipTemplate = _.template(IneligibleCitizenship)(this.data);
+    $('#container').html(_.template(IneligibleCitizenshipTemplate)());
+    var ProcessFlowTemplate = require('./apps/apply/templates/process_flow_template.html');
+    $('#process-title-banners').html(_.template(ProcessFlowTemplate)());
+    $('#search-results-loading').hide();
   },
 
   logout: function () {
