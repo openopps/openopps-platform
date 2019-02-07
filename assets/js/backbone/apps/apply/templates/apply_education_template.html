@@ -1,6 +1,6 @@
 <div id="process-title-banners"></div>
 
-<div class="usajobs-content-gutter opportunity-gutter internship">
+<div class="usajobs-content-gutter opportunity-gutter internship education">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div class="usajobs-profile-home-section">
       <h2 class="usajobs-profile-home-section__title">Education &amp; Transcript</h2>
@@ -10,12 +10,13 @@
           <h3 class="usajobs-profile-home-section__sub-section">Education</h3>
           <p>Please tell us about your current academic standing and list any other education that you have completed to date.</p>
           <fieldset class="usajobs-fieldset">
-            <div class="form-group required-input usa-fieldset-inputs">
+            <div class="form-group required-input usa-fieldset-inputs" id="apply-enrolled">
               <h5>
                 <label for="Enrolled" class="usajobs-profile-question__title">
                   Are you currently enrolled (part-time or full-time) or accepted for enrollment in an accredited college or university?
                 </label>
               </h5>
+              <span class="field-validation-error" style="display:none;" >Please select Yes or No</span>
               <ul class="usa-unstyled-list" id="enrolled">
                 <li>
                   <input id="enrolled-yes" name="Enrolled" type="radio" value="yes">
@@ -27,13 +28,15 @@
                 </li>
               </ul>
             </div>
-            <div class="form-group required-input usa-fieldset-inputs">
+            <div class="form-group required-input usa-fieldset-inputs" id="apply-junior">
               <h5>
                 <label for="Junior" class="usajobs-profile-question__title">
                   Will you be, at a minimum, a college or university junior (i.e. have completed 60 or more undergraduate semester credit 
                   hours or 90 or more undergraduate quarter credit hours) by the start of the intern session for which you are applying?
                 </label>
               </h5>
+                <span class="field-validation-error" style="display:none;" >Please select Yes or No</span>
+              
               <ul class="usa-unstyled-list" id="junior">
                 <li>
                   <input id="junior-yes" name="Junior" type="radio" value="yes">
@@ -45,12 +48,14 @@
                 </li>
               </ul>
             </div>
-            <div class="form-group required-input usa-fieldset-inputs">
-              <h5>
+            <div class="form-group required-input usa-fieldset-inputs" id="apply-continue-education">
+            <h5>
                 <label for="ContinueEducation" class="usajobs-profile-question__title">
                     Will you continue your education after this internship has been completed?
                 </label>
-              </h5>
+           </h5>
+                <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
+              
               <ul class="usa-unstyled-list" id="continue-education">
                 <li>
                   <input id="continue-education-yes" name="ContinueEducation" type="radio" value="yes">
@@ -62,182 +67,18 @@
                 </li>
               </ul>
             </div>
-            <div class="required-input">
+            <div class="form-group required-input">
               <h5><label for="cumulative-gpa" class="no-margin-top">What is your cumulative GPA on a 4.0 scale?</label></h5>
-              <input type="text" class="usa-input-tiny form-control" id="cumulative-gpa" name="cumulative-gpa">
+              <input type="text" class="usa-input-tiny form-control validate" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty" onkeyup="if(this.value>4){this.value='4';}">
             </div>
           </fieldset>
         </div>
-        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
-          <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-            <li class="usajobs-drawer" data-section="education" data-id="edu-1">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1">Bachelor's Degree</button>
-              <dl class="usajobs-drawer-face">
-                <dt>University</dt>
-                <dd>
-                  May 2004
-                </dd>
-              </dl>
-              <div id="edu-1" class="usa-accordion-content usajobs-drawer-content">
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
-                        <p class="usajobs-drawer-content__item-content">Washington</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
-                        <p class="usajobs-drawer-content__item-content">20415</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Major</h5>
-                        <p class="usajobs-drawer-content__item-content">Major</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">GPA</h5>
-                        <p class="usajobs-drawer-content__item-content">4.0</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Total credits earned</h5>
-                        <p class="usajobs-drawer-content__item-content">400</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Honors</h5>
-                        <p class="usajobs-drawer-content__item-content">Summa Cum Laude</p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
-                        <p class="usajobs-drawer-content__item-content">District of Columbia</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Country</h5>
-                        <p class="usajobs-drawer-content__item-content">United States</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Minor</h5>
-                        <p class="usajobs-drawer-content__item-content">Minor</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">GPA Max</h5>
-                        <p class="usajobs-drawer-content__item-content">4.0</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">System for credits</h5>
-                        <p class="usajobs-drawer-content__item-content">Semester hours</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label"></h5>
-                        <p class="usajobs-drawer-content__item-content"></p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-whole">
-                    <h5 class="usajobs-drawer-content__item-label">Relevant coursework, licensures, and certifications</h5>
-                    <p class="usajobs-drawer-content__item-content">Relevant coursework, licensures, and certifications</p>
-                  </div>
-                </div>
-                <div class="usajobs-button-bar--split">
-                  <div class="usajobs-button-bar__body">
-                    <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="usajobs-drawer" data-section="education" data-id="edu-2">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-2">Master's Degree</button>
-              <dl class="usajobs-drawer-face">
-                <dt>University</dt>
-                <dd>
-                  May 2012
-                </dd>
-              </dl>
-              <div id="edu-2" class="usa-accordion-content usajobs-drawer-content">
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
-                        <p class="usajobs-drawer-content__item-content">Washington</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
-                        <p class="usajobs-drawer-content__item-content">20415</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Major</h5>
-                        <p class="usajobs-drawer-content__item-content">Major</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">GPA</h5>
-                        <p class="usajobs-drawer-content__item-content">4.0</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Total credits earned</h5>
-                        <p class="usajobs-drawer-content__item-content">400</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Honors</h5>
-                        <p class="usajobs-drawer-content__item-content">Summa Cum Laude</p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
-                        <p class="usajobs-drawer-content__item-content">District of Columbia</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Country</h5>
-                        <p class="usajobs-drawer-content__item-content">United States</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Minor</h5>
-                        <p class="usajobs-drawer-content__item-content">Minor</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">GPA Max</h5>
-                        <p class="usajobs-drawer-content__item-content">4.0</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">System for credits</h5>
-                        <p class="usajobs-drawer-content__item-content">Semester hours</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label"></h5>
-                        <p class="usajobs-drawer-content__item-content"></p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-whole">
-                    <h5 class="usajobs-drawer-content__item-label">Relevant coursework, licensures, and certifications</h5>
-                    <p class="usajobs-drawer-content__item-content">Relevant coursework, licensures, and certifications</p>
-                  </div>
-                </div>
-                <div class="usajobs-button-bar--split">
-                  <div class="usajobs-button-bar__body">
-                    <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
+        
+      
+        <div id="education-preview-id"></div>
+           
         <div class="usajobs-profile-home-section__body">
-          <p><a href="#" class="add-record">+ Add education</a></p>
+          <p><a  id="add-education" class="add-record">+ Add education</a></p>
           <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>
           <p>Please upload your current or most recent academic transcript. We accept unofficial transcripts.</p>
           <fieldset class="usajobs-fieldset">
@@ -319,7 +160,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Back</button>
-              <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
+              <a href="#success" id="main-education-save" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
             </div>
           </div>
         </div>
