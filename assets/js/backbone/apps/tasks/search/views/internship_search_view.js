@@ -333,6 +333,7 @@ var InternshipListView = Backbone.View.extend({
     $('#bureau').on('change', function (e) {
       this.showOfficeDropdown();
       $('#office').val(null).trigger('change');
+      this.filters.page = 1;
       this.filter();
     }.bind(this));
 
@@ -352,6 +353,7 @@ var InternshipListView = Backbone.View.extend({
       } else {
         delete this.filters.office;
       }
+      this.filters.page = 1;
       this.filter();
     }.bind(this));
   },
@@ -595,11 +597,8 @@ var InternshipListView = Backbone.View.extend({
     } else { delete this.filters.restrict; }
         
     this.initAgencyFilter();
-    if ( isChecked ) {
-      this.filter();
-    } else {
-      this.filter();
-    }
+    this.filters.page = 1;
+    this.filter();
   },
     
   filter: function () {
