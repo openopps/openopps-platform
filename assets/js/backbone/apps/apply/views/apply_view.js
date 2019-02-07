@@ -52,29 +52,23 @@ var ApplyView = Backbone.View.extend({
     'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
     'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
     'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
-<<<<<<< HEAD
     'click #add-language'                       : 'toggleLanguagesOn',
     'click #cancel-language'                    : 'toggleLanguagesOff',  
     'click #save-language'                      : 'saveLanguage',
-=======
     'click .apply-continue'                                       : 'applyContinue',
->>>>>>> 424b1b7113f8a8b87d6ee1cbe9dfd263e248150f
   },
 
   // initialize components and global functions
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
-<<<<<<< HEAD
     this.dataLanguageArray      = [];
     this.deleteLanguageArray    = [];
-=======
     this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
     this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
     this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
->>>>>>> 424b1b7113f8a8b87d6ee1cbe9dfd263e248150f
   },
 
   render: function () {
