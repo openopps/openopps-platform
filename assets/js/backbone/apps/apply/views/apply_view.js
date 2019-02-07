@@ -3,10 +3,10 @@ var async = require('async');
 var Backbone = require('backbone');
 var $ = require('jquery');
 var charcounter = require('../../../../vendor/jquery.charcounter');
+var marked = require('marked');
 
 // templates
-// var ApplyTemplate = require('../templates/apply_summary_template.html');
-var ApplyTemplate = require('../templates/apply_language_template.html');
+var ApplyTemplate = require('../templates/apply_summary_template.html');
 var ProcessFlowTemplate = require('../templates/process_flow_template.html');
 var ApplyAddEducationTemplate = require('../templates/apply_add_education_template.html');
 var ApplyEducationTemplate = require('../templates/apply_education_template.html');
@@ -65,6 +65,7 @@ var ApplyView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
+    this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
     this.dataLanguageArray      = [];
     this.deleteLanguageArray    = [];
     this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
@@ -72,7 +73,6 @@ var ApplyView = Backbone.View.extend({
     this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
-    // console.log(this.data);
   },
 
   render: function () {
@@ -84,7 +84,7 @@ var ApplyView = Backbone.View.extend({
         this.$el.html(templates.applyExperience(this.data));
         break;
       case '3':
-        this.$el.html(templates.applyAddEducation(this.data));
+        this.$el.html(templates.applyEducation(this.data));
         break;
       case '4':
         this.$el.html(templates.applyLanguage(this.data));
@@ -382,6 +382,7 @@ var ApplyView = Backbone.View.extend({
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       this.data.statementOfInterest = result.statementOfInterest;
+      this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
       this.$el.html(templates.applyReview(this.data));
       this.$el.localize();
       this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
