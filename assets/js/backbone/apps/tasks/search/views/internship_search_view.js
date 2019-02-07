@@ -36,8 +36,8 @@ var InternshipListView = Backbone.View.extend({
     this.bureaus = [];
     this.offices = {};
     this.currentOffices = [];
+    this.filterLookup = {};
     this.firstFilter = true;
-    this.parseURLToFilters();
     this.userAgency =  {};
     if (window.cache.currentUser && window.cache.currentUser.agency) {
       this.userAgency = window.cache.currentUser.agency;
@@ -46,9 +46,10 @@ var InternshipListView = Backbone.View.extend({
     this.initializeHideFields();
     this.initializeCycle();
     this.initializeBureaus();
+    this.initializeCommunityDetails();
+    this.parseURLToFilters();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-   
   },
     
   render: function () {
@@ -58,7 +59,7 @@ var InternshipListView = Backbone.View.extend({
       user: window.cache.currentUser,
       ui: UIConfig,
       agencyName: this.userAgency.name,
-      term: this.filters.term,
+      term: this.filters.term ? this.filters.term : "",
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,    
@@ -68,7 +69,6 @@ var InternshipListView = Backbone.View.extend({
     this.filter();
     this.initializeKeywordSearch();
     this.initializeLocationSearch(); 
-    this.initializeCommunityDetails();
     $('.usa-footer-search--intern').show();
     $('.usa-footer-search--intern-hide').hide();
     this.$('.usajobs-open-opps-search__box').show();
@@ -154,8 +154,14 @@ var InternshipListView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
+        this.filterLookup["bureau"] = {};
+        this.filterLookup["office"] = {};
         for (var i = 0; i < data.length; i++) {
           this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+          this.filterLookup["bureau"][data[i].bureauId] = data[i].name;
+          data[i].offices.forEach(function(office) {
+            this.filterLookup["office"][office.id] = office.text;
+          }.bind(this));
         }
         this.bureaus = data.sort(function (a, b) {
           if(a.name < b.name ) { return -1; }
@@ -173,6 +179,10 @@ var InternshipListView = Backbone.View.extend({
       async: false,
       success: function (data) {      
         this.programs = data;
+        this.filterLookup["program"] = {};
+        data.forEach(function(program) {
+          this.filterLookup.program[program.communityId] = program.communityName;
+        }.bind(this));
       }.bind(this),
     });
   },
@@ -327,7 +337,7 @@ var InternshipListView = Backbone.View.extend({
     }.bind(this));
 
     $('#office').select2({
-      placeholder: 'Select an office',
+      placeholder: 'Select an office/post',
       width: '100%',
       allowClear: true,
       data: function() { 
@@ -659,16 +669,13 @@ var InternshipListView = Backbone.View.extend({
       } else {    
         if (key == 'program' || key == 'bureau' || key == 'office')
         {
-          var splitValue = value.split(':');
-          this.filters[key] = { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
+          this.filters[key] = { type: key, name: this.filterLookup[key][value], id: value };
         } else { 
           this.filters[key] = _.map(values, function (value) {
-            var splitValue = value.split(':');
-            if (splitValue[1]) {
-              return { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
-            } else {
+            if (key == "location") {
               return value;
             }
+            return { type: key, name: value };
           });
         }
       }
@@ -677,13 +684,12 @@ var InternshipListView = Backbone.View.extend({
 });
     
 function formatObjectForURL (value) {
-  if (value.type && !value.id) {
-    return value.name + ':' + 0;
-  } else if (value.id) {
-    return value.id ? value.name + ':' + value.id : value.name;
+  if (value.type == "program" || value.type == "office" || value.type == "bureau") {
+    return value.id;
   }
-  
-  return value.id ? value.name + ':' + value.id : value.name;
+  else {
+    return value.name;
+  }
 }
   
 function getAppliedFiltersCount (filters, agency) {

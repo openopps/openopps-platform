@@ -62,6 +62,21 @@ module.exports.apply = async function (userId, taskId, callback) {
 };
 
 module.exports.findById = async function (applicationId) {
-  var application = await dao.Application.find('id = ?', applicationId);
-  
+  var application = (await dao.Application.query(dao.query.application, applicationId))[0];
+  if (application) {
+    application.tasks = (await dao.Application.db.query(dao.query.applicationTasks, applicationId)).rows;
+  }
+  return application;
+};
+
+module.exports.updateApplication = async function (userId, applicationId, data) {
+  return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+    return await dao.Application.update(data).then((application) => {
+      return application;
+    }).catch((err) => {
+      return false;
+    });
+  }).catch((err) => {
+    return false;
+  });
 };

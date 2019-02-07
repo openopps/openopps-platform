@@ -52,25 +52,56 @@ var ApplyView = Backbone.View.extend({
     'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
     'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
     'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
+<<<<<<< HEAD
     'click #add-language'                       : 'toggleLanguagesOn',
     'click #cancel-language'                    : 'toggleLanguagesOff',  
     'click #save-language'                      : 'saveLanguage',
+=======
+    'click .apply-continue'                                       : 'applyContinue',
+>>>>>>> 424b1b7113f8a8b87d6ee1cbe9dfd263e248150f
   },
 
   // initialize components and global functions
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
+<<<<<<< HEAD
     this.dataLanguageArray      = [];
     this.deleteLanguageArray    = [];
+=======
+    this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
+    this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
+    this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
+    this.params = new URLSearchParams(window.location.search);
+    this.data.selectedStep = this.params.get('step') || this.data.currentStep;
+>>>>>>> 424b1b7113f8a8b87d6ee1cbe9dfd263e248150f
   },
 
   render: function () {
-    this.$el.html(templates.main);
+    switch (this.data.selectedStep.toString()) {
+      case '1':
+        this.$el.html(templates.applyProgram(this.data));
+        break;
+      case '2':
+        this.$el.html(templates.applyExperience(this.data));
+        break;
+      case '3':
+        this.$el.html(templates.applyEducation(this.data));
+        break;
+      case '4':
+        this.$el.html(templates.applyLanguage(this.data));
+        break;
+      case '5':
+        this.$el.html(templates.applyStatement(this.data));
+        break;
+      default:
+        this.$el.html(templates.main);
+        break;
+    }
     $('#search-results-loading').hide();
     this.$el.localize();
 
-    this.data = {
+    this.data = _.extend(this.data, {
       accordion1: {
         open: false,
       },
@@ -80,9 +111,9 @@ var ApplyView = Backbone.View.extend({
       accordion3: {
         open: false,
       },
-    };
+    });
 
-    this.renderProcessFlowTemplate();
+    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.toggleOverseasExperienceDetails();
     this.toggleOverseasExperienceFilterOther();
     this.toggleSecurityClearanceDetails();
@@ -112,13 +143,40 @@ var ApplyView = Backbone.View.extend({
     element.attr('aria-expanded', this.data.accordion3.open);
     element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
   },
+
+  applyContinue: function (e) {
+    e.preventDefault && e.preventDefault();
+    this[e.currentTarget.dataset.action] && this[e.currentTarget.dataset.action]();
+  },
   // end initialize components and global functions
  
   // process flow section 
-  renderProcessFlowTemplate: function () {
-    $('#process-title-banners').html(_.template(ProcessFlowTemplate)());
+  renderProcessFlowTemplate: function (data) {
+    $('#process-title-banners').html(_.template(ProcessFlowTemplate)(data));
   },
   // end process flow section
+
+  // summary section
+  summaryContinue: function () {
+    this.data.currentStep = 1;
+    this.data.selectedStep = 1;
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      method: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        currentStep: 1,
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      this.$el.html(templates.applyProgram(this.data));
+      this.$el.localize();
+      this.renderProcessFlowTemplate({ currentStep: 1, selectedStep: 1 });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
+  // end summary section
 
   // education section
   // end education section

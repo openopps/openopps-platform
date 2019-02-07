@@ -6,32 +6,74 @@
       <h2>Select internship opportunities</h2>
       <p>You must select three internship opportunities. You can choose from your saved internship opportunities or search for more.</p>
       <h4 class="program-choice">1st choice</h4>
-      <div class="usajobs-card--large">
-        <div class="program-choice__title">
-          <h3 class="usajobs-card__title" itemprop="title">
-            Knowledge &amp; Learning for Global Food Security
-          </h3>
-          <a class="program-delete" href="#"><i class="fas fa-times"></i><span>Delete</span></a>
+      <% if (firstChoice) { %>
+        <div class="usajobs-card--large">
+          <div class="program-choice__title">
+            <h3 class="usajobs-card__title" itemprop="title">
+              <%- firstChoice.title %>
+            </h3>
+            <a class="program-delete" href="#"><i class="fas fa-times"></i><span>Delete</span></a>
+          </div>
+          <div class="usajobs-card__body">
+            <h5 class="program-label">
+              Bureau/Office
+            </h5>
+            <p>
+              <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
+            </p>
+          </div>
         </div>
-        <div class="usajobs-card__body">
-          <h5 class="program-label">
-            Bureau/Office
-          </h5>
-          <p>
-            Administration (A)/Office of the Executive Director (EX)
-          </p>
-        </div>
-      </div>
-
+      <% } else { %>
+        <a class="program-empty" href="/search">
+          <h3>Search for your 1st choice</h3>
+        </a>
+      <% } %>
       <h4 class="program-choice">2nd choice</h4>
-      <a class="program-empty" href="#">
-        <h3>Search for your 2nd choice</h3>
-      </a>
-
+      <% if (secondChoice) { %>
+        <div class="usajobs-card--large">
+          <div class="program-choice__title">
+            <h3 class="usajobs-card__title" itemprop="title">
+              <%- secondChoice.title %>
+            </h3>
+            <a class="program-delete" href="#"><i class="fas fa-times"></i><span>Delete</span></a>
+          </div>
+          <div class="usajobs-card__body">
+            <h5 class="program-label">
+              Bureau/Office
+            </h5>
+            <p>
+              <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+            </p>
+          </div>
+        </div>
+      <% } else { %>
+        <a class="program-empty" href="/search">
+          <h3>Search for your 2nd choice</h3>
+        </a>
+      <% } %>
       <h4 class="program-choice">3rd choice</h4>
-      <a class="program-empty" href="#">
-        <h3>Search for your 3rd choice</h3>
-      </a>
+      <% if (thirdChoice) { %>
+        <div class="usajobs-card--large">
+          <div class="program-choice__title">
+            <h3 class="usajobs-card__title" itemprop="title">
+              <%- thirdChoice.title %>
+            </h3>
+            <a class="program-delete" href="#"><i class="fas fa-times"></i><span>Delete</span></a>
+          </div>
+          <div class="usajobs-card__body">
+            <h5 class="program-label">
+              Bureau/Office
+            </h5>
+            <p>
+              <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+            </p>
+          </div>
+        </div>
+      <% } else { %>
+        <a class="program-empty" href="/search">
+          <h3>Search for your 3rd choice</h3>
+        </a>
+      <% } %>
 
       <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
