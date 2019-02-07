@@ -2,6 +2,7 @@ var _ = require('underscore');
 var async = require('async');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var charcounter = require('../../../../vendor/jquery.charcounter');
 
 // templates
 var ApplyTemplate = require('../templates/apply_summary_template.html');
@@ -52,6 +53,8 @@ var ApplyView = Backbone.View.extend({
     'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
     'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
     'click .apply-continue'                                       : 'applyContinue',
+    'keypress #statement'                                         : 'statementCharacterCount',
+    'keydown #statement'                                          : 'statementCharacterCount',
   },
 
   // initialize components and global functions
@@ -63,6 +66,7 @@ var ApplyView = Backbone.View.extend({
     this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
+    // console.log(this.data);
   },
 
   render: function () {
@@ -74,13 +78,16 @@ var ApplyView = Backbone.View.extend({
         this.$el.html(templates.applyExperience(this.data));
         break;
       case '3':
-        this.$el.html(templates.applyEducation(this.data));
+        this.$el.html(templates.applyAddEducation(this.data));
         break;
       case '4':
         this.$el.html(templates.applyLanguage(this.data));
         break;
       case '5':
         this.$el.html(templates.applyStatement(this.data));
+        break;
+      case '6':
+        this.$el.html(templates.applyReview(this.data));
         break;
       default:
         this.$el.html(templates.main);
@@ -215,6 +222,33 @@ var ApplyView = Backbone.View.extend({
   // end review section
 
   // statement section
+  statementCharacterCount: function () {
+    $('#statement').charCounter(2500, {
+      container: '#statement-count',
+    });
+  },
+
+  statementContinue: function () {
+    this.data.currentStep = 6;
+    this.data.selectedStep = 6;
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      method: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        currentStep: 6,
+        statementOfInterest: $('#statement').val(),
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      this.data.statementOfInterest = result.statementOfInterest;
+      this.$el.html(templates.applyReview(this.data));
+      this.$el.localize();
+      this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
   // end statement section
 
   // summary section
