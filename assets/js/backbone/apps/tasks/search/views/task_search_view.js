@@ -37,13 +37,14 @@ var TaskListView = Backbone.View.extend({
     this.careers = [];
     this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
-    this.parseURLToFilters();
     this.userAgency =  {};
+    this.filterLookup = {};
     if (window.cache.currentUser && window.cache.currentUser.agency) {
       this.userAgency = window.cache.currentUser.agency;
     }
     this.initAgencyFilter();
     this.initializeCareerField();
+    this.parseURLToFilters();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
 
@@ -175,6 +176,10 @@ var TaskListView = Backbone.View.extend({
       async: false,
       success: function (data) {
         this.careers = data;
+        this.filterLookup["career"] = {};
+        data.forEach(function (career) {
+          this.filterLookup["career"][career.id] = career.name;
+        }.bind(this));
       }.bind(this),
     });
   },
@@ -550,28 +555,26 @@ var TaskListView = Backbone.View.extend({
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {
             return value;
+          } else if (key == "career") {
+              console.log(this.filterLookup);
+              console.log(value);
+              return { type: key, name: this.filterLookup[key][value], id: value };
+          } else if (key == "skill" || key == "series") {
+            return { type: key, name: value };
           } else {
-            var splitValue = value.split(':');
-            if (splitValue[1]) {
-              return { type: key, name: splitValue[0], id: parseInt(splitValue[1]) };
-            } else {
-              return value;
-            }
+            return value;
           }
-        });
+        }.bind(this));
       }
     }.bind(this));
   },
 });
 
 function formatObjectForURL (value) {
-  if (value.type && !value.id) {
-    return value.name + ':' + 0;
-  } else if (value.id) {
-    return value.id ? value.name + ':' + value.id : value.name;
+  if (value.type == "career") {
+    return value.id;
   }
-
-  return value.id ? value.name + ':' + value.id : value.name;
+  return value.name;
 }
 
 function getAppliedFiltersCount (filters, agency) {
