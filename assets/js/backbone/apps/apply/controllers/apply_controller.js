@@ -9,10 +9,14 @@ var ApplyController = BaseController.extend({
     if(!window.cache.currentUser) {
       Backbone.history.navigate('/login?apply/' + this.options.data.applicationId, { trigger: true });
     } else {
-      this.applyView = new ApplyView({
-        el: '#container',
-        data: options,
-      }).render();
+      $.ajax('/api/application/' + options.data.applicationId).done(function (application) {
+        this.applyView = new ApplyView({
+          el: '#container',
+          data: application,
+        }).render();
+      }.bind(this)).error(function () {
+        // TODO: Need a Whoops! page
+      });
     }
     return this;
   },
