@@ -101,42 +101,18 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
   
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency", "program", "bureau", "office"];
+  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
 
-  for(i=0; i<formatParamTypes.length; i++){
-    var formatParam = query[formatParamTypes[i]];
-    if (formatParam && _.isArray(formatParam)) {
-      var newList = [];
-      _.each(formatParam, function(item) {
-        if (formatParamTypes[i] === "location" && (item === "virtual" || item === "in person")) {
-          if (!query.locationType) {
-            query.locationType = [];
-          }
-          query.locationType.push(item);
-        } else if (formatParamTypes[i] === "series") {
-          newList.push(item.split("(")[0].trim());
-        } else {
-          newList.push(item.split(":")[0].trim());
-        }
-      });
-      if (newList.length === 0 && formatParamTypes[i] === "location") {
-        delete query.location;
-      } else {
-        query[formatParamTypes[i]] = newList;
-      }
-    } else if (formatParam) {
-      if (formatParamTypes[i] === "location" && (formatParam === "virtual" || formatParam === "in person")) {
-        query.locationType = formatParam;
-        delete query.location;
-      } else if (formatParamTypes[i] === "series") {
-        query[formatParamTypes[i]] = formatParam.split("(")[0].trim();
-      } else if (formatParamTypes[i] === "program" || formatParamTypes[i] === "office" || formatParamTypes[i] === "bureau") {
-        query[formatParamTypes[i]] = formatParam.split(":")[1].trim();
-      } else {
-        query[formatParamTypes[i]] = formatParam.split(":")[0].trim();
-      }
-    }
+  var seriesList = [];
+  if (query.series && _.isArray(query.series)) {
+    _.each(query.series, function(item) {
+      seriesList.push(item.split("(")[0].trim());
+    });
+    query.series = seriesList;
+  } else if (query.series) {
+    query.series = query.series.split("(")[0].trim();
   }
+  
   var agencies = ["null"];
   
   if (ctx.state.user && ctx.state.user.agency) {
@@ -201,7 +177,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   
   request.addTerms(query.isInternship, 'isInternship');
   request.addTerms(query.skill, 'skills.name');
-  request.addTerms(query.career, 'careers.name');
+  request.addTerms(query.career, 'careers.id');
   request.addTerms(query.series, 'series.code');
   request.addTerms(query.time, 'timeRequired');
   request.addTerms(query.locationType, 'locationType');
