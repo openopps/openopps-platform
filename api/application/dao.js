@@ -6,7 +6,7 @@ const applicationQuery = 'SELECT @application.* ' +
   'WHERE application.application_id = ?';
 
 const applicationTasksQuery = 'SELECT ' +
-  'application_task.application_id, application_task.sort_order, ' +
+  'application_task.application_task_id, application_task.sort_order, ' +
   'task.title, bureau.name as bureau, office.name as office ' +
   'FROM application_task ' +
   'JOIN task ON task.id = application_task.task_id ' +

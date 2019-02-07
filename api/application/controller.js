@@ -7,7 +7,19 @@ const service = require('./service');
 var router = new Router();
 
 router.get('/api/application/:id', auth, async (ctx, next) => {
-  ctx.body = await service.findById(ctx.params.id);
+  var application = await service.findById(ctx.params.id);
+  ctx.status = application ? 200 : 404;
+  ctx.body = application ? application : 'Not Found';
+});
+
+router.put('/api/application/:id', auth, async (ctx, next) => {
+  var result = await service.updateApplication(ctx.state.user.id, ctx.params.id, ctx.request.body);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
 });
 
 router.get('/api/application/:userId/:communityId', auth, async (ctx, next) => {
