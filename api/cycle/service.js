@@ -27,7 +27,7 @@ module.exports.addCycle = async function (data, callback) {
     log.error('An error was encountered trying to create a cycle', err);
     callback(null, { message: 'An error was encountered trying to add this cycle to the community.' });
   });
-d};
+};
 
 module.exports.createAudit = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
