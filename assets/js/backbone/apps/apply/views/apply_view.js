@@ -2,10 +2,11 @@ var _ = require('underscore');
 var async = require('async');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var charcounter = require('../../../../vendor/jquery.charcounter');
+var marked = require('marked');
 
 // templates
-// var ApplyTemplate = require('../templates/apply_summary_template.html');
-var ApplyTemplate = require('../templates/apply_language_template.html');
+var ApplyTemplate = require('../templates/apply_summary_template.html');
 var ProcessFlowTemplate = require('../templates/process_flow_template.html');
 var ApplyAddEducationTemplate = require('../templates/apply_add_education_template.html');
 var ApplyEducationTemplate = require('../templates/apply_education_template.html');
@@ -55,9 +56,11 @@ var ApplyView = Backbone.View.extend({
     'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
     'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
     'click #add-language'                                         : 'toggleLanguagesOn',
-    'click #cancel-language'                                       : 'toggleLanguagesOff',  
-    'click #save-language'                                         : 'saveLanguage',
+    'click #cancel-language'                                      : 'toggleLanguagesOff',  
+    'click #save-language'                                        : 'saveLanguage',
     'click .apply-continue'                                       : 'applyContinue',
+    'keypress #statement'                                         : 'statementCharacterCount',
+    'keydown #statement'                                          : 'statementCharacterCount',
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
     'click #add-education'                                        :'toggleAddEducation',
@@ -75,6 +78,7 @@ var ApplyView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.data = options.data;
+    this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
     this.dataLanguageArray      = [];
     this.deleteLanguageArray    = [];
     this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
@@ -101,6 +105,9 @@ var ApplyView = Backbone.View.extend({
         break;
       case '5':
         this.$el.html(templates.applyStatement(this.data));
+        break;
+      case '6':
+        this.$el.html(templates.applyReview(this.data));
         break;
       default:
         this.$el.html(templates.main);
@@ -710,6 +717,34 @@ var ApplyView = Backbone.View.extend({
   // end review section
 
   // statement section
+  statementCharacterCount: function () {
+    $('#statement').charCounter(2500, {
+      container: '#statement-count',
+    });
+  },
+
+  statementContinue: function () {
+    this.data.currentStep = 6;
+    this.data.selectedStep = 6;
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      method: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        currentStep: 6,
+        statementOfInterest: $('#statement').val(),
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      this.data.statementOfInterest = result.statementOfInterest;
+      this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
+      this.$el.html(templates.applyReview(this.data));
+      this.$el.localize();
+      this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
   // end statement section
 
   // summary section
