@@ -5,6 +5,7 @@
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
+    "@koa/cors": "^2.2.3",
     "app-module-path": "^2.2.0",
     "async": "^2.0.0-rc.2",
     "autolinker": "^1.1.0",

@@ -225,10 +225,13 @@ if (openopps.auth.oidc) {
     strictSsl: false,
   });
   opts.issuer = openopps.auth.oidc.issuer.issuer;
-  //opts.audience = 'openopps';
+  opts.audience = opts.issuer + '/resources';
   passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
     try {
-      // dao.User.findById
+      if (!jwt_payload.scope.includes('openopps'))
+      {
+        return done(new Error('Scope error'), null);
+      }
       dao.User.findOne('linked_id = ?', jwt_payload.sub).then(user => {
         if (user) {
           console.log('user found', user);

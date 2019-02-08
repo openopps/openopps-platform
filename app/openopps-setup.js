@@ -26,6 +26,7 @@ _.extend(configuration, require('../config/application'));
 _.extend(configuration, require('../config/session'));
 _.extend(configuration, require('../config/settings/auth'));
 _.extend(configuration, require('../config/cache'));
+_.extend(configuration, require('../config/cors'));
 _.extend(configuration, require('../config/version'));
 _.extend(configuration, require('../config/fileStore'));
 _.extend(configuration, require('../config/email'));
