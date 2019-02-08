@@ -1,6 +1,6 @@
 <div id="process-title-banners"></div>
 
-<div class="usajobs-content-gutter opportunity-gutter internship">
+<div class="usajobs-content-gutter opportunity-gutter internship education-apply">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
       <h2>Education &amp; Transcript</h2>
@@ -8,34 +8,40 @@
         <fieldset class="usajobs-fieldset">
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
           <h3 class="usajobs-profile-home-section__sub-section">Education</h3>
-          <div class="required-input">
+          <div class="form-group required-input">
             <label for="school-name" class="no-margin-top">School or Program name</label>
-            <input type="text" class="fullwidth form-control" id="school-name" name="school-name">
+            <span class="field-validation-error error-empty" style="display:none;">You must enter School or Program Name</span>
+            <input type="text" class="fullwidth form-control validate" id="school-name" name="school-name" data-validate="empty">
           </div>
-          <div class="required-input">
+          <div class="required-input apply_country">
             <label for="country">Country</label>
-            <select name="country">
-              <option></option>
-            </select>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a country for this internship.</span>              
+            <input  id="apply_country" class="dropdown validate" data-validate="empty" />
           </div>
+          
           <div class="required-input">
             <label for="postal-code">Postal code</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter Postal code</span>
             <input type="text" class="usa-input-medium form-control" id="postal-code" name="postal-code">
           </div>
-          <div class="required-input">
+          <div class="form-group required-input">
             <label for="city">City or Town</label>
-            <input type="text" class="fullwidth form-control" id="city" name="city">
+            <span class="field-validation-error error-empty" style="display:none;">You must enter city</span>
+            <input type="text" class="fullwidth form-control validate" id="city" name="city" data-validate="empty">
           </div>
-          <div class="required-input">
-            <label for="state">State, Territory, or Province</label>
-            <select name="state">
-              <option></option>
-            </select>
+          <div class="required-input apply_countrySubdivision">
+            <label for="countrySubdivision">State, Territory, or Province</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a state for this internship.</span>
+            <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" disabled /> 
           </div>
-          <div class="required-input">
+          <div class="form-group required-input">
             <label for="degree">Degree or Level attained</label>
-            <select name="degree">
-              <option>- Select -</option>
+            <span class="field-validation-error error-empty" style="display:none;">You must select Degree or Level attained.</span>
+            <select name="degree" id="degree" class="dropdown validate" data-validate="empty">
+              <option value=""></option>
+              <% _.each(degreeLevels, function (d) { %>             
+                <option value=<%- d.lookup_code_id %>> <%- d.value %></option>
+              <% }); %>
             </select>
           </div>
         </fieldset>
@@ -48,11 +54,12 @@
             <div>
               <div class="usa-datefield usa-form-group-month">
                 <label for="completion-month" class="no-margin-top">Month</label>
-                <input type="text" class="usa-input-tiny form-control" id="completion-month" name="completion-month">
+               
+                <input  class="usa-input-tiny form-control" id="completion-month" name="completion-month"  maxlength="2" type="number" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
               </div>
               <div class="usa-datefield usa-form-group-year">
                 <label for="completion-year" class="no-margin-top">Year</label>
-                <input type="text" class="usa-input-small form-control" id="completion-year" name="completion-year">
+                <input name="completion-year" id="completion-year" aria-invalid="false" aria-describedby="completion-year-error" type="text" maxlength="4" value="" data-val="true" data-val-range-min="1900" data-val-range-max="3000" data-val-range="Completion Year must be valid" data-val-number="The field CompletionYear must be a number.">
               </div>
             </div>
           </div>
@@ -73,20 +80,24 @@
           <label for="GPA">
             <h5 class="usajobs-form__label-header">Grade Point Average (GPA)</h5>
           </label>
-          <div class="gpa">
+          <div>
+          <div class="gpa form-group required-input">
             <label for="GPA" class="no-margin-top">GPA</label>
-            <input id="GPA" maxlength="6" name="GPA" type="text">
+            <span class="field-validation-error error-empty" style="display:none;">You must select GPA.</span>
+            <input id="GPA" maxlength="6" name="GPA" type="text" class="validate" data-validate="empty">
           </div>
-          <div class="gpa">
+          <div class="gpa form-group required-input gpa-max">
             <label for="GPAMax" class="no-margin-top">of GPA Max.</label>
-            <input id="GPAMax" maxlength="6" name="GPAMax" type="text">
+            <span class="field-validation-error error-empty" style="display:none;">You must select GPA Max.</span>
+            <input id="GPAMax" maxlength="6" name="GPAMax" type="text" class="validate" data-validate="empty">
           </div>
+          
         </fieldset>
 
         <fieldset class="usajobs-fieldset">
           <div>
             <label for="credits" class="usa-input-optional">Total credits earned</label>
-            <input type="text" class="fullwidth form-control" id="credits" name="credits">
+            <input type="text" class="fullwidth form-control" id="credit-earned" name="credits">
           </div>
           <div class="form-group required-input usa-fieldset-inputs">
             <label for="GPA">
@@ -94,7 +105,7 @@
             </label>
             <ul class="usa-unstyled-list usa-fieldset-inputs">
               <li>
-                <input checked="checked" id="credit-S" name="CreditSystem" type="radio" value="S">
+                <input id="credit-S" name="CreditSystem" type="radio" value="S">
                 <label for="credit-S">Semester hours</label>
               </li>
               <li>
@@ -108,12 +119,12 @@
             </ul>
           </div>
           <div class="required-input">
-            <label for="degree" class="usa-input-optional">Honors</label>
-            <select name="degree">
-              <option>- Select -</option>
-              <option>Cum Laude</option>
-              <option>Magna Cum Laude</option>
-              <option>Summa Cum Laude</option>
+            <label for="honor-field" class="usa-input-optional">Honors</label>
+            <select id="honors" class="dropdown">
+              <option value=""> </option>
+              <% _.each(honors, function (h) { %>             
+                <option value=<%- h.lookup_code_id %>> <%- h.value %></option>
+              <% }); %>
             </select>
           </div>
           <div class="required-input">
@@ -124,8 +135,8 @@
 
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
-            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
-            <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save experience</a>
+            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-education">Cancel and return</button>
+            <a href="#success" id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</a>
           </div>
         </div>
       </form>
