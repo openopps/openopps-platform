@@ -7,6 +7,17 @@ const Audit = require('../model/Audit');
 module.exports = {};
 
 module.exports.addCycle = async function (data, callback) {
+  var cycles = await this.list(data.communityId);
+  var startDate = new Date(data.applyStartDate);
+  var endDate = new Date(data.applyEndDate);
+  for (var i = 0; i < cycles.length; i++) {
+    var cycleStartDate = new Date(cycles[i].applyStartDate);
+    var cycleEndDate = new Date(cycles[i].applyEndDate);
+    if (startDate <= cycleEndDate && cycleStartDate <= endDate) {
+      return callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycles[i].name + '</b>'});
+    }
+  }
+
   await dao.Cycle.insert(_.extend(data, {
     createdAt: new Date(),
     updatedAt: new Date(),

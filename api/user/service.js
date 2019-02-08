@@ -54,6 +54,15 @@ async function getActivities (id) {
   };
 }
 
+async function getInternshipsActivities (id) {
+  return {
+    tasks: {
+      applied: dao.clean.activity(await dao.Task.find('"userId" = ?', id)),
+      saved: (await dao.Task.db.query(dao.query.participated, id)).rows,
+    },
+  };
+}
+
 function processUserTags (user, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(!_.isNaN(_.parseInt(tag))) {
@@ -230,6 +239,7 @@ module.exports = {
   getProfile: getProfile,
   populateBadgeDescriptions: populateBadgeDescriptions,
   getActivities: getActivities,
+  getInternshipsActivities: getInternshipsActivities,
   updateProfile: updateProfile,
   updateProfileStatus: updateProfileStatus,
   updatePassword: updatePassword,
