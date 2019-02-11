@@ -21,6 +21,7 @@ var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
+var ApplyCongratulationsView = require('./apps/apply/views/apply_congratulations_view');
 var LoginController = require('./apps/login/controllers/login_controller');
 var Modal = require('./components/modal');
 
@@ -47,6 +48,7 @@ var BrowseRouter = Backbone.Router.extend({
     'admin(/)'                                      : 'showAdmin',
     'admin(/):action(/)(:actionId)(/)(:subAction)'  : 'showAdmin',
     'login(/)'                                      : 'showLogin',
+    'apply/congratulations'                         : 'showApplyCongratulations',
     'apply/:id(/)'                                  : 'showApply',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'unauthorized(/)'                               : 'showUnauthorized',
@@ -105,6 +107,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.internshipEditFormView) { this.internshipEditFormView.cleanup(); }
     if (this.internshipView) { this.internshipView.cleanup(); }
     this.applyController && this.applyController.cleanup();
+    this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.data = { saved: false };
   },
 
@@ -475,6 +478,13 @@ var BrowseRouter = Backbone.Router.extend({
         data: this.data,
       });
     }
+  },
+
+  showApplyCongratulations: function () {
+    this.cleanupChildren();
+    this.applyCongratulationsView = new ApplyCongratulationsView({
+      el: '#container',
+    }).render();
   },
 
   showApply: function (id) {

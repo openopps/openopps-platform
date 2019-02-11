@@ -78,6 +78,9 @@ var ApplyView = Backbone.View.extend({
     //statement events
     'keypress #statement'                                         : 'statementCharacterCount',
     'keydown #statement'                                          : 'statementCharacterCount',
+
+    //review events
+    'click .apply-submit'                                         : 'submitApplication',
   },
 
   // initialize components and global functions
@@ -719,9 +722,6 @@ var ApplyView = Backbone.View.extend({
   // program section
   // end program section
 
-  // review section
-  // end review section
-
   // statement section
   statementCharacterCount: function () {
     $('#statement').charCounter(2500, {
@@ -753,8 +753,13 @@ var ApplyView = Backbone.View.extend({
   },
   // end statement section
 
-  // summary section
-  // end summary sectrion
+  // review section
+  submitApplication: function (e) {
+    e.preventDefault && e.preventDefault();
+    Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
+    window.scrollTo(0, 0);
+  },
+  // end review section
 
   cleanup: function () {
     $('.apply-hide').show();
