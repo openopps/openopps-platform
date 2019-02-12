@@ -46,8 +46,17 @@ async function userFound (user, tokenset, done) {
   if (user.disabled) {
     done({ message: 'Not authorized' });
   } else {
-    user.access_token = tokenset.access_token,
-    user.id_token = tokenset.id_token,
+    var data = {
+      id: user.id,
+      hiringPath: tokenset.claims['usaj:hiringPath'],
+      governmentUri: tokenset.claims['usaj:governmentURI'],
+    };
+    if (tokenset.claims['usaj:hiringPath'] == 'student') {
+      data.username = tokenset.claims.email;
+    }
+    await dao.User.update(data);
+    user.access_token = tokenset.access_token;
+    user.id_token = tokenset.id_token;
     done(null, user);
   }
 }

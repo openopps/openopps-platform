@@ -39,10 +39,6 @@ async function updateProfileData (user, profile, tokenset) {
   user.isUsCitizen = profile.Profile.IsUSCitizen;
   user.title = profile.Profile.JobTitle;
   user.bio = profile.Profile.Biography;
-  if (tokenset.claims) {
-    user.linkedId = tokenset.claims.sub;
-    user.governmentUri = tokenset.claims['usaj:governmentURI'];
-  }
   user.agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
   user.agencyId = user.agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
