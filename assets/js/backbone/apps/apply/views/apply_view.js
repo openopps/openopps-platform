@@ -46,9 +46,8 @@ var templates = {
 
 //utility functions
 var Experience = require('./experience');
-console.log(Experience);
+
 var ApplyView = Backbone.View.extend({
-  
   events: {
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
@@ -143,7 +142,6 @@ var ApplyView = Backbone.View.extend({
 
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
-    console.log(Experience.toggleOverseasExperienceDetails);
     Experience.toggleOverseasExperienceDetails();
     Experience.toggleOverseasExperienceFilterOther();
     Experience.toggleSecurityClearanceDetails();
@@ -160,8 +158,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   callMethod: function (method) {
-    console.log(this);
-    method.bind(this)(this);
+    method.bind(this)();
   },
 
   toggleAccordion: function (e) {
