@@ -52,9 +52,9 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
-    'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
-    'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
-    'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
+    'change [name=has_overseas_experience]'                       : 'toggleOverseasExperienceDetails',
+    'change [name=overseas_experience_types]'                     : 'toggleOverseasExperienceFilterOther',
+    'change [name=has_security_clearance]'                        : 'toggleSecurityClearanceDetails',
     'click #add-language'                                         : 'toggleLanguagesOn',
     'click #cancel-language'                                      : 'toggleLanguagesOff',  
     'click #save-language'                                        : 'saveLanguage',
@@ -63,15 +63,18 @@ var ApplyView = Backbone.View.extend({
     'keydown #statement'                                          : 'statementCharacterCount',
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
-    'click #add-education'                                        :'toggleAddEducation',
+    'click #add-education'                                        : 'toggleAddEducation',
     'click #cancel-education'                                     : 'toggleAddEducationOff',
-    'click #save-education'                                       :'saveEducation',
-    'click #delete-education'                                     :'deleteEducation',
-    'click #main-education-save'                                  :'mainEducationSave',
-    'change input[name=Enrolled]'                                 :'changeCurrentlyEnrolled',
-    'change input[name=Junior]'                                    :'changeJunior',
-    'change input[name=ContinueEducation]'                         :'changeContinueEducation',
+    'click #save-education'                                       : 'saveEducation',
+    'click #delete-education'                                     : 'deleteEducation',
+    'click #main-education-save'                                  : 'mainEducationSave',
+    'change input[name=Enrolled]'                                 : 'changeCurrentlyEnrolled',
+    'change input[name=Junior]'                                   : 'changeJunior',
+    'change input[name=ContinueEducation]'                        : 'changeContinueEducation',
     //education events end
+    //experience events
+    'click #saveExperienceContinue'                               : 'saveExperienceContinue'
+    //experience events end
   },
 
   // initialize components and global functions
@@ -749,6 +752,36 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   // end summary sectrion
+
+  // experience section
+  saveExperienceContinue: function() {
+    var overseasExperienceTypes = [];
+    $.each($("[name=overseas_experience_types]:checked"), function(){            
+        overseasExperienceTypes.push($(this).val());
+    });
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      method: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        currentStep: 2,
+        hasOverseasExperience: $('[name=has_overseas_experience]').val(),
+        overseasExperienceOther: $('[name=overseas_experience_other]').val(),
+        overseasExperienceLength: $('[name=overseas_experience_length]').val(),
+        hasSecurityClearance: $('[name=has_security_clearance]').val(),
+        securityClearanceId: $('[name=security_clearance_id]').val(),
+        overseasExperienceTypes: overseasExperienceTypes,
+        securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
+        hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 3 });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
+  // end experience section
 
   cleanup: function () {
     $('.apply-hide').show();
