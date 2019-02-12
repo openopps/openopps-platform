@@ -44,8 +44,11 @@ var templates = {
   applySummary: _.template(ApplySummaryTemplate),
 };
 
+//utility functions
+var Experience = require('./experience');
+console.log(Experience);
 var ApplyView = Backbone.View.extend({
-
+  
   events: {
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
@@ -55,10 +58,10 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
 
     //experience events
-    'change [name=has_overseas_experience]'                       : 'toggleOverseasExperienceDetails',
-    'change [name=overseas_experience_types]'                     : 'toggleOverseasExperienceFilterOther',
-    'change [name=has_security_clearance]'                        : 'toggleSecurityClearanceDetails',
-    'click #saveExperienceContinue'                               : 'saveExperienceContinue',
+    'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
+    'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
+    'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
+    'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
 
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
@@ -140,9 +143,10 @@ var ApplyView = Backbone.View.extend({
 
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
-    this.toggleOverseasExperienceDetails();
-    this.toggleOverseasExperienceFilterOther();
-    this.toggleSecurityClearanceDetails();
+    console.log(Experience.toggleOverseasExperienceDetails);
+    Experience.toggleOverseasExperienceDetails();
+    Experience.toggleOverseasExperienceFilterOther();
+    Experience.toggleSecurityClearanceDetails();
     this.renderLanguages();
     this.initializeLanguagesSelect();
 
@@ -153,6 +157,11 @@ var ApplyView = Backbone.View.extend({
 
   validateField: function (e) {
     return validate(e);
+  },
+
+  callMethod: function (method) {
+    console.log(this);
+    method.bind(this)(this);
   },
 
   toggleAccordion: function (e) {
@@ -548,38 +557,6 @@ var ApplyView = Backbone.View.extend({
 
   // end education section
 
-  // experience section
-  toggleOverseasExperienceDetails: function () {
-    $('#overseas-experience-details').hide();
-
-    if($('input#overseas-experience-yes').is(':checked')) {
-      $('#overseas-experience-details').show();
-    } else {
-      $('#overseas-experience-details').hide();
-    }
-  },
-
-  toggleOverseasExperienceFilterOther: function () {
-    $('#overseas-experience-filter-other').hide();
-
-    if($('input#overseasExperienceOther').is(':checked')) {
-      $('#overseas-experience-filter-other').show();
-    } else {
-      $('#overseas-experience-filter-other').hide();
-    }
-  },
-
-  toggleSecurityClearanceDetails: function () {
-    $('#security-clearance-details').hide();
-
-    if($('input#SecurityClearanceYes').is(':checked')) {
-      $('#security-clearance-details').show();
-    } else {
-      $('#security-clearance-details').hide();
-    }
-  },
-  // end experience section
-
   // language section
   initializeLanguagesSelect: function () {
     $('#languageId').select2({
@@ -761,36 +738,6 @@ var ApplyView = Backbone.View.extend({
     window.scrollTo(0, 0);
   },
   // end review section
-
-  // experience section
-  saveExperienceContinue: function() {
-    var overseasExperienceTypes = [];
-    $.each($("[name=overseas_experience_types]:checked"), function(){            
-        overseasExperienceTypes.push($(this).val());
-    });
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId,
-      method: 'PUT',
-      data: {
-        applicationId: this.data.applicationId,
-        currentStep: 2,
-        hasOverseasExperience: $('[name=has_overseas_experience]').val(),
-        overseasExperienceOther: $('[name=overseas_experience_other]').val(),
-        overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-        hasSecurityClearance: $('[name=has_security_clearance]').val(),
-        securityClearanceId: $('[name=security_clearance_id]').val(),
-        overseasExperienceTypes: overseasExperienceTypes,
-        securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-        hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
-        updatedAt: this.data.updatedAt,
-      },
-    }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;
-      this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 3 });
-      window.scrollTo(0, 0);
-    }.bind(this));
-  },
-  // end experience section
 
   cleanup: function () {
     $('.apply-hide').show();
