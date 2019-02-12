@@ -2,6 +2,8 @@ const _ = require ('lodash');
 const log = require('log')('app:application:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
+const Profile = require('../auth/profile');
+const Import = require('./import');
 
 async function findOrCreateApplication (data) {
   var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [data.userId, data.community.communityId, data.task.cycleId]))[0];
@@ -64,9 +66,25 @@ module.exports.apply = async function (userId, taskId, callback) {
 module.exports.findById = async function (applicationId) {
   var application = (await dao.Application.query(dao.query.application, applicationId))[0];
   if (application) {
-    application.tasks = (await dao.Application.db.query(dao.query.applicationTasks, applicationId)).rows;
+    application.tasks = (await db.query(dao.query.applicationTasks, applicationId)).rows;
   }
   return application;
+};
+
+module.exports.importProfileData = async function (user, applicationId) {
+  return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
+    return await Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(async profile => {
+      return await Import.profileEducation(user.id, applicationId, profile.Profile.Educations).then(() => {
+        return true;
+      }).catch((err) => {
+        return { err: err };
+      });
+    }).catch((err) => {
+      return { err: 'Unable to get data from your USAJOBS profile.' };
+    });
+  }).catch((err) => {
+    return false;
+  });
 };
 
 module.exports.updateApplication = async function (userId, applicationId, data) {

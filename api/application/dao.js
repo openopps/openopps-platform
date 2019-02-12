@@ -19,6 +19,10 @@ module.exports = function (db) {
     Application: dao({ db: db, table: 'application' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
     Community: dao({ db: db, table: 'community' }),
+    Country:dao({ db: db, table: 'country' }),
+    CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    Education: dao({ db: db, table: 'education' }),
+    LookupCode:dao({ db: db, table: 'lookup_code' }),
     Task: dao({ db: db, table: 'task' }),
     query: {
       application: applicationQuery,

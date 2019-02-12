@@ -9,22 +9,12 @@ Backbone.history.on('all', function (route, router) {
   window.scrollTo(0, 0);
 });
 
-// // Polyfill for URLSearchParams for IE
-// (function (w) {
-//   w.URLSearchParams = w.URLSearchParams || function (searchString) {
-//     this.get = function (name) {
-//       var results = new RegExp('[\?&]' + name + '=?([^&#]*)').exec(searchString);
-//       if (results) {
-//         return decodeURI(results[1]);
-//       } else {
-//         return null;
-//       }
-//     }.bind(this);
-//     this.has = function (name) {
-//       return (new RegExp('[\?&]' + name + '=?([^&#]*)').exec(searchString) != null);
-//     };
-//   };
-// })(window);
+global.showWhoopsPage = function () {
+  var whoopsPage = require('./apps/error/templates/whoops.html');
+  $('#container').html(_.template(whoopsPage));
+  $('#search-results-loading').hide();
+  window.scrollTo(0, 0);
+};
 
 /**
  * Takes a name and pulls the first letter of first name
