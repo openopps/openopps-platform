@@ -29,6 +29,7 @@ var templates = {
   processflow: _.template(ProcessFlowTemplate),
   applyAddEducation: _.template(ApplyAddEducationTemplate),
   applyEducation: _.template(ApplyEducationTemplate),
+  educationPreview:_.template(ApplyEducationPreviewTemplate),
   applyAddExperience: _.template(ApplyAddExperienceTemplate),
   applyExperience: _.template(ApplyExperienceTemplate),
   applyAddLanguage: _.template(ApplyAddLanguageTemplate),
@@ -41,7 +42,6 @@ var templates = {
   applyReview: _.template(ApplyReviewTemplate),
   applyStatement: _.template(ApplyStatementTemplate),
   applySummary: _.template(ApplySummaryTemplate),
-  educationPreview:_.template(ApplyEducationPreviewTemplate),
 };
 
 var ApplyView = Backbone.View.extend({
@@ -49,18 +49,17 @@ var ApplyView = Backbone.View.extend({
   events: {
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
+    'click .apply-continue'                                       : 'applyContinue',
     'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
+
+    //experience events
     'change [name=has_overseas_experience]'                       : 'toggleOverseasExperienceDetails',
     'change [name=overseas_experience_types]'                     : 'toggleOverseasExperienceFilterOther',
     'change [name=has_security_clearance]'                        : 'toggleSecurityClearanceDetails',
-    'click #add-language'                                         : 'toggleLanguagesOn',
-    'click #cancel-language'                                      : 'toggleLanguagesOff',  
-    'click #save-language'                                        : 'saveLanguage',
-    'click .apply-continue'                                       : 'applyContinue',
-    'keypress #statement'                                         : 'statementCharacterCount',
-    'keydown #statement'                                          : 'statementCharacterCount',
+    'click #saveExperienceContinue'                               : 'saveExperienceContinue',
+
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
     'click #add-education'                                        : 'toggleAddEducation',
@@ -71,10 +70,18 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : 'changeCurrentlyEnrolled',
     'change input[name=Junior]'                                   : 'changeJunior',
     'change input[name=ContinueEducation]'                        : 'changeContinueEducation',
-    //education events end
-    //experience events
-    'click #saveExperienceContinue'                               : 'saveExperienceContinue'
-    //experience events end
+
+    //language events
+    'click #add-language'                                         : 'toggleLanguagesOn',
+    'click #cancel-language'                                      : 'toggleLanguagesOff',  
+    'click #save-language'                                        : 'saveLanguage',
+
+    //statement events
+    'keypress #statement'                                         : 'statementCharacterCount',
+    'keydown #statement'                                          : 'statementCharacterCount',
+
+    //review events
+    'click .apply-submit'                                         : 'submitApplication',
   },
 
   // initialize components and global functions
@@ -118,7 +125,6 @@ var ApplyView = Backbone.View.extend({
     }
     $('#search-results-loading').hide();
     this.$el.localize();
-    this.renderComponentEducation();
 
     this.data = _.extend(this.data, {
       accordion1: {
@@ -133,6 +139,7 @@ var ApplyView = Backbone.View.extend({
     });
 
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+    this.renderComponentEducation();
     this.toggleOverseasExperienceDetails();
     this.toggleOverseasExperienceFilterOther();
     this.toggleSecurityClearanceDetails();
@@ -716,9 +723,6 @@ var ApplyView = Backbone.View.extend({
   // program section
   // end program section
 
-  // review section
-  // end review section
-
   // statement section
   statementCharacterCount: function () {
     $('#statement').charCounter(2500, {
@@ -750,8 +754,13 @@ var ApplyView = Backbone.View.extend({
   },
   // end statement section
 
-  // summary section
-  // end summary sectrion
+  // review section
+  submitApplication: function (e) {
+    e.preventDefault && e.preventDefault();
+    Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
+    window.scrollTo(0, 0);
+  },
+  // end review section
 
   // experience section
   saveExperienceContinue: function() {
