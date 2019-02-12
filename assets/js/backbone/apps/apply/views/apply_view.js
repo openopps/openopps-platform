@@ -4,8 +4,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 // templates
-// var ApplyTemplate = require('../templates/apply_summary_template.html');
-var ApplyTemplate = require('../templates/apply_language_template.html');
+var ApplyTemplate = require('../templates/apply_summary_template.html');
 var ProcessFlowTemplate = require('../templates/process_flow_template.html');
 var ApplyAddEducationTemplate = require('../templates/apply_add_education_template.html');
 var ApplyEducationTemplate = require('../templates/apply_education_template.html');
@@ -52,26 +51,29 @@ var ApplyView = Backbone.View.extend({
     'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
     'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
     'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
-    'click #add-language'                       : 'toggleLanguagesOn',
-    'click #cancel-language'                    : 'toggleLanguagesOff',  
-    'click #save-language'                      : 'saveLanguage',
+    'click #add-language'                                         : 'toggleLanguagesOn',
+    'click #cancel-language'                                      : 'toggleLanguagesOff',  
+    'click #save-language'                                        : 'saveLanguage',
     'click .apply-continue'                                       : 'applyContinue',
   },
 
   // initialize components and global functions
   initialize: function (options) {
-    this.options = options;
-    this.data = options.data;
-    this.dataLanguageArray      = [];
-    this.deleteLanguageArray    = [];
-    this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
-    this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
-    this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
-    this.params = new URLSearchParams(window.location.search);
-    this.data.selectedStep = this.params.get('step') || this.data.currentStep;
+    this.options              = options;
+    this.data                 = options.data;
+    this.dataLanguageArray    = [];
+    this.deleteLanguageArray  = [];
+    this.data.firstChoice     = _.findWhere(this.data.tasks, { sort_order: 1 });
+    this.data.secondChoice    = _.findWhere(this.data.tasks, { sort_order: 2 });
+    this.data.thirdChoice     = _.findWhere(this.data.tasks, { sort_order: 3 });
+    this.params               = new URLSearchParams(window.location.search);
+    this.data.selectedStep    = this.params.get('step') || this.data.currentStep;
+    this.languageProficiencies = [];
   },
 
   render: function () {
+    this.initializeEnumerations();
+
     switch (this.data.selectedStep.toString()) {
       case '1':
         this.$el.html(templates.applyProgram(this.data));
@@ -107,16 +109,26 @@ var ApplyView = Backbone.View.extend({
       },
     });
 
+    
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.toggleOverseasExperienceDetails();
     this.toggleOverseasExperienceFilterOther();
     this.toggleSecurityClearanceDetails();
-    this.renderLanguages();
-    this.initializeLanguagesSelect();
 
     $('.apply-hide').hide();
 
     return this;
+  },
+
+  initializeEnumerations: function () {
+    $.ajax({
+      url: '/api/lookup/application/enumerations',
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.languageProficiencies = data.languageProficiencies;
+      }.bind(this),
+    });
   },
 
   validateField: function (e) {
@@ -283,29 +295,34 @@ var ApplyView = Backbone.View.extend({
   },
 
   saveLanguage:function (){
+    $('.usajobs-alert--error').hide();
     if(!this.validateLanguage()){
-      this.toggleLanguagesOff();
-      var data = this.getDataFromLanguagePage();
-      if (_.filter(this.dataLanguageArray, function (language) {
-        return  language.languageId == data.languageId;
-      }).length) {
-        var index = _.findIndex(this.dataLanguageArray, function (language) {
-          return language.languageId == data.languageId;
-        });
-        this.dataLanguageArray[index] = data;
-      } else {
-        this.dataLanguageArray.push(data);
-      }
-      this.renderLanguages();
-      $('#lang-1').get(0).scrollIntoView();
-    }
-  },
-
-  renderLanguages: function () {
-    templates.applyAddLanguage({
-      data: this.dataLanguageArray,     
-    });
-    $('#lang-1').html(templates.applyAddLanguage);
+      var language = this.getDataFromLanguagePage();
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/language',
+        method: 'POST',
+        contentType: 'application/json',
+        data: {
+          applicationId: this.data.applicationId,
+          language: language,
+          updatedAt: this.data.updatedAt,
+        },
+      }).done(function (result) {
+        this.dataLanguageArray.push(result.language);
+        this.data.updatedAt = result.updatedAt;
+        this.$el.html(templates.applyLanguage(this.data));
+        this.$el.localize();
+        this.renderProcessFlowTemplate({ currentStep: 1, selectedStep: 1 });
+        window.scrollTo(0, 0);
+      }.bind(this)).fail(function (err) {
+        if(err.statusCode == 400) {
+          showWhoopsPage();
+        } else {
+          $('.usajobs-alert--error').show();
+          window.scrollTo(0,0);
+        }
+      });
+    }  
   },
   
   resetLanguages:function (e){
@@ -316,27 +333,25 @@ var ApplyView = Backbone.View.extend({
   },
 
   toggleLanguagesOn: function (e) {
+    templates.applyAddLanguage({
+      data: this.dataLanguageArray,     
+    });
+    
+    this.$el.html(templates.applyAddLanguage);
+    this.$el.localize();
+    this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+    this.initializeLanguagesSelect();
     this.resetLanguages();
-    $('.usajobs-form__title').hide();
-    $('.usajobs-form__title').attr('aria-hidden');
-   
-    $('#button-bar').hide();    
-    $('#button-bar').attr('aria-hidden');
-    $('#add-languages-fieldset').show();
-    $('#add-languages-fieldset').removeAttr('aria-hidden');
     window.scrollTo(0, 0);
   },
 
   toggleLanguagesOff: function (e) {
-    $('.usajobs-form__title').show();
-    $('.usajobs-form__title').removeAttr('aria-hidden');
-   
-    $('#button-bar').show();
-    $('#button-bar').removeAttr('aria-hidden');
-    $('#add-languages-fieldset').hide();
-    $('#add-languages-fieldset').attr('aria-hidden');
-    $('span#lang-id-val.field-validation-error').hide();
-    $('#language-select').removeClass('usa-input-error');
+    templates.applyLanguage({
+      data: this.dataLanguageArray,     
+    });
+    this.$el.html(templates.applyLanguage);
+    this.$el.localize();
+    this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
     window.scrollTo(0, 0);
   },
   // end language section
