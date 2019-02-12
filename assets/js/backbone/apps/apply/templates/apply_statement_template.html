@@ -14,7 +14,7 @@
             <label for="Statement">
               <h5 class="usajobs-form__label-header">Paste or type your statement here.</h5>
             </label>
-            <textarea cols="20" id="Statement" maxlength="2500" name="Statement" rows="2"></textarea>
+            <textarea id="statement" maxlength="2500" name="statement"><%- statementOfInterest %></textarea>
             <p class="usajobs-form__help-brief" id="statement-count">
               (2500 characters remaining)
             </p>
@@ -24,7 +24,7 @@
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
             <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Back</button>
-            <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
+            <a href="#continue" class="usa-button usa-button-primary apply-continue" data-action="statementContinue">Save and continue</a>
           </div>
         </div>
       </form>

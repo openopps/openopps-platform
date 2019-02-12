@@ -96,3 +96,32 @@ module.exports.updateApplication = async function (userId, applicationId, data) 
     return false;
   });
 };
+
+module.exports.saveEducation = async function (attributes,done) { 
+  attributes.updatedAt = new Date(); 
+  attributes.createdAt= new Date(),
+  await dao.Education.insert(attributes).then(async (education) => {   
+    return done(null, education);
+  }).catch(err => {
+    return done(true);
+  });
+};
+
+module.exports.deleteEducation= async function (educationId){
+  await dao.Education.delete('education_id = ?', educationId).then(async (education) => {
+    return education;
+  }).catch(err => {
+    log.info('delete: failed to delete Education ', err);
+    return false;
+  });
+};
+
+module.exports.getHonors= async function (){
+  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupHonors)).rows;
+  return honordata;
+};
+module.exports.getDegreeLevels= async function (){
+  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupDegreeLevels)).rows;
+  return honordata;
+};
+
