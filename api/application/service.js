@@ -40,6 +40,22 @@ async function processUnpaidApplication (data, callback) {
 
 module.exports = {};
 
+module.exports.addLanguage = async function (userId, applicationId, data) {
+  await dao.LanguageSkill.findOne('application_id = ? and language_id = ?', applicationId, data.language.languageId).then(() => {
+    return { err: 'language already exists' };
+  }).catch(async () => { 
+    return await dao.LanguageSkill.insert(_.extend(data.language, {
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: userId,
+    })).then(languageSkill => {
+      return languageSkill;
+    }).catch(err => {
+      return false;
+    });
+  });
+};
+
 module.exports.apply = async function (userId, taskId, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {

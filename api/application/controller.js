@@ -37,6 +37,16 @@ router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   }
 });
 
+router.post('/api/application/:id/language', auth, async (ctx, next) =>{
+  var result = await service.addLanguage(ctx.state.user.id, ctx.params.id, ctx.request.body);
+  if (result) {
+    ctx.status = result.err ? 409 : 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
+});
+
 router.post('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;

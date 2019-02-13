@@ -65,7 +65,7 @@ module.exports.isAdminOrCommunityAdmin = async (ctx, next) => {
 };
 
 module.exports.bearer = async (ctx, next) => {
-  await passport.authenticate('jwt', { session: false }, async (err, user) => {
+  await passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err)
     {
       console.log(err);
@@ -73,6 +73,11 @@ module.exports.bearer = async (ctx, next) => {
     }
     if (!user)
     {
+      if (info != null) {
+        console.log(info);
+        ctx.body = { message: 'You must be logged in to view this page', info: info.message }
+        return ctx;
+      }
       ctx.status = 403;
       ctx.body = { message: 'You must be logged in to view this page' };
       return ctx;

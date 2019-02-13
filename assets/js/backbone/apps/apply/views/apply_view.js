@@ -46,6 +46,7 @@ var templates = {
 
 //utility functions
 var Experience = require('./experience');
+var Language = require('./language');
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -74,9 +75,9 @@ var ApplyView = Backbone.View.extend({
     'change input[name=ContinueEducation]'                        : 'changeContinueEducation',
 
     //language events
-    'click #add-language'                                         : 'toggleLanguagesOn',
-    'click #cancel-language'                                      : 'toggleLanguagesOff',  
-    'click #save-language'                                        : 'saveLanguage',
+    'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
+    'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
+    'click #save-language'                                        : function () { this.callMethod(Language.saveLanguage); },
 
     //statement events
     'keypress #statement'                                         : 'statementCharacterCount',
@@ -88,11 +89,19 @@ var ApplyView = Backbone.View.extend({
 
   // initialize components and global functions
   initialize: function (options) {
-    this.options = options;
-    this.data = options.data;
+    this.options              = options;
+    this.data                 = options.data;
+    this.data.languages       = [];
+    this.dataLanguageArray    = [];
+    this.deleteLanguageArray  = [];
+    this.languageProficiencies = [];
+    this.data.firstChoice     = _.findWhere(this.data.tasks, { sort_order: 1 });
+    this.data.secondChoice    = _.findWhere(this.data.tasks, { sort_order: 2 });
+    this.data.thirdChoice     = _.findWhere(this.data.tasks, { sort_order: 3 });
+    this.params               = new URLSearchParams(window.location.search);
+    this.data.selectedStep    = this.params.get('step') || this.data.currentStep;
+
     this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
-    this.dataLanguageArray      = [];
-    this.deleteLanguageArray    = [];
     this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
     this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
     this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
@@ -100,6 +109,7 @@ var ApplyView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.initializeComponentEducation(options);
+    this.initializeEnumerations();
   },
 
   render: function () {
@@ -141,17 +151,29 @@ var ApplyView = Backbone.View.extend({
       },
     });
 
+    
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
     Experience.toggleOverseasExperienceDetails();
     Experience.toggleOverseasExperienceFilterOther();
     Experience.toggleSecurityClearanceDetails();
-    this.renderLanguages();
-    this.initializeLanguagesSelect();
+    // Language.renderLanguages();
+    Language.initializeLanguagesSelect();
 
     $('.apply-hide').hide();
 
     return this;
+  },
+
+  initializeEnumerations: function () {
+    $.ajax({
+      url: '/api/lookup/application/enumerations',
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.languageProficiencies = data.languageProficiencies;
+      }.bind(this),
+    });
   },
 
   validateField: function (e) {
@@ -277,6 +299,7 @@ var ApplyView = Backbone.View.extend({
       this.initializeCountrySubdivisionSelect(data);
     }.bind(this));
   },
+
   getCompletedDateMonth:function (){
     var monthName = $('#completion-month').val(); 
    
@@ -386,6 +409,7 @@ var ApplyView = Backbone.View.extend({
       }.bind(this),
     });
   },
+  
   mainEducationSave:function (){
     var data= this.getDataFromEducationPage();
     // eslint-disable-next-line no-empty
@@ -447,11 +471,11 @@ var ApplyView = Backbone.View.extend({
    
     
   },
+
   changeCurrentlyEnrolled: function (){
     if($('[name=Enrolled]:checked').length>0){ 
       $('#apply-enrolled').removeClass('usa-input-error');    
       $('#apply-enrolled>.field-validation-error').hide();
-      
     }
    
   },
@@ -556,137 +580,6 @@ var ApplyView = Backbone.View.extend({
   // end education section
 
   // language section
-  initializeLanguagesSelect: function () {
-    $('#languageId').select2({
-      placeholder: '- Select -',
-      minimumInputLength: 3,
-      ajax: {
-        url: '/api/ac/languages',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) {         
-          return { results: data };
-        },
-      },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatNoMatches: 'No languages found ',
-    });
-
-    $('#languageId').on('change', function (e) {
-      validate({ currentTarget: $('#languageId') });
-      if($('#languageId').val() !=''){
-        $('span#lang-id-val.field-validation-error').hide();
-        $('#language-select').removeClass('usa-input-error');   
-      }
-    }.bind(this));
-    $('#languageId').focus();
-  },
-
-  deleteLanguage: function (e){
-    var dataAttr=$(e.currentTarget).attr('data-id');
-    this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
-    var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
-    this.dataLanguageArray= updateArray;
-    this.renderLanguages(); 
-  },
-
-  validateLanguage:function (e){
-    var abort=false;   
-    
-    if($('#languageId').val() ==''){
-      $('#language-select').addClass('usa-input-error'); 
-      $('span#lang-id-val.field-validation-error').show();
-      abort=true;
-    }
-    else{
-      $('span#lang-id-val.field-validation-error').hide(); 
-    }
-
-    if(abort) {
-      $('.usa-input-error').get(0).scrollIntoView();
-    }
-    return abort; 
-  },
-  
-  getDataFromLanguagePage: function (){
-    var modelData = {
-      languageId:$('#languageId').val(),
-      readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
-      readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
-      selectLanguage:$('#languageId').select2('data').value,      
-      speakingProficiencyId:$('[name=spoken-skill-level]:checked').val(),
-      spokenSkillLevel:$('[name=spoken-skill-level]:checked + label').text(),
-      writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-      writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
-    };
-    return modelData;
-  },
-
-  saveLanguage:function (){
-    if(!this.validateLanguage()){
-      this.toggleLanguagesOff();
-      var data = this.getDataFromLanguagePage();
-      if (_.filter(this.dataLanguageArray, function (language) {
-        return  language.languageId == data.languageId;
-      }).length) {
-        var index = _.findIndex(this.dataLanguageArray, function (language) {
-          return language.languageId == data.languageId;
-        });
-        this.dataLanguageArray[index] = data;
-      } else {
-        this.dataLanguageArray.push(data);
-      }
-      this.renderLanguages();
-      $('#lang-1').get(0).scrollIntoView();
-    }
-  },
-
-  renderLanguages: function () {
-    templates.applyAddLanguage({
-      data: this.dataLanguageArray,     
-    });
-    $('#lang-1').html(templates.applyAddLanguage);
-  },
-  
-  resetLanguages:function (e){
-    $('#languageId').select2('data', null);  
-    $("input[name='spoken-skill-level'][id='spoken-none']").prop('checked', true);
-    $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
-    $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
-  },
-
-  toggleLanguagesOn: function (e) {
-    this.resetLanguages();
-    $('.usajobs-form__title').hide();
-    $('.usajobs-form__title').attr('aria-hidden');
-   
-    $('#button-bar').hide();    
-    $('#button-bar').attr('aria-hidden');
-    $('#add-languages-fieldset').show();
-    $('#add-languages-fieldset').removeAttr('aria-hidden');
-    window.scrollTo(0, 0);
-  },
-
-  toggleLanguagesOff: function (e) {
-    $('.usajobs-form__title').show();
-    $('.usajobs-form__title').removeAttr('aria-hidden');
-   
-    $('#button-bar').show();
-    $('#button-bar').removeAttr('aria-hidden');
-    $('#add-languages-fieldset').hide();
-    $('#add-languages-fieldset').attr('aria-hidden');
-    $('span#lang-id-val.field-validation-error').hide();
-    $('#language-select').removeClass('usa-input-error');
-    window.scrollTo(0, 0);
-  },
   // end language section
 
   // reference section
