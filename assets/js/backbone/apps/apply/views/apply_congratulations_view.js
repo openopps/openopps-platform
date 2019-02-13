@@ -7,6 +7,10 @@ var ApplyCongratulationsView = Backbone.View.extend({
   events: {
     'click .a1' : 'toggleAccordion1',
     'click .a2' : 'toggleAccordion2',
+    'click .d1' : 'toggleDrawer1',
+    'click .d2' : 'toggleDrawer2',
+    'click .d3' : 'toggleDrawer3',
+    'click .d4' : 'toggleDrawer4',
   },
 
   // initialize components and global functions
@@ -25,6 +29,18 @@ var ApplyCongratulationsView = Backbone.View.extend({
         open: false,
       },
       a2: {
+        open: false,
+      },
+      d1: {
+        open: false,
+      },
+      d2: {
+        open: false,
+      },
+      d3: {
+        open: false,
+      },
+      d4: {
         open: false,
       },
     };
@@ -54,6 +70,126 @@ var ApplyCongratulationsView = Backbone.View.extend({
     $('.a1').attr('aria-expanded', false);
     $('#a1').attr('aria-hidden', true);
     this.data.a1.open = false;
+  },
+
+  toggleDrawer1: function (e) {
+    if (!this.data.d1.open) {
+      $('#find').slideDown('fast', function () {
+        $('.d2').attr('aria-expanded', false);
+        $('.d3').attr('aria-expanded', false);
+        $('.d4').attr('aria-expanded', false);
+        $('#resume-search').attr('aria-hidden', true);
+        $('#resume-search').css('display', '');
+        $('#save-search').attr('aria-hidden', true);
+        $('#save-search').css('display', '');
+        $('#learn-more-govt').attr('aria-hidden', true);
+        $('#learn-more-govt').css('display', '');
+        $('html, body').animate({
+          scrollTop: $('.d1').offset().top,
+        });
+        $('.d1').attr('aria-expanded', 'true');
+        $('#find').attr('aria-hidden', 'false');
+      });
+    } else {
+      $('#find').slideUp(function () {
+        $('.d1').attr('aria-expanded', 'false');
+        $('#find').attr('aria-hidden', 'true');
+      });
+    }
+    this.data.d1.open = !this.data.d1.open;
+    this.data.d2.open = false;
+    this.data.d3.open = false;
+    this.data.d4.open = false;
+  },
+
+  toggleDrawer2: function (e) {
+    if (!this.data.d2.open) {
+      $('#resume-search').slideDown('fast', function () {
+        $('.d1').attr('aria-expanded', false);
+        $('.d3').attr('aria-expanded', false);
+        $('.d4').attr('aria-expanded', false);
+        $('#find').attr('aria-hidden', true);
+        $('#find').css('display', '');
+        $('#save-search').attr('aria-hidden', true);
+        $('#save-search').css('display', '');
+        $('#learn-more-govt').attr('aria-hidden', true);
+        $('#learn-more-govt').css('display', '');
+        $('html, body').animate({
+          scrollTop: $('.d2').offset().top,
+        });
+        $('.d2').attr('aria-expanded', 'true');
+        $('#resume-search').attr('aria-hidden', 'false');
+      });
+    } else {
+      $('#resume-search').slideUp(function () {
+        $('.d2').attr('aria-expanded', 'false');
+        $('#resume-search').attr('aria-hidden', 'true');
+      });
+    }
+    this.data.d1.open = false;
+    this.data.d2.open = !this.data.d2.open;
+    this.data.d3.open = false;
+    this.data.d4.open = false;
+  },
+
+  toggleDrawer3: function (e) {
+    if (!this.data.d3.open) {
+      $('#save-search').slideDown('fast', function () {
+        $('.d1').attr('aria-expanded', false);
+        $('.d2').attr('aria-expanded', false);
+        $('.d4').attr('aria-expanded', false);
+        $('#find').attr('aria-hidden', true);
+        $('#find').css('display', '');
+        $('#resume-search').attr('aria-hidden', true);
+        $('#resume-search').css('display', '');
+        $('#learn-more-govt').attr('aria-hidden', true);
+        $('#learn-more-govt').css('display', '');
+        $('html, body').animate({
+          scrollTop: $('.d3').offset().top,
+        });
+        $('.d3').attr('aria-expanded', 'true');
+        $('#save-search').attr('aria-hidden', 'false');
+      });
+    } else {
+      $('#save-search').slideUp(function () {
+        $('.d3').attr('aria-expanded', 'false');
+        $('#save-search').attr('aria-hidden', 'true');
+      });
+    }
+    this.data.d1.open = false;
+    this.data.d2.open = false;
+    this.data.d3.open = !this.data.d3.open;
+    this.data.d4.open = false;
+  },
+
+  toggleDrawer4: function (e) {
+    if (!this.data.d4.open) {
+      $('#learn-more-govt').slideDown('fast', function () {
+        $('.d1').attr('aria-expanded', false);
+        $('.d2').attr('aria-expanded', false);
+        $('.d3').attr('aria-expanded', false);
+        $('#find').attr('aria-hidden', true);
+        $('#find').css('display', '');
+        $('#resume-search').attr('aria-hidden', true);
+        $('#resume-search').css('display', '');
+        $('#save-search').attr('aria-hidden', true);
+        $('#save-search').css('display', '');
+        $('html, body').animate({
+          scrollTop: $('.d4').offset().top,
+        });
+        $('.d4').attr('aria-expanded', 'true');
+        $('#learn-more-govt').attr('aria-hidden', 'false');
+      });
+    } else {
+      $('#learn-more-govt').slideUp(function () {
+        $('.d4').attr('aria-expanded', 'false');
+        $('#learn-more-govt').attr('aria-hidden', 'true');
+      });
+    }
+    this.data.d1.open = false;
+    this.data.d2.open = false;
+    this.data.d3.open = false;
+    this.data.d4.open = !this.data.d4.open;
   },
 
   cleanup: function () {

@@ -507,11 +507,22 @@
     text-decoration: underline;
   }
 
+  .usajobs-alert {
+
+    @include media($ML) {
+      margin-bottom: 0;
+    }
+  }
+
   .usajobs-open-opps-opportunity.usajobs-open-opps-profile {
     padding: $size-default $size-default 0 $size-default;
 
     @include media($ML) {
       padding: $size-default $size-M $size-M $size-M;
+    }
+
+    &.confirmation {
+      padding: $size-default;
     }
 
     a.question, a.question:visited {
@@ -928,6 +939,14 @@
   .usajobs-drawers {
     border-bottom: 1px solid $color-gray-lighter;
 
+    &.no-border {
+      border-bottom: 0;
+      
+      .usajobs-drawer {
+        border-top: 0;
+      }
+    }
+
     .usajobs-drawer {
       margin-bottom: 0;
       background-color: $color-white;
@@ -937,7 +956,7 @@
         font-size: 1.9rem;
         font-weight: normal;
         background-color: $color-white;
-        background-image: url(../../../img/plus-circle.svg);
+        background-image: url(../../img/plus-circle.svg);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -949,8 +968,45 @@
         }
 
         &[aria-expanded="true"] {
-          background-image: url(../../../img/minus-circle.svg);
+          background-image: url(../../img/minus-circle.svg);
           background-size: 2rem;
+        }
+
+        &--alt-handle {
+          background-image: url(../../img/icons/drawer/plus.svg);
+          padding: $size-default 4.5rem 0.5rem $size-default;
+          background-position: 95% center;
+          background-size: $size-default;
+
+          &[aria-expanded="true"] {
+            background-image: url(../../img/icons/drawer/minus.svg);
+            background-size: $size-default;
+          }
+
+          &.has-no-face {
+            padding-bottom: $size-default;
+          }
+        }
+
+        &--with-icon {
+          display: flex;
+          align-items: center;
+          line-height: 1.5;
+
+          &__figure {
+            flex-shrink: 0;
+            padding-right: 1rem;
+
+            @include media($L) {
+              padding-right: $size-default;
+            }
+
+            svg {
+              width: 4.4rem;
+              height: 4.4rem;
+              vertical-align: middle;
+            }
+          }
         }
       }
 
@@ -1042,7 +1098,7 @@
           display: inline-block;
           padding: 0.6rem $size-default 0.6rem 2.5rem;
           font-weight: bold;
-          background-image: url(../img/icons/button-bar/times-circle.svg);
+          background-image: url(../../img/icons/button-bar/times-circle.svg);
           background-size: $size-SM $size-SM;
           background-position: left center;
           background-repeat: no-repeat;
@@ -1056,20 +1112,30 @@
     }
   }
 
-  .usajobs-profile-help {
-    margin-bottom: $size-M;
-    max-width: $L-screen;
+  .hidden-svg {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -9999rem;
+  }
 
-    @include media($ML) {
-      margin: $size-default;
+  .usajobs-profile-help {
+    max-width: $L-screen;
+    background-color: $color-white;
+    padding: $size-default;
+
+    @include media($ML-down) {
+      border-top: 1px solid $color-gray-light;
     }
 
     @include media($ML) {
       position: relative;
-      background-color: $color-white;
-      margin: $size-M 0;
-      padding: $size-default;
+      margin: $size-default 0;
       box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+    }
+
+    @include media($L) {
+      margin: $size-M 0;
     }
 
     &--warning {
@@ -1104,6 +1170,11 @@
 
     &__title {
       color: $color-primary-darker;
+    }
+
+    &-drawers {
+      margin-left: -$size-default;
+      margin-right: -$size-default;
     }
   }
 
