@@ -54,6 +54,7 @@ async function userFound (user, tokenset, done) {
     if (tokenset.claims['usaj:hiringPath'] == 'student') {
       data.username = tokenset.claims.email;
     }
+    data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
     await dao.User.update(data);
     user.access_token = tokenset.access_token;
     user.id_token = tokenset.id_token;
@@ -236,10 +237,13 @@ if (openopps.auth.oidc) {
     strictSsl: false,
   });
   opts.issuer = openopps.auth.oidc.issuer.issuer;
-  //opts.audience = 'openopps';
+  opts.audience = opts.issuer + '/resources';
   passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
     try {
-      // dao.User.findById
+      if (!jwt_payload.scope.includes('openopps'))
+      {
+        return done(new Error('Scope error'), null);
+      }
       dao.User.findOne('linked_id = ?', jwt_payload.sub).then(user => {
         if (user) {
           console.log('user found', user);
