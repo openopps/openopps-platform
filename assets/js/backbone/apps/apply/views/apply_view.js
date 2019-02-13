@@ -96,6 +96,7 @@ var ApplyView = Backbone.View.extend({
     this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
     this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
     this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
+    this.data.overseasExperienceTypes = this.data.overseasExperienceTypes ? this.data.overseasExperienceTypes : [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.initializeComponentEducation(options);
