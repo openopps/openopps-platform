@@ -15,7 +15,7 @@ var ApplyController = BaseController.extend({
           data: application,
         }).render();
       }.bind(this)).fail(function () {
-        // TODO: Need a Whoops! page
+        showWhoopsPage();
       });
     }
     return this;

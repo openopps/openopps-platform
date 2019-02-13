@@ -44,6 +44,7 @@ async function findRecord (languageCode) {
  */
 async function processLanguageCodes (languageCodes, callback) {
   var languageCode = languageCodes.pop();
+  languageCode.Code = languageCode.Code.trim(); // trim coode value
   languageCode.IsDisabled = (languageCode.IsDisabled == 'Yes'); // change from string to boolean
   var record = await findRecord(languageCode); //, async (record, err) => {
   if (record) {

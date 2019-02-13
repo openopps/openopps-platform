@@ -1,48 +1,9 @@
-var _ = require('underscore');
-var async = require('async');
-var Backbone = require('backbone');
-var $ = require('jquery');
-var charcounter = require('../../../../vendor/jquery.charcounter');
-var marked = require('marked');
-
-// templates
-var ApplyTemplate = require('../templates/apply_summary_template.html');
-var ProcessFlowTemplate = require('../templates/process_flow_template.html');
-var ApplyAddEducationTemplate = require('../templates/apply_add_education_template.html');
-var ApplyEducationTemplate = require('../templates/apply_education_template.html');
-var ApplyEducationPreviewTemplate = require('../templates/apply_education_preview_template.html');
-var ApplyAddExperienceTemplate = require('../templates/apply_add_experience_template.html');
-var ApplyExperienceTemplate = require('../templates/apply_experience_template.html');
-var ApplyAddLanguageTemplate = require('../templates/apply_add_language_template.html');
-var ApplyLanguageTemplate = require('../templates/apply_language_template.html');
-var ApplyAddReferenceTemplate = require('../templates/apply_add_reference_template.html');
-var ApplyAddSkillTemplate = require('../templates/apply_add_skill_template.html');
-var ApplyIneligibleCitizenshipTemplate = require('../templates/apply_ineligible_citizenship_template.html');
-var ApplyIneligibleGPATemplate = require('../templates/apply_ineligible_gpa_template.html');
-var ApplyProgramTemplate = require('../templates/apply_program_template.html');
-var ApplyReviewTemplate = require('../templates/apply_review_template.html');
-var ApplyStatementTemplate = require('../templates/apply_statement_template.html');
-var ApplySummaryTemplate = require('../templates/apply_summary_template.html');
-
-var templates = {
-  main: _.template(ApplyTemplate),
-  processflow: _.template(ProcessFlowTemplate),
-  applyAddEducation: _.template(ApplyAddEducationTemplate),
-  applyEducation: _.template(ApplyEducationTemplate),
-  educationPreview:_.template(ApplyEducationPreviewTemplate),
-  applyAddExperience: _.template(ApplyAddExperienceTemplate),
-  applyExperience: _.template(ApplyExperienceTemplate),
-  applyAddLanguage: _.template(ApplyAddLanguageTemplate),
-  applyLanguage: _.template(ApplyLanguageTemplate),
-  applyAddReference: _.template(ApplyAddReferenceTemplate),
-  applyAddSkill: _.template(ApplyAddSkillTemplate),
-  applyIneligibleCitizenship: _.template(ApplyIneligibleCitizenshipTemplate),
-  applyIneligibleGPA: _.template(ApplyIneligibleGPATemplate),
-  applyProgram: _.template(ApplyProgramTemplate),
-  applyReview: _.template(ApplyReviewTemplate),
-  applyStatement: _.template(ApplyStatementTemplate),
-  applySummary: _.template(ApplySummaryTemplate),
-};
+const _ = require('underscore');
+const Backbone = require('backbone');
+const $ = require('jquery');
+const marked = require('marked');
+const templates = require('./templates');
+const nextSteps = require('./next_steps');
 
 //utility functions
 var Experience = require('./experience');
@@ -89,23 +50,21 @@ var ApplyView = Backbone.View.extend({
 
   // initialize components and global functions
   initialize: function (options) {
-    this.options              = options;
-    this.data                 = options.data;
-    this.data.languages       = [];
-    this.dataLanguageArray    = [];
-    this.deleteLanguageArray  = [];
+    this.options = options;
+    this.data = options.data;
+    this.data = _.extend(this.data, {
+      accordion1: { open: false },
+      accordion2: { open: false },
+      accordion3: { open: false },
+      firstChoice: _.findWhere(this.data.tasks, { sort_order: 1 }),
+      secondChoice: _.findWhere(this.data.tasks, { sort_order: 2 }),
+      thirdChoice: _.findWhere(this.data.tasks, { sort_order: 3 }),
+      statementOfInterestHtml: marked(this.data.statementOfInterest),
+    });
+    this.dataLanguageArray     = [];
+    this.deleteLanguageArray   = [];
+    this.data.languages        = this.data.languages || [];
     this.languageProficiencies = [];
-    this.data.firstChoice     = _.findWhere(this.data.tasks, { sort_order: 1 });
-    this.data.secondChoice    = _.findWhere(this.data.tasks, { sort_order: 2 });
-    this.data.thirdChoice     = _.findWhere(this.data.tasks, { sort_order: 3 });
-    this.params               = new URLSearchParams(window.location.search);
-    this.data.selectedStep    = this.params.get('step') || this.data.currentStep;
-
-    this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
-    this.data.firstChoice = _.findWhere(this.data.tasks, { sort_order: 1 });
-    this.data.secondChoice = _.findWhere(this.data.tasks, { sort_order: 2 });
-    this.data.thirdChoice = _.findWhere(this.data.tasks, { sort_order: 3 });
-    this.data.overseasExperienceTypes = this.data.overseasExperienceTypes ? this.data.overseasExperienceTypes : [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.initializeComponentEducation(options);
@@ -113,45 +72,9 @@ var ApplyView = Backbone.View.extend({
   },
 
   render: function () {
-    switch (this.data.selectedStep.toString()) {
-      case '1':
-        this.$el.html(templates.applyProgram(this.data));
-        break;
-      case '2':
-        this.$el.html(templates.applyExperience(this.data));
-        break;
-      case '3':
-        this.$el.html(templates.applyEducation(this.data));
-        break;
-      case '4':
-        this.$el.html(templates.applyLanguage(this.data));
-        break;
-      case '5':
-        this.$el.html(templates.applyStatement(this.data));
-        break;
-      case '6':
-        this.$el.html(templates.applyReview(this.data));
-        break;
-      default:
-        this.$el.html(templates.main);
-        break;
-    }
+    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
     $('#search-results-loading').hide();
     this.$el.localize();
-
-    this.data = _.extend(this.data, {
-      accordion1: {
-        open: false,
-      },
-      accordion2: {
-        open: false,
-      },
-      accordion3: {
-        open: false,
-      },
-    });
-
-    
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
     Experience.toggleOverseasExperienceDetails();
@@ -207,29 +130,37 @@ var ApplyView = Backbone.View.extend({
  
   // process flow section 
   renderProcessFlowTemplate: function (data) {
-    $('#process-title-banners').html(_.template(ProcessFlowTemplate)(data));
+    $('#process-title-banners').html(templates.processflow(data));
   },
   // end process flow section
 
   // summary section
   summaryContinue: function () {
-    this.data.currentStep = 1;
-    this.data.selectedStep = 1;
+    // TODO: Only run if current step equals 0
+    nextSteps.importProfileData.bind(this)();
+  },
+
+  updateApplicationStep: function (step) {
+    this.data.currentStep = (this.data.currentStep < step ? step : this.data.currentStep);
+    this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
       data: {
         applicationId: this.data.applicationId,
-        currentStep: 1,
+        currentStep: this.data.currentStep,
         updatedAt: this.data.updatedAt,
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      this.$el.html(templates.applyProgram(this.data));
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
       this.$el.localize();
-      this.renderProcessFlowTemplate({ currentStep: 1, selectedStep: 1 });
+      this.renderProcessFlowTemplate({ currentStep: step, selectedStep: step });
       window.scrollTo(0, 0);
-    }.bind(this));
+    }.bind(this)).fail(function () {
+      showWhoopsPage();
+    });
   },
   // end summary section
 

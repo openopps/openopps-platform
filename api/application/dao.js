@@ -22,9 +22,15 @@ module.exports = function (db) {
     Application: dao({ db: db, table: 'application' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
     Community: dao({ db: db, table: 'community' }),
+    Country:dao({ db: db, table: 'country' }),
+    CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    Education: dao({ db: db, table: 'education' }),
+    Experience: dao({ db: db, table: 'experience' }),
+    Language: dao({ db: db, table: 'language' }),
     LanguageSkill: dao({ db: db, table: 'language_skill' }),
+    LookupCode:dao({ db: db, table: 'lookup_code' }),
+    Reference:dao({ db:db, table:'reference'}),
     Task: dao({ db: db, table: 'task' }),
-    Education:dao({ db:db, table:'education'}),
     LookUpCode:dao({ db:db, table:'lookup_code'}),
 
     query: {

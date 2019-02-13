@@ -44,6 +44,10 @@ async function findRecord (countrySubdivision) {
  */
 async function processCountrySubdivisions (countrySubdivisions, callback) {
   var countrySubdivision = countrySubdivisions.pop();
+  countrySubdivision.Code = countrySubdivision.Code.trim(); // trim coode value
+  if (countrySubdivision.ParentCode) {
+    countrySubdivision.ParentCode = countrySubdivision.ParentCode.trim(); // trim parent coode value
+  }
   countrySubdivision.IsDisabled = (countrySubdivision.IsDisabled == 'Yes'); // change from string to boolean
   var record = await findRecord(countrySubdivision); //, async (record, err) => {
   if (record) {
