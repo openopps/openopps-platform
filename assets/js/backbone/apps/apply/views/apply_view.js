@@ -17,6 +17,7 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
+    'click #back'                                                 : 'backClicked',
 
     //experience events
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -103,6 +104,14 @@ var ApplyView = Backbone.View.extend({
     return validate(e);
   },
 
+  backClicked: function () {
+    this.data.selectedStep--;
+    Backbone.history.navigate(window.location.pathname + '?step=' + this.data.selectedStep);
+    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    this.$el.localize();
+    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+  },
+
   callMethod: function (method) {
     method.bind(this)();
   },
@@ -156,7 +165,7 @@ var ApplyView = Backbone.View.extend({
       Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
       this.$el.localize();
-      this.renderProcessFlowTemplate({ currentStep: step, selectedStep: step });
+      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
