@@ -75,15 +75,9 @@ var ApplyCongratulationsView = Backbone.View.extend({
   toggleDrawer1: function (e) {
     if (!this.data.d1.open) {
       $('#find').slideDown('fast', function () {
-        $('.d2').attr('aria-expanded', false);
-        $('.d3').attr('aria-expanded', false);
-        $('.d4').attr('aria-expanded', false);
-        $('#resume-search').attr('aria-hidden', true);
-        $('#resume-search').css('display', '');
-        $('#save-search').attr('aria-hidden', true);
-        $('#save-search').css('display', '');
-        $('#learn-more-govt').attr('aria-hidden', true);
-        $('#learn-more-govt').css('display', '');
+        $('.d2, .d3, .d4').attr('aria-expanded', false);
+        $('#resume-search, #save-search, #learn-more-govt').attr('aria-hidden', true);
+        $('#resume-search, #save-search, #learn-more-govt').css('display', '');
         $('html, body').animate({
           scrollTop: $('.d1').offset().top,
         });
@@ -105,15 +99,9 @@ var ApplyCongratulationsView = Backbone.View.extend({
   toggleDrawer2: function (e) {
     if (!this.data.d2.open) {
       $('#resume-search').slideDown('fast', function () {
-        $('.d1').attr('aria-expanded', false);
-        $('.d3').attr('aria-expanded', false);
-        $('.d4').attr('aria-expanded', false);
-        $('#find').attr('aria-hidden', true);
-        $('#find').css('display', '');
-        $('#save-search').attr('aria-hidden', true);
-        $('#save-search').css('display', '');
-        $('#learn-more-govt').attr('aria-hidden', true);
-        $('#learn-more-govt').css('display', '');
+        $('.d1, .d3, .d4').attr('aria-expanded', false);
+        $('#find, #save-search, #learn-more-govt').attr('aria-hidden', true);
+        $('#find, #save-search, #learn-more-govt').css('display', '');
         $('html, body').animate({
           scrollTop: $('.d2').offset().top,
         });
@@ -135,15 +123,9 @@ var ApplyCongratulationsView = Backbone.View.extend({
   toggleDrawer3: function (e) {
     if (!this.data.d3.open) {
       $('#save-search').slideDown('fast', function () {
-        $('.d1').attr('aria-expanded', false);
-        $('.d2').attr('aria-expanded', false);
-        $('.d4').attr('aria-expanded', false);
-        $('#find').attr('aria-hidden', true);
-        $('#find').css('display', '');
-        $('#resume-search').attr('aria-hidden', true);
-        $('#resume-search').css('display', '');
-        $('#learn-more-govt').attr('aria-hidden', true);
-        $('#learn-more-govt').css('display', '');
+        $('.d1, .d2, .d4').attr('aria-expanded', false);
+        $('#find, #resume-search, #learn-more-govt').attr('aria-hidden', true);
+        $('#find, #resume-search, #learn-more-govt').css('display', '');
         $('html, body').animate({
           scrollTop: $('.d3').offset().top,
         });
@@ -165,15 +147,9 @@ var ApplyCongratulationsView = Backbone.View.extend({
   toggleDrawer4: function (e) {
     if (!this.data.d4.open) {
       $('#learn-more-govt').slideDown('fast', function () {
-        $('.d1').attr('aria-expanded', false);
-        $('.d2').attr('aria-expanded', false);
-        $('.d3').attr('aria-expanded', false);
-        $('#find').attr('aria-hidden', true);
-        $('#find').css('display', '');
-        $('#resume-search').attr('aria-hidden', true);
-        $('#resume-search').css('display', '');
-        $('#save-search').attr('aria-hidden', true);
-        $('#save-search').css('display', '');
+        $('.d1, .d2, .d3').attr('aria-expanded', false);
+        $('#find, #resume-search, #save-search').attr('aria-hidden', true);
+        $('#find, #resume-search, #save-search').css('display', '');
         $('html, body').animate({
           scrollTop: $('.d4').offset().top,
         });
