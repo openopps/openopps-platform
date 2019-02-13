@@ -161,11 +161,11 @@
               <h4><label for="OverseasExperience" class="usajobs-profile-question__title">Do you have any overseas experience?</label></h4>
               <ul class="usa-unstyled-list" id="overseas-experience">
                 <li>
-                  <input id="overseas-experience-yes" name="OverseasExperience" type="radio" value="yes" data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-details">
+                  <input id="overseas-experience-yes" name="has_overseas_experience" type="radio" value="yes" data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience) { %><%= "checked" %><% } %>>
                   <label for="overseas-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="overseas-experience-no" name="OverseasExperience" type="radio" value="no" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details">
+                  <input id="overseas-experience-no" name="has_overseas_experience" type="radio" value="no" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience == false) { %><%= "checked" %><% } %>>
                   <label for="overseas-experience-no">No</label>
                 </li>
               </ul>
@@ -173,37 +173,37 @@
                 <h4 class="usajobs-overseas-experience__title usajobs-profile-question--spacer">Please indicate what type of overseas experience you possess.</h4>
                 <ul id="overseasExperienceFilters" class="usa-unstyled-list">
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperienceStudent' value='student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceStudent' value='student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('student')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceStudent' class="student-filter">
                       Student
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperienceDependent' value='dependent' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceDependent' value='dependent' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('dependent')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceDependent' class="dependent-filter">
                       Dependent
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperiencePeaceCorps' value='peacecorps' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperiencePeaceCorps' value='peacecorps' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('peacecorps')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperiencePeaceCorps' class="peacecorps-filter">
                       Peace Corps
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperienceMilitary' value='military' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceMilitary' value='military' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('military')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceMilitary' class="military-filter">
                       Military
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperienceGovernment' value='government' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceGovernment' value='government' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('government')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceGovernment' class="government-filter">
                       Government
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas-experience-filter' id='overseasExperienceOther' value='other' data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-filter-other">
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceOther' value='other' data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes.includes('other')) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceOther' class="other-filter">
                       Other
                     </label>
@@ -211,9 +211,9 @@
                 </ul>
                 <div id="overseas-experience-filter-other" class="usajobs-form-reveal-fields" aria-hidden="true">
                   <label for="input-type-textarea">If you chose "Other", please specify.</label>
-                  <textarea id="input-type-textarea" name="input-type-textarea"></textarea>
+                  <textarea id="input-type-textarea" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
                   <label for="input-type-textarea">Please indicate the total length of your overseas experience(s).</label>
-                  <textarea id="input-type-textarea" name="input-type-textarea"></textarea>
+                  <textarea id="input-type-textarea" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
                 </div>
               </div>
             </div>
@@ -222,11 +222,11 @@
               <h4><label for="SecurityClearance" class="usajobs-profile-question__title">Do you have, or have you had, a Security Clearance?</label></h4>
               <ul class="usa-unstyled-list usa-fieldset-inputs usajobs-profile-question__list">
                 <li>
-                  <input id="SecurityClearanceYes" name="SecurityClearance" type="radio" value="True">
+                  <input id="SecurityClearanceYes" name="has_security_clearance" type="radio" value="True" <% if (hasSecurityClearance) { %><%= "checked" %> <% } %>>
                   <label for="SecurityClearanceYes">Yes</label>
                 </li>
                 <li>
-                  <input id="SecurityClearanceNo" name="SecurityClearance" type="radio" value="False">
+                  <input id="SecurityClearanceNo" name="has_security_clearance" type="radio" value="False" <% if (hasSecurityClearance == false) { %><%= "checked" %><% } %>>
                   <label for="SecurityClearanceNo">No</label>
                 </li>
               </ul>
@@ -234,21 +234,21 @@
                 <div class="form-group required-input">
                   <label for="security-clearance-type">Type of security clearance</label>
                   <span class="field-validation-error error-empty" style="display:none;">You must select the type of security clearance.</span>
-                  <select id="security-clearance-type" class="dropdown validate" data-validate="empty">
-                    <option></option>
-                    <option>Public trust</option>
-                    <option>Confidential</option>
-                    <option>Secret</option>
-                    <option>Top secret</option>
-                    <option>Top secret/SCI</option>
-                    <option>Q-Sensitive</option>
-                    <option>Q-Nonsensitive</option>
-                    <option>L-Atomic Energy</option>
+                  <select id="security-clearance-type" name="security_clearance_id" class="dropdown validate" data-validate="empty">
+                    <option >Select a security clearance</option>
+                    <option value="1" <% if (securityClearanceId == 1) { %><%= "selected" %><% } %>>Public trust</option>
+                    <option value="9" <% if (securityClearanceId == 9) { %><%= "selected" %><% } %>>Confidential</option>
+                    <option value="8" <% if (securityClearanceId == 8) { %><%= "selected" %><% } %>>Secret</option>
+                    <option value="7" <% if (securityClearanceId == 7) { %><%= "selected" %><% } %>>Top secret</option>
+                    <option value="6" <% if (securityClearanceId == 6) { %><%= "selected" %><% } %>>Top secret/SCI</option>
+                    <option value="5" <% if (securityClearanceId == 5) { %><%= "selected" %><% } %>>Q-Sensitive</option>
+                    <option value="4" <% if (securityClearanceId == 4) { %><%= "selected" %><% } %>>Q-Nonsensitive</option>
+                    <option value="3" <% if (securityClearanceId == 3) { %><%= "selected" %><% } %>>L-Atomic Energy</option>
                   </select>
                 </div>
                 <div class="form-group required-input">
                   <label for="security-clearance-issuer">Please provide who issued the clearance</label>
-                  <input type="text" class="fullwidth form-control" id="security-clearance-issuer" name="security-clearance-issuer">
+                  <input type="text" class="fullwidth form-control" id="security-clearance-issuer" name="security_clearance_issuer" value="<%= securityClearanceIssuer %>">
                 </div>
               </div>
             </div>
@@ -257,11 +257,11 @@
               <h4><label for="VsfsExperience" class="usajobs-profile-question__title">Have you previously participated in the Virtual Student Federal Service (VSFS) program?</label></h4>
               <ul class="usa-unstyled-list" id="vsfs-experience">
                 <li>
-                  <input id="vsfs-experience-yes" name="VsfsExperience" type="radio" value="yes">
+                  <input id="vsfs-experience-yes" name="has_vsfs_experience" type="radio" value="yes" <% if (hasVsfsExperience) { %><%= "checked" %><% } %>>
                   <label for="vsfs-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="vsfs-experience-no" name="VsfsExperience" type="radio" value="no">
+                  <input id="vsfs-experience-no" name="has_vsfs_experience" type="radio" value="no" <% if (hasVsfsExperience == false) { %><%= "checked" %><% } %>>
                   <label for="vsfs-experience-no">No</label>
                 </li>
               </ul>
@@ -327,7 +327,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Back</button>
-              <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
+              <a class="usa-button usa-button-primary usajobs-button_bar__save" id="saveExperienceContinue">Save and continue</a>
             </div>
           </div>
         </div>

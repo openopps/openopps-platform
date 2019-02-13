@@ -44,8 +44,10 @@ var templates = {
   applySummary: _.template(ApplySummaryTemplate),
 };
 
-var ApplyView = Backbone.View.extend({
+//utility functions
+var Experience = require('./experience');
 
+var ApplyView = Backbone.View.extend({
   events: {
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
@@ -55,9 +57,10 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
 
     //experience events
-    'change [name=OverseasExperience]'                            : 'toggleOverseasExperienceDetails',
-    'change [name=overseas-experience-filter]'                    : 'toggleOverseasExperienceFilterOther',
-    'change [name=SecurityClearance]'                             : 'toggleSecurityClearanceDetails',
+    'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
+    'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
+    'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
+    'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
 
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
@@ -148,9 +151,11 @@ var ApplyView = Backbone.View.extend({
     
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
-    this.toggleOverseasExperienceDetails();
-    this.toggleOverseasExperienceFilterOther();
-    this.toggleSecurityClearanceDetails();
+    Experience.toggleOverseasExperienceDetails();
+    Experience.toggleOverseasExperienceFilterOther();
+    Experience.toggleSecurityClearanceDetails();
+    this.renderLanguages();
+    this.initializeLanguagesSelect();
 
     $('.apply-hide').hide();
 
@@ -170,6 +175,10 @@ var ApplyView = Backbone.View.extend({
 
   validateField: function (e) {
     return validate(e);
+  },
+
+  callMethod: function (method) {
+    method.bind(this)();
   },
 
   toggleAccordion: function (e) {
@@ -567,43 +576,7 @@ var ApplyView = Backbone.View.extend({
 
   // end education section
 
-  // experience section
-  toggleOverseasExperienceDetails: function () {
-    $('#overseas-experience-details').hide();
-
-    if($('input#overseas-experience-yes').is(':checked')) {
-      $('#overseas-experience-details').show();
-    } else {
-      $('#overseas-experience-details').hide();
-    }
-  },
-
-  toggleOverseasExperienceFilterOther: function () {
-    $('#overseas-experience-filter-other').hide();
-
-    if($('input#overseasExperienceOther').is(':checked')) {
-      $('#overseas-experience-filter-other').show();
-    } else {
-      $('#overseas-experience-filter-other').hide();
-    }
-  },
-
-  toggleSecurityClearanceDetails: function () {
-    $('#security-clearance-details').hide();
-
-    if($('input#SecurityClearanceYes').is(':checked')) {
-      $('#security-clearance-details').show();
-    } else {
-      $('#security-clearance-details').hide();
-    }
-  },
-  // end experience section
-
-  // language section 
-  initializeLanguages: function () {
-    this.data.languages = this.dataLanguageArray;
-  },
-
+  // language section
   initializeLanguagesSelect: function () {
     $('#languageId').select2({
       placeholder: '- Select -',
