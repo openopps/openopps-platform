@@ -103,6 +103,7 @@ var ApplyView = Backbone.View.extend({
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.initializeComponentEducation(options);
     this.initializeEnumerations();
+    this.initializeLanguages();
   },
 
   render: function () {
@@ -286,6 +287,7 @@ var ApplyView = Backbone.View.extend({
       this.initializeCountrySubdivisionSelect(data);
     }.bind(this));
   },
+
   getCompletedDateMonth:function (){
     var monthName = $('#completion-month').val(); 
    
@@ -395,6 +397,7 @@ var ApplyView = Backbone.View.extend({
       }.bind(this),
     });
   },
+  
   mainEducationSave:function (){
     var data= this.getDataFromEducationPage();
     // eslint-disable-next-line no-empty
@@ -596,7 +599,11 @@ var ApplyView = Backbone.View.extend({
   },
   // end experience section
 
-  // language section
+  // language section 
+  initializeLanguages: function () {
+    this.data.languages = this.dataLanguageArray;
+  },
+
   initializeLanguagesSelect: function () {
     $('#languageId').select2({
       placeholder: '- Select -',
@@ -710,23 +717,30 @@ var ApplyView = Backbone.View.extend({
   },
 
   toggleLanguagesOn: function (e) {
-    templates.applyAddLanguage({
-      data: this.dataLanguageArray,     
-    });
+    var data = {
+      languageProficiencies: this.languageProficiencies,
+    };
+
+    var template = templates.applyAddLanguage(data);
     
-    this.$el.html(templates.applyAddLanguage);
+    this.$el.html(template);
     this.$el.localize();
+
     this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+
     this.initializeLanguagesSelect();
     this.resetLanguages();
     window.scrollTo(0, 0);
   },
 
   toggleLanguagesOff: function (e) {
-    templates.applyLanguage({
-      data: this.dataLanguageArray,     
-    });
-    this.$el.html(templates.applyLanguage);
+    var data = {
+      languages: this.dataLanguageArray,
+    };
+
+    var template = templates.applyAddLanguage(data);
+
+    this.$el.html(template);
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
     window.scrollTo(0, 0);
