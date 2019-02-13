@@ -10,10 +10,10 @@
           <h3 class="usajobs-profile-home-section__sub-section">Languages</h3>
           <p>Please list the foreign languages you can speak, write, or read. Include your level of proficiency with each.</p>
         </div>
-        <% if (datalanguageArray.length) { %>
+        <% if (languages.length) { %>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true" role="list">
-            <% _.each(datalanguageArray, function (l, index) { %>
+            <% _.each(languages, function (l, index) { %>
             <li class="usajobs-drawer" data-section="language" data-id="<%- index %>">
               <button class="usa-accordion-button usajobs-drawer-button has-no-face" aria-controls="lang-<%- index %>"><%- l.selectLanguage %><</button>
               <div id="lang-<%- index %>" class="usa-accordion-content usajobs-drawer-content">
