@@ -3,7 +3,6 @@ var $ = require('jquery');
 var experience = {
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
-    
     if($('input#overseas-experience-yes').is(':checked')) {
       $('#overseas-experience-details').show();
     } else {
@@ -13,17 +12,15 @@ var experience = {
 
   toggleOverseasExperienceFilterOther: function () {
     $('#overseas-experience-filter-other').hide();
-    
     if($('input#overseasExperienceOther').is(':checked')) {
       $('#overseas-experience-filter-other').show();
     } else {
       $('#overseas-experience-filter-other').hide();
     }
   },
-    
+  
   toggleSecurityClearanceDetails: function () {
     $('#security-clearance-details').hide();
-    
     if($('input#SecurityClearanceYes').is(':checked')) {
       $('#security-clearance-details').show();
     } else {
