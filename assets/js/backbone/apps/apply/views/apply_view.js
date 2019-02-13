@@ -1,8 +1,9 @@
 const _ = require('underscore');
-const async = require('async');
 const Backbone = require('backbone');
 const $ = require('jquery');
+const marked = require('marked');
 const templates = require('./templates');
+const nextSteps = require('./next_steps');
 
 //utility functions
 var Experience = require('./experience');
@@ -120,26 +121,12 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId + '/import',
-      method: 'POST',
-      data: {
-        applicationId: this.data.applicationId,
-      },
-    }).done(function () {
-      this.updateApplicationStep(1);
-    }.bind(this)).fail(function (err) {
-      if (err.status == 404) {
-        // TODO: display failed to import profile modal
-        this.updateApplicationStep(1);
-      } else {
-        showWhoopsPage();
-      }
-    }.bind(this));
+    // TODO: Only run if current step equals 0
+    nextSteps.importProfileData.bind(this)();
   },
 
   updateApplicationStep: function (step) {
-    this.data.currentStep = step;
+    this.data.currentStep = (this.data.currentStep < step ? step : this.data.currentStep);
     this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
@@ -151,6 +138,7 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
       this.$el.localize();
       this.renderProcessFlowTemplate({ currentStep: step, selectedStep: step });

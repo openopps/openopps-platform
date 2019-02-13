@@ -54,9 +54,9 @@ var Modal = BaseComponent.extend({
       };
     }   
     this.options.alert = this.options.alert || '';
-    this.options.disableClose = this.disableClose || false;
-    this.options.disablePrimary = this.disablePrimary || false;
-    this.options.disableSecondary = this.disableSecondary || false;
+    this.options.disableClose = this.options.disableClose || false;
+    this.options.disablePrimary = this.options.disablePrimary || false;
+    this.options.disableSecondary = this.options.disableSecondary || false;
   },
 
   render: function () {

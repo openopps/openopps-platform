@@ -19,6 +19,20 @@ async function findOrCreateApplication (data) {
   return application;
 }
 
+function lookForErrors (recordResults) {
+  return _.reduce(recordResults, (error, recordResult) => {
+    return error || _.reduce(recordResult, (innerError, record) => {
+      return innerError || record.err;
+    }, false);
+  }, false);
+}
+
+function filterOutErrors (recordList) {
+  return _.filter(recordList, (record) => {
+    return !record.err;
+  });
+}
+
 async function processUnpaidApplication (data, callback) {
   var application = await findOrCreateApplication(data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
@@ -74,8 +88,19 @@ module.exports.findById = async function (applicationId) {
 module.exports.importProfileData = async function (user, applicationId) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
     return await Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(async profile => {
-      return await Import.profileEducation(user.id, applicationId, profile.Profile.Educations).then(() => {
-        return true;
+      return await Promise.all([
+        Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
+        Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
+        Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
+        Import.profileReferences(user.id, applicationId, profile.Profile.References),
+      ]).then((results) => {
+        return {
+          error: lookForErrors(results),
+          education: filterOutErrors(results[0]),
+          experience: filterOutErrors(results[1]),
+          language: filterOutErrors(results[2]),
+          reference: filterOutErrors(results[3]),
+        };
       }).catch((err) => {
         return { err: err };
       });

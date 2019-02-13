@@ -25,7 +25,7 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
 router.post('/api/application/:id/import', auth, async (ctx, next) => {
   var result = await service.importProfileData(ctx.state.user, ctx.params.id);
   if (result) {
-    ctx.status = result.err ? 404 : 200;
+    ctx.status = 200;
     ctx.body = result;
   } else {
     ctx.status = 400;
