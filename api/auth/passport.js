@@ -218,6 +218,7 @@ if (openopps.auth.oidc) {
 
       client.getSigningKey(decoded.header.kid, (err, key) => {
         if (err) {
+          console.log(err);
           return onError(err, (newError) => cb(newError, null));
         }
 
@@ -245,12 +246,10 @@ if (openopps.auth.oidc) {
         return done(new Error('Scope error'), null);
       }
       dao.User.findOne('linked_id = ?', jwt_payload.sub).then(user => {
-        if (user) {
-          console.log('user found', user);
-          return done(null, user);
-        } else {
-          return done(new Error('User not found'), null);
-        }
+        console.log('user found');
+        done(null, user);
+      }).catch(err => {
+        done(new Error('User not found'), null);
       });
     } catch (err) {
       return done(err, null);
