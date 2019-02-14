@@ -52,6 +52,7 @@ async function findRecord (dataType, value) {
  */
 async function processValues (dataType, values, callback) {
   var value = values.pop();
+  value.Code = value.Code.trim(); // trim coode value
   value.IsDisabled = (value.IsDisabled == 'Yes'); // change from string to boolean
   var record =  await findRecord(dataType, value);
   if(record) {

@@ -44,6 +44,7 @@ async function findRecord (country) {
  */
 async function processCountries (countries, callback) {
   var country = countries.pop();
+  country.Code = country.Code.trim(); // trim coode value
   country.IsDisabled = (country.IsDisabled == 'Yes'); // change from string to boolean
   var record = await findRecord(country); //, async (record, err) => {
   if (record) {
