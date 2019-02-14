@@ -1,46 +1,54 @@
 var $ = require('jquery');
+const templates = require('./templates');
+
+function initializeLanguagesSelect () {
+  $('#languageId').select2({
+    placeholder: '- Select -',
+    minimumInputLength: 3,
+    ajax: {
+      url: '/api/ac/languages',
+      dataType: 'json',
+      data: function (term) {       
+        return { q: term };
+      },
+      results: function (data) {         
+        return { results: data }
+      },
+    },
+    dropdownCssClass: 'select2-drop-modal',
+    formatResult: function (obj, container, query) {
+      return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+    },
+    formatSelection: function (obj, container, query) {
+      return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+    },
+    formatNoMatches: 'No languages found ',
+  });
+    
+  $('#languageId').on('change', function (e) {
+    validate({ currentTarget: $('#languageId') });
+    if($('#languageId').val() !=''){
+      $('span#lang-id-val.field-validation-error').hide();
+      $('#language-select').removeClass('usa-input-error');   
+    }
+  }.bind(this));
+  $('#languageId').focus();
+}
+
+function resetLanguages (e) {
+  $('#languageId').select2('data', null);  
+  $("input[name='spoken-skill-level'][id='spoken-none']").prop('checked', true);
+  $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
+  $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
+}
 
 var language = {
-  initializeLanguagesSelect: function () {
-    $('#languageId').select2({
-      placeholder: '- Select -',
-      minimumInputLength: 3,
-      ajax: {
-        url: '/api/ac/languages',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) {         
-          return { results: data };
-        },
-      },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-      formatNoMatches: 'No languages found ',
-    });
-    
-    $('#languageId').on('change', function (e) {
-      validate({ currentTarget: $('#languageId') });
-      if($('#languageId').val() !=''){
-        $('span#lang-id-val.field-validation-error').hide();
-        $('#language-select').removeClass('usa-input-error');   
-      }
-    }.bind(this));
-    $('#languageId').focus();
-  },
-    
   deleteLanguage: function (e){
     var dataAttr=$(e.currentTarget).attr('data-id');
     this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
     var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
     this.dataLanguageArray= updateArray;
-    this.renderLanguages(); 
+    renderLanguages(); 
   },
     
   validateLanguage:function (e){
@@ -112,14 +120,7 @@ var language = {
     // });
     // $('#lang-1').html(languageTemplate);
   },
-      
-  resetLanguages:function (e){
-    $('#languageId').select2('data', null);  
-    $("input[name='spoken-skill-level'][id='spoken-none']").prop('checked', true);
-    $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
-    $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
-  },
-    
+          
   toggleLanguagesOn: function (e) {
     var data = {
       languageProficiencies: this.languageProficiencies,
@@ -132,8 +133,8 @@ var language = {
     
     this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
     
-    this.initializeLanguagesSelect();
-    this.resetLanguages();
+    initializeLanguagesSelect();
+    resetLanguages();
     window.scrollTo(0, 0);
   },
     
@@ -142,7 +143,7 @@ var language = {
       languages: this.dataLanguageArray,
     };
     
-    var template = templates.applyAddLanguage(data);
+    var template = templates.applyLanguage(data);
     
     this.$el.html(template);
     this.$el.localize();
