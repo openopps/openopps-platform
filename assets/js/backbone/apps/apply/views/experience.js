@@ -56,6 +56,19 @@ var experience = {
       window.scrollTo(0, 0);
     }.bind(this));
   },
+
+  toggleAddExperience: function (e) {
+    var data = { };
+    console.log(this);
+    var template = this.templates.applyAddExperience(data);
+        
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    
+    window.scrollTo(0, 0);
+  },
 };
 
 module.exports = experience;

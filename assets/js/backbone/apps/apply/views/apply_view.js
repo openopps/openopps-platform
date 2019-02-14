@@ -62,6 +62,7 @@ var ApplyView = Backbone.View.extend({
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
+    'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
 
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
@@ -108,6 +109,7 @@ var ApplyView = Backbone.View.extend({
     this.data.overseasExperienceTypes = this.data.overseasExperienceTypes ? this.data.overseasExperienceTypes : [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
+    this.templates = templates;
     this.initializeComponentEducation(options);
     this.initializeEnumerations();
   },
