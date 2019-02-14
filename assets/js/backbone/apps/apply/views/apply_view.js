@@ -84,8 +84,6 @@ var ApplyView = Backbone.View.extend({
     Experience.toggleOverseasExperienceDetails();
     Experience.toggleOverseasExperienceFilterOther();
     Experience.toggleSecurityClearanceDetails();
-    // Language.renderLanguages();
-    Language.initializeLanguagesSelect();
 
     $('.apply-hide').hide();
 
