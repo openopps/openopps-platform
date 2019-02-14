@@ -24,6 +24,8 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
+    'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
+    'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
 
     //education events
     'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
@@ -248,7 +250,6 @@ var ApplyView = Backbone.View.extend({
   },
 
   initializeCountrySubdivisionSelect: function (data) {
-    
     $('#apply_countrySubdivision').select2({
       placeholder: '- Select -',
       data: { results: data, text: 'value' },

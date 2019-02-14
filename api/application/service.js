@@ -159,6 +159,16 @@ module.exports.deleteEducation= async function (educationId){
   });
 };
 
+module.exports.saveExperience = async function (attributes,done) { 
+  attributes.updatedAt = new Date(); 
+  attributes.createdAt = new Date();
+  await dao.Experience.insert(attributes).then(async (experience) => {   
+    return done(null, experience);
+  }).catch(err => {
+    return done(true);
+  });
+};
+
 module.exports.getHonors= async function (){
   var honordata= (await dao.LookUpCode.db.query(dao.query.lookupHonors)).rows;
   return honordata;
