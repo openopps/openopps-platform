@@ -54,7 +54,7 @@ router.post('/api/application/:id/language', auth, async (ctx, next) =>{
   }
 });
 
-router.post('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
+router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;
   await service.saveEducation(ctx.request.body, function (errors,education)  {
@@ -66,6 +66,16 @@ router.post('/api/application/:applicationId/Education',auth, async (ctx,next) =
       ctx.body = education;
     }
   });
+});
+
+router.get('/api/application/:id/Education/:educationId/', auth, async (ctx, next) => {
+  var result = await service.getEducation(ctx.params.educationId);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
 });
 
 router.delete('/api/application/:id/Education/:educationId/',auth, async (ctx,next) =>{ 
@@ -86,10 +96,4 @@ router.post('/api/application/:applicationId/experience',auth, async (ctx,next) 
   });
 });
 
-router.get('/api/honors/',auth, async (ctx, next) => {
-  ctx.body = await service.getHonors();
-});
-router.get('/api/degreeLevels/',auth, async (ctx, next) => {
-  ctx.body = await service.getDegreeLevels();
-});
 module.exports = router.routes();

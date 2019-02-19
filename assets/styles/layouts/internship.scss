@@ -752,12 +752,24 @@
     margin-top: 1rem;
   }
 
+  .select2-container {
+   display: block;
+  }
+
   .usajobs-fieldset--horizontal .gpa {
     clear: none;
     display: block;
     float: left;
     margin-right: 1.5rem;
-    width: 9rem;
+    width: 19rem;
+
+    &:not(:first-child) {
+      width: 22rem;
+    }
+
+    &.usa-input-error input {
+      width: 100%;
+    }
   }
 
   .usajobs-section-header {

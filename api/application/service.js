@@ -54,6 +54,21 @@ async function processUnpaidApplication (data, callback) {
   }
 }
 
+async function updateEducation ( educationId,data) {
+ 
+  return await dao.Education.findOne('education_id = ? and user_id = ?',educationId,data.userId).then(async (e) => { 
+    return await dao.Education.update(data).then((education) => {
+      return education;
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
 module.exports = {};
 
 module.exports.addLanguage = async function (userId, applicationId, data) {
@@ -159,6 +174,23 @@ module.exports.deleteEducation= async function (educationId){
   });
 };
 
+module.exports.saveEducation = async function (attributes,done) { 
+  if(attributes.educationId){ 
+    await updateEducation(attributes.educationId,attributes).then((education) => {   
+      return done(!education, education);
+    });
+  }
+  else {
+    attributes.createdAt= new Date();
+    attributes.updatedAt = new Date();
+    await dao.Education.insert(attributes).then(async (education) => {   
+      return done(null, education);
+    }).catch(err => {
+      return done(true);
+    });
+  }
+};
+
 module.exports.saveExperience = async function (attributes,done) { 
   attributes.updatedAt = new Date(); 
   attributes.createdAt = new Date();
@@ -169,12 +201,16 @@ module.exports.saveExperience = async function (attributes,done) {
   });
 };
 
-module.exports.getHonors= async function (){
-  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupHonors)).rows;
-  return honordata;
+module.exports.getEducation= async function (educationId){
+  var country= (await dao.Country.db.query(dao.query.country,educationId)).rows[0];
+  return await dao.Education.findOne('education_id = ?', educationId).then((education) => {  
+    education.country=country;
+    return education;
+  }).catch((err) => {
+    log.info('error', err);
+    return null;
+  });
 };
-module.exports.getDegreeLevels= async function (){
-  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupDegreeLevels)).rows;
-  return honordata;
-};
+
+
 
