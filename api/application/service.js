@@ -79,7 +79,7 @@ module.exports = {};
 
 module.exports.saveLanguage = async function (userId, applicationId, data) {
   var record = data.language[0];
-  await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
+  return await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
     return { err: 'language already exists' };
   }).catch(async () => { 
     return await dao.ApplicationLanguageSkill.insert(_.extend(record, {
