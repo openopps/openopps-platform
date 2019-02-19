@@ -41,7 +41,7 @@ module.exports = function (db) {
     Education: dao({ db: db, table: 'education' }),
     Experience: dao({ db: db, table: 'experience' }),
     Language: dao({ db: db, table: 'language' }),
-    LanguageSkill: dao({ db: db, table: 'language_skill' }),
+    ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
     LookupCode:dao({ db: db, table: 'lookup_code' }),
     Reference:dao({ db:db, table:'reference'}),
     Task: dao({ db: db, table: 'task' }),

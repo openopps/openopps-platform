@@ -38,7 +38,7 @@ function initializeLanguagesSelect () {
 
 function resetLanguages (e) {
   $('#languageId').select2('data', null);  
-  $("input[name='spoken-skill-level'][id='spoken-none']").prop('checked', true);
+  $("input[name='speaking-skill-level'][id='speaking-none']").prop('checked', true);
   $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
   $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
 }
@@ -64,13 +64,13 @@ function validateLanguage (e) {
 function getDataFromLanguagePage () {
   var modelData = {
     languageId:$('#languageId').val(),
-    readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
+    // readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
     readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
-    selectLanguage:$('#languageId').select2('data').value,      
-    speakingProficiencyId:$('[name=spoken-skill-level]:checked').val(),
-    spokenSkillLevel:$('[name=spoken-skill-level]:checked + label').text(),
+    // selectLanguage:$('#languageId').select2('data').value,      
+    speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
+    // speakingSkillLevel:$('[name=speaking-skill-level]:checked + label').text(),
     writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-    writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
+    // writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
   };
   return modelData;
 }
@@ -93,11 +93,11 @@ var language = {
         url: '/api/application/' + this.data.applicationId + '/language',
         method: 'POST',
         contentType: 'application/json',
-        data: {
+        data: JSON.stringify({
           applicationId: this.data.applicationId,
           language: this.dataLanguageArray,
           updatedAt: this.data.updatedAt,
-        },
+        }),
       }).done(function (result) {
         this.dataLanguageArray.push(result.language);
         this.data.updatedAt = result.updatedAt;
