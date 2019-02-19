@@ -229,7 +229,7 @@ if (openopps.auth.oidc) {
   };
 
   var opts = {};
-  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+  opts.jwtFromRequest = ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken(), ExtractJwt.fromHeader("x-authorization")]);
   opts.secretOrKeyProvider = passportJwtSecret({
     cache: true,
     rateLimit: true,

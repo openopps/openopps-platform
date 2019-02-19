@@ -40,7 +40,7 @@
             <select name="degree" id="degree" class="dropdown validate" data-validate="empty">
               <option value=""></option>
               <% _.each(degreeLevels, function (d) { %>             
-                <option value=<%- d.lookup_code_id %>> <%- d.value %></option>
+                <option value=<%- d.lookupCodeId %>> <%- d.value %></option>
               <% }); %>
             </select>
           </div>
@@ -105,15 +105,15 @@
             </label>
             <ul class="usa-unstyled-list usa-fieldset-inputs">
               <li>
-                <input id="credit-S" name="CreditSystem" type="radio" value="S">
+                <input id="credit-S" name="CreditSystem" type="radio" value="Semester hours">
                 <label for="credit-S">Semester hours</label>
               </li>
               <li>
-                <input id="credit-Q" name="CreditSystem" type="radio" value="Q">
+                <input id="credit-Q" name="CreditSystem" type="radio" value="Quarter hours">
                 <label for="credit-Q">Quarter hours</label>
               </li>
               <li>
-                <input id="credit-C" name="CreditSystem" type="radio" value="C">
+                <input id="credit-C" name="CreditSystem" type="radio" value="Continuing education units">
                 <label for="credit-C">Continuing education units</label>
               </li>
             </ul>
@@ -123,7 +123,7 @@
             <select id="honors" class="dropdown">
               <option value=""> </option>
               <% _.each(honors, function (h) { %>             
-                <option value=<%- h.lookup_code_id %>> <%- h.value %></option>
+                <option value=<%- h.lookupCodeId %>> <%- h.value %></option>
               <% }); %>
             </select>
           </div>
@@ -135,7 +135,7 @@
 
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
-            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-education">Cancel and return</button>
+            <button class="usa-button usa-button-secondary usa-button-left"  id="cancel-education">Cancel and return</button>
             <a href="#success" id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</a>
           </div>
         </div>
