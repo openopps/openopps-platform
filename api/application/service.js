@@ -36,17 +36,23 @@ function filterOutErrors (recordList) {
 async function processUnpaidApplication (data, callback) {
   var application = await findOrCreateApplication(data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
-  if (applicationTasks.length >= 3) {
-    callback({ message: 'You have already picked the maximum of 3 programs. ' + 
-    'To apply to this internship please remove at least 1 of your already chosen programs from your application.' });
-  } else if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
+  if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
     callback(null, application.applicationId);
+  } else if (applicationTasks.length >= 3) {
+    callback({
+      type:'maximum-reached',
+      message: 'You have already picked the maximum of 3 programs. To apply to this internship please remove at least 1 of your already chosen programs from your application.',
+      applicationId: application.applicationId,
+    });
   } else {
+    var sortOrder = _.difference([1, 2, 3], applicationTasks.map((applicationTask) => { 
+      return _.parseInt(applicationTask.sortOrder);
+    }))[0];
     await dao.ApplicationTask.insert({
       applicationId: application.applicationId,
       userId: application.userId,
       taskId: data.task.id,
-      sortOrder: applicationTasks.length + 1,
+      sortOrder: sortOrder,
       createdAt: new Date(),
       updateAt: new Date(),
     });
@@ -105,6 +111,20 @@ module.exports.apply = async function (userId, taskId, callback) {
   }).catch(err => {
     log.error('User attempted to apply to task but none found.', err);
     callback({ message: 'An error occurred attempting to start your application.' });
+  });
+};
+
+module.exports.deleteApplicationTask = async function (userId, applicationId, taskId) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(() => {
+      dao.ApplicationTask.delete('task_id = ? and application_id = ?', taskId, applicationId).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to remove this internship selection from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
   });
 };
 
