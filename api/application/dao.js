@@ -15,6 +15,17 @@ const applicationTasksQuery = 'SELECT ' +
   'LEFT JOIN office ON office.office_id = task.office_id ' +
   'WHERE application_task.application_id = ?';
 
+const applicationEducationQuery = 'SELECT education.*, country.value as country_name, country_subdivision.value as country_subdivision_name ' +
+  'FROM education ' + 
+  'JOIN country on country.country_id = education.country_id ' +
+  'JOIN country_subdivision on country_subdivision.country_subdivision_id = education.country_subdivision_id ' +
+  'WHERE education.application_id = ?';
+
+const applicationExperienceQuery = 'SELECT experience.*, country.value as country_name, country_subdivision.value as country_subdivision_name ' +
+  'FROM experience ' +
+  'JOIN country on country.country_id = experience.country_id ' +
+  'JOIN country_subdivision on country_subdivision.country_subdivision_id = experience.country_subdivision_id ' +
+  'WHERE experience.application_id = ?';
 
 const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join education on country.country_id = education.country_id ' + 
@@ -38,7 +49,9 @@ module.exports = function (db) {
 
     query: {
       application: applicationQuery,
-      applicationTasks: applicationTasksQuery, 
+      applicationTasks: applicationTasksQuery,
+      applicationEducation: applicationEducationQuery,
+      applicationExperience: applicationExperienceQuery,
       country:countryQuery,
     },
   };

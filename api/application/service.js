@@ -130,9 +130,15 @@ module.exports.deleteApplicationTask = async function (userId, applicationId, ta
 
 module.exports.findById = async function (applicationId) {
   var application = (await dao.Application.query(dao.query.application, applicationId))[0];
-  if (application) {
-    application.tasks = (await db.query(dao.query.applicationTasks, applicationId)).rows;
-  }
+  var results = await Promise.all([
+    db.query(dao.query.applicationTasks, applicationId),
+    db.query(dao.query.applicationEducation, applicationId),
+    db.query(dao.query.applicationExperience, applicationId),
+  ]);
+  application.tasks = results[0].rows;
+  application.education = results[1].rows;
+  application.experience = results[2].rows;
+
   return application;
 };
 

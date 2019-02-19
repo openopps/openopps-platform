@@ -12,7 +12,7 @@ function initializeLanguagesSelect () {
         return { q: term };
       },
       results: function (data) {         
-        return { results: data }
+        return { results: data };
       },
     },
     dropdownCssClass: 'select2-drop-modal',
