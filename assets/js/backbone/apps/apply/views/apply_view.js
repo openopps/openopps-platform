@@ -262,12 +262,13 @@ var ApplyView = Backbone.View.extend({
     if(this.data.editEducation && this.data.selectedStep =='3'){
       
       Education.getEducation.bind(this)();
-      // Education.toggleAddEducation.bind(this)();
+     
       Education.initializeAddEducationFields.bind(this)();
-      this.renderEducation();
+      
     }
     else if(this.data.selectedStep =='3'){
-      this.$el.html(templates.applyEducation(this.data));      
+      this.$el.html(templates.applyEducation(this.data));   
+      this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
     }    
   },
 
@@ -307,11 +308,6 @@ var ApplyView = Backbone.View.extend({
     }; 
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
-  
-  
-  
-
-  
   
   // end education section
 
