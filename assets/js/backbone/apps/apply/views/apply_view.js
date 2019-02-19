@@ -20,6 +20,8 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
     'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
+    'click #back'                                                 : 'backClicked',
+    'click .program-delete'                                       : 'deleteProgram',
 
     //experience events
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -108,94 +110,34 @@ var ApplyView = Backbone.View.extend({
     });
   },
 
-
-  
-  initializeCountriesSelect: function () {  
-    
-    $('#apply_country').select2({    
-      placeholder: '- Select -',    
-      minimumInputLength: 3,  
-      ajax: {
-        url: '/api/ac/country',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) {              
-          return { results: data };
-        },
-      },
-    
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-
-      formatNoMatches: 'No country found ',
-    });
-
-    $('#apply_country').on('change', function (e) {
-      validate({ currentTarget: $('#apply_country') });
-      this.countryCode = $('#apply_country').select2('data').code;
-      this.countryCode && this.loadCountrySubivisionData();
-    }.bind(this));
-
-    $('#apply_country').focus();
-  },
-
-  loadCountrySubivisionData: function () {
-    $.ajax({
-      url: '/api/ac/countrySubdivision/' + this.countryCode,
-      dataType: 'json',
-    }).done(function (data) {
-      this.initializeCountrySubdivisionSelect(data);
-    }.bind(this));
-  },
-
- 
-
-  initializeCountrySubdivisionSelect: function (data) {
-    $('#apply_countrySubdivision').select2({
-      placeholder: '- Select -',
-      data: { results: data, text: 'value' },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (item) {
-        return item.value;
-      },
-      formatSelection: function (item) {
-        return item.value;
-      },
-      formatNoMatches: 'No state found ',
-    });
-    if (data.length) {
-      $('#apply_countrySubdivision').removeAttr('disabled', true);
-      $('#apply_countrySubdivision').addClass('validate');
-      
-    } else {
-      $('#apply_countrySubdivision').attr('disabled', true);
-      $('#apply_countrySubdivision').removeClass('validate');
-      $('.apply_countrySubdivision').removeClass('usa-input-error');
-      $('.apply_countrySubdivision > .field-validation-error').hide();
-    }
-  
-    $('#apply_countrySubdivision').on('change', function (e) {
-      if ($('#apply_country').val() == 'United States') {
-        validate({ currentTarget: $('#apply_countrySubdivision') });
-      }  
-    });
-  },
-  
-
   validateField: function (e) {
     return validate(e);
   },
 
+  backClicked: function () {
+    this.data.selectedStep--;
+    Backbone.history.navigate(window.location.pathname + '?step=' + this.data.selectedStep, { trigger: false });
+    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    this.$el.localize();
+    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+  },
+
   callMethod: function (method) {
     method.bind(this)();
+  },
+
+  deleteProgram: function (e) {
+    e.preventDefault && e.preventDefault();
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId + '/task/' + e.currentTarget.dataset.taskId,
+      method: 'DELETE',
+    }).done(function () {
+      this.data.tasks.splice(e.currentTarget.dataset.index, 1);
+      this.data[['firstChoice', 'secondChoice', 'thirdChoice'][e.currentTarget.dataset.index]] = null;
+      this.$el.html(templates.getTemplateForStep(1)(this.data));
+    }.bind(this)).fail(function () {
+      showWhoopsPage();
+    });
   },
 
   toggleAccordion: function (e) {
@@ -247,7 +189,7 @@ var ApplyView = Backbone.View.extend({
       Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
       this.$el.localize();
-      this.renderProcessFlowTemplate({ currentStep: step, selectedStep: step });
+      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
@@ -310,18 +252,83 @@ var ApplyView = Backbone.View.extend({
   },
   
   // end education section
+  
+  initializeCountriesSelect: function () {  
+    
+    $('#apply_country').select2({    
+      placeholder: '- Select -',    
+      minimumInputLength: 3,  
+      ajax: {
+        url: '/api/ac/country',
+        dataType: 'json',
+        data: function (term) {       
+          return { q: term };
+        },
+        results: function (data) {              
+          return { results: data };
+        },
+      },
+    
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
 
-  // language section
-  // end language section
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
 
-  // reference section
-  // end reference section
+      formatNoMatches: 'No country found ',
+    });
 
-  // skill section
-  // end skill section
+    $('#apply_country').on('change', function (e) {
+      validate({ currentTarget: $('#apply_country') });
+      this.countryCode = $('#apply_country').select2('data').code;
+      this.countryCode && this.loadCountrySubivisionData();
+    }.bind(this));
 
-  // program section
-  // end program section
+    $('#apply_country').focus();
+  },
+
+  loadCountrySubivisionData: function () {
+    $.ajax({
+      url: '/api/ac/countrySubdivision/' + this.countryCode,
+      dataType: 'json',
+    }).done(function (data) {
+      this.initializeCountrySubdivisionSelect(data);
+    }.bind(this));
+  },
+
+  initializeCountrySubdivisionSelect: function (data) {
+    $('#apply_countrySubdivision').select2({
+      placeholder: '- Select -',
+      data: { results: data, text: 'value' },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (item) {
+        return item.value;
+      },
+      formatSelection: function (item) {
+        return item.value;
+      },
+      formatNoMatches: 'No state found ',
+    });
+    if (data.length) {
+      $('#apply_countrySubdivision').removeAttr('disabled', true);
+      $('#apply_countrySubdivision').addClass('validate');
+      
+    } else {
+      $('#apply_countrySubdivision').attr('disabled', true);
+      $('#apply_countrySubdivision').removeClass('validate');
+      $('.apply_countrySubdivision').removeClass('usa-input-error');
+      $('.apply_countrySubdivision > .field-validation-error').hide();
+    }
+  
+    $('#apply_countrySubdivision').on('change', function (e) {
+      if ($('#apply_country').val() == 'United States') {
+        validate({ currentTarget: $('#apply_countrySubdivision') });
+      }  
+    });
+  },
 
   // statement section
   statementCharacterCount: function () {
