@@ -36,22 +36,43 @@ function filterOutErrors (recordList) {
 async function processUnpaidApplication (data, callback) {
   var application = await findOrCreateApplication(data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
-  if (applicationTasks.length >= 3) {
-    callback({ message: 'You have already picked the maximum of 3 programs. ' + 
-    'To apply to this internship please remove at least 1 of your already chosen programs from your application.' });
-  } else if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
+  if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
     callback(null, application.applicationId);
+  } else if (applicationTasks.length >= 3) {
+    callback({
+      type:'maximum-reached',
+      message: 'You have already picked the maximum of 3 programs. To apply to this internship please remove at least 1 of your already chosen programs from your application.',
+      applicationId: application.applicationId,
+    });
   } else {
+    var sortOrder = _.difference([1, 2, 3], applicationTasks.map((applicationTask) => { 
+      return _.parseInt(applicationTask.sortOrder);
+    }))[0];
     await dao.ApplicationTask.insert({
       applicationId: application.applicationId,
       userId: application.userId,
       taskId: data.task.id,
-      sortOrder: applicationTasks.length + 1,
+      sortOrder: sortOrder,
       createdAt: new Date(),
       updateAt: new Date(),
     });
     callback(null, application.applicationId);
   }
+}
+
+async function updateEducation ( educationId,data) {
+ 
+  return await dao.Education.findOne('education_id = ? and user_id = ?',educationId,data.userId).then(async (e) => { 
+    return await dao.Education.update(data).then((education) => {
+      return education;
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
 }
 
 module.exports = {};
@@ -95,11 +116,31 @@ module.exports.apply = async function (userId, taskId, callback) {
   });
 };
 
+module.exports.deleteApplicationTask = async function (userId, applicationId, taskId) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(() => {
+      dao.ApplicationTask.delete('task_id = ? and application_id = ?', taskId, applicationId).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to remove this internship selection from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
+
 module.exports.findById = async function (applicationId) {
   var application = (await dao.Application.query(dao.query.application, applicationId))[0];
-  if (application) {
-    application.tasks = (await db.query(dao.query.applicationTasks, applicationId)).rows;
-  }
+  var results = await Promise.all([
+    db.query(dao.query.applicationTasks, applicationId),
+    db.query(dao.query.applicationEducation, applicationId),
+    db.query(dao.query.applicationExperience, applicationId),
+  ]);
+  application.tasks = results[0].rows;
+  application.education = results[1].rows;
+  application.experience = results[2].rows;
+
   return application;
 };
 
@@ -161,6 +202,23 @@ module.exports.deleteEducation= async function (educationId){
   });
 };
 
+module.exports.saveEducation = async function (attributes,done) { 
+  if(attributes.educationId){ 
+    await updateEducation(attributes.educationId,attributes).then((education) => {   
+      return done(!education, education);
+    });
+  }
+  else {
+    attributes.createdAt= new Date();
+    attributes.updatedAt = new Date();
+    await dao.Education.insert(attributes).then(async (education) => {   
+      return done(null, education);
+    }).catch(err => {
+      return done(true);
+    });
+  }
+};
+
 module.exports.saveExperience = async function (attributes,done) { 
   attributes.updatedAt = new Date(); 
   attributes.createdAt = new Date();
@@ -171,12 +229,16 @@ module.exports.saveExperience = async function (attributes,done) {
   });
 };
 
-module.exports.getHonors= async function (){
-  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupHonors)).rows;
-  return honordata;
+module.exports.getEducation= async function (educationId){
+  var country= (await dao.Country.db.query(dao.query.country,educationId)).rows[0];
+  return await dao.Education.findOne('education_id = ?', educationId).then((education) => {  
+    education.country=country;
+    return education;
+  }).catch((err) => {
+    log.info('error', err);
+    return null;
+  });
 };
-module.exports.getDegreeLevels= async function (){
-  var honordata= (await dao.LookUpCode.db.query(dao.query.lookupDegreeLevels)).rows;
-  return honordata;
-};
+
+
 

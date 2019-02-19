@@ -19,11 +19,11 @@
               <span class="field-validation-error" style="display:none;" >Please select Yes or No</span>
               <ul class="usa-unstyled-list" id="enrolled">
                 <li>
-                  <input id="enrolled-yes" name="Enrolled" type="radio" value="yes">
+                  <input id="enrolled-yes" name="Enrolled" type="radio" value="true" checked="checked">
                   <label for="enrolled-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="enrolled-no" name="Enrolled" type="radio" value="no">
+                  <input id="enrolled-no" name="Enrolled" type="radio" value="false" >
                   <label for="enrolled-no">No</label>
                 </li>
               </ul>
@@ -39,11 +39,11 @@
               
               <ul class="usa-unstyled-list" id="junior">
                 <li>
-                  <input id="junior-yes" name="Junior" type="radio" value="yes">
+                  <input id="junior-yes" name="Junior" type="radio" value="true" checked="checked">
                   <label for="junior-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="junior-no" name="Junior" type="radio" value="no">
+                  <input id="junior-no" name="Junior" type="radio" value="false" >
                   <label for="junior-no">No</label>
                 </li>
               </ul>
@@ -58,11 +58,11 @@
               
               <ul class="usa-unstyled-list" id="continue-education">
                 <li>
-                  <input id="continue-education-yes" name="ContinueEducation" type="radio" value="yes">
+                  <input id="continue-education-yes" name="ContinueEducation" type="radio" value="true" checked="checked">
                   <label for="continue-education-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="continue-education-no" name="ContinueEducation" type="radio" value="no">
+                  <input id="continue-education-no" name="ContinueEducation" type="radio" value="false">
                   <label for="continue-education-no">No</label>
                 </li>
               </ul>
@@ -78,7 +78,7 @@
         <div id="education-preview-id"></div>
            
         <div class="usajobs-profile-home-section__body">
-          <p><a  id="add-education" class="add-record">+ Add education</a></p>
+          <p><a href="javascript:void(0);" id="add-education" class="add-record">+ Add education</a></p>
           <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>
           <p>Please upload your current or most recent academic transcript. We accept unofficial transcripts.</p>
           <fieldset class="usajobs-fieldset">
@@ -160,7 +160,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Back</button>
-              <a href="#success" id="main-education-save" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
+              <a href="#success" id="saveEducationContinue" class="usa-button usa-button-primary usajobs-button_bar__save apply-continue" data-action="educationContinue">Save and continue</a>
             </div>
           </div>
         </div>

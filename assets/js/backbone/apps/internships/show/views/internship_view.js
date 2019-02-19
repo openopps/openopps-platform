@@ -51,20 +51,26 @@ var InternshipView = BaseView.extend({
   },
 
   displayError: function (error) {
+    var primaryButton = {
+      text: 'Close',
+      action: function () {
+        this.modalComponent.cleanup();
+      }.bind(this),
+    };
+    if (error.responseJSON && error.responseJSON.type == 'maximum-reached') {
+      primaryButton.text = 'Continue to application';
+      primaryButton.action = function () {
+        this.modalComponent.cleanup();
+        Backbone.history.navigate('/apply/' + error.responseJSON.applicationId, { trigger: true });
+      }.bind(this);
+    }
     this.modalComponent = new ModalComponent({
       el: '#site-modal',
       id: 'internship-apply-error',
       alert: 'error',
-      primary: {
-        text: 'Close',
-        action: function () {
-          this.modalComponent.cleanup();
-          window.history.back();
-        }.bind(this),
-      },
-      secondary: null,
+      primary: primaryButton,
       modalTitle: 'You are not eligible',
-      modalBody: error.responseText,
+      modalBody: error.responseJSON ? error.responseJSON.message : error.responseText,
     }).render();
   },
 

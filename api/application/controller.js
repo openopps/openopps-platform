@@ -36,7 +36,7 @@ router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
     await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
       ctx.status = err ? 400 : 200;
-      ctx.body = err ? err.message : applicationId;
+      ctx.body = err ? err : applicationId;
     });
   } else {
     ctx.status = 400;
@@ -44,7 +44,16 @@ router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/application/:id/language', auth, async (ctx, next) => {
+router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
+  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then(() => {
+    ctx.status = 200;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
+});
+
+router.post('/api/application/:id/language', auth, async (ctx, next) =>{
   var result = await service.saveLanguage(ctx.state.user.id, ctx.params.id, ctx.request.body);
   if (result) {
     ctx.status = result.err ? 409 : 200;
@@ -54,7 +63,7 @@ router.post('/api/application/:id/language', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
+router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;
   await service.saveEducation(ctx.request.body, function (errors,education)  {
@@ -66,6 +75,16 @@ router.post('/api/application/:applicationId/Education',auth, async (ctx,next) =
       ctx.body = education;
     }
   });
+});
+
+router.get('/api/application/:id/Education/:educationId/', auth, async (ctx, next) => {
+  var result = await service.getEducation(ctx.params.educationId);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
 });
 
 router.delete('/api/application/:id/Education/:educationId/',auth, async (ctx,next) =>{ 
@@ -84,13 +103,6 @@ router.post('/api/application/:applicationId/experience',auth, async (ctx,next) 
       ctx.body = experience;
     }
   });
-});
-
-router.get('/api/honors/',auth, async (ctx, next) => {
-  ctx.body = await service.getHonors();
-});
-router.get('/api/degreeLevels/',auth, async (ctx, next) => {
-  ctx.body = await service.getDegreeLevels();
 });
 
 module.exports = router.routes();
