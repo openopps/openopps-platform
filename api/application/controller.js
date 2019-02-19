@@ -82,5 +82,18 @@ router.delete('/api/application/:id/Education/:educationId/',auth, async (ctx,ne
   ctx.body = await service.deleteEducation(ctx.params.educationId);
 });
 
+router.post('/api/application/:applicationId/experience',auth, async (ctx,next) =>{
+  ctx.request.body.userId = ctx.state.user.id;
+  ctx.request.body.applicationId=ctx.params.applicationId;
+  await service.saveExperience(ctx.request.body, function (errors,experience)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = experience;
+    }
+  });
+});
 
 module.exports = router.routes();

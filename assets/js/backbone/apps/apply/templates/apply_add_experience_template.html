@@ -31,10 +31,8 @@
           </div>
           <div class="required-input">
             <label for="country">Country</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must select a country.</span>
-            <select name="country" class="dropdown validate" data-validate="empty">
-              <option></option>
-            </select>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a country.<br /></span>
+            <input type="hidden" name="country" id="apply_country" class="dropdown validate" data-validate="empty" />
           </div>
           <div class="required-input">
             <label for="postal-code">Postal code</label>
@@ -50,12 +48,10 @@
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
             <input type="text" class="fullwidth form-control validate" id="city" name="city" value="" data-validate="empty,count100,html">
           </div>
-          <div class="required-input">
+          <div class="required-input apply_countrySubdivision">
             <label for="state">State, Territory, or Province</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must select a state, territory, or province.</span>
-            <select name="state" class="dropdown validate" data-validate="empty">
-              <option></option>
-            </select>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a state, territory, or province.<br /></span>
+            <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" disabled /> 
           </div>
           <label for="Position">
             <h5>Position</h5>
@@ -77,14 +73,14 @@
             <div class="required-input usa-datefield usa-form-group-month">
               <label for="start-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting month.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The starting month must be no more than 100 characters.</span>
+              <span class="field-validation-error error-count2" style="display:none;">The starting month must be no more than 100 characters.</span>
               <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
               <input type="text" class="usa-input-tiny form-control validate" id="start-month" name="start-month" value="" data-validate="empty,count100,html">
             </div>
             <div class="required-input usa-datefield usa-form-group-year">
               <label for="start-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting year.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The starting year must be no more than 100 characters.</span>
+              <span class="field-validation-error error-count4" style="display:none;">The starting year must be no more than 100 characters.</span>
               <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
               <input type="text" class="usa-input-small form-control validate" id="start-year" name="start-year" value="" data-validate="empty,count100,html">
             </div>
@@ -99,14 +95,14 @@
             <div class="required-input usa-datefield usa-form-group-month">
               <label for="end-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending month.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The ending month must be no more than 100 characters.</span>
+              <span class="field-validation-error error-count2" style="display:none;">The ending month must be no more than 100 characters.</span>
               <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
               <input type="text" class="usa-input-tiny form-control validate" id="end-month" name="end-month" value="" data-validate="empty,count100,html">
             </div>
             <div class="required-input usa-datefield usa-form-group-year">
               <label for="end-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending year.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The ending year must be no more than 100 characters.</span>
+              <span class="field-validation-error error-count4" style="display:none;">The ending year must be no more than 100 characters.</span>
               <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
               <input type="text" class="usa-input-small form-control validate" id="end-year" name="end-year" value="" data-validate="empty,count100,html">
             </div>
@@ -114,7 +110,7 @@
         </fieldset>
 
         <fieldset class="usajobs-fieldset-inputs">
-          <input id="Present" name="Present" type="checkbox" value="true">
+          <input id="present" name="Present" type="checkbox" value="true">
           <label class="usajobs-profile__date-present" for="Present">Present?</label>
         </fieldset>
 
@@ -131,8 +127,8 @@
 
       <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
-          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
-          <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save experience</a>
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-add-experience">Cancel and return</button>
+          <a class="usa-button usa-button-primary usajobs-button_bar__save" id="save-add-experience">Save experience</a>
         </div>
       </div>
     </div>

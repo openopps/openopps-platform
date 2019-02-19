@@ -191,6 +191,16 @@ module.exports.saveEducation = async function (attributes,done) {
   }
 };
 
+module.exports.saveExperience = async function (attributes,done) { 
+  attributes.updatedAt = new Date(); 
+  attributes.createdAt = new Date();
+  await dao.Experience.insert(attributes).then(async (experience) => {   
+    return done(null, experience);
+  }).catch(err => {
+    return done(true);
+  });
+};
+
 module.exports.getEducation= async function (educationId){
   var country= (await dao.Country.db.query(dao.query.country,educationId)).rows[0];
   return await dao.Education.findOne('education_id = ?', educationId).then((education) => {  
