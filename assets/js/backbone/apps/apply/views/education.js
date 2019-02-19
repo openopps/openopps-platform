@@ -299,11 +299,9 @@ var education = {
       url: '/api/application/'+ this.data.applicationId +'/Education/'+ this.data.editEducation,
       type: 'GET',
       async:false,
-      success: function (data) {
-        console.log(data);       
+      success: function (data) {        
         this.educationData =data;       
-        toggleAddEducation.bind(this)();  
-        console.log(this);      
+        toggleAddEducation.bind(this)();        
       }.bind(this),
       error: function (err) {     
       }.bind(this),

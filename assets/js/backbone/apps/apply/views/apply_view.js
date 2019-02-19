@@ -35,6 +35,7 @@ var ApplyView = Backbone.View.extend({
     'click #save-education'                                       :function () { this.callMethod(Education.saveEducation); },
     'click #delete-education'                                     :'deleteEducation',
     'click  #education-edit'                                      :'editEducation',
+    'click  #saveEducationContinue'                                  :function () { this.callMethod(Education.educationContinue); },
 
 
     //language events
