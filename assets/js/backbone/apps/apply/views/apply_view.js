@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 const _ = require('underscore');
 const Backbone = require('backbone');
 const $ = require('jquery');
@@ -8,6 +9,8 @@ const nextSteps = require('./next_steps');
 //utility functions
 var Experience = require('./experience');
 var Language = require('./language');
+var Education = require('./education');
+
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -25,15 +28,14 @@ var ApplyView = Backbone.View.extend({
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
 
     //education events
-    'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' : 'toggleAccordion',  
-    'click #add-education'                                        : 'toggleAddEducation',
-    'click #cancel-education'                                     : 'toggleAddEducationOff',
-    'click #save-education'                                       : 'saveEducation',
-    'click #delete-education'                                     : 'deleteEducation',
-    'click #main-education-save'                                  : 'mainEducationSave',
-    'change input[name=Enrolled]'                                 : 'changeCurrentlyEnrolled',
-    'change input[name=Junior]'                                   : 'changeJunior',
-    'change input[name=ContinueEducation]'                        : 'changeContinueEducation',
+   
+    'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' :'toggleAccordion',
+    'click #add-education'                                        :function () { this.callMethod(Education.toggleAddEducation); },
+    'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
+    'click #save-education'                                       :function () { this.callMethod(Education.saveEducation); },
+    'click #delete-education'                                     :'deleteEducation',
+    'click  #education-edit'                                      :'editEducation',
+
 
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
@@ -66,8 +68,9 @@ var ApplyView = Backbone.View.extend({
     this.data.languages        = this.data.languages || [];
     this.languageProficiencies = [];
     this.params = new URLSearchParams(window.location.search);
-    this.data.selectedStep = this.params.get('step') || this.data.currentStep;
-    this.initializeComponentEducation(options);
+    this.data.selectedStep = this.params.get('step') || this.data.currentStep;  
+	  this.data.editEducation= this.params.get('editEducation');
+    Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
 
@@ -93,9 +96,95 @@ var ApplyView = Backbone.View.extend({
       async: false,
       success: function (data) {
         this.languageProficiencies = data.languageProficiencies;
+        this.honors=data.academicHonors;
+        this.degreeTypes=data.degreeTypes;
+			
       }.bind(this),
     });
   },
+
+
+  
+  initializeCountriesSelect: function () {  
+    
+    $('#apply_country').select2({    
+      placeholder: '- Select -',    
+      minimumInputLength: 3,  
+      ajax: {
+        url: '/api/ac/country',
+        dataType: 'json',
+        data: function (term) {       
+          return { q: term };
+        },
+        results: function (data) {              
+          return { results: data };
+        },
+      },
+    
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+
+      formatNoMatches: 'No country found ',
+    });
+
+    $('#apply_country').on('change', function (e) {
+      validate({ currentTarget: $('#apply_country') });
+      this.countryCode = $('#apply_country').select2('data').code;
+      this.countryCode && this.loadCountrySubivisionData();
+    }.bind(this));
+
+    $('#apply_country').focus();
+  },
+
+  loadCountrySubivisionData: function () {
+    $.ajax({
+      url: '/api/ac/countrySubdivision/' + this.countryCode,
+      dataType: 'json',
+    }).done(function (data) {
+      this.initializeCountrySubdivisionSelect(data);
+    }.bind(this));
+  },
+
+ 
+
+  initializeCountrySubdivisionSelect: function (data) {
+    
+    $('#apply_countrySubdivision').select2({
+      placeholder: '- Select -',
+      data: { results: data, text: 'value' },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (item) {
+        return item.value;
+      },
+      formatSelection: function (item) {
+        return item.value;
+      },
+      formatNoMatches: 'No state found ',
+    });
+    if (data.length) {
+      $('#apply_countrySubdivision').removeAttr('disabled', true);
+      $('#apply_countrySubdivision').addClass('validate');
+      
+    } else {
+      $('#apply_countrySubdivision').attr('disabled', true);
+      $('#apply_countrySubdivision').removeClass('validate');
+      $('.apply_countrySubdivision').removeClass('usa-input-error');
+      $('.apply_countrySubdivision > .field-validation-error').hide();
+    }
+  
+    $('#apply_countrySubdivision').on('change', function (e) {
+      if ($('#apply_country').val() == 'United States') {
+        validate({ currentTarget: $('#apply_countrySubdivision') });
+      }  
+    });
+  },
+  
 
   validateField: function (e) {
     return validate(e);
@@ -163,223 +252,19 @@ var ApplyView = Backbone.View.extend({
   // end summary section
 
   // education section
-  initializeComponentEducation: function (options){
-    this.dataEducationArray=[];
-    this.dataEducation={};
-  },
-
+  
   renderComponentEducation: function (){
-    //this.$el.html(templates.applyEducation);
-    this.initializeCountriesSelect();
-  },
-  
-
-  initializeFormFieldsEducation: function (){
-    var data= this.dataEducation;
-   
-    $('input[name=Enrolled][value=' + data.isCurrentlyEnrolled +']').prop('checked', true);
-    $('input[name=Junior][value=' + data.isMinimumCompleted +']').prop('checked', true);
-    $('input[name=ContinueEducation][value=' + data.isEducationContinued +']').prop('checked', true);
-    this.$('#cumulative-gpa').val(data.cumulativeGpa);
-  },
-
-  initializeCountriesSelect: function () {  
     
-    $('#apply_country').select2({    
-      placeholder: '- Select -',    
-      minimumInputLength: 3,  
-      ajax: {
-        url: '/api/ac/country',
-        dataType: 'json',
-        data: function (term) {       
-          return { q: term };
-        },
-        results: function (data) {              
-          return { results: data };
-        },
-      },
-    
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-
-      formatSelection: function (obj, container, query) {
-        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
-      },
-
-      formatNoMatches: 'No country found ',
-    });
-
-    $('#apply_country').on('change', function (e) {
-      validate({ currentTarget: $('#apply_country') });
-      this.countryCode = $('#apply_country').select2('data').code;
-      this.countryCode && this.loadCountrySubivisionData();
-    }.bind(this));
-
-    $('#apply_country').focus();
-  },
-
-  loadCountrySubivisionData: function () {
-    $.ajax({
-      url: '/api/ac/countrySubdivision/' + this.countryCode,
-      dataType: 'json',
-    }).done(function (data) {
-      this.initializeCountrySubdivisionSelect(data);
-    }.bind(this));
-  },
-
-  getCompletedDateMonth:function (){
-    var monthName = $('#completion-month').val(); 
-   
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
-      'August', 'September', 'October', 'November', 'December'];
-    if( monthName.substring(0,1)=='0'){
-      monthName= monthName.substring(1);
-    }
-    else{
-      monthName;
-    }
-    return months[[monthName]-1]; 
-  },
-
-  initializeCountrySubdivisionSelect: function (data) {
-    
-    $('#apply_countrySubdivision').select2({
-      placeholder: '- Select -',
-      data: { results: data, text: 'value' },
-      dropdownCssClass: 'select2-drop-modal',
-      formatResult: function (item) {
-        return item.value;
-      },
-      formatSelection: function (item) {
-        return item.value;
-      },
-      formatNoMatches: 'No state found ',
-    });
-    if (data.length) {
-      $('#apply_countrySubdivision').removeAttr('disabled', true);
-      $('#apply_countrySubdivision').addClass('validate');
+    if(this.data.editEducation && this.data.selectedStep =='3'){
       
-    } else {
-      $('#apply_countrySubdivision').attr('disabled', true);
-      $('#apply_countrySubdivision').removeClass('validate');
-      $('.apply_countrySubdivision').removeClass('usa-input-error');
-      $('.apply_countrySubdivision > .field-validation-error').hide();
+      Education.getEducation.bind(this)();
+      // Education.toggleAddEducation.bind(this)();
+      Education.initializeAddEducationFields.bind(this)();
+      this.renderEducation();
     }
-  
-    $('#apply_countrySubdivision').on('change', function (e) {
-      if ($('#apply_country').val() == 'United States') {
-        validate({ currentTarget: $('#apply_countrySubdivision') });
-      }  
-    });
-  },
-  //Data for Add Education Page
-
-  getDataFromAddEducationPage:function (){
-    var modelData = {
-      schoolName: $('#school-name').val(),
-      countryId: $('#apply_country').val(),
-      postalCode:$('#postal-code').val(),
-      cityName: this.$('#city').val(),
-      countrySubdivisionId: $('#apply_countrySubdivision').val(),
-      degreeLevelId :$('#degree').val(),
-      completionMonth: $('#completion-month').val(),
-      completionYear: $('#completion-year').val(),
-      major : $('#major').val(),
-      minor: $('#minor').val(),
-      gpa: $('#GPA').val(),
-      gpaMax: $('#GPAMax').val(),
-      totalCreditsEarned: $('#credit-earned').val(),
-      creditSystem :$('[name=CreditSystem]:checked + label').text(),
-      honorsId: $('#honors').val(),
-      courseWork: $('#Coursework').val(),  
-      honors: $('#honors :selected').text(),
-      degreeLevel: $('#degree :selected').text(),
-      country:$('#apply_country').select2('data')? $('#apply_country').select2('data').value: '',
-      state:$('#apply_countrySubdivision').select2('data') ? $('#apply_countrySubdivision').select2('data').value: '',
-      monthName:this.getCompletedDateMonth(),
-
-    };
-    return modelData;
-  },
-
-  getDataFromEducationPage:function (){
-    var modelData = {
-      isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val(),
-      isMinimumCompleted:this.$('input[name=Junior]:checked').val(),
-      isEducationContinued: this.$('input[name=ContinueEducation]:checked').val(),
-      cumulativeGpa: this.$('#cumulative-gpa').val(),
-    };
-    return modelData;
-  },
-
-  getHonors: function () {
-    
-    $.ajax({
-      url: '/api/honors/' ,
-      type: 'GET',
-      async: false,
-      success: function (data) {
-        this.honors= data;
-      
-      }.bind(this),
-    });
-  },
-  getDegreeLevels: function () {
-    
-    $.ajax({
-      url: '/api/degreeLevels/' ,
-      type: 'GET',
-      async: false,
-      success: function (data) {
-        this.degreeLevels= data;
-       
-      }.bind(this),
-    });
-  },
-  
-  mainEducationSave:function (){
-    var data= this.getDataFromEducationPage();
-    // eslint-disable-next-line no-empty
-    if(!this.validateEducationFields()){
-      if(data.cumulativeGpa>=0 && data.cumulativeGpa<=2.99){
-        alert('testing');
-        this.$el.html(templates.applyIneligibleGPA);
-      }
-    }
-  },
-
-  saveEducation:function (){
-    this.getCompletedDateMonth();
-    var data= this.getDataFromAddEducationPage();   
-    if(!this.validateFields())
-    // eslint-disable-next-line no-empty
-    {
-     
-      $.ajax({
-        url: '/api/application/'+this.data.applicationId+'/Education',
-        type: 'POST',
-        data: data,
-        success: function (education) {
-          this.dataEducationArray.push(education);
-          
-          this.renderEducation();  
-          this.toggleAddEducationOff();
-        }.bind(this),
-        error: function (err) {
-          // display modal alert type error
-        }.bind(this),
-      });
-    }   
-  },
-
-  renderEducation: function (){   
-    var  educationPreviewTemplate= _.template(ApplyEducationPreviewTemplate)({
-      data:this.dataEducationArray,
-    });
-   
-    $('#education-preview-id').html(educationPreviewTemplate);
+    else if(this.data.selectedStep =='3'){
+      this.$el.html(templates.applyEducation(this.data));      
+    }    
   },
 
   deleteEducation:function (e){
@@ -394,118 +279,36 @@ var ApplyView = Backbone.View.extend({
         this.renderEducation(); 
       }.bind(this),
       error: function (err) {
-       
+           
       }.bind(this),
     });
+         
+  },
+  editEducation:function (e){
+    var educationId= $(e.currentTarget).attr('data-id');
+    // console.log(this);
+    this.dataEducationArray = _.filter(this.dataEducationArray, function (el) {
+      return el.educationId === educationId; 
+    });
+    var data = _.reduce( this.dataEducationArray, function ( e,item) {
+      return _.extend( e, item ); }, {} );
    
-    
+    Backbone.history.navigate('/apply/'+data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+    return this;       
   },
 
-  changeCurrentlyEnrolled: function (){
-    if($('[name=Enrolled]:checked').length>0){ 
-      $('#apply-enrolled').removeClass('usa-input-error');    
-      $('#apply-enrolled>.field-validation-error').hide();
-    }
-   
-  },
-  changeJunior:function (){
-    if($('[name=Junior]:checked').length >0){ 
-      $('#apply-junior').removeClass('usa-input-error');    
-      $('#apply-junior>.field-validation-error').hide();   
-    }
-  },
-
-  changeContinueEducation: function (){
-    if($('[name=ContinueEducation]:checked').length>0){ 
-      $('#apply-continue-education').removeClass('usa-input-error');    
-      $('#apply-continue-education>.field-validation-error').hide();   
-    }
-
-  },
-
-  validateFields: function () {
-    var children = this.$el.find( '.validate' );
-    var abort = false;
-
-   
-    _.each( children, function ( child ) {
-      var iAbort = validate( { currentTarget: child } );
-      abort = abort || iAbort;
-    } );
-
-    if(abort) {
-      $('.usa-input-error').get(0).scrollIntoView();
-    }
-    
-    return abort;
-  },
-
-  validateEducationFields: function () {
-    var children = this.$el.find( '.validate' );
-    var abort = false;
-
-    if($('[name=ContinueEducation]:checked').length==0){ 
-      $('#apply-continue-education').addClass('usa-input-error');    
-      $('#apply-continue-education>.field-validation-error').show();
-      abort=true;
-    }
-
-    if($('[name=Junior]:checked').length==0){ 
-      $('#apply-junior').addClass('usa-input-error');    
-      $('#apply-junior>.field-validation-error').show();
-      abort=true;
-    }
-
-    if($('[name=Enrolled]:checked').length==0){ 
-      $('#apply-enrolled').addClass('usa-input-error');    
-      $('#apply-enrolled>.field-validation-error').show();
-      abort=true;
-    }
-
-    _.each( children, function ( child ) {
-      var iAbort = validate( { currentTarget: child } );
-      abort = abort || iAbort;
-    } );
-
-    if(abort) {
-      $('.usa-input-error').get(0).scrollIntoView();
-    }
-    
-    return abort;
-  },
-
-  toggleAddEducation: function () { 
-    var dataEducation= this.getDataFromEducationPage();
-    this.dataEducation= dataEducation;
-   
-    this.getHonors();
-    this.getDegreeLevels();  
+  renderEducation:function (){ 
     var data= {
-      honors:this.honors,
-      degreeLevels:this.degreeLevels,
-    };   
-    var template = _.template(ApplyAddEducationTemplate)(data);
-    $('#search-results-loading').hide();
-    this.$el.html(template);
+      data:this.dataEducationArray,
+    }; 
+    $('#education-preview-id').html(templates.applyeducationPreview(data));
+  },
   
-    this.initializeCountriesSelect();
-    
-    setTimeout(function () {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, 50);
-  },
+  
+  
 
-  toggleAddEducationOff: function () { 
-    this.$el.html(_.template(ApplyEducationTemplate)());
-    this.initializeFormFieldsEducation();
-    this.renderEducation();  
-    setTimeout(function () {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, 50);
-  },
-
+  
+  
   // end education section
 
   // language section

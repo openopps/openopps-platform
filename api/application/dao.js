@@ -14,8 +14,10 @@ const applicationTasksQuery = 'SELECT ' +
   'LEFT JOIN office ON office.office_id = task.office_id ' +
   'WHERE application_task.application_id = ?';
 
-const lookupHonorsQuery= 'select * from lookup_code where lookup_code_type=\'HONORS\' ';
-const lookupDegreeLevelsQuery= 'select * from lookup_code where lookup_code_type=\'DEGREE_LEVEL\'';
+
+const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
+  'from country ' + 'join education on country.country_id = education.country_id ' + 
+  'where education.education_id = ? ';
 
 module.exports = function (db) {
   return {
@@ -35,9 +37,8 @@ module.exports = function (db) {
 
     query: {
       application: applicationQuery,
-      applicationTasks: applicationTasksQuery,
-      lookupHonors:lookupHonorsQuery,
-      lookupDegreeLevels:lookupDegreeLevelsQuery,
+      applicationTasks: applicationTasksQuery, 
+      country:countryQuery,
     },
   };
 };
