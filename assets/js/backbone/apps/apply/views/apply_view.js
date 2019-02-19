@@ -198,15 +198,60 @@ var ApplyView = Backbone.View.extend({
   // end summary section
 
   // education section
-  initializeComponentEducation: function (options){
-    this.dataEducationArray=[];
-    this.dataEducation={};
+  
+  renderComponentEducation: function (){
+    
+    if(this.data.editEducation && this.data.selectedStep =='3'){
+      
+      Education.getEducation.bind(this)();
+     
+      Education.initializeAddEducationFields.bind(this)();
+      
+    }
+    else if(this.data.selectedStep =='3'){
+      this.$el.html(templates.applyEducation(this.data));   
+      this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
+    }    
   },
 
-  renderComponentEducation: function (){
-    //this.$el.html(templates.applyEducation);
-    this.initializeCountriesSelect();
+  deleteEducation:function (e){
+    var educationId=$(e.currentTarget).attr('data-id');
+    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
+      return el.educationId === educationId; 
+    });
+    $.ajax({
+      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
+      type: 'Delete',     
+      success: function (data) {       
+        this.renderEducation(); 
+      }.bind(this),
+      error: function (err) {
+           
+      }.bind(this),
+    });
+         
   },
+  editEducation:function (e){
+    var educationId= $(e.currentTarget).attr('data-id');
+    // console.log(this);
+    this.dataEducationArray = _.filter(this.dataEducationArray, function (el) {
+      return el.educationId === educationId; 
+    });
+    var data = _.reduce( this.dataEducationArray, function ( e,item) {
+      return _.extend( e, item ); }, {} );
+   
+    Backbone.history.navigate('/apply/'+data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+    return this;       
+  },
+
+  renderEducation:function (){ 
+    var data= {
+      data:this.dataEducationArray,
+    }; 
+    $('#education-preview-id').html(templates.applyeducationPreview(data));
+  },
+  
+  // end education section
   
   initializeCountriesSelect: function () {  
     
