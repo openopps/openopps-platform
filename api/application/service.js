@@ -137,10 +137,14 @@ module.exports.findById = async function (applicationId) {
       db.query(dao.query.applicationTasks, applicationId),
       dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
       dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
+      dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { speakingProficiency: '', readingProficiency: '', writingProficiency: '' }}),
+      dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
     ]);
     application.tasks = results[0].rows;
-    application.education = results[1].rows;
-    application.experience = results[2].rows;
+    application.education = results[1];
+    application.experience = results[2];
+    application.language = results[3];
+    application.reference = results[4];
   }
   return application;
 };

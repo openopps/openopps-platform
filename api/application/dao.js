@@ -23,9 +23,21 @@ const applicationEducationQuery = 'SELECT @education.*, @country.*, @countrySubd
 
 const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySubdivision.* ' +
   'FROM @experience experience ' +
-  'JOIN @country country on country.country_id = education.country_id ' +
-  'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = education.country_subdivision_id ' +
+  'JOIN @country country on country.country_id = experience.country_id ' +
+  'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = experience.country_subdivision_id ' +
   'WHERE experience.application_id = ?';
+
+const applicationLanguageQuery = 'SELECT @language.*, @speakingProficiency.*, @readingProficiency.*, @writingProficiency.* ' +
+'FROM @application_language_skill language ' +
+'JOIN @lookup_code speakingProficiency on "speakingProficiency".lookup_code_id = language.speaking_proficiency_id ' +
+'JOIN @lookup_code readingProficiency on "readingProficiency".lookup_code_id = language.reading_proficiency_id ' +
+'JOIN @lookup_code writingProficiency on "writingProficiency".lookup_code_id = language.writing_proficiency_id ' +
+'WHERE language.application_id = ?';
+
+const applicationReferenceQuery = 'SELECT @reference.*, @referenceType.* ' +
+'FROM @reference reference ' +
+'JOIN @lookup_code referenceType on "referenceType".lookup_code_id = reference.reference_type_id ' +
+'WHERE reference.application_id = ?';
 
 const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join education on country.country_id = education.country_id ' + 
@@ -52,7 +64,9 @@ module.exports = function (db) {
       applicationTasks: applicationTasksQuery,
       applicationEducation: applicationEducationQuery,
       applicationExperience: applicationExperienceQuery,
-      country:countryQuery,
+      applicationLanguage: applicationLanguageQuery,
+      applicationReference: applicationReferenceQuery,
+      country: countryQuery,
     },
   };
 };
