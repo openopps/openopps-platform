@@ -207,6 +207,15 @@ module.exports.saveExperience = async function (attributes,done) {
   });
 };
 
+module.exports.deleteExperience= async function (experienceId){
+  await dao.Experience.delete('experience_id = ?', experienceId).then(async (experience) => {
+    return experience;
+  }).catch(err => {
+    log.info('delete: failed to delete Experience ', err);
+    return false;
+  });
+};
+
 module.exports.getEducation= async function (educationId){
   var country= (await dao.Country.db.query(dao.query.country,educationId)).rows[0];
   return await dao.Education.findOne('education_id = ?', educationId).then((education) => {  
@@ -217,6 +226,3 @@ module.exports.getEducation= async function (educationId){
     return null;
   });
 };
-
-
-
