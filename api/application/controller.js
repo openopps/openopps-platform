@@ -54,7 +54,7 @@ router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, 
 });
 
 router.post('/api/application/:id/language', auth, async (ctx, next) =>{
-  var result = await service.addLanguage(ctx.state.user.id, ctx.params.id, ctx.request.body);
+  var result = await service.saveLanguage(ctx.state.user.id, ctx.params.id, ctx.request.body);
   if (result) {
     ctx.status = result.err ? 409 : 200;
     ctx.body = result;
@@ -103,6 +103,10 @@ router.post('/api/application/:applicationId/experience',auth, async (ctx,next) 
       ctx.body = experience;
     }
   });
+});
+
+router.delete('/api/application/:id/experience/:experienceId',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteExperience(ctx.params.experienceId);
 });
 
 module.exports = router.routes();

@@ -64,7 +64,7 @@ module.exports.profileLanguages = (userId, applicationId, languageRecords) => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      return dao.LanguageSkill.insert(language);
+      return dao.ApplicationLanguageSkill.insert(language);
     } catch (err) {
       return { err: 'An error occured trying to import profile data.' };
     }

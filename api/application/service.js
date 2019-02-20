@@ -77,16 +77,18 @@ async function updateEducation ( educationId,data) {
 
 module.exports = {};
 
-module.exports.addLanguage = async function (userId, applicationId, data) {
-  await dao.LanguageSkill.findOne('application_id = ? and language_id = ?', applicationId, data.language.languageId).then(() => {
+module.exports.saveLanguage = async function (userId, applicationId, data) {
+  var record = data.language[0];
+  await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
     return { err: 'language already exists' };
   }).catch(async () => { 
-    return await dao.LanguageSkill.insert(_.extend(data.language, {
+    return await dao.ApplicationLanguageSkill.insert(_.extend(record, {
       createdAt: new Date(),
       updatedAt: new Date(),
+      applicationId: applicationId,
       userId: userId,
-    })).then(languageSkill => {
-      return languageSkill;
+    })).then(applicationLanguageSkill => {
+      return applicationLanguageSkill;
     }).catch(err => {
       return false;
     });
@@ -184,7 +186,7 @@ module.exports.updateApplication = async function (userId, applicationId, data) 
 
 module.exports.saveEducation = async function (attributes,done) { 
   attributes.updatedAt = new Date(); 
-  attributes.createdAt= new Date(),
+  attributes.createdAt= new Date();
   await dao.Education.insert(attributes).then(async (education) => {   
     return done(null, education);
   }).catch(err => {
@@ -228,6 +230,15 @@ module.exports.saveExperience = async function (attributes,done) {
   });
 };
 
+module.exports.deleteExperience= async function (experienceId){
+  await dao.Experience.delete('experience_id = ?', experienceId).then(async (experience) => {
+    return experience;
+  }).catch(err => {
+    log.info('delete: failed to delete Experience ', err);
+    return false;
+  });
+};
+
 module.exports.getEducation= async function (educationId){
   var country= (await dao.Country.db.query(dao.query.country,educationId)).rows[0];
   return await dao.Education.findOne('education_id = ?', educationId).then((education) => {  
@@ -238,6 +249,3 @@ module.exports.getEducation= async function (educationId){
     return null;
   });
 };
-
-
-
