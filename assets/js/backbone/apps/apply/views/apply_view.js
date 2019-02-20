@@ -2,6 +2,7 @@
 const _ = require('underscore');
 const Backbone = require('backbone');
 const $ = require('jquery');
+const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
 const nextSteps = require('./next_steps');
@@ -10,6 +11,7 @@ const nextSteps = require('./next_steps');
 var Experience = require('./experience');
 var Language = require('./language');
 var Education = require('./education');
+var Statement = require('./statement');
 
 
 var ApplyView = Backbone.View.extend({
@@ -17,9 +19,7 @@ var ApplyView = Backbone.View.extend({
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
     'click .apply-continue'                                       : 'applyContinue',
-    'click .usajobs-drawer[data-id=exp-1] .usajobs-drawer-button' : 'toggleAccordion',
-    'click .usajobs-drawer[data-id=exp-2] .usajobs-drawer-button' : 'toggleAccordion',
-    'click .usajobs-drawer[data-id=ref-1] .usajobs-drawer-button' : 'toggleAccordion',
+    'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
     'click .program-delete'                                       : 'deleteProgram',
 
@@ -33,14 +33,12 @@ var ApplyView = Backbone.View.extend({
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
 
     //education events
-   
-    'click .usajobs-drawer[data-id=edu-1] .usajobs-drawer-button' :'toggleAccordion',
-    'click #add-education'                                        :function () { this.callMethod(Education.toggleAddEducation); },
+    'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
     'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
-    'click #save-education'                                       :function () { this.callMethod(Education.saveEducation); },
-    'click #delete-education'                                     :'deleteEducation',
-    'click  #education-edit'                                      :'editEducation',
-    'click  #saveEducationContinue'                                  :function () { this.callMethod(Education.educationContinue); },
+    'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
+    'click #delete-education'                                     : 'deleteEducation',
+    'click #education-edit'                                       : 'editEducation',
+    'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
 
 
     //language events
@@ -49,8 +47,10 @@ var ApplyView = Backbone.View.extend({
     'click #save-language'                                        : function () { this.callMethod(Language.saveLanguage); },
 
     //statement events
-    'keypress #statement'                                         : 'statementCharacterCount',
-    'keydown #statement'                                          : 'statementCharacterCount',
+    'keypress #statement'                                         : function () { this.callMethod(Statement.statementCharacterCount); },
+    'keydown #statement'                                          : function () { this.callMethod(Statement.statementCharacterCount); },
+    'click #statementContinue'                                    : function () { this.callMethod(Statement.statementContinue); },
+    'click #statementCancel'                                      : function () { this.callMethod(Statement.cancel); },
 
     //review events
     'click .apply-submit'                                         : 'submitApplication',
@@ -61,9 +61,6 @@ var ApplyView = Backbone.View.extend({
     this.options = options;
     this.data = options.data;
     this.data = _.extend(this.data, {
-      accordion1: { open: false },
-      accordion2: { open: false },
-      accordion3: { open: false },
       firstChoice: _.findWhere(this.data.tasks, { sort_order: 1 }),
       secondChoice: _.findWhere(this.data.tasks, { sort_order: 2 }),
       thirdChoice: _.findWhere(this.data.tasks, { sort_order: 3 }),
@@ -90,6 +87,7 @@ var ApplyView = Backbone.View.extend({
     Experience.toggleOverseasExperienceDetails();
     Experience.toggleOverseasExperienceFilterOther();
     Experience.toggleSecurityClearanceDetails();
+    Statement.characterCount();
 
     $('.apply-hide').hide();
 
@@ -155,6 +153,26 @@ var ApplyView = Backbone.View.extend({
     element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
+  toggleDrawers: function (e) {
+    var element = $(e.currentTarget);
+    var target = element.siblings('.usajobs-drawer-content');
+    var open = element.attr('aria-expanded') == 'true';
+    if (!open) {
+      target.slideDown('fast', function () {
+        $('html, body').animate({
+          scrollTop: element.offset().top,
+        });
+        element.attr('aria-expanded', 'true');
+        target.attr('aria-hidden', 'false');
+      });
+    } else {
+      target.slideUp(function () {
+        element.attr('aria-expanded', 'false');
+        target.attr('aria-hidden', 'true');
+      });
+    }
+  },
+
   applyContinue: function (e) {
     e.preventDefault && e.preventDefault();
     this[e.currentTarget.dataset.action] && this[e.currentTarget.dataset.action]();
@@ -198,15 +216,60 @@ var ApplyView = Backbone.View.extend({
   // end summary section
 
   // education section
-  initializeComponentEducation: function (options){
-    this.dataEducationArray=[];
-    this.dataEducation={};
+  
+  renderComponentEducation: function (){
+    
+    if(this.data.editEducation && this.data.selectedStep =='3'){
+      
+      Education.getEducation.bind(this)();
+     
+      Education.initializeAddEducationFields.bind(this)();
+      
+    }
+    else if(this.data.selectedStep =='3'){
+      this.$el.html(templates.applyEducation(this.data));   
+      this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
+    }    
   },
 
-  renderComponentEducation: function (){
-    //this.$el.html(templates.applyEducation);
-    this.initializeCountriesSelect();
+  deleteEducation:function (e){
+    var educationId=$(e.currentTarget).attr('data-id');
+    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
+      return el.educationId === educationId; 
+    });
+    $.ajax({
+      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
+      type: 'Delete',     
+      success: function (data) {       
+        this.renderEducation(); 
+      }.bind(this),
+      error: function (err) {
+           
+      }.bind(this),
+    });
+         
   },
+  editEducation:function (e){
+    var educationId= $(e.currentTarget).attr('data-id');
+    // console.log(this);
+    this.dataEducationArray = _.filter(this.dataEducationArray, function (el) {
+      return el.educationId === educationId; 
+    });
+    var data = _.reduce( this.dataEducationArray, function ( e,item) {
+      return _.extend( e, item ); }, {} );
+   
+    Backbone.history.navigate('/apply/'+data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+    return this;       
+  },
+
+  renderEducation:function (){ 
+    var data= {
+      data:this.dataEducationArray,
+    }; 
+    $('#education-preview-id').html(templates.applyeducationPreview(data));
+  },
+  
+  // end education section
   
   initializeCountriesSelect: function () {  
     
