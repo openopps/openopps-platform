@@ -612,6 +612,10 @@
     }
   }
 
+  .program-title-body-container {
+    margin-left: 4rem;
+  }
+
   .program-choice {
     margin-top: $size-M;
   }
@@ -639,7 +643,7 @@
     }
 
     @include media($L) {
-      padding: $size-default $size-M;
+      padding: $size-default $size-M $size-default $size-default;
     }
 
     &.review-application {
@@ -656,8 +660,25 @@
       }
     }
 
+    .sorting-container {
+      display: block;
+
+      .sorting-arrows {
+        display: block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      svg.svg-inline--fa {
+        display: block;
+        height: 2.5rem;
+        width: 1.7rem;
+      }
+    }
+
     .usajobs-card__title {
-      width: 80%;
+      width: 75%;
       display: inline-block;
 
       @include media($M) {

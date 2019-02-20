@@ -105,4 +105,8 @@ router.post('/api/application/:applicationId/experience',auth, async (ctx,next) 
   });
 });
 
+router.delete('/api/application/:id/experience/:experienceId',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteExperience(ctx.params.experienceId);
+});
+
 module.exports = router.routes();

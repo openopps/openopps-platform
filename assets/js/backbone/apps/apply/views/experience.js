@@ -126,7 +126,7 @@ var experience = {
   validateAddExperienceFields: function () {
     var abort = false;
     return abort;
-  }
+  },
 };
 
 module.exports = experience;
