@@ -5,11 +5,10 @@ const Backbone = require('backbone');
 
 
 function renderEducation (){ 
-  var data= {
-    data:this.dataEducationArray,
-  };
+
  
-  $('#education-preview-id').html(templates.applyeducationPreview(data));
+ 
+  $('#education-preview-id').html(templates.applyeducationPreview(this.data));
 }
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
@@ -254,10 +253,9 @@ var education = {
         type: 'PUT',
         data: data,
         success: function (education) {
-          this.dataEducationArray.push(education);
-          Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-          this.data.editEducation='';
-          renderEducation.bind(this)();  
+       
+          renderEducation.bind(this)();
+          Backbone.history.loadUrl(Backbone.history.getFragment()); 
           toggleAddEducationOff.bind(this)();
         }.bind(this),
         error: function (err) {
