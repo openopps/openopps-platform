@@ -132,15 +132,20 @@ module.exports.deleteApplicationTask = async function (userId, applicationId, ta
 
 module.exports.findById = async function (applicationId) {
   var application = (await dao.Application.query(dao.query.application, applicationId))[0];
-  var results = await Promise.all([
-    db.query(dao.query.applicationTasks, applicationId),
-    db.query(dao.query.applicationEducation, applicationId),
-    db.query(dao.query.applicationExperience, applicationId),
-  ]);
-  application.tasks = results[0].rows;
-  application.education = results[1].rows;
-  application.experience = results[2].rows;
-
+  if(application) {
+    var results = await Promise.all([
+      db.query(dao.query.applicationTasks, applicationId),
+      dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
+      dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
+      dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { speakingProficiency: '', readingProficiency: '', writingProficiency: '' }}),
+      dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
+    ]);
+    application.tasks = results[0].rows;
+    application.education = results[1];
+    application.experience = results[2];
+    application.language = results[3];
+    application.reference = results[4];
+  }
   return application;
 };
 
