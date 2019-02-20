@@ -18,13 +18,13 @@ const applicationTasksQuery = 'SELECT ' +
 const applicationEducationQuery = 'SELECT education.*, country.value as country_name, country_subdivision.value as country_subdivision_name ' +
   'FROM education ' + 
   'JOIN country on country.country_id = education.country_id ' +
-  'JOIN country_subdivision on country_subdivision.country_subdivision_id = education.country_subdivision_id ' +
+  'LEFT JOIN country_subdivision on country_subdivision.country_subdivision_id = education.country_subdivision_id ' +
   'WHERE education.application_id = ?';
 
 const applicationExperienceQuery = 'SELECT experience.*, country.value as country_name, country_subdivision.value as country_subdivision_name ' +
   'FROM experience ' +
   'JOIN country on country.country_id = experience.country_id ' +
-  'JOIN country_subdivision on country_subdivision.country_subdivision_id = experience.country_subdivision_id ' +
+  'LEFT JOIN country_subdivision on country_subdivision.country_subdivision_id = experience.country_subdivision_id ' +
   'WHERE experience.application_id = ?';
 
 const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
