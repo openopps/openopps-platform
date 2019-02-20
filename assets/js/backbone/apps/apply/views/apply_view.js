@@ -12,6 +12,7 @@ var Experience = require('./experience');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
+var ModalComponent = require('../../../components/modal');
 
 
 var ApplyView = Backbone.View.extend({
@@ -31,6 +32,7 @@ var ApplyView = Backbone.View.extend({
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
     'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
+    'click .delete-record'                                        : 'deleteRecord',
 
     //education events
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
@@ -390,6 +392,62 @@ var ApplyView = Backbone.View.extend({
   cleanup: function () {
     $('.apply-hide').show();
     removeView(this);
+  },
+
+  deleteRecord: function (e) {
+    var recordData = $(e.currentTarget).data(),
+        applicationData = this.data;
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'delete-record',
+      modalTitle: 'Delete ' + recordData.section,
+      modalBody: 'Are you sure you want to delete ' + recordData.name + '?',
+      primary: {
+        text: 'Delete',
+        action: function () {
+          $.ajax({
+            url: '/api/application/'+ applicationData.applicationId +'/' + recordData.section + '/'+ recordData.id,
+            type: 'Delete',     
+            success: function (data) {
+              var recordList = [];
+              _.each(applicationData[recordData.section], function (element) {
+                if (element[recordData.section + '_id'] != recordData.id) {
+                  recordList.push(element);
+                }
+              });
+              applicationData[recordData.section] = recordList;
+              $(e.currentTarget).closest('li').remove();
+              this.modalComponent.cleanup();
+            }.bind(this),
+            error: function (err) {
+              this.modalComponent.cleanup();
+            }.bind(this),
+          });
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+    }).render();
+  },
+
+  validateFields () {
+    var children = this.$el.find( '.validate' );
+    var abort = false;
+    
+    _.each( children, function ( child ) {
+      var iAbort = validate( { currentTarget: child } );
+      abort = abort || iAbort;
+    } );
+    
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+        
+    return abort;
   },
 });
 
