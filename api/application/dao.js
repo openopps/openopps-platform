@@ -6,7 +6,8 @@ const applicationQuery = 'SELECT @application.* ' +
   'WHERE application.application_id = ?';
 
 const applicationTasksQuery = 'SELECT ' +
-  'application_task.application_task_id, application_task.sort_order, ' +
+  'application_task.application_task_id, application_task.application_id, ' +
+  'application_task.task_id, application_task.sort_order, ' +
   'task.title, bureau.name as bureau, office.name as office ' +
   'FROM application_task ' +
   'JOIN task ON task.id = application_task.task_id ' +
@@ -40,7 +41,7 @@ module.exports = function (db) {
     Education: dao({ db: db, table: 'education' }),
     Experience: dao({ db: db, table: 'experience' }),
     Language: dao({ db: db, table: 'language' }),
-    LanguageSkill: dao({ db: db, table: 'language_skill' }),
+    ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
     LookupCode:dao({ db: db, table: 'lookup_code' }),
     Reference:dao({ db:db, table:'reference'}),
     Task: dao({ db: db, table: 'task' }),

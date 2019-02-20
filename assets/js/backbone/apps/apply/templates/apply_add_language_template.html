@@ -24,22 +24,22 @@
             <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select at least one language.</span>
             <input id="languageId" class="dropdown" data-validate="empty" />
           </div>
-            <label for="spoken-skill-level">
+            <label for="speaking-skill-level">
               <h4>Speaking language skill level</h4>
             </label>
-            <div class="form-group required-input" id="spoken-skill">
+            <div class="form-group required-input" id="speaking-skill">
               <fieldset class="usa-fieldset-inputs usa-sans">
-                <legend class="usa-sr-only">Spoken language skill level</legend>
+                <legend class="usa-sr-only">Speaking language skill level</legend>
                 <ul class="usa-unstyled-list">
                   <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
                     <li>
-                      <input id="spoken-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="spoken-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
-                      <label for="spoken-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                      <input id="speaking-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="speaking-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="speaking-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
                     </li>
                   <% }) %>
                 </ul>
               </fieldset>
-              <span class="field-validation-error error-empty" style="display:none;">You must select spoken language skill level.</span>
+              <span class="field-validation-error error-empty" style="display:none;">You must select speaking language skill level.</span>
             </div>
             <label for="written-skill-level">
               <h4>Writing language skill level</h4>

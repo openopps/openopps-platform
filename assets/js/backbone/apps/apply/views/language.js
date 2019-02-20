@@ -1,4 +1,5 @@
 var $ = require('jquery');
+const _ = require('underscore');
 const templates = require('./templates');
 
 function initializeLanguagesSelect () {
@@ -37,13 +38,45 @@ function initializeLanguagesSelect () {
 
 function resetLanguages (e) {
   $('#languageId').select2('data', null);  
-  $("input[name='spoken-skill-level'][id='spoken-none']").prop('checked', true);
+  $("input[name='speaking-skill-level'][id='speaking-none']").prop('checked', true);
   $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
   $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
 }
 
+function validateLanguage (e) {
+  var abort=false;   
+        
+  if($('#languageId').val() ==''){
+    $('#language-select').addClass('usa-input-error'); 
+    $('span#lang-id-val.field-validation-error').show();
+    abort=true;
+  }
+  else{
+    $('span#lang-id-val.field-validation-error').hide(); 
+  }
+    
+  if(abort) {
+    $('.usa-input-error').get(0).scrollIntoView();
+  }
+  return abort; 
+}
+
+function getDataFromLanguagePage () {
+  var modelData = {
+    languageId:$('#languageId').val(),
+    // readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
+    readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
+    // selectLanguage:$('#languageId').select2('data').value,      
+    speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
+    // speakingSkillLevel:$('[name=speaking-skill-level]:checked + label').text(),
+    writingProficiencyId:$('[name=written-skill-level]:checked').val(),
+    // writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
+  };
+  return modelData;
+}
+
 var language = {
-  deleteLanguage: function (e){
+  deleteLanguage: function (e) {
     var dataAttr=$(e.currentTarget).attr('data-id');
     this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
     var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
@@ -51,57 +84,26 @@ var language = {
     renderLanguages(); 
   },
     
-  validateLanguage:function (e){
-    var abort=false;   
-        
-    if($('#languageId').val() ==''){
-      $('#language-select').addClass('usa-input-error'); 
-      $('span#lang-id-val.field-validation-error').show();
-      abort=true;
-    }
-    else{
-      $('span#lang-id-val.field-validation-error').hide(); 
-    }
-    
-    if(abort) {
-      $('.usa-input-error').get(0).scrollIntoView();
-    }
-    return abort; 
-  },
-      
-  getDataFromLanguagePage: function (){
-    var modelData = {
-      languageId:$('#languageId').val(),
-      readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
-      readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
-      selectLanguage:$('#languageId').select2('data').value,      
-      speakingProficiencyId:$('[name=spoken-skill-level]:checked').val(),
-      spokenSkillLevel:$('[name=spoken-skill-level]:checked + label').text(),
-      writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-      writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
-    };
-    return modelData;
-  },
-    
-  saveLanguage:function (){
+  saveLanguage: function () {
     $('.usajobs-alert--error').hide();
-    if(!this.validateLanguage()){
-      var language = this.getDataFromLanguagePage();
+    var data = getDataFromLanguagePage();
+    this.dataLanguageArray.push(data);
+    if(!validateLanguage()) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/language',
         method: 'POST',
         contentType: 'application/json',
-        data: {
+        data: JSON.stringify({
           applicationId: this.data.applicationId,
-          language: language,
+          language: this.dataLanguageArray,
           updatedAt: this.data.updatedAt,
-        },
+        }),
       }).done(function (result) {
         this.dataLanguageArray.push(result.language);
         this.data.updatedAt = result.updatedAt;
         this.$el.html(templates.applyLanguage(this.data));
         this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: 1, selectedStep: 1 });
+        this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
         window.scrollTo(0, 0);
       }.bind(this)).fail(function (err) {
         if(err.statusCode == 400) {
@@ -112,6 +114,23 @@ var language = {
         }
       });
     }  
+  },
+
+  saveLanguageContinue: function () {
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        applicationId: this.data.applicationId,
+        currentStep: 4,
+        updatedAt: this.data.updatedAt,
+      }),
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 5 });
+      window.scrollTo(0, 0);
+    }.bind(this));
   },
 
   renderLanguages: function () {

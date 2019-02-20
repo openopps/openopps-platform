@@ -300,8 +300,9 @@ var education = {
       type: 'GET',
       async:false,
       success: function (data) {        
-        this.educationData =data;       
-        toggleAddEducation.bind(this)();        
+        this.educationData =data;              
+        toggleAddEducation.bind(this)();   
+        this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });  
       }.bind(this),
       error: function (err) {     
       }.bind(this),
@@ -319,7 +320,7 @@ var education = {
     var template = templates.applyAddEducation(data);
     $('#search-results-loading').hide();
     this.$el.html(template); 
-
+    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
     initializeCountriesSelect.bind(this)();      
     setTimeout(function () {
       document.body.scrollTop = 0; // For Safari
@@ -336,6 +337,7 @@ var education = {
     this.$el.html(templates.applyEducation());
     initializeFormFieldsEducation.bind(this)();
     renderEducation.bind(this)();
+    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
     setTimeout(function () {
       document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
