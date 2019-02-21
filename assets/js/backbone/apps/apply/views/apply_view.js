@@ -226,7 +226,7 @@ var ApplyView = Backbone.View.extend({
       Education.getEducation.bind(this)();
      
       Education.initializeAddEducationFields.bind(this)();
-      
+  
     }
     else if(this.data.selectedStep =='3'){
       this.$el.html(templates.applyEducation(this.data));
