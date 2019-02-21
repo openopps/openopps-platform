@@ -10,11 +10,14 @@
             Please describe why you're seeking an internship. Include your objectives and how your academic courses and other 
             experiences relate to the three internship opportunities you're applying to. (2,500 character maximum)
           </p>
-          <div class="required-input">
+          <div class="form-group required-input">
             <label for="Statement">
               <h5 class="usajobs-form__label-header">Paste or type your statement here.</h5>
             </label>
-            <textarea id="statement" maxlength="2500" name="statement"><%- statementOfInterest %></textarea>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a statement for this application.</span>
+            <span class="field-validation-error error-count2500" style="display:none;">The statement must be no more than 2500 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <textarea id="statement" class="fullwidth form-control validate" name="statement" data-validate="empty,count2500,html"><%- statementOfInterest %></textarea>
             <p class="usajobs-form__help-brief" id="statement-count">
               (2500 characters remaining)
             </p>
@@ -23,7 +26,7 @@
 
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
-            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="statementCancel">Back</button>
+            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
             <a class="usa-button usa-button-primary apply-continue" id="statementContinue" data-action="statementContinue">Save and continue</a>
           </div>
         </div>
@@ -46,15 +49,6 @@
         <li>Highlight any disadvantages you've overcome or other relevant unique experiences and how it will help you successfully complete the internship.</li>
         <li>Expand on any of the questions asked in the application, such as your language ability or other special skills.</li>
       </ul>
-      <!-- <div class="usa-grid">
-        <p>
-          You must only list degrees from accredited schools or other education programs.
-        </p>
-        <p>
-          <a href="https://www.ed.gov/accreditation" target="_blank" rel="noopen nofollow">
-            <span class="sr-only">Opens in a new window</span>Look up your school</a> at the U.S. Department of Education.
-        </p>
-      </div> -->
     </div>
   </aside>
 </div>
