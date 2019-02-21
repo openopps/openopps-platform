@@ -34,13 +34,15 @@ var experience = {
     var endDateValue = $('#end-month').val() + '-01-' + $('#end-year').val();
     var startDate = new Date(startDateValue);
     var endDate = new Date(endDateValue);
+    var countryData = $('#apply_country').select2('data');
+    var countrySubdivisionData = $('#apply_countrySubdivision').select2('data');
     var modelData = {
       applicationId: this.data.applicationId,
       employerName: $('#employer-name').val(),
       addressLineOne: $('#street-address').val(),
       addressLineTwo: $('#street-address2').val(),
-      countryId: $('#apply_country').val(),
-      countrySubdivisionId: $('#apply_countrySubdivision').val(),
+      country: countryData,
+      countrySubdivision: countrySubdivisionData,
       postalCode: $('#postal-code').val(),
       cityName: $('#city').val(),
       formalTitle: $('#job-title').val(),
@@ -56,12 +58,17 @@ var experience = {
     if(!this.validateFields() && !experience.validateAddExperienceFields()) {
       var data = experience.getDataFromAddExperiencePage.bind(this)();
       var callback = experience.toggleExperienceOff.bind(this);
-      console.log(data);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience',
         type: 'POST',
-        data: data,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
         success: function (experience) {
+          if (this.data.experience && $.isArray(this.data.experience)) {
+            this.data.experience.push(experience);
+          } else {
+            this.data.experience = [experience];
+          }
           callback();
         }.bind(this),
         error: function (err) {

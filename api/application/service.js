@@ -240,6 +240,8 @@ module.exports.saveEducation = async function (attributes,done) {
 module.exports.saveExperience = async function (attributes,done) { 
   attributes.updatedAt = new Date(); 
   attributes.createdAt = new Date();
+  attributes.countryId = attributes.country.id;
+  attributes.countrySubdivisionId = attributes.countrySubdivision.id;
   await dao.Experience.insert(attributes).then(async (experience) => {   
     return done(null, experience);
   }).catch(err => {

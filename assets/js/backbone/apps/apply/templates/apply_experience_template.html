@@ -15,12 +15,12 @@
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
             <% _.each(experience, function (e, index) { %>
             <li class="usajobs-drawer" data-section="experience" data-id="exp-1">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-1"><%= e.formal_title %></button>
+              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-1"><%= e.formalTitle %></button>
               <dl class="usajobs-drawer-face">
-                <dt><%= e.employer_name %></dt>
+                <dt><%= e.employerName %></dt>
                 <dd>
-                  <% var startDate = new Date(e.start_date), 
-                         endDate = new Date(e.end_date),
+                  <% var startDate = new Date(e.startDate), 
+                         endDate = new Date(e.endDate),
                          monthNames = [
                           'January', 'February', 'March',
                           'April', 'May', 'June', 'July',
@@ -39,11 +39,11 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Street address</h5>
-                        <p class="usajobs-drawer-content__item-content"><%= e.address_line_one %></p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.addressLineOne %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Country</h5>
-                        <p class="usajobs-drawer-content__item-content"><%= e.country_name %></p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.country.value %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Salary</h5>
@@ -59,15 +59,15 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
-                        <p class="usajobs-drawer-content__item-content"><%= e.city_name %></p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.cityName %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
-                        <p class="usajobs-drawer-content__item-content"><%= e.country_subdivision_name %></p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.countrySubdivision.value %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
-                        <p class="usajobs-drawer-content__item-content"><%= e.postal_code %></p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.postalCode %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Average hours per week</h5>
@@ -89,8 +89,8 @@
                 <div class="usajobs-button-bar--split">
                   <div class="usajobs-button-bar__body">
                     <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="<%= e.experience_id %>" data-name="<%= e.formal_title %>" data-section="experience" data-record="job">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/<%= e.experience_id %>">Edit</a>
+                      data-id="<%= e.experienceId %>" data-name="<%= e.formalTitle %>" data-section="experience" data-record="job">Delete</a>
+                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/<%= e.experienceId %>">Edit</a>
                   </div>
                 </div>
               </div>
