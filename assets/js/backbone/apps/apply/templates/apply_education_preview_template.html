@@ -1,14 +1,14 @@
 
- <% _.each(education, function (d,index) { %>
+ 
   <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
      <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
+        <% _.each(education, function (d,index) { %>
        <li class="usajobs-drawer" data-section="education" data-id="edu-1">
          <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
          <dl class="usajobs-drawer-face">
            <dt><%- d.schoolName %></dt>
            <% if (d.completionMonth) { %>
-           <dd>
-                  
+           <dd>          
              <%= d.completionMonth  + '  ' + d.completionYear %>
            </dd>
            <% } %>
@@ -100,13 +100,13 @@
            <div class="usajobs-button-bar--split">
              <div class="usajobs-button-bar__body">
                <a class="usajobs-button-bar__delete delete-record" id="delete-education" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                 data-id="<%-d.educationId%>" data-section="education" data-record="school">Delete</a>
+                 data-id="<%-d.educationId%>" data-section="education" data-name="<%= d.degreeLevel.value %>" data-record="school">Delete</a>
                <a href="javascript:void(0)" id="education-edit" class="usa-button usajobs-button-bar__edit" data-id="<%-d.educationId%>" href="/">Edit</a>
              </div>
            </div>
          </div>
        </li>
-       
+       <% }); %> 
      </ul>
    </div>
-   <% }); %>
+  
