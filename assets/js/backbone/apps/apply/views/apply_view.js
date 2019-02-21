@@ -14,7 +14,6 @@ var Education = require('./education');
 var Statement = require('./statement');
 var ModalComponent = require('../../../components/modal');
 
-
 var ApplyView = Backbone.View.extend({
   events: {
     'blur .validate'                                              : 'validateField',
@@ -38,10 +37,8 @@ var ApplyView = Backbone.View.extend({
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
     'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
-    
     'click #education-edit'                                       : 'editEducation',
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
-
 
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
@@ -50,10 +47,9 @@ var ApplyView = Backbone.View.extend({
     'click #edit-language'                                        : function () { this.callMethod(Language.deleteLanguage); },
     
     //statement events
-    'keypress #statement'                                         : function () { this.callMethod(Statement.statementCharacterCount); },
-    'keydown #statement'                                          : function () { this.callMethod(Statement.statementCharacterCount); },
+    'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
+    'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
     'click #statementContinue'                                    : function () { this.callMethod(Statement.statementContinue); },
-    'click #statementCancel'                                      : function () { this.callMethod(Statement.cancel); },
 
     //review events
     'click .apply-submit'                                         : 'submitApplication',
@@ -139,21 +135,6 @@ var ApplyView = Backbone.View.extend({
     }.bind(this)).fail(function () {
       showWhoopsPage();
     });
-  },
-
-  toggleAccordion: function (e) {
-    var element = $(e.currentTarget);
-    this.data.accordion1.open = !this.data.accordion1.open;
-    element.attr('aria-expanded', this.data.accordion1.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion1.open);
-
-    this.data.accordion2.open = !this.data.accordion2.open;
-    element.attr('aria-expanded', this.data.accordion2.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion2.open);
-
-    this.data.accordion3.open = !this.data.accordion3.open;
-    element.attr('aria-expanded', this.data.accordion3.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
   toggleDrawers: function (e) {
@@ -346,34 +327,6 @@ var ApplyView = Backbone.View.extend({
   },
 
   // statement section
-  statementCharacterCount: function () {
-    $('#statement').charCounter(2500, {
-      container: '#statement-count',
-    });
-  },
-
-  statementContinue: function () {
-    this.data.currentStep = 6;
-    this.data.selectedStep = 6;
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId,
-      method: 'PUT',
-      data: {
-        applicationId: this.data.applicationId,
-        currentStep: 6,
-        statementOfInterest: $('#statement').val(),
-        updatedAt: this.data.updatedAt,
-      },
-    }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;
-      this.data.statementOfInterest = result.statementOfInterest;
-      this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
-      this.$el.html(templates.applyReview(this.data));
-      this.$el.localize();
-      this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
-      window.scrollTo(0, 0);
-    }.bind(this));
-  },
   // end statement section
 
   // review section
