@@ -27,11 +27,12 @@ const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySu
   'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = experience.country_subdivision_id ' +
   'WHERE experience.application_id = ?';
 
-const applicationLanguageQuery = 'SELECT @language.*, @speakingProficiency.*, @readingProficiency.*, @writingProficiency.* ' +
+const applicationLanguageQuery = 'SELECT @language.*, @details.*, @speakingProficiency.*, @readingProficiency.*, @writingProficiency.* ' +
 'FROM @application_language_skill language ' +
 'JOIN @lookup_code speakingProficiency on "speakingProficiency".lookup_code_id = language.speaking_proficiency_id ' +
 'JOIN @lookup_code readingProficiency on "readingProficiency".lookup_code_id = language.reading_proficiency_id ' +
 'JOIN @lookup_code writingProficiency on "writingProficiency".lookup_code_id = language.writing_proficiency_id ' +
+'LEFT JOIN @language details on language.language_id = details.language_id ' +
 'WHERE language.application_id = ?';
 
 const applicationReferenceQuery = 'SELECT @reference.*, @referenceType.* ' +

@@ -63,6 +63,10 @@ router.post('/api/application/:id/language', auth, async (ctx, next) =>{
   }
 });
 
+router.delete('/api/application/:id/language/:applicationLanguageSkillId/',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteLanguage(ctx.params.applicationLanguageSkillId);
+});
+
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;
