@@ -4,7 +4,7 @@
     <div class="usajobs-process_flow-progress_indicator-container">
       <div class="usajobs-progress_indicator" role="navigation" aria-label="Secondary">
         <div class="usajobs-progress_indicator__body">
-          <a href="javascript:void(0);" data-id="0" class="usajobs-progress_indicator__step" title="Select programs">
+          <a href="javascript:void(0);" data-id="0" class="usajobs-progress_indicator__step <%= selectedStep == 1 ? 'is-current' : currentStep > 1 ? 'has-visit' : 'is-disabled' %>" title="Select programs">
             <div class="usajobs-progress_indicator__number">
               <span class="circle">1</span>
             </div>
@@ -15,7 +15,7 @@
               </h5>
             </div>
           </a>
-          <a href="javascript:void(0);" data-id="1" class="usajobs-progress_indicator__step" title="Experience &amp; References">
+          <a href="javascript:void(0);" data-id="1" class="usajobs-progress_indicator__step <%= selectedStep == 2 ? 'is-current' : currentStep > 2 ? 'has-visit' : 'is-disabled' %>" title="Experience &amp; References">
             <div class="usajobs-progress_indicator__number">
               <span class="circle">2</span>
             </div>
@@ -26,7 +26,7 @@
               </h5>
             </div>
           </a>
-          <a href="javascript:void(0);" data-id="2" class="usajobs-progress_indicator__step" title="Education &amp; Transcript">
+          <a href="javascript:void(0);" data-id="2" class="usajobs-progress_indicator__step <%= selectedStep == 3 ? 'is-current' : currentStep > 3 ? 'has-visit' : 'is-disabled' %>" title="Education &amp; Transcript">
             <div class="usajobs-progress_indicator__number">
               <span class="circle">3</span>
             </div>
@@ -37,7 +37,7 @@
               </h5>
             </div>
           </a>
-          <a href="javascript:void(0);" data-id="3" class="usajobs-progress_indicator__step" title="Languages &amp; Skills">
+          <a href="javascript:void(0);" data-id="3" class="usajobs-progress_indicator__step <%= selectedStep == 4 ? 'is-current' : currentStep > 4 ? 'has-visit' : 'is-disabled' %>" title="Languages &amp; Skills">
             <div class="usajobs-progress_indicator__number">
               <span class="circle">4</span>
             </div>
@@ -48,7 +48,7 @@
               </h5>
             </div>
           </a>
-          <a href="javascript:void(0);" data-id="4" class="usajobs-progress_indicator__step" title="Statement of interest">
+          <a href="javascript:void(0);" data-id="4" class="usajobs-progress_indicator__step <%= selectedStep == 5 ? 'is-current' : currentStep > 5 ? 'has-visit' : 'is-disabled' %>" title="Statement of interest">
             <div class="usajobs-progress_indicator__number">
               <span class="circle">5</span>
             </div>
