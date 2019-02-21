@@ -38,7 +38,7 @@ var ApplyView = Backbone.View.extend({
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
     'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
-    'click #delete-education'                                     : 'deleteEducation',
+    
     'click #education-edit'                                       : 'editEducation',
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
 
@@ -229,46 +229,24 @@ var ApplyView = Backbone.View.extend({
       
     }
     else if(this.data.selectedStep =='3'){
-      this.$el.html(templates.applyEducation(this.data));   
+      this.$el.html(templates.applyEducation(this.data));
+      this.renderEducation();   
       this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
     }    
   },
+  
 
-  deleteEducation:function (e){
-    var educationId=$(e.currentTarget).attr('data-id');
-    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    $.ajax({
-      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
-      type: 'Delete',     
-      success: function (data) {       
-        this.renderEducation(); 
-      }.bind(this),
-      error: function (err) {
-           
-      }.bind(this),
-    });
-         
-  },
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
     // console.log(this);
-    this.dataEducationArray = _.filter(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    var data = _.reduce( this.dataEducationArray, function ( e,item) {
-      return _.extend( e, item ); }, {} );
-   
-    Backbone.history.navigate('/apply/'+data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+  
+    Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },
 
   renderEducation:function (){ 
-    var data= {
-      data:this.dataEducationArray,
-    }; 
-    $('#education-preview-id').html(templates.applyeducationPreview(data));
+   
+    $('#education-preview-id').html(templates.applyeducationPreview(this.data));
   },
   
   // end education section
@@ -397,6 +375,7 @@ var ApplyView = Backbone.View.extend({
   deleteRecord: function (e) {
     var recordData = $(e.currentTarget).data(),
         applicationData = this.data;
+  
     this.modalComponent = new ModalComponent({
       el: '#site-modal',
       id: 'delete-record',
@@ -418,6 +397,7 @@ var ApplyView = Backbone.View.extend({
               applicationData[recordData.section] = recordList;
               $(e.currentTarget).closest('li').remove();
               this.modalComponent.cleanup();
+            
             }.bind(this),
             error: function (err) {
               this.modalComponent.cleanup();
