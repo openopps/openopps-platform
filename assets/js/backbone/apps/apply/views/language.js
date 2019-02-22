@@ -42,24 +42,6 @@ function resetLanguages (e) {
   $("input[name='written-skill-level'][id='written-none']").prop('checked', true);
   $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
 }
-
-function renderLanguages () {
-  // var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
-  //   data: this.dataLanguageArray,     
-  // });
-  // $('#lang-1').html(languageTemplate);
-
-  var data = {
-    language: this.data.language,
-  };
-  
-  var template = templates.applyLanguage(data);
-  
-  this.$el.html(template);
-  this.$el.localize();
-  this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
-  window.scrollTo(0, 0);
-}
       
 function validateLanguage (e) {
   var abort=false;   
@@ -90,24 +72,23 @@ function getDataFromLanguagePage () {
 }
 
 var language = {
-  saveLanguage: function () {
+  saveLanguage: function (e) {
+    var target = e.currentTarget;
     $('.usajobs-alert--error').hide();
     var dataLanguageArray = [];
     dataLanguageArray.push(getDataFromLanguagePage());
-    if(!validateLanguage()) {
+    if(!validateLanguage.bind(this)()) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/language',
-        method: 'POST',
+        method: target.data('action') == 'edit' ? 'PUT' : 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
           applicationId: this.data.applicationId,
+          applicationLanguageSkillId: target.data('id'),
           language: dataLanguageArray,
-          updatedAt: this.data.updatedAt,
         }),
       }).done(function (result) {
-        // this.dataLanguageArray.push(result.language);
-        // this.data.updatedAt = result.updatedAt;
-        this.data.language = result.language;
+        this.data.language = result;
         this.$el.html(templates.applyLanguage(this.data));
         this.$el.localize();
         this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
@@ -119,9 +100,9 @@ var language = {
           $('.usajobs-alert--error').show();
           window.scrollTo(0,0);
         }
-      });
+      }.bind(this));
     }  
-  },
+  }.bind(this),
 
   saveLanguageContinue: function () {
     $.ajax({
@@ -144,12 +125,11 @@ var language = {
     var data = {
       languageProficiencies: this.languageProficiencies,
     };
-    
+        
     var template = templates.applyAddLanguage(data);
         
     this.$el.html(template);
     this.$el.localize();
-    
     this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
     
     initializeLanguagesSelect();

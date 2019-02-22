@@ -46,8 +46,8 @@ var ApplyView = Backbone.View.extend({
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
-    'click #save-language'                                        : function () { this.callMethod(Language.saveLanguage); },
-    'click #edit-language'                                        : function () { this.callMethod(Language.deleteLanguage); },
+    'click #save-language, click #edit-language'                  : function () { this.callMethod(Language.saveLanguage); },
+    //  'click #edit-language'                                        : function () { this.callMethod(Language.editLanguage); },
     
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.statementCharacterCount); },
@@ -69,9 +69,7 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sort_order: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
-    // this.dataLanguageArray     = [];
-    // this.deleteLanguageArray   = [];
-    // this.data.languages        = this.data.languages || [];
+ 
     this.languageProficiencies = [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;

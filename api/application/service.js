@@ -77,11 +77,24 @@ async function updateEducation ( educationId,data) {
 
 module.exports = {};
 
-module.exports.deleteLanguage = async function (applicationLanguageSkillId){
-  await dao.ApplicationLanguageSkill.delete('application_language_skill_id = ?', applicationLanguageSkillId).then(async (language) => {
+module.exports.updateLanguage = async function (userId, applicationLanguageSkillId, data) {
+  return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', applicationLanguageSkillId, userId).then(async () => {
+    return await dao.ApplicationLanguageSkill.update(data).then((language) => {
+      return language;
+    }).catch(err => {
+      log.info('update: failed to update language', err);
+      return false;
+    });
+  }).catch((err) => {
+    return false;
+  });
+};
+
+module.exports.deleteLanguage = async function (applicationLanguageSkillId) {
+  return await dao.ApplicationLanguageSkill.delete('application_language_skill_id = ?', applicationLanguageSkillId).then(async (language) => {
     return language;
   }).catch(err => {
-    log.info('delete: failed to delete Language ', err);
+    log.info('delete: failed to delete language ', err);
     return false;
   });
 };
@@ -96,8 +109,12 @@ module.exports.saveLanguage = async function (userId, applicationId, data) {
       updatedAt: new Date(),
       applicationId: applicationId,
       userId: userId,
-    })).then(applicationLanguageSkill => {
-      return applicationLanguageSkill;
+    })).then(async (e) => {
+      return await dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
+        details: '',
+        speakingProficiency: '', 
+        readingProficiency: '', 
+        writingProficiency: '' }});
     }).catch(err => {
       return false;
     });
