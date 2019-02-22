@@ -30,6 +30,7 @@ var statement = {
         this.$el.html(templates.applyReview(this.data));
         this.$el.localize();
         this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
+        this.updateApplicationStep(6);
         window.scrollTo(0, 0);
       }.bind(this));
     }
