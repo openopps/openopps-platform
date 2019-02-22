@@ -2,14 +2,14 @@
  
   <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
      <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-        <% _.each(education, function (d,index) { %>
+        <% _.each(data, function (d,index) { %>
        <li class="usajobs-drawer" data-section="education" data-id="edu-1">
          <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
          <dl class="usajobs-drawer-face">
            <dt><%- d.schoolName %></dt>
            <% if (d.completionMonth) { %>
            <dd>          
-             <%= d.completionMonth  + '  ' + d.completionYear %>
+             <%= completedMonthFunction(d.completionMonth)  + '  ' + d.completionYear %>
            </dd>
            <% } %>
          </dl>
@@ -75,7 +75,7 @@
                    <h5 class="usajobs-drawer-content__item-label">GPA Max</h5>
                    <p class="usajobs-drawer-content__item-content"><%- d.gpaMax %></p>
                  </li>
-                 <% if (d.minor) { %>
+                 <% if (d.creditSystem) { %>
                  <li class="usajobs-drawer-content__item">
                    <h5 class="usajobs-drawer-content__item-label">System for credits</h5>
                    <p class="usajobs-drawer-content__item-content"><%- d.creditSystem %></p>
