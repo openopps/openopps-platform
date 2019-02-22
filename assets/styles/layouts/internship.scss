@@ -613,7 +613,7 @@
   }
 
   .program-title-body-container {
-    margin-left: 4rem;
+    margin-left: 4.5rem;
   }
 
   .program-choice {
@@ -643,7 +643,7 @@
     }
 
     @include media($L) {
-      padding: $size-default $size-M $size-default $size-default;
+      padding: $size-default $size-M;
     }
 
     &.review-application {

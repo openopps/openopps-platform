@@ -5,11 +5,9 @@ const Backbone = require('backbone');
 
 
 function renderEducation (){ 
-  var data= {
-    data:this.dataEducationArray,
-  };
- 
+  var data= _.extend({data:this.data.education}, { completedMonthFunction: education.getCompletedDateMonth });
   $('#education-preview-id').html(templates.applyeducationPreview(data));
+ 
 }
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
@@ -75,7 +73,7 @@ function getDataFromAddEducationPage (){
     degreeLevel: $('#degree :selected').text(),
     country:$('#apply_country').select2('data')? $('#apply_country').select2('data').value: '',
     state:$('#apply_countrySubdivision').select2('data') ? $('#apply_countrySubdivision').select2('data').value: '',
-    monthName:getCompletedDateMonth(),
+    
   
   };
   return modelData;
@@ -152,19 +150,7 @@ function loadCountrySubivisionData () {
     initializeCountrySubdivisionSelect.bind(this)(data);
   }.bind(this));
 }
-function getCompletedDateMonth (){
-  var monthName = $('#completion-month').val(); 
-     
-  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
-    'August', 'September', 'October', 'November', 'December'];
-  if( monthName.substring(0,1)=='0'){
-    monthName= monthName.substring(1);
-  }
-  else{
-    monthName;
-  }
-  return months[[monthName]-1]; 
-}
+
   
 function initializeCountrySubdivisionSelect (data) {
       
@@ -239,7 +225,7 @@ var education = {
   
    
   saveEducation:function (){
-    getCompletedDateMonth();
+ 
     var data= getDataFromAddEducationPage();   
     if(!validateFields.bind(this)())
     // eslint-disable-next-line no-empty
@@ -254,10 +240,9 @@ var education = {
         type: 'PUT',
         data: data,
         success: function (education) {
-          this.dataEducationArray.push(education);
-          Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-          this.data.editEducation='';
-          renderEducation.bind(this)();  
+       
+          renderEducation.bind(this)();
+          Backbone.history.loadUrl(Backbone.history.getFragment()); 
           toggleAddEducationOff.bind(this)();
         }.bind(this),
         error: function (err) {
@@ -266,7 +251,20 @@ var education = {
       });
     }   
   },
+  getCompletedDateMonth:function (month){
   
+    var completionMonth= month.toString();
+   
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+      'August', 'September', 'October', 'November', 'December'];
+    if( completionMonth.substring(0,1)=='0'){
+      completionMonth= completionMonth.substring(1);
+    }
+    else{
+      completionMonth;
+    }
+    return months[[completionMonth]-1]; 
+  },
      
   initializeAddEducationFields:function (){   
     var data= this.educationData;  

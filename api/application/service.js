@@ -76,9 +76,18 @@ async function updateEducation ( educationId,data) {
 
 module.exports = {};
 
+module.exports.deleteLanguage = async function (applicationLanguageSkillId){
+  await dao.ApplicationLanguageSkill.delete('application_language_skill_id = ?', applicationLanguageSkillId).then(async (language) => {
+    return language;
+  }).catch(err => {
+    log.info('delete: failed to delete Language ', err);
+    return false;
+  });
+};
+
 module.exports.saveLanguage = async function (userId, applicationId, data) {
   var record = data.language[0];
-  await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
+  return await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
     return { err: 'language already exists' };
   }).catch(async () => { 
     return await dao.ApplicationLanguageSkill.insert(_.extend(record, {
@@ -134,9 +143,13 @@ module.exports.findById = async function (applicationId) {
   if(application) {
     var results = await Promise.all([
       db.query(dao.query.applicationTasks, applicationId),
-      dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
+      dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' ,degreeLevel:'',honor:''}}),
       dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
-      dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { speakingProficiency: '', readingProficiency: '', writingProficiency: '' }}),
+      dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
+        details: '',
+        speakingProficiency: '', 
+        readingProficiency: '', 
+        writingProficiency: '' }}),
       dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
     ]);
     application.tasks = results[0].rows;

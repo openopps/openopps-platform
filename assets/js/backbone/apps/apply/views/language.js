@@ -43,6 +43,24 @@ function resetLanguages (e) {
   $("input[name='read-skill-level'][id='read-none']").prop('checked', true);
 }
 
+function renderLanguages () {
+  // var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
+  //   data: this.dataLanguageArray,     
+  // });
+  // $('#lang-1').html(languageTemplate);
+
+  var data = {
+    language: this.data.language,
+  };
+  
+  var template = templates.applyLanguage(data);
+  
+  this.$el.html(template);
+  this.$el.localize();
+  this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+  window.scrollTo(0, 0);
+}
+      
 function validateLanguage (e) {
   var abort=false;   
         
@@ -64,30 +82,18 @@ function validateLanguage (e) {
 function getDataFromLanguagePage () {
   var modelData = {
     languageId:$('#languageId').val(),
-    // readSkillLevel:$('[name=read-skill-level]:checked + label').text(), 
-    readingProficiencyId:$('[name=read-skill-level]:checked').val(), 
-    // selectLanguage:$('#languageId').select2('data').value,      
+    readingProficiencyId:$('[name=read-skill-level]:checked').val(),      
     speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
-    // speakingSkillLevel:$('[name=speaking-skill-level]:checked + label').text(),
     writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-    // writtenSkillLevel:$('[name=written-skill-level]:checked + label').text(),
   };
   return modelData;
 }
 
 var language = {
-  deleteLanguage: function (e) {
-    var dataAttr=$(e.currentTarget).attr('data-id');
-    this.deleteLanguageArray.push(this.dataLanguageArray[dataAttr]);      
-    var updateArray= _.difference(this.dataLanguageArray,this.deleteLanguageArray);   
-    this.dataLanguageArray= updateArray;
-    renderLanguages(); 
-  },
-    
   saveLanguage: function () {
     $('.usajobs-alert--error').hide();
-    var data = getDataFromLanguagePage();
-    this.dataLanguageArray.push(data);
+    var dataLanguageArray = [];
+    dataLanguageArray.push(getDataFromLanguagePage());
     if(!validateLanguage()) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/language',
@@ -95,12 +101,13 @@ var language = {
         contentType: 'application/json',
         data: JSON.stringify({
           applicationId: this.data.applicationId,
-          language: this.dataLanguageArray,
+          language: dataLanguageArray,
           updatedAt: this.data.updatedAt,
         }),
       }).done(function (result) {
-        this.dataLanguageArray.push(result.language);
-        this.data.updatedAt = result.updatedAt;
+        // this.dataLanguageArray.push(result.language);
+        // this.data.updatedAt = result.updatedAt;
+        this.data.language = result.language;
         this.$el.html(templates.applyLanguage(this.data));
         this.$el.localize();
         this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
@@ -133,13 +140,6 @@ var language = {
     }.bind(this));
   },
 
-  renderLanguages: function () {
-    // var languageTemplate = _.template(InternshipLanguagePreviewTemplate)({
-    //   data: this.dataLanguageArray,     
-    // });
-    // $('#lang-1').html(languageTemplate);
-  },
-          
   toggleLanguagesOn: function (e) {
     var data = {
       languageProficiencies: this.languageProficiencies,
@@ -159,7 +159,7 @@ var language = {
     
   toggleLanguagesOff: function (e) {
     var data = {
-      languages: this.dataLanguageArray,
+      language: this.data.language,
     };
     
     var template = templates.applyLanguage(data);
