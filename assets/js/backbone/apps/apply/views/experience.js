@@ -96,8 +96,6 @@ var experience = {
         success: function (experience) {
           var index = _.findIndex(this.data.experience, { experienceId: experience.experienceId });
           this.data.experience[index] = experience;
-          console.log(index);
-          console.log(this.data.experience[index]);  
           callback();
         }.bind(this),
         error: function (err) {

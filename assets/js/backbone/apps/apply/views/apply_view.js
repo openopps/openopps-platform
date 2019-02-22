@@ -245,7 +245,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){ 
-  
+    console.log(this.data);
     var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
    
     $('#education-preview-id').html(templates.applyeducationPreview(data));
