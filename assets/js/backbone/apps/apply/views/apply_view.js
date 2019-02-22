@@ -86,9 +86,7 @@ var ApplyView = Backbone.View.extend({
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
-    Experience.toggleOverseasExperienceDetails();
-    Experience.toggleOverseasExperienceFilterOther();
-    Experience.toggleSecurityClearanceDetails();
+    Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
 
     $('.apply-hide').hide();
