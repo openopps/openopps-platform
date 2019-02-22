@@ -20,26 +20,26 @@ const queries = {
 };
 
 async function insertBureauRecord (bureau) {
-    return new Promise(resolve => {
-        db.one(queries.insertBureauRecord, [bureau.name]).then(async (record) => {
-            resolve(record);
-        }).catch(() => {
-            console.log('Error inserting bureau ' + bureau.name);
-            resolve();
-        });
+  return new Promise(resolve => {
+    db.one(queries.insertBureauRecord, [bureau.name]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Error inserting bureau ' + bureau.name);
+      resolve();
     });
+  });
 }
 
 async function insertOfficeRecord (name, bureau_id) {
-    await db.none(queries.insertOfficeRecord, [bureau_id, name]).catch(err => {
-        console.log('Error updating record for office ' + name + ' for parent id ' + bureau_id, err);
-    });
+  await db.none(queries.insertOfficeRecord, [bureau_id, name]).catch(err => {
+    console.log('Error updating record for office ' + name + ' for parent id ' + bureau_id, err);
+  });
 }
 
 async function updateOfficeRecord (name, bureau_id, office_id) {
-    await db.none(queries.updateOfficeRecord, [bureau_id, name, office_id]).catch(err => {
-        console.log('Error updating record for office ' + name + ' for parent id ' + bureau_id, err);
-    });
+  await db.none(queries.updateOfficeRecord, [bureau_id, name, office_id]).catch(err => {
+    console.log('Error updating record for office ' + name + ' for parent id ' + bureau_id, err);
+  });
 }
 
 async function findBureauRecord (bureau) {
@@ -54,15 +54,15 @@ async function findBureauRecord (bureau) {
 }
 
 async function findOfficeRecord (name) {
-    return new Promise(resolve => {
-      db.oneOrNone(queries.findOfficeRecord, [name]).then(async (record) => {
-        resolve(record);
-      }).catch(() => {
-        console.log('Found multiple records for name ' + bureau.name);
-        resolve();
-      });
+  return new Promise(resolve => {
+    db.oneOrNone(queries.findOfficeRecord, [name]).then(async (record) => {
+      resolve(record);
+    }).catch(() => {
+      console.log('Found multiple records for name ' + bureau.name);
+      resolve();
     });
-  }
+  });
+}
 
 /**
  * @param {Array} bureaus
@@ -79,9 +79,9 @@ async function processBureaus (bureaus, callback) {
     var key = bureau.offices[i];
     var officeRecord = await findOfficeRecord(key)
     if (!officeRecord) {
-        await insertOfficeRecord(key, record.bureau_id);
+      await insertOfficeRecord(key, record.bureau_id);
     } else {
-        await updateOfficeRecord(key, record.bureau_id, officeRecord.office_id);
+      await updateOfficeRecord(key, record.bureau_id, officeRecord.office_id);
     }
   }
 
@@ -102,9 +102,9 @@ module.exports = {
     console.log('Importing data for bureaus and offices');
 
     processBureaus(bureaus, () => {
-        console.log('Completed import of ' + numBureaus + ' records for bureaus.');
-        pgp.end();
-        callback && callback();
+      console.log('Completed import of ' + numBureaus + ' records for bureaus.');
+      pgp.end();
+      callback && callback();
     });
   },
 };

@@ -14,7 +14,6 @@ var Education = require('./education');
 var Statement = require('./statement');
 var ModalComponent = require('../../../components/modal');
 
-
 var ApplyView = Backbone.View.extend({
   events: {
     'blur .validate'                                              : 'validateField',
@@ -30,18 +29,19 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
+    'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
     'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
+    'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
+    'click #Present'                                              : function () { this.callMethod(Experience.toggleEndDate); },
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
     'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
-    'click #delete-education'                                     : 'deleteEducation',
     'click #education-edit'                                       : 'editEducation',
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
-
 
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
@@ -50,10 +50,9 @@ var ApplyView = Backbone.View.extend({
     //  'click #edit-language'                                        : function () { this.callMethod(Language.editLanguage); },
     
     //statement events
-    'keypress #statement'                                         : function () { this.callMethod(Statement.statementCharacterCount); },
-    'keydown #statement'                                          : function () { this.callMethod(Statement.statementCharacterCount); },
+    'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
+    'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
     'click #statementContinue'                                    : function () { this.callMethod(Statement.statementContinue); },
-    'click #statementCancel'                                      : function () { this.callMethod(Statement.cancel); },
 
     //review events
     'click .apply-submit'                                         : 'submitApplication',
@@ -121,8 +120,8 @@ var ApplyView = Backbone.View.extend({
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
   },
 
-  callMethod: function (method) {
-    method.bind(this)();
+  callMethod: function (method, e) {
+    method.bind(this)(e);
   },
 
   deleteProgram: function (e) {
@@ -137,21 +136,6 @@ var ApplyView = Backbone.View.extend({
     }.bind(this)).fail(function () {
       showWhoopsPage();
     });
-  },
-
-  toggleAccordion: function (e) {
-    var element = $(e.currentTarget);
-    this.data.accordion1.open = !this.data.accordion1.open;
-    element.attr('aria-expanded', this.data.accordion1.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion1.open);
-
-    this.data.accordion2.open = !this.data.accordion2.open;
-    element.attr('aria-expanded', this.data.accordion2.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion2.open);
-
-    this.data.accordion3.open = !this.data.accordion3.open;
-    element.attr('aria-expanded', this.data.accordion3.open);
-    element.siblings('.usajobs-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
   toggleDrawers: function (e) {
@@ -225,14 +209,15 @@ var ApplyView = Backbone.View.extend({
       Education.getEducation.bind(this)();
      
       Education.initializeAddEducationFields.bind(this)();
-      
+  
     }
     else if(this.data.selectedStep =='3'){
-      this.$el.html(templates.applyEducation(this.data));   
+      this.$el.html(templates.applyEducation(this.data));
+      this.renderEducation();   
       this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
     }    
   },
-
+  
   deleteEducation:function (e){
     var educationId=$(e.currentTarget).attr('data-id');
     this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
@@ -249,27 +234,21 @@ var ApplyView = Backbone.View.extend({
       }.bind(this),
     });      
   },
-
+    
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
-    // console.log(this);
-    this.dataEducationArray = _.filter(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    var data = _.reduce( this.dataEducationArray, function ( e,item) {
-      return _.extend( e, item ); }, {} );
-   
-    Backbone.history.navigate('/apply/'+data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+  
+    Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },
 
   renderEducation:function (){ 
-    var data= {
-      data:this.dataEducationArray,
-    }; 
+    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
+   
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   
+
   // end education section
   
   initializeCountriesSelect: function () {  
@@ -350,34 +329,6 @@ var ApplyView = Backbone.View.extend({
   },
 
   // statement section
-  statementCharacterCount: function () {
-    $('#statement').charCounter(2500, {
-      container: '#statement-count',
-    });
-  },
-
-  statementContinue: function () {
-    this.data.currentStep = 6;
-    this.data.selectedStep = 6;
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId,
-      method: 'PUT',
-      data: {
-        applicationId: this.data.applicationId,
-        currentStep: 6,
-        statementOfInterest: $('#statement').val(),
-        updatedAt: this.data.updatedAt,
-      },
-    }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;
-      this.data.statementOfInterest = result.statementOfInterest;
-      this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
-      this.$el.html(templates.applyReview(this.data));
-      this.$el.localize();
-      this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
-      window.scrollTo(0, 0);
-    }.bind(this));
-  },
   // end statement section
 
   // review section
@@ -396,6 +347,7 @@ var ApplyView = Backbone.View.extend({
   deleteRecord: function (e) {
     var recordData = $(e.currentTarget).data(),
         applicationData = this.data;
+  
     this.modalComponent = new ModalComponent({
       el: '#site-modal',
       id: 'delete-record',
@@ -417,6 +369,7 @@ var ApplyView = Backbone.View.extend({
               applicationData[recordData.section] = recordList;
               $(e.currentTarget).closest('li').remove();
               this.modalComponent.cleanup();
+            
             }.bind(this),
             error: function (err) {
               this.modalComponent.cleanup();

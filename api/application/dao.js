@@ -15,11 +15,13 @@ const applicationTasksQuery = 'SELECT ' +
   'LEFT JOIN office ON office.office_id = task.office_id ' +
   'WHERE application_task.application_id = ?';
 
-const applicationEducationQuery = 'SELECT @education.*, @country.*, @countrySubdivision.* ' +
-  'FROM @education education ' + 
+const applicationEducationQuery = 'SELECT @education.*, @degreeLevel.*,@honor.*, @country.*, @countrySubdivision.* ' +
+  'FROM @education education ' +
+  'JOIN @lookup_code degreeLevel on "degreeLevel".lookup_code_id = education.degree_level_id ' + 
+  'LEFT JOIN @lookup_code honor on "honor".lookup_code_id = education.honors_id ' + 
   'JOIN @country country on country.country_id = education.country_id ' +
   'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = education.country_subdivision_id ' +
-  'WHERE education.application_id = ?';
+  'WHERE education.application_id = ? ' + 'order by education.education_id ';
 
 const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySubdivision.* ' +
   'FROM @experience experience ' +

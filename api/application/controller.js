@@ -119,6 +119,21 @@ router.post('/api/application/:applicationId/experience',auth, async (ctx,next) 
   });
 });
 
+router.put('/api/application/:applicationId/experience/:experienceId', auth, async (ctx,next) => {
+  ctx.request.body.userId = ctx.state.user.id;
+  ctx.request.body.applicationId=ctx.params.applicationId;
+  ctx.request.body.experienceId = ctx.params.experienceId;
+  await service.saveExperience(ctx.request.body, function (errors,experience)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = experience;
+    }
+  });
+});
+
 router.delete('/api/application/:id/experience/:experienceId',auth, async (ctx,next) =>{ 
   ctx.body = await service.deleteExperience(ctx.params.experienceId);
 });
