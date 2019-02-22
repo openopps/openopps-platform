@@ -236,17 +236,19 @@ var ApplyView = Backbone.View.extend({
     
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
-    // console.log(this);
   
     Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },
 
   renderEducation:function (){ 
+  
+    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
    
-    $('#education-preview-id').html(templates.applyeducationPreview(this.data));
+    $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   
+
   // end education section
   
   initializeCountriesSelect: function () {  
