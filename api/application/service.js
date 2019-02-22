@@ -61,7 +61,6 @@ async function processUnpaidApplication (data, callback) {
 }
 
 async function updateEducation ( educationId,data) {
- 
   return await dao.Education.findOne('education_id = ? and user_id = ?',educationId,data.userId).then(async (e) => { 
     return await dao.Education.update(data).then((education) => {
       return education;
@@ -237,16 +236,48 @@ module.exports.saveEducation = async function (attributes,done) {
   }
 };
 
+async function insertExperience (attributes) {
+  return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
+    return await dao.Experience.insert(attributes).then(async (experience) => {   
+      return experience;
+    }).catch(err => {
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
+async function updateExperience (attributes) {
+  return await dao.Experience.findOne('experience_id = ? and user_id = ?',attributes.experienceId,attributes.userId).then(async (e) => { 
+    return await dao.Experience.update(attributes).then((experience) => {
+      return experience;
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
 module.exports.saveExperience = async function (attributes,done) { 
-  attributes.updatedAt = new Date(); 
-  attributes.createdAt = new Date();
   attributes.countryId = attributes.country.id;
   attributes.countrySubdivisionId = attributes.countrySubdivision.id;
-  await dao.Experience.insert(attributes).then(async (experience) => {   
-    return done(null, experience);
-  }).catch(err => {
-    return done(true);
-  });
+
+  if (attributes.experienceId) {
+    await updateExperience(attributes).then((experience) => {   
+      return done(!experience, experience);
+    });
+  } else {
+    attributes.updatedAt = new Date(); 
+    attributes.createdAt = new Date();
+    await insertExperience(attributes).then((experience) => {   
+      return done(!experience, experience);
+    });
+  }
 };
 
 module.exports.deleteExperience= async function (experienceId){
