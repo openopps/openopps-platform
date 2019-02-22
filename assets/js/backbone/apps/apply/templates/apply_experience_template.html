@@ -45,14 +45,6 @@
                         <h5 class="usajobs-drawer-content__item-label">Country</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.country.value %></p>
                       </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Salary</h5>
-                        <p class="usajobs-drawer-content__item-content">TBD</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">May we contact your supervisor?</h5>
-                        <p class="usajobs-drawer-content__item-content">TBD</p>
-                      </li>
                     </ul>
                   </div>
                   <div class="usajobs-width-one-half">
@@ -69,14 +61,6 @@
                         <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.postalCode %></p>
                       </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Average hours per week</h5>
-                        <p class="usajobs-drawer-content__item-content">TBD</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Federal position</h5>
-                        <p class="usajobs-drawer-content__item-content">TBD</p>
-                      </li>
                     </ul>
                   </div>
                 </div>
@@ -90,7 +74,7 @@
                   <div class="usajobs-button-bar__body">
                     <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
                       data-id="<%= e.experienceId %>" data-name="<%= e.formalTitle %>" data-section="experience" data-record="job">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/<%= e.experienceId %>">Edit</a>
+                    <a class="usa-button usajobs-button-bar__edit" data-id="<%= e.experienceId %>" id="edit-experience" href="javascript:void(0);">Edit</a>
                   </div>
                 </div>
               </div>
@@ -100,7 +84,7 @@
         </div>
         <% }; %>
         <div class="usajobs-profile-home-section__body">
-          <p><a id="add-experience" class="add-record">+ Add experience</a></p>
+          <p><a id="add-experience" class="add-record" href="javascript:void(0);">+ Add experience</a></p>
           <fieldset class="usajobs-fieldset">
             <div class="form-group required-input">
               <h4><label for="OverseasExperience" class="usajobs-profile-question__title">Do you have any overseas experience?</label></h4>

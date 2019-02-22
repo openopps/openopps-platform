@@ -30,8 +30,11 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
+    'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
     'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
+    'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
+    'click #Present'                                              : function () { this.callMethod(Experience.toggleEndDate); },
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
@@ -122,8 +125,8 @@ var ApplyView = Backbone.View.extend({
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
   },
 
-  callMethod: function (method) {
-    method.bind(this)();
+  callMethod: function (method, e) {
+    method.bind(this)(e);
   },
 
   deleteProgram: function (e) {
