@@ -375,6 +375,7 @@ var education = {
         // this.initializeFormFieldsEducation(result);
         this.$el.localize();
         this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+        this.updateApplicationStep(3);
         window.scrollTo(0, 0);
       }.bind(this));
     }
