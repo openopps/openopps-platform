@@ -18,6 +18,8 @@ var experience = {
       $('#overseas-experience-filter-other').show();
     } else {
       $('#overseas-experience-filter-other').hide();
+      $('[name=overseas_experience_other]').val('');
+      $('[name=overseas_experience_length]').val('');
     }
   },
   
@@ -27,6 +29,8 @@ var experience = {
       $('#security-clearance-details').show();
     } else {
       $('#security-clearance-details').hide();
+      $('#security-clearance-type').prop('selectedIndex', 0);
+      $('#security-clearance-issuer').val('');
     }
   },
 
@@ -58,6 +62,38 @@ var experience = {
     }
 
     return modelData;
+  },
+
+  getDataFromExperiencePage: function () {
+    var overseasExperienceTypes = [];
+    $.each($('[name=overseas_experience_types]:checked'), function (){            
+      overseasExperienceTypes.push($(this).val());
+    });
+    return {
+      applicationId: this.data.applicationId,
+      currentStep: 2,
+      hasOverseasExperience: $('[name=has_overseas_experience]').val(),
+      overseasExperienceOther: $('[name=overseas_experience_other]').val(),
+      overseasExperienceLength: $('[name=overseas_experience_length]').val(),
+      hasSecurityClearance: $('[name=has_security_clearance]').val(),
+      securityClearanceId: $('[name=security_clearance_id]').val(),
+      overseasExperienceTypes: overseasExperienceTypes,
+      securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
+      hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
+      updatedAt: this.data.updatedAt,
+    };
+  },
+
+  updateExperienceDataObject: function () {
+    var data = experience.getDataFromExperiencePage.bind(this)();
+    this.data.hasOverseasExperience = data.hasOverseasExperience;
+    this.data.overseasExperienceOther = data.overseasExperienceOther;
+    this.data.overseasExperienceLength = data.overseasExperienceLength;
+    this.data.hasSecurityClearance = data.hasSecurityClearance;
+    this.data.securityClearanceId = data.securityClearanceId;
+    this.data.overseasExperienceTypes = data.overseasExperienceTypes;
+    this.data.securityClearanceIssuer = data.securityClearanceIssuer;
+    this.data.hasVsfsExperience = data.hasVsfsExperience;
   },
 
   saveExperience: function () {
@@ -106,27 +142,12 @@ var experience = {
   },
 
   saveExperienceContinue: function () {
-    var overseasExperienceTypes = [];
-    $.each($('[name=overseas_experience_types]:checked'), function (){            
-      overseasExperienceTypes.push($(this).val());
-    });
+    var data = experience.getDataFromExperiencePage.bind(this)();
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
       contentType: 'application/json',
-      data: JSON.stringify({
-        applicationId: this.data.applicationId,
-        currentStep: 2,
-        hasOverseasExperience: $('[name=has_overseas_experience]').val(),
-        overseasExperienceOther: $('[name=overseas_experience_other]').val(),
-        overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-        hasSecurityClearance: $('[name=has_security_clearance]').val(),
-        securityClearanceId: $('[name=security_clearance_id]').val(),
-        overseasExperienceTypes: overseasExperienceTypes,
-        securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-        hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
-        updatedAt: this.data.updatedAt,
-      }),
+      data: JSON.stringify(data),
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 3 });        
@@ -136,6 +157,7 @@ var experience = {
   },
 
   toggleAddExperience: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
         
@@ -148,6 +170,7 @@ var experience = {
   },
 
   toggleUpdateExperience: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
     var data = {};
     var id = $(e.currentTarget).data('id');
 
@@ -183,6 +206,7 @@ var experience = {
     
     this.$el.html(template);
     this.$el.localize();
+    experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
     window.scrollTo(0, 0);
   },
@@ -201,6 +225,12 @@ var experience = {
         .prop('disabled', false)
         .addClass('validate');
     }
+  },
+
+  renderExperienceComponent: function () {
+    experience.toggleOverseasExperienceDetails.bind(this)();
+    experience.toggleOverseasExperienceFilterOther.bind(this)();
+    experience.toggleSecurityClearanceDetails.bind(this)();
   },
 
   validateAddExperienceFields: function (data) {

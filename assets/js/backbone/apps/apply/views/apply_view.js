@@ -8,6 +8,7 @@ const templates = require('./templates');
 const nextSteps = require('./next_steps');
 
 //utility functions
+var Program = require('./program');
 var Experience = require('./experience');
 var Language = require('./language');
 var Education = require('./education');
@@ -21,7 +22,9 @@ var ApplyView = Backbone.View.extend({
     'click .apply-continue'                                       : 'applyContinue',
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
-    'click .program-delete'                                       : 'deleteProgram',
+
+    // program events
+    'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
 
     //experience events
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -86,9 +89,7 @@ var ApplyView = Backbone.View.extend({
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
-    Experience.toggleOverseasExperienceDetails();
-    Experience.toggleOverseasExperienceFilterOther();
-    Experience.toggleSecurityClearanceDetails();
+    Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
 
     $('.apply-hide').hide();
@@ -124,20 +125,6 @@ var ApplyView = Backbone.View.extend({
 
   callMethod: function (method, e) {
     method.bind(this)(e);
-  },
-
-  deleteProgram: function (e) {
-    e.preventDefault && e.preventDefault();
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId + '/task/' + e.currentTarget.dataset.taskId,
-      method: 'DELETE',
-    }).done(function () {
-      this.data.tasks.splice(e.currentTarget.dataset.index, 1);
-      this.data[['firstChoice', 'secondChoice', 'thirdChoice'][e.currentTarget.dataset.index]] = null;
-      this.$el.html(templates.getTemplateForStep(1)(this.data));
-    }.bind(this)).fail(function () {
-      showWhoopsPage();
-    });
   },
 
   toggleDrawers: function (e) {
