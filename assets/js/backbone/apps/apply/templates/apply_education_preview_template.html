@@ -45,7 +45,7 @@
                  </li>
                  <% } %>
  
-                 <% if (d.honor) { %>
+                 <% if (d.honor && d.honor.value!=" ") { %>
                  <li class="usajobs-drawer-content__item">            
                    <h5 class="usajobs-drawer-content__item-label">Honors</h5>
                    <p class="usajobs-drawer-content__item-content"><%- d.honor.value %></p>
