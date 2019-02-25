@@ -19,6 +19,136 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join @bureau bureau on bureau.bureau_id = task.bureau_id ' +
   'left join @office office on office.office_id = task.office_id';
 
+const internshipListQuery = `
+  select 
+    task.id, 
+    "cycle".name as "Cycle", 
+    task.title as "Title", 
+    task.interns as "NumberOfPositions",
+    task.city_name as "City",
+    country.value as "Country",
+    (select count(*) from application_task where application_task."task_id" = task.id) as "ApplicantCount"
+  from 
+    task 
+    inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
+    inner join community on task.community_id = community.community_id
+    inner join task_share on task.id = task_share."task_id"
+    left outer join country on task."country_id" = country."country_id"
+  where
+    task_share.user_id = ?
+    and state = ?
+`;
+
+const internshipSummaryQuery = `
+  select 
+    task.id, 
+    "cycle".name as "cycleName", 
+    task.title as "taskTitle", 
+    task.interns as "numberOfSeats"
+  from 
+    task 
+    inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
+    inner join community on task.community_id = community.community_id
+    inner join task_share on task.id = task_share."task_id"
+  where   
+    task_share."user_id" = ?
+    and task.id = ?
+`;
+
+const taskShareQuery = `
+  select
+    left(given_name, 1) || left(last_name, 1) as initials,
+    given_name,
+    last_name,
+    government_uri,
+    user_id,
+    shared_by_user_id,
+    last_modified
+  from 
+    task_share
+    inner join midas_user on task_share.user_id = midas_user."id"
+  where 
+    task_share.user_id <> ?
+    and task_id = ?
+`;
+
+const taskListQuery = `
+  select
+    task_list_id,
+    task_id,
+    title,
+    sort_order
+  from
+    task_list
+  where task_id = ?
+  order by sort_order
+`;
+
+const applicationsNotInListQuery = `
+  select application_id
+  from application_task
+  where task_id = ?
+  except
+  select application_id
+  from 
+    task_list_application 
+    inner join task_list on task_list_application.task_list_id = task_list.task_list_id
+  where task_id = ?
+`;
+
+const taskListApplicationQuery = `
+  select
+    task_list_application_id,
+    task_list_application.task_list_id,
+    task_list_application.application_id,
+    task_list_application.sort_order,
+    task_list_application.date_last_contacted,
+    midas_user.given_name,
+    midas_user.last_name,
+    midas_user.government_uri,
+    (
+      select json_agg(item)
+      from (
+      select 
+        educationcode.value as "degree_level",
+        education.major
+      from 
+        education
+        inner join lookup_code as educationcode on education.degree_level_id = educationcode.lookup_code_id
+      where application.application_id = education.application_id
+      ) item
+    ) as educations,
+    application.cumulative_gpa,
+    (
+      select json_agg(item)
+      from (
+      select "language".value
+      from "language"    
+        inner join language_skill on "language".language_id = language_skill.language_id
+      where "language".language_id = language_skill.language_id and language_skill.application_id = application.application_id
+      ) item
+    ) as languages,
+    application.cumulative_gpa,
+    (
+      select json_agg(item)
+      from (
+      select locationtag.name
+      from tagentity locationtag 
+        inner join tagentity_users__user_tags tags on locationtag.id = tags.tagentity_users
+      where 
+        type = 'location'
+        and user_tags = application.user_id
+      ) item
+    ) as locations
+  from
+    task_list_application
+    inner join task_list on task_list_application.task_list_id = task_list.task_list_id
+    inner join application on task_list_application.application_id = application.application_id
+    inner join midas_user on application.user_id = midas_user.id
+  where
+    task_list.task_id = ?
+`;
+
 const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join task on country.country_id = task.country_id ' + 
   'where task."userId" = ? and task.id = ? ';
@@ -221,6 +351,9 @@ module.exports = function (db) {
     LookupCode:dao({ db: db, table: 'lookup_code' }),
     Office:dao({ db: db, table: 'office' }),
     Bureau:dao({ db: db, table: 'bureau' }),
+    TaskShare:dao({ db: db, table: 'task_share'}),
+    TaskList:dao({ db: db, table: 'task_list' }),
+    TaskListApplication:dao({ db: db, table: 'task_list_application' }),
 
     query: {
       task: taskQuery,
@@ -239,7 +372,13 @@ module.exports = function (db) {
       taskCommunitiesQuery:taskCommunitiesQuery,
       intern:countryQuery,
       countrySubdivision:countrySubdivisionQuery,
-      languageList:languageListQuery
+      languageList:languageListQuery,
+      internshipListQuery: internshipListQuery,
+      internshipSummaryQuery: internshipSummaryQuery,
+      taskShareQuery: taskShareQuery,
+      taskListQuery: taskListQuery,
+      taskListApplicationQuery: taskListApplicationQuery,
+      applicationsNotInListQuery: applicationsNotInListQuery,
     },
     options: options,
     clean: clean,
