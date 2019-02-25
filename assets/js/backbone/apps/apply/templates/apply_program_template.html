@@ -7,13 +7,15 @@
       <p>You must select three internship opportunities. You can choose from your saved internship opportunities or search for more.</p>
       <h4 class="program-choice">1st choice</h4>
       <% if (firstChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
+        <div class="usajobs-card--large" data-index="0">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
               <div class="sorting-arrows">
-                <i class="fas fa-arrow-down"></i>
+                <i class="fas fa-arrow-down sorting-arrow" data-action"down"></i>
               </div>
-          </div>
-          <div class="program-title-body-container">
+            </div>
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- firstChoice.title %>
@@ -37,14 +39,16 @@
       <% } %>
       <h4 class="program-choice">2nd choice</h4>
       <% if (secondChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
-            <div class="sorting-arrows">
-              <i class="fas fa-arrow-up"></i>
-              <i class="fas fa-arrow-down"></i>
+        <div class="usajobs-card--large" data-index="1">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
+              <div class="sorting-arrows">
+                <i class="fas fa-arrow-up sorting-arrow" data-action"up"></i>
+                <i class="fas fa-arrow-down sorting-arrow" data-action"down"></i>
+              </div>
             </div>
-          </div>
-          <div class="program-title-body-container">
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- secondChoice.title %>
@@ -68,13 +72,15 @@
       <% } %>
       <h4 class="program-choice">3rd choice</h4>
       <% if (thirdChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
-            <div class="sorting-arrows">
-              <i class="fas fa-arrow-up"></i>
+        <div class="usajobs-card--large" data-index="2">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
+              <div class="sorting-arrows">
+                <i class="fas fa-arrow-up sorting-arrow" data-action"up"></i>
+              </div>
             </div>
-          </div>
-          <div class="program-title-body-container">
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- thirdChoice.title %>
