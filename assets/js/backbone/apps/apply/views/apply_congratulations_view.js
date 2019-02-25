@@ -5,8 +5,8 @@ var $ = require('jquery');
 var ApplyCongratulationsView = Backbone.View.extend({
 
   events: {
-    'click .a1' : 'toggleAccordion1',
-    'click .a2' : 'toggleAccordion2',
+    'click .accordion-1'            : 'toggleAccordion',
+    'click .usajobs-drawer-button'  : 'toggleDrawer',
   },
 
   // initialize components and global functions
@@ -20,40 +20,50 @@ var ApplyCongratulationsView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.localize();
 
-    this.data = {
-      a1: {
-        open: false,
-      },
-      a2: {
-        open: false,
-      },
-    };
-
     $('.apply-hide').hide();
 
     return this;
   },
   
-  toggleAccordion1: function (e) {
+  toggleAccordion: function (e) {
     var element = $(e.currentTarget);
-    this.data.a1.open = !this.data.a1.open;
-    element.attr('aria-expanded', this.data.a1.open);
-    $('#a1').attr('aria-hidden', !this.data.a1.open);
-
-    $('.a2').attr('aria-expanded', false);
-    $('#a2').attr('aria-hidden', true);
-    this.data.a2.open = false;
+    var target = element.siblings('.usa-accordion-content');
+    var otherElements = element.parent('li').siblings('li').find('.usa-accordion-button');
+    var otherTargets = element.parent('li').siblings('li').find('.usa-accordion-content');
+    var open = element.attr('aria-expanded') == 'true';
+    if (!open) {
+      otherElements.attr('aria-expanded', false);
+      otherTargets.attr('aria-hidden', true);
+      element.attr('aria-expanded', true);
+      target.attr('aria-hidden', false);
+    } else {
+      element.attr('aria-expanded', false);
+      target.attr('aria-hidden', true);
+    }
   },
-  
-  toggleAccordion2: function (e) {
-    var element = $(e.currentTarget);
-    this.data.a2.open = !this.data.a2.open;
-    element.attr('aria-expanded', this.data.a2.open);
-    $('#a2').attr('aria-hidden', !this.data.a2.open);
 
-    $('.a1').attr('aria-expanded', false);
-    $('#a1').attr('aria-hidden', true);
-    this.data.a1.open = false;
+  toggleDrawer: function (e) {
+    var element = $(e.currentTarget);
+    var target = element.siblings('.usajobs-drawer-content');
+    var otherElements = element.parent('.usajobs-drawer').siblings().find('.usajobs-drawer-button');
+    var otherTargets = element.parent('.usajobs-drawer').siblings().find('.usajobs-drawer-content');
+    var open = element.attr('aria-expanded') == 'true';
+    if (!open) {
+      otherElements.attr('aria-expanded', false);
+      otherTargets.attr('aria-hidden', true).css('display', '');
+      target.slideDown('fast', function () {
+        $('html, body').animate({
+          scrollTop: element.offset().top,
+        });
+        element.attr('aria-expanded', 'true');
+        target.attr('aria-hidden', 'false');
+      });
+    } else {
+      target.slideUp(function () {
+        element.attr('aria-expanded', 'false');
+        target.attr('aria-hidden', 'true');
+      });
+    }
   },
 
   cleanup: function () {

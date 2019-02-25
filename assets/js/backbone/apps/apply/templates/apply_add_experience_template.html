@@ -1,5 +1,9 @@
 <div id="process-title-banners"></div>
-
+<% 
+var getValue = function (field) {
+  return obj[field] ? obj[field] : '';
+}
+%>
 <div class="usajobs-content-gutter opportunity-gutter internship">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
@@ -13,7 +17,7 @@
             <span class="field-validation-error error-empty" style="display:none;">You must enter an employee name.</span>
             <span class="field-validation-error error-count100" style="display:none;">The employee name must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="employer-name" name="employer-name" value="" data-validate="empty,count100,html">
+            <input type="text" class="fullwidth form-control validate" id="employer-name" name="employer-name" value="<%= getValue('employerName') %>" data-validate="empty,count100,html">
           </div>
           <label for="Address">
             <h5>Address</h5>
@@ -23,39 +27,35 @@
             <span class="field-validation-error error-empty" style="display:none;">You must enter a street address.</span>
             <span class="field-validation-error error-count100" style="display:none;">The street address must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="street-address" name="street-address" value="" data-validate="empty,count100,html">
+            <input type="text" class="fullwidth form-control validate" id="street-address" name="street-address" value="<%= getValue('addressLineOne') %>" data-validate="empty,count100,html">
           </div>
           <div>
             <label for="street-address2" class="usa-input-optional">Street address 2</label>
-            <input type="text" class="fullwidth form-control" id="street-address2" name="street-address2">
+            <input type="text" class="fullwidth form-control" id="street-address2" name="street-address2" value="<%= getValue('addressLineTwo') %>">
           </div>
           <div class="required-input">
             <label for="country">Country</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must select a country.</span>
-            <select name="country" class="dropdown validate" data-validate="empty">
-              <option></option>
-            </select>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a country.<br /></span>
+            <input type="hidden" name="country" id="apply_country" class="dropdown validate" data-validate="empty" />
           </div>
           <div class="required-input">
             <label for="postal-code">Postal code</label>
             <span class="field-validation-error error-empty" style="display:none;">You must enter a postal code.</span>
             <span class="field-validation-error error-count100" style="display:none;">The postal code must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="usa-input-medium form-control validate" id="postal-code" name="postal-code" value="" data-validate="empty,count100,html">
+            <input type="text" class="usa-input-medium form-control validate" id="postal-code" name="postal-code" value="<%= getValue('postalCode') %>" data-validate="empty,count100,html">
           </div>
           <div class="required-input">
             <label for="city">City or Town</label>
             <span class="field-validation-error error-empty" style="display:none;">You must enter a city or town.</span>
             <span class="field-validation-error error-count100" style="display:none;">The city or town must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="city" name="city" value="" data-validate="empty,count100,html">
+            <input type="text" class="fullwidth form-control validate" id="city" name="city" value="<%= getValue('cityName') %>" data-validate="empty,count100,html">
           </div>
-          <div class="required-input">
+          <div class="required-input apply_countrySubdivision">
             <label for="state">State, Territory, or Province</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must select a state, territory, or province.</span>
-            <select name="state" class="dropdown validate" data-validate="empty">
-              <option></option>
-            </select>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a state, territory, or province.<br /></span>
+            <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" value="<% if (obj['countrySubdivision']) { %><%= countrySubdivision.countrySubdivisionId %><% } %>" disabled /> 
           </div>
           <label for="Position">
             <h5>Position</h5>
@@ -65,7 +65,7 @@
             <span class="field-validation-error error-empty" style="display:none;">You must enter a job title.</span>
             <span class="field-validation-error error-count100" style="display:none;">The job title must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="job-title" name="job-title" value="" data-validate="empty,count100,html">
+            <input type="text" class="fullwidth form-control validate" id="job-title" name="job-title" value="<%= getValue('formalTitle') %>" data-validate="empty,count100,html">
           </div>
         </fieldset>
 
@@ -77,16 +77,12 @@
             <div class="required-input usa-datefield usa-form-group-month">
               <label for="start-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting month.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The starting month must be no more than 100 characters.</span>
-              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-              <input type="text" class="usa-input-tiny form-control validate" id="start-month" name="start-month" value="" data-validate="empty,count100,html">
+              <input type="number" class="usa-input-tiny form-control validate" id="start-month" name="start-month" max="12" value="<%= getValue('startMonth') %>" data-validate="empty" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
             </div>
             <div class="required-input usa-datefield usa-form-group-year">
               <label for="start-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting year.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The starting year must be no more than 100 characters.</span>
-              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-              <input type="text" class="usa-input-small form-control validate" id="start-year" name="start-year" value="" data-validate="empty,count100,html">
+              <input type="number" class="usa-input-small form-control validate" id="start-year" name="start-year" max="3000" value="<%= getValue('startYear') %>" data-validate="empty>" onkeyup="if(this.value.length>4){this.value=this.value.substring(0, 4);}">
             </div>
           </div>
         </fieldset>        
@@ -99,22 +95,19 @@
             <div class="required-input usa-datefield usa-form-group-month">
               <label for="end-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending month.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The ending month must be no more than 100 characters.</span>
-              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-              <input type="text" class="usa-input-tiny form-control validate" id="end-month" name="end-month" value="" data-validate="empty,count100,html">
+              <input type="number" class="usa-input-tiny form-control validate" id="end-month" name="end-month" max="12" value="<%= getValue('endMonth') %>" data-validate="empty" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
             </div>
             <div class="required-input usa-datefield usa-form-group-year">
               <label for="end-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending year.</span>
-              <span class="field-validation-error error-count100" style="display:none;">The ending year must be no more than 100 characters.</span>
-              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-              <input type="text" class="usa-input-small form-control validate" id="end-year" name="end-year" value="" data-validate="empty,count100,html">
+              <span class="field-validation-error error-datecomparison" style="display:none;">End date must be before start date</span>
+              <input type="number" class="usa-input-small form-control validate" id="end-year" name="end-year" max="3000" value="<%= getValue('endYear') %>" data-validate="empty" onkeyup="if(this.value.length>4){this.value=this.value.substring(0, 4);}">
             </div>
           </div>
         </fieldset>
 
         <fieldset class="usajobs-fieldset-inputs">
-          <input id="Present" name="Present" type="checkbox" value="true">
+          <input id="Present" name="Present" type="checkbox" value="true" <% if (getValue('isPresent')) { %>checked<% } %>>
           <label class="usajobs-profile__date-present" for="Present">Present?</label>
         </fieldset>
 
@@ -124,15 +117,19 @@
             <span class="field-validation-error error-empty" style="display:none;">You must enter duties, accomplishments, and related skills.</span>
             <span class="field-validation-error error-count100" style="display:none;">The duties, accomplishments, and related skills must be no more than 100 characters.</span>
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <textarea cols="20" id="duties" maxlength="5000" name="duties" rows="2" class="validate" value="" data-validate="empty,count100,html"></textarea>
+            <textarea cols="20" id="duties" maxlength="5000" name="duties" rows="2" class="validate" data-validate="empty,count100,html"><%= getValue('duties') %></textarea>
           </div>
         </fieldset>
+        <% if (obj['experienceId']) { %>
+          <input type="hidden" name="experience-id" id="experience-id" value="<%= experienceId %>" />
+          <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />
+        <% } %>
       </form>
 
       <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
-          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
-          <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save experience</a>
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-add-experience">Cancel and return</button>
+          <a class="usa-button usa-button-primary usajobs-button_bar__save" href="javascript:void(0)" id="<% if (obj['experienceId']) { %>save-update-experience<% } else { %>save-add-experience<% } %>">Save experience</a>
         </div>
       </div>
     </div>

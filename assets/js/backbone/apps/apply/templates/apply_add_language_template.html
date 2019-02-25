@@ -1,6 +1,17 @@
 <div id="process-title-banners"></div>
-
 <div class="usajobs-content-gutter opportunity-gutter internship">
+  <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+      </div>
+      <div class="usajobs-alert__body">
+        <h3 class="usa-alert-heading">
+          Error adding language
+        </h3>
+        <p class="usa-alert-text">The language you have selected has already been added to your application.</p>
+      </div>
+    </div>
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div id="add-language-section" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
       <h2>Languages &amp; Skills</h2>
@@ -13,87 +24,68 @@
             <span id="lang-id-val" class="field-validation-error error-empty" style="display:none;">You must select at least one language.</span>
             <input id="languageId" class="dropdown" data-validate="empty" />
           </div>
-          <div class="form-group required-input usa-fieldset-inputs">
-            <h5 class="usajobs-form__label-header">
-              <label for="SpeakingProficiencyID" class="usajobs-profile-question__title">Spoken language skill level</label>
-            </h5>
-            <ul class="usa-unstyled-list">
-              <li>
-                <input checked="checked" id="spoken-language-00" name="SpeakingProficiencyID" type="radio" value="830">
-                <label for="spoken-language-00">None</label>
-              </li>
-              <li>
-                <input id="spoken-language-10" name="SpeakingProficiencyID" type="radio" value="831">
-                <label for="spoken-language-10">Novice</label>
-              </li>
-              <li>
-                <input id="spoken-language-30" name="SpeakingProficiencyID" type="radio" value="832">
-                <label for="spoken-language-30">Intermediate</label>
-              </li>
-              <li>
-                <input id="spoken-language-40" name="SpeakingProficiencyID" type="radio" value="833">
-                <label for="spoken-language-40">Advanced</label>
-              </li>
-            </ul>
-          </div>
-          <div class="form-group required-input usa-fieldset-inputs">
-            <h5 class="usajobs-form__label-header">
-              <label for="WritingProficiencyID" class="usajobs-profile-question__title">Writing language skill level</label>
-            </h5>
-            <ul class="usa-unstyled-list">
-              <li>
-                <input checked="checked" id="written-language-00" name="WritingProficiencyID" type="radio" value="830">
-                <label for="written-language-00">None</label>
-              </li>
-              <li>
-                <input id="written-language-10" name="WritingProficiencyID" type="radio" value="831">
-                <label for="written-language-10">Novice</label>
-              </li>
-              <li>
-                <input id="written-language-30" name="WritingProficiencyID" type="radio" value="832">
-                <label for="written-language-30">Intermediate</label>
-              </li>
-              <li>
-                <input id="written-language-40" name="WritingProficiencyID" type="radio" value="833">
-                <label for="written-language-40">Advanced</label>
-              </li>
-            </ul>
-          </div>
-          <div class="form-group required-input usa-fieldset-inputs">
-            <h5 class="usajobs-form__label-header">
-              <label for="ReadingProficiencyID" class="usajobs-profile-question__title">Reading language skill level</label>
-            </h5>
-            <ul class="usa-unstyled-list">
-              <li>
-                <input checked="checked" id="reading-language-00" name="ReadingProficiencyID" type="radio" value="830">
-                <label for="reading-language-00">None</label>
-              </li>
-              <li>
-                <input id="reading-language-10" name="ReadingProficiencyID" type="radio" value="831">
-                <label for="reading-language-10">Novice</label>
-              </li>
-              <li>
-                <input id="reading-language-30" name="ReadingProficiencyID" type="radio" value="832">
-                <label for="reading-language-30">Intermediate</label>
-              </li>
-              <li>
-                <input id="reading-language-40" name="ReadingProficiencyID" type="radio" value="833">
-                <label for="reading-language-40">Advanced</label>
-              </li>
-            </ul>
-          </div>
+            <label for="speaking-skill-level">
+              <h4>Speaking language skill level</h4>
+            </label>
+            <div class="form-group required-input" id="speaking-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Speaking language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="speaking-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="speaking-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="speaking-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select speaking language skill level.</span>
+            </div>
+            <label for="written-skill-level">
+              <h4>Writing language skill level</h4>
+            </label>
+            <div class="form-group required-input" id="written-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Written language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="written-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="written-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="written-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select written language skill level.</span>
+            </div>
+            <label for="read-skill-level">
+              <h4>Reading language skill level</h4>
+            </label>
+            <div class="form-group required-input"id="read-skill">
+              <fieldset class="usa-fieldset-inputs usa-sans">
+                <legend class="usa-sr-only">Read language skill level</legend>
+                <ul class="usa-unstyled-list">
+                  <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
+                    <li>
+                      <input id="read-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="read-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <label for="read-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
+                    </li>
+                  <% }) %>
+                </ul>
+              </fieldset>
+              <span class="field-validation-error error-empty" style="display:none;">You must select read language skill level.</span>
+            </div>
           <h5 class="usajobs-profile-home-section__field-label usajobs-form__label-header">
             <a href="https://www.usajobs.gov/Help/how-to/account/profile/languages/" target="_blank" rel="noopener noreferrer" class="question">What does novice, intermediate and advanced mean?</a>
           </h5>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
-              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
-              <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save language</a>
+              <button id="cancel-language" class="usa-button usa-button-secondary usa-button-left" data-state="cancel">Cancel and return</button>
+              <a href="#success" id="save-language" class="usa-button usa-button-primary usajobs-button_bar__save">Save language</a>
             </div>
           </div>
         </fieldset>
       </form>
     </div>
-    <div data-target="apply-language-section"></div>
   </main>
 </div>

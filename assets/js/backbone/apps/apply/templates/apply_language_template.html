@@ -1,7 +1,7 @@
-<!-- <div id="process-title-banners"></div> -->
+<div id="process-title-banners"></div>
 
-<!-- <div class="usajobs-content-gutter opportunity-gutter internship">
-  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main"> -->
+<div class="usajobs-content-gutter opportunity-gutter internship">
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div id="apply-language-section" class="usajobs-profile-home-section">
       <h2 class="usajobs-profile-home-section__title">Languages &amp; Skills</h2>
       <fieldset class="usajobs-fieldset">
@@ -10,21 +10,23 @@
           <h3 class="usajobs-profile-home-section__sub-section">Languages</h3>
           <p>Please list the foreign languages you can speak, write, or read. Include your level of proficiency with each.</p>
         </div>
+        <% if (language.length) { %>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true" role="list">
-            <li class="usajobs-drawer" data-section="language" data-id="lang-1">
-              <button class="usa-accordion-button usajobs-drawer-button has-no-face" aria-controls="lang-1">Spanish</button>
-              <div id="lang-1" class="usa-accordion-content usajobs-drawer-content">
+            <% _.each(language, function (l, index) { %>
+            <li class="usajobs-drawer" data-section="language" data-id="<%- index %>">
+              <button class="usa-accordion-button usajobs-drawer-button has-no-face" aria-controls="lang-<%- index %>"><%- l.details.value %></button>
+              <div id="lang-<%- index %>" class="usa-accordion-content usajobs-drawer-content">
                 <div class="usajobs-grid">
                   <div class="usajobs-width-one-half">
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Spoken language skill level</h5>
-                        <p>Advanced</p>
+                        <h5 class="usajobs-drawer-content__item-label">Speaking language skill level</h5>
+                        <p><%- l.speakingProficiency.value %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
-                        <p>Advanced</p>
+                        <p><%- l.readingProficiency.value %></p>
                       </li>
                     </ul>
                   </div>
@@ -32,56 +34,25 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
-                        <p>Advanced</p>
+                        <p><%- l.writingProficiency.value %></p>
                       </li>
                     </ul>
                   </div>
                 </div>
                 <div class="usajobs-button-bar--split">
                   <div class="usajobs-button-bar__body">
-                    <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
+                    <a id="delete-language" class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
+                      data-id="<%- l.applicationLanguageSkillId %>" data-section="language" data-name="<%- l.details.value %>">Delete</a>
+                    <a id="edit-language" class="usa-button usajobs-button-bar__edit" href="javascript:void(0);"
+                    data-id="<%- l.applicationLanguageSkillId %>" data-section="language">Edit</a>
                   </div>
                 </div>
               </div>
             </li>
-            <li class="usajobs-drawer" data-section="language" data-id="lang-2">
-              <button class="usa-accordion-button usajobs-drawer-button has-no-face" aria-controls="lang-2">French</button>
-              <div id="lang-2" class="usa-accordion-content usajobs-drawer-content">
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Spoken language skill level</h5>
-                        <p>Advanced</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
-                        <p>Advanced</p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
-                        <p>Advanced</p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="usajobs-button-bar--split">
-                  <div class="usajobs-button-bar__body">
-                    <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
-                  </div>
-                </div>
-              </div>
-            </li>
+            <% }); %>
           </ul>
         </div>
+        <% } %>
         <div class="usajobs-profile-home-section__body">
           <p><a href="#" id="add-language" class="add-record">+ Add language</a></p>
           <h3 class="usajobs-profile-home-section__sub-section">Skills</h3>
@@ -94,11 +65,11 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Back</button>
-              <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save and continue</a>
+              <a href="#success" data-action="language.saveLanguageContinue" class="usa-button usa-button-primary usajobs-button_bar__save apply-continue">Save and continue</a>
             </div>
           </div>
         </div>
       </fieldset>
     </div>
-  <!-- </main>
-</div> -->
+  </main>
+</div>
