@@ -12,6 +12,10 @@ function renderEducation (){
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
   this.dataEducation= dataEducation;
+  if(this.data.editEducation){
+    var getEduStorage= localStorage.getItem('eduKey');
+    this.dataEducation=JSON.parse(getEduStorage);
+  }
   //initializeCountriesSelect.bind(this)();  
   var data= {
     honors:this.honors,
@@ -52,6 +56,8 @@ function toggleAddEducationOff () {
 }
 
 function getDataFromAddEducationPage (){
+  var countryData = $('#apply_country').select2('data');
+  var countrySubdivisionData=$('#apply_countrySubdivision').select2('data');
   var modelData = {
     schoolName: $('#school-name').val(),
     countryId: $('#apply_country').val(),
@@ -69,11 +75,10 @@ function getDataFromAddEducationPage (){
     creditSystem :$('[name=CreditSystem]:checked + label').text(),
     honorsId: $('#honors').val(),
     courseWork: $('#Coursework').val(),  
-    honors: $('#honors :selected').text(),
-    degreeLevel: $('#degree :selected').text(),
-    country:$('#apply_country').select2('data')? $('#apply_country').select2('data').value: '',
-    state:$('#apply_countrySubdivision').select2('data') ? $('#apply_countrySubdivision').select2('data').value: '',
-    
+    honor: { lookupCodeId: $('#honors').val(), value: $('#honors :selected').text()},
+    degreeLevel: { lookupCodeId: $('#degree').val(), value: $('#degree :selected').text()},
+    country: countryData ,
+    countrySubdivision:countrySubdivisionData,
   
   };
   return modelData;
@@ -240,10 +245,21 @@ var education = {
         type: 'PUT',
         data: data,
         success: function (education) {
-       
-          renderEducation.bind(this)();
-          Backbone.history.loadUrl(Backbone.history.getFragment()); 
+         
+          education.honor = data.honor;
+          education.degreeLevel = data.degreeLevel;
+          education.country= data.country;
+          education.countrySubdivision=data.countrySubdivision;
+          var index = _.findIndex(this.data.education, { educationId: education.educationId });
+          if (index == -1) {
+            this.data.education.push(education);
+          } else {
+            this.data.education[index] = education;
+          }
+          
+          renderEducation.bind(this)();    
           toggleAddEducationOff.bind(this)();
+          this.data.editEducation='';
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -289,7 +305,15 @@ var education = {
     }
         
   },
-    
+  getDataFromEducationPage:function (){
+    var modelData = {
+      isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val(),
+      isMinimumCompleted:this.$('input[name=Junior]:checked').val(),
+      isEducationContinued: this.$('input[name=ContinueEducation]:checked').val(),
+      cumulativeGpa: this.$('#cumulative-gpa').val(),
+    };
+    return modelData;
+  },
   
   getEducation: function (){
     //Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+this.data.editEducation, { trigger: true, replace: true });
@@ -306,7 +330,7 @@ var education = {
       }.bind(this),
     });
   },
-     
+ 
   toggleAddEducation: function () { 
     var dataEducation= getDataFromEducationPage();
     this.dataEducation= dataEducation;
@@ -361,7 +385,7 @@ var education = {
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {
-            
+        this.data.updatedAt = result.updatedAt;
         this.data.isCurrentlyEnrolled = result.isCurrentlyEnrolled;
         this.data.isMinimumCompleted = result.isMinimumCompleted;
         this.data.isEducationContinued=result.isEducationContinued;
@@ -370,12 +394,11 @@ var education = {
           this.$el.html(templates.applyIneligibleGPA);
         }
         else{
-          this.$el.html(templates.applyLanguage)(this.data);
-        }
-        // this.initializeFormFieldsEducation(result);
+          this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 4 });
+          this.updateApplicationStep(4);
+        }      
         this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
-        this.updateApplicationStep(3);
+       
         window.scrollTo(0, 0);
       }.bind(this));
     }

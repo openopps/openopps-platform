@@ -207,26 +207,12 @@ var ApplyView = Backbone.View.extend({
     }    
   },
   
-  deleteEducation:function (e){
-    var educationId=$(e.currentTarget).attr('data-id');
-    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    $.ajax({
-      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
-      type: 'Delete',     
-      success: function (data) {       
-        this.renderEducation(); 
-      }.bind(this),
-      error: function (err) {
-           
-      }.bind(this),
-    });      
-  },
-    
+ 
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
-  
+    var dataEducation= Education.getDataFromEducationPage.bind(this)();
+    
+    localStorage.setItem('eduKey', JSON.stringify(dataEducation));
     Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },
