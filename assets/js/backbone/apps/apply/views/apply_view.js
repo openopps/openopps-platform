@@ -23,7 +23,10 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
 
-    // program events
+    //process flow events
+    'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
+
+    //program events
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
 
     //experience events
@@ -187,6 +190,17 @@ var ApplyView = Backbone.View.extend({
       showWhoopsPage();
     });
   },
+
+  historyApplicationStep: function (e) {
+    // this.data.selectedStep = step;
+    step = e.currentTarget.dataset.step;
+    Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+    this.$el.html(templates.getTemplateForStep(step)(this.data));
+    this.$el.localize();
+    this.renderComponentEducation();
+    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: step });
+    window.scrollTo(0, 0);
+  },
   // end summary section
 
   // education section
@@ -204,7 +218,9 @@ var ApplyView = Backbone.View.extend({
       this.$el.html(templates.applyEducation(this.data));
       this.renderEducation();   
       this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
-    }    
+    } else if (this.data.selectedStep =='6') {
+      this.renderEducation();
+    }
   },
   
  
@@ -219,7 +235,6 @@ var ApplyView = Backbone.View.extend({
 
   renderEducation:function (){ 
     var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
-   
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   
