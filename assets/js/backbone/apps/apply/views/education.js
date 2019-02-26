@@ -42,19 +42,6 @@ function initializeFormFieldsEducation (){
   $('#cumulative-gpa').val(data.cumulativeGpa);
 }
 
-function toggleAddEducationOff () { 
-  if(this.data.editEducation){
-    Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-  }
-  this.$el.html(templates.applyEducation());
-  initializeFormFieldsEducation.bind(this)();
-  renderEducation.bind(this)();  
-  setTimeout(function () {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-  }, 50);
-}
-
 function getDataFromAddEducationPage (){
   var countryData = $('#apply_country').select2('data');
   var countrySubdivisionData=$('#apply_countrySubdivision').select2('data');
@@ -227,11 +214,23 @@ var education = {
     $('#cumulative-gpa').val(data.cumulativeGpa);
   },
     
-  
+  toggleAddEducationOff: function () { 
+    if(this.data.editEducation){
+      Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
+      this.data.editEducation='';
+     
+    }
+    this.$el.html(templates.applyEducation());
+    initializeFormFieldsEducation.bind(this)();
+    renderEducation.bind(this)();
+    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    window.scrollTo(0, 0);
+  },
    
   saveEducation:function (){
  
-    var data= getDataFromAddEducationPage();   
+    var data= getDataFromAddEducationPage(); 
+    var callback= education.toggleAddEducationOff.bind(this);  
     if(!validateFields.bind(this)())
     // eslint-disable-next-line no-empty
     {
@@ -245,7 +244,7 @@ var education = {
         type: 'PUT',
         data: data,
         success: function (education) {
-         
+       
           education.honor = data.honor;
           education.degreeLevel = data.degreeLevel;
           education.country= data.country;
@@ -258,8 +257,9 @@ var education = {
           }
           
           renderEducation.bind(this)();    
-          toggleAddEducationOff.bind(this)();
-          this.data.editEducation='';
+         
+          callback();
+          this.data.editEducation='';        
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -350,23 +350,6 @@ var education = {
     }, 50);
   },
     
-  toggleAddEducationOff: function () { 
-    if(this.data.editEducation){
-      Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-      this.data.editEducation='';
-     
-    }
-    this.$el.html(templates.applyEducation());
-    initializeFormFieldsEducation.bind(this)();
-    renderEducation.bind(this)();
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
-    setTimeout(function () {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, 50);
-  },
-    
- 
     
   educationContinue: function () {
     this.data.currentStep = 3;
