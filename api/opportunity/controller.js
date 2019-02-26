@@ -46,6 +46,23 @@ router.get('/api/task/communities', auth, async (ctx, next) => {
   ctx.body = data;
 });
 
+router.get('/api/task/internships', auth.bearer, async(ctx, next) => {
+  var data = await service.getInternships(ctx.state.user.id, ctx.query.state); 
+  ctx.body = data;
+});
+
+router.get('/api/task/internshipSummary', auth.bearer, async(ctx, next) => {
+  var data = await service.getInternshipSummary(ctx.state.user.id, ctx.query.taskId); 
+  data.owners = await service.getTaskShareList(ctx.state.user.id, ctx.query.taskId);
+  data.taskList = await service.getTaskList(ctx.state.user.id, ctx.query.taskId);
+  ctx.body = data;
+});
+
+router.get('/api/task/taskList', auth.bearer, async(ctx, next) => {
+  var data = await service.getTaskList(ctx.query.taskId); 
+  ctx.body = data;
+});
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user ? true : false);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {

@@ -8,6 +8,7 @@ const templates = require('./templates');
 const nextSteps = require('./next_steps');
 
 //utility functions
+var Program = require('./program');
 var Experience = require('./experience');
 var Language = require('./language');
 var Education = require('./education');
@@ -21,7 +22,9 @@ var ApplyView = Backbone.View.extend({
     'click .apply-continue'                                       : 'applyContinue',
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
-    'click .program-delete'                                       : 'deleteProgram',
+
+    // program events
+    'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
 
     //experience events
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -126,20 +129,6 @@ var ApplyView = Backbone.View.extend({
     method.bind(this)(e);
   },
 
-  deleteProgram: function (e) {
-    e.preventDefault && e.preventDefault();
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId + '/task/' + e.currentTarget.dataset.taskId,
-      method: 'DELETE',
-    }).done(function () {
-      this.data.tasks.splice(e.currentTarget.dataset.index, 1);
-      this.data[['firstChoice', 'secondChoice', 'thirdChoice'][e.currentTarget.dataset.index]] = null;
-      this.$el.html(templates.getTemplateForStep(1)(this.data));
-    }.bind(this)).fail(function () {
-      showWhoopsPage();
-    });
-  },
-
   toggleDrawers: function (e) {
     var element = $(e.currentTarget);
     var target = element.siblings('.usajobs-drawer-content');
@@ -220,26 +209,12 @@ var ApplyView = Backbone.View.extend({
     }    
   },
   
-  deleteEducation:function (e){
-    var educationId=$(e.currentTarget).attr('data-id');
-    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    $.ajax({
-      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
-      type: 'Delete',     
-      success: function (data) {       
-        this.renderEducation(); 
-      }.bind(this),
-      error: function (err) {
-           
-      }.bind(this),
-    });      
-  },
-    
+ 
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
-  
+    var dataEducation= Education.getDataFromEducationPage.bind(this)();
+    
+    localStorage.setItem('eduKey', JSON.stringify(dataEducation));
     Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },

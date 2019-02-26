@@ -668,6 +668,11 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
+
+        .sorting-arrow {
+          cursor: pointer;
+          margin: 1rem 0;
+        }
       }
 
       svg.svg-inline--fa {
