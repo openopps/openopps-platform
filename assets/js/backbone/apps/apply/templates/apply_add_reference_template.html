@@ -33,11 +33,11 @@
             <h5><label for="ReferenceType" class="usajobs-profile-question__title">Reference type</label></h5>
             <ul class="usa-unstyled-list" id="reference-type">
               <li>
-                <input id="reference-type-professional" name="ReferenceType" type="radio" value="professional" checked="checked">
+                <input id="reference-type-professional" name="ReferenceType" type="radio" value="11" checked="checked">
                 <label for="reference-type-professional">Professional</label>
               </li>
               <li>
-                <input id="reference-type-personal" name="ReferenceType" type="radio" value="personal">
+                <input id="reference-type-personal" name="ReferenceType" type="radio" value="12">
                 <label for="reference-type-personal">Personal</label>
               </li>
             </ul>
@@ -48,7 +48,7 @@
           </div>
           <div>
             <label for="title" class="usa-input-optional">Title</label>
-            <input type="text" class="fullwidth form-control" id="title" name="title">
+            <input type="text" class="fullwidth form-control" id="reference_title" name="title">
           </div>
           <div class="form-group required-input">
             <h5><label for="Contact" class="usajobs-profile-question__title">May we contact this person about you?</label></h5>
@@ -67,8 +67,8 @@
       </form>
       <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
-          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel and return</button>
-          <a href="#success" class="usa-button usa-button-primary usajobs-button_bar__save">Save reference</a>
+          <button class="usa-button usa-button-secondary usa-button-left cancel-add-experience-reference" data-state="cancel" id="cancel">Cancel and return</button>
+          <a href="javascript:void(0)" id="save-add-reference" class="usa-button usa-button-primary usajobs-button_bar__save">Save reference</a>
         </div>
       </div>
     </div>

@@ -274,6 +274,54 @@ var experience = {
   isValidDate: function (date) {
     return date instanceof Date && !isNaN(date);
   },
+
+  toggleAddReference: function () {
+    experience.updateExperienceDataObject.bind(this)();
+    var data = { };
+    var template = templates.applyAddReference(data);
+        
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    window.scrollTo(0, 0);
+  },
+
+  getDataFromAddReferencePage: function () {
+    return {
+      referenceName: $('#name').val(),
+      referencePhone: $('#telephone').val(),
+      referenceEmail: $('#email').val(),
+      referenceEmployer: $('#employer').val(),
+      referenceTitle: $('#reference_title').val(),
+      isReferenceContact: $('#contact-yes').is(':checked'),
+      referenceTypeId: $('[name=ReferenceType]:checked').val(),
+    };
+  },
+  
+  saveReference: function () {
+    var data = experience.getDataFromAddReferencePage.bind(this)();
+    if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/reference',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (reference) {
+          if (this.data.reference && $.isArray(this.data.reference)) {
+            this.data.reference.push(reference);
+          } else {
+            this.data.reference = [reference];
+          }
+          callback();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
+  },
 };
 
 module.exports = experience;

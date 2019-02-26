@@ -30,10 +30,12 @@ var ApplyView = Backbone.View.extend({
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
     'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
-    'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
+    'click .cancel-add-experience-reference'                      : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
     'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
     'click #Present'                                              : function () { this.callMethod(Experience.toggleEndDate); },
+    'click #add-reference'                                        : function () { this.callMethod(Experience.toggleAddReference); },
+    'click #save-add-reference'                                   : function () { this.callMethod(Experience.saveReference); },
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
