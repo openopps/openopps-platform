@@ -38,7 +38,9 @@ var ApplyView = Backbone.View.extend({
     'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
     'click #Present'                                              : function () { this.callMethod(Experience.toggleEndDate); },
     'click #add-reference'                                        : function () { this.callMethod(Experience.toggleAddReference); },
+    'click #edit-reference'                                       : function (e) { this.callMethod(Experience.toggleUpdateReference, e); },
     'click #save-add-reference'                                   : function () { this.callMethod(Experience.saveReference); },
+    'click #save-update-reference'                                : function () { this.callMethod(Experience.updateReference); },
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
@@ -108,7 +110,10 @@ var ApplyView = Backbone.View.extend({
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
-			
+        this.referenceTypes={};
+        for (var i=0;i<data.referenceTypes.length;i++) {
+          this.referenceTypes[data.referenceTypes[i].code] = data.referenceTypes[i];
+        }
       }.bind(this),
     });
   },

@@ -247,7 +247,7 @@
                   <div class="usajobs-button-bar__body">
                     <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
                       data-id="<%= r.referenceId %>" data-name="<%= r.referenceTitle %>" data-section="reference" data-record="reference">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="javascript:void(0);">Edit</a>
+                    <a class="usa-button usajobs-button-bar__edit" data-id="<%= r.referenceId %>" href="javascript:void(0);" id="edit-reference">Edit</a>
                   </div>
                 </div>
               </div>
@@ -260,7 +260,7 @@
           <p><a id="add-reference" class="add-record" href="javascript:void(0);">+ Add reference</a></p>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
-              <button class="usa-button usa-button-secondary usa-button-left cancel-add-experience-reference" data-state="cancel" id="cancel">Back</button>
+              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
               <a class="usa-button usa-button-primary usajobs-button_bar__save" id="saveExperienceContinue">Save and continue</a>
             </div>
           </div>

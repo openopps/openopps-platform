@@ -142,6 +142,21 @@ router.post('/api/application/:applicationId/reference',auth, async (ctx,next) =
   });
 });
 
+router.put('/api/application/:applicationId/reference/:referenceId', auth, async (ctx,next) => {
+  ctx.request.body.userId = ctx.state.user.id;
+  ctx.request.body.applicationId=ctx.params.applicationId;
+  ctx.request.body.referenceId = ctx.params.referenceId;
+  await service.saveReference(ctx.request.body, function (errors,reference)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = reference;
+    }
+  });
+});
+
 router.delete('/api/application/:id/reference/:referenceId',auth, async (ctx,next) =>{ 
   ctx.body = await service.deleteReference(ctx.params.referenceId, ctx.state.user.id);
 });
