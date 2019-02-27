@@ -180,7 +180,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   updateApplicationStep: function (step) {
-    this.data.currentStep = (this.data.currentStep < step ? step : this.data.currentStep);
+    this.data.currentStep = Math.max(this.data.currentStep, step);
     this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
