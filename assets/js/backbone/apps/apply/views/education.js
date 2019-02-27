@@ -12,6 +12,10 @@ function renderEducation (){
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
   this.dataEducation= dataEducation;
+  if(this.data.editEducation){
+    var getEduStorage= localStorage.getItem('eduKey');
+    this.dataEducation=JSON.parse(getEduStorage);
+  }
   //initializeCountriesSelect.bind(this)();  
   var data= {
     honors:this.honors,
@@ -38,20 +42,9 @@ function initializeFormFieldsEducation (){
   $('#cumulative-gpa').val(data.cumulativeGpa);
 }
 
-function toggleAddEducationOff () { 
-  if(this.data.editEducation){
-    Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-  }
-  this.$el.html(templates.applyEducation());
-  initializeFormFieldsEducation.bind(this)();
-  renderEducation.bind(this)();  
-  setTimeout(function () {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-  }, 50);
-}
-
 function getDataFromAddEducationPage (){
+  var countryData = $('#apply_country').select2('data');
+  var countrySubdivisionData=$('#apply_countrySubdivision').select2('data');
   var modelData = {
     schoolName: $('#school-name').val(),
     countryId: $('#apply_country').val(),
@@ -69,11 +62,10 @@ function getDataFromAddEducationPage (){
     creditSystem :$('[name=CreditSystem]:checked + label').text(),
     honorsId: $('#honors').val(),
     courseWork: $('#Coursework').val(),  
-    honors: $('#honors :selected').text(),
-    degreeLevel: $('#degree :selected').text(),
-    country:$('#apply_country').select2('data')? $('#apply_country').select2('data').value: '',
-    state:$('#apply_countrySubdivision').select2('data') ? $('#apply_countrySubdivision').select2('data').value: '',
-    
+    honor: { lookupCodeId: $('#honors').val(), value: $('#honors :selected').text()},
+    degreeLevel: { lookupCodeId: $('#degree').val(), value: $('#degree :selected').text()},
+    country: countryData ,
+    countrySubdivision:countrySubdivisionData,
   
   };
   return modelData;
@@ -222,11 +214,23 @@ var education = {
     $('#cumulative-gpa').val(data.cumulativeGpa);
   },
     
-  
+  toggleAddEducationOff: function () { 
+    if(this.data.editEducation){
+      Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
+      this.data.editEducation='';
+     
+    }
+    this.$el.html(templates.applyEducation());
+    initializeFormFieldsEducation.bind(this)();
+    renderEducation.bind(this)();
+    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    window.scrollTo(0, 0);
+  },
    
   saveEducation:function (){
  
-    var data= getDataFromAddEducationPage();   
+    var data= getDataFromAddEducationPage(); 
+    var callback= education.toggleAddEducationOff.bind(this); 
     if(!validateFields.bind(this)())
     // eslint-disable-next-line no-empty
     {
@@ -241,9 +245,21 @@ var education = {
         data: data,
         success: function (education) {
        
-          renderEducation.bind(this)();
-          Backbone.history.loadUrl(Backbone.history.getFragment()); 
-          toggleAddEducationOff.bind(this)();
+          education.honor = data.honor;
+          education.degreeLevel = data.degreeLevel;
+          education.country= data.country;
+          education.countrySubdivision=data.countrySubdivision;
+          var index = _.findIndex(this.data.education, { educationId: education.educationId });
+          if (index == -1) {
+            this.data.education.push(education);
+          } else {
+            this.data.education[index] = education;
+          }
+          
+          renderEducation.bind(this)();    
+         
+          callback();
+          this.data.editEducation='';        
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -289,7 +305,15 @@ var education = {
     }
         
   },
-    
+  getDataFromEducationPage:function (){
+    var modelData = {
+      isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val(),
+      isMinimumCompleted:this.$('input[name=Junior]:checked').val(),
+      isEducationContinued: this.$('input[name=ContinueEducation]:checked').val(),
+      cumulativeGpa: this.$('#cumulative-gpa').val(),
+    };
+    return modelData;
+  },
   
   getEducation: function (){
     //Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+this.data.editEducation, { trigger: true, replace: true });
@@ -306,7 +330,7 @@ var education = {
       }.bind(this),
     });
   },
-     
+ 
   toggleAddEducation: function () { 
     var dataEducation= getDataFromEducationPage();
     this.dataEducation= dataEducation;
@@ -325,29 +349,68 @@ var education = {
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     }, 50);
   },
-    
-  toggleAddEducationOff: function () { 
-    if(this.data.editEducation){
-      Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
-      this.data.editEducation='';
-     
+
+  validateEducationFields: function () {
+
+    var children = this.$el.find( '.validate' );
+    var abort = false;
+
+    if($('[name=ContinueEducation]:checked').length==0){ 
+      $('#apply-continue-education').addClass('usa-input-error');    
+      $('#apply-continue-education>.field-validation-error').show();
+      abort=true;
     }
-    this.$el.html(templates.applyEducation());
-    initializeFormFieldsEducation.bind(this)();
-    renderEducation.bind(this)();
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
-    setTimeout(function () {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, 50);
+
+    if($('[name=Junior]:checked').length==0){ 
+      $('#apply-junior').addClass('usa-input-error');    
+      $('#apply-junior>.field-validation-error').show();
+      abort=true;
+    }
+
+    if($('[name=Enrolled]:checked').length==0){ 
+      $('#apply-enrolled').addClass('usa-input-error');    
+      $('#apply-enrolled>.field-validation-error').show();
+      abort=true;
+    }
+
+    _.each( children, function ( child ) {
+      var iAbort = validate( { currentTarget: child } );
+      abort = abort || iAbort;
+    } );
+
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    
+    return abort;
   },
-    
- 
-    
+  changeCurrentlyEnrolled: function (){
+    if($('[name=Enrolled]:checked').length>0){ 
+      $('#apply-enrolled').removeClass('usa-input-error');    
+      $('#apply-enrolled>.field-validation-error').hide();
+      
+    }
+   
+  },
+  changeJunior:function (){
+    if($('[name=Junior]:checked').length >0){ 
+      $('#apply-junior').removeClass('usa-input-error');    
+      $('#apply-junior>.field-validation-error').hide();   
+    }
+  },
+
+  changeContinueEducation: function (){
+    if($('[name=ContinueEducation]:checked').length>0){ 
+      $('#apply-continue-education').removeClass('usa-input-error');    
+      $('#apply-continue-education>.field-validation-error').hide();   
+    }
+
+  },
   educationContinue: function () {
     this.data.currentStep = 3;
     this.data.selectedStep = 3;
-    if(!validateFields.bind(this)()){
+    var validationEduFields= education.validateEducationFields.bind(this); 
+    if(!validationEduFields()){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
         method: 'PUT',
@@ -361,7 +424,7 @@ var education = {
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {
-            
+        this.data.updatedAt = result.updatedAt;
         this.data.isCurrentlyEnrolled = result.isCurrentlyEnrolled;
         this.data.isMinimumCompleted = result.isMinimumCompleted;
         this.data.isEducationContinued=result.isEducationContinued;
@@ -370,11 +433,11 @@ var education = {
           this.$el.html(templates.applyIneligibleGPA);
         }
         else{
-          this.$el.html(templates.applyLanguage)(this.data);
-        }
-        // this.initializeFormFieldsEducation(result);
+          this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 4 });
+          this.updateApplicationStep(4);
+        }      
         this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+       
         window.scrollTo(0, 0);
       }.bind(this));
     }

@@ -12,14 +12,11 @@ var statement = {
 
   statementContinue: function () {
     if(!this.validateFields()) {
-      this.data.currentStep = 6;
-      this.data.selectedStep = 6;
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
         method: 'PUT',
         data: {
           applicationId: this.data.applicationId,
-          currentStep: 6,
           statementOfInterest: $('#statement').val(),
           updatedAt: this.data.updatedAt,
         },
@@ -29,7 +26,6 @@ var statement = {
         this.data.statementOfInterestHtml = marked(this.data.statementOfInterest);
         this.$el.html(templates.applyReview(this.data));
         this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: 6, selectedStep: 6 });
         this.updateApplicationStep(6);
         window.scrollTo(0, 0);
       }.bind(this));

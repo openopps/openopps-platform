@@ -23,7 +23,10 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
 
-    // program events
+    //process flow events
+    'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
+
+    //program events
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
@@ -34,10 +37,14 @@ var ApplyView = Backbone.View.extend({
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
     'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
-    'click #cancel-add-experience'                                : function () { this.callMethod(Experience.toggleExperienceOff); },
+    'click .cancel-add-experience-reference'                      : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
     'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
     'click #Present'                                              : function () { this.callMethod(Experience.toggleEndDate); },
+    'click #add-reference'                                        : function () { this.callMethod(Experience.toggleAddReference); },
+    'click #edit-reference'                                       : function (e) { this.callMethod(Experience.toggleUpdateReference, e); },
+    'click #save-add-reference'                                   : function () { this.callMethod(Experience.saveReference); },
+    'click #save-update-reference'                                : function () { this.callMethod(Experience.updateReference); },
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
@@ -46,7 +53,9 @@ var ApplyView = Backbone.View.extend({
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
     'click #education-edit'                                       : 'editEducation',
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
-
+    'change input[name=Enrolled]'                                 :function () { this.callMethod(Education.changeCurrentlyEnrolled); },
+    'change input[name=Junior]'                                    :function () { this.callMethod(Education.changeJunior); },
+    'change input[name=ContinueEducation]'                         :function () { this.callMethod(Education.changeContinueEducation); },
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
@@ -107,7 +116,10 @@ var ApplyView = Backbone.View.extend({
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
-			
+        this.referenceTypes={};
+        for (var i=0;i<data.referenceTypes.length;i++) {
+          this.referenceTypes[data.referenceTypes[i].code] = data.referenceTypes[i];
+        }
       }.bind(this),
     });
   },
@@ -188,6 +200,17 @@ var ApplyView = Backbone.View.extend({
       showWhoopsPage();
     });
   },
+
+  historyApplicationStep: function (e) {
+    // this.data.selectedStep = step;
+    step = e.currentTarget.dataset.step;
+    Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+    this.$el.html(templates.getTemplateForStep(step)(this.data));
+    this.$el.localize();
+    this.renderComponentEducation();
+    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: step });
+    window.scrollTo(0, 0);
+  },
   // end summary section
 
   // education section
@@ -205,36 +228,23 @@ var ApplyView = Backbone.View.extend({
       this.$el.html(templates.applyEducation(this.data));
       this.renderEducation();   
       this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
-    }    
+    } else if (this.data.selectedStep =='6') {
+      this.renderEducation();
+    }
   },
   
-  deleteEducation:function (e){
-    var educationId=$(e.currentTarget).attr('data-id');
-    this.dataEducationArray = _.reject(this.dataEducationArray, function (el) {
-      return el.educationId === educationId; 
-    });
-    $.ajax({
-      url: '/api/application/'+ this.data.applicationId +'/Education/'+ educationId,
-      type: 'Delete',     
-      success: function (data) {       
-        this.renderEducation(); 
-      }.bind(this),
-      error: function (err) {
-           
-      }.bind(this),
-    });      
-  },
-    
+ 
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
-  
+    var dataEducation= Education.getDataFromEducationPage.bind(this)();
+    
+    localStorage.setItem('eduKey', JSON.stringify(dataEducation));
     Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
     return this;       
   },
 
   renderEducation:function (){ 
     var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
-   
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   

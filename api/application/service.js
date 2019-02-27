@@ -318,3 +318,58 @@ module.exports.getEducation= async function (educationId){
     return null;
   });
 };
+
+async function insertReference (attributes) {
+  return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
+    return await dao.Reference.insert(attributes).then(async (reference) => {   
+      return reference;
+    }).catch(err => {
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
+async function updateReference (attributes) {
+  return await dao.Reference.findOne('reference_id = ? and user_id = ?',attributes.referenceId,attributes.userId).then(async (e) => { 
+    return await dao.Reference.update(attributes).then((reference) => {
+      return reference;
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
+module.exports.saveReference = async function (attributes,done) { 
+  if (attributes.referenceId) {
+    await updateReference(attributes).then((reference) => {   
+      return done(!reference, reference);
+    });
+  } else {
+    attributes.updatedAt = new Date(); 
+    attributes.createdAt = new Date();
+    await insertReference(attributes).then((reference) => {   
+      return done(!reference, reference);
+    });
+  }
+};
+
+module.exports.deleteReference= async function (referenceId, userId){
+  return await dao.Reference.findOne('reference_id = ? and user_id = ?',referenceId,userId).then(async (e) => { 
+    return await dao.Reference.delete('reference_id = ?', referenceId).then(async (reference) => {
+      return reference;
+    }).catch(err => {
+      log.info('delete: failed to delete Reference ', err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+};
