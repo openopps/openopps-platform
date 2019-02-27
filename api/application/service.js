@@ -54,7 +54,7 @@ async function processUnpaidApplication (data, callback) {
       taskId: data.task.id,
       sortOrder: sortOrder,
       createdAt: new Date(),
-      updateAt: new Date(),
+      updatedAt: new Date(),
     });
     callback(null, application.applicationId);
   }
@@ -185,6 +185,25 @@ module.exports.importProfileData = async function (user, applicationId) {
     });
   }).catch((err) => {
     return false;
+  });
+};
+
+module.exports.swapApplicationTasks = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.query('BEGIN').then(async () => {
+        await dao.ApplicationTask.update({ applicationTaskId: data[0].applicationTaskId, sortOrder: data[1].sortOrder, updatedAt: data[0].updatedAt });
+        await dao.ApplicationTask.update({ applicationTaskId: data[1].applicationTaskId, sortOrder: data[0].sortOrder, updatedAt: data[1].updatedAt });
+        await db.query('COMMIT');
+      }).then(async () => {
+        resolve((await db.query(dao.query.applicationTasks, applicationId)).rows);
+      }).catch((err) => {
+        db.query('ROLLBACK');
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your internship selections from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
   });
 };
 
