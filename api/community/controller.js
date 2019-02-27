@@ -14,11 +14,6 @@ function initializeAuditData (ctx) {
 
 var router = new Router();
 
-router.get('/api/community/my', auth.bearer, async(ctx, next) => {
-  var data = await service.getCommunities(ctx.state.user.id); 
-  ctx.body = data;
-});
-
 router.get('/api/community/:id', async (ctx, next) => {
   ctx.body = await service.findById(ctx.params.id);
 });
