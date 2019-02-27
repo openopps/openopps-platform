@@ -21,8 +21,7 @@ function onSuccess (results) {
   this.data.firstChoice = _.findWhere(this.data.tasks, { sortOrder: 1 });
   this.data.secondChoice = _.findWhere(this.data.tasks, { sortOrder: 2 });
   this.data.thirdChoice = _.findWhere(this.data.tasks, { sortOrder: 3 });
-  this.$el.html(templates.getTemplateForStep(1)(this.data));
-  this.$el.localize();
+  this.render();
 }
 
 function swapPrograms (program1, program2) {
