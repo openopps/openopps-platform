@@ -212,7 +212,7 @@ var ApplyView = Backbone.View.extend({
     this.$el.html(templates.getTemplateForStep(step)(this.data));
     this.$el.localize();
     if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-      this.renderComponentEducation();
+      this.renderEducation();
     }
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: step });
     window.scrollTo(0, 0);
