@@ -44,6 +44,16 @@ router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) => {
+  await service.swapApplicationTasks(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
+});
+
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
   await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then(() => {
     ctx.status = 200;
