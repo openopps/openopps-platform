@@ -274,6 +274,101 @@ var experience = {
   isValidDate: function (date) {
     return date instanceof Date && !isNaN(date);
   },
+
+  toggleAddReference: function () {
+    experience.updateExperienceDataObject.bind(this)();
+    var data = { referenceTypes: this.referenceTypes };
+    var template = templates.applyAddReference(data);
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    window.scrollTo(0, 0);
+  },
+
+  toggleUpdateReference: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
+    var data = {};
+    var id = $(e.currentTarget).data('id');
+    $.each(this.data.reference, function (i, reference) {
+      if (reference.referenceId == id) {
+        data = reference;
+      }
+    });
+    data.referenceTypes = this.referenceTypes;
+    var template = templates.applyAddReference(data);
+        
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    window.scrollTo(0, 0);
+  },
+
+  getDataFromAddReferencePage: function () {
+    var modelData = {
+      referenceName: $('#name').val(),
+      referencePhone: $('#telephone').val(),
+      referenceEmail: $('#email').val(),
+      referenceEmployer: $('#employer').val(),
+      referenceTitle: $('#reference_title').val(),
+      isReferenceContact: $('#contact-yes').is(':checked'),
+      referenceTypeId: $('[name=ReferenceType]:checked').val(),
+      referenceTypeName: $('[name=ReferenceType]:checked').data('name'),
+    };
+    if ($('#reference-id').length) {
+      modelData.referenceId = $('#reference-id').val();
+      modelData.updatedAt = $('#updated-at').val();
+    }
+    return modelData;
+  },
+  
+  saveReference: function () {
+    var data = experience.getDataFromAddReferencePage.bind(this)();
+    if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/reference',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (reference) {
+          reference.referenceType = { value: data.referenceTypeName };
+          if (this.data.reference && $.isArray(this.data.reference)) {
+            this.data.reference.push(reference);
+          } else {
+            this.data.reference = [reference];
+          }
+          callback();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
+  },
+
+  updateReference: function () {
+    var data = experience.getDataFromAddReferencePage.bind(this)();
+    if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/reference/' + data.referenceId,
+        type: 'PUT',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (reference) {
+          reference.referenceType = { value: data.referenceTypeName };
+          var index = _.findIndex(this.data.reference, { referenceId: reference.referenceId });
+          this.data.reference[index] = reference;
+          callback();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
+  },
 };
 
 module.exports = experience;
