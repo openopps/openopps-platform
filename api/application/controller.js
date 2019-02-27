@@ -7,9 +7,12 @@ const service = require('./service');
 var router = new Router();
 
 router.get('/api/application/:id', auth, async (ctx, next) => {
-  var application = await service.findById(ctx.params.id);
-  ctx.status = application ? 200 : 404;
-  ctx.body = application ? application : 'Not Found';
+  await service.findById(ctx.state.user.id, ctx.params.id).then(application => {
+    ctx.status = 200;
+    ctx.body = application;
+  }).catch(() => {
+    ctx.status = 404;
+  });
 });
 
 router.put('/api/application/:id', auth, async (ctx, next) => {

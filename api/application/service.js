@@ -138,27 +138,30 @@ module.exports.deleteApplicationTask = async function (userId, applicationId, ta
   });
 };
 
-module.exports.findById = async function (applicationId) {
-  var application = (await dao.Application.query(dao.query.application, applicationId))[0];
-  if(application) {
-    var results = await Promise.all([
-      db.query(dao.query.applicationTasks, applicationId),
-      dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' ,degreeLevel:'',honor:''}}),
-      dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
-      dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
-        details: '',
-        speakingProficiency: '', 
-        readingProficiency: '', 
-        writingProficiency: '' }}),
-      dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
-    ]);
-    application.tasks = results[0].rows;
-    application.education = results[1];
-    application.experience = results[2];
-    application.language = results[3];
-    application.reference = results[4];
-  }
-  return application;
+module.exports.findById = async function (userId, applicationId) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async application => {
+      var results = await Promise.all([
+        db.query(dao.query.applicationTasks, applicationId),
+        dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' ,degreeLevel:'',honor:''}}),
+        dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
+        dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
+          details: '',
+          speakingProficiency: '', 
+          readingProficiency: '', 
+          writingProficiency: '' }}),
+        dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
+      ]);
+      application.tasks = results[0].rows;
+      application.education = results[1];
+      application.experience = results[2];
+      application.language = results[3];
+      application.reference = results[4];
+      resolve(application);
+    }).catch((err) => {
+      reject();
+    });
+  });
 };
 
 module.exports.importProfileData = async function (user, applicationId) {
