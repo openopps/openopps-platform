@@ -48,7 +48,9 @@ var ApplyView = Backbone.View.extend({
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
     'click #education-edit'                                       : 'editEducation',
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
-
+    'change input[name=Enrolled]'                                 :function () { this.callMethod(Education.changeCurrentlyEnrolled); },
+    'change input[name=Junior]'                                    :function () { this.callMethod(Education.changeJunior); },
+    'change input[name=ContinueEducation]'                         :function () { this.callMethod(Education.changeContinueEducation); },
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
