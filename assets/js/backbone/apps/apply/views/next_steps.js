@@ -13,13 +13,13 @@ function onSuccess (results) {
   this.data.reference = results.reference;
   this.data.language = results.language;
   if (results.error) {
-    showImportErrorMessage();
+    showImportErrorMessage.bind(this)();
   } else {
     this.updateApplicationStep(1);
   }
 }
 
-function showImportErrorMessage () {
+function showImportErrorMessage (action) {
   this.modalComponent = new ModalComponent({
     el: '#site-modal',
     id: 'import-profile',
