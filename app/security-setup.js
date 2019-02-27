@@ -56,6 +56,7 @@ module.exports = async (app) => {
 
   // configure receiving AWS SNS messages prior to CSRF configuration
   app.use(require('../api/notification/controller'));
+  require('../api/v1')(app);
 
   // configure CSRF
   app.use(new CSRF(csrfOptions));
