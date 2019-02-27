@@ -230,7 +230,7 @@ var education = {
   saveEducation:function (){
  
     var data= getDataFromAddEducationPage(); 
-    var callback= education.toggleAddEducationOff.bind(this);  
+    var callback= education.toggleAddEducationOff.bind(this); 
     if(!validateFields.bind(this)())
     // eslint-disable-next-line no-empty
     {
@@ -349,12 +349,68 @@ var education = {
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     }, 50);
   },
+
+  validateEducationFields: function () {
+
+    var children = this.$el.find( '.validate' );
+    var abort = false;
+
+    if($('[name=ContinueEducation]:checked').length==0){ 
+      $('#apply-continue-education').addClass('usa-input-error');    
+      $('#apply-continue-education>.field-validation-error').show();
+      abort=true;
+    }
+
+    if($('[name=Junior]:checked').length==0){ 
+      $('#apply-junior').addClass('usa-input-error');    
+      $('#apply-junior>.field-validation-error').show();
+      abort=true;
+    }
+
+    if($('[name=Enrolled]:checked').length==0){ 
+      $('#apply-enrolled').addClass('usa-input-error');    
+      $('#apply-enrolled>.field-validation-error').show();
+      abort=true;
+    }
+
+    _.each( children, function ( child ) {
+      var iAbort = validate( { currentTarget: child } );
+      abort = abort || iAbort;
+    } );
+
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
     
-    
+    return abort;
+  },
+  changeCurrentlyEnrolled: function (){
+    if($('[name=Enrolled]:checked').length>0){ 
+      $('#apply-enrolled').removeClass('usa-input-error');    
+      $('#apply-enrolled>.field-validation-error').hide();
+      
+    }
+   
+  },
+  changeJunior:function (){
+    if($('[name=Junior]:checked').length >0){ 
+      $('#apply-junior').removeClass('usa-input-error');    
+      $('#apply-junior>.field-validation-error').hide();   
+    }
+  },
+
+  changeContinueEducation: function (){
+    if($('[name=ContinueEducation]:checked').length>0){ 
+      $('#apply-continue-education').removeClass('usa-input-error');    
+      $('#apply-continue-education>.field-validation-error').hide();   
+    }
+
+  },
   educationContinue: function () {
     this.data.currentStep = 3;
     this.data.selectedStep = 3;
-    if(!validateFields.bind(this)()){
+    var validationEduFields= education.validateEducationFields.bind(this); 
+    if(!validationEduFields()){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
         method: 'PUT',
