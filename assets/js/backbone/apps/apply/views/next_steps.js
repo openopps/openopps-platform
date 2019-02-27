@@ -25,7 +25,7 @@ function showImportErrorMessage () {
     id: 'import-profile',
     alert: 'error',
     primary: {
-      text: 'Continue',
+      text: 'Continue with application',
       action: function () {
         this.modalComponent.cleanup();
         this.updateApplicationStep(1);
@@ -33,7 +33,7 @@ function showImportErrorMessage () {
     },
     secondary: {},
     disableClose: true,
-    modalTitle: 'An unexpected errror occured',
+    modalTitle: 'An unexpected error occured',
     modalBody: 'An error has occurred attempting to import some of your USAJOBS profile data. Please verify all entries for completeness and correctness before submitting our application.',
   }).render();
 }

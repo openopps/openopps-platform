@@ -28,6 +28,7 @@ var ApplyView = Backbone.View.extend({
 
     //program events
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
+    'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
     //experience events
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -76,9 +77,9 @@ var ApplyView = Backbone.View.extend({
     this.options = options;
     this.data = options.data;
     this.data = _.extend(this.data, {
-      firstChoice: _.findWhere(this.data.tasks, { sort_order: 1 }),
-      secondChoice: _.findWhere(this.data.tasks, { sort_order: 2 }),
-      thirdChoice: _.findWhere(this.data.tasks, { sort_order: 3 }),
+      firstChoice: _.findWhere(this.data.tasks, { sortOrder: 1 }),
+      secondChoice: _.findWhere(this.data.tasks, { sortOrder: 2 }),
+      thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
     // this.dataLanguageArray     = [];
