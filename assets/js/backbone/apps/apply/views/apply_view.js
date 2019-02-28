@@ -385,7 +385,7 @@ var ApplyView = Backbone.View.extend({
     }).render();
   },
 
-  validateFields () {
+  validateFields: function () {
     var children = this.$el.find( '.validate' );
     var abort = false;
     
