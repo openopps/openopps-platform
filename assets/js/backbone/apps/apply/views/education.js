@@ -16,7 +16,7 @@ function toggleAddEducation () {
     var getEduStorage= localStorage.getItem('eduKey');
     this.dataEducation=JSON.parse(getEduStorage);
   }
-  //initializeCountriesSelect.bind(this)();  
+ 
   var data= {
     honors:this.honors,
     degreeLevels:this.degreeTypes,
