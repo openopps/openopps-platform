@@ -223,7 +223,7 @@ var education = {
     this.$el.html(templates.applyEducation(this.data));
     initializeFormFieldsEducation.bind(this)();
     renderEducation.bind(this)();
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     window.scrollTo(0, 0);
   },
    
@@ -324,7 +324,7 @@ var education = {
       success: function (data) {        
         this.educationData =data;              
         toggleAddEducation.bind(this)();   
-        this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });  
+        this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });  
       }.bind(this),
       error: function (err) {     
       }.bind(this),
@@ -342,7 +342,7 @@ var education = {
     var template = templates.applyAddEducation(data);
     $('#search-results-loading').hide();
     this.$el.html(template); 
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     initializeCountriesSelect.bind(this)();      
     setTimeout(function () {
       document.body.scrollTop = 0; // For Safari
