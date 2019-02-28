@@ -56,6 +56,7 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+
     //language events
     'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
@@ -209,34 +210,23 @@ var ApplyView = Backbone.View.extend({
     step = e.currentTarget.dataset.step;
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-    this.$el.html(templates.getTemplateForStep(step)(this.data));
-    this.$el.localize();
-    if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-      this.renderEducation();
-    }
-    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: step });
+    this.render();
     window.scrollTo(0, 0);
   },
   // end summary section
 
   // education section
-  
   renderComponentEducation: function (){
     this.renderEducation();
     if(this.data.editEducation && this.data.selectedStep =='3'){
-      
       Education.getEducation.bind(this)();
-     
       Education.initializeAddEducationFields.bind(this)();
-
     }
   },
   
- 
   editEducation:function (e){
     var educationId= $(e.currentTarget).attr('data-id');
     var dataEducation= Education.getDataFromEducationPage.bind(this)();
-    
     localStorage.setItem('eduKey', JSON.stringify(dataEducation));
     Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });  
     return this;       
@@ -246,8 +236,6 @@ var ApplyView = Backbone.View.extend({
     var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
-  
-
   // end education section
   
   initializeCountriesSelect: function () {  
