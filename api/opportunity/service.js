@@ -86,6 +86,7 @@ function processTaskTags (task, tags) {
 }
 
 async function createNewTaskTag (tag, task) {
+  tag.name = tag.name.trim();
   return await dao.TagEntity.insert(tag).then(async (t) => {
     return await createTaskTag(t.id, task);
   }).catch(err => {
@@ -156,18 +157,28 @@ async function sendTaskNotification (user, task, action) {
 
 async function canUpdateOpportunity (user, id) {
   var task = await dao.Task.findOne('id = ?', id);
-  if (task.userId == user.id || user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, task.userId))) {
+  if (task && user.isAdmin) {
     return true;
+  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
+    return true;
+  } else if (await isCommunityAdmin(user, task)) {
+    return true;
+  } else {
+    return false;
   }
-  return false;
 }
 
 async function canAdministerTask (user, id) {
   var task = await dao.Task.findOne('id = ?', id);
-  if (task && (user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, task.userId)))) {
+  if (task && user.isAdmin) {
     return true;
+  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
+    return true;
+  } else if (await isCommunityAdmin(user, task)) {
+    return true;
+  } else {
+    return false;
   }
-  return false;
 }
 async function getCommunities (userId) {
   var communities = await dao.Community.query(dao.query.communitiesQuery, userId);
@@ -199,6 +210,16 @@ async function checkAgency (user, ownerId) {
     return user.tags ? _.find(user.tags, { 'type': 'agency' }).name == owner.agency.name : false;
   }
   return false;
+}
+
+async function isCommunityAdmin (user, task) {
+  if (task && task.communityId) {
+    return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
+      return {};
+    })).isManager;
+  } else {
+    return false;
+  }
 }
 
 async function updateOpportunityState (attributes, done) {
