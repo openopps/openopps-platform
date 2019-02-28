@@ -119,7 +119,8 @@ const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_cou
   'offset ((? - 1) * 25) ';
 
 const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
-'from midas_user inner join community_user on midas_user.id= community_user.user_Id ' ;
+'from midas_user inner join community_user on midas_user.id = community_user.user_Id ' +
+'where community_user.community_id = ?';
 
 const communityListQuery = 'select community.* from community ' + 
   'join community_user on community_user.community_id = community.community_id ' +
