@@ -12,7 +12,7 @@ function renderEducation (){
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
   this.dataEducation= dataEducation;
-  if(this.data.editEducation){
+  if(this.data.editEducation && this.data.currentStep ==3){
     var getEduStorage= localStorage.getItem('eduKey');
     this.dataEducation=JSON.parse(getEduStorage);
   }
