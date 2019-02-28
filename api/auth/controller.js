@@ -19,7 +19,11 @@ function getMessage (err) {
 
 async function useLocalAuthentication (ctx, next) {
   await passport.authenticate('local', (err, user, info, status) => {
-    if (err || !user) {
+    if (info) {
+      service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { status: 'info' });
+      ctx.status = 401;
+      return ctx.body = { message: 'Invalid email address or password.' };
+    } else if (err || !user) {
       service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', _.extend(err.data, { 
         status: (err.message == 'locked' ? 'locked' : 'failed'),
       }));

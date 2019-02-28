@@ -188,6 +188,8 @@ Admin.ShowController = BaseController.extend({
               this.target = undefined;
               $('#task-change-owner').select2('destroy');
               this.modalComponent.cleanup();
+            }.bind(this)).fail(function () {
+              this.modalComponent.cleanup();
             }.bind(this));
           }
         }.bind(this),

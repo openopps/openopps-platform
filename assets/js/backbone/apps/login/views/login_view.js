@@ -10,9 +10,10 @@ var LoginView = Backbone.View.extend({
   el: '#container',
 
   events: {
-    'click .oauth-link'          : 'link',
-    'blur .validate'             : 'validateField',
-    'click #submitLogin'         : 'submitLogin',
+    'click .oauth-link'      : 'link',
+    'blur .validate'         : 'validateField',
+    'keypress .form-control' : 'submitOnEnter',
+    'click #submitLogin'     : 'submitLogin',
   },
 
   initialize: function (options) {
@@ -50,12 +51,16 @@ var LoginView = Backbone.View.extend({
     return validate(e);
   },
 
+  submitOnEnter: function (e) {
+    (e.which == 13) && this.submitLogin(e);
+  },
+
   submitLogin: function (e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var data = {
-      identifier: this.$('#username').val(),
-      password: this.$('#password').val(),
+      identifier: this.$('#username').val() || '',
+      password: this.$('#password').val() || '',
       json: true,
     };
     $.getJSON('/csrfToken', function (t) {
