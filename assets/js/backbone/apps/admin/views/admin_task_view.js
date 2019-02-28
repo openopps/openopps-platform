@@ -143,7 +143,7 @@ var AdminTaskView = Backbone.View.extend({
       displayModal.cleanup();
       this.render();
     }.bind(this)).fail(function (error) {
-      displayModal.displayError('confirm-publish', 'There was an error attempting to publish this opportunity.');
+      displayModal.displayError('An unexpected error occured attempting to publish this opportunity.');
     }.bind(this));
   },
 

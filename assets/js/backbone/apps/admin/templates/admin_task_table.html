@@ -6,8 +6,10 @@
       <th class="center">Date</th>
       <th class="center" data-target="publish-delete">Publish</th>
       <th class="center" data-target="publish-delete">Delete</th> 
-      <th class="center hide" data-target="change-add"><div class="left">Change<br/> owner</div></th>
-      <th class="center hide" data-target="change-add"><div Class="left">Add<br/> participant</div></th>
+      <th class="center hide" data-target="change-add">Change<br/> owner</th>
+      <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+        <th class="center hide" data-target="change-add">Add<br/> participant</th>
+      <% } %>
     </tr>
   </thead>
   <tbody>
