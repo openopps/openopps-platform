@@ -220,7 +220,7 @@ var education = {
       this.data.editEducation='';
      
     }
-    this.$el.html(templates.applyEducation());
+    this.$el.html(templates.applyEducation(this.data));
     initializeFormFieldsEducation.bind(this)();
     renderEducation.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });

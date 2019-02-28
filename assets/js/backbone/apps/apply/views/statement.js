@@ -12,6 +12,8 @@ var statement = {
 
   statementContinue: function () {
     if(!this.validateFields()) {
+      this.data.currentStep = Math.max(this.data.currentStep, 5);
+      this.data.selectedStep = 6;
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
         method: 'PUT',
