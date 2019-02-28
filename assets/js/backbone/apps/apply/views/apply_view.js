@@ -222,20 +222,13 @@ var ApplyView = Backbone.View.extend({
   // education section
   
   renderComponentEducation: function (){
-    
+    this.renderEducation();
     if(this.data.editEducation && this.data.selectedStep =='3'){
       
       Education.getEducation.bind(this)();
      
       Education.initializeAddEducationFields.bind(this)();
-  
-    }
-    else if(this.data.selectedStep == '3'){
-      this.$el.html(templates.applyEducation(this.data));
-      this.renderEducation();   
-      this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });   
-    } else if (this.data.selectedStep == '6') {
-      this.renderEducation();
+
     }
   },
   
@@ -245,11 +238,11 @@ var ApplyView = Backbone.View.extend({
     var dataEducation= Education.getDataFromEducationPage.bind(this)();
     
     localStorage.setItem('eduKey', JSON.stringify(dataEducation));
-    Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });
+    Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });  
     return this;       
   },
 
-  renderEducation:function (){ 
+  renderEducation:function (){   
     var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
