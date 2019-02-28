@@ -402,6 +402,19 @@ async function canChangeOwner (user, taskId) {
   return task && (task.restrict.name == agency.name);
 }
 
+async function canCommunityChangeOwner (user, taskId) {
+  var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
+    return undefined;
+  });
+  if (task && task.communityId) {
+    return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
+      return {};
+    })).isManager;
+  } else {
+    return false;
+  }
+}
+
 async function getOwnerOptions (taskId, done) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
     return undefined;
@@ -416,8 +429,8 @@ async function getCommunityOwnerOptions (taskId, done) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
     return undefined;
   });
-  if (task) {
-    done(await dao.User.query(dao.query.ownerCommunityListQuery));  
+  if (task && task.communityId) {
+    done(await dao.User.query(dao.query.ownerCommunityListQuery, task.communityId));  
   } else {
     done(undefined, 'Unable to locate specified task');
   }
@@ -532,6 +545,7 @@ module.exports = {
   getOwnerOptions: getOwnerOptions,
   getCommunityOwnerOptions:getCommunityOwnerOptions,
   changeOwner: changeOwner,
+  canCommunityChangeOwner: canCommunityChangeOwner,
   assignParticipant: assignParticipant,
   createAuditLog: createAuditLog,
   getCommunityTaskStateMetrics:getCommunityTaskStateMetrics,
