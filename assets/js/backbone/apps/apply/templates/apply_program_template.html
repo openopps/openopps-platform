@@ -7,18 +7,20 @@
       <p>You must select three internship opportunities. You can choose from your saved internship opportunities or search for more.</p>
       <h4 class="program-choice">1st choice</h4>
       <% if (firstChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
+        <div class="usajobs-card--large" data-sort="1">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
               <div class="sorting-arrows">
-                <i class="fas fa-arrow-down"></i>
+                <i class="fas fa-arrow-down sorting-arrow" data-action="down"></i>
               </div>
-          </div>
-          <div class="program-title-body-container">
+            </div>
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- firstChoice.title %>
               </h3>
-              <a class="program-delete" href="#" data-task-id="<%- firstChoice.task_id %>" data-index="0"><i class="fas fa-times"></i><span>Delete</span></a>
+              <a class="program-delete" href="#" data-task-id="<%- firstChoice.taskId %>" data-sort="1"><i class="fas fa-times"></i><span>Delete</span></a>
             </div>
             <div class="usajobs-card__body">
               <h5 class="program-label">
@@ -37,19 +39,21 @@
       <% } %>
       <h4 class="program-choice">2nd choice</h4>
       <% if (secondChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
-            <div class="sorting-arrows">
-              <i class="fas fa-arrow-up"></i>
-              <i class="fas fa-arrow-down"></i>
+        <div class="usajobs-card--large" data-sort="2">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
+              <div class="sorting-arrows">
+                <i class="fas fa-arrow-up sorting-arrow" data-action="up"></i>
+                <i class="fas fa-arrow-down sorting-arrow" data-action="down"></i>
+              </div>
             </div>
-          </div>
-          <div class="program-title-body-container">
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- secondChoice.title %>
               </h3>
-              <a class="program-delete" href="#" data-task-id="<%- secondChoice.task_id %>" data-index="1"><i class="fas fa-times"></i><span>Delete</span></a>
+              <a class="program-delete" href="#" data-task-id="<%- secondChoice.taskId %>" data-sort="2"><i class="fas fa-times"></i><span>Delete</span></a>
             </div>
             <div class="usajobs-card__body">
               <h5 class="program-label">
@@ -68,18 +72,20 @@
       <% } %>
       <h4 class="program-choice">3rd choice</h4>
       <% if (thirdChoice) { %>
-        <div class="usajobs-card--large">
-          <div class="sorting-container">
-            <div class="sorting-arrows">
-              <i class="fas fa-arrow-up"></i>
+        <div class="usajobs-card--large" data-sort="3">
+          <% if (tasks.length > 2) { %>
+            <div class="sorting-container">
+              <div class="sorting-arrows">
+                <i class="fas fa-arrow-up sorting-arrow" data-action="up"></i>
+              </div>
             </div>
-          </div>
-          <div class="program-title-body-container">
+          <% } %>
+          <div <% if (tasks.length > 2) { %>class="program-title-body-container"<% } %>>
             <div class="program-choice__title">
               <h3 class="usajobs-card__title" itemprop="title">
                 <%- thirdChoice.title %>
               </h3>
-              <a class="program-delete" href="#" data-task-id="<%- thirdChoice.task_id %>" data-index="2"><i class="fas fa-times"></i><span>Delete</span></a>
+              <a class="program-delete" href="#" data-task-id="<%- thirdChoice.taskId %>" data-sort="3"><i class="fas fa-times"></i><span>Delete</span></a>
             </div>
             <div class="usajobs-card__body">
               <h5 class="program-label">

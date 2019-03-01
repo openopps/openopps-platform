@@ -7,9 +7,12 @@ const service = require('./service');
 var router = new Router();
 
 router.get('/api/application/:id', auth, async (ctx, next) => {
-  var application = await service.findById(ctx.params.id);
-  ctx.status = application ? 200 : 404;
-  ctx.body = application ? application : 'Not Found';
+  await service.findById(ctx.state.user.id, ctx.params.id).then(application => {
+    ctx.status = 200;
+    ctx.body = application;
+  }).catch(() => {
+    ctx.status = 404;
+  });
 });
 
 router.put('/api/application/:id', auth, async (ctx, next) => {
@@ -42,6 +45,16 @@ router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
     ctx.status = 400;
     ctx.body = 'You must be a student to apply for this internship';
   }
+});
+
+router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) => {
+  await service.swapApplicationTasks(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
 });
 
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
@@ -136,6 +149,39 @@ router.put('/api/application/:applicationId/experience/:experienceId', auth, asy
 
 router.delete('/api/application/:id/experience/:experienceId',auth, async (ctx,next) =>{ 
   ctx.body = await service.deleteExperience(ctx.params.experienceId);
+});
+
+router.post('/api/application/:applicationId/reference',auth, async (ctx,next) =>{
+  ctx.request.body.userId = ctx.state.user.id;
+  ctx.request.body.applicationId=ctx.params.applicationId;
+  await service.saveReference(ctx.request.body, function (errors,reference)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = reference;
+    }
+  });
+});
+
+router.put('/api/application/:applicationId/reference/:referenceId', auth, async (ctx,next) => {
+  ctx.request.body.userId = ctx.state.user.id;
+  ctx.request.body.applicationId=ctx.params.applicationId;
+  ctx.request.body.referenceId = ctx.params.referenceId;
+  await service.saveReference(ctx.request.body, function (errors,reference)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = reference;
+    }
+  });
+});
+
+router.delete('/api/application/:id/reference/:referenceId',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteReference(ctx.params.referenceId, ctx.state.user.id);
 });
 
 module.exports = router.routes();

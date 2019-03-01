@@ -239,7 +239,7 @@ module.exports = function (db) {
       taskCommunitiesQuery:taskCommunitiesQuery,
       intern:countryQuery,
       countrySubdivision:countrySubdivisionQuery,
-      languageList:languageListQuery
+      languageList:languageListQuery,
     },
     options: options,
     clean: clean,

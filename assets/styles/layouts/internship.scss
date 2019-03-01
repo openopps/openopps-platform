@@ -31,8 +31,16 @@
     }
 
     &__body {
-      padding: 0 $size-default;
+      padding: 0 $size-base;
       display: flex;
+
+      @include media(375px) {
+        padding: 0 $size-S;
+      }
+
+      @include media(550px) {
+        padding: 0 $size-default;
+      }
 
       @include media($L) {
         padding: 0;
@@ -110,13 +118,17 @@
       }
 
       .short-desc {
-        font-size: $xsmall-font-size;
+        font-size: 1rem;
 
         @include media(375px) {
+          font-size: $xsmall-font-size;
+        }
+
+        @include media(450px) {
           font-size: $small-font-size;
         }
 
-        @include media($SM) {
+        @include media(550px) {
           font-size: $base-font-size;
         }
 
@@ -668,6 +680,11 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
+
+        .sorting-arrow {
+          cursor: pointer;
+          margin: 1rem 0;
+        }
       }
 
       svg.svg-inline--fa {

@@ -18,6 +18,8 @@ var experience = {
       $('#overseas-experience-filter-other').show();
     } else {
       $('#overseas-experience-filter-other').hide();
+      $('[name=overseas_experience_other]').val('');
+      $('[name=overseas_experience_length]').val('');
     }
   },
   
@@ -27,6 +29,8 @@ var experience = {
       $('#security-clearance-details').show();
     } else {
       $('#security-clearance-details').hide();
+      $('#security-clearance-type').prop('selectedIndex', 0);
+      $('#security-clearance-issuer').val('');
     }
   },
 
@@ -58,6 +62,38 @@ var experience = {
     }
 
     return modelData;
+  },
+
+  getDataFromExperiencePage: function () {
+    var overseasExperienceTypes = [];
+    $.each($('[name=overseas_experience_types]:checked'), function (){            
+      overseasExperienceTypes.push($(this).val());
+    });
+    return {
+      applicationId: this.data.applicationId,
+      currentStep: Math.max(this.data.currentStep, 2),
+      hasOverseasExperience: $('[name=has_overseas_experience]').val(),
+      overseasExperienceOther: $('[name=overseas_experience_other]').val(),
+      overseasExperienceLength: $('[name=overseas_experience_length]').val(),
+      hasSecurityClearance: $('[name=has_security_clearance]').val(),
+      securityClearanceId: $('[name=security_clearance_id]').val(),
+      overseasExperienceTypes: overseasExperienceTypes,
+      securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
+      hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
+      updatedAt: this.data.updatedAt,
+    };
+  },
+
+  updateExperienceDataObject: function () {
+    var data = experience.getDataFromExperiencePage.bind(this)();
+    this.data.hasOverseasExperience = data.hasOverseasExperience;
+    this.data.overseasExperienceOther = data.overseasExperienceOther;
+    this.data.overseasExperienceLength = data.overseasExperienceLength;
+    this.data.hasSecurityClearance = data.hasSecurityClearance;
+    this.data.securityClearanceId = data.securityClearanceId;
+    this.data.overseasExperienceTypes = data.overseasExperienceTypes;
+    this.data.securityClearanceIssuer = data.securityClearanceIssuer;
+    this.data.hasVsfsExperience = data.hasVsfsExperience;
   },
 
   saveExperience: function () {
@@ -106,48 +142,36 @@ var experience = {
   },
 
   saveExperienceContinue: function () {
-    var overseasExperienceTypes = [];
-    $.each($('[name=overseas_experience_types]:checked'), function (){            
-      overseasExperienceTypes.push($(this).val());
-    });
+    var data = experience.getDataFromExperiencePage.bind(this)();
+    this.data.currentStep = Math.max(this.data.currentStep, 2);
+    this.data.selectedStep = 3;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
       contentType: 'application/json',
-      data: JSON.stringify({
-        applicationId: this.data.applicationId,
-        currentStep: 2,
-        hasOverseasExperience: $('[name=has_overseas_experience]').val(),
-        overseasExperienceOther: $('[name=overseas_experience_other]').val(),
-        overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-        hasSecurityClearance: $('[name=has_security_clearance]').val(),
-        securityClearanceId: $('[name=security_clearance_id]').val(),
-        overseasExperienceTypes: overseasExperienceTypes,
-        securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-        hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
-        updatedAt: this.data.updatedAt,
-      }),
+      data: JSON.stringify(data),
     }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;
-      this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 3 });        
+      this.data.updatedAt = result.updatedAt;       
       this.updateApplicationStep(3);
       window.scrollTo(0, 0);
     }.bind(this));
   },
 
   toggleAddExperience: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
         
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     window.scrollTo(0, 0);
   },
 
   toggleUpdateExperience: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
     var data = {};
     var id = $(e.currentTarget).data('id');
 
@@ -162,7 +186,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     $('#apply_country').select2('data', { 
       id: data.country.countryId, 
@@ -183,7 +207,8 @@ var experience = {
     
     this.$el.html(template);
     this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    experience.renderExperienceComponent.bind(this)();
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
 
@@ -201,6 +226,12 @@ var experience = {
         .prop('disabled', false)
         .addClass('validate');
     }
+  },
+
+  renderExperienceComponent: function () {
+    experience.toggleOverseasExperienceDetails.bind(this)();
+    experience.toggleOverseasExperienceFilterOther.bind(this)();
+    experience.toggleSecurityClearanceDetails.bind(this)();
   },
 
   validateAddExperienceFields: function (data) {
@@ -243,6 +274,101 @@ var experience = {
 
   isValidDate: function (date) {
     return date instanceof Date && !isNaN(date);
+  },
+
+  toggleAddReference: function () {
+    experience.updateExperienceDataObject.bind(this)();
+    var data = { referenceTypes: this.referenceTypes };
+    var template = templates.applyAddReference(data);
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    window.scrollTo(0, 0);
+  },
+
+  toggleUpdateReference: function (e) {
+    experience.updateExperienceDataObject.bind(this)();
+    var data = {};
+    var id = $(e.currentTarget).data('id');
+    $.each(this.data.reference, function (i, reference) {
+      if (reference.referenceId == id) {
+        data = reference;
+      }
+    });
+    data.referenceTypes = this.referenceTypes;
+    var template = templates.applyAddReference(data);
+        
+    this.$el.html(template);
+    this.$el.localize();
+    
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    window.scrollTo(0, 0);
+  },
+
+  getDataFromAddReferencePage: function () {
+    var modelData = {
+      referenceName: $('#name').val(),
+      referencePhone: $('#telephone').val(),
+      referenceEmail: $('#email').val(),
+      referenceEmployer: $('#employer').val(),
+      referenceTitle: $('#reference_title').val(),
+      isReferenceContact: $('#contact-yes').is(':checked'),
+      referenceTypeId: $('[name=ReferenceType]:checked').val(),
+      referenceTypeName: $('[name=ReferenceType]:checked').data('name'),
+    };
+    if ($('#reference-id').length) {
+      modelData.referenceId = $('#reference-id').val();
+      modelData.updatedAt = $('#updated-at').val();
+    }
+    return modelData;
+  },
+  
+  saveReference: function () {
+    var data = experience.getDataFromAddReferencePage.bind(this)();
+    if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/reference',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (reference) {
+          reference.referenceType = { value: data.referenceTypeName };
+          if (this.data.reference && $.isArray(this.data.reference)) {
+            this.data.reference.push(reference);
+          } else {
+            this.data.reference = [reference];
+          }
+          callback();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
+  },
+
+  updateReference: function () {
+    var data = experience.getDataFromAddReferencePage.bind(this)();
+    if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId + '/reference/' + data.referenceId,
+        type: 'PUT',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (reference) {
+          reference.referenceType = { value: data.referenceTypeName };
+          var index = _.findIndex(this.data.reference, { referenceId: reference.referenceId });
+          this.data.reference[index] = reference;
+          callback();
+        }.bind(this),
+        error: function (err) {
+          // display modal alert type error
+        }.bind(this),
+      });
+    }
   },
 };
 
