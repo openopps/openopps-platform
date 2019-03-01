@@ -167,7 +167,7 @@ module.exports.findById = async function (userId, applicationId) {
       var results = await Promise.all([
         db.query(dao.query.applicationTasks, applicationId),
         dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' ,degreeLevel:'',honor:''}}),
-        dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '',securityClearence:'' }}),
+        dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
         dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
           details: '',
           speakingProficiency: '', 
