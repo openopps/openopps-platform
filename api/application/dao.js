@@ -23,8 +23,9 @@ const applicationEducationQuery = 'SELECT @education.*, @degreeLevel.*,@honor.*,
   'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = education.country_subdivision_id ' +
   'WHERE education.application_id = ? ' + 'order by education.education_id ';
 
-const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySubdivision.* ' +
+const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySubdivision.*, @securityClearence.* ' +
   'FROM @experience experience ' +
+  'LEFT JOIN @lookup_code securityClearence on "securityClearence".lookup_code_id = experience.security_clearence_id ' + 
   'JOIN @country country on country.country_id = experience.country_id ' +
   'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = experience.country_subdivision_id ' +
   'WHERE experience.application_id = ?';
