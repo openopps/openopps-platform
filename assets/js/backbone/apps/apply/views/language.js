@@ -104,7 +104,7 @@ var language = {
         this.data.language = result;
         this.$el.html(templates.applyLanguage(this.data));
         this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+        this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 4), selectedStep: 4 });
         window.scrollTo(0, 0);
       }.bind(this)).fail(function (err) {
         if(err.statusCode == 400) {
@@ -118,18 +118,19 @@ var language = {
   },
 
   saveLanguageContinue: function () {
+    this.data.currentStep = Math.max(this.data.currentStep, 4);
+    this.data.selectedStep = 5;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify({
+      data: {
         applicationId: this.data.applicationId,
-        currentStep: 4,
         updatedAt: this.data.updatedAt,
-      }),
+      },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 5 });
+      this.$el.localize();
+      this.updateApplicationStep(4);      
       window.scrollTo(0, 0);
     }.bind(this));
   },
@@ -148,7 +149,7 @@ var language = {
         
     this.$el.html(template);
     this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 4), selectedStep: 4 });
     
     initializeLanguagesSelect(data.language);
 
@@ -168,7 +169,7 @@ var language = {
     
     this.$el.html(template);
     this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 4), selectedStep: 4 });
     window.scrollTo(0, 0);
   },
 };
