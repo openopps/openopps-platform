@@ -114,10 +114,11 @@ var ApplyView = Backbone.View.extend({
       url: '/api/lookup/application/enumerations',
       type: 'GET',
       async: false,
-      success: function (data) {
+      success: function (data) {    
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
+        this.data.securityClearences= data.securityClearances;
         this.referenceTypes={};
         for (var i=0;i<data.referenceTypes.length;i++) {
           this.referenceTypes[data.referenceTypes[i].code] = data.referenceTypes[i];
