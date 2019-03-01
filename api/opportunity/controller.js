@@ -51,10 +51,7 @@ router.get('/api/task/:id', async (ctx, next) => {
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
     task.isOwner = true;
   }
-  if (task.isOwner ||
-    (_.has(ctx.state.user, 'isAdmin') && ctx.state.user.isAdmin) ||
-    ((_.has(ctx.state.user, 'isAgencyAdmin') && ctx.state.user.isAgencyAdmin) &&
-      (ctx.state.user.tags && (_.find(ctx.state.user.tags, { 'type': 'agency' }) || {}).name == task.owner.agency.name))) {
+  if (task.isOwner || (ctx.state.user && await service.canUpdateOpportunity(ctx.state.user, ctx.params.id))) {
     task.canEditTask = true;
   }
   ctx.body = task;

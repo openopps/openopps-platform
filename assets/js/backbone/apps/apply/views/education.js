@@ -12,11 +12,11 @@ function renderEducation (){
 function toggleAddEducation () { 
   var dataEducation= getDataFromEducationPage();
   this.dataEducation= dataEducation;
-  if(this.data.editEducation){
+  if(this.data.editEducation && this.data.currentStep ==3){
     var getEduStorage= localStorage.getItem('eduKey');
     this.dataEducation=JSON.parse(getEduStorage);
   }
-  //initializeCountriesSelect.bind(this)();  
+ 
   var data= {
     honors:this.honors,
     degreeLevels:this.degreeTypes,
@@ -223,7 +223,7 @@ var education = {
     this.$el.html(templates.applyEducation(this.data));
     initializeFormFieldsEducation.bind(this)();
     renderEducation.bind(this)();
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     window.scrollTo(0, 0);
   },
    
@@ -324,7 +324,7 @@ var education = {
       success: function (data) {        
         this.educationData =data;              
         toggleAddEducation.bind(this)();   
-        this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });  
+        this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });  
       }.bind(this),
       error: function (err) {     
       }.bind(this),
@@ -342,7 +342,7 @@ var education = {
     var template = templates.applyAddEducation(data);
     $('#search-results-loading').hide();
     this.$el.html(template); 
-    this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 3 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     initializeCountriesSelect.bind(this)();      
     setTimeout(function () {
       document.body.scrollTop = 0; // For Safari
@@ -407,8 +407,8 @@ var education = {
 
   },
   educationContinue: function () {
-    this.data.currentStep = 3;
-    this.data.selectedStep = 3;
+    this.data.currentStep = Math.max(this.data.currentStep, 3);
+    this.data.selectedStep = 4;
     var validationEduFields= education.validateEducationFields.bind(this); 
     if(!validationEduFields()){
       $.ajax({
@@ -416,8 +416,7 @@ var education = {
         method: 'PUT',
         data: {
           applicationId: this.data.applicationId,
-          updatedAt: this.data.updatedAt,
-          currentStep:3,
+          updatedAt: this.data.updatedAt,         
           isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val()=='true' ? true : false,
           isMinimumCompleted:this.$('input[name=Junior]:checked').val()=='true' ? true : false,
           isEducationContinued: this.$('input[name=ContinueEducation]:checked').val()=='true' ? true : false,
@@ -432,8 +431,7 @@ var education = {
         if(result.cumulativeGpa>=0 && result.cumulativeGpa<=2.99){       
           this.$el.html(templates.applyIneligibleGPA);
         }
-        else{
-          this.renderProcessFlowTemplate({ currentStep: 3, selectedStep: 4 });
+        else{      
           this.updateApplicationStep(4);
         }      
         this.$el.localize();
