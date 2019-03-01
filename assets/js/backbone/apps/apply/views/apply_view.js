@@ -44,10 +44,9 @@ var ApplyView = Backbone.View.extend({
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
 
     //language events
-    'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
+    'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
-    'click #save-language, click #edit-language'                  : function () { this.callMethod(Language.saveLanguage); },
-    //  'click #edit-language'                                        : function () { this.callMethod(Language.editLanguage); },
+    'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
     
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
@@ -103,7 +102,6 @@ var ApplyView = Backbone.View.extend({
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
-			
       }.bind(this),
     });
   },

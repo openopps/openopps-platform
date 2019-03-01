@@ -76,10 +76,16 @@ async function updateEducation ( educationId,data) {
 
 module.exports = {};
 
-module.exports.updateLanguage = async function (userId, applicationLanguageSkillId, data) {
-  return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', applicationLanguageSkillId, userId).then(async () => {
-    return await dao.ApplicationLanguageSkill.update(data).then((language) => {
-      return language;
+module.exports.updateLanguage = async function (userId, data) {
+  return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', data.applicationLanguageSkillId, userId).then(async (l) => {
+    return await dao.ApplicationLanguageSkill.update(_.extend(data, {
+      updatedAt: l.updatedAt,
+    })).then(async (language) => {
+      return await dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, data.applicationId, { fetch: { 
+        details: '',
+        speakingProficiency: '', 
+        readingProficiency: '', 
+        writingProficiency: '' }});
     }).catch(err => {
       log.info('update: failed to update language', err);
       return false;
@@ -98,23 +104,23 @@ module.exports.deleteLanguage = async function (applicationLanguageSkillId) {
   });
 };
 
-module.exports.saveLanguage = async function (userId, applicationId, data) {
-  var record = data.language[0];
-  return await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [applicationId, record.languageId]).then(() => {
+module.exports.saveLanguage = async function (userId, data) {
+  // var record = data.language[0];
+  return await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [data.applicationId, data.languageId]).then(() => {
     return { err: 'language already exists' };
   }).catch(async () => { 
-    return await dao.ApplicationLanguageSkill.insert(_.extend(record, {
+    return await dao.ApplicationLanguageSkill.insert(_.extend(data, {
       createdAt: new Date(),
       updatedAt: new Date(),
-      applicationId: applicationId,
       userId: userId,
     })).then(async (e) => {
-      return await dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
+      return await dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, data.applicationId, { fetch: { 
         details: '',
         speakingProficiency: '', 
         readingProficiency: '', 
         writingProficiency: '' }});
     }).catch(err => {
+      log.error('save: failed to save language ',  err);
       return false;
     });
   });

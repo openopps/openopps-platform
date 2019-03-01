@@ -2,7 +2,7 @@ var $ = require('jquery');
 const _ = require('underscore');
 const templates = require('./templates');
 
-function initializeLanguagesSelect () {
+function initializeLanguagesSelect (language) {
   $('#languageId').select2({
     placeholder: '- Select -',
     minimumInputLength: 3,
@@ -16,16 +16,32 @@ function initializeLanguagesSelect () {
         return { results: data };
       },
     },
+
     dropdownCssClass: 'select2-drop-modal',
     formatResult: function (obj, container, query) {
       return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
     },
+
     formatSelection: function (obj, container, query) {
       return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
     },
+
     formatNoMatches: 'No languages found ',
-  });
-    
+
+    initSelection: function (element, callback){
+      if(!(_.isEmpty(language))) {
+        var data = {
+          languageId: language.languageId,
+          field: 'value',
+          id: language.languageId,
+          value: language.details.value, 
+        };
+        callback(data);
+      }
+    }.bind(this),
+
+  }).select2('val', []);
+  
   $('#languageId').on('change', function (e) {
     validate({ currentTarget: $('#languageId') });
     if($('#languageId').val() !=''){
@@ -33,6 +49,7 @@ function initializeLanguagesSelect () {
       $('#language-select').removeClass('usa-input-error');   
     }
   }.bind(this));
+
   $('#languageId').focus();
 }
 
@@ -61,31 +78,27 @@ function validateLanguage (e) {
   return abort; 
 }
 
-function getDataFromLanguagePage () {
-  var modelData = {
-    languageId:$('#languageId').val(),
-    readingProficiencyId:$('[name=read-skill-level]:checked').val(),      
-    speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
-    writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-  };
-  return modelData;
+function getSelectedLangauge (id, languages) {
+  return languages.find(function (l) { return l.applicationLanguageSkillId == id; });
 }
 
 var language = {
   saveLanguage: function (e) {
-    var target = e.currentTarget;
     $('.usajobs-alert--error').hide();
-    var dataLanguageArray = [];
-    dataLanguageArray.push(getDataFromLanguagePage());
+    var action = $(e.currentTarget).data('action');
+    var id = $(e.currentTarget).data('id');
     if(!validateLanguage.bind(this)()) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/language',
-        method: target.data('action') == 'edit' ? 'PUT' : 'POST',
+        method: action === 'edit' ? 'PUT' : 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
+          applicationLanguageSkillId: id,
           applicationId: this.data.applicationId,
-          applicationLanguageSkillId: target.data('id'),
-          language: dataLanguageArray,
+          languageId:$('#languageId').val(),
+          readingProficiencyId:$('[name=read-skill-level]:checked').val(),      
+          speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
+          writingProficiencyId:$('[name=written-skill-level]:checked').val(),
         }),
       }).done(function (result) {
         this.data.language = result;
@@ -102,7 +115,7 @@ var language = {
         }
       }.bind(this));
     }  
-  }.bind(this),
+  },
 
   saveLanguageContinue: function () {
     $.ajax({
@@ -122,18 +135,27 @@ var language = {
   },
 
   toggleLanguagesOn: function (e) {
+    var action = $(e.currentTarget).data('action');
+    var id = $(e.currentTarget).data('id');
     var data = {
       languageProficiencies: this.languageProficiencies,
+      language: (action == 'edit' ? getSelectedLangauge(id, this.data.language) : []),
+      action: action,
+      id: id,
     };
-        
+
     var template = templates.applyAddLanguage(data);
         
     this.$el.html(template);
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: 4, selectedStep: 4 });
     
-    initializeLanguagesSelect();
-    resetLanguages();
+    initializeLanguagesSelect(data.language);
+
+    if (action != 'edit') {
+      resetLanguages();
+    } 
+
     window.scrollTo(0, 0);
   },
     

@@ -33,7 +33,7 @@
                 <ul class="usa-unstyled-list">
                   <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
                     <li>
-                      <input id="speaking-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="speaking-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <input id="speaking-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="speaking-skill-level" <% if (languageProficiency.lookupCodeId == language.speakingProficiencyId) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
                       <label for="speaking-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
                     </li>
                   <% }) %>
@@ -50,7 +50,7 @@
                 <ul class="usa-unstyled-list">
                   <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
                     <li>
-                      <input id="written-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="written-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <input id="written-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="written-skill-level" <% if (languageProficiency.lookupCodeId == language.writingProficiencyId) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
                       <label for="written-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
                     </li>
                   <% }) %>
@@ -67,7 +67,7 @@
                 <ul class="usa-unstyled-list">
                   <% _.each(_.sortBy(languageProficiencies, 'code'), function (languageProficiency, index) { %>
                     <li>
-                      <input id="read-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="read-skill-level" <% if (index == 0) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
+                      <input id="read-<%= languageProficiency.value.toLowerCase() %>" type="radio" name="read-skill-level" <% if (languageProficiency.lookupCodeId == language.readingProficiencyId) { %>checked<% } %> value="<%= languageProficiency.lookupCodeId %>">
                       <label for="read-<%= languageProficiency.value.toLowerCase() %>"><%= languageProficiency.value %></label>                    
                     </li>
                   <% }) %>
@@ -81,7 +81,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button id="cancel-language" class="usa-button usa-button-secondary usa-button-left" data-state="cancel">Cancel and return</button>
-              <a href="#success" id="save-language" class="usa-button usa-button-primary usajobs-button_bar__save">Save language</a>
+              <a href="#success" id="save-language" class="usa-button usa-button-primary usajobs-button_bar__save" data-action="<%= action %>" data-id="<%= id %>">Save language</a>
             </div>
           </div>
         </fieldset>
