@@ -1,8 +1,9 @@
 const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 
-const applicationQuery = 'SELECT @application.* ' +
+const applicationQuery = 'SELECT @application.*, @securityClearance.* ' +
   'FROM @application application ' +
+  'LEFT JOIN @lookup_code securityClearance on "securityClearance".lookup_code_id = application.security_clearance_id ' +
   'WHERE application.application_id = ?';
 
 const applicationTasksQuery = 'SELECT ' +
@@ -12,7 +13,7 @@ const applicationTasksQuery = 'SELECT ' +
   'FROM application_task ' +
   'JOIN task ON task.id = application_task.task_id ' +
   'LEFT JOIN bureau ON bureau.bureau_id = task.bureau_id ' +
-  'LEFT JOIN office ON office.office_id = task.office_id ' +
+  'LEFT JOIN office ON office.office_id = task.office_id ' + 
   'WHERE application_task.application_id = ?';
 
 const applicationEducationQuery = 'SELECT @education.*, @degreeLevel.*,@honor.*, @country.*, @countrySubdivision.* ' +
@@ -46,6 +47,10 @@ const countryQuery= 'select country.country_id as "id", country.country_id as "c
   'from country ' + 'join education on country.country_id = education.country_id ' + 
   'where education.education_id = ? ';
 
+const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup_code.value ' +
+  'FROM application join lookup_code on application.security_clearance_id = lookup_code.lookup_code_id ' +
+  'WHERE application.application_id = ?';
+
 module.exports = function (db) {
   return {
     Application: dao({ db: db, table: 'application' }),
@@ -70,6 +75,7 @@ module.exports = function (db) {
       applicationLanguage: applicationLanguageQuery,
       applicationReference: applicationReferenceQuery,
       country: countryQuery,
+      securityClearance: securityClearanceQuery,
     },
   };
 };

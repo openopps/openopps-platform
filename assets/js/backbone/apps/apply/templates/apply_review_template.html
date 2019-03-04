@@ -67,14 +67,27 @@
             <a href="javascript:void(0);" data-step="2" class="usajobs-profile-home-section__sub-edit">Edit</a>
           </h3>
         </div>
+        <% if (experience.length) { %>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
+            <% _.each(experience, function (e, index) { %>
             <li class="usajobs-drawer" data-section="experience" data-id="exp-1">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-1">Job Title</button>
+              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-1"><%= e.formalTitle %></button>
               <dl class="usajobs-drawer-face">
-                <dt>Employer</dt>
+                <dt><%= e.employerName %></dt>
                 <dd>
-                  January 2000 - December 2001
+                  <% var startDate = new Date(e.startDate), 
+                          endDate = new Date(e.endDate),
+                          monthNames = [
+                          'January', 'February', 'March',
+                          'April', 'May', 'June', 'July',
+                          'August', 'September', 'October',
+                          'November', 'December'
+                          ],
+                          formattedStartDate = monthNames[startDate.getMonth()] + ' ' + startDate.getFullYear(),
+                          formattedEndDate = monthNames[endDate.getMonth()] + ' ' + endDate.getFullYear()
+                  %>
+                  <%= formattedStartDate %> - <%= formattedEndDate %>
                 </dd>
               </dl>
               <div id="exp-1" class="usa-accordion-content usajobs-drawer-content">
@@ -83,19 +96,11 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Street address</h5>
-                        <p class="usajobs-drawer-content__item-content">1900 E Street, NW</p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.addressLineOne %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Country</h5>
-                        <p class="usajobs-drawer-content__item-content">United States</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Salary</h5>
-                        <p class="usajobs-drawer-content__item-content">1.00 per year</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">May we contact your supervisor?</h5>
-                        <p class="usajobs-drawer-content__item-content">No</p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.country.value %></p>
                       </li>
                     </ul>
                   </div>
@@ -103,23 +108,15 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
-                        <p class="usajobs-drawer-content__item-content">Washington</p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.cityName %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
-                        <p class="usajobs-drawer-content__item-content">District of Columbia</p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.countrySubdivision.value %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
-                        <p class="usajobs-drawer-content__item-content">20415</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Average hours per week</h5>
-                        <p class="usajobs-drawer-content__item-content">40</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Federal position</h5>
-                        <p class="usajobs-drawer-content__item-content">No</p>
+                        <p class="usajobs-drawer-content__item-content"><%= e.postalCode %></p>
                       </li>
                     </ul>
                   </div>
@@ -127,112 +124,46 @@
                 <div class="usajobs-grid">
                   <div class="usajobs-width-one-whole">
                     <h5 class="usajobs-drawer-content__item-label">Duties, accomplishments, and related skills</h5>
-                    <p class="usajobs-drawer-content__item-content">Duties as assigned, accomplished many accomplishments, and all my related skills</p>
+                    <p class="usajobs-drawer-content__item-content"><%= e.duties %></p>
                   </div>
                 </div>
                 <div class="usajobs-button-bar--split">
                   <div class="usajobs-button-bar__body">
                     <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
+                      data-id="<%= e.experienceId %>" data-name="<%= e.formalTitle %>" data-section="experience" data-record="job">Delete</a>
+                    <a class="usa-button usajobs-button-bar__edit" data-id="<%= e.experienceId %>" id="edit-experience" href="javascript:void(0);">Edit</a>
                   </div>
                 </div>
               </div>
             </li>
-            <li class="usajobs-drawer" data-section="experience" data-id="exp-2">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-2">Job Title 2</button>
-              <dl class="usajobs-drawer-face">
-                <dt>Employer</dt>
-                <dd>
-                  January 2002 - December 2003
-                </dd>
-              </dl>
-              <div id="exp-2" class="usa-accordion-content usajobs-drawer-content">
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Street address</h5>
-                        <p class="usajobs-drawer-content__item-content">1900 E Street, NW</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Country</h5>
-                        <p class="usajobs-drawer-content__item-content">United States</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Salary</h5>
-                        <p class="usajobs-drawer-content__item-content">1.00 per year</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">May we contact your supervisor?</h5>
-                        <p class="usajobs-drawer-content__item-content">No</p>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="usajobs-width-one-half">
-                    <ul class="usajobs-drawer-content__list">
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
-                        <p class="usajobs-drawer-content__item-content">Washington</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
-                        <p class="usajobs-drawer-content__item-content">District of Columbia</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
-                        <p class="usajobs-drawer-content__item-content">20415</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Average hours per week</h5>
-                        <p class="usajobs-drawer-content__item-content">40</p>
-                      </li>
-                      <li class="usajobs-drawer-content__item">
-                        <h5 class="usajobs-drawer-content__item-label">Federal position</h5>
-                        <p class="usajobs-drawer-content__item-content">No</p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="usajobs-grid">
-                  <div class="usajobs-width-one-whole">
-                    <h5 class="usajobs-drawer-content__item-label">Duties, accomplishments, and related skills</h5>
-                    <p class="usajobs-drawer-content__item-content">Duties as assigned, accomplished many accomplishments, and all my related skills</p>
-                  </div>
-                </div>
-                <div class="usajobs-button-bar--split">
-                  <div class="usajobs-button-bar__body">
-                    <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
-                  </div>
-                </div>
-              </div>
-            </li>
+            <% }); %>
           </ul>
         </div>
+        <% }; %>
         <div class="usajobs-profile-home-section__body">
           <ul class="usajobs-profile-home-section__field-list">
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Overseas experience?</h5>
-              <p>Yes</p>
+              <p><%- hasOverseasExperience ? "Yes" : "No" %></p>
             </li>
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience?</h5>
-              <p>Student, Government</p>
+              <p><%- overseasExperienceTypes.join(', ').replace(/\b\w/g, function(l){ return l.toUpperCase() }) %></p>
             </li>
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Security clearance</h5>
-              <p>Yes</p>
+              <p><%- hasSecurityClearance ? "Yes" : "No" %></p>
             </li>
-            <li class="usajobs-profile-home-section__field-item">
-              <h5 class="usajobs-profile-home-section__field-label">Type of security clearance</h5>
-              <p>Public Trust</p>
-            </li>
-            <li class="usajobs-profile-home-section__field-item">
-              <h5 class="usajobs-profile-home-section__field-label">Issued by</h5>
-              <p>Department of State</p>
-            </li>
+            <% if (hasSecurityClearance) { %>
+              <li class="usajobs-profile-home-section__field-item">
+                <h5 class="usajobs-profile-home-section__field-label">Type of security clearance</h5>
+                <p><%- securityClearance.value %></p>
+              </li>
+              <li class="usajobs-profile-home-section__field-item">
+                <h5 class="usajobs-profile-home-section__field-label">Issued by</h5>
+                <p><%- securityClearanceIssuer %></p>
+              </li>
+            <% } %>
           </ul>
         </div>
         <div class="usajobs-profile-home-section__body">
@@ -241,12 +172,14 @@
             <a href="javascript:void(0);" data-step="2" class="usajobs-profile-home-section__sub-edit">Edit</a>
           </h3>
         </div>
+        <% if (reference.length) { %>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-            <li class="usajobs-drawer" data-section="experience" data-id="ref-1">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="ref-1">Jeff T.H. Pon</button>
+            <% _.each(reference, function (r, index) { %>
+            <li class="usajobs-drawer" data-section="reference" data-id="ref-1">
+              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="ref-1"><%= r.referenceName %></button>
               <dl class="usajobs-drawer-face">
-                <dt>Director</dt>
+                <dt><%= r.referenceTitle %></dt>
                 <dd>
                   
                 </dd>
@@ -257,15 +190,15 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Phone</h5>
-                        <p class="usajobs-drawer-content__item-content">202-606-1800</p>
+                        <p class="usajobs-drawer-content__item-content"><%= r.referencePhone %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Employer</h5>
-                        <p class="usajobs-drawer-content__item-content">OPM</p>
+                        <p class="usajobs-drawer-content__item-content"><%= r.referenceEmployer %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Reference Type</h5>
-                        <p class="usajobs-drawer-content__item-content">Professional</p>
+                        <p class="usajobs-drawer-content__item-content"><%= r.referenceType.value %></p>
                       </li>
                     </ul>
                   </div>
@@ -273,11 +206,11 @@
                     <ul class="usajobs-drawer-content__list">
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Email</h5>
-                        <p class="usajobs-drawer-content__item-content">email@opm.gov</p>
+                        <p class="usajobs-drawer-content__item-content"><%= r.referenceEmail %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Title</h5>
-                        <p class="usajobs-drawer-content__item-content">Director</p>
+                        <p class="usajobs-drawer-content__item-content"><%= r.referenceTitle %></p>
                       </li>
                     </ul>
                   </div>
@@ -285,14 +218,16 @@
                 <div class="usajobs-button-bar--split">
                   <div class="usajobs-button-bar__body">
                     <a class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
-                      data-id="116" data-section="education" data-record="school">Delete</a>
-                    <a class="usa-button usajobs-button-bar__edit" href="/Applicant/Profile/EditEducation/116">Edit</a>
+                      data-id="<%= r.referenceId %>" data-name="<%= r.referenceTitle %>" data-section="reference" data-record="reference">Delete</a>
+                    <a class="usa-button usajobs-button-bar__edit" data-id="<%= r.referenceId %>" href="javascript:void(0);" id="edit-reference">Edit</a>
                   </div>
                 </div>
               </div>
             </li>
+            <% }); %>
           </ul>
         </div>
+        <% }; %>
       </fieldset>
     </div>
 
