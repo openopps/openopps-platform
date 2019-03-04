@@ -76,7 +76,7 @@ var experience = {
       overseasExperienceOther: $('[name=overseas_experience_other]').val(),
       overseasExperienceLength: $('[name=overseas_experience_length]').val(),
       hasSecurityClearance: $('[name=has_security_clearance]').val(),
-      securityClearanceId: $('[name=security_clearance_id]').val(),
+      securityClearanceId: $('#security-clearance-type').val(),
       overseasExperienceTypes: overseasExperienceTypes,
       securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
       hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
@@ -144,7 +144,7 @@ var experience = {
   saveExperienceContinue: function () {
     var data = experience.getDataFromExperiencePage.bind(this)();
     this.data.currentStep = Math.max(this.data.currentStep, 2);
-    this.data.selectedStep = 3;
+    this.data.selectedStep = 3;  
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
@@ -154,7 +154,7 @@ var experience = {
       this.data.updatedAt = result.updatedAt;       
       this.updateApplicationStep(3);
       window.scrollTo(0, 0);
-    }.bind(this));
+    }.bind(this));   
   },
 
   toggleAddExperience: function (e) {
