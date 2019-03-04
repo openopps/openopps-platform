@@ -142,8 +142,8 @@ module.exports.findById = async function (userId, applicationId) {
   return new Promise((resolve, reject) => {
     dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async application => {
       var results = await Promise.all([
-        db.query(dao.query.applicationTasks, applicationId),
-        dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '' ,degreeLevel:'',honor:''}}),
+        db.query(dao.query.applicationTasks, applicationId, { fetch: { securityClearance: '' }}),
+        dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '', degreeLevel: '', honor: '' }}),
         dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }}),
         dao.ApplicationLanguageSkill.query(dao.query.applicationLanguage, applicationId, { fetch: { 
           details: '',
@@ -157,6 +157,7 @@ module.exports.findById = async function (userId, applicationId) {
       application.experience = results[2];
       application.language = results[3];
       application.reference = results[4];
+      application.securityClearance = (await dao.LookUpCode.db.query(dao.query.securityClearance,applicationId)).rows[0];
       resolve(application);
     }).catch((err) => {
       reject();
