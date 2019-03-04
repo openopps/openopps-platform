@@ -58,11 +58,11 @@ var ApplyView = Backbone.View.extend({
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
 
     //language events
-    'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
+    'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
-    'click #save-language'                                        : function () { this.callMethod(Language.saveLanguage); },
-    'click #edit-language'                                        : function () { this.callMethod(Language.deleteLanguage); },
-    
+    'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
+    'click #saveLanguageContinue'                                : function () { this.callMethod(Language.saveLanguageContinue); },
+
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
     'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
@@ -83,10 +83,9 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
-    // this.dataLanguageArray     = [];
-    // this.deleteLanguageArray   = [];
-    // this.data.languages        = this.data.languages || [];
+ 
     this.languageProficiencies = [];
+    this.data.languages        = this.data.languages || [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
