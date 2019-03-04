@@ -13,49 +13,55 @@
           </h3>
         </div>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
-          <div class="usajobs-card--large review-application">
-            <h4>1st choice</h4>
-            <h3 class="usajobs-card__title" itemprop="title">
-              Knowledge &amp; Learning for Global Food Security
-            </h3>
-            <div class="usajobs-card__body">
-              <h5 class="program-label">
-                Bureau/Office
-              </h5>
-              <p>
-                Administration (A)/Office of the Executive Director (EX)
-              </p>
+          <% if (firstChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>1st choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- firstChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
+                </p>
+              </div>
             </div>
-          </div>
-          <div class="usajobs-card--large review-application">
-            <h4>2nd choice</h4>
-            <h3 class="usajobs-card__title" itemprop="title">
-              Super Spy Summer Training Camp
-            </h3>
-            <div class="usajobs-card__body">
-              <h5 class="program-label">
-                Bureau/Office
-              </h5>
-              <p>
-                Human Resources (HR)/Office of the Director General (DGHR)
-              </p>
+          <% } %>
+          <% if (secondChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>2nd choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- secondChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+                </p>
+              </div>
             </div>
-          </div>
-          <div class="usajobs-card--large review-application">
-            <h4>3rd choice</h4>
-            <h3 class="usajobs-card__title" itemprop="title">
-              Tracking Russian Information Campaigns in Brazil
-            </h3>
-            <div class="usajobs-card__body">
-              <h5 class="program-label">
-                Bureau/Office
-              </h5>
-              <p>
-                Foreign Service Institute (FSI)/Leadership and Management School (LMS)
-              </p>
+          <% } %>
+          <% if (thirdChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>3rd choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- thirdChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+                </p>
+              </div>
             </div>
+          <% } %>
           </div>
-        </div>
       </fieldset>
     </div>
 
@@ -368,10 +374,10 @@
             Statement of Interest
             <a href="javascript:void(0);" data-step="5" class="usajobs-profile-home-section__sub-edit">Edit</a>
           </h3>
-          <div>
+          <div class="statement-of-interest read-less">
             <%= statementOfInterestHtml %>
           </div>
-          <p><a href="#" class="read-more">Read more</a></p>
+          <p><a href="#" class="statement-of-interest read-more">Read more</a></p>
         </div>        
       </fieldset>
     </div>
@@ -387,11 +393,11 @@
             </label>
             <ul class="usa-unstyled-list" id="share-consent">
               <li>
-                <input id="share-consent-yes" name="ShareConsent" type="radio" value="yes">
+                <input id="share-consent-yes" name="is_consent_to_share" type="radio" value="yes" <% if (isConsentToShare) { %><%= "checked" %><% } %>>
                 <label for="share-consent-yes">Yes</label>
               </li>
               <li>
-                <input id="share-consent-no" name="ShareConsent" type="radio" value="no">
+                <input id="share-consent-no" name="is_consent_to_share" type="radio" value="no" <% if (isConsentToShare == false) { %><%= "checked" %><% } %>>
                 <label for="share-consent-no">No</label>
               </li>
             </ul>
@@ -401,7 +407,7 @@
 
     <div class="usajobs-button_bar--slim submit-application">
       <div class="usajobs-button_bar__body">
-        <button class="usa-button-big usa-button-primary apply-submit">Submit application</button>
+        <button class="usa-button-big usa-button-primary apply-submit" <% if (_.isNull(isConsentToShare)) { %>disabled<% } %>>Submit application</button>
       </div>
     </div>
 
