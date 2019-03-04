@@ -71,6 +71,8 @@ var ApplyView = Backbone.View.extend({
     //review events
     'click .usajobs-profile-home-section__sub-edit'               : 'historyApplicationStep',
     'click .apply-submit'                                         : 'submitApplication',
+    'click .read-more'                                            : 'readMore',
+    'change [name=is_consent_to_share]'                           : 'enableSubmit',
   },
 
   // initialize components and global functions
@@ -321,8 +323,37 @@ var ApplyView = Backbone.View.extend({
   // review section
   submitApplication: function (e) {
     e.preventDefault && e.preventDefault();
-    Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
-    window.scrollTo(0, 0);
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      type: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        isConsentToShare: this.data.isConsentToShare,
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
+
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('statement-of-interest')) {
+      $('.statement-of-interest').removeClass('read-less');
+      $('a.statement-of-interest.read-more').hide();
+      $('div.statement-of-interest').addClass('show');
+    }
+  },
+
+  enableSubmit: function () {
+    if ($('input[name=is_consent_to_share]:checked')) {
+      this.data.isConsentToShare = ($('input[name=is_consent_to_share]:checked').val() == 'yes');
+      $('.apply-submit').removeAttr('disabled');
+    }
   },
   // end review section
 
