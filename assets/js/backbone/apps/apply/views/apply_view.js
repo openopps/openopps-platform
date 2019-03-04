@@ -61,7 +61,8 @@ var ApplyView = Backbone.View.extend({
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
-    
+    'click #saveLanguageContinue'                                : function () { this.callMethod(Language.saveLanguageContinue); },
+
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
     'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
@@ -84,6 +85,7 @@ var ApplyView = Backbone.View.extend({
     });
  
     this.languageProficiencies = [];
+    this.data.languages        = this.data.languages || [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;

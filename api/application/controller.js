@@ -87,7 +87,12 @@ router.put('/api/application/:applicationId/language', auth, async (ctx, next) =
 });
 
 router.delete('/api/application/:applicationId/language/:applicationLanguageSkillId',auth, async (ctx,next) =>{ 
-  ctx.body = await service.deleteLanguage(ctx.state.user.id, ctx.params.applicationLanguageSkillId);
+  await service.deleteLanguage(ctx.state.user.id, ctx.params.applicationLanguageSkillId).then(() => {
+    ctx.status = 200;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
 });
 
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{

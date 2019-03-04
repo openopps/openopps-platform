@@ -130,7 +130,7 @@ var language = {
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       this.$el.localize();
-      this.updateApplicationStep(4);      
+      this.updateApplicationStep(5);      
       window.scrollTo(0, 0);
     }.bind(this));
   },
