@@ -71,12 +71,12 @@ var experience = {
     });
     return {
       applicationId: this.data.applicationId,
-      currentStep: 2,
+      currentStep: Math.max(this.data.currentStep, 2),
       hasOverseasExperience: $('[name=has_overseas_experience]').val(),
       overseasExperienceOther: $('[name=overseas_experience_other]').val(),
       overseasExperienceLength: $('[name=overseas_experience_length]').val(),
       hasSecurityClearance: $('[name=has_security_clearance]').val(),
-      securityClearanceId: $('[name=security_clearance_id]').val(),
+      securityClearanceId: $('#security-clearance-type').val(),
       overseasExperienceTypes: overseasExperienceTypes,
       securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
       hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
@@ -143,17 +143,18 @@ var experience = {
 
   saveExperienceContinue: function () {
     var data = experience.getDataFromExperiencePage.bind(this)();
+    this.data.currentStep = Math.max(this.data.currentStep, 2);
+    this.data.selectedStep = 3;  
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify(data),
     }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;
-      this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 3 });        
+      this.data.updatedAt = result.updatedAt;       
       this.updateApplicationStep(3);
       window.scrollTo(0, 0);
-    }.bind(this));
+    }.bind(this));   
   },
 
   toggleAddExperience: function (e) {
@@ -164,7 +165,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     window.scrollTo(0, 0);
   },
@@ -185,7 +186,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     $('#apply_country').select2('data', { 
       id: data.country.countryId, 
@@ -207,7 +208,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     experience.renderExperienceComponent.bind(this)();
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
 
@@ -282,7 +283,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
 
@@ -301,7 +302,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     
-    this.renderProcessFlowTemplate({ currentStep: 2, selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
 

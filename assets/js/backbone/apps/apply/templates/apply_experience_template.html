@@ -164,15 +164,14 @@
                   <label for="security-clearance-type">Type of security clearance</label>
                   <span class="field-validation-error error-empty" style="display:none;">You must select the type of security clearance.</span>
                   <select id="security-clearance-type" name="security_clearance_id" class="dropdown validate" data-validate="empty">
-                    <option>Select a security clearance</option>
-                    <option value="1" <% if (securityClearanceId == 1) { %><%= "selected" %><% } %>>Public trust</option>
-                    <option value="9" <% if (securityClearanceId == 9) { %><%= "selected" %><% } %>>Confidential</option>
-                    <option value="8" <% if (securityClearanceId == 8) { %><%= "selected" %><% } %>>Secret</option>
-                    <option value="7" <% if (securityClearanceId == 7) { %><%= "selected" %><% } %>>Top secret</option>
-                    <option value="6" <% if (securityClearanceId == 6) { %><%= "selected" %><% } %>>Top secret/SCI</option>
-                    <option value="5" <% if (securityClearanceId == 5) { %><%= "selected" %><% } %>>Q-Sensitive</option>
-                    <option value="4" <% if (securityClearanceId == 4) { %><%= "selected" %><% } %>>Q-Nonsensitive</option>
-                    <option value="3" <% if (securityClearanceId == 3) { %><%= "selected" %><% } %>>L-Atomic Energy</option>
+                    <option value=""></option>  
+                   <% _.each(securityClearances, function (h) { %>                     
+                  <option value=<%- h.lookupCodeId %>
+                    <% if (securityClearanceId == h.lookupCodeId) { %>selected<% } %>>
+                        <%- h.value %>
+                  </option>
+
+                    <% }); %>
                   </select>
                 </div>
                 <div class="form-group required-input">
