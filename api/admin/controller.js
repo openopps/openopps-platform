@@ -37,7 +37,7 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/admin/export/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  if(ctx.state.user.agencyId == ctx.params.id) {
+  if(ctx.state.user.isAdmin || ctx.state.user.agencyId == ctx.params.id) {
     await service.getExportData('agency', ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
       ctx.response.set('Content-disposition', 'attachment; filename=agency-users.csv');
@@ -48,7 +48,7 @@ router.get('/api/admin/export/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx
     });
   } else {
     service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
-      userId: user.id,
+      userId: ctx.state.user.id,
       path: ctx.path,
       method: ctx.method,
       status: 'blocked',
@@ -69,7 +69,7 @@ router.get('/api/admin/export/community/:id', auth, async (ctx, next) => {
     });
   } else {
     service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
-      userId: user.id,
+      userId: ctx.state.user.id,
       path: ctx.path,
       method: ctx.method,
       status: 'blocked',
