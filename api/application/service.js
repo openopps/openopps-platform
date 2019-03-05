@@ -95,17 +95,21 @@ module.exports.updateLanguage = async function (userId, data) {
   });
 };
 
-module.exports.deleteLanguage = async function (applicationLanguageSkillId) {
-  return await dao.ApplicationLanguageSkill.delete('application_language_skill_id = ?', applicationLanguageSkillId).then(async (language) => {
-    return language;
+module.exports.deleteLanguage = async function (userId, applicationLanguageSkillId) {
+  return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', applicationLanguageSkillId, userId).then(async (l) => {
+    return await dao.ApplicationLanguageSkill.delete('application_language_skill_id = ?', applicationLanguageSkillId).then(async (language) => {
+      return language;
+    }).catch(err => {
+      log.info('delete: failed to delete language ', err);
+      return false;
+    });
   }).catch(err => {
-    log.info('delete: failed to delete language ', err);
+    log.info('delete: record to delete not found ', err);
     return false;
   });
 };
 
 module.exports.saveLanguage = async function (userId, data) {
-  // var record = data.language[0];
   return await dao.ApplicationLanguageSkill.findOne('application_id = ? and language_id = ?', [data.applicationId, data.languageId]).then(() => {
     return { err: 'language already exists' };
   }).catch(async () => { 

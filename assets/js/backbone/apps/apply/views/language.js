@@ -87,19 +87,22 @@ var language = {
     $('.usajobs-alert--error').hide();
     var action = $(e.currentTarget).data('action');
     var id = $(e.currentTarget).data('id');
+    var data = {};
+    var method = action === 'edit' ? 'PUT' : 'POST';
     if(!validateLanguage.bind(this)()) {
+      data.applicationId = this.data.applicationId;
+      data.languageId = $('#languageId').val();
+      data.readingProficiencyId = $('[name=read-skill-level]:checked').val();
+      data.speakingProficiencyId = $('[name=speaking-skill-level]:checked').val();
+      data.writingProficiencyId = $('[name=written-skill-level]:checked').val();
+      if (action === 'edit') {
+        data.applicationLanguageSkillId = id;
+      } 
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/language',
-        method: action === 'edit' ? 'PUT' : 'POST',
+        method: method,
         contentType: 'application/json',
-        data: JSON.stringify({
-          applicationLanguageSkillId: id,
-          applicationId: this.data.applicationId,
-          languageId:$('#languageId').val(),
-          readingProficiencyId:$('[name=read-skill-level]:checked').val(),      
-          speakingProficiencyId:$('[name=speaking-skill-level]:checked').val(),
-          writingProficiencyId:$('[name=written-skill-level]:checked').val(),
-        }),
+        data: JSON.stringify(data),
       }).done(function (result) {
         this.data.language = result;
         this.$el.html(templates.applyLanguage(this.data));
