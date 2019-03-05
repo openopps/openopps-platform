@@ -61,7 +61,7 @@ var InternshipView = BaseView.extend({
       primaryButton.text = 'Continue to application';
       primaryButton.action = function () {
         this.modalComponent.cleanup();
-        Backbone.history.navigate('/apply/' + error.responseJSON.applicationId, { trigger: true });
+        Backbone.history.navigate('/apply/' + error.responseJSON.applicationId + '?step=1', { trigger: true });
       }.bind(this);
     }
     this.modalComponent = new ModalComponent({
