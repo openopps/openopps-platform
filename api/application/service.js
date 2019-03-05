@@ -315,7 +315,9 @@ async function updateExperience (attributes) {
 
 module.exports.saveExperience = async function (attributes,done) { 
   attributes.countryId = attributes.country.id;
-  attributes.countrySubdivisionId = attributes.countrySubdivision.id;
+  if(attributes.countrySubdivision){
+    attributes.countrySubdivisionId = attributes.countrySubdivision.id;
+  }
 
   if (attributes.experienceId) {
     await updateExperience(attributes).then((experience) => {   
