@@ -26,32 +26,35 @@ router.get('/api/admin/taskmetrics', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
-  var exportData = await service.getExportData().then(rendered => {
+  await service.getExportData().then(results => {
     ctx.response.set('Content-Type', 'text/csv');
     ctx.response.set('Content-disposition', 'attachment; filename=users.csv');
-    ctx.body = rendered;
+    ctx.body = results;
   }).catch(err => {
     log.info(err);
+    ctx.status = 500;
   });
 });
 
 router.get('/api/admin/export/agency/:id', auth.isAdmin, async (ctx, next) => {
-  var exportData = await service.getExportData('agency', ctx.params.id).then(rendered => {
+  await service.getExportData('agency', ctx.params.id).then(rendered => {
     ctx.response.set('Content-Type', 'text/csv');
-    ctx.response.set('Content-disposition', 'attachment; filename=users.csv');
+    ctx.response.set('Content-disposition', 'attachment; filename=agency-users.csv');
     ctx.body = rendered;
   }).catch(err => {
     log.info(err);
+    ctx.status = 500;
   });
 });
 
 router.get('/api/admin/export/community/:id', auth.isAdmin, async (ctx, next) => {
-  var exportData = await service.getExportData('community', ctx.params.id).then(rendered => {
+  await service.getExportData('community', ctx.params.id).then(rendered => {
     ctx.response.set('Content-Type', 'text/csv');
-    ctx.response.set('Content-disposition', 'attachment; filename=users.csv');
+    ctx.response.set('Content-disposition', 'attachment; filename=community-users.csv');
     ctx.body = rendered;
   }).catch(err => {
     log.info(err);
+    ctx.status = 500;
   });
 });
 
