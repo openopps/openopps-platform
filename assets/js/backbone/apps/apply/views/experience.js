@@ -118,14 +118,14 @@ var experience = {
     return {
       applicationId: this.data.applicationId,
       currentStep: Math.max(this.data.currentStep, 2),
-      hasOverseasExperience: $('input[name=has_overseas_experience]:checked').val()=='true'?true:false,
+      hasOverseasExperience: $('input[name=has_overseas_experience]:checked').val(),
       overseasExperienceOther: $('[name=overseas_experience_other]').val(),
       overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-      hasSecurityClearance: $('input[name=has_security_clearance]:checked').val()=='true'?true:false,
+      hasSecurityClearance: $('input[name=has_security_clearance]:checked').val(),
       securityClearanceId: $('#security-clearance-type').val(),
       overseasExperienceTypes: overseasExperienceTypes,
       securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-      hasVsfsExperience: $('input[name=has_vsfs_experience]:checked').val()=='true'?true:false,
+      hasVsfsExperience: $('input[name=has_vsfs_experience]:checked').val(),
       updatedAt: this.data.updatedAt,
     };
   },
