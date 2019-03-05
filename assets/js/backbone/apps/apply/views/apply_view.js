@@ -31,6 +31,7 @@ var ApplyView = Backbone.View.extend({
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
     //experience events
+    'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
@@ -71,6 +72,8 @@ var ApplyView = Backbone.View.extend({
     //review events
     'click .usajobs-profile-home-section__sub-edit'               : 'historyApplicationStep',
     'click .apply-submit'                                         : 'submitApplication',
+    'click .read-more'                                            : 'readMore',
+    'change [name=is_consent_to_share]'                           : 'enableSubmit',
   },
 
   // initialize components and global functions
@@ -117,7 +120,7 @@ var ApplyView = Backbone.View.extend({
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
-        this.data.securityClearences= data.securityClearances;
+        this.data.securityClearances= data.securityClearances;
         this.referenceTypes={};
         for (var i=0;i<data.referenceTypes.length;i++) {
           this.referenceTypes[data.referenceTypes[i].code] = data.referenceTypes[i];
@@ -321,8 +324,37 @@ var ApplyView = Backbone.View.extend({
   // review section
   submitApplication: function (e) {
     e.preventDefault && e.preventDefault();
-    Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
-    window.scrollTo(0, 0);
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      type: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        isConsentToShare: this.data.isConsentToShare,
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
+
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('statement-of-interest')) {
+      $('.statement-of-interest').removeClass('read-less');
+      $('a.statement-of-interest.read-more').hide();
+      $('div.statement-of-interest').addClass('show');
+    }
+  },
+
+  enableSubmit: function () {
+    if ($('input[name=is_consent_to_share]:checked')) {
+      this.data.isConsentToShare = ($('input[name=is_consent_to_share]:checked').val() == 'yes');
+      $('.apply-submit').removeAttr('disabled');
+    }
   },
   // end review section
 

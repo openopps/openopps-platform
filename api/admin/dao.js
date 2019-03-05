@@ -154,56 +154,33 @@ const userTaskState = 'select state from task where "userId" = ? ';
 
 const participantTaskState = 'select task.state from task inner join volunteer on volunteer."taskId" = task.id where volunteer."userId" = ? ';
 
-const exportUserData = 'select m_user.id, m_user.name, m_user.username, m_user.title, ' +
-  'm_user.bio, m_user."isAdmin", m_user.disabled, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'location' " +
-    'limit 1' +
-  ') as location, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'agency' " +
-    'limit 1' +
-  ') as agency ' +
-  'from midas_user m_user ';
+const exportUserData = 'SELECT ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'FROM midas_user m_user ' +
+  'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
+  'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
+  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'ORDER BY m_user.id';
 
-const exportUserAgencyData = 'select m_user.id, m_user.name, m_user.username, m_user.title, ' +
-  'm_user.bio, m_user."isAdmin", m_user.disabled, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'location' " +
-    'limit 1' +
-  ') as location, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'agency' " +
-    'limit 1' +
-  ') as agency ' +
-  'from midas_user m_user ' +
-  'where m_user.agency_id = ? ';
+const exportUserAgencyData = 'SELECT ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'FROM midas_user m_user ' +
+  'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
+  'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
+  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'WHERE m_user.agency_id = ? ORDER BY m_user.id';
 
-const exportUserCommunityData = 'select m_user.id, m_user.name, m_user.username, m_user.title, ' +
-  'm_user.bio, m_user."isAdmin", community_user.is_manager, m_user.disabled, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'location' " +
-    'limit 1' +
-  ') as location, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity_users__user_tags left join tagentity on tagentity_users__user_tags.tagentity_users = tagentity.id ' +
-    "where tagentity_users__user_tags.user_tags = m_user.id and type = 'agency' " +
-    'limit 1' +
-  ') as agency ' +
-  'from midas_user m_user ' +
-  'left join community_user on community_user."user_id" = m_user.id ' + 
-  'where community_user."community_id" = ? ';
+const exportUserCommunityData = 'SELECT ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'FROM midas_user m_user ' +
+  'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
+  'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
+  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
+  'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
 const taskStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
