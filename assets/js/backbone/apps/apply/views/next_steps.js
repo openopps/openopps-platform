@@ -12,11 +12,12 @@ function onSuccess (results) {
   this.data.experience = results.experience;
   this.data.reference = results.reference;
   this.data.language = results.language;
-  if (results.error) {
-    showImportErrorMessage.bind(this)();
-  } else {
-    this.updateApplicationStep(1);
-  }
+  this.updateApplicationStep(1);
+  // if (results.error) {
+  //   showImportErrorMessage.bind(this)();
+  // } else {
+  //  this.updateApplicationStep(1);
+  //}
 }
 
 function showImportErrorMessage (action) {
