@@ -812,19 +812,35 @@
    display: block;
   }
 
-  .usajobs-fieldset--horizontal .gpa {
-    clear: none;
-    display: block;
-    float: left;
-    margin-right: 1.5rem;
-    width: 9rem;
+  .usajobs-fieldset--horizontal {
+    .gpa {
+      clear: none;
+      display: block;
+      float: left;
+      margin-right: 1.5rem;
+      width: 9rem;
 
-    &:not(:first-child) {
-      width: 12rem;
+      &:not(:first-child) {
+        width: 12rem;
+      }
+
+      &.usa-input-error input {
+        width: 100%;
+      }
     }
 
-    &.usa-input-error input {
-      width: 100%;
+    .exp-start-date, .exp-end-date {
+      &.usa-input-error {
+        clear: none;
+        display: block;
+        float: left;
+        margin-right: 1.5rem;
+        width: 9rem;
+
+        input {
+          width: 100%;
+        }
+      }
     }
   }
 
