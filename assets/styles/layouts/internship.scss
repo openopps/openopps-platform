@@ -830,14 +830,16 @@
     }
 
     .exp-start-date, .exp-end-date {
-      clear: none;
-      display: block;
-      float: left;
-      margin-right: 1.5rem;
-      width: 9rem;
+      &.usa-input-error {
+        clear: none;
+        display: block;
+        float: left;
+        margin-right: 1.5rem;
+        width: 9rem;
 
-      &.usa-input-error input {
-        width: 100%;
+        input {
+          width: 100%;
+        }
       }
     }
   }
