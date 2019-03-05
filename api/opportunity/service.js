@@ -45,7 +45,7 @@ async function list (user) {
   if(user && user.isAdmin) {
     tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));
   } else {
-    var where = " where task.restrict->>'projectNetwork' = 'false'";
+    var where = " where task.restrict::text = '{}' or task.restrict->>'projectNetwork' = 'false'";
     if(user && user.agency && !_.isEmpty(user.agency.data)) {
       where += " or task.restrict->>'abbr' = '" + user.agency.data.abbr + "'";
       where += " or task.restrict->>'parentAbbr' = '" + user.agency.data.abbr + "'";
