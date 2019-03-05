@@ -31,6 +31,7 @@ var ApplyView = Backbone.View.extend({
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
     //experience events
+    'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
