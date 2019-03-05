@@ -203,6 +203,9 @@ var ApplyView = Backbone.View.extend({
         this.renderEducation();
       }
       this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+      if (this.data.selectedStep == '5') {
+        Statement.characterCount();
+      }
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
