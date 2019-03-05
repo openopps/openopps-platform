@@ -53,10 +53,13 @@
                         <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.cityName %></p>
                       </li>
+                      <% if (e.countrySubdivision) { %>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.countrySubdivision.value %></p>
                       </li>
+                      <% } %>
+
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.postalCode %></p>
@@ -233,8 +236,10 @@
                         <p class="usajobs-drawer-content__item-content"><%= r.referencePhone %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
+                          <% if (r.referenceEmployer) { %>
                         <h5 class="usajobs-drawer-content__item-label">Employer</h5>
                         <p class="usajobs-drawer-content__item-content"><%= r.referenceEmployer %></p>
+                        <% } %>
                       </li>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Reference Type</h5>
@@ -249,8 +254,10 @@
                         <p class="usajobs-drawer-content__item-content"><%= r.referenceEmail %></p>
                       </li>
                       <li class="usajobs-drawer-content__item">
+                          <% if (r.referenceTitle) { %>
                         <h5 class="usajobs-drawer-content__item-label">Title</h5>
                         <p class="usajobs-drawer-content__item-content"><%= r.referenceTitle %></p>
+                        <% } %>
                       </li>
                     </ul>
                   </div>
