@@ -86,20 +86,23 @@
         <div class="usajobs-profile-home-section__body">
           <p><a id="add-experience" class="add-record" href="javascript:void(0);">+ Add experience</a></p>
           <fieldset class="usajobs-fieldset">
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="overseas-experienceQn">
               <h4><label for="OverseasExperience" class="usajobs-profile-question__title">Do you have any overseas experience?</label></h4>
+              <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>           
               <ul class="usa-unstyled-list" id="overseas-experience">
                 <li>
-                  <input id="overseas-experience-yes" name="has_overseas_experience" type="radio" value="yes" data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience) { %><%= "checked" %><% } %>>
+                  <input id="overseas-experience-yes" name="has_overseas_experience" type="radio" value="true" data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience) { %><%= "checked" %><% } %>>
                   <label for="overseas-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="overseas-experience-no" name="has_overseas_experience" type="radio" value="no" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience == false) { %><%= "checked" %><% } %>>
+                  <input id="overseas-experience-no" name="has_overseas_experience" type="radio" value="false" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience == false) { %><%= "checked" %><% } %>>
                   <label for="overseas-experience-no">No</label>
                 </li>
               </ul>
+            
               <div id="overseas-experience-details" class="usajobs-form-reveal-fields" aria-hidden="true">
                 <h4 class="usajobs-overseas-experience__title usajobs-profile-question--spacer">Please indicate what type of overseas experience you possess.</h4>
+                <span class="field-validation-error" style="display:none;" >Please select atleast one.</span>
                 <ul id="overseasExperienceFilters" class="usa-unstyled-list">
                   <li>
                     <input type='checkbox' name='overseas_experience_types' id='overseasExperienceStudent' value='student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('student')) { %><%= "checked" %><% } %>>
@@ -138,24 +141,33 @@
                     </label>
                   </li>
                 </ul>
-                <div id="overseas-experience-filter-other" class="usajobs-form-reveal-fields" aria-hidden="true">
-                  <label for="input-type-textarea">If you chose "Other", please specify.</label>
-                  <textarea id="input-type-textarea" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
-                  <label for="input-type-textarea">Please indicate the total length of your overseas experience(s).</label>
-                  <textarea id="input-type-textarea" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-group required-input">
+           <div id="overseas-experience-filter-other" class="usajobs-form-reveal-fields" aria-hidden="true">
+
+           <div class="form-group required-input">
+          <label for="input-type-textarea">If you chose "Other", please specify.</label>  
+          <span class="field-validation-error error-empty" style="display:none;">You must enter details for other.</span>               
+           <textarea id="experience-other" data-validate="empty" class="fullwidth form-control" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
+           </div>
+
+          <div class="form-group required-input">
+           <label for="input-type-textarea">Please indicate the total length of your overseas experience(s).</label>
+           <span class="field-validation-error error-empty" style="display:none;">You must enter the total length of your overseas experience(s).</span> 
+         <textarea id="overseas-total-length" data-validate="empty" class="fullwidth form-control" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
+         </div>
+         </div>
+         </div>
+        </div>
+        
+            <div class="form-group required-input" id="security_clearenceQn">
               <h4><label for="SecurityClearance" class="usajobs-profile-question__title">Do you have, or have you had, a Security Clearance?</label></h4>
+              <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>            
               <ul class="usa-unstyled-list usa-fieldset-inputs usajobs-profile-question__list">
                 <li>
-                  <input id="SecurityClearanceYes" name="has_security_clearance" type="radio" value="True" <% if (hasSecurityClearance) { %><%= "checked" %> <% } %>>
+                  <input id="SecurityClearanceYes" name="has_security_clearance" type="radio" value="true" <% if (hasSecurityClearance) { %><%= "checked" %> <% } %>>
                   <label for="SecurityClearanceYes">Yes</label>
                 </li>
                 <li>
-                  <input id="SecurityClearanceNo" name="has_security_clearance" type="radio" value="False" <% if (hasSecurityClearance == false) { %><%= "checked" %><% } %>>
+                  <input id="SecurityClearanceNo" name="has_security_clearance" type="radio" value="false" <% if (hasSecurityClearance == false) { %><%= "checked" %><% } %>>
                   <label for="SecurityClearanceNo">No</label>
                 </li>
               </ul>
@@ -163,7 +175,7 @@
                 <div class="form-group required-input">
                   <label for="security-clearance-type">Type of security clearance</label>
                   <span class="field-validation-error error-empty" style="display:none;">You must select the type of security clearance.</span>
-                  <select id="security-clearance-type" name="security_clearance_id" class="dropdown validate" data-validate="empty">
+                  <select id="security-clearance-type" name="security_clearance_id" class="dropdown" data-validate="empty">
                     <option value=""></option>  
                    <% _.each(securityClearances, function (h) { %>                     
                   <option value=<%- h.lookupCodeId %>
@@ -176,20 +188,21 @@
                 </div>
                 <div class="form-group required-input">
                   <label for="security-clearance-issuer">Please provide who issued the clearance</label>
-                  <input type="text" class="fullwidth form-control" id="security-clearance-issuer" name="security_clearance_issuer" value="<%= securityClearanceIssuer %>">
+                  <input type="text" class="fullwidth form-control" id="security-clearance-issuer" name="security_clearance_issuer" data-validate="empty" value="<%= securityClearanceIssuer %>">
                 </div>
               </div>
             </div>
 
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="vsfs_experienceQn">
               <h4><label for="VsfsExperience" class="usajobs-profile-question__title">Have you previously participated in the Virtual Student Federal Service (VSFS) program?</label></h4>
+              <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>            
               <ul class="usa-unstyled-list" id="vsfs-experience">
                 <li>
-                  <input id="vsfs-experience-yes" name="has_vsfs_experience" type="radio" value="yes" <% if (hasVsfsExperience) { %><%= "checked" %><% } %>>
+                  <input id="vsfs-experience-yes" name="has_vsfs_experience" type="radio" value="true" <% if (hasVsfsExperience) { %><%= "checked" %><% } %>>
                   <label for="vsfs-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="vsfs-experience-no" name="has_vsfs_experience" type="radio" value="no" <% if (hasVsfsExperience == false) { %><%= "checked" %><% } %>>
+                  <input id="vsfs-experience-no" name="has_vsfs_experience" type="radio" value="false" <% if (hasVsfsExperience == false) { %><%= "checked" %><% } %>>
                   <label for="vsfs-experience-no">No</label>
                 </li>
               </ul>
