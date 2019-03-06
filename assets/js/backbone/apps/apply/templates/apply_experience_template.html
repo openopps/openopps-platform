@@ -108,37 +108,37 @@
                 <span class="field-validation-error" style="display:none;" >Please select atleast one.</span>
                 <ul id="overseasExperienceFilters" class="usa-unstyled-list">
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceStudent' value='student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('student')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceStudent' value='student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'student' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceStudent' class="student-filter">
                       Student
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceDependent' value='dependent' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('dependent')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceDependent' value='dependent' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'dependent' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceDependent' class="dependent-filter">
                       Dependent
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperiencePeaceCorps' value='peacecorps' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('peacecorps')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperiencePeaceCorps' value='peacecorps' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'peacecorps' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperiencePeaceCorps' class="peacecorps-filter">
                       Peace Corps
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceMilitary' value='military' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('military')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceMilitary' value='military' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'military' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceMilitary' class="military-filter">
                       Military
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceGovernment' value='government' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('government')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceGovernment' value='government' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other" <% if(_.contains(overseasExperienceTypes, 'government' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceGovernment' class="government-filter">
                       Government
                     </label>
                   </li>
                   <li>
-                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceOther' value='other' data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-filter-other" <% if (overseasExperienceTypes && overseasExperienceTypes.includes('other')) { %><%= "checked" %><% } %>>
+                    <input type='checkbox' name='overseas_experience_types' id='overseasExperienceOther' value='other' data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'other' )) { %><%= "checked" %><% } %>>
                     <label for='overseasExperienceOther' class="other-filter">
                       Other
                     </label>
