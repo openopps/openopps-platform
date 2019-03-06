@@ -5,7 +5,6 @@ const $ = require('jquery');
 const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
-const nextSteps = require('./next_steps');
 
 //utility functions
 var Program = require('./program');
@@ -27,6 +26,7 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
 
     //program events
+    'click #saveProgramContinue'                                  : function (e) { this.callMethod(Program.saveProgramContinue, e); },
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
@@ -92,7 +92,7 @@ var ApplyView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation= this.params.get('editEducation');
+	  this.data.editEducation = this.params.get('editEducation');
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
@@ -179,8 +179,7 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    // TODO: Only run if current step equals 0
-    nextSteps.importProfileData.bind(this)();
+    this.updateApplicationStep(1);
   },
 
   updateApplicationStep: function (step) {
@@ -196,16 +195,9 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-      this.$el.localize();
-      if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-        this.renderEducation();
-      }
-      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
-      if (this.data.selectedStep == '5') {
-        Statement.characterCount();
-      }
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
+      Backbone.history.loadUrl(Backbone.history.getFragment());
+      this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
@@ -216,6 +208,7 @@ var ApplyView = Backbone.View.extend({
     step = e.currentTarget.dataset.step;
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+    Backbone.history.loadUrl(Backbone.history.getFragment());
     this.render();
     window.scrollTo(0, 0);
   },
@@ -239,7 +232,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
+    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section

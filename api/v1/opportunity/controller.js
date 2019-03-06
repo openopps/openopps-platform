@@ -21,8 +21,16 @@ router.get('/api/v1/task/taskList', auth.bearer, async(ctx, next) => {
     ctx.body = data;
 });
 
-router.post('/api/v1/task/share/:taskId/share/:uri', auth.bearer, async(ctx, next) => {
-    var data = await service.getTaskList(ctx.query.taskId);
+router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
+    // 1. is this person a member of a community?
+    //   if they are, we can add them
+    // 2. make sure we handle any edge cases
+    var data = await service.getTaskList(ctx.params.taskId, ctx.request.fields.email);
+    ctx.body = data;
+});
+
+router.put('/api/v1/taskList', auth.bearer, async(ctx, next) => {
+    var data = await service.updateTaskList(ctx.state.user.id, ctx.request.fields);
     ctx.body = data;
 });
 

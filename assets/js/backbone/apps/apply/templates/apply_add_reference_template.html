@@ -38,11 +38,11 @@ var getValue = function (field) {
             <h5><label for="ReferenceType" class="usajobs-profile-question__title">Reference type</label></h5>
             <ul class="usa-unstyled-list" id="reference-type">
               <li>
-                <input id="reference-type-professional" name="ReferenceType" type="radio" value="<%= referenceTypes['PROFESSIONAL'].lookupCodeId %>" data-name="Professional" <% if (getValue('referenceTypeId') == '' || getValue('referenceTypeId') == 9) { %>checked<% } %>>
+                <input id="reference-type-professional" name="ReferenceType" type="radio" value="<%= referenceTypes['PROFESSIONAL'].lookupCodeId %>" data-name="Professional" <% if (getValue('referenceTypeId') == '' || getValue('referenceTypeId') == referenceTypes['PROFESSIONAL'].lookupCodeId) { %>checked<% } %>>
                 <label for="reference-type-professional">Professional</label>
               </li>
               <li>
-                <input id="reference-type-personal" name="ReferenceType" type="radio" value="<%= referenceTypes['PERSONAL'].lookupCodeId %>" data-name="Personal" <% if (getValue('referenceTypeId') == 8) { %>checked<% } %>>
+                <input id="reference-type-personal" name="ReferenceType" type="radio" value="<%= referenceTypes['PERSONAL'].lookupCodeId %>" data-name="Personal" <% if (getValue('referenceTypeId') == referenceTypes['PERSONAL'].lookupCodeId) { %>checked<% } %>>
                 <label for="reference-type-personal">Personal</label>
               </li>
             </ul>

@@ -829,13 +829,17 @@
       }
     }
 
-    .exp-start-date, .exp-end-date {
-      &.usa-input-error {
+    .usa-input-error {
+      &.exp-start-date, &.exp-end-date {
         clear: none;
         display: block;
         float: left;
-        margin-right: 1.5rem;
+        margin-right: 0;
         width: 9rem;
+
+        &:not(:first-child) {
+          margin-left: $size-default;
+        }
 
         input {
           width: 100%;
