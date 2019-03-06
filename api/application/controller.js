@@ -25,19 +25,9 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/application/:id/import', auth, async (ctx, next) => {
-  var result = await service.importProfileData(ctx.state.user, ctx.params.id);
-  if (result) {
-    ctx.status = 200;
-    ctx.body = result;
-  } else {
-    ctx.status = 400;
-  }
-});
-
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
-    await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
+    await service.apply(ctx.state.user, ctx.params.taskId, (err, applicationId) => {
       ctx.status = err ? 400 : 200;
       ctx.body = err ? err : applicationId;
     });
@@ -58,8 +48,9 @@ router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) 
 });
 
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
-  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then(() => {
+  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then((result) => {
     ctx.status = 200;
+    ctx.body = result;
   }).catch((err) => {
     ctx.status = err.status;
     ctx.body = err.message;

@@ -5,7 +5,6 @@ const $ = require('jquery');
 const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
-const nextSteps = require('./next_steps');
 
 //utility functions
 var Program = require('./program');
@@ -27,6 +26,7 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
 
     //program events
+    'click #saveProgramContinue'                                  : function (e) { this.callMethod(Program.saveProgramContinue, e); },
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
@@ -92,7 +92,7 @@ var ApplyView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation= this.params.get('editEducation');
+	  this.data.editEducation = this.params.get('editEducation');
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
@@ -179,8 +179,7 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    // TODO: Only run if current step equals 0
-    nextSteps.importProfileData.bind(this)();
+    this.updateApplicationStep(1);
   },
 
   updateApplicationStep: function (step) {

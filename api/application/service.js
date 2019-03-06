@@ -5,16 +5,17 @@ const dao = require('./dao')(db);
 const Profile = require('../auth/profile');
 const Import = require('./import');
 
-async function findOrCreateApplication (data) {
-  var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [data.userId, data.community.communityId, data.task.cycleId]))[0];
+async function findOrCreateApplication (user, data) {
+  var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [user.id, data.community.communityId, data.task.cycleId]))[0];
   if (!application) {
     application = await dao.Application.insert({
-      userId: data.userId,
+      userId: user.id,
       communityId: data.community.communityId,
       cycleId: data.task.cycleId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+    importProfileData(user, application.applicationId);
   }
   return application;
 }
@@ -33,8 +34,27 @@ function filterOutErrors (recordList) {
   });
 }
 
-async function processUnpaidApplication (data, callback) {
-  var application = await findOrCreateApplication(data);
+function importProfileData (user, applicationId) {
+  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(() => {
+    Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(profile => {
+      Promise.all([
+        Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
+        Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
+        Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
+        Import.profileReferences(user.id, applicationId, profile.Profile.References),
+      ]).catch((err) => {
+        // record data import error
+      });
+    }).catch((err) => {
+      // record error getting USAJOBS profile
+    });
+  }).catch((err) => {
+    // record error locating application
+  });
+}
+
+async function processUnpaidApplication (user, data, callback) {
+  var application = await findOrCreateApplication(user, data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
   if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
     callback(null, application.applicationId);
@@ -130,12 +150,12 @@ module.exports.saveLanguage = async function (userId, data) {
   });
 };
 
-module.exports.apply = async function (userId, taskId, callback) {
+module.exports.apply = async function (user, taskId, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
       // need a way to determine DoS Unpaid vs VSFS
       if (community.applicationProcess == 'dos') {
-        await processUnpaidApplication({ userId: userId, task: task, community: community }, callback);
+        await processUnpaidApplication(user, { task: task, community: community }, callback);
       } else {
         // We don't know yet how to handle this type of application
         log.error('User attempted to apply to a community task that is not defined.', taskId);
@@ -153,10 +173,16 @@ module.exports.apply = async function (userId, taskId, callback) {
 
 module.exports.deleteApplicationTask = async function (userId, applicationId, taskId) {
   return new Promise((resolve, reject) => {
-    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(() => {
-      dao.ApplicationTask.delete('task_id = ? and application_id = ?', taskId, applicationId).then(() => {
-        resolve();
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then((application) => {
+      db.query('BEGIN').then(async () => {
+        await dao.ApplicationTask.delete('task_id = ? and application_id = ?', taskId, applicationId);
+        var result = await dao.Application.update({ applicationId: applicationId, currentStep: 1, updatedAt: application.updatedAt });
+        await db.query('COMMIT');
+        return result;
+      }).then(async (result) => {
+        resolve(result);
       }).catch((err) => {
+        db.query('ROLLBACK');
         reject({ status: 400, message: 'An unexpected error occured attempting to remove this internship selection from your application.' });
       });
     }).catch((err) => {
@@ -189,33 +215,6 @@ module.exports.findById = async function (userId, applicationId) {
     }).catch((err) => {
       reject();
     });
-  });
-};
-
-module.exports.importProfileData = async function (user, applicationId) {
-  return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
-    return await Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(async profile => {
-      return await Promise.all([
-        Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
-        Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
-        Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
-        Import.profileReferences(user.id, applicationId, profile.Profile.References),
-      ]).then((results) => {
-        return {
-          error: lookForErrors(results),
-          education: filterOutErrors(results[0]),
-          experience: filterOutErrors(results[1]),
-          language: filterOutErrors(results[2]),
-          reference: filterOutErrors(results[3]),
-        };
-      }).catch((err) => {
-        return { err: err };
-      });
-    }).catch((err) => {
-      return { err: 'Unable to get data from your USAJOBS profile.' };
-    });
-  }).catch((err) => {
-    return false;
   });
 };
 
