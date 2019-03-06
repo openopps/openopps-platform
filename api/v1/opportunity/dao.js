@@ -89,7 +89,7 @@ dao.query.taskListApplicationQuery = `
     task_list_application.date_last_contacted,
     midas_user.given_name,
     midas_user.last_name,
-    midas_user.government_uri,
+    midas_user.username as email,
     (
       select json_agg(item)
       from (
@@ -123,14 +123,15 @@ dao.query.taskListApplicationQuery = `
         type = 'location'
         and user_tags = application.user_id
       ) item
-    ) as locations
+    ) as locations,
+    '2/28/2019' as "lastContacted"
   from
     task_list_application
     inner join task_list on task_list_application.task_list_id = task_list.task_list_id
     inner join application on task_list_application.application_id = application.application_id
     inner join midas_user on application.user_id = midas_user.id
   where
-    task_list.task_id = ?
+    task_list.task_list_id = ?
 `;
 
 module.exports = function (db) {

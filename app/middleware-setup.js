@@ -10,7 +10,7 @@ module.exports = (app) => {
   // initialize body parser
   app.use(parser());
   // initialize cache controller
-  app.use(cacheControl(openopps.cache.public));
+  app.use(cacheControl(openopps.cache.noStore));
   // initialize response compression
   app.use(compress({}));
   // initialize CORS
