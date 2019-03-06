@@ -1045,6 +1045,7 @@
         font-weight: normal;
         background-color: $color-white;
         background-image: url(../../img/plus-circle.svg);
+        background-image: url(../../img/plus-circle.png);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -1057,6 +1058,7 @@
 
         &[aria-expanded="true"] {
           background-image: url(../../img/minus-circle.svg);
+          background-image: url(../../img/minus-circle.png);
           background-size: 2rem;
         }
 
