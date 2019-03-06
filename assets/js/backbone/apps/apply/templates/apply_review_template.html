@@ -152,10 +152,12 @@
               <h5 class="usajobs-profile-home-section__field-label">Overseas experience?</h5>
               <p><%- hasOverseasExperience ? "Yes" : "No" %></p>
             </li>
-            <li class="usajobs-profile-home-section__field-item">
-              <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience?</h5>
-              <p><%- overseasExperienceTypes.join(', ').replace(/\b\w/g, function(l){ return l.toUpperCase() }) %></p>
-            </li>
+            <% if (hasOverseasExperience) { %>
+              <li class="usajobs-profile-home-section__field-item">
+                <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience?</h5>
+                <p><%- overseasExperienceTypes.join(', ').replace(/\b\w/g, function(l){ return l.toUpperCase() }) %></p>
+              </li>
+            <% } %>
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Security clearance</h5>
               <p><%- hasSecurityClearance ? "Yes" : "No" %></p>
