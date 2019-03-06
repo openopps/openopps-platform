@@ -196,11 +196,7 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-      this.$el.localize();
-     
-      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
       Backbone.history.loadUrl(Backbone.history.getFragment());
       this.render();
       window.scrollTo(0, 0);
