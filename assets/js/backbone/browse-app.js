@@ -152,7 +152,7 @@ var BrowseRouter = Backbone.Router.extend({
     var IneligibleCitizenshipTemplate = _.template(IneligibleCitizenship)(this.data);
     $('#container').html(_.template(IneligibleCitizenshipTemplate)());
     var ProcessFlowTemplate = require('./apps/apply/templates/process_flow_template.html');
-    $('#process-title-banners').html(_.template(ProcessFlowTemplate)());
+    $('#process-title-banners').html(_.template(ProcessFlowTemplate)({ currentStep: 0, selectedStep: 0 }));
     $('#search-results-loading').hide();
   },
 

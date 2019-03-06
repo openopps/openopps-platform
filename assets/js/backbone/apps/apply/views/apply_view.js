@@ -195,13 +195,9 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-      this.$el.localize();
-      if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-        this.renderEducation();
-      }
-      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
+      Backbone.history.loadUrl(Backbone.history.getFragment());
+      this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
@@ -212,6 +208,7 @@ var ApplyView = Backbone.View.extend({
     step = e.currentTarget.dataset.step;
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+    Backbone.history.loadUrl(Backbone.history.getFragment());
     this.render();
     window.scrollTo(0, 0);
   },
@@ -235,7 +232,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
+    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section
