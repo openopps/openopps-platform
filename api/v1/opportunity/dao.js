@@ -87,9 +87,9 @@ dao.query.taskListApplicationQuery = `
     task_list_application.application_id,
     task_list_application.sort_order,
     task_list_application.date_last_contacted,
-    midas_user.given_name as "givenName",
-    midas_user.last_name as "lastName",
-    midas_user.government_uri,
+    midas_user.given_name,
+    midas_user.last_name,
+    midas_user.username as email,
     (
       select json_agg(item)
       from (

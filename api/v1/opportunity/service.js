@@ -35,6 +35,22 @@ service.getTaskList = async function(userId, taskId) {
     return results.rows;
 }
 
+service.updateTaskList = async function(userId, toUpdate) {
+    var updated = [];
+    for (let i = 0; i < toUpdate.length; i++) {
+        updated.push(await updateListApplicant(userId, toUpdate[i]));
+    }
+    return updated;
+}
+
+async function updateListApplicant(userId, item) {
+    var applicant = await dao.TaskListApplication.findOne("task_list_application_id = ?", item.task_list_application_id);
+    applicant.taskListId = item.task_list_id;
+    applicant.sortOrder = item.sort_order;
+    applicant.updatedBy = userId;
+    return await dao.TaskListApplication.update(applicant); 
+}
+
 async function createTaskList(listName, taskId, userId, sortOrder) {
     var list = {
         task_id: taskId,
