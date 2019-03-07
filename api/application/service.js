@@ -34,6 +34,17 @@ function filterOutErrors (recordList) {
   });
 }
 
+function sortApplicationTasks (tasks) {
+  if(_.uniq(_.map(tasks, task => { return task.sortOrder; })).length == tasks.length) {
+    return tasks;
+  } else {
+    return _.map(_.sortBy(tasks, 'sortOrder'), async (task, index) => {
+      task.sortOrder = index + 1;
+      return await dao.ApplicationTask.update(task).catch(() => { return task; });
+    });
+  }
+}
+
 function importProfileData (user, applicationId) {
   dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(() => {
     Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(profile => {
@@ -208,7 +219,7 @@ module.exports.findById = async function (userId, applicationId) {
           writingProficiency: '' }}),
         dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
       ]);
-      application.tasks = results[0].rows;
+      application.tasks = sortApplicationTasks(results[0].rows);
       application.education = results[1];
       application.experience = results[2];
       application.language = results[3];
