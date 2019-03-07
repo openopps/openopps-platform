@@ -10,7 +10,7 @@ router.get('/api/v1/task/internships', auth.bearer, async(ctx, next) => {
 });
 
 router.get('/api/v1/task/internshipSummary', auth.bearer, async(ctx, next) => {
-    var data = await service.getInternshipSummary(ctx.state.user.id, ctx.query.taskId); 
+    var data = await service.getInternshipSummary(ctx.query.taskId); 
     data.owners = await service.getTaskShareList(ctx.state.user.id, ctx.query.taskId);
     data.taskList = await service.getTaskList(ctx.state.user.id, ctx.query.taskId);
     ctx.body = data;
