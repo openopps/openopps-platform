@@ -174,15 +174,18 @@ module.exports.apply = async function (user, taskId, callback) {
 module.exports.deleteApplicationTask = async function (userId, applicationId, taskId) {
   return new Promise((resolve, reject) => {
     dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then((application) => {
-      db.query('BEGIN').then(async () => {
-        await dao.ApplicationTask.delete('task_id = ? and application_id = ?', taskId, applicationId);
-        var result = await dao.Application.update({ applicationId: applicationId, currentStep: 1, updatedAt: application.updatedAt });
-        await db.query('COMMIT');
-        return result;
+      db.transaction(function* (transaction) {
+        yield transaction.query('DELETE from application_task WHERE task_id = $1 and application_id = $2', [taskId, applicationId]);
+        var updatedAt = new Date();
+        yield transaction.query('UPDATE application SET current_step = $1, updated_at = $2 WHERE application_id = $3', [1, updatedAt, applicationId]);
+        return { 
+          applicationId: applicationId,
+          currentStep: 1,
+          updatedAt: updatedAt,
+        };
       }).then(async (result) => {
         resolve(result);
       }).catch((err) => {
-        db.query('ROLLBACK');
         reject({ status: 400, message: 'An unexpected error occured attempting to remove this internship selection from your application.' });
       });
     }).catch((err) => {
@@ -221,14 +224,12 @@ module.exports.findById = async function (userId, applicationId) {
 module.exports.swapApplicationTasks = async function (userId, applicationId, data) {
   return new Promise((resolve, reject) => {
     dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
-      db.query('BEGIN').then(async () => {
-        await dao.ApplicationTask.update({ applicationTaskId: data[0].applicationTaskId, sortOrder: data[1].sortOrder, updatedAt: data[0].updatedAt });
-        await dao.ApplicationTask.update({ applicationTaskId: data[1].applicationTaskId, sortOrder: data[0].sortOrder, updatedAt: data[1].updatedAt });
-        await db.query('COMMIT');
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE application_task SET sort_order = $1 WHERE application_task_id = $2', [data[1].sortOrder, data[0].applicationTaskId]);
+        yield transaction.query('UPDATE application_task SET sort_order = $1 WHERE application_task_id = $2', [data[0].sortOrder, data[1].applicationTaskId]);
       }).then(async () => {
         resolve((await db.query(dao.query.applicationTasks, applicationId)).rows);
       }).catch((err) => {
-        db.query('ROLLBACK');
         reject({ status: 400, message: 'An unexpected error occured attempting to update your internship selections from your application.' });
       });
     }).catch((err) => {
