@@ -221,6 +221,7 @@ module.exports = function (db) {
     LookupCode:dao({ db: db, table: 'lookup_code' }),
     Office:dao({ db: db, table: 'office' }),
     Bureau:dao({ db: db, table: 'bureau' }),
+    TaskShare:dao({ db: db, table: 'task_share'}),
 
     query: {
       task: taskQuery,

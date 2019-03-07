@@ -28,15 +28,22 @@ dao.query.internshipSummaryQuery = `
     task.id, 
     "cycle".name as "cycleName", 
     task.title as "taskTitle", 
-    task.interns as "numberOfSeats"
-  from 
-    task 
+    task.interns as "numberOfSeats",
+    (
+      select json_agg(item)
+      from (
+        select updated_at, midas_user.given_name || ' ' || midas_user.last_name as fullname
+        from task_list
+          inner join midas_user on task_list.updated_by = midas_user.id
+        where task_id = task.id
+        order by updated_at desc
+        limit 1
+      ) item
+    ) as "last_updated"
+  from task 
     inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
     inner join community on task.community_id = community.community_id
-    inner join task_share on task.id = task_share."task_id"
-  where   
-    task_share."user_id" = ?
-    and task.id = ?
+  where task.id = ?
 `;
 
 dao.query.taskShareQuery = `
@@ -123,8 +130,7 @@ dao.query.taskListApplicationQuery = `
         type = 'location'
         and user_tags = application.user_id
       ) item
-    ) as locations,
-    '2/28/2019' as "lastContacted"
+    ) as locations
   from
     task_list_application
     inner join task_list on task_list_application.task_list_id = task_list.task_list_id
