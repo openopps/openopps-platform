@@ -48,8 +48,6 @@
     }
 
     &__step {
-      display: flex;
-      flex-direction: column;
       width: 20%;
       height: 100%;
       padding: $size-default 0 $size-base 0;
@@ -568,6 +566,24 @@
     border-top: 0;
   }
 
+  .read-less {
+    max-height: 13.5rem;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      content: '';
+      width: 100%;
+      height: 9rem;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: block;
+      background: linear-gradient(rgba(255, 255, 255, 0), white);
+      transition: height .5s;
+    }
+  }
+
   .read-more {
     text-decoration: underline;
     font-weight: bold;
@@ -794,19 +810,39 @@
    display: block;
   }
 
-  .usajobs-fieldset--horizontal .gpa {
-    clear: none;
-    display: block;
-    float: left;
-    margin-right: 1.5rem;
-    width: 9rem;
+  .usajobs-fieldset--horizontal {
+    .gpa {
+      clear: none;
+      display: block;
+      float: left;
+      margin-right: 1.5rem;
+      width: 9rem;
 
-    &:not(:first-child) {
-      width: 12rem;
+      &:not(:first-child) {
+        width: 12rem;
+      }
+
+      &.usa-input-error input {
+        width: 100%;
+      }
     }
 
-    &.usa-input-error input {
-      width: 100%;
+    .usa-input-error {
+      &.exp-start-date, &.exp-end-date {
+        clear: none;
+        display: block;
+        float: left;
+        margin-right: 0;
+        width: 9rem;
+
+        &:not(:first-child) {
+          margin-left: $size-default;
+        }
+
+        input {
+          width: 100%;
+        }
+      }
     }
   }
 
@@ -1007,6 +1043,7 @@
         font-weight: normal;
         background-color: $color-white;
         background-image: url(../../img/plus-circle.svg);
+        background-image: url(../../img/plus-circle.png);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -1019,6 +1056,7 @@
 
         &[aria-expanded="true"] {
           background-image: url(../../img/minus-circle.svg);
+          background-image: url(../../img/minus-circle.png);
           background-size: 2rem;
         }
 

@@ -45,7 +45,7 @@ async function list (user) {
   if(user && user.isAdmin) {
     tasks = dao.clean.tasks(await dao.Task.query(dao.query.task + ' order by task."createdAt" desc', {}, dao.options.task));
   } else {
-    var where = " where task.restrict->>'projectNetwork' = 'false'";
+    var where = " where task.restrict::text = '{}' or task.restrict->>'projectNetwork' = 'false'";
     if(user && user.agency && !_.isEmpty(user.agency.data)) {
       where += " or task.restrict->>'abbr' = '" + user.agency.data.abbr + "'";
       where += " or task.restrict->>'parentAbbr' = '" + user.agency.data.abbr + "'";
@@ -134,6 +134,17 @@ async function createOpportunity (attributes, done) {
     }
 
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+    if (attributes.communityId != null)
+    {
+      var share = {
+        task_id: task.id,
+        user_id: attributes.userId,
+        shared_by_user_id: attributes.userId,
+        last_modified: new Date,
+      }
+      await dao.TaskShare.insert(share);
+    }
+    
     await elasticService.indexOpportunity(task.id);
    
     return done(null, task);

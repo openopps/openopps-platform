@@ -6,5 +6,6 @@ loadFeature = function (name) {
 };
 
 module.exports = (app) => {
+  app.use(loadFeature('application'));
   app.use(loadFeature('opportunity'));
 };

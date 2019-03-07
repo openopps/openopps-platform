@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 const $ = require('jquery');
 const _ = require('underscore');
 const templates = require('./templates');
@@ -5,32 +6,77 @@ const templates = require('./templates');
 var experience = {
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
+
+    $('#overseas-experienceQn').removeClass('usa-input-error');    
+    $('#overseas-experienceQn>.field-validation-error').hide();
+    $('#overseas-experience-details').removeClass('usa-input-error');    
+    $('#overseas-experience-details>.field-validation-error').hide();
+
+
     if($('input#overseas-experience-yes').is(':checked')) {
       $('#overseas-experience-details').show();
+         
     } else {
       $('#overseas-experience-details').hide();
+      $("input[name='overseas_experience_types']:checkbox").prop('checked', false);
+      $('#overseas-experience-filter-other').hide();
+      $('[name=overseas_experience_other]').val('');
+      $('[name=overseas_experience_length]').val('');
+      
+     
     }
   },
 
   toggleOverseasExperienceFilterOther: function () {
+    
     $('#overseas-experience-filter-other').hide();
+    if ($("[name='overseas_experience_types']:checked").length>0){     
+      $('#overseas-experience-details').removeClass('usa-input-error'); 
+      $('#overseas-experienceQn').removeClass('usa-input-error');      
+      $('#overseas-experience-details>.field-validation-error').hide();  
+     
+    }
     if($('input#overseasExperienceOther').is(':checked')) {
       $('#overseas-experience-filter-other').show();
+      $('#overseas-experienceQn').removeClass('usa-input-error'); 
+      $('#experience-other').addClass('validate'); 
+      $('#overseas-total-length').addClass('validate');
+
     } else {
       $('#overseas-experience-filter-other').hide();
       $('[name=overseas_experience_other]').val('');
       $('[name=overseas_experience_length]').val('');
+      $('#input-details-other').removeClass('validate'); 
+      $('#overseas-total-length').removeClass('validate');   
+    }
+   
+  },
+  toggleVsfsDetails: function (){
+    if($('[name=has_vsfs_experience]:checked').length>0){ 
+      $('#vsfs_experienceQn').removeClass('usa-input-error');    
+      $('#vsfs_experienceQn>.field-validation-error').hide();
+      
     }
   },
   
   toggleSecurityClearanceDetails: function () {
     $('#security-clearance-details').hide();
-    if($('input#SecurityClearanceYes').is(':checked')) {
-      $('#security-clearance-details').show();
-    } else {
+    $('#security_clearenceQn').removeClass('usa-input-error');    
+    $('#security_clearenceQn>.field-validation-error').hide();
+
+    if($('input#SecurityClearanceYes').is(':checked')) {   
+      $('#security-clearance-details').show();      
+      $('#security-clearance-issuer').addClass('validate');    
+      $('#security-clearance-type').addClass('validate');
+    } 
+    else {
       $('#security-clearance-details').hide();
       $('#security-clearance-type').prop('selectedIndex', 0);
       $('#security-clearance-issuer').val('');
+      
+      $('#security-clearance-issuer').removeClass('validate');    
+      $('#security-clearance-type').removeClass('validate');
+     
     }
   },
 
@@ -72,14 +118,14 @@ var experience = {
     return {
       applicationId: this.data.applicationId,
       currentStep: Math.max(this.data.currentStep, 2),
-      hasOverseasExperience: $('[name=has_overseas_experience]').val(),
+      hasOverseasExperience: $('input[name=has_overseas_experience]:checked').val(),
       overseasExperienceOther: $('[name=overseas_experience_other]').val(),
       overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-      hasSecurityClearance: $('[name=has_security_clearance]').val(),
-      securityClearanceId: $('[name=security_clearance_id]').val(),
+      hasSecurityClearance: $('input[name=has_security_clearance]:checked').val(),
+      securityClearanceId: $('#security-clearance-type').val(),
       overseasExperienceTypes: overseasExperienceTypes,
       securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-      hasVsfsExperience: $('[name=has_vsfs_experience]').val(),
+      hasVsfsExperience: $('input[name=has_vsfs_experience]:checked').val(),
       updatedAt: this.data.updatedAt,
     };
   },
@@ -141,20 +187,77 @@ var experience = {
     }
   },
 
+  validateExperience:function (){
+  
+    var children = this.$el.find( '.validate' );
+    var abort = false;
+    if($('[name=has_overseas_experience]:checked').length==0){ 
+      $('#overseas-experienceQn').addClass('usa-input-error');    
+      $('#overseas-experienceQn>.field-validation-error').show();
+
+      abort=true;
+    }
+    
+    if($('[name=has_overseas_experience]:checked').length>0){ 
+      if($('input#overseas-experience-yes').is(':checked')) {
+        if ($("[name='overseas_experience_types']:checked").length==0){     
+          $('#overseas-experience-details').addClass('usa-input-error');    
+          $('#overseas-experience-details>.field-validation-error').show();
+         
+          abort=true;
+        }
+        
+      }
+      else{
+        $('#overseas-experienceQn').removeClass('usa-input-error');    
+        $('#overseas-experienceQn>.field-validation-error').hide();
+        $('#overseas-experience-details').removeClass('usa-input-error');    
+        $('#overseas-experience-details>.field-validation-error').hide();
+      }     
+    }
+
+    if($('[name=has_security_clearance]:checked').length==0){ 
+      $('#security_clearenceQn').addClass('usa-input-error');    
+      $('#security_clearenceQn>.field-validation-error').show();
+      abort=true;
+    }
+    if($('[name=has_vsfs_experience]:checked').length==0){ 
+      $('#vsfs_experienceQn').addClass('usa-input-error');    
+      $('#vsfs_experienceQn>.field-validation-error').show();
+      abort=true;
+    }
+    
+
+    _.each( children, function ( child ) {
+      var iAbort = validate( { currentTarget: child } );
+      abort = abort || iAbort;
+    } );
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    
+    return abort;
+
+  },
+
+
   saveExperienceContinue: function () {
+    var validateExperience= experience.validateExperience.bind(this);
     var data = experience.getDataFromExperiencePage.bind(this)();
     this.data.currentStep = Math.max(this.data.currentStep, 2);
-    this.data.selectedStep = 3;
-    $.ajax({
-      url: '/api/application/' + this.data.applicationId,
-      method: 'PUT',
-      contentType: 'application/json',
-      data: JSON.stringify(data),
-    }).done(function (result) {
-      this.data.updatedAt = result.updatedAt;       
-      this.updateApplicationStep(3);
-      window.scrollTo(0, 0);
-    }.bind(this));
+    this.data.selectedStep = 3;  
+    if(!validateExperience()){
+      $.ajax({
+        url: '/api/application/' + this.data.applicationId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+      }).done(function (result) {
+        this.data.updatedAt = result.updatedAt;       
+        this.updateApplicationStep(3);
+        window.scrollTo(0, 0);
+      }.bind(this));  
+    } 
   },
 
   toggleAddExperience: function (e) {

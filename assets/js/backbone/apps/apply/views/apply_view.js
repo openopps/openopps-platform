@@ -5,7 +5,6 @@ const $ = require('jquery');
 const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
-const nextSteps = require('./next_steps');
 
 //utility functions
 var Program = require('./program');
@@ -27,10 +26,12 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
 
     //program events
+    'click #saveProgramContinue'                                  : function (e) { this.callMethod(Program.saveProgramContinue, e); },
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
     //experience events
+    'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
@@ -58,11 +59,11 @@ var ApplyView = Backbone.View.extend({
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
 
     //language events
-    'click #add-language'                                         : function () { this.callMethod(Language.toggleLanguagesOn); },
+    'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
-    'click #save-language'                                        : function () { this.callMethod(Language.saveLanguage); },
-    'click #edit-language'                                        : function () { this.callMethod(Language.deleteLanguage); },
-    
+    'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
+    'click #saveLanguageContinue'                                : function () { this.callMethod(Language.saveLanguageContinue); },
+
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
     'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
@@ -71,6 +72,8 @@ var ApplyView = Backbone.View.extend({
     //review events
     'click .usajobs-profile-home-section__sub-edit'               : 'historyApplicationStep',
     'click .apply-submit'                                         : 'submitApplication',
+    'click .read-more'                                            : 'readMore',
+    'change [name=is_consent_to_share]'                           : 'enableSubmit',
   },
 
   // initialize components and global functions
@@ -83,14 +86,13 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
-    // this.dataLanguageArray     = [];
-    // this.deleteLanguageArray   = [];
-    // this.data.languages        = this.data.languages || [];
+ 
     this.languageProficiencies = [];
+    this.data.languages        = this.data.languages || [];
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation= this.params.get('editEducation');
+	  this.data.editEducation = this.params.get('editEducation');
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
@@ -118,7 +120,7 @@ var ApplyView = Backbone.View.extend({
         this.languageProficiencies = data.languageProficiencies;
         this.honors=data.academicHonors;
         this.degreeTypes=data.degreeTypes;
-        this.data.securityClearences= data.securityClearances;
+        this.data.securityClearances= data.securityClearances;
         this.referenceTypes={};
         for (var i=0;i<data.referenceTypes.length;i++) {
           this.referenceTypes[data.referenceTypes[i].code] = data.referenceTypes[i];
@@ -177,8 +179,7 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    // TODO: Only run if current step equals 0
-    nextSteps.importProfileData.bind(this)();
+    this.updateApplicationStep(1);
   },
 
   updateApplicationStep: function (step) {
@@ -194,13 +195,9 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-      this.$el.localize();
-      if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-        this.renderEducation();
-      }
-      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
+      Backbone.history.loadUrl(Backbone.history.getFragment());
+      this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
@@ -211,6 +208,7 @@ var ApplyView = Backbone.View.extend({
     step = e.currentTarget.dataset.step;
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
+    Backbone.history.loadUrl(Backbone.history.getFragment());
     this.render();
     window.scrollTo(0, 0);
   },
@@ -234,7 +232,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
+    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section
@@ -322,8 +320,37 @@ var ApplyView = Backbone.View.extend({
   // review section
   submitApplication: function (e) {
     e.preventDefault && e.preventDefault();
-    Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
-    window.scrollTo(0, 0);
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId,
+      type: 'PUT',
+      data: {
+        applicationId: this.data.applicationId,
+        isConsentToShare: this.data.isConsentToShare,
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function (result) {
+      this.data.updatedAt = result.updatedAt;
+      Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
+      window.scrollTo(0, 0);
+    }.bind(this));
+  },
+
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('statement-of-interest')) {
+      $('.statement-of-interest').removeClass('read-less');
+      $('a.statement-of-interest.read-more').hide();
+      $('div.statement-of-interest').addClass('show');
+    }
+  },
+
+  enableSubmit: function () {
+    if ($('input[name=is_consent_to_share]:checked')) {
+      this.data.isConsentToShare = ($('input[name=is_consent_to_share]:checked').val() == 'yes');
+      $('.apply-submit').removeAttr('disabled');
+    }
   },
   // end review section
 

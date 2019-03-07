@@ -25,19 +25,9 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/application/:id/import', auth, async (ctx, next) => {
-  var result = await service.importProfileData(ctx.state.user, ctx.params.id);
-  if (result) {
-    ctx.status = 200;
-    ctx.body = result;
-  } else {
-    ctx.status = 400;
-  }
-});
-
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
-    await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
+    await service.apply(ctx.state.user, ctx.params.taskId, (err, applicationId) => {
       ctx.status = err ? 400 : 200;
       ctx.body = err ? err : applicationId;
     });
@@ -58,16 +48,17 @@ router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) 
 });
 
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
-  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then(() => {
+  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then((result) => {
     ctx.status = 200;
+    ctx.body = result;
   }).catch((err) => {
     ctx.status = err.status;
     ctx.body = err.message;
   });
 });
 
-router.post('/api/application/:id/language', auth, async (ctx, next) =>{
-  var result = await service.saveLanguage(ctx.state.user.id, ctx.params.id, ctx.request.body);
+router.post('/api/application/:applicationId/language', auth, async (ctx, next) =>{
+  var result = await service.saveLanguage(ctx.state.user.id, ctx.request.body);
   if (result) {
     ctx.status = result.err ? 409 : 200;
     ctx.body = result;
@@ -76,8 +67,24 @@ router.post('/api/application/:id/language', auth, async (ctx, next) =>{
   }
 });
 
-router.delete('/api/application/:id/language/:applicationLanguageSkillId/',auth, async (ctx,next) =>{ 
-  ctx.body = await service.deleteLanguage(ctx.params.applicationLanguageSkillId);
+router.put('/api/application/:applicationId/language', auth, async (ctx, next) => {
+  var result = await service.updateLanguage(ctx.state.user.id, ctx.request.body);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
+});
+
+router.delete('/api/application/:applicationId/applicationLanguageSkill/:applicationLanguageSkillId',auth, async (ctx,next) =>{ 
+  var result = await service.deleteLanguage(ctx.state.user.id, ctx.params.applicationLanguageSkillId).then(() => {
+    ctx.body = result;
+    ctx.status = 200;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
 });
 
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{

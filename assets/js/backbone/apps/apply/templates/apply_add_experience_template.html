@@ -74,15 +74,15 @@ var getValue = function (field) {
             <h5>Start date</h5>
           </label>
           <div>
-            <div class="required-input usa-datefield usa-form-group-month">
+            <div class="exp-start-date required-input usa-datefield usa-form-group-month">
               <label for="start-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting month.</span>
               <input type="number" class="usa-input-tiny form-control validate" id="start-month" name="start-month" max="12" value="<%= getValue('startMonth') %>" data-validate="empty" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
             </div>
-            <div class="required-input usa-datefield usa-form-group-year">
+            <div class="exp-start-date required-input usa-datefield usa-form-group-year">
               <label for="start-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a starting year.</span>
-              <input type="number" class="usa-input-small form-control validate" id="start-year" name="start-year" max="3000" value="<%= getValue('startYear') %>" data-validate="empty>" onkeyup="if(this.value.length>4){this.value=this.value.substring(0, 4);}">
+              <input type="number" class="usa-input-small form-control validate" id="start-year" name="start-year" max="3000" value="<%= getValue('startYear') %>" data-validate="empty" onkeyup="if(this.value.length>4){this.value=this.value.substring(0, 4);}">
             </div>
           </div>
         </fieldset>        
@@ -92,12 +92,12 @@ var getValue = function (field) {
             <h5>End date</h5>
           </label>
           <div>
-            <div class="required-input usa-datefield usa-form-group-month">
+            <div class="exp-end-date required-input usa-datefield usa-form-group-month">
               <label for="end-month" class="no-margin-top">Month</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending month.</span>
               <input type="number" class="usa-input-tiny form-control validate" id="end-month" name="end-month" max="12" value="<%= getValue('endMonth') %>" data-validate="empty" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
             </div>
-            <div class="required-input usa-datefield usa-form-group-year">
+            <div class="exp-end-date required-input usa-datefield usa-form-group-year">
               <label for="end-year" class="no-margin-top">Year</label>
               <span class="field-validation-error error-empty" style="display:none;">You must enter a ending year.</span>
               <span class="field-validation-error error-datecomparison" style="display:none;">End date must be before start date</span>
@@ -119,6 +119,7 @@ var getValue = function (field) {
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
             <textarea cols="20" id="duties" maxlength="5000" name="duties" rows="2" class="validate" data-validate="empty,count100,html"><%= getValue('duties') %></textarea>
           </div>
+          <a href="https://usajobs.github.io/openopps-help/" target="_blank">Problems with formatting when pasting from Microsoft Word?.</a>      
         </fieldset>
         <% if (obj['experienceId']) { %>
           <input type="hidden" name="experience-id" id="experience-id" value="<%= experienceId %>" />

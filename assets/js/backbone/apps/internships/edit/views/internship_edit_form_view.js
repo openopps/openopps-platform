@@ -287,7 +287,7 @@ var InternshipEditFormView = Backbone.View.extend({
       placeholder: 'Select an office',
       width: '100%',
       allowClear: true,
-      data: function() { 
+      data: function () { 
         return {results: this.currentOffices}; 
       }.bind(this)
     });
