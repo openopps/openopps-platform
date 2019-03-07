@@ -329,6 +329,7 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         isConsentToShare: this.data.isConsentToShare,
         updatedAt: this.data.updatedAt,
+        submittedAt: (new Date()).toISOString(),
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
