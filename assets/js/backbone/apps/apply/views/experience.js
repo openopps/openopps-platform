@@ -304,12 +304,7 @@ var experience = {
   },
 
   toggleExperienceOff: function (e) {
-    var data = { };
-    
-    var template = templates.applyExperience(this.data);
-    
-    this.$el.html(template);
-    this.$el.localize();
+    this.$el.html(templates.applyExperience(this.data));  
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
@@ -381,7 +376,7 @@ var experience = {
 
   toggleAddReference: function () {
     experience.updateExperienceDataObject.bind(this)();
-    var data = { referenceTypes: this.referenceTypes };
+    var data = { referenceTypes: this.referenceTypes };   
     var template = templates.applyAddReference(data);
     this.$el.html(template);
     this.$el.localize();

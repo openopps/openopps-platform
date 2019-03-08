@@ -65,7 +65,7 @@ var ApplyView = Backbone.View.extend({
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
-    'click #saveLanguageContinue'                                : function () { this.callMethod(Language.saveLanguageContinue); },
+    'click #saveLanguageContinue'                                 : function () { this.callMethod(Language.saveLanguageContinue); },
 
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
@@ -108,6 +108,7 @@ var ApplyView = Backbone.View.extend({
     this.renderComponentEducation();
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
+    this.checkStatementHeight();
 
     $('.apply-hide').hide();
 
@@ -235,7 +236,8 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
+    var data= _.extend({data:this.data}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
+  
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section
@@ -330,12 +332,26 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         isConsentToShare: this.data.isConsentToShare,
         updatedAt: this.data.updatedAt,
+        submittedAt: (new Date()).toISOString(),
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
       window.scrollTo(0, 0);
     }.bind(this));
+  },
+
+  checkStatementHeight: function () {
+    var t = $('.statement-of-interest');
+    var height = $('.read-less').height();
+    var minheight = 135;
+    if (height < minheight) {
+      if (t.hasClass('statement-of-interest')) {
+        $('.statement-of-interest').removeClass('read-less');
+        $('a.statement-of-interest.read-more').hide();
+        $('div.statement-of-interest').addClass('show');
+      }
+    }
   },
 
   readMore: function (e) {

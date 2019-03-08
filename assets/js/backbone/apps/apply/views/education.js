@@ -5,7 +5,7 @@ const Backbone = require('backbone');
 
 
 function renderEducation (){ 
-  var data= _.extend({data:this.data.education}, { completedMonthFunction: education.getCompletedDateMonth });
+  var data= _.extend({data:this.data}, { completedMonthFunction: education.getCompletedDateMonth });
   $('#education-preview-id').html(templates.applyeducationPreview(data));
  
 }
