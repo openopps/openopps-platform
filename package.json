@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "7.6.44",
+  "version": "7.6.45",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
