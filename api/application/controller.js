@@ -6,10 +6,24 @@ const service = require('./service');
 
 var router = new Router();
 
-router.get('/api/application/:id', auth, async (ctx, next) => {
-  await service.findById(ctx.state.user.id, ctx.params.id).then(application => {
+router.get('/api/application/user/transcripts', auth, async (ctx, next) => {
+  await service.getTranscripts(ctx.state.user).then(transcripts => {
     ctx.status = 200;
-    ctx.body = application;
+    ctx.body = transcripts;
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
+
+router.get('/api/application/:id', auth, async (ctx, next) => {
+  await service.findById(ctx.state.user.id, ctx.params.id).then(async application => {
+    await service.getTranscripts(ctx.state.user).then(transcripts => {
+      application.transcripts = transcripts;
+      ctx.status = 200;
+      ctx.body = application;
+    }).catch(() => {
+      ctx.status = 404;
+    });
   }).catch(() => {
     ctx.status = 404;
   });
