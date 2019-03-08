@@ -143,7 +143,7 @@
                   <% }) %>
                 </div>
               <% } %>
-            <% } else if (data.canEditProfile) { %>
+            <% } else if (data.isOwner || data.canEditProfile) { %>
               <div>List all of your relevant skills.</div>
               <a href="/profile/edit/skills/<%- data.id %>/" class="usa-button add-skills">
                 <i class="fas fa-plus-circle"></i> Add skills
