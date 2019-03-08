@@ -98,7 +98,7 @@
                   <label for="overseas-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="overseas-experience-no" name="has_overseas_experience" type="radio" value="false" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience == false) { %><%= "checked" %><% } %>>
+                  <input id="overseas-experience-no" name="has_overseas_experience" type="radio" value="false" data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience == false ||hasOverseasExperience == 'false') { %><%= "checked" %><% } %>>
                   <label for="overseas-experience-no">No</label>
                 </li>
               </ul>
@@ -170,7 +170,7 @@
                   <label for="SecurityClearanceYes">Yes</label>
                 </li>
                 <li>
-                  <input id="SecurityClearanceNo" name="has_security_clearance" type="radio" value="false" <% if (hasSecurityClearance == false) { %><%= "checked" %><% } %>>
+                  <input id="SecurityClearanceNo" name="has_security_clearance" type="radio" value="false" <% if (hasSecurityClearance == 'false'|| hasSecurityClearance == false) { %><%= "checked" %><% } %>>
                   <label for="SecurityClearanceNo">No</label>
                 </li>
               </ul>
@@ -205,7 +205,7 @@
                   <label for="vsfs-experience-yes">Yes</label>
                 </li>
                 <li>
-                  <input id="vsfs-experience-no" name="has_vsfs_experience" type="radio" value="false" <% if (hasVsfsExperience == false) { %><%= "checked" %><% } %>>
+                  <input id="vsfs-experience-no" name="has_vsfs_experience" type="radio" value="false" <% if (hasVsfsExperience == false||hasVsfsExperience == 'false') { %><%= "checked" %><% } %>>
                   <label for="vsfs-experience-no">No</label>
                 </li>
               </ul>
