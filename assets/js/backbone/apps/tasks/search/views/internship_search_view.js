@@ -45,7 +45,7 @@ var InternshipListView = Backbone.View.extend({
     this.initAgencyFilter();
     this.initializeHideFields();
     this.initializeCycle();
-    this.initializeBureaus();
+    this.initializeBureaus();  
     this.initializeCommunityDetails();
     this.parseURLToFilters();
     this.taskFilteredCount = 0;
@@ -67,6 +67,7 @@ var InternshipListView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     this.filter();
+    this.renderCycle();
     this.initializeKeywordSearch();
     this.initializeLocationSearch(); 
     $('.usa-footer-search--intern').show();
@@ -102,10 +103,12 @@ var InternshipListView = Backbone.View.extend({
       $('.agencyselect').show();
     } 
     this.selected= studentProgram;
-    this.renderCycle(communityId);
+   
   },
 
-  renderCycle:function (communityId){
+  renderCycle:function (){
+    //communityId for Usdos
+    var communityId = 3;
     var cycleData = [];
     if (communityId in this.cycles) {
       cycleData = this.cycles[communityId];
@@ -122,7 +125,7 @@ var InternshipListView = Backbone.View.extend({
       url: '/api/cycle/',
       type: 'GET',
       async: false,
-      success: function (data) {
+      success: function (data) {     
         this.cycles = {};
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         for (var i = 0; i < data.length; i++) {
@@ -154,20 +157,20 @@ var InternshipListView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
-        this.filterLookup["bureau"] = {};
-        this.filterLookup["office"] = {};
+        this.filterLookup['bureau'] = {};
+        this.filterLookup['office'] = {};
         for (var i = 0; i < data.length; i++) {
           this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
-          this.filterLookup["bureau"][data[i].bureauId] = data[i].name;
-          data[i].offices.forEach(function(office) {
-            this.filterLookup["office"][office.id] = office.text;
+          this.filterLookup['bureau'][data[i].bureauId] = data[i].name;
+          data[i].offices.forEach(function (office) {
+            this.filterLookup['office'][office.id] = office.text;
           }.bind(this));
         }
         this.bureaus = data.sort(function (a, b) {
           if(a.name < b.name ) { return -1; }
           if(a.name > b.name ) { return 1; }
           return 0;
-        })
+        });
       }.bind(this),
     });
   },
@@ -179,8 +182,8 @@ var InternshipListView = Backbone.View.extend({
       async: false,
       success: function (data) {      
         this.programs = data;
-        this.filterLookup["program"] = {};
-        data.forEach(function(program) {
+        this.filterLookup['program'] = {};
+        data.forEach(function (program) {
           this.filterLookup.program[program.communityId] = program.communityName;
         }.bind(this));
       }.bind(this),
@@ -341,7 +344,7 @@ var InternshipListView = Backbone.View.extend({
       placeholder: 'Select an office/post',
       width: '100%',
       allowClear: true,
-      data: function() { 
+      data: function () { 
         return {results: this.currentOffices}; 
       }.bind(this)
     });
@@ -671,7 +674,7 @@ var InternshipListView = Backbone.View.extend({
           this.filters[key] = { type: key, name: this.filterLookup[key][value], id: value };
         } else { 
           this.filters[key] = _.map(values, function (value) {
-            if (key == "location") {
+            if (key == 'location') {
               return value;
             }
             return { type: key, name: value };
@@ -683,7 +686,7 @@ var InternshipListView = Backbone.View.extend({
 });
     
 function formatObjectForURL (value) {
-  if (value.type == "program" || value.type == "office" || value.type == "bureau") {
+  if (value.type == 'program' || value.type == 'office' || value.type == 'bureau') {
     return value.id;
   }
   else {

@@ -1,12 +1,12 @@
 <% _(cycles).forEach(function (cycle, i) { %>
-  <% if (selected) { %>
+  
 <div class="open-opps--info">
     <div class="open-opps--info__body">
       <p>
-        <%- selected %> is now accepting applications for <%= cycle.name %>.  
+        U.S. Department of State Student Internship Program (Unpaid)  is now accepting applications for <%= cycle.name %>.  
         <strong>Application deadline: <%= cycle.applyEndMonth  + ' ' +  cycle.applyEndDay  + ', ' +  cycle.applyEndYear %>.</strong>
       </p>
     </div>
   </div>
-  <% } %>
+ 
   <% }); %>
