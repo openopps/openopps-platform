@@ -67,10 +67,10 @@ module.exports.saveProgramContinue = function (e) {
 module.exports.deleteProgram = function (e) {
   e.preventDefault && e.preventDefault();
   $.ajax({
-    url: '/api/application/' + this.data.applicationId + '/task/' + e.currentTarget.dataset.taskId,
+    url: '/api/application/' + this.data.applicationId + '/task/' + e.currentTarget.getAttribute('data-task-id'),
     method: 'DELETE',
   }).done(function (result) {
-    var sort = parseInt(e.currentTarget.dataset.sort);
+    var sort = parseInt(e.currentTarget.getAttribute('data-sort'));
     var index = _.findIndex(this.data.tasks, { sortOrder: sort });
     this.data.tasks.splice(index, 1);
     this.data[['firstChoice', 'secondChoice', 'thirdChoice'][sort - 1]] = null;
@@ -83,8 +83,8 @@ module.exports.deleteProgram = function (e) {
 };
 
 module.exports.moveProgram = function (e) {
-  var action = e.currentTarget.dataset.action;
-  var sort = parseInt(e.currentTarget.closest('.usajobs-card--large').dataset.sort);
+  var action = e.currentTarget.getAttribute('data-action');
+  var sort = parseInt($(e.currentTarget).closest('.usajobs-card--large')[0].getAttribute('data-sort'));
   var program1 = _.findWhere(this.data.tasks, { sortOrder: sort });
   var program2 = _.findWhere(this.data.tasks, { sortOrder: (sort + actions[action]) });
   swapPrograms.bind(this)(program1, program2);
