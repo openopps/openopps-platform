@@ -258,7 +258,10 @@
             </li>
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Academic transcript</h5>
-              <p><i class="fas fa-check"></i> <a href="#" class="transcript-title">SchoolTranscript.pdf</a></p>
+              <% var transcript = _.findWhere(transcripts, { CandidateDocumentID: parseInt(transcriptId) }); %>
+              <% if (transcript) { %>
+                <p><i class="fas fa-check"></i> <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" class="transcript-title"><%- transcript.CandidateFileName + '.' + transcript.FileFormat %></a></p>
+              <% } %>
             </li>
           </ul>
         </div>

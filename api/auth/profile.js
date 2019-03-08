@@ -5,7 +5,6 @@ const _ = require('lodash');
 const request = require('request');
 
 const requestOptions = {
-  url: openopps.auth.profileURL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -51,9 +50,23 @@ async function updateProfileData (user, profile, tokenset) {
 module.exports = {
   get: async (tokenset) => {
     return new Promise((resolve, reject) => {
-      request(_.extend(requestOptions, { auth: { 'bearer': tokenset.access_token } }), async (err, res) => {
+      request(_.extend(requestOptions, { url: openopps.auth.profileURL, auth: { 'bearer': tokenset.access_token } }), async (err, res) => {
         if(err || res.statusCode !== 200) {
           reject({ message: 'Error getting user profile.' });
+        } else {
+          resolve(JSON.parse(res.body));
+        }
+      });
+    });
+  },
+  getDocuments: async (tokenset, documentType) => {
+    return new Promise((resolve, reject) => {
+      request(_.extend(requestOptions, { 
+        url: openopps.auth.profileDocumentURL + (documentType ? '/' + documentType : ''),
+        auth: { 'bearer': tokenset.access_token },
+      }), async (err, res) => {
+        if(err || res.statusCode !== 200) {
+          reject({ message: 'Error getting user documents.' });
         } else {
           resolve(JSON.parse(res.body));
         }

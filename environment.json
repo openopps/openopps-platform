@@ -24,6 +24,7 @@
     "NOTIFICATIONS_BCC": "",
     "NOTIFICATIONS_CC": "",
     "PROFILE_URL": "",
+    "PROFILE_DOCUMENT_URL": "",
     "PROTOCOL": "https",
     "REDIRECT": true,
     "REQUIRE_AGENCY": true,

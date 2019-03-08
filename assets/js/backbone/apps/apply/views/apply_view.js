@@ -9,6 +9,7 @@ const templates = require('./templates');
 //utility functions
 var Program = require('./program');
 var Experience = require('./experience');
+var Transcripts = require('./transcripts');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
@@ -57,6 +58,8 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+    'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
+    'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -86,7 +89,7 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
- 
+    //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
     this.data.languages        = this.data.languages || [];
     this.params = new URLSearchParams(window.location.search);
