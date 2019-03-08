@@ -22,7 +22,7 @@ service.getTaskList = async function(userId, taskId) {
     var results = await dao.Task.db.query(dao.query.taskListQuery, taskId);
 
     if (results.rows.length == 0) {
-        var listNames = ['Assigned', 'Interviewing', 'Interviewed', 'Offer out', 'Accepted'];
+        var listNames = ['For review', 'Interviewing', 'Interviewed', 'Offer out', 'Accepted - Primary', 'Accepted - Alternate'];
         for (let i = 0; i < listNames.length; i++) {
             await createTaskList(listNames[i], taskId, userId, i)
         }

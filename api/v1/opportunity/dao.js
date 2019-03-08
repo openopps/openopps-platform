@@ -98,6 +98,14 @@ dao.query.taskListApplicationQuery = `
     midas_user.last_name,
     midas_user.username as email,
     (
+      select application_task.sort_order as choice
+      from
+        application_task
+      where
+        application_task.application_id = application.application_id
+        and application_task.task_id = task_list.task_id
+    ),
+    (
       select json_agg(item)
       from (
       select 
@@ -119,7 +127,6 @@ dao.query.taskListApplicationQuery = `
       where "language".language_id = language_skill.language_id and language_skill.application_id = application.application_id
       ) item
     ) as languages,
-    application.cumulative_gpa as gpa,
     (
       select json_agg(item)
       from (
