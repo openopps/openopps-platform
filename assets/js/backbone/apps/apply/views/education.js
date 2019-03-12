@@ -218,7 +218,6 @@ var education = {
     if(this.data.editEducation){
       Backbone.history.navigate(window.location.pathname + '?step=3',{trigger:false});
       this.data.editEducation='';
-     
     }
     this.$el.html(templates.applyEducation(this.data));
     initializeFormFieldsEducation.bind(this)();
@@ -228,23 +227,17 @@ var education = {
   },
    
   saveEducation:function (){
- 
-    var data= getDataFromAddEducationPage(); 
-    var callback= education.toggleAddEducationOff.bind(this); 
-    if(!validateFields.bind(this)())
-    // eslint-disable-next-line no-empty
-    {
+    var data = getDataFromAddEducationPage();
+    if(!validateFields.bind(this)()) {
       if(this.data.editEducation){
-        data.educationId=this.data.editEducation;
-        data.updatedAt= this.educationData.updatedAt;      
+        data.educationId = this.data.editEducation;
+        data.updatedAt = this.educationData.updatedAt;      
       }
-    
       $.ajax({
         url: '/api/application/'+this.data.applicationId+'/Education',
         type: 'PUT',
         data: data,
         success: function (education) {
-       
           education.honor = data.honor;
           education.degreeLevel = data.degreeLevel;
           education.country= data.country;
@@ -255,11 +248,7 @@ var education = {
           } else {
             this.data.education[index] = education;
           }
-          
-          renderEducation.bind(this)();    
-         
-          callback();
-          this.data.editEducation='';        
+          this.updateApplicationStep(3);
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -400,8 +389,6 @@ var education = {
 
   },
   educationContinue: function () {
-    this.data.currentStep = Math.max(this.data.currentStep, 3);
-    this.data.selectedStep = 4;
     var validationEduFields= education.validateEducationFields.bind(this); 
     if(!validationEduFields()){
       $.ajax({
