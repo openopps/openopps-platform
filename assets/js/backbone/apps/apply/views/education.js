@@ -5,7 +5,7 @@ const Backbone = require('backbone');
 
 
 function renderEducation (){ 
-  var data= _.extend({data:this.data.education}, { completedMonthFunction: education.getCompletedDateMonth });
+  var data= _.extend({data:this.data}, { completedMonthFunction: education.getCompletedDateMonth });
   $('#education-preview-id').html(templates.applyeducationPreview(data));
  
 }
@@ -354,24 +354,17 @@ var education = {
 
     var children = this.$el.find( '.validate' );
     var abort = false;
-
-    if($('[name=ContinueEducation]:checked').length==0){ 
-      $('#apply-continue-education').addClass('usa-input-error');    
-      $('#apply-continue-education>.field-validation-error').show();
-      abort=true;
-    }
-
-    if($('[name=Junior]:checked').length==0){ 
-      $('#apply-junior').addClass('usa-input-error');    
-      $('#apply-junior>.field-validation-error').show();
-      abort=true;
-    }
-
-    if($('[name=Enrolled]:checked').length==0){ 
-      $('#apply-enrolled').addClass('usa-input-error');    
-      $('#apply-enrolled>.field-validation-error').show();
-      abort=true;
-    }
+    [
+      { name: 'ContinueEducation', id: 'apply-continue-education' },
+      { name: 'Junior', id: 'apply-junior' },
+      { name: 'Enrolled', id: 'apply-enrolled' },
+    ].forEach(function (item) {
+      if ($("input[name='" + item.name + "']:checked").length == 0) {
+        $('#' + item.id).addClass('usa-input-error');    
+        $('#' + item.id + ' > .field-validation-error').show();
+        abort = true;
+      }
+    });
 
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
@@ -420,6 +413,7 @@ var education = {
           isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val()=='true' ? true : false,
           isMinimumCompleted:this.$('input[name=Junior]:checked').val()=='true' ? true : false,
           isEducationContinued: this.$('input[name=ContinueEducation]:checked').val()=='true' ? true : false,
+          transcriptId: $('input[name=transcripts]:checked').val(),
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {
@@ -428,6 +422,7 @@ var education = {
         this.data.isMinimumCompleted = result.isMinimumCompleted;
         this.data.isEducationContinued=result.isEducationContinued;
         this.data.cumulativeGpa = result.cumulativeGpa;
+        this.data.transcriptId = result.transcriptId;
         if(result.cumulativeGpa>=0 && result.cumulativeGpa<=2.99){       
           this.$el.html(templates.applyIneligibleGPA);
         }

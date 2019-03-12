@@ -16,5 +16,6 @@ module.exports = {
       clientSecret: process.env.CLIENT_SECRET,
     },
     profileURL: process.env.PROFILE_URL,
+    profileDocumentURL: process.env.PROFILE_DOCUMENT_URL,
   },
 };

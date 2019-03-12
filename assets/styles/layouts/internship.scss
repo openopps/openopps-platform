@@ -1368,7 +1368,7 @@
 
         svg {
           width: 3rem;
-          height: auto;
+          height: 4rem;
           display: block;
           margin: 0 auto;
         }
@@ -1411,6 +1411,13 @@
 
     @include media($L-down) {
       margin: 0 $size-default;
+    }
+  }
+
+  #refreshing-transcripts {
+    .fa-circle-notch {
+      margin-right: $size-base;
+      color: #02bfe7;
     }
   }
 }

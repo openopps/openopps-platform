@@ -9,6 +9,7 @@ const templates = require('./templates');
 //utility functions
 var Program = require('./program');
 var Experience = require('./experience');
+var Transcripts = require('./transcripts');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
@@ -57,12 +58,14 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+    'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
+    'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
-    'click #saveLanguageContinue'                                : function () { this.callMethod(Language.saveLanguageContinue); },
+    'click #saveLanguageContinue'                                 : function () { this.callMethod(Language.saveLanguageContinue); },
 
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
@@ -86,7 +89,7 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
- 
+    //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
     this.data.languages        = this.data.languages || [];
     this.params = new URLSearchParams(window.location.search);
@@ -105,6 +108,7 @@ var ApplyView = Backbone.View.extend({
     this.renderComponentEducation();
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
+    this.checkStatementHeight();
 
     $('.apply-hide').hide();
 
@@ -232,7 +236,8 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
+    var data= _.extend({data:this.data}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
+  
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section
@@ -327,12 +332,26 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         isConsentToShare: this.data.isConsentToShare,
         updatedAt: this.data.updatedAt,
+        submittedAt: (new Date()).toISOString(),
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
       window.scrollTo(0, 0);
     }.bind(this));
+  },
+
+  checkStatementHeight: function () {
+    var t = $('.statement-of-interest');
+    var height = $('.read-less').height();
+    var minheight = 135;
+    if (height < minheight) {
+      if (t.hasClass('statement-of-interest')) {
+        $('.statement-of-interest').removeClass('read-less');
+        $('a.statement-of-interest.read-more').hide();
+        $('div.statement-of-interest').addClass('show');
+      }
+    }
   },
 
   readMore: function (e) {

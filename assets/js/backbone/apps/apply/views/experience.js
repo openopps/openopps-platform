@@ -144,7 +144,8 @@ var experience = {
 
   saveExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();
-    if(!this.validateFields() && !experience.validateAddExperienceFields(data)) {
+    var experienceValidation=experience.validateAddExperienceFields(data);
+    if(!this.validateFields() && !experienceValidation) {
       var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience',
@@ -304,12 +305,7 @@ var experience = {
   },
 
   toggleExperienceOff: function (e) {
-    var data = { };
-    
-    var template = templates.applyExperience(this.data);
-    
-    this.$el.html(template);
-    this.$el.localize();
+    this.$el.html(templates.applyExperience(this.data));  
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
@@ -324,6 +320,8 @@ var experience = {
         .closest('.usa-input-error')
         .removeClass('usa-input-error')
         .find('span.field-validation-error').hide();
+      $('#end-date-section> .field-validation-error').hide();
+     
     } else {
       $('#end-month, #end-year')
         .prop('disabled', false)
@@ -343,10 +341,14 @@ var experience = {
     if (data.startDate != null && data.endDate != null) {
       var startDate = new Date(data.startDate);
       var endDate = new Date(data.endDate);
-
-      if (startDate > endDate) {
+      
+      if (startDate > endDate && data.endDate !='1/1/2001' ) {
         $('.error-datecomparison').show().closest('div').addClass('usa-input-error');
         abort = true;
+      }
+      else{
+        $('#end-date-section>.field-validation-error').hide();       
+        abort = false;
       }
     }
 
@@ -381,7 +383,7 @@ var experience = {
 
   toggleAddReference: function () {
     experience.updateExperienceDataObject.bind(this)();
-    var data = { referenceTypes: this.referenceTypes };
+    var data = { referenceTypes: this.referenceTypes };   
     var template = templates.applyAddReference(data);
     this.$el.html(template);
     this.$el.localize();
