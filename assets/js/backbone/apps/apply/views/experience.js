@@ -131,7 +131,8 @@ var experience = {
 
   saveExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();
-    if(!this.validateFields() && !experience.validateAddExperienceFields(data)) {
+    var experienceValidation=experience.validateAddExperienceFields(data);
+    if(!this.validateFields() && !experienceValidation) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience',
         type: 'POST',
@@ -295,6 +296,8 @@ var experience = {
         .closest('.usa-input-error')
         .removeClass('usa-input-error')
         .find('span.field-validation-error').hide();
+      $('#end-date-section> .field-validation-error').hide();
+     
     } else {
       $('#end-month, #end-year')
         .prop('disabled', false)
@@ -314,10 +317,14 @@ var experience = {
     if (data.startDate != null && data.endDate != null) {
       var startDate = new Date(data.startDate);
       var endDate = new Date(data.endDate);
-
-      if (startDate > endDate) {
+      
+      if (startDate > endDate && data.endDate !='1/1/2001' ) {
         $('.error-datecomparison').show().closest('div').addClass('usa-input-error');
         abort = true;
+      }
+      else{
+        $('#end-date-section>.field-validation-error').hide();       
+        abort = false;
       }
     }
 
