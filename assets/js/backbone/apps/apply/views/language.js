@@ -79,7 +79,7 @@ function validateLanguage (e) {
 }
 
 function getSelectedLangauge (id, languages) {
-  return languages.find(function (l) { return l.applicationLanguageSkillId == id; });
+  return _.findWhere(languages, function (l) { return l.applicationLanguageSkillId == id; });
 }
 
 var language = {
