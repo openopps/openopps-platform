@@ -187,7 +187,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   updateApplicationStep: function (step) {
-    this.data.currentStep = Math.max(this.data.currentStep, step);
+    this.data.currentStep = step;
     this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
@@ -209,10 +209,9 @@ var ApplyView = Backbone.View.extend({
   },
 
   historyApplicationStep: function (e) {
-    step = e.currentTarget.dataset.step;
+    step = e.currentTarget.getAttribute('data-step');
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-    Backbone.history.loadUrl(Backbone.history.getFragment());
     this.render();
     window.scrollTo(0, 0);
   },
@@ -401,9 +400,9 @@ var ApplyView = Backbone.View.extend({
                 }
               });
               applicationData[recordData.section] = recordList;
-              $(e.currentTarget).closest('li').remove();
+              //$(e.currentTarget).closest('li').remove();
+              this.updateApplicationStep(this.data.selectedStep);
               this.modalComponent.cleanup();
-            
             }.bind(this),
             error: function (err) {
               this.modalComponent.cleanup();

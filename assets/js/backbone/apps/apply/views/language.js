@@ -105,10 +105,7 @@ var language = {
         data: JSON.stringify(data),
       }).done(function (result) {
         this.data.language = result;
-        this.$el.html(templates.applyLanguage(this.data));
-        this.$el.localize();
-        this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 4), selectedStep: 4 });
-        window.scrollTo(0, 0);
+        this.updateApplicationStep(4);
       }.bind(this)).fail(function (err) {
         if(err.statusCode == 400) {
           showWhoopsPage();
