@@ -15,8 +15,8 @@
           </label>
           <select name="sort_attribute" id="sort-applied" class="usajobs-search-controls__sort-control">
             <option value="" disabled>- Sort By -</option>
-            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
-            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Internship</option>
+            <option value="submittedAt" <% if (sort == 'submittedAt') { %>selected<% } %>>Status</option>
+            <option value="communityName" <% if (sort == 'communityName') { %>selected<% } %>>Program</option>
             <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
           </select>
         </div>
@@ -29,11 +29,12 @@
         <div class="usajobs-show-next" data-object="reveal">
           <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="applied-table">
             <thead>
-            <tr class="usajobs-grid open-opps-row header">
-              <th scope="col" class="your-status">Status</th>
-              <th scope="col">Internship</th>
-              <th scope="col">Last updated</th>
-            </tr>
+              <tr class="usajobs-grid open-opps-row header">
+                <th scope="col" class="your-status">Status</th>
+                <th scope="col">Program</th>
+                <th scope="col" class="application-action">Action</th>
+                <th scope="col">Last updated</th>
+              </tr>
             </thead>
             <tbody>
               <% for (var i in data) { %>
@@ -41,11 +42,13 @@
                   <td class="your-status">
                     <%= getStatus(data[i]) %>
                   </td>
-                  <td class="open-opps-title">
-                    <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
-                      data[ i ].title = 'Untitled draft';
-                    } %>
-                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
+                  <td class="application-program-title">
+                    <!-- <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].communityName %></a> -->
+                    <%- data[i].communityName %>
+                  </td>
+                  <td class="application-action">
+                    <!-- <a href="javascript:void(0);" class="activity-link" data-id="<%- data[i].id %>">Update</a> -->
+                    <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>">Update</a>
                   </td>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>
@@ -66,15 +69,16 @@
 
         <table class="usa-table-borderless" role="presentation">
         	<thead>
-        	<tr class="usajobs-grid open-opps-row header">
-        		<th scope="col" class="your-status">Status</th>
-        		<th scope="col">Internship</th>
-        		<th scope="col">Last updated</th>
-        	</tr>
+            <tr class="usajobs-grid open-opps-row header">
+              <th scope="col" class="your-status">Status</th>
+              <th scope="col">Program</th>
+              <th scope="col">Action</th>
+              <th scope="col">Last updated</th>
+            </tr>
         	</thead>
           <tbody>
             <tr>
-              <td colspan="3">No <%- targetsFriendly %></td>
+              <td colspan="4">No applied applications</td>
             </tr>
           </tbody>
         </table>

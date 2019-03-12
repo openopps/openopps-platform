@@ -56,9 +56,9 @@ async function getActivities (id) {
 
 async function getInternshipsActivities (id) {
   return {
-    tasks: {
-      applied: dao.clean.activity(await dao.Task.find('"userId" = ?', id)),
-      saved: (await dao.Task.db.query(dao.query.participated, id)).rows,
+    applications: {
+      applied: (await dao.Application.db.query(dao.query.applicationStatus, id)).rows,
+      // saved: (await dao.Application.db.query(dao.query.applicationStatus, id)).rows,
     },
   };
 }
