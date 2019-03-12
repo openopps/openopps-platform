@@ -13,8 +13,8 @@ service.getInternshipSummary = async function(taskId) {
     return results.rows[0];
 }
 
-service.getTaskShareList = async function(userId, taskId) {
-    var results = await dao.Task.db.query(dao.query.taskShareQuery, userId, taskId);
+service.getTaskShareList = async function(taskId) {
+    var results = await dao.Task.db.query(dao.query.taskShareQuery, taskId);
     return results.rows;
 }
 
@@ -38,20 +38,34 @@ service.getTaskList = async function(userId, taskId) {
 service.updateTaskList = async function(userId, toUpdate) {
     var updated = [];
     for (let i = 0; i < toUpdate.length; i++) {
-        var list = await dao.TaskList.findOne("task_list_id = ?", toUpdate[i].task_list_id);
-        list.updatedBy = userId;
-        await dao.TaskList.update(list);
-        updated.push(await updateListApplicant(userId, toUpdate[i]));
+        var list = await dao.TaskList.query(dao.query.taskListAndOwner, toUpdate[i].task_list_id, userId);
+        if (list.length == 1)
+        {
+            var listItem = list[0];
+            listItem.updatedBy = userId;
+            await dao.TaskList.update(listItem);
+            updated.push(await updateListApplicant(userId, toUpdate[i]));
+        }
+        else {
+            throw new Error('Error updating task list');
+        }
     }
     return new Date;
 }
 
 async function updateListApplicant(userId, item) {
-    var applicant = await dao.TaskListApplication.findOne("task_list_application_id = ?", item.task_list_application_id);
-    applicant.taskListId = item.task_list_id;
-    applicant.sortOrder = item.sort_order;
-    applicant.updatedBy = userId;
-    return await dao.TaskListApplication.update(applicant); 
+    var applicant = await dao.TaskListApplication.query(dao.query.taskListApplicationAndOwner, item.task_list_application_id, userId);
+    if (applicant.length == 1)
+    {
+        var applicantItem = applicant[0];
+        applicantItem.taskListId = item.task_list_id;
+        applicantItem.sortOrder = item.sort_order;
+        applicantItem.updatedBy = userId;
+        return await dao.TaskListApplication.update(applicantItem);
+    }
+    else {
+        throw new Error('Error updating card movement');
+    }
 }
 
 async function createTaskList(listName, taskId, userId, sortOrder) {
