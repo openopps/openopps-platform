@@ -59,8 +59,7 @@ dao.query.taskShareQuery = `
     task_share
     inner join midas_user on task_share.user_id = midas_user."id"
   where 
-    task_share.user_id <> ?
-    and task_id = ?
+    task_id = ?
 `;
 
 dao.query.taskListQuery = `
@@ -73,6 +72,45 @@ dao.query.taskListQuery = `
     task_list
   where task_id = ?
   order by sort_order
+`;
+
+dao.query.taskListAndOwner = `
+  select
+    task_list_id,
+    task_list.task_id,
+    task_list.title,
+    sort_order,
+    created_at,
+    updated_at,
+    updated_by
+  from
+    task_list
+    inner join task on task_list.task_id = task.id
+    inner join task_share on task.id = task_share.task_id
+  where
+    task_list_id = ?
+    and task_share.user_id = ?
+`;
+
+dao.query.taskListApplicationAndOwner = `
+  select
+    tla.task_list_application_id,
+    tla.task_list_id,
+    tla.application_id,
+    tla.sort_order,
+    tla.date_last_viewed,
+    tla.date_last_contacted,
+    tla.created_at,
+    tla.updated_at,
+    tla.updated_by
+  from
+    task_list_application tla
+    inner join task_list tl on tla.task_list_id = tl.task_list_id
+    inner join task on tl.task_id = task.id
+    inner join task_share on task.id = task_share.task_id
+  where
+    task_list_application_id = ?
+    and task_share.user_id = ?
 `;
 
 dao.query.applicationsNotInListQuery = `
