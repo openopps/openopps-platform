@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "7.7.1",
+  "version": "7.7.2",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -157,6 +157,6 @@
   "bugs": "https://github.com/openopps/openopps-platform/issues",
   "license": "CC0-1.0",
   "engines": {
-    "node": "8.11.x"
+    "node": "8.15.x"
   }
 }
