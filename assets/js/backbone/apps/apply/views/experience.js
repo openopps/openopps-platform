@@ -86,8 +86,8 @@ var experience = {
       formalTitle: $('#job-title').val(),
       isPresent: $('#Present').is(':checked'),
       duties: $('#duties').val(),
-      startDate: experience.isValidDate(startDate) ? startDate.toLocaleDateString() : null,
-      endDate: experience.isValidDate(endDate) ? endDate.toLocaleDateString() : null,
+      startDate: experience.isValidDate(startDate) ? startDate.toISOString() : null,
+      endDate: experience.isValidDate(endDate) ? endDate.toISOString() : null,
     };
     if ($('#experience-id').length) {
       modelData.experienceId = $('#experience-id').val();
