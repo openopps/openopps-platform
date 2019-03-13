@@ -51,7 +51,7 @@ var InternshipsActivityView = Backbone.View.extend({
     if (application.submittedAt == null) {
       return 'In Progress';
     } else {
-      return 'Submitted';
+      return 'Applied';
     }
   },
 
