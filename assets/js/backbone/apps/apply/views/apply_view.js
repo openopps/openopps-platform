@@ -109,6 +109,7 @@ var ApplyView = Backbone.View.extend({
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
     this.checkStatementHeight();
+    this.closeSubNav();
 
     $('.apply-hide').hide();
 
@@ -131,6 +132,16 @@ var ApplyView = Backbone.View.extend({
         }
       }.bind(this),
     });
+  },
+
+  closeSubNav: function () {
+    $('.toggle-one').attr('data-state', 'is-closed');
+    $('#section-one').attr('aria-expanded', false);
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-closed');
+    $('#section-two').attr('aria-expanded', false);
+    $('a[title="Account"]').removeClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section-active');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section');
   },
 
   validateField: function (e) {
