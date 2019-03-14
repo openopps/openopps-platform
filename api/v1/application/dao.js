@@ -16,7 +16,9 @@ dao.query.ApplicantSummary = `
         select 
           educationcode.value as "degree_level",
           education.major,
-          education.school_name
+          education.school_name,
+          education.completion_month,
+          education.completion_year
         from 
           education
           inner join lookup_code as educationcode on education.degree_level_id = educationcode.lookup_code_id
@@ -26,19 +28,13 @@ dao.query.ApplicantSummary = `
     (
         select json_agg(item)
         from (
-        select 
-        (
-          select tag.name
-          from tagentity_tasks__task_tags tags
-            inner join tagentity tag on tags.tagentity_tasks = tag.id 
-          where task_tags = task.id and type = 'location'
-          limit 1
-        ) loc,
+        select coalesce(task.city_name || ', ' || country.value, 'Virtual') as loc,
         task.id,
         task.title
       from 
         application_task apps
         inner join task on apps.task_id = task.id
+        left join country on task.country_id = country.country_id
       where apps.application_id = application.application_id
         ) item
       ) as "desiredOpportunities",
@@ -108,7 +104,8 @@ dao.query.ApplicantSummary = `
       ) as experience,
     statement_of_interest,
     task_list_application.sort_order,
-    task_list.task_list_id
+    task_list.task_list_id,
+    application.has_vsfs_experience
     from
       task_list_application
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
@@ -116,12 +113,12 @@ dao.query.ApplicantSummary = `
       inner join midas_user on application.user_id = midas_user.id
     where
       application.application_id = ?
-`
+`;
 
 module.exports = function (db) {
-    dao.Application = pgdao({ db: db, table: 'application' }),
-    dao.User = pgdao({ db: db, table: 'midas_user' });
-    dao.TaskList = pgdao({ db: db, table: 'task_list' });
-    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-    return dao;
-  };
+  dao.Application = pgdao({ db: db, table: 'application' }),
+  dao.User = pgdao({ db: db, table: 'midas_user' });
+  dao.TaskList = pgdao({ db: db, table: 'task_list' });
+  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  return dao;
+};
