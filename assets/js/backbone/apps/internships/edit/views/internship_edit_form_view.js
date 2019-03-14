@@ -275,7 +275,7 @@ var InternshipEditFormView = Backbone.View.extend({
       allowClear: true,
     });
     if($('#task_tag_bureau').select2('data')) {
-      this.showOfficeDropdown();
+      this.showOfficeDropdownOnRender();
     }
     $('#task_tag_bureau').on('change', function (e) {
       $('#task_tag_office').val(null).trigger('change');
@@ -293,6 +293,22 @@ var InternshipEditFormView = Backbone.View.extend({
     });
   },
 
+  showOfficeDropdownOnRender: function () {
+    if($('#task_tag_bureau').select2('data')) {
+      var selectData = $('#task_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length) {
+        $('.task_tag_office').show();
+      } else {
+        $('#task_tag_office').attr('disabled', true).removeClass('validate').select2('data', null);
+        $('.task_tag_office').removeClass('usa-input-error');
+        $('.task_tag_office .error-empty').hide();
+      }
+    } else {
+      $('.task_tag_office').hide();
+    }
+  },
+
   showOfficeDropdown: function () {
     if($('#task_tag_bureau').select2('data')) {
       var selectData = $('#task_tag_bureau').select2('data');
@@ -303,7 +319,6 @@ var InternshipEditFormView = Backbone.View.extend({
         $('.task_tag_office').addClass('usa-input-error');
         $('.task_tag_office .error-empty').show();
       } else {
-        // $('.task_tag_office').hide();
         $('#task_tag_office').attr('disabled', true).removeClass('validate').select2('data', null);
         $('.task_tag_office').removeClass('usa-input-error');
         $('.task_tag_office .error-empty').hide();

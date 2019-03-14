@@ -330,6 +330,23 @@
     }
 }
 
+.application-program-title {
+  width: 50%;
+  min-width: 13.5rem;
+
+  a, a:visited {
+    color: #006FBB;
+  }
+}
+
+.application-action {
+  width: 18%;
+
+  a, a:visited {
+    color: #006FBB;
+  }
+}
+
 .profile-email {
   margin-bottom: $size-M;
 }
