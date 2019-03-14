@@ -104,7 +104,8 @@ dao.query.ApplicantSummary = `
       ) as experience,
     statement_of_interest,
     task_list_application.sort_order,
-    task_list.task_list_id
+    task_list.task_list_id,
+    application.has_vsfs_experience
     from
       task_list_application
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
