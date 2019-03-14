@@ -378,7 +378,12 @@ var InternshipEditFormView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
+        var cycle = this.model.get('cycle');
         this.cycles = data;
+        if (!_.findWhere(this.cycles), { cycleId: cycle.cycleId }) {
+          this.cycles.push(cycle);
+        }
+        this.cycles = _.sortBy(this.cycles, 'postingStartDate');
       }.bind(this),
     });
   },
