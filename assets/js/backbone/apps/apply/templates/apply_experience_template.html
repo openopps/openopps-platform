@@ -30,7 +30,13 @@
                          formattedStartDate = monthNames[startDate.getMonth()] + ' ' + startDate.getFullYear(),
                          formattedEndDate = monthNames[endDate.getMonth()] + ' ' + endDate.getFullYear()
                   %>
+                  <% if (e.isPresent) { %>
+                    <%= formattedStartDate %> - Present
+                    <% }
+
+                    else { %>
                   <%= formattedStartDate %> - <%= formattedEndDate %>
+                  <% } %>
                 </dd>
               </dl>
               <div id="exp-1" class="usa-accordion-content usajobs-drawer-content">

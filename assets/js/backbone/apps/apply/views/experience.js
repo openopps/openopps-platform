@@ -69,9 +69,9 @@ var experience = {
 
   getDataFromAddExperiencePage:function (){
     var startDateValue = $('#start-month').val() + '-01-' + $('#start-year').val();
-    var endDateValue = $('#end-month').val() + '-01-' + $('#end-year').val();
+    var endDateValue = $('#end-month').val() + '-01-' + $('#end-year').val();  
     var startDate = new Date(startDateValue);
-    var endDate = new Date(endDateValue);
+    var endDate = new Date(endDateValue);  
     var countryData = $('#apply_country').select2('data');
     var countrySubdivisionData = $('#apply_countrySubdivision').select2('data');
     var modelData = {
@@ -130,7 +130,7 @@ var experience = {
   },
 
   saveExperience: function () {
-    var data = experience.getDataFromAddExperiencePage.bind(this)();
+    var data = experience.getDataFromAddExperiencePage.bind(this)();    
     var experienceValidation=experience.validateAddExperienceFields(data);
     if(!this.validateFields() && !experienceValidation) {
       $.ajax({
@@ -288,7 +288,7 @@ var experience = {
   },
 
   toggleEndDate: function () {
-    if ($('#Present').is(':checked')) {
+    if ($('#Present').is(':checked')) {     
       $('#end-month, #end-year')
         .val('')
         .prop('disabled', true)
@@ -318,7 +318,7 @@ var experience = {
       var startDate = new Date(data.startDate);
       var endDate = new Date(data.endDate);
       
-      if (startDate > endDate && data.endDate !='1/1/2001' ) {
+      if (startDate > endDate && !data.isPresent ) {
         $('.error-datecomparison').show().closest('div').addClass('usa-input-error');
         abort = true;
       }
