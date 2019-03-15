@@ -62,13 +62,8 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
             }
         } else if (owner.length > 1) {
             ctx.status = 400;
-        } else {
-            ctx.status = 401;
         }
-    }
-    else {
-        ctx.status = 401;
-    }
+    } 
     return ctx.status;
 });
 
