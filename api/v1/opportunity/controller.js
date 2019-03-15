@@ -52,25 +52,24 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
         var account = await service.getCommunityUserByTaskAndEmail(ctx.params.taskId, ctx.request.fields.email);
         if (account.length == 1)
         {
-            var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner.user_id);
+            var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner[0].user_id);
             if (data == null) {
-                return ctx.status = 409;
+                ctx.status = 409;
+            } else {
+                ctx.status = 200;
+                var shared = await service.getTaskShareList(data.taskId, data.userId);
+                return ctx.body = shared[0];
             }
-            ctx.status = 200;
-            var shared = await service.getTaskShareList(data.taskId, data.userId);
-            return ctx.body = shared[0];
-        }
-        else {
-            if (owner.length > 1) {
-                return ctx.status = 400;
-            }
-            return ctx.status = 401;
+        } else if (owner.length > 1) {
+            ctx.status = 400;
+        } else {
+            ctx.status = 401;
         }
     }
     else {
-        return ctx.status = 401;
-    }   
-    ctx.body = data;
+        ctx.status = 401;
+    }
+    return ctx.status;
 });
 
 router.put('/api/v1/taskList', auth.bearer, async(ctx, next) => {
