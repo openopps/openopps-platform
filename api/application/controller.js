@@ -96,6 +96,17 @@ router.delete('/api/application/:applicationId/applicationLanguageSkill/:applica
   });
 });
 
+router.put('/api/application/:applicationId/skill', auth, async (ctx, next) =>{
+  var result = await service.saveSkill(ctx.state.user.id, ctx.params.applicationId, ctx.request.body);
+  if (result) {
+    ctx.status = result.err ? 409 : 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
+});
+
+
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;

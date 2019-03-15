@@ -31,19 +31,24 @@ const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySu
   'WHERE experience.application_id = ?';
 
 const applicationLanguageQuery = 'SELECT @language.*, @details.*, @speakingProficiency.*, @readingProficiency.*, @writingProficiency.* ' +
-'FROM @application_language_skill language ' +
-'JOIN @lookup_code speakingProficiency on "speakingProficiency".lookup_code_id = language.speaking_proficiency_id ' +
-'JOIN @lookup_code readingProficiency on "readingProficiency".lookup_code_id = language.reading_proficiency_id ' +
-'JOIN @lookup_code writingProficiency on "writingProficiency".lookup_code_id = language.writing_proficiency_id ' +
-'LEFT JOIN @language details on language.language_id = details.language_id ' +
-'WHERE language.application_id = ?';
+  'FROM @application_language_skill language ' +
+  'JOIN @lookup_code speakingProficiency on "speakingProficiency".lookup_code_id = language.speaking_proficiency_id ' +
+  'JOIN @lookup_code readingProficiency on "readingProficiency".lookup_code_id = language.reading_proficiency_id ' +
+  'JOIN @lookup_code writingProficiency on "writingProficiency".lookup_code_id = language.writing_proficiency_id ' +
+  'LEFT JOIN @language details on language.language_id = details.language_id ' +
+  'WHERE language.application_id = ?';
 
 const applicationReferenceQuery = 'SELECT @reference.*, @referenceType.* ' +
-'FROM @reference reference ' +
-'JOIN @lookup_code referenceType on "referenceType".lookup_code_id = reference.reference_type_id ' +
-'WHERE reference.application_id = ?';
+  'FROM @reference reference ' +
+  'JOIN @lookup_code referenceType on "referenceType".lookup_code_id = reference.reference_type_id ' +
+  'WHERE reference.application_id = ?';
 
-const countryQuery= 'select country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
+const applicationSkillQuery = 'SELECT tags.* ' +
+  'FROM tagentity AS tags ' +
+  'JOIN application_skill AS skill on tags.id = skill.skill_id ' +
+  'WHERE skill.application_id = ?';
+
+const countryQuery= 'SELECT country.country_id as "id", country.country_id as "countryId",country.code,country.value ' +
   'from country ' + 'join education on country.country_id = education.country_id ' + 
   'where education.education_id = ? ';
 
@@ -54,6 +59,8 @@ const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup
 module.exports = function (db) {
   return {
     Application: dao({ db: db, table: 'application' }),
+    ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
+    ApplicationSkill:dao({ db:db, table:'application_skill' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
     Community: dao({ db: db, table: 'community' }),
     Country:dao({ db: db, table: 'country' }),
@@ -61,11 +68,10 @@ module.exports = function (db) {
     Education: dao({ db: db, table: 'education' }),
     Experience: dao({ db: db, table: 'experience' }),
     Language: dao({ db: db, table: 'language' }),
-    ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
-    LookupCode:dao({ db: db, table: 'lookup_code' }),
+    LookUpCode:dao({ db: db, table: 'lookup_code' }),
     Reference:dao({ db:db, table:'reference'}),
+    TagEntity: dao({ db: db, table: 'tagentity' }),
     Task: dao({ db: db, table: 'task' }),
-    LookUpCode:dao({ db:db, table:'lookup_code'}),
 
     query: {
       application: applicationQuery,
@@ -74,6 +80,7 @@ module.exports = function (db) {
       applicationExperience: applicationExperienceQuery,
       applicationLanguage: applicationLanguageQuery,
       applicationReference: applicationReferenceQuery,
+      applicationSkill: applicationSkillQuery,
       country: countryQuery,
       securityClearance: securityClearanceQuery,
     },

@@ -55,12 +55,24 @@
         <% } %>
         <div class="usajobs-profile-home-section__body">
           <p><a href="#" id="add-language" class="add-record">+ Add language</a></p>
+          <div class="usajobs-opop-section-edit skills-edit">
+            <a href="#" id="edit-skill" class="link-backbone" data-action="edit"><span>Edit</span></a>
+          </div>
           <h3 class="usajobs-profile-home-section__sub-section">Skills</h3>
-          <p>List your relevant skills, competencies and specific knowledge relating to the position for which you are applying.</p>
+          <% if (skill.length > 0) { %>
+            <h3>I have experience with</h3>
+            <div>
+              <% _.each(skill, function (s) { %>
+                <a class="skill-label"><%= s.name %></a>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p>List your relevant skills, competencies and specific knowledge relating to the position for which you are applying.</p>
+            <a class="usajobs-profile-home-section__footer" href="#" id="add-skill">
+              <i class="fas fa-plus-circle"></i> Add skills
+            </a>
+          <% } %>
         </div>
-        <a class="usajobs-profile-home-section__footer" href="#">
-          <i class="fas fa-plus-circle"></i> Add skills
-        </a>
         <div class="usajobs-profile-home-section__body">
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">

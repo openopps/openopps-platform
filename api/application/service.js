@@ -130,6 +130,63 @@ module.exports.saveLanguage = async function (userId, data) {
   });
 };
 
+module.exports.saveSkill = async function (userId, applicationId, attributes) {
+  return await dao.ApplicationSkill.delete('application_id = ? ', [applicationId]).then(async () => { 
+    var tags = [].concat(attributes || []);
+    await processUserTags({ userId: userId, username: attributes.username }, applicationId, tags).then(async () => {
+      return await db.query(dao.query.applicationSkill, applicationId, { fetch: { name: ''}});
+    }).catch(err => {
+      log.error('save: failed to save skill ',  err);
+      return false;
+    });
+  }).catch(err => {
+    log.info('delete: failed to delete skill(s) ', err);
+    return false;
+  });
+};
+
+function processUserTags (user, applicationId, tags) {
+  return Promise.all(tags.map(async (tag) => {
+    if(_.isNaN(_.parseInt(tag.id))) {
+      await createNewSkillTag(user, applicationId, tag);
+    } else {
+      _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
+      tag = _.pickBy(tag, _.identity);
+      if (tag.id) {
+        await createApplicationSkill(user, applicationId, tag);
+      } else {
+        await createNewSkillTag(user, applicationId, tag);
+      }
+    }
+  }));
+}
+
+async function createNewSkillTag (user, applicationId, tag) {
+  tag.name = tag.name.trim();
+  return await dao.TagEntity.insert({
+    name: tag.name, 
+    type: tag.tagType,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }).then(async (t) => {
+    await createApplicationSkill(user, applicationId, t);
+  }).catch(err => {
+    log.info('skill: failed to create skill tag ', user.username, tag, err);
+  });
+}
+
+async function createApplicationSkill (user, applicationId, tag) {
+  return await dao.ApplicationSkill.insert({ 
+    applicationId: applicationId, 
+    userId: user.userId, 
+    skillId: tag.id,
+    createdAt: new Date(),
+  }).catch(err => {
+    log.info('skill: failed to create tag ', user.username, application_id, err);
+  });
+}
+
+
 module.exports.apply = async function (userId, taskId, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
@@ -178,13 +235,16 @@ module.exports.findById = async function (userId, applicationId) {
           readingProficiency: '', 
           writingProficiency: '' }}),
         dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
+        db.query(dao.query.applicationSkill, applicationId, { fetch: { name: ''}}),
+        dao.LookUpCode.query(dao.query.securityClearance, applicationId, { fetch: { securityClearance: ''}}),
       ]);
       application.tasks = results[0].rows;
       application.education = results[1];
       application.experience = results[2];
       application.language = results[3];
       application.reference = results[4];
-      application.securityClearance = (await dao.LookUpCode.db.query(dao.query.securityClearance,applicationId)).rows[0];
+      application.skill = results[5].rows;
+      application.securityClearance = results[6];
       resolve(application);
     }).catch((err) => {
       reject();
