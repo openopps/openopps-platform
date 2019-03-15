@@ -505,10 +505,19 @@ async function copyOpportunity (attributes, user, done) {
             log.info('register: failed to update tag ', attributes.username, tag, err);
           });
         });
+        if (results.communityId != null)
+        {
+          var share = {
+            task_id: intern.id,
+            user_id: user.id,
+            shared_by_user_id: user.id,
+            last_modified: new Date,
+          }
+          await dao.TaskShare.insert(share);
+        }
         await elasticService.indexOpportunity(intern.id);
         return done(null, { 'taskId': intern.id });
       }).catch (err => { return done({'message':'Error copying task.'}); });
-
   }
 
   else{

@@ -32,10 +32,7 @@ router.get('/api/v1/task/internshipSummary', auth.bearer, async(ctx, next) => {
 });
 
 router.get('/api/v1/task/taskList', auth.bearer, async(ctx, next) => {     
-    var owners = await service.getTaskShareList(ctx.query.taskId);
-    var owner = _.find(owners, function(owner) {
-        return owner.user_id == ctx.state.user.id;
-    });
+    var owner = await service.getTaskShareList(ctx.query.taskId, ctx.state.user.id);
     if (owner)
     {
         var data = await service.getTaskList(ctx.query.taskId);
@@ -49,22 +46,29 @@ router.get('/api/v1/task/taskList', auth.bearer, async(ctx, next) => {
 });
 
 router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
-    // 1. is this person a member of a community?
-    //   if they are, we can add them
-    // 2. make sure we handle any edge cases
-    var owners = await service.getTaskShareList(ctx.query.taskId);
-    var owner = _.find(owners, function(owner) {
-        return owner.user_id == ctx.state.user.id;
-    });
+    var owner = await service.getTaskShareList(ctx.params.taskId, ctx.state.user.id);
     if (owner)
     {
-        var data = await service.getTaskList(ctx.params.taskId, ctx.request.fields.email);
-        ctx.status = 200;
-        ctx.body = data;
+        var account = await service.getCommunityUserByTaskAndEmail(ctx.params.taskId, ctx.request.fields.email);
+        if (account.length == 1)
+        {
+            var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner.user_id);
+            if (data == null) {
+                return ctx.status = 409;
+            }
+            ctx.status = 200;
+            var shared = await service.getTaskShareList(data.taskId, data.userId);
+            return ctx.body = shared[0];
+        }
+        else {
+            if (owner.length > 1) {
+                return ctx.status = 400;
+            }
+            return ctx.status = 401;
+        }
     }
     else {
-        ctx.status = 401;
-        ctx.body = { err: 'Not authorized '};
+        return ctx.status = 401;
     }   
     ctx.body = data;
 });
@@ -74,9 +78,13 @@ router.put('/api/v1/taskList', auth.bearer, async(ctx, next) => {
     ctx.body = data;
 });
 
-router.delete('/api/task/:taskId/share/:uri', auth.bearer, async(ctx, next) => {
-    //ctx.params.id
-    var data = await service.getTaskList(ctx.query.taskId);
+router.delete('/api/v1/task/:taskId/unshare/:userId', auth.bearer, async(ctx, next) => {
+    if (ctx.params.userId == 0)
+    {
+        ctx.params.userId = ctx.state.user.id;
+    }
+    var data = await service.removeTaskOwner(ctx.state.user.id, ctx.params);
+    ctx.status = 200;
     ctx.body = data;
 });
 
