@@ -134,6 +134,17 @@ async function createOpportunity (attributes, done) {
     }
 
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+    if (attributes.communityId != null)
+    {
+      var share = {
+        task_id: task.id,
+        user_id: attributes.userId,
+        shared_by_user_id: attributes.userId,
+        last_modified: new Date,
+      }
+      await dao.TaskShare.insert(share);
+    }
+    
     await elasticService.indexOpportunity(task.id);
    
     return done(null, task);

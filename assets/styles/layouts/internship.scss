@@ -48,8 +48,6 @@
     }
 
     &__step {
-      display: flex;
-      flex-direction: column;
       width: 20%;
       height: 100%;
       padding: $size-default 0 $size-base 0;
@@ -829,13 +827,17 @@
       }
     }
 
-    .exp-start-date, .exp-end-date {
-      &.usa-input-error {
+    .usa-input-error {
+      &.exp-start-date, &.exp-end-date {
         clear: none;
         display: block;
         float: left;
-        margin-right: 1.5rem;
+        margin-right: 0;
         width: 9rem;
+
+        &:not(:first-child) {
+          margin-left: $size-default;
+        }
 
         input {
           width: 100%;
@@ -1041,6 +1043,7 @@
         font-weight: normal;
         background-color: $color-white;
         background-image: url(../../img/plus-circle.svg);
+        background-image: url(../../img/plus-circle.png);
         background-position: $size-default $size-default;
         background-size: 2rem;
         padding: $size-default $size-default $size-base $size-L;
@@ -1053,6 +1056,7 @@
 
         &[aria-expanded="true"] {
           background-image: url(../../img/minus-circle.svg);
+          background-image: url(../../img/minus-circle.png);
           background-size: 2rem;
         }
 
@@ -1364,7 +1368,7 @@
 
         svg {
           width: 3rem;
-          height: auto;
+          height: 4rem;
           display: block;
           margin: 0 auto;
         }
@@ -1407,6 +1411,13 @@
 
     @include media($L-down) {
       margin: 0 $size-default;
+    }
+  }
+
+  #refreshing-transcripts {
+    .fa-circle-notch {
+      margin-right: $size-base;
+      color: #02bfe7;
     }
   }
 }

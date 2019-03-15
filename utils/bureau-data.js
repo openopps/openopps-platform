@@ -69,7 +69,7 @@ async function findOfficeRecord (name) {
  * @param {function} callback
  */
 async function processBureaus (bureaus, callback) {
-  var bureau = bureaus.pop();
+  var bureau = bureaus.shift(); // pull first item
   var record = await findBureauRecord(bureau); //, async (record, err) => {
   if (!record) {
     record = await insertBureauRecord(bureau);

@@ -188,7 +188,7 @@ var InternshipEditFormView = Backbone.View.extend({
       agency: this.agency,
       languageProficiencies: this.options.languageProficiencies,
       cycles: this.cycles,
-      bureaus: this.bureaus
+      bureaus: this.bureaus,
     },
 
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
@@ -275,11 +275,11 @@ var InternshipEditFormView = Backbone.View.extend({
       allowClear: true,
     });
     if($('#task_tag_bureau').select2('data')) {
-      this.showOfficeDropdown();
+      this.showOfficeDropdownOnRender();
     }
     $('#task_tag_bureau').on('change', function (e) {
-      this.showOfficeDropdown();
       $('#task_tag_office').val(null).trigger('change');
+      this.showOfficeDropdown();
     }.bind(this));
 
     //adding this for select 2 as binding messed with it
@@ -289,15 +289,40 @@ var InternshipEditFormView = Backbone.View.extend({
       allowClear: true,
       data: function () { 
         return {results: this.currentOffices}; 
-      }.bind(this)
+      }.bind(this),
     });
+  },
+
+  showOfficeDropdownOnRender: function () {
+    if($('#task_tag_bureau').select2('data')) {
+      var selectData = $('#task_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length) {
+        $('.task_tag_office').show();
+      } else {
+        $('#task_tag_office').attr('disabled', true).removeClass('validate').select2('data', null);
+        $('.task_tag_office').removeClass('usa-input-error');
+        $('.task_tag_office .error-empty').hide();
+      }
+    } else {
+      $('.task_tag_office').hide();
+    }
   },
 
   showOfficeDropdown: function () {
     if($('#task_tag_bureau').select2('data')) {
       var selectData = $('#task_tag_bureau').select2('data');
       this.currentOffices = this.offices[selectData.id];
-      $('.task_tag_office').show();
+      if (this.currentOffices.length) {
+        $('.task_tag_office').show();
+        $('#task_tag_office').removeAttr('disabled', true).addClass('validate');
+        $('.task_tag_office').addClass('usa-input-error');
+        $('.task_tag_office .error-empty').show();
+      } else {
+        $('#task_tag_office').attr('disabled', true).removeClass('validate').select2('data', null);
+        $('.task_tag_office').removeClass('usa-input-error');
+        $('.task_tag_office .error-empty').hide();
+      }
     } else {
       $('.task_tag_office').hide();
     }
@@ -353,7 +378,12 @@ var InternshipEditFormView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
+        var cycle = this.model.get('cycle');
         this.cycles = data;
+        if (!_.findWhere(this.cycles), { cycleId: cycle.cycleId }) {
+          this.cycles.push(cycle);
+        }
+        this.cycles = _.sortBy(this.cycles, 'postingStartDate');
       }.bind(this),
     });
   },
@@ -371,7 +401,7 @@ var InternshipEditFormView = Backbone.View.extend({
           if(a.name < b.name ) { return -1; }
           if(a.name > b.name ) { return 1; }
           return 0;
-        })
+        });
       }.bind(this),
     });
   },
@@ -748,9 +778,9 @@ var InternshipEditFormView = Backbone.View.extend({
       countrySubdivision    : null,
       cityName              : null,
       bureau_id             : this.$('#task_tag_bureau').select2('data').id,
-      office_id             : this.$('#task_tag_office').select2('data').id,
+      office_id             : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').id : null,
       bureauName            : this.$('#task_tag_bureau').select2('data').text,
-      officeName            : this.$('#task_tag_office').select2('data').text,
+      officeName            : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').text : null,
       interns               : this.$('#needed-interns').val(),
       cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
       cycleStartDate        : this.$('input[name=internship-timeframe]:checked').attr('data-cycleStartDate'),

@@ -109,7 +109,7 @@ var NavView = Backbone.View.extend({
 
   activePage: function () {
     $('.usajobs-nav--openopps__section-active').switchClass('usajobs-nav--openopps__section-active', 'usajobs-nav--openopps__section', 0);
-    $('.usajobs-openopps-secondary-nav__link').switchClass('is-active', '', 0);
+    $('.usajobs-nav--openopps__section-link').switchClass('is-active', '', 0);
     if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
       this.showSubMenu1();
       this.activateProfile();
@@ -126,17 +126,23 @@ var NavView = Backbone.View.extend({
       this.showSubMenu2();
       this.activateProfiles();
     }
-    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?(internships\/?)?$/)) {
+    else if (window.location.pathname.match(/tasks\/?$/) || window.location.pathname.match(/search\/?(internships\/?)?$/)) {
       this.showSubMenu2();
       this.activateTasks();
+    }
+    else if (window.location.pathname.match(/apply\/?$/)) {
+      this.showNoSubMenu();
     }
   },
 
   activeSubPage: function () {
     $('.usajobs-openopps-secondary-nav__link').switchClass('is-active', '', 0);
-    if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
+    if (window.cache.currentUser && window.location.pathname.match('/profile/' + window.cache.currentUser.id)) {
       //set Profile to active
       $('a[title="Profile"]').addClass('is-active');
+    } else if (window.location.pathname.match(/home/)) {
+      //set Administration to active
+      $('a[title="Home"]').addClass('is-active');
     } else if (window.location.pathname.match(/admin/)) {
       //set Administration to active
       $('a[title="Administration"]').addClass('is-active');
@@ -165,6 +171,11 @@ var NavView = Backbone.View.extend({
   },
 
   activateHome: function () {
+    //set Profile to active
+    $('a[title="Account"]').addClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section-active');
+
     //set Home to active
     $('a[title="Home"]').addClass('is-active');
     $('a[title="Home"] > span').removeClass('usajobs-nav--openopps__section');
@@ -228,6 +239,16 @@ var NavView = Backbone.View.extend({
     $('#section-two').attr('aria-expanded', true);
     $('.toggle-one').attr('data-state', 'is-closed');
     $('#section-one').attr('aria-expanded', false);
+  },
+
+  showNoSubMenu: function () {
+    $('.toggle-one').attr('data-state', 'is-closed');
+    $('#section-one').attr('aria-expanded', false);
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-closed');
+    $('#section-two').attr('aria-expanded', false);
+    $('a[title="Account"]').removeClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section-active');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section');
   },
 
   subMenuClick: function (s) {

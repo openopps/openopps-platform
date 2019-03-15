@@ -66,6 +66,7 @@ module.exports = function (db) {
     Country:dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     Education: dao({ db: db, table: 'education' }),
+    ErrorLog: dao({ db: db, table: 'error_log' }),
     Experience: dao({ db: db, table: 'experience' }),
     Language: dao({ db: db, table: 'language' }),
     LookUpCode:dao({ db: db, table: 'lookup_code' }),

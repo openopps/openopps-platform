@@ -47,6 +47,14 @@ var InternshipsActivityView = Backbone.View.extend({
     return this;
   },
 
+  getStatus: function (application) {
+    if (application.submittedAt == null) {
+      return 'In Progress';
+    } else {
+      return 'Applied';
+    }
+  },
+
   followLink: function (e) {
     if (e.preventDefault) e.preventDefault();
     Backbone.history.navigate(this.options.target + 's/' + $(e.currentTarget).data('id'), { trigger: true });

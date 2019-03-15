@@ -6,42 +6,33 @@ const templates = require('./templates');
 var experience = {
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
-
     $('#overseas-experienceQn').removeClass('usa-input-error');    
     $('#overseas-experienceQn>.field-validation-error').hide();
     $('#overseas-experience-details').removeClass('usa-input-error');    
     $('#overseas-experience-details>.field-validation-error').hide();
-
-
     if($('input#overseas-experience-yes').is(':checked')) {
       $('#overseas-experience-details').show();
-         
     } else {
       $('#overseas-experience-details').hide();
       $("input[name='overseas_experience_types']:checkbox").prop('checked', false);
       $('#overseas-experience-filter-other').hide();
       $('[name=overseas_experience_other]').val('');
       $('[name=overseas_experience_length]').val('');
-      
-     
     }
   },
 
   toggleOverseasExperienceFilterOther: function () {
-    
     $('#overseas-experience-filter-other').hide();
     if ($("[name='overseas_experience_types']:checked").length>0){     
       $('#overseas-experience-details').removeClass('usa-input-error'); 
       $('#overseas-experienceQn').removeClass('usa-input-error');      
       $('#overseas-experience-details>.field-validation-error').hide();  
-     
     }
     if($('input#overseasExperienceOther').is(':checked')) {
       $('#overseas-experience-filter-other').show();
       $('#overseas-experienceQn').removeClass('usa-input-error'); 
       $('#experience-other').addClass('validate'); 
       $('#overseas-total-length').addClass('validate');
-
     } else {
       $('#overseas-experience-filter-other').hide();
       $('[name=overseas_experience_other]').val('');
@@ -49,13 +40,12 @@ var experience = {
       $('#input-details-other').removeClass('validate'); 
       $('#overseas-total-length').removeClass('validate');   
     }
-   
   },
+
   toggleVsfsDetails: function (){
     if($('[name=has_vsfs_experience]:checked').length>0){ 
       $('#vsfs_experienceQn').removeClass('usa-input-error');    
       $('#vsfs_experienceQn>.field-validation-error').hide();
-      
     }
   },
   
@@ -63,7 +53,6 @@ var experience = {
     $('#security-clearance-details').hide();
     $('#security_clearenceQn').removeClass('usa-input-error');    
     $('#security_clearenceQn>.field-validation-error').hide();
-
     if($('input#SecurityClearanceYes').is(':checked')) {   
       $('#security-clearance-details').show();      
       $('#security-clearance-issuer').addClass('validate');    
@@ -73,10 +62,8 @@ var experience = {
       $('#security-clearance-details').hide();
       $('#security-clearance-type').prop('selectedIndex', 0);
       $('#security-clearance-issuer').val('');
-      
       $('#security-clearance-issuer').removeClass('validate');    
       $('#security-clearance-type').removeClass('validate');
-     
     }
   },
 
@@ -99,8 +86,8 @@ var experience = {
       formalTitle: $('#job-title').val(),
       isPresent: $('#Present').is(':checked'),
       duties: $('#duties').val(),
-      startDate: experience.isValidDate(startDate) ? startDate.toLocaleDateString() : null,
-      endDate: experience.isValidDate(endDate) ? endDate.toLocaleDateString() : null,
+      startDate: experience.isValidDate(startDate) ? startDate.toISOString() : null,
+      endDate: experience.isValidDate(endDate) ? endDate.toISOString() : null,
     };
     if ($('#experience-id').length) {
       modelData.experienceId = $('#experience-id').val();
@@ -118,14 +105,14 @@ var experience = {
     return {
       applicationId: this.data.applicationId,
       currentStep: Math.max(this.data.currentStep, 2),
-      hasOverseasExperience: $('input[name=has_overseas_experience]:checked').val()=='true'?true:false,
+      hasOverseasExperience: $('input[name=has_overseas_experience]:checked').val(),
       overseasExperienceOther: $('[name=overseas_experience_other]').val(),
       overseasExperienceLength: $('[name=overseas_experience_length]').val(),
-      hasSecurityClearance: $('input[name=has_security_clearance]:checked').val()=='true'?true:false,
+      hasSecurityClearance: $('input[name=has_security_clearance]:checked').val(),
       securityClearanceId: $('#security-clearance-type').val(),
       overseasExperienceTypes: overseasExperienceTypes,
       securityClearanceIssuer: $('[name=security_clearance_issuer]').val(),
-      hasVsfsExperience: $('input[name=has_vsfs_experience]:checked').val()=='true'?true:false,
+      hasVsfsExperience: $('input[name=has_vsfs_experience]:checked').val(),
       updatedAt: this.data.updatedAt,
     };
   },
@@ -144,8 +131,8 @@ var experience = {
 
   saveExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();
-    if(!this.validateFields() && !experience.validateAddExperienceFields(data)) {
-      var callback = experience.toggleExperienceOff.bind(this);
+    var experienceValidation=experience.validateAddExperienceFields(data);
+    if(!this.validateFields() && !experienceValidation) {
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience',
         type: 'POST',
@@ -157,7 +144,7 @@ var experience = {
           } else {
             this.data.experience = [experience];
           }
-          callback();
+          this.updateApplicationStep(2);
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -169,7 +156,6 @@ var experience = {
   updateExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();
     if(!this.validateFields() && !experience.validateAddExperienceFields(data)) {
-      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience/' + data.experienceId,
         type: 'PUT',
@@ -178,7 +164,7 @@ var experience = {
         success: function (experience) {
           var index = _.findIndex(this.data.experience, { experienceId: experience.experienceId });
           this.data.experience[index] = experience;
-          callback();
+          this.updateApplicationStep(2);
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -194,8 +180,7 @@ var experience = {
     if($('[name=has_overseas_experience]:checked').length==0){ 
       $('#overseas-experienceQn').addClass('usa-input-error');    
       $('#overseas-experienceQn>.field-validation-error').show();
-
-      abort=true;
+      abort = true;
     }
     
     if($('[name=has_overseas_experience]:checked').length>0){ 
@@ -203,10 +188,8 @@ var experience = {
         if ($("[name='overseas_experience_types']:checked").length==0){     
           $('#overseas-experience-details').addClass('usa-input-error');    
           $('#overseas-experience-details>.field-validation-error').show();
-         
-          abort=true;
+          abort = true;
         }
-        
       }
       else{
         $('#overseas-experienceQn').removeClass('usa-input-error');    
@@ -219,15 +202,15 @@ var experience = {
     if($('[name=has_security_clearance]:checked').length==0){ 
       $('#security_clearenceQn').addClass('usa-input-error');    
       $('#security_clearenceQn>.field-validation-error').show();
-      abort=true;
+      abort = true;
     }
+
     if($('[name=has_vsfs_experience]:checked').length==0){ 
       $('#vsfs_experienceQn').addClass('usa-input-error');    
       $('#vsfs_experienceQn>.field-validation-error').show();
-      abort=true;
+      abort = true;
     }
     
-
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
@@ -237,7 +220,6 @@ var experience = {
     }
     
     return abort;
-
   },
 
 
@@ -264,10 +246,8 @@ var experience = {
     experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
-        
     this.$el.html(template);
     this.$el.localize();
-    
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     window.scrollTo(0, 0);
@@ -277,7 +257,6 @@ var experience = {
     experience.updateExperienceDataObject.bind(this)();
     var data = {};
     var id = $(e.currentTarget).data('id');
-
     $.each(this.data.experience, function (i, experience) {
       if (experience.experienceId == id) {
         data = experience;
@@ -285,10 +264,8 @@ var experience = {
     });
     data = experience.formatExperienceDates(data);
     var template = templates.applyAddExperience(data);
-        
     this.$el.html(template);
     this.$el.localize();
-    
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     this.initializeCountriesSelect();
     $('#apply_country').select2('data', { 
@@ -304,12 +281,7 @@ var experience = {
   },
 
   toggleExperienceOff: function (e) {
-    var data = { };
-    
-    var template = templates.applyExperience(this.data);
-    
-    this.$el.html(template);
-    this.$el.localize();
+    this.$el.html(templates.applyExperience(this.data));  
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
@@ -324,6 +296,8 @@ var experience = {
         .closest('.usa-input-error')
         .removeClass('usa-input-error')
         .find('span.field-validation-error').hide();
+      $('#end-date-section> .field-validation-error').hide();
+     
     } else {
       $('#end-month, #end-year')
         .prop('disabled', false)
@@ -343,10 +317,14 @@ var experience = {
     if (data.startDate != null && data.endDate != null) {
       var startDate = new Date(data.startDate);
       var endDate = new Date(data.endDate);
-
-      if (startDate > endDate) {
+      
+      if (startDate > endDate && data.endDate !='1/1/2001' ) {
         $('.error-datecomparison').show().closest('div').addClass('usa-input-error');
         abort = true;
+      }
+      else{
+        $('#end-date-section>.field-validation-error').hide();       
+        abort = false;
       }
     }
 
@@ -381,11 +359,10 @@ var experience = {
 
   toggleAddReference: function () {
     experience.updateExperienceDataObject.bind(this)();
-    var data = { referenceTypes: this.referenceTypes };
+    var data = { referenceTypes: this.referenceTypes };   
     var template = templates.applyAddReference(data);
     this.$el.html(template);
     this.$el.localize();
-    
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
@@ -401,10 +378,8 @@ var experience = {
     });
     data.referenceTypes = this.referenceTypes;
     var template = templates.applyAddReference(data);
-        
     this.$el.html(template);
     this.$el.localize();
-    
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
   },
@@ -430,7 +405,6 @@ var experience = {
   saveReference: function () {
     var data = experience.getDataFromAddReferencePage.bind(this)();
     if(!this.validateFields()) {
-      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/reference',
         type: 'POST',
@@ -443,7 +417,7 @@ var experience = {
           } else {
             this.data.reference = [reference];
           }
-          callback();
+          this.updateApplicationStep(2);
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -455,7 +429,6 @@ var experience = {
   updateReference: function () {
     var data = experience.getDataFromAddReferencePage.bind(this)();
     if(!this.validateFields()) {
-      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/reference/' + data.referenceId,
         type: 'PUT',
@@ -465,7 +438,7 @@ var experience = {
           reference.referenceType = { value: data.referenceTypeName };
           var index = _.findIndex(this.data.reference, { referenceId: reference.referenceId });
           this.data.reference[index] = reference;
-          callback();
+          this.updateApplicationStep(2);
         }.bind(this),
         error: function (err) {
           // display modal alert type error

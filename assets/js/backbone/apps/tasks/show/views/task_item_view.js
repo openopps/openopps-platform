@@ -584,7 +584,7 @@ var TaskItemView = BaseView.extend({
       data: {
         taskId: this.model.attributes.id,
       },
-    }.bind(this)).done( function (data) {
+    }).done( function (data) {
       if(!_.findWhere(this.data.model.volunteers, { userId: data.userId })) {
         this.data.model.volunteers.push(data);
         this.initializeProgress();

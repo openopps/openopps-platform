@@ -5,11 +5,11 @@ const $ = require('jquery');
 const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
-const nextSteps = require('./next_steps');
 
 //utility functions
 var Program = require('./program');
 var Experience = require('./experience');
+var Transcripts = require('./transcripts');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
@@ -29,6 +29,7 @@ var ApplyView = Backbone.View.extend({
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
 
     //program events
+    'click #saveProgramContinue'                                  : function (e) { this.callMethod(Program.saveProgramContinue, e); },
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
 
@@ -59,6 +60,8 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+    'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
+    'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -91,14 +94,14 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
     });
- 
+    //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
     this.data.languages        = this.data.languages || [];
     this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation= this.params.get('editEducation');
+	  this.data.editEducation = this.params.get('editEducation');
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
@@ -111,6 +114,8 @@ var ApplyView = Backbone.View.extend({
     this.renderComponentEducation();
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
+    this.checkStatementHeight();
+    this.closeSubNav();
 
     $('.apply-hide').hide();
 
@@ -133,6 +138,16 @@ var ApplyView = Backbone.View.extend({
         }
       }.bind(this),
     });
+  },
+
+  closeSubNav: function () {
+    $('.toggle-one').attr('data-state', 'is-closed');
+    $('#section-one').attr('aria-expanded', false);
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-closed');
+    $('#section-two').attr('aria-expanded', false);
+    $('a[title="Account"]').removeClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section-active');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section');
   },
 
   validateField: function (e) {
@@ -185,12 +200,11 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    // TODO: Only run if current step equals 0
-    nextSteps.importProfileData.bind(this)();
+    this.updateApplicationStep(1);
   },
 
   updateApplicationStep: function (step) {
-    this.data.currentStep = Math.max(this.data.currentStep, step);
+    this.data.currentStep = step;
     this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
@@ -202,13 +216,9 @@ var ApplyView = Backbone.View.extend({
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
-      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
-      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-      this.$el.localize();
-      if (this.data.selectedStep == '3' || this.data.selectedStep == '6') {
-        this.renderEducation();
-      }
-      this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+      Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
+      Backbone.history.loadUrl(Backbone.history.getFragment());
+      this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
       showWhoopsPage();
@@ -216,7 +226,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   historyApplicationStep: function (e) {
-    step = e.currentTarget.dataset.step;
+    step = e.currentTarget.getAttribute('data-step');
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
     this.render();
@@ -242,7 +252,8 @@ var ApplyView = Backbone.View.extend({
   },
 
   renderEducation:function (){   
-    var data= _.extend({data:this.data.education}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) });
+    var data= _.extend({data:this.data}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
+  
     $('#education-preview-id').html(templates.applyeducationPreview(data));
   },
   // end education section
@@ -337,12 +348,26 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         isConsentToShare: this.data.isConsentToShare,
         updatedAt: this.data.updatedAt,
+        submittedAt: (new Date()).toISOString(),
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate('apply/congratulations', { trigger: true, replace: true });
       window.scrollTo(0, 0);
     }.bind(this));
+  },
+
+  checkStatementHeight: function () {
+    var t = $('.statement-of-interest');
+    var height = $('.read-less').height();
+    var minheight = 135;
+    if (height < minheight) {
+      if (t.hasClass('statement-of-interest')) {
+        $('.statement-of-interest').removeClass('read-less');
+        $('a.statement-of-interest.read-more').hide();
+        $('div.statement-of-interest').addClass('show');
+      }
+    }
   },
 
   readMore: function (e) {
@@ -392,9 +417,9 @@ var ApplyView = Backbone.View.extend({
                 }
               });
               applicationData[recordData.section] = recordList;
-              $(e.currentTarget).closest('li').remove();
+              //$(e.currentTarget).closest('li').remove();
+              this.updateApplicationStep(this.data.selectedStep);
               this.modalComponent.cleanup();
-            
             }.bind(this),
             error: function (err) {
               this.modalComponent.cleanup();

@@ -2,7 +2,7 @@
  
   <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
      <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-        <% _.each(data, function (d,index) { %>
+        <% _.each(data.education, function (d,index) { %>
        <li class="usajobs-drawer" data-section="education" data-id="edu-1">
          <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
          <dl class="usajobs-drawer-face">
@@ -97,6 +97,7 @@
              </div>
              <% } %>
            </div>
+           <% if (data.selectedStep==3) { %>
            <div class="usajobs-button-bar--split">
              <div class="usajobs-button-bar__body">
                <a class="usajobs-button-bar__delete delete-record" id="delete-education" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
@@ -104,6 +105,7 @@
                <a href="javascript:void(0)" id="education-edit" class="usa-button usajobs-button-bar__edit" data-id="<%-d.educationId%>" href="/">Edit</a>
              </div>
            </div>
+           <% } %>
          </div>
        </li>
        <% }); %> 

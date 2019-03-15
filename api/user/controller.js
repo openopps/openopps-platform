@@ -72,6 +72,10 @@ router.get('/api/user/activities/:id', auth, async (ctx, next) => {
   ctx.body = await service.getActivities(ctx.params.id);
 });
 
+router.get('/api/user/internship/activities/:id', auth, async (ctx, next) => {
+  ctx.body = await service.getInternshipsActivities(ctx.params.id);
+});
+
 router.get('/api/user/photo/:id', async (ctx, next) => {
   var user = await service.findOne(ctx.params.id);
   if (!user) {

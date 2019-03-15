@@ -6,10 +6,24 @@ const service = require('./service');
 
 var router = new Router();
 
-router.get('/api/application/:id', auth, async (ctx, next) => {
-  await service.findById(ctx.state.user.id, ctx.params.id).then(application => {
+router.get('/api/application/user/transcripts', auth, async (ctx, next) => {
+  await service.getTranscripts(ctx.state.user).then(transcripts => {
     ctx.status = 200;
-    ctx.body = application;
+    ctx.body = transcripts;
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
+
+router.get('/api/application/:id', auth, async (ctx, next) => {
+  await service.findById(ctx.state.user.id, ctx.params.id).then(async application => {
+    await service.getTranscripts(ctx.state.user).then(transcripts => {
+      application.transcripts = transcripts;
+      ctx.status = 200;
+      ctx.body = application;
+    }).catch(() => {
+      ctx.status = 404;
+    });
   }).catch(() => {
     ctx.status = 404;
   });
@@ -25,19 +39,9 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/application/:id/import', auth, async (ctx, next) => {
-  var result = await service.importProfileData(ctx.state.user, ctx.params.id);
-  if (result) {
-    ctx.status = 200;
-    ctx.body = result;
-  } else {
-    ctx.status = 400;
-  }
-});
-
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
-    await service.apply(ctx.state.user.id, ctx.params.taskId, (err, applicationId) => {
+    await service.apply(ctx.state.user, ctx.params.taskId, (err, applicationId) => {
       ctx.status = err ? 400 : 200;
       ctx.body = err ? err : applicationId;
     });
@@ -58,8 +62,9 @@ router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) 
 });
 
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
-  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then(() => {
+  await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then((result) => {
     ctx.status = 200;
+    ctx.body = result;
   }).catch((err) => {
     ctx.status = err.status;
     ctx.body = err.message;
