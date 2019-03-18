@@ -68,8 +68,8 @@ var experience = {
   },
 
   getDataFromAddExperiencePage:function (){
-    var startDateValue = $('#start-month').val() + '-01-' + $('#start-year').val();
-    var endDateValue = $('#end-month').val() + '-01-' + $('#end-year').val();  
+    var startDateValue = $('#start-month').val() + '/01/' + $('#start-year').val();
+    var endDateValue = $('#end-month').val() + '/01/' + $('#end-year').val();  
     var startDate = new Date(startDateValue);
     var endDate = new Date(endDateValue);  
     var countryData = $('#apply_country').select2('data');
@@ -139,6 +139,7 @@ var experience = {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (experience) {
+          console.log(experience);
           if (this.data.experience && $.isArray(this.data.experience)) {
             this.data.experience.push(experience);
           } else {
