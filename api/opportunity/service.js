@@ -141,7 +141,7 @@ async function createOpportunity (attributes, done) {
         user_id: attributes.userId,
         shared_by_user_id: attributes.userId,
         last_modified: new Date,
-      }
+      };
       await dao.TaskShare.insert(share);
     }
     
@@ -473,8 +473,8 @@ async function copyOpportunity (attributes, user, done) {
     about: results.about,
     agencyId: results.agencyId,
     communityId: results.communityId,
-    office:results.office,
-    bureau:results.bureau,
+    officeId:results.officeId,
+    bureauId:results.bureauId,
     cityName:results.cityName,
     cycleId:results.cycleId,
     countryId:results.countryId,
