@@ -37,25 +37,23 @@
               </tr>
             </thead>
             <tbody>
-              <% for (var i in data) { %>
-                <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
+              <% _.each(data, function (d, index) { %>
+                <tr class="usajobs-grid open-opps-row" data-id="<%- index %>">
                   <td class="your-status">
-                    <%= getStatus(data[i]) %>
+                    <%= getStatus(d) %>
                   </td>
                   <td class="application-program-title">
-                    <!-- <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].communityName %></a> -->
-                    <%- data[i].communityName %>
+                    <%- d.communityName %>
                   </td>
                   <td class="application-action">
-                    <!-- <a href="javascript:void(0);" class="activity-link" data-id="<%- data[i].id %>">Update</a> -->
-                    <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>">Update</a>
+                    <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- index %>">Update</a>
                   </td>
                   <td>
-                    <% var updated = new Date(data[i].updatedAt); %>
+                    <% var updated = new Date(d.updatedAt); %>
                     <%- updated.toLocaleDateString() %>
                   </td>
                 </tr>
-              <% } %>
+              <% }) %>
             </tbody>
           </table>
           <% if (!showAll && data.length > 5) { %>
