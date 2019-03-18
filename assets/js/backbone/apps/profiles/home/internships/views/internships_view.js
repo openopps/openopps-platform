@@ -161,21 +161,6 @@ var InternshipsView = Backbone.View.extend({
     var data = this.applications.applied[dataAttr];
 
     if (data.submittedAt == null) {
-      // this.modalComponent = new ModalComponent({
-      //   el: '#site-modal',
-      //   id: 'submit-opp',
-      //   modalTitle: 'Update application',
-      //   modalBody: '<p>You are about to make edits to an application you have already submitted. Follow these steps to resubmit your application:</p> ' +
-      //   '<ol><li>Click <strong>Save and continue</strong> on each page where you have made changes.</li><li>Click <strong>6 (Review Application)</strong> ' +
-      //   'at the top of the page, when you are done with your changes.</li><li>Review your application and click <strong>Submit application</strong>.</li></ol>',
-      //   primary: {
-      //     text: 'Update application',
-      //     action: function () {
-      //       Backbone.history.navigate('apply/' + data.id, { trigger: true });
-      //       this.modalComponent.cleanup();
-      //     }.bind(this),
-      //   },
-      // }).render();
       Backbone.history.navigate('apply/' + data.id, { trigger: true });
     } else {
       this.modalComponent = new ModalComponent({
