@@ -108,6 +108,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.internshipView) { this.internshipView.cleanup(); }
     this.applyController && this.applyController.cleanup();
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
+    this.studentHomeController && this.studentHomeController.cleanup();
     this.data = { saved: false };
   },
 

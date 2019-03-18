@@ -229,7 +229,7 @@ if (openopps.auth.oidc) {
   };
 
   var opts = {};
-  opts.jwtFromRequest = ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken(), ExtractJwt.fromHeader("x-authorization")]);
+  opts.jwtFromRequest = ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderAsBearerToken(), ExtractJwt.fromHeader('x-authorization')]);
   opts.secretOrKeyProvider = passportJwtSecret({
     cache: true,
     rateLimit: true,
@@ -246,6 +246,7 @@ if (openopps.auth.oidc) {
         return done(new Error('Scope error'), null);
       }
       dao.User.findOne('linked_id = ?', jwt_payload.sub).then(user => {
+        user.jwt_payload = jwt_payload;
         console.log('user found');
         done(null, user);
       }).catch(err => {

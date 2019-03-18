@@ -31,31 +31,29 @@
             <thead>
               <tr class="usajobs-grid open-opps-row header">
                 <th scope="col" class="your-status">Status</th>
-                <th scope="col">Program</th>
-                <th scope="col" class="application-action">Action</th>
+                <th scope="col" class="application-action">Program</th>
                 <th scope="col">Last updated</th>
               </tr>
             </thead>
             <tbody>
-              <% for (var i in data) { %>
-                <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
+              <% _.each(data, function (d, index) { %>
+                <tr class="usajobs-grid open-opps-row" data-id="<%- index %>">
                   <td class="your-status">
-                    <%= getStatus(data[i]) %>
+                    <%= getStatus(d) %>
                   </td>
                   <td class="application-program-title">
-                    <!-- <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].communityName %></a> -->
-                    <%- data[i].communityName %>
-                  </td>
-                  <td class="application-action">
-                    <!-- <a href="javascript:void(0);" class="activity-link" data-id="<%- data[i].id %>">Update</a> -->
-                    <a href="/apply/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>">Update</a>
+                    <% var today = new Date(); if (new Date(d.applyEndDate) >= today) { %>
+                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- index %>"><%- d.communityName %> - <%- d.cycleName %></a>
+                    <% } else { %>
+                      <%- d.communityName %> - <%- d.cycleName %>
+                    <% } %>
                   </td>
                   <td>
-                    <% var updated = new Date(data[i].updatedAt); %>
+                    <% var updated = new Date(d.updatedAt); %>
                     <%- updated.toLocaleDateString() %>
                   </td>
                 </tr>
-              <% } %>
+              <% }) %>
             </tbody>
           </table>
           <% if (!showAll && data.length > 5) { %>
@@ -71,14 +69,13 @@
         	<thead>
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col" class="your-status">Status</th>
-              <th scope="col">Program</th>
-              <th scope="col">Action</th>
+              <th scope="col" class="application-program-title">Program</th>
               <th scope="col">Last updated</th>
             </tr>
         	</thead>
           <tbody>
             <tr>
-              <td colspan="4">No applied applications</td>
+              <td colspan="3">No applied applications</td>
             </tr>
           </tbody>
         </table>

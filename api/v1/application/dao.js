@@ -77,7 +77,6 @@ dao.query.ApplicantSummary = `
           where app.application_id = application.application_id
         ) item
       ) as "securityClearance",
-    -- prior vsfs experience
     (
         select json_agg(item)
         from (
@@ -105,7 +104,9 @@ dao.query.ApplicantSummary = `
     statement_of_interest,
     task_list_application.sort_order,
     task_list.task_list_id,
-    application.has_vsfs_experience
+    application.has_vsfs_experience,
+    application.transcript_id,
+    application.transcript_name
     from
       task_list_application
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
