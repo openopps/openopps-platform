@@ -9,8 +9,7 @@ dao.query.internshipListQuery = `
     "cycle".name as "Cycle", 
     task.title as "Title", 
     task.interns as "NumberOfPositions",
-    task.city_name as "City",
-    country.value as "Country",
+    coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
     (select count(*) from application_task where application_task."task_id" = task.id) as "ApplicantCount"
   from 
     task 
@@ -60,6 +59,7 @@ dao.query.taskShareQuery = `
     inner join midas_user on task_share.user_id = midas_user."id"
   where 
     task_id = ?
+    and user_id = coalesce(?, user_id)
 `;
 
 dao.query.taskListQuery = `
@@ -175,10 +175,23 @@ dao.query.taskListApplicationQuery = `
     task_list.task_list_id = ?
 `;
 
+dao.query.communityByTaskAndEmail = `
+  select midas_user.id
+  from
+	  community
+    inner join community_user on community.community_id = community_user.community_id
+    inner join task on community.community_id = task.community_id
+    inner join midas_user on community_user.user_id = midas_user.id
+  where
+    task.id = ?
+    and midas_user.government_uri = ?
+`;
+
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' }),
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.Community = pgdao({ db: db, table: 'community' });
   return dao;
 };
