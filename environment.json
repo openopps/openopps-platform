@@ -6,6 +6,7 @@
     "DATASTORE": "",
     "DATA_IMPORT_URL": "",
     "DISCOVERY_URL": "",
+    "DOCUMENT_SECRET": "",
     "DRAFT_ADMIN_ONLY": true,
     "EMAIL_HOST": "",
     "EMAIL_PASS": "",

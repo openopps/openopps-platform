@@ -213,6 +213,7 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         currentStep: this.data.currentStep,
         updatedAt: this.data.updatedAt,
+        submittedAt: null,
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;
