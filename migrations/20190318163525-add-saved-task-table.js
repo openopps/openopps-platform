@@ -15,9 +15,10 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db, callback) {
-  db.createTable('task_share', {
+  db.createTable('saved_task', {
+    saved_task_id: {type: 'bigserial', primaryKey: true },
     task_id: { type: 'bigint', notNull: true, primaryKey: true, foreignKey: {
-      name: 'task_share_task_fk',
+      name: 'saved_task_task_fk',
       table: 'task',
       mapping: 'id',
       rules: {
@@ -25,27 +26,20 @@ exports.up = function(db, callback) {
       },
     }}, 
     user_id: { type: 'bigint', notNull: true, primaryKey: true, foreignKey: {
-      name: 'task_share_midas_user_fk',
+      name: 'saved_task_midas_user_fk',
       table: 'midas_user',
       mapping: 'id',
       rules: {
         onDelete: 'CASCADE',
       },
     }},
-    shared_by_user_id: { type: 'bigint', notNull: true, foreignKey: {
-      name: 'task_share_shared_by_midas_user_id_fk',
-      table: 'midas_user',
-      mapping: 'id',
-      rules: {
-        onDelete: 'RESTRICT',
-      },
-    }},
-    last_modified: { type: 'timestamp with time zone', notNull: true, defaultValue: new String('CURRENT_TIMESTAMP') },
+    created_at: { type: 'timestamp with time zone', notNull: true, defaultValue: new String('CURRENT_TIMESTAMP') },
+    deleted_at: { type: 'timestamp with time zone' },
   }, callback );
 };
 
 exports.down = function(db, callback) {
-  db.dropTable('task_share', callback);
+  db.dropTable('saved_task', callback);
 };
 
 exports._meta = {
