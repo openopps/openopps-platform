@@ -21,7 +21,7 @@ var InternshipListView = Backbone.View.extend({
     'click .usajobs-search-filter-nav__back'  : 'toggleFilter',
     'click .usajobs-search-pills__item'       : 'removeFilter',
     'click #search-pills-remove-all'          : 'removeAllFilters',
-    'change input[type=radio][name=internship-program]'  : 'changedInternsPrograms',
+    // 'change input[type=radio][name=internship-program]'  : 'changedInternsPrograms',
   },
     
   initialize: function (options) {
@@ -59,7 +59,7 @@ var InternshipListView = Backbone.View.extend({
       user: window.cache.currentUser,
       ui: UIConfig,
       agencyName: this.userAgency.name,
-      term: this.filters.term ? this.filters.term : "",
+      term: this.filters.term ? this.filters.term : '',
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,    
@@ -82,29 +82,29 @@ var InternshipListView = Backbone.View.extend({
     removeView(this);
   },
 
-  changedInternsPrograms: function (e){
-    this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
-    this.checkInternsPrograms();
-    this.filters.page = 1;
-    this.filter();
-  },
+  // changedInternsPrograms: function (e){
+  //   this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
+  //   this.checkInternsPrograms();
+  //   this.filters.page = 1;
+  //   this.filter();
+  // },
 
-  checkInternsPrograms: function () {
-    var studentProgram= $('[name=internship-program]:checked + label').text();
-    var communityId= $('[name=internship-program]:checked').attr('id');
+  // checkInternsPrograms: function () {
+  //   var studentProgram= $('[name=internship-program]:checked + label').text();
+  //   var communityId= $('[name=internship-program]:checked').attr('id');
     
-    if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
-      delete this.filters.agency;        
-      $('.dossection').show();
-      $('.agencyselect').hide();
-    }
-    else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service (VSFS)') {          
-      $('.dossection').hide();
-      $('.agencyselect').show();
-    } 
-    this.selected= studentProgram;
+  //   if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
+  //     delete this.filters.agency;        
+  //     $('.dossection').show();
+  //     $('.agencyselect').hide();
+  //   }
+  //   else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service (VSFS)') {          
+  //     $('.dossection').hide();
+  //     $('.agencyselect').show();
+  //   } 
+  //   this.selected= studentProgram;
    
-  },
+  // },
 
   renderCycle:function (){
     //communityId for Usdos
@@ -143,7 +143,7 @@ var InternshipListView = Backbone.View.extend({
               applyEndMonth: months[endDate.getMonth()],
               applyEndDay: endDate.getDate(), 
               applyEndYear: endDate.getFullYear(),
-              cycleStartYear: cycleStartDate.getFullYear()
+              cycleStartYear: cycleStartDate.getFullYear(),
             });
           }
         } 
@@ -346,7 +346,7 @@ var InternshipListView = Backbone.View.extend({
       allowClear: true,
       data: function () { 
         return {results: this.currentOffices}; 
-      }.bind(this)
+      }.bind(this),
     });
 
     $('#office').on('change', function (e) {
@@ -410,7 +410,7 @@ var InternshipListView = Backbone.View.extend({
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
       programs :this.programs,
-      bureaus: this.bureaus
+      bureaus: this.bureaus,
     });
     $('#task-filters').html(compiledTemplate);
     compiledTemplate = _.template(SearchPills)({
@@ -423,7 +423,7 @@ var InternshipListView = Backbone.View.extend({
     this.checkInternsPrograms();
   },
   initializeHideFields:function (){
-    $('.dossection').hide();
+    // $('.dossection').hide();
     $('.agencyselect').hide();
   },
 
