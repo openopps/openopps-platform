@@ -158,7 +158,7 @@ var InternshipsView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     var dataAttr = $(e.currentTarget).attr('data-id');
-    var data = this.applications.applied[dataAttr];
+    var data = this.applications[dataAttr];
 
     if (data.submittedAt == null) {
       Backbone.history.navigate('apply/' + data.id, { trigger: true });
