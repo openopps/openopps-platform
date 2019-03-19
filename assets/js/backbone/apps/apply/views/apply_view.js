@@ -13,7 +13,9 @@ var Transcripts = require('./transcripts');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
+var Skill = require('./skill');
 var ModalComponent = require('../../../components/modal');
+var TagFactory = require('../../../components/tag_factory');
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -66,7 +68,10 @@ var ApplyView = Backbone.View.extend({
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
     'click #saveLanguageContinue'                                 : function () { this.callMethod(Language.saveLanguageContinue); },
-
+    'click #add-skill, #edit-skill'                               : function (e) { this.callMethod(Skill.toggleSkillOn, e); },
+    'click #cancel-skill'                                         : function () { this.callMethod(Skill.toggleSkillOff); }, 
+    'click #save-skill'                                           : function (e) { this.callMethod(Skill.saveSkill, e); },
+    
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
     'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
@@ -92,6 +97,7 @@ var ApplyView = Backbone.View.extend({
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
     this.data.languages        = this.data.languages || [];
+    this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
