@@ -164,7 +164,7 @@ module.exports.saveLanguage = async function (userId, data) {
 module.exports.saveSkill = async function (userId, applicationId, attributes) {
   return await dao.ApplicationSkill.delete('application_id = ? ', [applicationId]).then(async () => { 
     var tags = [].concat(attributes || []);
-    await processUserTags({ userId: userId, username: attributes.username }, applicationId, tags).then(async () => {
+    return await processUserTags({ userId: userId, username: attributes.username }, applicationId, tags).then(async () => {
       return await db.query(dao.query.applicationSkill, applicationId, { fetch: { name: ''}});
     }).catch(err => {
       log.error('save: failed to save skill ',  err);
@@ -184,7 +184,7 @@ function processUserTags (user, applicationId, tags) {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
       tag = _.pickBy(tag, _.identity);
       if (tag.id) {
-        await createApplicationSkill(user, applicationId, tag);
+        return await createApplicationSkill(user, applicationId, tag);
       } else {
         await createNewSkillTag(user, applicationId, tag);
       }
@@ -200,7 +200,7 @@ async function createNewSkillTag (user, applicationId, tag) {
     createdAt: new Date(),
     updatedAt: new Date(),
   }).then(async (t) => {
-    await createApplicationSkill(user, applicationId, t);
+    return await createApplicationSkill(user, applicationId, t);
   }).catch(err => {
     log.info('skill: failed to create skill tag ', user.username, tag, err);
   });
@@ -218,7 +218,7 @@ async function createApplicationSkill (user, applicationId, tag) {
 }
 
 
-module.exports.apply = async function (userId, taskId, callback) {
+module.exports.apply = async function (user, taskId, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
       // need a way to determine DoS Unpaid vs VSFS

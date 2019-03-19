@@ -55,15 +55,18 @@
         <% } %>
         <div class="usajobs-profile-home-section__body">
           <p><a href="#" id="add-language" class="add-record">+ Add language</a></p>
-          <div class="usajobs-opop-section-edit skills-edit">
-            <a href="#" id="edit-skill" class="link-backbone" data-action="edit"><span>Edit</span></a>
-          </div>
           <h3 class="usajobs-profile-home-section__sub-section">Skills</h3>
           <% if (skill.length > 0) { %>
+            <div class="usajobs-opop-section-edit skills-edit">
+              <a href="#" id="edit-skill" class="link-backbone" data-action="edit"><span>Edit</span></a>
+            </div>
+            <div class="usajobs-opop-section-edit skills-edit">
+              <a href="#" id="edit-skill" class="link-backbone" data-action="edit"><span>Edit</span></a>
+            </div>
             <h3>I have experience with</h3>
             <div>
               <% _.each(skill, function (s) { %>
-                <a class="skill-label"><%= s.name %></a>
+                <span class="skill-label"><%= s.name %></span>
               <% }) %>
             </div>
           <% } else { %>
