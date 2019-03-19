@@ -54,12 +54,10 @@ async function getActivities (id) {
   };
 }
 
-async function getInternshipsActivities (id) {
+async function getInternshipsActivities (user) {
   return {
-    applications: {
-      applied: (await dao.Application.db.query(dao.query.applicationStatus, id)).rows,
-      // saved: (await dao.Application.db.query(dao.query.applicationStatus, id)).rows,
-    },
+    applications: (await dao.Application.db.query(dao.query.applicationStatus, user.id)).rows,
+    savedOpportunities: await dao.Task.query(dao.query.savedTask, user.id),
   };
 }
 

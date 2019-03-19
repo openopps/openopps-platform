@@ -44,6 +44,12 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
   'INNER JOIN cycle c ON app.cycle_id = c.cycle_id ' +
   'WHERE app.user_id = ? ';
 
+const savedTaskQuery = 'select ' +
+  'task.id, title, state, task.community_id, "updatedAt" ' +
+  'from task ' +
+  'join saved_task on saved_task.task_id = task.id ' +
+  'where saved_task.user_id = ?';
+
 const options = {
   user: {
     fetch: {
@@ -101,6 +107,7 @@ module.exports = function (db) {
     UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
     Badge: dao({ db: db, table: 'badge'}),
     Task: dao({ db: db, table: 'task' }),
+    SavedTask: dao({ db: db, table: 'saved_task' }),
     Passport: dao({ db: db, table: 'passport' }),
     Application: dao({ db: db, table: 'application' }),
     query: {
@@ -111,6 +118,7 @@ module.exports = function (db) {
       deleteUserTags: deleteUserTags,
       deleteSkillTags: deleteSkillTags,
       applicationStatus: applicationStatusQuery,
+      savedTask: savedTaskQuery,
     },
     options: options,
     clean: clean,
