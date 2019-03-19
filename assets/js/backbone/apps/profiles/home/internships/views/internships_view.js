@@ -32,7 +32,6 @@ var InternshipsView = Backbone.View.extend({
 
   initialize: function (options) {
     this.options = options;
-    this.data = options.data;
   },
 
   render: function () {
@@ -67,7 +66,7 @@ var InternshipsView = Backbone.View.extend({
     if (this.appliedView) { this.appliedView.cleanup(); }
     if (this.savedView) { this.savedView.cleanup(); }
     $.ajax('/api/user/internship/activities').done(function (data) {
-      this.applications = data.applications;
+      this.data = data;
       this.appliedView = new InternshipsActivityView({
         model: this.model,
         el: '.internships-applied',
@@ -86,7 +85,6 @@ var InternshipsView = Backbone.View.extend({
         target: 'task',
         handle: 'savedInternships',  // used in css and in table id
         data: _.sortBy(data.savedOpportunities, 'updatedAt').reverse(),
-        getStatus: this.getStatus,
       });
       this.savedView.render();
     }.bind(this));
@@ -126,7 +124,7 @@ var InternshipsView = Backbone.View.extend({
 
   sortInternships: function (e) {
     var target = $(e.currentTarget)[0];
-    var data = this.applications[target.id == 'sort-applied' ? 'applied' : 'saved'];
+    var data = this.data[target.id == 'sort-applied' ? 'applications' : 'savedOpportunities'];
     var sortedData = [];
     if(target.id == 'sort-applied' && target.value == 'submittedAt') {
       sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
@@ -139,7 +137,12 @@ var InternshipsView = Backbone.View.extend({
       sortedData = _.sortBy(data, function (item){
         return item.communityName.toLowerCase();
       });     
-    } 
+    }
+    if(target.value == 'title'){
+      sortedData = _.sortBy(data, function (item){
+        return item.title.toLowerCase();
+      });     
+    }
     if(target.value == 'updatedAt') {
       sortedData = sortedData.reverse();
     }
@@ -158,7 +161,7 @@ var InternshipsView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     var dataAttr = $(e.currentTarget).attr('data-id');
-    var data = this.applications[dataAttr];
+    var data = this.data.applications[dataAttr];
 
     if (data.submittedAt == null) {
       Backbone.history.navigate('apply/' + data.id, { trigger: true });
