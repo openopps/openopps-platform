@@ -6,7 +6,9 @@ var service = {};
 
 service.getApplicationSummary = async function (applicationId, sub, auth_time) {
   var results = (await dao.TaskListApplication.db.query(dao.query.ApplicantSummary, applicationId)).rows[0];
-  results.transcript_key = tamperProof.Hmac([sub, auth_time, results.transcript_id].join('|'));
+  if (results.transcript_id !== null) {
+    results.transcript_key = tamperProof.Hmac([sub, auth_time, results.transcript_id].join('|'));
+  }
   return results;
 };
 module.exports = service;
