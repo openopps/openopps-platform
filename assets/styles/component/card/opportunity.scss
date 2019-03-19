@@ -54,6 +54,14 @@
   &-item__header {
     min-height: 17rem;
 
+    @include media($ML) {
+      margin-bottom: $size-M;
+    }
+
+    @include media($XXL) {
+      margin-bottom: 0;
+    }
+
     a:visited {
       color: $color-primary;
     }
