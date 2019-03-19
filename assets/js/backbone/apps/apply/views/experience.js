@@ -335,8 +335,14 @@ var experience = {
   formatExperienceDates: function (data) {
     var startDate = new Date(data.startDate);
     var endDate = new Date(data.endDate);
-    if (experience.isValidDate(startDate)) {
-      data.startMonth = '0' + (startDate.getMonth() + 1);
+    if (experience.isValidDate(startDate)) {       
+      var startDateMonthStr=  (startDate.getMonth()+ 1).toString();     
+      if(startDateMonthStr.length<2) {
+        data.startMonth = '0' + (startDate.getMonth() + 1); 
+      }
+      else{
+        data.startMonth = startDate.getMonth() + 1; 
+      }       
       data.startYear = startDate.getFullYear();
     } else {
       data.startMonth = '';
@@ -344,7 +350,13 @@ var experience = {
     }
 
     if (experience.isValidDate(endDate)) {
-      data.endMonth = '0' + (endDate.getMonth() + 1);
+      var endDateMonthStr=  (endDate.getMonth()+ 1).toString(); 
+      if(endDateMonthStr.length<2){
+        data.endMonth = '0' + (endDate.getMonth() + 1); 
+      } 
+      else{
+        data.endMonth =  (endDate.getMonth() + 1); 
+      } 
       data.endYear = endDate.getFullYear();
     } else {
       data.endMonth = '';
