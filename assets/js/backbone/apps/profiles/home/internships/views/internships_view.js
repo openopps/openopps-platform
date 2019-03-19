@@ -66,7 +66,7 @@ var InternshipsView = Backbone.View.extend({
   initializeAppliedSaved: function () {
     if (this.appliedView) { this.appliedView.cleanup(); }
     if (this.savedView) { this.savedView.cleanup(); }
-    $.ajax('/api/user/internship/activities/' + window.cache.currentUser.id).done(function (data) {
+    $.ajax('/api/user/internship/activities').done(function (data) {
       this.applications = data.applications;
       this.appliedView = new InternshipsActivityView({
         model: this.model,
@@ -74,7 +74,7 @@ var InternshipsView = Backbone.View.extend({
         template: templates.applied,
         target: 'task',
         handle: 'appliedInternships',  // used in css and table id
-        data: _.sortBy(data.applications.applied, 'updatedAt').reverse(),
+        data: _.sortBy(data.applications, 'updatedAt').reverse(),
         getStatus: this.getStatus,
       });
       this.appliedView.render();
@@ -85,7 +85,7 @@ var InternshipsView = Backbone.View.extend({
         template: templates.saved,
         target: 'task',
         handle: 'savedInternships',  // used in css and in table id
-        data: _.sortBy(data.applications.saved, 'updatedAt').reverse(),
+        data: _.sortBy(data.savedOpportunities, 'updatedAt').reverse(),
         getStatus: this.getStatus,
       });
       this.savedView.render();
