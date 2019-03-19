@@ -67,7 +67,6 @@ dao.query.ApplicantSummary = `
             and user_tags = application.user_id
         ) item
       ) as skills,
-    -- overseas experience
     (
         select json_agg(item)
         from (
@@ -105,6 +104,10 @@ dao.query.ApplicantSummary = `
     task_list_application.sort_order,
     task_list.task_list_id,
     application.has_vsfs_experience,
+    application.has_overseas_experience,
+    application.overseas_experience_other,
+    application.overseas_experience_length,
+    application.overseas_experience_types,
     application.transcript_id,
     application.transcript_name
     from
