@@ -382,7 +382,8 @@
   transition: height .5s;
 }
 
-#volTask-tab-open .participated-show-all, #task-tab-open .created-show-all {
+#volTask-tab-open .participated-show-all, #task-tab-open .created-show-all,
+#appliedInternships-tab-open .applied-show-all, #savedInternships-tab-open .saved-show-all {
   display: block;
   color: #212121;
   background-color: #d6d7d9;
