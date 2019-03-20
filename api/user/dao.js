@@ -36,6 +36,20 @@ const deleteSkillTags = 'delete from tagentity_users__user_tags where id in (' +
   'join tagentity on tagentity.id = tagentity_users and type in (\'skill\', \'topic\') ' +
   'where user_tags = ?)';
 
+const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted_at AS "submittedAt", ' +
+  'comm.community_name AS "communityName", c.name AS "cycleName", c.apply_end_date AS "applyEndDate", ' +
+  'app.updated_at AS "updatedAt" ' +
+  'FROM application app ' +
+  'INNER JOIN community comm ON app.community_id = comm.community_id ' +
+  'INNER JOIN cycle c ON app.cycle_id = c.cycle_id ' +
+  'WHERE app.user_id = ? ';
+
+const savedTaskQuery = 'select ' +
+  'task.id, title, state, task.community_id, "updatedAt" ' +
+  'from task ' +
+  'join saved_task on saved_task.task_id = task.id ' +
+  'where saved_task.deleted_at is null and saved_task.user_id = ?';
+
 const options = {
   user: {
     fetch: {
@@ -93,7 +107,9 @@ module.exports = function (db) {
     UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
     Badge: dao({ db: db, table: 'badge'}),
     Task: dao({ db: db, table: 'task' }),
+    SavedTask: dao({ db: db, table: 'saved_task' }),
     Passport: dao({ db: db, table: 'passport' }),
+    Application: dao({ db: db, table: 'application' }),
     query: {
       user: userQuery,
       tag: tagQuery,
@@ -101,6 +117,8 @@ module.exports = function (db) {
       userAgencyQuery: userAgencyQuery,
       deleteUserTags: deleteUserTags,
       deleteSkillTags: deleteSkillTags,
+      applicationStatus: applicationStatusQuery,
+      savedTask: savedTaskQuery,
     },
     options: options,
     clean: clean,

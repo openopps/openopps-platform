@@ -9,8 +9,7 @@ dao.query.internshipListQuery = `
     "cycle".name as "Cycle", 
     task.title as "Title", 
     task.interns as "NumberOfPositions",
-    task.city_name as "City",
-    country.value as "Country",
+    coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
     (select count(*) from application_task where application_task."task_id" = task.id) as "ApplicantCount"
   from 
     task 
@@ -60,6 +59,7 @@ dao.query.taskShareQuery = `
     inner join midas_user on task_share.user_id = midas_user."id"
   where 
     task_id = ?
+    and user_id = coalesce(?, user_id)
 `;
 
 dao.query.taskListQuery = `
@@ -144,17 +144,17 @@ dao.query.taskListApplicationQuery = `
         and application_task.task_id = task_list.task_id
     ),
     (
-      select json_agg(item)
-      from (
-      select 
-        educationcode.value as "degree_level",
-        education.major
+      select json_build_object(
+        'degree_level', educationcode.value,
+        'major', education.major
+      ) as education
       from 
         education
         inner join lookup_code as educationcode on education.degree_level_id = educationcode.lookup_code_id
       where application.application_id = education.application_id
-      ) item
-    ) as educations,
+      order by education.major
+      limit 1
+    ),
     application.cumulative_gpa as gpa,
     (
       select json_agg(item)
@@ -163,19 +163,9 @@ dao.query.taskListApplicationQuery = `
       from "language"    
         inner join language_skill on "language".language_id = language_skill.language_id
       where "language".language_id = language_skill.language_id and language_skill.application_id = application.application_id
+      limit 3
       ) item
-    ) as languages,
-    (
-      select json_agg(item)
-      from (
-      select locationtag.name
-      from tagentity locationtag
-        inner join tagentity_users__user_tags tags on locationtag.id = tags.tagentity_users
-      where 
-        type = 'location'
-        and user_tags = application.user_id
-      ) item
-    ) as locations
+    ) as languages
   from
     task_list_application
     inner join task_list on task_list_application.task_list_id = task_list.task_list_id
@@ -186,10 +176,23 @@ dao.query.taskListApplicationQuery = `
   order by sort_order
 `;
 
+dao.query.communityByTaskAndEmail = `
+  select midas_user.id
+  from
+	  community
+    inner join community_user on community.community_id = community_user.community_id
+    inner join task on community.community_id = task.community_id
+    inner join midas_user on community_user.user_id = midas_user.id
+  where
+    task.id = ?
+    and midas_user.government_uri = ?
+`;
+
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' }),
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.Community = pgdao({ db: db, table: 'community' });
   return dao;
 };

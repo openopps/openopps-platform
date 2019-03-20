@@ -319,11 +319,13 @@
           </h3>
         </div>
         <div class="usajobs-profile-home-section__body">
+          <% if (skill.length > 0) { %>
           <div class="skill-list">
-            <a class="skill-label" href="/tasks?search=JavaScript">JavaScript</a>
-            <a class="skill-label" href="/tasks?search=HTML">HTML</a>
-            <a class="skill-label" href="/tasks?search=CSS">CSS</a>
+            <% _.each(skill, function (s) { %>
+              <span class="skill-label"><%= s.name %></span>
+            <% }) %>
           </div>
+          <% } %>
         </div>
       </fieldset>
     </div>

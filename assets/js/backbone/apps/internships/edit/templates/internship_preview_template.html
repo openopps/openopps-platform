@@ -20,7 +20,7 @@
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <p class="usajobs-open-opps-opportunity-requestor__name dos">
-                      Department of State
+                      U.S. Department of State
                     </p>
                   </div>
                 </div>
@@ -32,9 +32,9 @@
           <div class="usa-width-one-third personnel-needed mobile">
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
-              <div><%- data.bureau %></div>
+              <div><%- data.bureauName %></div>
               <h4>Office/post</h4>
-              <div><%- data.office %></div>
+              <div><%- data.officeName %></div>
               <h4>Location</h4>
               <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
               <% if (data.country) { %>

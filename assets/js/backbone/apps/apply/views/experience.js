@@ -68,10 +68,10 @@ var experience = {
   },
 
   getDataFromAddExperiencePage:function (){
-    var startDateValue = $('#start-month').val() + '-01-' + $('#start-year').val();
-    var endDateValue = $('#end-month').val() + '-01-' + $('#end-year').val();
+    var startDateValue = $('#start-month').val() + '/01/' + $('#start-year').val();
+    var endDateValue = $('#end-month').val() + '/01/' + $('#end-year').val();  
     var startDate = new Date(startDateValue);
-    var endDate = new Date(endDateValue);
+    var endDate = new Date(endDateValue);  
     var countryData = $('#apply_country').select2('data');
     var countrySubdivisionData = $('#apply_countrySubdivision').select2('data');
     var modelData = {
@@ -86,8 +86,8 @@ var experience = {
       formalTitle: $('#job-title').val(),
       isPresent: $('#Present').is(':checked'),
       duties: $('#duties').val(),
-      startDate: experience.isValidDate(startDate) ? startDate.toLocaleDateString() : null,
-      endDate: experience.isValidDate(endDate) ? endDate.toLocaleDateString() : null,
+      startDate: experience.isValidDate(startDate) ? startDate.toISOString() : null,
+      endDate: experience.isValidDate(endDate) ? endDate.toISOString() : null,
     };
     if ($('#experience-id').length) {
       modelData.experienceId = $('#experience-id').val();
@@ -130,7 +130,7 @@ var experience = {
   },
 
   saveExperience: function () {
-    var data = experience.getDataFromAddExperiencePage.bind(this)();
+    var data = experience.getDataFromAddExperiencePage.bind(this)();    
     var experienceValidation=experience.validateAddExperienceFields(data);
     if(!this.validateFields() && !experienceValidation) {
       $.ajax({
@@ -139,6 +139,7 @@ var experience = {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (experience) {
+          console.log(experience);
           if (this.data.experience && $.isArray(this.data.experience)) {
             this.data.experience.push(experience);
           } else {
@@ -288,7 +289,7 @@ var experience = {
   },
 
   toggleEndDate: function () {
-    if ($('#Present').is(':checked')) {
+    if ($('#Present').is(':checked')) {     
       $('#end-month, #end-year')
         .val('')
         .prop('disabled', true)
@@ -318,7 +319,7 @@ var experience = {
       var startDate = new Date(data.startDate);
       var endDate = new Date(data.endDate);
       
-      if (startDate > endDate && data.endDate !='1/1/2001' ) {
+      if (startDate > endDate && !data.isPresent ) {
         $('.error-datecomparison').show().closest('div').addClass('usa-input-error');
         abort = true;
       }
@@ -334,8 +335,14 @@ var experience = {
   formatExperienceDates: function (data) {
     var startDate = new Date(data.startDate);
     var endDate = new Date(data.endDate);
-    if (experience.isValidDate(startDate)) {
-      data.startMonth = '0' + (startDate.getMonth() + 1);
+    if (experience.isValidDate(startDate)) {       
+      var startDateMonthStr=  (startDate.getMonth()+ 1).toString();     
+      if(startDateMonthStr.length<2) {
+        data.startMonth = '0' + (startDate.getMonth() + 1); 
+      }
+      else{
+        data.startMonth = startDate.getMonth() + 1; 
+      }       
       data.startYear = startDate.getFullYear();
     } else {
       data.startMonth = '';
@@ -343,7 +350,13 @@ var experience = {
     }
 
     if (experience.isValidDate(endDate)) {
-      data.endMonth = '0' + (endDate.getMonth() + 1);
+      var endDateMonthStr=  (endDate.getMonth()+ 1).toString(); 
+      if(endDateMonthStr.length<2){
+        data.endMonth = '0' + (endDate.getMonth() + 1); 
+      } 
+      else{
+        data.endMonth =  (endDate.getMonth() + 1); 
+      } 
       data.endYear = endDate.getFullYear();
     } else {
       data.endMonth = '';

@@ -16,8 +16,9 @@ var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_c
 
 var InternshipView = BaseView.extend({
   events: {
-    'click #apply'  : 'apply',
-    'click #task-copy': 'copy',
+    'click #apply'      : 'apply',
+    'click #task-copy'  : 'copy',
+    'click #save'       : 'toggleSave',
   },
 
   initialize: function (options) {
@@ -48,6 +49,32 @@ var InternshipView = BaseView.extend({
       this.apply({});
     }
     return this;
+  },
+
+  toggleSave: function (e) {
+    e.preventDefault && e.preventDefault();
+    if (!window.cache.currentUser) {
+      Backbone.history.navigate('/login?internships/' + this.model.attributes.id, { trigger: true });
+    } else {
+      $.ajax({
+        url: '/api/task/save',
+        method: 'POST',
+        data: {
+          taskId: this.model.attributes.id, 
+          action: e.currentTarget.getAttribute('data-action'),
+        },
+      }).done(function () {
+        if (e.currentTarget.getAttribute('data-action') == 'save') {
+          $('#save').html('<i class="fa fa-star"></i> Saved');
+          e.currentTarget.setAttribute('data-action', 'unsave');
+        } else {
+          $('#save').html('<i class="far fa-star"></i> Save');
+          e.currentTarget.setAttribute('data-action', 'save');
+        }
+      }).fail(function (err) {
+
+      }.bind(this));
+    }
   },
 
   displayError: function (error) {

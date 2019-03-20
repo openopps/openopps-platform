@@ -29,11 +29,11 @@
         <div class="usajobs-show-next" data-object="reveal">
           <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="saved-table">
             <thead>
-            <tr class="usajobs-grid open-opps-row header">
-              <th scope="col" class="your-status">Internship status</th>
-              <th scope="col">Internship</th>
-              <th scope="col">Last updated</th>
-            </tr>
+              <tr class="usajobs-grid open-opps-row header">
+                <th scope="col" class="your-status">Internship status</th>
+                <th scope="col" class="application-program-title">Internship</th>
+                <th scope="col">Last updated</th>
+              </tr>
             </thead>
             <tbody>
               <% for (var i in data) { %>
@@ -43,11 +43,8 @@
                       <%= data[ i ].state.charAt( 0 ).toUpperCase() + data[ i ].state.slice( 1 ) %>
                     </span>
                   </td>
-                  <td class="open-opps-title">
-                    <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
-                      data[ i ].title = 'Untitled draft';
-                    } %>
-                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
+                  <td class="application-program-title">
+                    <a href="/internships/<%- data[i].id %>" data-id="<%- data[i].id %>"><%- data[i].title %></a>
                   </td>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>
@@ -68,11 +65,11 @@
 
         <table class="usa-table-borderless" role="presentation">
         	<thead>
-        	<tr class="usajobs-grid open-opps-row header">
-        		<th scope="col" class="your-status">Internship status</th>
-        		<th scope="col">Internship</th>
-        		<th scope="col">Last updated</th>
-        	</tr>
+            <tr class="usajobs-grid open-opps-row header">
+              <th scope="col" class="your-status">Status</th>
+              <th scope="col" class="application-program-title">Program</th>
+              <th scope="col">Last updated</th>
+            </tr>
         	</thead>
           <tbody>
             <tr>

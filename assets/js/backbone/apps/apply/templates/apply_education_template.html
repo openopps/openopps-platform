@@ -88,7 +88,7 @@
             <ul class="transcript-card-buttons">
               <% _.each(transcripts, function (transcript) { %>
                 <li class="transcript-card-button">
-                  <input type="radio" value="<%- transcript.CandidateDocumentID %>" name="transcripts" id="<%- transcript.CandidateDocumentID %>" <% if (transcript.CandidateDocumentID == transcriptId) { %><%= "checked" %><% } %>>
+                  <input type="radio" value="<%- transcript.CandidateDocumentID + '|' + transcript.CandidateFileName + '.' + transcript.FileFormat %>" name="transcripts" id="<%- transcript.CandidateDocumentID %>" <% if (transcript.CandidateDocumentID == transcriptId) { %><%= "checked" %><% } %>>
                   <label for="<%- transcript.CandidateDocumentID %>">
                     <div class="usajobs-grid-full">
                       <div class="usa-width-one-twelfth radio-button"></div>

@@ -5,7 +5,7 @@ var InternshipsView = require('../views/internships_view');
 
 var InternshipsController = BaseController.extend({
   events: {
-    'click .add-opportunity' : 'add',
+    
   },
 
   initialize: function (options) {
@@ -19,10 +19,6 @@ var InternshipsController = BaseController.extend({
       }).render();
     }
     return this;
-  },
-
-  add: function (e) {
-    Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 
   cleanup: function () {

@@ -2,6 +2,7 @@ var _ = require('underscore');
 var async = require('async');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var ModalComponent = require('../../../../../components/modal');
 
 var ActivityCollection = window.c = require('../../../../../entities/activities/activities_collection');
 var InternshipsActivityView = require('./internships_activity_view');
@@ -26,11 +27,11 @@ var InternshipsView = Backbone.View.extend({
     'click .saved-show-all'   : 'showAllInternships',
     'change #sort-applied'    : 'sortInternships',
     'change #sort-saved'      : 'sortInternships',
+    'click .activity-link'    : 'updateApplication',
   },
 
   initialize: function (options) {
     this.options = options;
-    this.data = options.data;
   },
 
   render: function () {
@@ -64,15 +65,15 @@ var InternshipsView = Backbone.View.extend({
   initializeAppliedSaved: function () {
     if (this.appliedView) { this.appliedView.cleanup(); }
     if (this.savedView) { this.savedView.cleanup(); }
-    $.ajax('/api/user/activities/' + window.cache.currentUser.id).done(function (data) {
-      this.data.tasks = data.tasks;
+    $.ajax('/api/user/internship/activities').done(function (data) {
+      this.data = data;
       this.appliedView = new InternshipsActivityView({
         model: this.model,
         el: '.internships-applied',
         template: templates.applied,
         target: 'task',
         handle: 'appliedInternships',  // used in css and table id
-        data: _.sortBy(_.filter(data.tasks.volunteered, this.filterArchived), 'updatedAt').reverse(),
+        data: _.sortBy(data.applications, 'updatedAt').reverse(),
         getStatus: this.getStatus,
       });
       this.appliedView.render();
@@ -83,7 +84,7 @@ var InternshipsView = Backbone.View.extend({
         template: templates.saved,
         target: 'task',
         handle: 'savedInternships',  // used in css and in table id
-        data: _.sortBy(_.filter(data.tasks.created, this.filterArchived), 'updatedAt').reverse(),
+        data: _.sortBy(data.savedOpportunities, 'updatedAt').reverse(),
       });
       this.savedView.render();
     }.bind(this));
@@ -100,16 +101,11 @@ var InternshipsView = Backbone.View.extend({
     // }.bind(this));
   },
 
-  getStatus: function (task) {
-    switch (task.state) {
-      case 'completed':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
-      case 'in progress':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
-      case 'canceled':
-        return 'Canceled';
-      default:
-        return (task.assigned ? 'Assigned' : 'Applied');
+  getStatus: function (application) {
+    if (application.submittedAt == null) {
+      return 'In Progress';
+    } else {
+      return 'Applied';
     }
   },
 
@@ -128,20 +124,25 @@ var InternshipsView = Backbone.View.extend({
 
   sortInternships: function (e) {
     var target = $(e.currentTarget)[0];
-    var data = this.data.tasks[target.id == 'sort-applied' ? 'applied' : 'saved'];
+    var data = this.data[target.id == 'sort-applied' ? 'applications' : 'savedOpportunities'];
     var sortedData = [];
-    if(target.id == 'sort-applied' && target.value == 'state') {
+    if(target.id == 'sort-applied' && target.value == 'submittedAt') {
       sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
         return this.getStatus(item);
       }.bind(this));
     } else {
       sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
     }
+    if(target.value == 'communityName'){
+      sortedData = _.sortBy(data, function (item){
+        return item.communityName.toLowerCase();
+      });     
+    }
     if(target.value == 'title'){
       sortedData = _.sortBy(data, function (item){
         return item.title.toLowerCase();
       });     
-    } 
+    }
     if(target.value == 'updatedAt') {
       sortedData = sortedData.reverse();
     }
@@ -153,6 +154,35 @@ var InternshipsView = Backbone.View.extend({
       this.savedView.options.sort = target.value;
       this.savedView.options.data = sortedData;
       this.savedView.render();
+    }
+  },
+
+  updateApplication: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+    var dataAttr = $(e.currentTarget).attr('data-id');
+    var data = this.data.applications[dataAttr];
+
+    if (data.submittedAt == null) {
+      Backbone.history.navigate('apply/' + data.id, { trigger: true });
+    } else {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'submit-opp',
+        modalTitle: 'Update application',
+        modalBody: '<p>You are about to make edits to an application you have already submitted. Follow these steps to resubmit your application:</p> ' +
+        '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
+        'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
+        'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
+        'your application and click <strong>Submit application</strong>.</li></ol>',
+        primary: {
+          text: 'Update application',
+          action: function () {
+            Backbone.history.navigate('apply/' + data.id + '?step=1', { trigger: true });
+            this.modalComponent.cleanup();
+          }.bind(this),
+        },
+      }).render();
     }
   },
 

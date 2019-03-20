@@ -13,7 +13,9 @@ var Transcripts = require('./transcripts');
 var Language = require('./language');
 var Education = require('./education');
 var Statement = require('./statement');
+var Skill = require('./skill');
 var ModalComponent = require('../../../components/modal');
+var TagFactory = require('../../../components/tag_factory');
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -66,7 +68,10 @@ var ApplyView = Backbone.View.extend({
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
     'click #saveLanguageContinue'                                 : function () { this.callMethod(Language.saveLanguageContinue); },
-
+    'click #add-skill, #edit-skill'                               : function (e) { this.callMethod(Skill.toggleSkillOn, e); },
+    'click #cancel-skill'                                         : function () { this.callMethod(Skill.toggleSkillOff); }, 
+    'click #save-skill'                                           : function (e) { this.callMethod(Skill.saveSkill, e); },
+    
     //statement events
     'keypress #statement'                                         : function () { this.callMethod(Statement.characterCount); },
     'keydown #statement'                                          : function () { this.callMethod(Statement.characterCount); },
@@ -92,6 +97,7 @@ var ApplyView = Backbone.View.extend({
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
     this.data.languages        = this.data.languages || [];
+    this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
@@ -109,6 +115,7 @@ var ApplyView = Backbone.View.extend({
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
     this.checkStatementHeight();
+    this.closeSubNav();
 
     $('.apply-hide').hide();
 
@@ -131,6 +138,16 @@ var ApplyView = Backbone.View.extend({
         }
       }.bind(this),
     });
+  },
+
+  closeSubNav: function () {
+    $('.toggle-one').attr('data-state', 'is-closed');
+    $('#section-one').attr('aria-expanded', false);
+    $('.usajobs-nav__menu-search.mobile').attr('data-state', 'is-closed');
+    $('#section-two').attr('aria-expanded', false);
+    $('a[title="Account"]').removeClass('is-active');
+    $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section-active');
+    $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section');
   },
 
   validateField: function (e) {
@@ -196,6 +213,7 @@ var ApplyView = Backbone.View.extend({
         applicationId: this.data.applicationId,
         currentStep: this.data.currentStep,
         updatedAt: this.data.updatedAt,
+        submittedAt: null,
       },
     }).done(function (result) {
       this.data.updatedAt = result.updatedAt;

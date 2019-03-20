@@ -15,8 +15,8 @@
           </label>
           <select name="sort_attribute" id="sort-applied" class="usajobs-search-controls__sort-control">
             <option value="" disabled>- Sort By -</option>
-            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
-            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Internship</option>
+            <option value="submittedAt" <% if (sort == 'submittedAt') { %>selected<% } %>>Status</option>
+            <option value="communityName" <% if (sort == 'communityName') { %>selected<% } %>>Internship application</option>
             <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
           </select>
         </div>
@@ -29,30 +29,31 @@
         <div class="usajobs-show-next" data-object="reveal">
           <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="applied-table">
             <thead>
-            <tr class="usajobs-grid open-opps-row header">
-              <th scope="col" class="your-status">Status</th>
-              <th scope="col">Internship</th>
-              <th scope="col">Last updated</th>
-            </tr>
+              <tr class="usajobs-grid open-opps-row header">
+                <th scope="col" class="your-status">Status</th>
+                <th scope="col" class="application-action">Internship application</th>
+                <th scope="col">Last updated</th>
+              </tr>
             </thead>
             <tbody>
-              <% for (var i in data) { %>
-                <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
+              <% _.each(data, function (d, index) { %>
+                <tr class="usajobs-grid open-opps-row" data-id="<%- index %>">
                   <td class="your-status">
-                    <%= getStatus(data[i]) %>
+                    <%= getStatus(d) %>
                   </td>
-                  <td class="open-opps-title">
-                    <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
-                      data[ i ].title = 'Untitled draft';
-                    } %>
-                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
+                  <td class="application-program-title">
+                    <% var today = new Date(); if (new Date(d.applyEndDate) >= today) { %>
+                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- index %>"><%- d.communityName %> - <%- d.cycleName %></a>
+                    <% } else { %>
+                      <%- d.communityName %> - <%- d.cycleName %>
+                    <% } %>
                   </td>
                   <td>
-                    <% var updated = new Date(data[i].updatedAt); %>
+                    <% var updated = new Date(d.updatedAt); %>
                     <%- updated.toLocaleDateString() %>
                   </td>
                 </tr>
-              <% } %>
+              <% }) %>
             </tbody>
           </table>
           <% if (!showAll && data.length > 5) { %>
@@ -66,15 +67,15 @@
 
         <table class="usa-table-borderless" role="presentation">
         	<thead>
-        	<tr class="usajobs-grid open-opps-row header">
-        		<th scope="col" class="your-status">Status</th>
-        		<th scope="col">Internship</th>
-        		<th scope="col">Last updated</th>
-        	</tr>
+            <tr class="usajobs-grid open-opps-row header">
+              <th scope="col" class="your-status">Status</th>
+              <th scope="col" class="application-program-title">Program</th>
+              <th scope="col">Last updated</th>
+            </tr>
         	</thead>
           <tbody>
             <tr>
-              <td colspan="3">No <%- targetsFriendly %></td>
+              <td colspan="3">No applied applications</td>
             </tr>
           </tbody>
         </table>

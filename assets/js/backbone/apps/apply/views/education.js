@@ -400,7 +400,8 @@ var education = {
           isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val()=='true' ? true : false,
           isMinimumCompleted:this.$('input[name=Junior]:checked').val()=='true' ? true : false,
           isEducationContinued: this.$('input[name=ContinueEducation]:checked').val()=='true' ? true : false,
-          transcriptId: $('input[name=transcripts]:checked').val(),
+          transcriptId: $('input[name=transcripts]:checked').val().split('|')[0],
+          transcriptName: $('input[name=transcripts]:checked').val().split('|')[1],
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {

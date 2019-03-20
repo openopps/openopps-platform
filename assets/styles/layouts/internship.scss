@@ -539,6 +539,12 @@
       color: $color-primary;
       text-decoration: underline;
     }
+
+    .usajobs-alert {
+      @include media($ML) {
+        margin-bottom: $size-M;
+      }
+    }
   }
 
   .usajobs-open-opps-opportunity.saved-internship-opportunities {

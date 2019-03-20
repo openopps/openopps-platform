@@ -16,7 +16,9 @@ dao.query.ApplicantSummary = `
         select 
           educationcode.value as "degree_level",
           education.major,
-          education.school_name
+          education.school_name,
+          education.completion_month,
+          education.completion_year
         from 
           education
           inner join lookup_code as educationcode on education.degree_level_id = educationcode.lookup_code_id
@@ -26,19 +28,13 @@ dao.query.ApplicantSummary = `
     (
         select json_agg(item)
         from (
-        select 
-        (
-          select tag.name
-          from tagentity_tasks__task_tags tags
-            inner join tagentity tag on tags.tagentity_tasks = tag.id 
-          where task_tags = task.id and type = 'location'
-          limit 1
-        ) loc,
+        select coalesce(task.city_name || ', ' || country.value, 'Virtual') as loc,
         task.id,
         task.title
       from 
         application_task apps
         inner join task on apps.task_id = task.id
+        left join country on task.country_id = country.country_id
       where apps.application_id = application.application_id
         ) item
       ) as "desiredOpportunities",
@@ -71,7 +67,6 @@ dao.query.ApplicantSummary = `
             and user_tags = application.user_id
         ) item
       ) as skills,
-    -- overseas experience
     (
         select json_agg(item)
         from (
@@ -81,7 +76,6 @@ dao.query.ApplicantSummary = `
           where app.application_id = application.application_id
         ) item
       ) as "securityClearance",
-    -- prior vsfs experience
     (
         select json_agg(item)
         from (
@@ -120,6 +114,13 @@ dao.query.ApplicantSummary = `
     task_list_application.task_list_application_id,
     task_list.sort_order task_list_sort_order,
     task_list.task_id
+    application.has_vsfs_experience,
+    application.has_overseas_experience,
+    application.overseas_experience_other,
+    application.overseas_experience_length,
+    application.overseas_experience_types,
+    application.transcript_id,
+    application.transcript_name
     from
       task_list_application
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
@@ -135,4 +136,4 @@ module.exports = function (db) {
     dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
     dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
     return dao;
-  };
+};
