@@ -108,20 +108,31 @@ dao.query.ApplicantSummary = `
       ) as experience,
     statement_of_interest,
     task_list_application.sort_order,
-    task_list.task_list_id
+    task_list.task_list_id, 
+    (
+      select application_task.application_task_id
+      from
+        application_task
+      where
+        application_task.application_id = application.application_id
+        and application_task.task_id = task_list.task_id
+    ),
+    task_list_application.task_list_application_id,
+    task_list.sort_order task_list_sort_order,
+    task_list.task_id
     from
       task_list_application
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
       inner join application on task_list_application.application_id = application.application_id
       inner join midas_user on application.user_id = midas_user.id
     where
-      application.application_id = ?
+    task_list_application.task_list_application_id = ?
 `
-
 module.exports = function (db) {
     dao.Application = pgdao({ db: db, table: 'application' }),
     dao.User = pgdao({ db: db, table: 'midas_user' });
     dao.TaskList = pgdao({ db: db, table: 'task_list' });
     dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+    dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
     return dao;
   };
