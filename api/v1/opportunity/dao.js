@@ -173,6 +173,7 @@ dao.query.taskListApplicationQuery = `
     inner join midas_user on application.user_id = midas_user.id
   where
     task_list.task_list_id = ?
+  order by sort_order
 `;
 
 dao.query.communityByTaskAndEmail = `

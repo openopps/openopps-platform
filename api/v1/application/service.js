@@ -11,4 +11,16 @@ service.getApplicationSummary = async function (applicationId, sub, auth_time) {
   }
   return results;
 };
+
+service.removeApplicationTask  = async function(application_task_id, task_list_application_id){
+  return await db.transaction(function* (transaction) {
+    yield transaction.query('UPDATE application_task SET is_removed = true, updated_at = NOW() WHERE application_task_id = $1', application_task_id);
+    yield transaction.query('DELETE FROM task_list_application WHERE task_list_application_id = $1', task_list_application_id);
+  }).then(async () => {
+    return true;
+  }).catch((err) => {
+    return false;
+  });
+}
+
 module.exports = service;
