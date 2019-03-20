@@ -37,7 +37,7 @@
             </thead>
             <tbody>
               <% _.each(data, function (d, index) { %>
-                <tr class="usajobs-grid open-opps-row" data-id="<%- index %>">
+                <tr class="usajobs-grid open-opps-row" data-id="<%- d.id %>">
                   <td class="your-status">
                     <%= getStatus(d) %>
                   </td>
