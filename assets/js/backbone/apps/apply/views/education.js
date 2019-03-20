@@ -389,7 +389,8 @@ var education = {
 
   },
   educationContinue: function () {
-    var validationEduFields= education.validateEducationFields.bind(this); 
+    var validationEduFields= education.validateEducationFields.bind(this);
+    var selectedTranscript = $('input[name=transcripts]:checked').val();
     if(!validationEduFields()){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
@@ -400,8 +401,8 @@ var education = {
           isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val()=='true' ? true : false,
           isMinimumCompleted:this.$('input[name=Junior]:checked').val()=='true' ? true : false,
           isEducationContinued: this.$('input[name=ContinueEducation]:checked').val()=='true' ? true : false,
-          transcriptId: $('input[name=transcripts]:checked').val().split('|')[0],
-          transcriptName: $('input[name=transcripts]:checked').val().split('|')[1],
+          transcriptId: selectedTranscript ? selectedTranscript.split('|')[0] : null,
+          transcriptName: selectedTranscript ? selectedTranscript.split('|')[1] : null,
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {
