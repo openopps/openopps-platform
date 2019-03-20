@@ -48,7 +48,7 @@ const savedTaskQuery = 'select ' +
   'task.id, title, state, task.community_id, "updatedAt" ' +
   'from task ' +
   'join saved_task on saved_task.task_id = task.id ' +
-  'where saved_task.user_id = ?';
+  'where saved_task.deleted_at is null and saved_task.user_id = ?';
 
 const options = {
   user: {

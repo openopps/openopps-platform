@@ -222,7 +222,7 @@ module.exports = function (db) {
     Office:dao({ db: db, table: 'office' }),
     Bureau:dao({ db: db, table: 'bureau' }),
     TaskShare:dao({ db: db, table: 'task_share'}),
-
+    SavedTask: dao({ db: db, table: 'saved_task' }),
     query: {
       task: taskQuery,
       user: userQuery,

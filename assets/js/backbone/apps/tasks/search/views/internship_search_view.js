@@ -420,7 +420,7 @@ var InternshipListView = Backbone.View.extend({
     $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
     this.initializeHideFields();
-    this.checkInternsPrograms();
+    // this.checkInternsPrograms();
   },
   initializeHideFields:function (){
     // $('.dossection').hide();

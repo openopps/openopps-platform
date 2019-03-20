@@ -39,12 +39,12 @@
               <% for (var i in data) { %>
                 <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
                   <td class="your-status">
-                    <!-- <span  class="usajobs-pill--opportunity-status status-<%= data[ i ].state.charAt( 0 ).toLowerCase() + data[ i ].state.slice( 1 ).replace(' ', '-') %>"> -->
+                    <span  class="usajobs-pill--opportunity-status status-<%= data[ i ].state.charAt( 0 ).toLowerCase() + data[ i ].state.slice( 1 ).replace(' ', '-') %>">
                       <%= data[ i ].state.charAt( 0 ).toUpperCase() + data[ i ].state.slice( 1 ) %>
-                    <!-- </span> -->
+                    </span>
                   </td>
                   <td class="application-program-title">
-                    <%- data[i].title %>
+                    <a href="/internships/<%- data[i].id %>" data-id="<%- data[i].id %>"><%- data[i].title %></a>
                   </td>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>

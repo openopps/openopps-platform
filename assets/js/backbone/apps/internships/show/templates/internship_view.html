@@ -55,7 +55,11 @@
               <% if (model.canEditTask && model.state != 'completed') { %>
                 <div><a class="usajobs-opop-actions__save" href="<%- model.id %>/edit" id="task-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
               <% } else { %>
-                <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save"><i class="fa fa-star"></i> Save</a></div>
+                <% if (model.saved) { %>
+                  <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='unsave'><i class="fa fa-star"></i> Saved</a></div>
+                <% } else { %>
+                  <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='save'><i class="far fa-star"></i> Save</a></div>
+                <% } %>
               <% } %>
             </div>
           </div>
