@@ -380,7 +380,7 @@ var InternshipEditFormView = Backbone.View.extend({
       success: function (data) {
         var cycle = this.model.get('cycle');
         this.cycles = data;
-        if (!_.findWhere(this.cycles), { cycleId: cycle.cycleId }) {
+        if (!_.findWhere(this.cycles, { cycleId: cycle.cycleId })) {
           this.cycles.push(cycle);
         }
         this.cycles = _.sortBy(this.cycles, 'postingStartDate');
