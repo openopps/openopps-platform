@@ -43,7 +43,7 @@
                   </td>
                   <td class="application-program-title">
                     <% var today = new Date(); if (new Date(d.applyEndDate) >= today) { %>
-                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- index %>"><%- d.communityName %> - <%- d.cycleName %></a>
+                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- d.id %>"><%- d.communityName %> - <%- d.cycleName %></a>
                     <% } else { %>
                       <%- d.communityName %> - <%- d.cycleName %>
                     <% } %>
