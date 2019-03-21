@@ -150,22 +150,26 @@
                     </label>
                   </li>
                 </ul>
-           <div id="overseas-experience-filter-other" class="usajobs-form-reveal-fields" aria-hidden="true">
-
-           <div class="form-group required-input">
-          <label for="input-type-textarea">If you chose "Other", please specify.</label>  
-          <span class="field-validation-error error-empty" style="display:none;">You must enter details for other.</span>               
-           <textarea id="experience-other" data-validate="empty" class="fullwidth form-control" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
-           </div>
-
-          <div class="form-group required-input">
-           <label for="input-type-textarea">Please indicate the total length of your overseas experience(s).</label>
-           <span class="field-validation-error error-empty" style="display:none;">You must enter the total length of your overseas experience(s).</span> 
-         <textarea id="overseas-total-length" data-validate="empty" class="fullwidth form-control" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
-         </div>
-         </div>
-         </div>
-        </div>
+                <div id="overseas-experience-filter-other" class="usajobs-form-reveal-fields" aria-hidden="true">
+                  <div class="form-group required-input">
+                    <label for="input-type-textarea">If you chose "Other", please specify.</label>  
+                    <span class="field-validation-error error-empty" style="display:none;">You must enter details for other.</span>               
+                    <textarea id="experience-other" data-validate="empty" class="fullwidth form-control" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
+                    <p class="usajobs-form__help-brief" id="other-count">
+                      (250 characters remaining)
+                    </p>
+                  </div>
+                  <div class="form-group required-input">
+                    <label for="input-type-textarea">Please indicate the total length of your overseas experience(s).</label>
+                    <span class="field-validation-error error-empty" style="display:none;">You must enter the total length of your overseas experience(s).</span> 
+                    <textarea id="overseas-total-length" data-validate="empty" class="fullwidth form-control" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
+                    <p class="usajobs-form__help-brief" id="overseas-count">
+                      (250 characters remaining)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
         
             <div class="form-group required-input" id="security_clearenceQn">
               <h4><label for="SecurityClearance" class="usajobs-profile-question__title">Do you have, or have you had, a Security Clearance?</label></h4>
