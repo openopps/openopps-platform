@@ -4,6 +4,15 @@ const _ = require('underscore');
 const templates = require('./templates');
 
 var experience = {
+  characterCount: function () {
+    $('#experience-other').charCounter(250, {
+      container: '#other-count',
+    });
+    $('#overseas-total-length').charCounter(250, {
+      container: '#overseas-count',
+    });
+  },
+  
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
     $('#overseas-experienceQn').removeClass('usa-input-error');    
