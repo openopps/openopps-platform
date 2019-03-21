@@ -113,7 +113,7 @@ dao.query.ApplicantSummary = `
     ),
     task_list_application.task_list_application_id,
     task_list.sort_order task_list_sort_order,
-    task_list.task_id
+    task_list.task_id,
     application.has_vsfs_experience,
     application.has_overseas_experience,
     application.overseas_experience_other,

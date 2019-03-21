@@ -7,7 +7,7 @@ var _ = require('lodash')
 var router = new Router();
 
 router.get('/api/v1/application', auth.bearer, async (ctx, next) => {
-  var data = await service.getApplicationSummary(ctx.query.applicationId, ctx.state.user.jwt_payload.sub, ctx.state.user.jwt_payload.auth_time);
+  var data = await service.getApplicationSummary(ctx.query.taskListApplicationId, ctx.state.user.jwt_payload.sub, ctx.state.user.jwt_payload.auth_time);
   ctx.body = data;
 });
 
