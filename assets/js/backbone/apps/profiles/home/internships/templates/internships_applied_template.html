@@ -37,13 +37,13 @@
             </thead>
             <tbody>
               <% _.each(data, function (d, index) { %>
-                <tr class="usajobs-grid open-opps-row" data-id="<%- index %>">
+                <tr class="usajobs-grid open-opps-row" data-id="<%- d.id %>">
                   <td class="your-status">
                     <%= getStatus(d) %>
                   </td>
                   <td class="application-program-title">
                     <% var today = new Date(); if (new Date(d.applyEndDate) >= today) { %>
-                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- index %>"><%- d.communityName %> - <%- d.cycleName %></a>
+                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- d.id %>"><%- d.communityName %> - <%- d.cycleName %></a>
                     <% } else { %>
                       <%- d.communityName %> - <%- d.cycleName %>
                     <% } %>
@@ -69,7 +69,7 @@
         	<thead>
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col" class="your-status">Status</th>
-              <th scope="col" class="application-program-title">Program</th>
+              <th scope="col" class="application-program-title">Internship application</th>
               <th scope="col">Last updated</th>
             </tr>
         	</thead>

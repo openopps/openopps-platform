@@ -14,14 +14,21 @@ function findOne (id) {
   return dao.Task.findOne('id = ?', id);
 }
 
-async function findById (id, loggedIn) {
+async function findById (id, user) {
   var results = await dao.Task.query(dao.query.task + ' where task.id = ?', id, dao.options.task);
   if(results.length === 0) {
     return {};
   }
   var task = dao.clean.task(results[0]);
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
-
+  if (user) {
+    task.saved = await dao.SavedTask.findOne('deleted_at is null and task_id = ? and user_id = ?', id, user.id).then(() => {
+      return true;
+    }).catch(() => {
+      return false;
+    });
+  }
+  
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
   
@@ -36,7 +43,7 @@ async function findById (id, loggedIn) {
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
   }
-  task.volunteers = loggedIn ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
+  task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
 }
 
@@ -617,6 +624,20 @@ async function sendTasksDueNotifications (action, i) {
     });
 }
 
+async function saveOpportunity(user, data, callback) {
+  var savedTask = await dao.SavedTask.findOne('task_id = ? and user_id = ?', data.taskId, user.id).catch(() => { return null; });
+  if(data.action == 'unsave' && !savedTask || (data.action == 'save' && savedTask && !savedTask.deletedAt)) {
+    callback();
+  } else if (data.action == 'unsave' || (data.action == 'save' && savedTask && savedTask.deletedAt)) {
+    savedTask.deletedAt = (data.action == 'unsave' ? new Date() : null);
+    await dao.SavedTask.update(savedTask);
+    callback();
+  } else {
+    await dao.SavedTask.insert({ user_id: user.id, task_id: data.taskId, created_at: new Date() });
+    callback();
+  }
+}
+
 module.exports = {
   findOne: findOne,
   findById: findById,
@@ -638,4 +659,5 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  saveOpportunity: saveOpportunity,
 };

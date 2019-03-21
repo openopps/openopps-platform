@@ -47,7 +47,7 @@ router.get('/api/task/communities', auth, async (ctx, next) => {
 });
 
 router.get('/api/task/:id', async (ctx, next) => {
-  var task = await service.findById(ctx.params.id, ctx.state.user ? true : false);
+  var task = await service.findById(ctx.params.id, ctx.state.user);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
     task.isOwner = true;
   }
@@ -81,6 +81,13 @@ router.post('/api/task', auth, async (ctx, next) => {
     }
   });
 });
+
+router.post('/api/task/save', auth, async (ctx, next) => {
+  await service.saveOpportunity(ctx.state.user, ctx.request.body, function (error) {
+    ctx.status = error ? 400 : 200;
+    ctx.body = error || { success: true };
+  });
+})
 
 router.put('/api/task/state/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {

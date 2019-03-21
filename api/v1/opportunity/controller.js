@@ -54,6 +54,7 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
         {
             var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner[0].user_id);
             if (data == null) {
+                ctx.body = { 'message':'The user associated with this email is already an owner of this board' };
                 ctx.status = 409;
             } else {
                 ctx.status = 200;
@@ -61,10 +62,14 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
                 return ctx.body = shared[0];
             }
         } else if (owner.length > 1) {
-            ctx.status = 400;
+            ctx.status = 409;
+            ctx.body = { 'message': 'Unable to add owner to board due to more than one record found' };
+        } else {
+            ctx.status = 404;
         }
-    } 
-    return ctx.status;
+    } else {
+        ctx.status = 400;
+    }
 });
 
 router.put('/api/v1/taskList', auth.bearer, async(ctx, next) => {

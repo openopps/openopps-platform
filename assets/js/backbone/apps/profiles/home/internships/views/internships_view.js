@@ -161,8 +161,10 @@ var InternshipsView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     var dataAttr = $(e.currentTarget).attr('data-id');
-    var data = this.data.applications[dataAttr];
-
+   
+    var data= _.filter(this.data.applications,function (app){
+      return app.id == dataAttr; })[0];
+  
     if (data.submittedAt == null) {
       Backbone.history.navigate('apply/' + data.id, { trigger: true });
     } else {

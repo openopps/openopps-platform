@@ -1168,6 +1168,13 @@
 
         &__item-content {
           margin-top: 0;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
+          -ms-hyphens: auto;
+          -moz-hyphens: auto;
+          -webkit-hyphens: auto;
+          hyphens: auto;
         }
 
         & > *:last-child {
@@ -1425,5 +1432,15 @@
       margin-right: $size-base;
       color: #02bfe7;
     }
+  }
+
+  .statement-of-interest {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
 }

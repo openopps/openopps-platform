@@ -68,7 +68,6 @@ dao.query.ApplicantSummary = `
             and user_tags = application.user_id
         ) item
       ) as skills,
-    -- overseas experience
     (
         select json_agg(item)
         from (
@@ -104,8 +103,23 @@ dao.query.ApplicantSummary = `
       ) as experience,
     statement_of_interest,
     task_list_application.sort_order,
-    task_list.task_list_id,
+    task_list.task_list_id, 
+    (
+      select application_task.application_task_id
+      from
+        application_task
+      where
+        application_task.application_id = application.application_id
+        and application_task.task_id = task_list.task_id
+    ),
+    task_list_application.task_list_application_id,
+    task_list.sort_order task_list_sort_order,
+    task_list.task_id,
     application.has_vsfs_experience,
+    application.has_overseas_experience,
+    application.overseas_experience_other,
+    application.overseas_experience_length,
+    application.overseas_experience_types,
     application.transcript_id,
     application.transcript_name
     from
@@ -114,13 +128,13 @@ dao.query.ApplicantSummary = `
       inner join application on task_list_application.application_id = application.application_id
       inner join midas_user on application.user_id = midas_user.id
     where
-      application.application_id = ?
-`;
-
+    task_list_application.task_list_application_id = ?
+`
 module.exports = function (db) {
-  dao.Application = pgdao({ db: db, table: 'application' }),
-  dao.User = pgdao({ db: db, table: 'midas_user' });
-  dao.TaskList = pgdao({ db: db, table: 'task_list' });
-  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-  return dao;
+    dao.Application = pgdao({ db: db, table: 'application' }),
+    dao.User = pgdao({ db: db, table: 'midas_user' });
+    dao.TaskList = pgdao({ db: db, table: 'task_list' });
+    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+    dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
+    return dao;
 };
