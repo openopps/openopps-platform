@@ -4,7 +4,7 @@
       <div class="usajobs-search-controls__results-count-container no-params">
         <% if (data.length > 0) { %>
           <h4 id="participated-count" class="usajobs-search-controls__results-count">
-            Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %><%= Math.min(data.length, 5) %><% } %> of <%= data.length %> internships
+            Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %><%= Math.min(data.length, 5) %><% } %> of <%= data.length %> <% if (data.length > 1) { %>internships<% } else { %>internship<% } %>
           </h4>
         <% } %>
       </div>
@@ -75,7 +75,7 @@
         	</thead>
           <tbody>
             <tr>
-              <td colspan="3">No applied applications</td>
+              <td colspan="3">No current internship applications</td>
             </tr>
           </tbody>
         </table>
