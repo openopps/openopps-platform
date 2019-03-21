@@ -6,6 +6,7 @@ dao.query = {};
 dao.query.ApplicantSummary = `
   select
     midas_user.id as userId,
+    midas_user.linked_id,
     midas_user.given_name,
     midas_user.last_name,
     task_list_application.date_last_contacted,	

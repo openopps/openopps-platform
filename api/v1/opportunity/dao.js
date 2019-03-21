@@ -27,6 +27,8 @@ dao.query.internshipSummaryQuery = `
     task.id, 
     "cycle".name as "cycleName", 
     task.title as "taskTitle", 
+    bureau.name as "bureauName",
+    office.name as "officeName",
     task.interns as "numberOfSeats",
     (
       select json_agg(item)
@@ -42,6 +44,8 @@ dao.query.internshipSummaryQuery = `
   from task 
     inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
     inner join community on task.community_id = community.community_id
+    left join bureau on bureau.bureau_id = task.bureau_id
+    left join office on office.office_id = task.office_id
   where task.id = ?
 `;
 
