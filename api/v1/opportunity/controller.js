@@ -52,7 +52,7 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
         var account = await service.getCommunityUserByTaskAndEmail(ctx.params.taskId, ctx.request.fields.email);
         if (account.length == 1)
         {
-            var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner[0].user_id);
+            var data = await service.addTaskOwner(ctx.params.taskId, account[0].id, owner[0].user_id, ctx.state.user);
             if (data == null) {
                 ctx.body = { 'message':'The user associated with this email is already an owner of this board' };
                 ctx.status = 409;
@@ -73,7 +73,7 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async(ctx, next) => {
 });
 
 router.put('/api/v1/taskList', auth.bearer, async(ctx, next) => {
-    var data = await service.updateTaskList(ctx.state.user.id, ctx.request.fields);
+    var data = await service.updateTaskList(ctx.state.user, ctx.request.fields);
     ctx.body = data;
 });
 
