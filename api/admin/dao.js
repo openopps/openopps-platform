@@ -333,6 +333,7 @@ module.exports = function (db) {
     AuditLog: dao({ db: db, table: 'audit_log' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
+    Cycle: dao({ db: db, table: 'cycle' }),
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,

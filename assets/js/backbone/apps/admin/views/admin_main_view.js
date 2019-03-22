@@ -78,7 +78,7 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminUserView(target, this.options[target + 'Id']);
           this.adminUserView.render();
           break;
-        case 'cycle':
+        case 'cycles':
           this.initializeAdminCommunityCycleView(target, this.options[target + 'Id']);
           this.adminCommunityCycleView.render();
           break;
