@@ -49,11 +49,11 @@ dao.query.ApplicantSummary = `
             writing.value as writing_value,
             speaking.value as speaking_value
           from "language"    
-            inner join language_skill on "language".language_id = language_skill.language_id
-            left outer join lookup_code reading on language_skill.reading_proficiency_id = reading.lookup_code_id
-            left outer join lookup_code writing on language_skill.writing_proficiency_id = writing.lookup_code_id
-            left outer join lookup_code speaking on language_skill.speaking_proficiency_id = speaking.lookup_code_id
-          where "language".language_id = language_skill.language_id and language_skill.application_id = application.application_id
+            inner join application_language_skill on "language".language_id = application_language_skill.language_id
+            left outer join lookup_code reading on application_language_skill.reading_proficiency_id = reading.lookup_code_id
+            left outer join lookup_code writing on application_language_skill.writing_proficiency_id = writing.lookup_code_id
+            left outer join lookup_code speaking on application_language_skill.speaking_proficiency_id = speaking.lookup_code_id
+          where "language".language_id = application_language_skill.language_id and application_language_skill.application_id = application.application_id
         ) item
       ) as languages,
       application.cumulative_gpa as gpa,
@@ -61,11 +61,11 @@ dao.query.ApplicantSummary = `
         select json_agg(item)
         from (
           select skilltag.name
-          from tagentity skilltag
-            inner join tagentity_users__user_tags tags on skilltag.id = tags.tagentity_users
+          from application_skill
+              inner join tagentity skilltag on application_skill.skill_id = skilltag.id
           where 
             type = 'skill'
-            and user_tags = application.user_id
+            and application_skill.application_id = application.application_id
         ) item
       ) as skills,
     (
@@ -129,12 +129,12 @@ dao.query.ApplicantSummary = `
       inner join midas_user on application.user_id = midas_user.id
     where
     task_list_application.task_list_application_id = ?
-`
+`;
 module.exports = function (db) {
-    dao.Application = pgdao({ db: db, table: 'application' }),
-    dao.User = pgdao({ db: db, table: 'midas_user' });
-    dao.TaskList = pgdao({ db: db, table: 'task_list' });
-    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-    dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
-    return dao;
+  dao.Application = pgdao({ db: db, table: 'application' }),
+  dao.User = pgdao({ db: db, table: 'midas_user' });
+  dao.TaskList = pgdao({ db: db, table: 'task_list' });
+  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
+  return dao;
 };
