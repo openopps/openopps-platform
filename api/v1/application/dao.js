@@ -134,6 +134,8 @@ module.exports = function (db) {
     dao.User = pgdao({ db: db, table: 'midas_user' });
     dao.TaskList = pgdao({ db: db, table: 'task_list' });
     dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+    dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
     dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
+    dao.pgdao = pgdao;
     return dao;
 };

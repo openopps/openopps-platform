@@ -191,6 +191,7 @@ dao.query.communityByTaskAndEmail = `
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' }),
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
+  dao.TaskShareHistory = pgdao({ db: db, table: 'task_share_history' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
   dao.Community = pgdao({ db: db, table: 'community' });
