@@ -131,10 +131,12 @@ dao.query.ApplicantSummary = `
     task_list_application.task_list_application_id = ?
 `;
 module.exports = function (db) {
-  dao.Application = pgdao({ db: db, table: 'application' }),
-  dao.User = pgdao({ db: db, table: 'midas_user' });
-  dao.TaskList = pgdao({ db: db, table: 'task_list' });
-  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-  dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
-  return dao;
+    dao.Application = pgdao({ db: db, table: 'application' }),
+    dao.User = pgdao({ db: db, table: 'midas_user' });
+    dao.TaskList = pgdao({ db: db, table: 'task_list' });
+    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+    dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
+    dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
+    dao.pgdao = pgdao;
+    return dao;
 };
