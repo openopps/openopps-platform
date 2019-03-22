@@ -46,7 +46,7 @@ var experience = {
       $('#overseas-experience-filter-other').hide();
       $('[name=overseas_experience_other]').val('');
       $('[name=overseas_experience_length]').val('');
-      $('#input-details-other').removeClass('validate'); 
+      $('#experience-other').removeClass('validate'); 
       $('#overseas-total-length').removeClass('validate');   
     }
   },
