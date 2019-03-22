@@ -114,6 +114,7 @@ var ApplyView = Backbone.View.extend({
     this.renderComponentEducation();
     Experience.renderExperienceComponent.bind(this)();
     Statement.characterCount();
+    Experience.characterCount();
     this.checkStatementHeight();
     this.closeSubNav();
 
