@@ -1434,7 +1434,7 @@
     }
   }
 
-  .statement-of-interest {
+  .statement-of-interest, .overseas-length-text-area, .overseas-other-text-area {
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-word;
@@ -1443,4 +1443,6 @@
     -webkit-hyphens: auto;
     hyphens: auto;
   }
+ 
+  
 }
