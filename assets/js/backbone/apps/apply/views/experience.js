@@ -21,12 +21,19 @@ var experience = {
     $('#overseas-experience-details>.field-validation-error').hide();
     if($('input#overseas-experience-yes').is(':checked')) {
       $('#overseas-experience-details').show();
+      $('#overseas-total-length-exp').show();
+      $('#overseas-total-length').addClass('validate');
+      
     } else {
       $('#overseas-experience-details').hide();
       $("input[name='overseas_experience_types']:checkbox").prop('checked', false);
       $('#overseas-experience-filter-other').hide();
       $('[name=overseas_experience_other]').val('');
       $('[name=overseas_experience_length]').val('');
+      $('#overseas-experience-details').hide();
+      $('#overseas-total-length-exp').hide();
+      $('#overseas-total-length').removeClass('validate');
+      $('#experience-other').removeClass('validate');
     }
   },
 
@@ -40,14 +47,12 @@ var experience = {
     if($('input#overseasExperienceOther').is(':checked')) {
       $('#overseas-experience-filter-other').show();
       $('#overseas-experienceQn').removeClass('usa-input-error'); 
-      $('#experience-other').addClass('validate'); 
-      $('#overseas-total-length').addClass('validate');
+      $('#experience-other').addClass('validate');    
     } else {
-      $('#overseas-experience-filter-other').hide();
-      $('[name=overseas_experience_other]').val('');
-      $('[name=overseas_experience_length]').val('');
-      $('#experience-other').removeClass('validate'); 
-      $('#overseas-total-length').removeClass('validate');   
+      $('#overseas-experience-filter-other').hide();      
+        
+      $('[name=overseas_experience_other]').val(''); 
+      $('#experience-other').removeClass('validate');      
     }
   },
 
