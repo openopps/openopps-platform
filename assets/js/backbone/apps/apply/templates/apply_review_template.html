@@ -160,7 +160,9 @@
             <% if (hasSecurityClearance) { %>
               <li class="usajobs-profile-home-section__field-item">
                 <h5 class="usajobs-profile-home-section__field-label">Type of security clearance</h5>
-                <p><%- securityClearance.value %></p>
+                <% _.each(securityClearances, function (h) { %>
+                    <% if (securityClearanceId == h.lookupCodeId) { %><%- h.value %><% } %>
+                <% }); %>
               </li>
               <li class="usajobs-profile-home-section__field-item">
                 <h5 class="usajobs-profile-home-section__field-label">Issued by</h5>
