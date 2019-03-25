@@ -118,13 +118,45 @@ service.removeTaskOwner = async function(userId, params) {
 
 async function updateListApplicant(userId, item) {
     var applicant = await dao.TaskListApplication.query(dao.query.taskListApplicationAndOwner, item.task_list_application_id, userId);
+    var applicantItem = applicant[0];
     if (applicant.length == 1)
     {
-        var applicantItem = applicant[0];
+        var historyRecord = {
+            taskListApplicationId: applicantItem.taskListApplicationId,
+            action: 'update',
+            actionBy: userId,
+            actionDate: new Date,
+            details: { 
+                previous: {
+                    'task_list_id': applicantItem.taskListId,
+                    //'application_id': applicant.applicationId,
+                    'sort_order': applicantItem.sortOrder,
+                    // 'date_last_viewed': applicant.dateLastViewed,
+                    // 'date_last_contacted': applicant.dateLastContacted,
+                    'updated_at': applicantItem.updatedAt,
+                    'updated_by': applicantItem.updatedBy,
+                },
+                'task_list_id': item.task_list_id,
+                'sort_order': item.sort_order,
+            }
+        };  
+        if (historyRecord.details.task_list_id == historyRecord.details.previous.task_list_id)
+        {
+            delete historyRecord.details.task_list_id;
+            delete historyRecord.details.previous.task_list_id;
+        }   
+        if (historyRecord.details.sort_order == historyRecord.details.previous.sort_order)
+        {
+            delete historyRecord.details.sort_order;
+            delete historyRecord.details.previous.sort_order;
+        }  
         applicantItem.taskListId = item.task_list_id;
         applicantItem.sortOrder = item.sort_order;
         applicantItem.updatedBy = userId;
-        return await dao.TaskListApplication.update(applicantItem);
+        return await db.transaction(function*() {
+            yield dao.TaskListApplicationHistory.insert(historyRecord);
+            return yield dao.TaskListApplication.update(applicantItem);
+        });      
     }
     else {
         throw new Error('Error updating card movement');
