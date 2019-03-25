@@ -15,7 +15,7 @@
           </label>
           <select name="sort_attribute" id="sort-saved" class="usajobs-search-controls__sort-control">
             <option value="" disabled>- Sort By -</option>
-            <option value="taskLocation" <% if (sort == 'taskLocation') { %>selected<% } %>>Location</option>
+            <option value="cityName" <% if (sort == 'cityName') { %>selected<% } %>>Location</option>
             <option value="title" <% if (sort == 'title') { %>selected<% } %>>Internship</option>
             <option value="applyEndDate" <% if (sort == 'applyEndDate') { %>selected<% } %>>Closing date</option>
           </select>
@@ -39,7 +39,7 @@
               <% for (var i in data) { %>
                 <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
                   <td class="your-status location">
-                    <%- data[i].taskLocation.replace(', United States', '') %>
+                    <%- data[i].cityName %><% if (data[i].countrySubdivision) { %>, <%- data[i].countrySubdivision %><% } %><% if (data[i].country !== "United States") { %>, <%- data[i].country %><% } %>
                   </td>
                   <td class="application-program-title">
                     <a href="/internships/<%- data[i].id %>" data-id="<%- data[i].id %>"><%- data[i].title %></a>

@@ -46,7 +46,7 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
 
 const savedTaskQuery = 'select ' +
   'task.id, task.title, task.state, task.community_id as "communityId", task."updatedAt", ' +
-  'concat_ws(\', \', task.city_name, csub.value, country.value) as "taskLocation", cycle.apply_end_date as "applyEndDate" ' +
+  'task.city_name as "cityName", csub.value as "countrySubdivision", country.value as country, cycle.apply_end_date as "applyEndDate" ' +
   'from task ' +
   'join saved_task on saved_task.task_id = task.id ' +
   'left join cycle on cycle.cycle_id = task.cycle_id ' +
