@@ -9,6 +9,9 @@ service.getApplicationSummary = async function (taskListApplicationId, sub, auth
   if (results.transcript_id !== null) {
     results.transcript_key = tamperProof.Hmac([sub, auth_time, results.transcript_id].join('|'));
   }
+  if (results.linked_id !== null) {
+    results.linked_key = tamperProof.Hmac([sub, auth_time, results.linked_id].join('|'));
+  }
   return results;
 };
 
