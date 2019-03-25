@@ -24,7 +24,8 @@ dao.query.internshipListQuery = `
 
 dao.query.internshipSummaryQuery = `
   select 
-    task.id, 
+    task.id,
+    community.community_name,
     "cycle".name as "cycleName", 
     task.title as "taskTitle", 
     bureau.name as "bureauName",
