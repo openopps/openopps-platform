@@ -101,7 +101,8 @@ var ApplyView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation = this.params.get('editEducation');
+    this.data.editEducation = this.params.get('editEducation');
+    Program.getSavedOpportunities.bind(this)();
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },

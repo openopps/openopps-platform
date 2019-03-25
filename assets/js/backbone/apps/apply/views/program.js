@@ -35,6 +35,16 @@ function swapPrograms (program1, program2) {
 
 module.exports = {};
 
+module.exports.getSavedOpportunities = function () {
+  $.ajax({
+    url: '/api/task/saved',
+    dataType: 'json',
+    success: function (data) {  
+      this.data.savedOpportunities = data;
+    }.bind(this),
+  });
+},
+
 module.exports.saveProgramContinue = function (e) {
   e.preventDefault && e.preventDefault();
   var emptySelections = $('.program-empty');

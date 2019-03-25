@@ -174,6 +174,12 @@ async function sendTaskNotification (user, task, action) {
   }
 }
 
+async function getSavedOpportunities (user) {
+  return {
+    savedOpportunities: await dao.Task.query(dao.query.savedTask, user.id),
+  };
+}
+
 async function canUpdateOpportunity (user, id) {
   var task = await dao.Task.findOne('id = ?', id);
   if (task && user.isAdmin) {
@@ -659,5 +665,6 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };
