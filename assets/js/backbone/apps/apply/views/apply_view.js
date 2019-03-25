@@ -93,6 +93,8 @@ var ApplyView = Backbone.View.extend({
       secondChoice: _.findWhere(this.data.tasks, { sortOrder: 2 }),
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
+      overseasExperienceLengthHtml: marked(this.data.overseasExperienceLength),
+      overseasExperienceOtherHtml: marked(this.data.overseasExperienceOther),
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];

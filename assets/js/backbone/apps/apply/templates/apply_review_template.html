@@ -149,10 +149,23 @@
             </li>
             <% if (hasOverseasExperience) { %>
               <li class="usajobs-profile-home-section__field-item">
-                <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience?</h5>
+                <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience</h5>
                 <p><%- overseasExperienceTypes.join(', ').replace(/\b\w/g, function(l){ return l.toUpperCase() }) %></p>
               </li>
+            <% if(_.contains(overseasExperienceTypes, 'Other' )) { %>
+               <li class="usajobs-profile-home-section__field-item overseas-other-text-area">
+                  <h5 class="usajobs-profile-home-section__field-label">Type of overseas experience "other" specify</h5>
+                  <p class="overseas-other-text-area"><%= overseasExperienceOtherHtml %></p>                       
+                </li> 
+               <% } %> 
+
+              <li class="usajobs-profile-home-section__field-item overseas-length-text-area">
+                <h5 class="usajobs-profile-home-section__field-label">Total length of overseas experience</h5>
+                <p class="overseas-length-text-area"><%= overseasExperienceLengthHtml %></p>                       
+              </li>
+           
             <% } %>
+           
             <li class="usajobs-profile-home-section__field-item">
               <h5 class="usajobs-profile-home-section__field-label">Security clearance</h5>
               <p><%- hasSecurityClearance ? "Yes" : "No" %></p>
