@@ -199,6 +199,7 @@ module.exports = function (db) {
   dao.TaskShareHistory = pgdao({ db: db, table: 'task_share_history' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
   dao.Community = pgdao({ db: db, table: 'community' });
   return dao;
 };
