@@ -85,7 +85,7 @@ var InternshipView = BaseView.extend({
       }.bind(this),
     };
     if (error.responseJSON && error.responseJSON.type == 'maximum-reached') {
-      primaryButton.text = 'Continue to application';
+      primaryButton.text = 'Update application';
       primaryButton.action = function () {
         this.modalComponent.cleanup();
         Backbone.history.navigate('/apply/' + error.responseJSON.applicationId + '?step=1', { trigger: true });
@@ -96,7 +96,7 @@ var InternshipView = BaseView.extend({
       id: 'internship-apply-error',
       alert: 'error',
       primary: primaryButton,
-      modalTitle: 'You are not eligible',
+      modalTitle: 'You\'ve already selected 3 internships',
       modalBody: error.responseJSON ? error.responseJSON.message : error.responseText,
     }).render();
   },

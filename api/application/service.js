@@ -72,7 +72,7 @@ async function processUnpaidApplication (user, data, callback) {
   } else if (applicationTasks.length >= 3) {
     callback({
       type:'maximum-reached',
-      message: 'You have already picked the maximum of 3 programs. To apply to this internship please remove at least 1 of your already chosen programs from your application.',
+      message: 'You\'ve already selected the maximum of three internships as part of your application to the U.S. Department of State Student Internship Program (Unpaid). If you want to apply to this internship, you must update your application to remove one of the selected internships.',
       applicationId: application.applicationId,
     });
   } else {
