@@ -25,14 +25,14 @@ service.removeApplicationTask  = async function(application_task_id, task_list_a
     details: { 
         'removed_by_userId': user.id, 
         'action_by_username': user.username,
-        'task_list_id': taskListApplicationRecord.task_list_id,
-        'application_id': taskListApplicationRecord.application_id,
-        'sort_order': taskListApplicationRecord.sort_order,
-        'date_last_viewed': taskListApplicationRecord.date_last_viewed,
-        'date_last_contacted': taskListApplicationRecord.date_last_contacted,
-        'created_at': taskListApplicationRecord.created_at,
-        'updated_at': taskListApplicationRecord.updated_at,
-        'updated_by': taskListApplicationRecord.updated_by,
+        'task_list_id': taskListApplicationRecord.taskListId,
+        'application_id': taskListApplicationRecord.applicationId,
+        'sort_order': taskListApplicationRecord.sortOrder,
+        'date_last_viewed': taskListApplicationRecord.dateLastViewed,
+        'date_last_contacted': taskListApplicationRecord.dateLastContacted,
+        'created_at': taskListApplicationRecord.createdAt,
+        'updated_at': taskListApplicationRecord.updatedAt,
+        'updated_by': taskListApplicationRecord.updatedBy,
     }
   }
   return await db.transaction(function* () {
