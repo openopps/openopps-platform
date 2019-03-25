@@ -84,7 +84,7 @@ var InternshipsView = Backbone.View.extend({
         template: templates.saved,
         target: 'task',
         handle: 'savedInternships',  // used in css and in table id
-        data: _.sortBy(data.savedOpportunities, 'updatedAt').reverse(),
+        data: _.sortBy(data.savedOpportunities, 'applyEndDate').reverse(),
       });
       this.savedView.render();
     }.bind(this));
@@ -138,12 +138,17 @@ var InternshipsView = Backbone.View.extend({
         return item.communityName.toLowerCase();
       });     
     }
+    if(target.value == 'taskLocation'){
+      sortedData = _.sortBy(data, function (item){
+        return item.taskLocation.toLowerCase();
+      });     
+    }
     if(target.value == 'title'){
       sortedData = _.sortBy(data, function (item){
         return item.title.toLowerCase();
       });     
     }
-    if(target.value == 'updatedAt') {
+    if(target.value == 'updatedAt' || target.value == 'applyEndDate') {
       sortedData = sortedData.reverse();
     }
     if(target.id == 'sort-applied') {
