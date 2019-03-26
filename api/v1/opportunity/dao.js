@@ -31,7 +31,7 @@ dao.query.internshipListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
-    and state = ?
+    and "cycle".apply_end_date < current_date
 `;
 
 dao.query.internshipSummaryQuery = `

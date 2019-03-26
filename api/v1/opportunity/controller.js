@@ -6,7 +6,7 @@ var _ = require('lodash');
 var router = new Router();
 
 router.get('/api/v1/task/internships', auth.bearer, async (ctx, next) => {
-  var data = await service.getInternships(ctx.state.user.id, ctx.query.state); 
+  var data = await service.getInternships(ctx.state.user.id); 
   ctx.body = data;
 });
 
