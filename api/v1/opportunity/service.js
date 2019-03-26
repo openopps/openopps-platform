@@ -4,12 +4,12 @@ const dao = require('./dao')(db);
 var service = {};
 
 service.getInternships = async function (userId, state) {
-  var results = await dao.Task.db.query(dao.query.internshipListQuery, userId, userId, state);
+  var results = await dao.Task.db.query(dao.query.internshipListQuery, userId, state);
   return results.rows;
 };
 
-service.getInternshipSummary = async function (userId, taskId) {
-  var results = await dao.Task.db.query(dao.query.internshipSummaryQuery, userId, taskId);
+service.getInternshipSummary = async function (taskId) {
+  var results = await dao.Task.db.query(dao.query.internshipSummaryQuery, taskId);
   return results.rows[0];
 };
 
@@ -104,7 +104,7 @@ service.removeTaskOwner = async function (userId, params) {
         action: 'delete',
         actionBy: userId,
         actionDate: new Date,
-        details: { 'shared_by_user_id': owner.sharedByUserId }
+        details: { 'shared_by_user_id': owner.sharedByUserId },
       };
       return await db.transaction(function*() {
         yield dao.TaskShareHistory.insert(historyRecord);
@@ -140,7 +140,7 @@ async function updateListApplicant (userId, item) {
         },
         'task_list_id': item.task_list_id,
         'sort_order': item.sort_order,
-      }
+      },
     };  
     if (historyRecord.details.task_list_id == historyRecord.details.previous.task_list_id)
     {
