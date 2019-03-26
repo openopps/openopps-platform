@@ -3,8 +3,8 @@ const dao = require('./dao')(db);
 
 var service = {};
 
-service.getInternships = async function (userId, state) {
-  var results = await dao.Task.db.query(dao.query.internshipListQuery, userId, state);
+service.getInternships = async function (userId) {
+  var results = await dao.Task.db.query(dao.query.internshipListQuery, userId);
   return results.rows;
 };
 
