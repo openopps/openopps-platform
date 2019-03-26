@@ -2,7 +2,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 
-var AdminCommunityCycleTemplate = require('../templates/admin_community_cycle_template.html');
+var AdminCommunityCycleTemplate = require('../templates/admin_community_cycle_form_template.html');
 var CycleModel = require('../../../entities/cycles/cycle_model');
 var ModalComponent = require('../../../components/modal');
 
@@ -19,9 +19,8 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     this.options = options;
     this.data = {
       user: window.cache.currentUser,
-      target: this.options.target,
+      community: this.options.community,
     };
-    this.community = {};
     this.cycle = new CycleModel();
     this.initializeListeners();
   },
@@ -57,37 +56,10 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
 
   render: function (replace) {
     this.$el.show();
-    this.loadCommunityData();
-    return this;
-  },
-
-  loadCommunityData: function () {
-    $.ajax({
-      url: '/api/admin/' + this.options.target + '/' + this.options.targetId,
-      dataType: 'json',
-      success: function (targetInfo) {
-        this[this.options.target] = targetInfo;
-        this.renderTemplate();
-      }.bind(this),
-    });
-  },
-
-  loadCycleData: function () {
-
-  },
-
-  renderTemplate: function () {
-    _.extend(this.data, {
-      community: this.community,
-      cycle: { },
-    });
-
+    _.extend(this.data, { cycle: {} });
     var template = _.template(AdminCommunityCycleTemplate)(this.data);
     this.$el.html(template);
-    this.rendered = true;
-    // this.fetchData(this.data);
-    this.data.target = this.options.target;
-    $('#search-results-loading').hide();
+    return this;
   },
 
   cancel: function (e) {

@@ -3,11 +3,13 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 var AdminCommunityCycleTemplate = require('../templates/admin_community_cycle_template.html');
+var AdminCommunityCycleEditView = require('./admin_community_cycle_edit_view');
 var ModalComponent = require('../../../components/modal');
 
 var AdminCommunityCycleView = Backbone.View.extend({
 
   events: {
+    'click #create-cycle': 'initializeCycleEditView'
   },
 
   initialize: function (options) {
@@ -47,7 +49,17 @@ var AdminCommunityCycleView = Backbone.View.extend({
     $('#search-results-loading').hide();
   },
 
+  initializeCycleEditView: function (event) {
+    event.preventDefault && event.preventDefault();
+    Backbone.history.navigate('/admin/community/' + this.community.communityId + '/cycles/new', { trigger: false });
+    this.cycleEditView = new AdminCommunityCycleEditView({
+      el: '#admin-cycle',
+      community: this.community,
+    }).render();
+  },
+
   cleanup: function () {
+    this.cycleEditView && this.cycleEditView.cleanup();
     removeView(this);
   },
 
