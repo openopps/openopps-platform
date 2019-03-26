@@ -45,9 +45,13 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
   'WHERE app.user_id = ? ';
 
 const savedTaskQuery = 'select ' +
-  'task.id, title, state, task.community_id, "updatedAt" ' +
+  'task.id, task.title, task.state, task.community_id as "communityId", task."updatedAt", ' +
+  'task.city_name as "cityName", csub.value as "countrySubdivision", country.value as country, cycle.apply_end_date as "applyEndDate" ' +
   'from task ' +
   'join saved_task on saved_task.task_id = task.id ' +
+  'left join cycle on cycle.cycle_id = task.cycle_id ' +
+  'left join country_subdivision csub on csub.country_subdivision_id = task.country_subdivision_id ' +
+  'left join country on country.country_id = task.country_id ' +
   'where saved_task.deleted_at is null and saved_task.user_id = ?';
 
 const options = {
@@ -110,6 +114,9 @@ module.exports = function (db) {
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Passport: dao({ db: db, table: 'passport' }),
     Application: dao({ db: db, table: 'application' }),
+    Cycle: dao({ db: db, table: 'cycle' }),
+    Country: dao({ db: db, table: 'country' }),
+    CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     query: {
       user: userQuery,
       tag: tagQuery,

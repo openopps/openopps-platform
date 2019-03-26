@@ -24,7 +24,8 @@ dao.query.internshipListQuery = `
 
 dao.query.internshipSummaryQuery = `
   select 
-    task.id, 
+    task.id,
+    community.community_name,
     "cycle".name as "cycleName", 
     task.title as "taskTitle", 
     bureau.name as "bureauName",
@@ -165,8 +166,8 @@ dao.query.taskListApplicationQuery = `
       from (
       select "language".value
       from "language"    
-        inner join language_skill on "language".language_id = language_skill.language_id
-      where "language".language_id = language_skill.language_id and language_skill.application_id = application.application_id
+        inner join application_language_skill on "language".language_id = application_language_skill.language_id
+      where "language".language_id = application_language_skill.language_id and application_language_skill.application_id = application.application_id
       limit 3
       ) item
     ) as languages
@@ -195,8 +196,10 @@ dao.query.communityByTaskAndEmail = `
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' }),
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
+  dao.TaskShareHistory = pgdao({ db: db, table: 'task_share_history' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
   dao.Community = pgdao({ db: db, table: 'community' });
   return dao;
 };

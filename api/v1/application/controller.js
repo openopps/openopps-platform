@@ -18,7 +18,7 @@ router.post('/api/v1/application/removeApplicationTask', auth.bearer, async(ctx,
     });
     if (owner)
     {
-        var data = await service.removeApplicationTask(ctx.request.fields.applicationTaskId, ctx.request.fields.taskListApplicationId);
+        var data = await service.removeApplicationTask(ctx.request.fields.applicationTaskId, ctx.request.fields.taskListApplicationId, ctx.state.user);
         if(!data){
             ctx.status = 401;
             ctx.body = { err: 'There was an error removing the applicant.'};
