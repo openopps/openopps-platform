@@ -10,7 +10,19 @@ dao.query.internshipListQuery = `
     task.title as "Title", 
     task.interns as "NumberOfPositions",
     coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
-    (select count(*) from application_task where application_task."task_id" = task.id) as "ApplicantCount"
+    (select count(*) from application_task where application_task."task_id" = task.id) as "ApplicantCount",
+    (select count(*) from task_list where task_list.task_id = task.id) as "ListCount",
+    (
+      select json_agg(item)
+      from (
+        select updated_at, midas_user.given_name || ' ' || midas_user.last_name as fullname
+        from task_list
+          inner join midas_user on task_list.updated_by = midas_user.id
+        where task_id = task.id
+        order by updated_at desc
+        limit 1
+      ) item
+    ) as "last_updated"
   from 
     task 
     inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
