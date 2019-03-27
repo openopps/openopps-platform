@@ -32,7 +32,10 @@ const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skil
   ' where l1.lookup_code_id= g.speaking_proficiency_id and l2.lookup_code_id =g.reading_proficiency_id and r.language_id= g.language_id and l3.lookup_code_id=g.writing_proficiency_id and g.task_id=? ' +
   'order by g.language_skill_id ';
 
- 
+const applicationTaskQuery= 'select application.* from application ' +  
+'join application_task on application_task.application_id= application.application_id ' +
+'where application_task.user_id= ? and application_task.task_id= ? ';
+
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
@@ -223,6 +226,7 @@ module.exports = function (db) {
     Bureau:dao({ db: db, table: 'bureau' }),
     TaskShare:dao({ db: db, table: 'task_share'}),
     SavedTask: dao({ db: db, table: 'saved_task' }),
+    Application: dao({db:db,table:'application'}),
     query: {
       task: taskQuery,
       user: userQuery,
@@ -241,6 +245,7 @@ module.exports = function (db) {
       intern:countryQuery,
       countrySubdivision:countrySubdivisionQuery,
       languageList:languageListQuery,
+      applicationTasks:applicationTaskQuery,
     },
     options: options,
     clean: clean,

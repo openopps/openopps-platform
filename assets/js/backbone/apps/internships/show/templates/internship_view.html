@@ -84,7 +84,11 @@
               <% } %>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>
@@ -158,7 +162,11 @@
               <% } %>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>
@@ -195,8 +203,13 @@
         <h4>For more information</h4>
         <p>Visit <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid)'s</a> website.</p>
         <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
-          <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
-        <% } %>
+          <% if (model.application) { %>
+            <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>
+  
+            <% } else { %>
+              <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+              <% } %>
+          <% } %>
       </div>
     
     </aside>
