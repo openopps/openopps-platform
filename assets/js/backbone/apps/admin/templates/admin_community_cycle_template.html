@@ -41,7 +41,7 @@
               <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__button">
-            <a href="#open/<%- cycle.cycleId %>"
+            <a href="<%- cycle.cycleId %>"
               data-cycle-id="<%- cycle.cycleId %>"
               data-cycle-title="<%- cycle.name %>"
               class="edit-cycle"
@@ -52,10 +52,10 @@
           </td>
           <% if (true) { %>
             <td class="metrics-table__button">
-              <a href="#delete/<%- cycle.cycleId %>"
+              <a href="#delete"
                 data-task-id="<%- cycle.cycleId %>"
                 data-task-title="<%- cycle.name %>"
-                class="delete-task"
+                class="delete-cycle"
                 alt="Delete cycle"
                 title="Delete cycle">
                 <span class='fa fa-times'></span>
