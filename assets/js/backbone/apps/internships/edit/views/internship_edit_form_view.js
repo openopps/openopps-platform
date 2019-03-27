@@ -773,7 +773,7 @@ var InternshipEditFormView = Backbone.View.extend({
       language              : this.dataLanguageArray,
       location              : this.$('.opportunity-location .selected').attr('id'),
       countryId             : this.$('#task_tag_country').val() || null,
-      countrySubdivisionId  : this.$('#task_tag_countrySubdivision').val() || null,
+      countrySubdivisionId  : this.$('#task_tag_countrySubdivision').select2('data') ? this.$('#task_tag_countrySubdivision').val() : null,
       country               : null,
       countrySubdivision    : null,
       cityName              : null,
