@@ -26,6 +26,7 @@
     "db-migrate-pg": "^0.4.0",
     "ejs": "^2.5.7",
     "elasticsearch": "^15.1.1",
+    "faker": "^4.1.0",
     "font-face-mixin": "^1.1.0",
     "fs-extra": "^5.0.0",
     "git-clone": "^0.1.0",
