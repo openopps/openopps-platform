@@ -715,7 +715,7 @@ var InternshipEditFormView = Backbone.View.extend({
     if(e) {
       $(e.currentTarget).addClass('selected');
     } else {
-      if(this.model.attributes.country&&this.model.attributes.countrySubdivision&&this.model.attributes.cityName) {
+      if(this.model.attributes.country&&this.model.attributes.cityName) {
         $('#specific-location').addClass('selected');
         $('#task_tag_city').val(this.model.attributes.cityName);
       } else {
@@ -790,12 +790,11 @@ var InternshipEditFormView = Backbone.View.extend({
 
     if($('.opportunity-location.selected').val() !== 'anywhere') {
       modelData.country             = this.$('#task_tag_country').select2('data').value;
-      modelData.countrySubdivision  = this.$('#task_tag_countrySubdivision').select2('data').value;
+      modelData.countrySubdivision  = this.$('#task_tag_countrySubdivision').select2('data') ? this.$('#task_tag_countrySubdivision').select2('data').value : null;
       modelData.cityName            = this.$('#task_tag_city').val();
     }
     
     modelData.tags = _(this.getTagsFromInternPage()).chain().map(function (tag) {
-      console.log(tag);
       if (!tag || !tag.id) { return; }
       return (tag.id && tag.id !== tag.name) ? parseInt(tag.id, 10) : {
         name: tag.name,

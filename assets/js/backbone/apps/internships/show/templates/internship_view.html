@@ -84,7 +84,11 @@
               <% } %>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>
@@ -158,7 +162,11 @@
               <% } %>
               <h4>Location</h4>
               <div>
-                <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
               </div>
               <% if (model.country) { %>
                 <h4>Country</h4>

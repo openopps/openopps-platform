@@ -36,7 +36,13 @@
               <h4>Office/post</h4>
               <div><%- data.officeName %></div>
               <h4>Location</h4>
-              <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
+              <div>
+                <% if (data.countrySubdivision) { %>
+                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
+                <% } else { %>
+                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
+                <% } %>
+              </div>
               <% if (data.country) { %>
                 <h4>Country</h4>
                 <div><%- data.country %></div>
@@ -96,7 +102,13 @@
               <h4>Office/post</h4>
               <div><%- data.officeName %></div>
               <h4>Location</h4>
-              <div><%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %></div>
+              <div>
+                <% if (data.countrySubdivision) { %>
+                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
+                <% } else { %>
+                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
+                <% } %>
+              </div>
               <% if (data.country) { %>
                 <h4>Country</h4>
                 <div><%- data.country %></div>
