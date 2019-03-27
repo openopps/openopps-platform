@@ -156,12 +156,12 @@ async function sendTaskNotification (user, task, action) {
 }
 
 async function canUpdateOpportunity (user, id) {
-  var task = await dao.Task.findOne('id = ?', id);
-  if (task && user.isAdmin) {
-    return true;
-  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
-    return true;
-  } else if (await isCommunityAdmin(user, task)) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });
+  if (!task) {
+    return false;
+  } else if (task.userId == user.id || user.isAdmin
+    || (user.isAgencyAdmin && await checkAgency(user, task.userId))
+    || await isCommunityAdmin(user, task)) {
     return true;
   } else {
     return false;
@@ -169,17 +169,18 @@ async function canUpdateOpportunity (user, id) {
 }
 
 async function canAdministerTask (user, id) {
-  var task = await dao.Task.findOne('id = ?', id);
-  if (task && user.isAdmin) {
-    return true;
-  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
-    return true;
-  } else if (await isCommunityAdmin(user, task)) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });;
+  if (!task) {
+    return false;
+  } else if (user.isAdmin
+    || (user.isAgencyAdmin && await checkAgency(user, task.userId))
+    || await isCommunityAdmin(user, task)) {
     return true;
   } else {
     return false;
   }
 }
+
 async function getCommunities (userId) {
   var communities = await dao.Community.query(dao.query.communitiesQuery, userId);
   var communityTypes = {
