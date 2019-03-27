@@ -27,7 +27,7 @@
             <div class="skills">
               <div>Desired skills:</div>
               <% _.each(madlibTags['skill'], function (t) { %>
-                <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                <a class="skill-label" href="/search/internships?skill=<%= t.name %>"><%= t.name %></a>
               <% }) %>
             </div>
           </div>
