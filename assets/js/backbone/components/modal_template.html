@@ -27,7 +27,7 @@
             <button id="secondary-btn" class="usa-button usa-button-secondary" data-behavior="modal.close" <%= disableSecondary ? 'disabled' : '' %>><%- secondary.text %></button>
           <% } %>
           <% if (primary && (primary.text !== null && typeof(primary.text) !== 'undefined')) { %>
-            <button id="primary-btn" class="usa-button usa-button-primary" data-behavior="modal.close" <%= disablePrimary ? 'disabled' : '' %>><%- primary.text %></button>
+            <button id="primary-btn" class="usa-button <% if (action != 'delete') { %>usa-button-primary<% } else { %>usajobs-button-destructive-action<% } %>" data-behavior="modal.close" <%= disablePrimary ? 'disabled' : '' %>><%- primary.text %></button>
           <% } %>
         </div>
 

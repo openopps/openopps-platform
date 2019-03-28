@@ -77,11 +77,8 @@ var ProfileSkillsView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
-    $('.usajobs-nav__menu').hide();
-
     this.initializeForm();
     this.initializeTags();
-
     return this;
   },
 

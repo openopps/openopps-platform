@@ -44,4 +44,28 @@ router.post('/api/cycle', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/cycle/:id', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.request.body.communityId)) {
+    await service.updateCycle(_.extend(ctx.request.body, { updatedBy: ctx.state.user.id }), (cycle, err) => {
+      ctx.status = err ? 400 : 200;
+      ctx.body = err ? err.message : cycle;
+    });
+  } else {
+    await service.createAudit('FORBIDDEN_ACCESS', ctx, initializeAuditData(ctx));
+    ctx.status = 403;
+  }
+});
+
+router.delete('/api/cycle/:communityId/:cycleId', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.communityId)) {
+    await service.deleteCycle(ctx.params.communityId, ctx.params.cycleId, (err) => {
+      ctx.status = err ? 400 : 200;
+      ctx.body = err ? err.message : 'success';
+    });
+  } else {
+    await service.createAudit('FORBIDDEN_ACCESS', ctx, initializeAuditData(ctx));
+    ctx.status = 403;
+  }
+});
+
 module.exports = router.routes();

@@ -251,6 +251,50 @@
     }
   }
 
+  .cycle-table {
+
+    width: 100%;
+    
+    th.center {
+      text-align: center;
+
+      .left {
+        text-align: left;
+      }
+    }
+
+    .metrics-table {
+      &__title {
+        padding-left: 0;
+      }
+
+      &__label {
+        min-width: 15rem;
+      }
+
+      &__date {
+        min-width: 10rem;
+      }
+
+      &__button {
+        min-width: 10rem;
+        text-align: center;
+      }
+    }
+
+    .delete-cycle {
+      color: #CD2026;
+    }
+
+    .edit-cycle, .delete-cycle {
+      padding: 7px 10px;
+    }
+
+    .edit-cycle:visited {
+      color: $color-primary;
+    }
+  }
+
   .announcement-description, #announcement-title {
     width: 100%;
     max-width: initial;
