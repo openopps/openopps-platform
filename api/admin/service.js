@@ -19,15 +19,26 @@ async function getMetrics () {
 
 async function getCommunityTaskStateMetrics (communityId){
   var states = {};
-  
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId,dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId , dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
-  return states;
+  var community = await communityService.findById(communityId);
+
+  if (community.duration == 'Cyclical') {
+    states.approved = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'open' and \"apply_start_date\" > now()", communityId, dao.options.task));
+    states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'open' and \"apply_start_date\" <= now()", communityId, dao.options.task));
+    states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
+    states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId, dao.options.task));
+    states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
+    states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
+    return states;
+  } else {
+    states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId, dao.options.task));
+    states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
+    states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
+    states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
+    states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId, dao.options.task));
+    states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
+    states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
+    return states;
+  }
 }
 
 
