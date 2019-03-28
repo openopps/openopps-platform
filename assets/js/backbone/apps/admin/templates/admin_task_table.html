@@ -63,7 +63,7 @@
                 <i class="fas fa-user-cog"></i>
               </a>
             </td>
-          <% } else if (_.contains(['completed', 'canceled'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['completed', 'canceled', 'draft'], task.state.toLowerCase())) { %>
             <td>&nbsp;</td>
           <% } %>   
         
@@ -92,7 +92,7 @@
                 </a>
               </td>
             <% } %>
-          <% } else if (_.contains(['completed', 'canceled'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['completed', 'canceled', 'draft'], task.state.toLowerCase())) { %>
             <td>&nbsp;</td>
           <% } %>
       </tr>
