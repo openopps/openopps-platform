@@ -20,8 +20,9 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     this.data = {
       user: window.cache.currentUser,
       community: this.options.community,
+      cycle: this.options.cycle || {},
     };
-    this.cycle = new CycleModel();
+    this.cycle = new CycleModel(this.data.cycle);
     this.initializeListeners();
   },
 
@@ -30,8 +31,8 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
         id: 'create-cycle',
-        modalTitle: 'New cycle created',
-        modalBody: 'The new cycle ' + cycle.get('name') + ' has been successfully created.',
+        modalTitle: (this.data.cycle.cycleId ? 'Cycle updated' : 'New cycle created'),
+        modalBody: 'The cycle <b>' + cycle.get('name') + '</b> has been successfully ' + (this.data.cycle.cycleId ? 'updated.' : 'created.'),
         primary: {
           text: 'Close',
           action: function () {
@@ -41,7 +42,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         },
         secondary: {},
       }).render();
-    });
+    }.bind(this));
     this.listenTo(this.cycle, 'cycle:save:error', function (model, response, options) {
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
@@ -56,7 +57,6 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
 
   render: function (replace) {
     this.$el.show();
-    _.extend(this.data, { cycle: {} });
     var template = _.template(AdminCommunityCycleTemplate)(this.data);
     this.$el.html(template);
     return this;
@@ -74,7 +74,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     } else {
       var data = {
         cycleId: this.cycle.get('cycleId'),
-        communityId: this.community.communityId,
+        communityId: this.data.community.communityId,
         name: $('#cycle-title').val(),
         postingStartDate: this.getDateFromFormGroup('first-day-date'),
         postingEndDate: this.getDateFromFormGroup('last-day-date'),
@@ -82,6 +82,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         applyEndDate: this.getDateFromFormGroup('stop-application-date'),
         cycleStartDate: this.getDateFromFormGroup('start-internship-date'),
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
+        updatedAt: this.cycle.get('updatedAt'),
       };
       this.cycle.trigger('cycle:save', data);
     }

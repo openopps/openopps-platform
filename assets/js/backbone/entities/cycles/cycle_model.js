@@ -2,6 +2,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var CycleModel = Backbone.Model.extend({
+  idAttribute: 'cycleId',
   urlRoot: '/api/cycle',
 
   initialize: function () {

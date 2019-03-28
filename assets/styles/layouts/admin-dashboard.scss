@@ -289,6 +289,10 @@
     .edit-cycle, .delete-cycle {
       padding: 7px 10px;
     }
+
+    .edit-cycle:visited {
+      color: $color-primary;
+    }
   }
 
   .announcement-description, #announcement-title {

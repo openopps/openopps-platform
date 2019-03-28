@@ -54,6 +54,7 @@ var Modal = BaseComponent.extend({
       };
     }   
     this.options.alert = this.options.alert || '';
+    this.options.action = this.options.action || '';
     this.options.disableClose = this.options.disableClose || false;
     this.options.disablePrimary = this.options.disablePrimary || false;
     this.options.disableSecondary = this.options.disableSecondary || false;

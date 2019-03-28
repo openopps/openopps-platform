@@ -10,7 +10,7 @@
 <p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
 <h2><%- communityName %>
 </h2>
-<h3>Cycles<a href="/admin/community/<%- communityId %>/cycles/new" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
+<h3>Cycles<a href="/admin/community/<%- communityId %>/cycles?edit=new" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
 </h3>
 
 <div id="cycle-table" class="table-responsive">
@@ -29,7 +29,7 @@
       <% _.each(_.sortBy(cycles, 'postingStartDate').reverse(), function (cycle) { %>
         <tr>
           <td class="metrics-table__title">
-            <a href="#<%- cycle.cycleId %>"><%- cycle.name %></a>
+            <%- cycle.name %>
           </td>
           <td class="metrics-table__date">
               <%- moment(cycle.postingStartDate).format('MM/DD/YY') %> - <%- moment(cycle.postingEndDate).format('MM/DD/YY') %>
@@ -41,7 +41,7 @@
               <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__button">
-            <a href="<%- cycle.cycleId %>"
+            <a href="/admin/community/<%- communityId %>/cycles?edit=<%- cycle.cycleId %>"
               data-cycle-id="<%- cycle.cycleId %>"
               data-cycle-title="<%- cycle.name %>"
               class="edit-cycle"
@@ -50,11 +50,11 @@
               <span class='fas fa-edit'></span>
             </a>
           </td>
-          <% if (true) { %>
+          <% if (new Date(cycle.applyStartDate) > new Date()) { %>
             <td class="metrics-table__button">
               <a href="#delete"
-                data-task-id="<%- cycle.cycleId %>"
-                data-task-title="<%- cycle.name %>"
+                data-cycle-id="<%- cycle.cycleId %>"
+                data-cycle-title="<%- cycle.name %>"
                 class="delete-cycle"
                 alt="Delete cycle"
                 title="Delete cycle">
