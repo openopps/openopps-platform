@@ -28,6 +28,9 @@ async function findById (id, user) {
       return false;
     });
   }
+  if(user && user.hiringPath=='student'){
+    task.application=(await dao.Application.db.query(dao.query.applicationTasks,user.id,task.id)).rows[0];
+  }
   
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
@@ -42,6 +45,7 @@ async function findById (id, user) {
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    
   }
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;

@@ -58,7 +58,8 @@ const taskCommunityStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'where community_id= ? and ';
+  'left join cycle on cycle.cycle_id = task.cycle_id ' +
+  'where task.community_id= ? and ';
 
 const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
 

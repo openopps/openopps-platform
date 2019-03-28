@@ -210,10 +210,10 @@ var AdminTaskView = Backbone.View.extend({
             reindexModal.cleanup();
           }
         }.bind(this),
-      }
+      },
     });
     reindexModal.render();  
-  }
+  },
 });
 
 module.exports = AdminTaskView;

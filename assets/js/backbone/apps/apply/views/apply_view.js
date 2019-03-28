@@ -115,6 +115,7 @@ var ApplyView = Backbone.View.extend({
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     this.renderComponentEducation();
     Experience.renderExperienceComponent.bind(this)();
+    Transcripts.renderTranscripts.bind(this)();
     Statement.characterCount();
     Experience.characterCount();
     this.checkStatementHeight();
