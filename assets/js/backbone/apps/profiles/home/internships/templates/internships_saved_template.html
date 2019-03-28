@@ -39,7 +39,11 @@
               <% for (var i in data) { %>
                 <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
                   <td class="your-status location">
-                    <%- data[i].cityName %><% if (data[i].countrySubdivision) { %>, <%- data[i].countrySubdivision %><% } %><% if (data[i].country !== "United States") { %>, <%- data[i].country %><% } %>
+                    <% if (data[i].cityName) { %>
+                      <%- data[i].cityName %><% if (data[i].countrySubdivision) { %>, <%- data[i].countrySubdivision %><% } %><% if (data[i].country !== "United States") { %>, <%- data[i].country %><% } %>
+                    <% } else { %>
+                      Virtual
+                    <% } %>
                   </td>
                   <td class="application-program-title">
                     <a href="/internships/<%- data[i].id %>" data-id="<%- data[i].id %>"><%- data[i].title %></a>
