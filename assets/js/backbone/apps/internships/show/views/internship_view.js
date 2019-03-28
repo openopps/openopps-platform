@@ -48,6 +48,8 @@ var InternshipView = BaseView.extend({
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
       this.apply({});
     }
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     return this;
   },
 
@@ -207,6 +209,11 @@ var InternshipView = BaseView.extend({
       '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
+  },
+  cleanup: function () {
+    $('.usa-footer-search--intern-hide').show();
+    $('.usa-footer-search--intern').hide();
+    removeView(this);
   },
 
   organizeTags: function (tags) {
