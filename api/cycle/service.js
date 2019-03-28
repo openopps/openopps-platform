@@ -4,29 +4,34 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const Audit = require('../model/Audit');
 
+async function findCycleApplyOverlap (data) {
+  var cycles = await dao.Cycle.find('community_id = ?', data.communityId);
+  var startDate = new Date(data.applyStartDate);
+  var endDate = new Date(data.applyEndDate);
+  return _.filter(cycles, cycle => {
+    var cycleStartDate = new Date(cycle.applyStartDate);
+    var cycleEndDate = new Date(cycle.applyEndDate);
+    return cycle.cycleId != data.cycleId && startDate <= cycleEndDate && cycleStartDate <= endDate;
+  })[0];
+}
+
 module.exports = {};
 
 module.exports.addCycle = async function (data, callback) {
-  var cycles = await this.list(data.communityId);
-  var startDate = new Date(data.applyStartDate);
-  var endDate = new Date(data.applyEndDate);
-  for (var i = 0; i < cycles.length; i++) {
-    var cycleStartDate = new Date(cycles[i].applyStartDate);
-    var cycleEndDate = new Date(cycles[i].applyEndDate);
-    if (startDate <= cycleEndDate && cycleStartDate <= endDate) {
-      return callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycles[i].name + '</b>'});
-    }
+  var cycleOverlap = await findCycleApplyOverlap(data);
+  if (cycleOverlap) {
+    callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycleOverlap.name + '</b>'});
+  } else {
+    await dao.Cycle.insert(_.extend(data, {
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })).then((cycle) => {
+      callback(cycle);
+    }).catch((err) => {
+      log.error('An error was encountered trying to create a cycle', err);
+      callback(null, { message: 'An error was encountered trying to add this cycle to the community.' });
+    });
   }
-
-  await dao.Cycle.insert(_.extend(data, {
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  })).then((cycle) => {
-    callback(cycle);
-  }).catch((err) => {
-    log.error('An error was encountered trying to create a cycle', err);
-    callback(null, { message: 'An error was encountered trying to add this cycle to the community.' });
-  });
 };
 
 module.exports.createAudit = async function (type, ctx, auditData) {
@@ -34,14 +39,47 @@ module.exports.createAudit = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
-module.exports.getAll = function () {
-  return dao.Cycle.find();
-}
+module.exports.deleteCycle = async (communityId, cycleId, callback) => {
+  await dao.Cycle.findOne('community_id = ? and cycle_id = ?', communityId, cycleId).then(async (cycle) => {
+    await dao.Cycle.delete(cycle).then(() => {
+      callback();
+    }).catch((err) => {
+      log.error('An error was encountered trying to delete a cycle', err);
+    callback({ message: 'An error was encountered trying to delete this cycle.' });
+    });
+  }).catch((err) => {
+    log.error('An error was encountered trying to delete a cycle', err);
+    callback({ message: 'An error was encountered trying to delete this cycle.' });
+  })
+};
 
 module.exports.findById = function (cycleId) {
   return dao.Cycle.find('cycle_id = ?', cycleId);
 };
 
+module.exports.getAll = function () {
+  return dao.Cycle.find();
+}
+
 module.exports.list = function (communityId) {
   return dao.Cycle.find('community_id = ?', communityId);
+};
+
+module.exports.updateCycle = async (data, callback) => {
+  await dao.Cycle.findOne('community_id = ? and cycle_id = ?', data.communityId, data.cycleId).then(async () => {
+    var cycleOverlap = await findCycleApplyOverlap(data);
+    if (cycleOverlap) {
+      callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycleOverlap.name + '</b>'});
+    } else {
+      await dao.Cycle.update(data).then((cycle) => {
+        callback(cycle);
+      }).catch((err) => {
+        log.error('An error was encountered trying to update a cycle', err);
+        callback(null, { message: 'An error was encountered trying to update this cycle.' });
+      });
+    }
+  }).catch((err) => {
+    log.error('An error was encountered trying to update a cycle', err);
+    callback(null, { message: 'An error was encountered trying to update this cycle.' });
+  })
 };
