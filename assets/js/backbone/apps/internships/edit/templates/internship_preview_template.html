@@ -33,8 +33,10 @@
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureauName %></div>
-              <h4>Office/post</h4>
-              <div><%- data.officeName %></div>
+              <% if (data.officeName) { %>
+                <h4>Office/post</h4>
+                <div><%- data.officeName %></div>
+              <% } %>
               <h4>Location</h4>
               <div>
                 <% if (data.countrySubdivision) { %>
@@ -99,8 +101,10 @@
             <div class="usajobs-opop__task-intro">
               <h4>Bureau</h4>
               <div><%- data.bureauName %></div>
-              <h4>Office/post</h4>
-              <div><%- data.officeName %></div>
+              <% if (data.officeName) { %>
+                <h4>Office/post</h4>
+                <div><%- data.officeName %></div>
+              <% } %>
               <h4>Location</h4>
               <div>
                 <% if (data.countrySubdivision) { %>
