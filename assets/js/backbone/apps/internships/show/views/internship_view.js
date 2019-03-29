@@ -39,7 +39,7 @@ var InternshipView = BaseView.extend({
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }
     }.bind(this));
-    var compiledTemplate = _.template(InternshipShowTemplate)(this.data);
+    var compiledTemplate = _.template(InternshipShowTemplate)(this.data); 
     this.$el.html(compiledTemplate);
     this.$el.localize();
     $('#search-results-loading').hide();
@@ -48,6 +48,8 @@ var InternshipView = BaseView.extend({
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
       this.apply({});
     }
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     return this;
   },
 
@@ -85,7 +87,7 @@ var InternshipView = BaseView.extend({
       }.bind(this),
     };
     if (error.responseJSON && error.responseJSON.type == 'maximum-reached') {
-      primaryButton.text = 'Continue to application';
+      primaryButton.text = 'Update application';
       primaryButton.action = function () {
         this.modalComponent.cleanup();
         Backbone.history.navigate('/apply/' + error.responseJSON.applicationId + '?step=1', { trigger: true });
@@ -96,7 +98,7 @@ var InternshipView = BaseView.extend({
       id: 'internship-apply-error',
       alert: 'error',
       primary: primaryButton,
-      modalTitle: 'You are not eligible',
+      modalTitle: 'You\'ve already selected 3 internships',
       modalBody: error.responseJSON ? error.responseJSON.message : error.responseText,
     }).render();
   },
@@ -106,15 +108,47 @@ var InternshipView = BaseView.extend({
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '#apply', { trigger: true });
     } else if (window.cache.currentUser.isUsCitizen) {
-      $.ajax({
-        url: '/api/application/apply/' + this.model.attributes.id,
-        method: 'POST',
-      }).done(function (applicationId) {
-        Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
-      }).fail(this.displayError.bind(this));
+      if(this.model.attributes.application){
+        this.updateApplication();
+      }
+      else{
+        $.ajax({
+          url: '/api/application/apply/' + this.model.attributes.id,
+          method: 'POST',
+        }).done(function (applicationId) {
+          Backbone.history.navigate('/apply/' + applicationId, { trigger: true });
+        }).fail(this.displayError.bind(this));
+      }
     } else {
       Backbone.history.navigate('/ineligible_citizenship', { trigger: true, replace: true });
       window.scrollTo(0, 0);
+    }
+  },
+
+
+  updateApplication: function () {
+    if (this.modalComponent) { this.modalComponent.cleanup(); }  
+    var applicationData=this.model.attributes.application;  
+    if (applicationData.submitted_at == null) {
+      Backbone.history.navigate('apply/' + applicationData.application_id, { trigger: true });
+    } else {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'submit-opp',
+        modalTitle: 'Update application',
+        modalBody: '<p>You are about to make edits to an application you have already submitted. Follow these steps to resubmit your application:</p> ' +
+        '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
+        'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
+        'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
+        'your application and click <strong>Submit application</strong>.</li></ol>',
+        primary: {
+          text: 'Update application',
+          action: function () {
+            Backbone.history.navigate('apply/' + applicationData.application_id + '?step=1', { trigger: true });
+            this.modalComponent.cleanup();
+          }.bind(this),
+        },
+      }).render();
     }
   },
 
@@ -175,6 +209,11 @@ var InternshipView = BaseView.extend({
       '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
+  },
+  cleanup: function () {
+    $('.usa-footer-search--intern-hide').show();
+    $('.usa-footer-search--intern').hide();
+    removeView(this);
   },
 
   organizeTags: function (tags) {

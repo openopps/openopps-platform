@@ -85,6 +85,7 @@ var InternshipsView = Backbone.View.extend({
         target: 'task',
         handle: 'savedInternships',  // used in css and in table id
         data: _.sortBy(data.savedOpportunities, 'applyEndDate').reverse(),
+        sort: 'applyEndDate',
       });
       this.savedView.render();
     }.bind(this));

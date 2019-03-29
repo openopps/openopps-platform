@@ -2,6 +2,7 @@ const $ = require('jquery');
 const _ = require('underscore');
 const Backbone = require('backbone');
 const ModalComponent = require('../../../components/modal');
+const templates = require('./templates');
 
 module.exports = {};
 
@@ -12,9 +13,9 @@ module.exports.refresh = function (e) {
   $.ajax({
     url: '/api/application/user/transcripts',
     method: 'GET',
-  }).done(function (transcripts) {
+  }).done(function (transcripts) { 
     this.data.transcripts = transcripts;
-    this.render();
+    module.exports.renderTranscripts.bind(this)();
   }.bind(this)).fail(function () {
     showWhoopsPage();
   });
@@ -24,3 +25,6 @@ module.exports.upload = function () {
   $('#upload-transcript').hide();
   $('#refresh-transcripts').show();
 };
+module.exports.renderTranscripts= function (){ 
+  $('#transcript-preview-id').html(templates.applyTranscript(this.data));
+}; 

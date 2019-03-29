@@ -112,6 +112,7 @@ dao.query.ApplicantSummary = `
         application_task.application_id = application.application_id
         and application_task.task_id = task_list.task_id
     ),
+    task_list_application.application_id,
     task_list_application.task_list_application_id,
     task_list.sort_order task_list_sort_order,
     task_list.task_id,

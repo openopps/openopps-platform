@@ -1,159 +1,78 @@
-
-<form action="" class="usajobs-form" role="form" id="form-community-cycles">
-    <fieldset class="usajobs-fieldset">
-        <h1><%- community.communityName %></h1>
-        <h2>Create new cycle</h2>
-        <div class="required-input" id="headline">
-            <label for="cycle-title">
-                <h3>Cycle title</h3>
-            </label>
-            <span class="field-validation-error error-empty" style="display:none;">You must enter a name for this cycle.</span>
-            <span class="field-validation-error error-count100" style="display:none;">The headline must be no more than 100 characters.</span>
-            <span class="field-validation-error error-html" style="display:none;">The special characters '
-                < ' or '>' are not allowed</span>
-            <input type="text" id="cycle-title" class="fullwidth form-control validate" value="<%= cycle.name %>" data-validate="empty,count100,html" />
-            <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
-        </div>
-    </fieldset>
-    <fieldset class="usajobs-fieldset">
-        <h3>Date range to create internship</h3>
-        <div class="form-group required-input" id="first-day-date">
-            <label class="first-day-date-label">
-                <h4>First day</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">You must enter a valid date.</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">First day must occur before last day.</span>
-            <div class="first-day-date">
-                <div class="usa-form-group usa-form-group-month">
-                <label for="first-day-date-1">Month</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-1" name="first-day-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('MM') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-day">
-                <label for="first-day-date-2">Day</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-2" name="first-day-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                <label for="first-day-date-3">Year</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="first-day-date-3" name="first-day-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.postingStartDate) { %> value="<%- moment(cycle.postingStartDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-        <div class="form-group required-input" id="last-day-date">
-            <label class="last-day-date-label">
-                <h4>Last day</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="last-day-date" data-valmsg-replace="true">You must enter a valid date.</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Last day must occur after first day.</span>
-            <div class="last-day-date">
-                <div class="usa-form-group usa-form-group-month">
-                <label for="last-day-date-1">Month</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-1" name="last-day-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('MM') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-day">
-                <label for="last-day-date-2">Day</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-2" name="last-day-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                <label for="last-day-date-3">Year</label>
-                <input class="usa-input-inline" aria-describedby="dateHint" id="last-day-date-3" name="last-day-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.postingEndDate) { %> value="<%- moment(cycle.postingEndDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="usajobs-fieldset">
-        <h3>Date range for accepting applications</h3>
-        <div class="form-group required-input" id="start-application-date">
-            <label class="start-application-date-label">
-                <h4>Start date</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="start-application-date" data-valmsg-replace="true">You must enter a valid date.</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Start day must occur before stop day.</span>
-            <div class="start-application-date">
-                <div class="usa-form-group usa-form-group-month">
-                    <label for="start-application-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-1" name="start-application-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('MM') %>" <% } %> >
-                </div>
-                    <div class="usa-form-group usa-form-group-day">
-                    <label for="start-application-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-2" name="start-application-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                    <label for="start-application-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-application-date-3" name="start-application-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.applyStartDate) { %> value="<%- moment(cycle.applyStartDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-        <div class="form-group required-input" id="stop-application-date">
-            <label class="stop-application-date-label">
-                <h4>Stop date</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="stop-application-date" data-valmsg-replace="true">You must enter a valid date.</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Stop day must occur after start day.</span>
-            <div class="stop-application-date">
-                <div class="usa-form-group usa-form-group-month">
-                    <label for="stop-application-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-1" name="stop-application-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('MM') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-day">
-                    <label for="stop-application-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-2" name="stop-application-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                    <label for="stop-application-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-application-date-3" name="stop-application-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.applyEndDate) { %> value="<%- moment(cycle.applyEndDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-    </fieldset>
-    <fieldset class="usajobs-fieldset">
-        <h3>Date range of internship</h3>
-        <div class="form-group required-input" id="start-internship-date">
-            <label class="start-internship-date-label">
-                <h4>Start date</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="start-internship-date" data-valmsg-replace="true">You must enter a valid date.</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Start day must occur before end day.</span>
-            <div class="start-internship-date">
-                <div class="usa-form-group usa-form-group-month">
-                    <label for="start-internship-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-1" name="start-internship-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('MM') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-day">
-                    <label for="start-internship-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-2" name="start-internship-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                    <label for="start-internship-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-internship-date-3" name="start-internship-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.cycleStartDate) { %> value="<%- moment(cycle.cycleStartDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-        <div class="form-group" id="stop-internship-date">
-            <label class="stop-internship-date-label">
-                <h4>End date</h4>
-            </label>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="stop-internship-date" data-valmsg-replace="true">You must enter a valid date</span>
-            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">End day must occur after start day.</span>
-            <div class="stop-internship-date">
-                <div class="usa-form-group usa-form-group-month">
-                    <label for="stop-internship-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-1" name="stop-internship-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('MM') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-day">
-                    <label for="stop-internship-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-2" name="stop-internship-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('DD') %>" <% } %> >
-                </div>
-                <div class="usa-form-group usa-form-group-year">
-                    <label for="stop-internship-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="dateHint" id="stop-internship-date-3" name="stop-internship-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.cycleEndDate) { %> value="<%- moment(cycle.cycleEndDate).format('YYYY') %>" <% } %> >
-                </div>
-            </div>
-        </div>
-    </fieldset>
-    <div class="usajobs-button_bar--slim">
-        <div class="usajobs-button_bar__body">
-            <a href="#" class="usa-button usa-button-secondary usa-button-left" id="cycle-cancel">Cancel</a>
-            <a href="#" class="usa-button" id="cycle-save">Save</a>
-        </div>
+<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
     </div>
-</form>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text"></p>
+  </div>
+</div>
+<p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<h2><%- communityName %>
+</h2>
+<h3>Cycles<a href="/admin/community/<%- communityId %>/cycles?edit=new" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
+</h3>
+
+<div id="cycle-table" class="table-responsive">
+  <table class="usa-table-borderless cycle-table" role="presentation">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Posting Dates</th>
+        <th>Application Dates</th>
+        <th>Internship Dates</th>
+        <th class="center" data-target="publish-delete">Edit</th>
+        <th class="center" data-target="publish-delete">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% _.each(_.sortBy(cycles, 'postingStartDate').reverse(), function (cycle) { %>
+        <tr>
+          <td class="metrics-table__title">
+            <%- cycle.name %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.postingStartDate).format('MM/DD/YY') %> - <%- moment(cycle.postingEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.applyStartDate).format('MM/DD/YY') %> - <%- moment(cycle.applyEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__button">
+            <a href="/admin/community/<%- communityId %>/cycles?edit=<%- cycle.cycleId %>"
+              data-cycle-id="<%- cycle.cycleId %>"
+              data-cycle-title="<%- cycle.name %>"
+              class="edit-cycle"
+              alt="Edit cycle"
+              title="Edit cycle">
+              <span class='fas fa-edit'></span>
+            </a>
+          </td>
+          <% if (new Date(cycle.applyStartDate) > new Date()) { %>
+            <td class="metrics-table__button">
+              <a href="#delete"
+                data-cycle-id="<%- cycle.cycleId %>"
+                data-cycle-title="<%- cycle.name %>"
+                class="delete-cycle"
+                alt="Delete cycle"
+                title="Delete cycle">
+                <span class='fa fa-times'></span>
+              </a>
+            </td>
+          <% } else { %>
+            <td>&nbsp;</td>
+          <% } %>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!--<div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+    title="Download list of tasks as a comma-separated file ready for import into Excel">
+  <a href="/api/task/export" >
+    <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+  </a>
+</div>-->

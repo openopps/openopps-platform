@@ -28,6 +28,9 @@ async function findById (id, user) {
       return false;
     });
   }
+  if(user && user.hiringPath=='student'){
+    task.application=(await dao.Application.db.query(dao.query.applicationTasks,user.id,task.id)).rows[0];
+  }
   
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
@@ -42,6 +45,7 @@ async function findById (id, user) {
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    
   }
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
@@ -179,12 +183,12 @@ async function getSavedOpportunities (user) {
 }
 
 async function canUpdateOpportunity (user, id) {
-  var task = await dao.Task.findOne('id = ?', id);
-  if (task && user.isAdmin) {
-    return true;
-  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
-    return true;
-  } else if (await isCommunityAdmin(user, task)) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });
+  if (!task) {
+    return false;
+  } else if (task.userId == user.id || user.isAdmin
+    || (user.isAgencyAdmin && await checkAgency(user, task.userId))
+    || await isCommunityAdmin(user, task)) {
     return true;
   } else {
     return false;
@@ -192,12 +196,12 @@ async function canUpdateOpportunity (user, id) {
 }
 
 async function canAdministerTask (user, id) {
-  var task = await dao.Task.findOne('id = ?', id);
-  if (task && user.isAdmin) {
-    return true;
-  } else if (user.isAgencyAdmin && await checkAgency(user, task.userId)) {
-    return true;
-  } else if (await isCommunityAdmin(user, task)) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });;
+  if (!task) {
+    return false;
+  } else if (user.isAdmin
+    || (user.isAgencyAdmin && await checkAgency(user, task.userId))
+    || await isCommunityAdmin(user, task)) {
     return true;
   } else {
     return false;

@@ -25,6 +25,15 @@
       <li>Admins: <%- numeral(community.users.admins).format('0,0') %></li>
     </ul>
   </div>
+  <% if (community.duration == 'Cyclical') { %>
+    <div class="usa-width-one-third">
+      <h3><i class="fas fa-sync-alt"></i><span class="box-icon-text">Cycles <a href="/admin/community/<%=community.communityId %>/cycles" class="">Manage</a></span></h3>
+      <ul class="usajobs-unstyled-list">
+        <li>Total created: <%- numeral(community.cycles.length).format('0,0') %></li>
+        <li>Completed: <%- numeral(_.filter(community.cycles, function (cycle) { return cycle.cycleEndDate <= new Date(); }).length).format('0,0') %></li>
+      </ul>
+    </div>
+  <% } %>
   <div class="usa-width-one-third">
     <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
@@ -37,6 +46,10 @@
       <li>Canceled: <%- numeral(community.tasks.canceled).format('0,0') %></li>
     </ul>
   </div>
+  <% if (community.duration == 'Cyclical') { %>
+    </div>
+    <div class="usajobs-grid-full"></div>
+  <% } %>
   <div class="usa-width-one-third">
     <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
     <ul class="usajobs-unstyled-list">
@@ -47,5 +60,3 @@
     </ul>
   </div>
 </div>
-</div>
-
