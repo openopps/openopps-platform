@@ -59,7 +59,8 @@ var ApplyView = Backbone.View.extend({
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
-    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },  
+    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); }, 
+    'change input[name=transcripts]'                             : function () { this.callMethod(Education.changeTranscripts); }, 
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
