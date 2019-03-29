@@ -41,9 +41,9 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
 
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
-    await service.apply(ctx.state.user, ctx.params.taskId, (err, applicationId) => {
+    await service.apply(ctx.state.user, ctx.params.taskId, (ctx.request.body || {}).getTasks, (err, results) => {
       ctx.status = err ? 400 : 200;
-      ctx.body = err ? err : applicationId;
+      ctx.body = err ? err : results;
     });
   } else {
     ctx.status = 400;

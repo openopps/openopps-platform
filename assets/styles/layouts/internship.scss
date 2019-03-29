@@ -794,6 +794,9 @@
 
         &.selected {
           color: $color-green;
+          span {
+            text-decoration: none;
+          }
         }
   
         span {

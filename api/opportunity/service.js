@@ -178,6 +178,10 @@ async function sendTaskNotification (user, task, action) {
   }
 }
 
+async function getSavedOpportunities (user) {
+  return (await db.query(dao.query.savedTask, user.id)).rows;
+}
+
 async function canUpdateOpportunity (user, id) {
   var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });
   if (!task) {
@@ -663,5 +667,6 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };

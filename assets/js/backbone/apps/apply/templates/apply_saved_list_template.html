@@ -1,0 +1,27 @@
+<h3>Saved internship opportunities</h3>
+<p><%- savedOpportunities.length %> saved internship<% if (savedOpportunities.length != 1) { %>s<% } %></p>
+<div class="saved-internships-list">
+  <% _.each(savedOpportunities, function (opportunity) { %>
+    <div class="usajobs-card--large">
+      <div class="program-choice__title">
+        <h4 class="usajobs-card__title" itemprop="title">
+          <%- opportunity.title %>
+        </h4>
+        <% if (isSelected(opportunity.id, tasks)) { %>
+        <div class="program-select selected"><i class="fas fa-check"></i><span>Selected</span></div>
+        <% } else { %>
+        <a class="program-select" href="#" data-id="<%- opportunity.id %>"><span>Select</span></a>
+        <% } %>
+      </div>
+      <div class="usajobs-card__body">
+        <h5 class="program-label">
+          Bureau/Office
+        </h5>
+        <p>
+          <%- opportunity.bureau %>/<% if (opportunity.office) { %>/<%- opportunity.office %><% } %>
+        </p>
+      </div>
+    </div>
+  <% }); %>
+</div>
+<a class="usa-button usa-button-secondary" href="/home#saved">Go to saved</a>

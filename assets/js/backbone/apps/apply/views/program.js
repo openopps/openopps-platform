@@ -22,6 +22,7 @@ function onSuccess (results) {
   this.data.secondChoice = _.findWhere(this.data.tasks, { sortOrder: 2 });
   this.data.thirdChoice = _.findWhere(this.data.tasks, { sortOrder: 3 });
   this.render();
+  this.renderSavedInternships();
 }
 
 function swapPrograms (program1, program2) {
@@ -34,6 +35,26 @@ function swapPrograms (program1, program2) {
 }
 
 module.exports = {};
+
+module.exports.getSavedOpportunities = function () {
+  $.ajax('/api/task/saved').done(function (results) {
+    this.data.savedOpportunities = _.sortBy(_.filter(results, function (result) {
+      return result.cycleId == this.data.cycleId;
+    }.bind(this)), 'title');
+    this.renderSavedInternships();
+  }.bind(this));
+},
+
+module.exports.selectSavedOpportunity = function (e) {
+  e.preventDefault && e.preventDefault();
+    $.ajax({
+        url: '/api/application/apply/' + e.currentTarget.getAttribute('data-id'),
+        method: 'POST',
+        data: { getTasks: true },
+    }).done(onSuccess.bind(this)).fail(function () {
+      showWhoopsPage();
+    }.bind(this));
+};
 
 module.exports.saveProgramContinue = function (e) {
   e.preventDefault && e.preventDefault();
@@ -77,6 +98,7 @@ module.exports.deleteProgram = function (e) {
     this.data.currentStep = 1;
     this.data.updatedAt = result.updatedAt;
     this.render();
+    this.renderSavedInternships();
   }.bind(this)).fail(function () {
     showWhoopsPage();
   });

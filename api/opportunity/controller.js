@@ -46,6 +46,10 @@ router.get('/api/task/communities', auth, async (ctx, next) => {
   ctx.body = data;
 });
 
+router.get('/api/task/saved', auth, async (ctx, next) => {
+  ctx.body = await service.getSavedOpportunities(ctx.state.user);
+});
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
@@ -87,7 +91,7 @@ router.post('/api/task/save', auth, async (ctx, next) => {
     ctx.status = error ? 400 : 200;
     ctx.body = error || { success: true };
   });
-})
+});
 
 router.put('/api/task/state/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
