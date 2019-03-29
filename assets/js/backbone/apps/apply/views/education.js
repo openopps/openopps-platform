@@ -357,6 +357,12 @@ var education = {
         abort = true;
       }
     });
+    
+    if (this.data.education.length == 0) {
+      $('.add-education').addClass('usa-input-error');
+      $('.add-education>.field-validation-error').show();
+      abort = true;
+    }
   
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
