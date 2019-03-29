@@ -175,9 +175,7 @@ async function sendTaskNotification (user, task, action) {
 }
 
 async function getSavedOpportunities (user) {
-  return {
-    savedOpportunities: await dao.Task.query(dao.query.savedTask, user.id),
-  };
+  return (await db.query(dao.query.savedTask, user.id)).rows;
 }
 
 async function canUpdateOpportunity (user, id) {

@@ -218,12 +218,26 @@ async function createApplicationSkill (user, applicationId, tag) {
 }
 
 
-module.exports.apply = async function (user, taskId, callback) {
+module.exports.apply = async function (user, taskId, getTasks, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
       // need a way to determine DoS Unpaid vs VSFS
       if (community.applicationProcess == 'dos') {
-        await processUnpaidApplication(user, { task: task, community: community }, callback);
+        await new Promise((resolve, reject) => {
+          processUnpaidApplication(user, { task: task, community: community }, (err, applicationId) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(applicationId);
+            }
+          });
+        }).then(async applicationId => {
+          if (getTasks) {
+            callback(null, (await db.query(dao.query.applicationTasks, applicationId)).rows);
+          } else {
+            callback(null, applicationId);
+          }
+        }).catch(callback);
       } else {
         // We don't know yet how to handle this type of application
         log.error('User attempted to apply to a community task that is not defined.', taskId);
