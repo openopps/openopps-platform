@@ -59,7 +59,7 @@ var ApplyView = Backbone.View.extend({
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
-    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },  
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
@@ -161,9 +161,7 @@ var ApplyView = Backbone.View.extend({
   backClicked: function () {
     this.data.selectedStep--;
     Backbone.history.navigate(window.location.pathname + '?step=' + this.data.selectedStep, { trigger: false });
-    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-    this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+    this.render();  
   },
 
   callMethod: function (method, e) {
