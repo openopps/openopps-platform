@@ -73,8 +73,9 @@ var InternshipsView = Backbone.View.extend({
         template: templates.applied,
         target: 'task',
         handle: 'appliedInternships',  // used in css and table id
-        data: _.sortBy(data.applications, 'updatedAt').reverse(),
+        data: _.sortBy(data.applications, 'cycleStartDate').reverse(),
         getStatus: this.getStatus,
+        sort: 'cycleName',
       });
       this.appliedView.render();
 

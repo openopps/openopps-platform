@@ -1,36 +1,38 @@
 <div class="usajobs-profile-home-section__body">
-    <p><a href="javascript:void(0);" id="add-education" class="add-record">+ Add education</a></p>
-    <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>
+    <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>  
     <p>Please upload your current or most recent academic transcript. We accept unofficial transcripts.</p>
-    <fieldset id="transcripts" class="usajobs-fieldset">
-      <ul class="transcript-card-buttons">
-        <% _.each(transcripts, function (transcript) { %>
-          <li class="transcript-card-button">
-            <input type="radio" value="<%- transcript.CandidateDocumentID + '|' + transcript.CandidateFileName + '.' + transcript.FileFormat %>" name="transcripts" id="<%- transcript.CandidateDocumentID %>" <% if (transcript.CandidateDocumentID == transcriptId) { %><%= "checked" %><% } %>>
-            <label for="<%- transcript.CandidateDocumentID %>">
-              <div class="usajobs-grid-full">
-                <div class="usa-width-one-twelfth radio-button"></div>
-                <div class="transcript-info">
-                  <%- transcript.CandidateFileName %>
-                  <span class="transcript-card-button__sub-text">
-                    <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- transcript.DateTimeReceived %>
-                  </span>
-                </div>
-                <div class="usa-width-one-fourth">
-                  <span class="transcript-icon">
-                    <i class="far fa-file-word"></i>
-                    <h6>Transcript</h6>
-                  </span>
-                </div>
-              </div>                  
-            </label>            
-          </li>
-        <% }) %>
-      </ul>
-    </fieldset>
-    <a id="upload-transcript" href="<%- usajobsURL %>/Applicant/ProfileDashboard/OtherDocuments/" target="_blank" class="usa-button usa-button-secondary">Upload transcript</a>
-    <a id="refresh-transcripts" href="#refresh" class="usa-button usa-button-secondary" style="display:none">Refresh transcripts</a>
-    <div id="refreshing-transcripts" style="display:none"><i class="fas fa-circle-notch fa-spin"></i>Refreshing transcripts</div>
+    <div id="apply-transcript">      
+      <span class="field-validation-error" style="display:none;" >Please refresh and choose one transcript once uploaded.</span>      
+      <fieldset id="transcripts" class="usajobs-fieldset" >          
+        <ul class="transcript-card-buttons">   
+          <% _.each(transcripts, function (transcript) { %>
+            <li class="transcript-card-button">
+              <input type="radio" value="<%- transcript.CandidateDocumentID + '|' + transcript.CandidateFileName + '.' + transcript.FileFormat %>" name="transcripts" id="<%- transcript.CandidateDocumentID %>" <% if (transcript.CandidateDocumentID == transcriptId) { %><%= "checked" %><% } %>>          
+              <label for="<%- transcript.CandidateDocumentID %>">
+                <div class="usajobs-grid-full">
+                  <div class="usa-width-one-twelfth radio-button"></div>
+                  <div class="transcript-info">
+                    <%- transcript.CandidateFileName %>
+                    <span class="transcript-card-button__sub-text">
+                      <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- transcript.DateTimeReceived %>
+                    </span>
+                  </div>
+                  <div class="usa-width-one-fourth">
+                    <span class="transcript-icon">
+                      <i class="far fa-file-word"></i>
+                      <h6>Transcript</h6>
+                    </span>
+                  </div>
+                </div>                  
+              </label>            
+            </li>
+          <% }) %>
+        </ul>
+      </fieldset>
+      <a id="upload-transcript" href="<%- usajobsURL %>/Applicant/ProfileDashboard/OtherDocuments/" target="_blank" class="usa-button usa-button-secondary">Upload transcript</a>
+      <a id="refresh-transcripts" href="#refresh" class="usa-button usa-button-secondary" style="display:none">Refresh transcripts</a>
+      <div id="refreshing-transcripts" style="display:none"><i class="fas fa-circle-notch fa-spin"></i>Refreshing transcripts</div>
+    </div>
   </div>
 
   

@@ -5,6 +5,7 @@ const $ = require('jquery');
 const charcounter = require('../../../../vendor/jquery.charcounter');
 const marked = require('marked');
 const templates = require('./templates');
+const SavedListTemplate = require('../templates/apply_saved_list_template.html');
 
 //utility functions
 var Program = require('./program');
@@ -32,7 +33,8 @@ var ApplyView = Backbone.View.extend({
     'click #saveProgramContinue'                                  : function (e) { this.callMethod(Program.saveProgramContinue, e); },
     'click .program-delete'                                       : function (e) { this.callMethod(Program.deleteProgram, e); },
     'click .sorting-arrow'                                        : function (e) { this.callMethod(Program.moveProgram, e); },
-
+    'click .program-select'                                       : function (e) { this.callMethod(Program.selectSavedOpportunity, e); },
+    
     //experience events
     'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
@@ -59,7 +61,8 @@ var ApplyView = Backbone.View.extend({
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
-    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); },
+    'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); }, 
+    'change input[name=transcripts]'                             : function () { this.callMethod(Education.changeTranscripts); }, 
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
 
@@ -103,7 +106,9 @@ var ApplyView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);
     this.data.selectedStep = this.params.get('step') || this.data.currentStep;
     this.templates = templates;
-	  this.data.editEducation = this.params.get('editEducation');
+    this.data.savedOpportunities = {};
+    Program.getSavedOpportunities.bind(this)();
+    this.data.editEducation = this.params.get('editEducation');
     Education.initializeComponentEducation.bind(this)();
     this.initializeEnumerations();
   },
@@ -124,6 +129,16 @@ var ApplyView = Backbone.View.extend({
     $('.apply-hide').hide();
 
     return this;
+  },
+
+  renderSavedInternships: function () {
+    $('.saved-internship-opportunities').html(_.template(SavedListTemplate)(_.extend(this.data, { isSelected: this.isSelected })));
+  },
+  
+  isSelected: function (taskId, applicationTasks) {
+    return _.find(applicationTasks, function(applicationTask) {
+      return applicationTask.taskId == taskId;
+    });
   },
 
   initializeEnumerations: function () {
@@ -161,9 +176,7 @@ var ApplyView = Backbone.View.extend({
   backClicked: function () {
     this.data.selectedStep--;
     Backbone.history.navigate(window.location.pathname + '?step=' + this.data.selectedStep, { trigger: false });
-    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
-    this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
+    this.render();  
   },
 
   callMethod: function (method, e) {

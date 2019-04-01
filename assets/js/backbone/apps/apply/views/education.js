@@ -2,7 +2,7 @@ var $ = require('jquery');
 const templates = require('./templates');
 const _ = require('underscore');
 const Backbone = require('backbone');
-
+var Transcripts = require('./transcripts');
 
 function renderEducation (){ 
   var data= _.extend({data:this.data}, { completedMonthFunction: education.getCompletedDateMonth });
@@ -221,6 +221,7 @@ var education = {
     }
     this.$el.html(templates.applyEducation(this.data));
     initializeFormFieldsEducation.bind(this)();
+    Transcripts.renderTranscripts.bind(this)();  
     renderEducation.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     window.scrollTo(0, 0);
@@ -347,6 +348,8 @@ var education = {
       { name: 'ContinueEducation', id: 'apply-continue-education' },
       { name: 'Junior', id: 'apply-junior' },
       { name: 'Enrolled', id: 'apply-enrolled' },
+      { name: 'transcripts', id: 'apply-transcript' },
+
     ].forEach(function (item) {
       if ($("input[name='" + item.name + "']:checked").length == 0) {
         $('#' + item.id).addClass('usa-input-error');    
@@ -354,7 +357,23 @@ var education = {
         abort = true;
       }
     });
+    
+    if (this.data.education.length == 0) {
+      $('.add-education').addClass('usa-input-error');
+      $('.add-education>.field-validation-error').show();
+      abort = true;
+    }
+    
 
+    if($('#refresh-transcripts').css('display') != 'none')
+   
+    {
+      $('#apply-transcript').addClass('usa-input-error');        
+      $('#apply-transcript>.field-validation-error').show();    
+      abort=true;
+    }
+   
+  
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
@@ -387,6 +406,13 @@ var education = {
       $('#apply-continue-education>.field-validation-error').hide();   
     }
 
+  },
+
+  changeTranscripts: function (e){
+    if($('[name=transcripts]:checked').length>0){ 
+      $('#apply-transcript').removeClass('usa-input-error');        
+      $('#apply-transcript>.field-validation-error').hide();
+    }
   },
   educationContinue: function () {
     var validationEduFields= education.validateEducationFields.bind(this);
