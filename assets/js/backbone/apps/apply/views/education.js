@@ -363,6 +363,16 @@ var education = {
       $('.add-education>.field-validation-error').show();
       abort = true;
     }
+    
+
+    if($('#refresh-transcripts').css('display') != 'none')
+   
+    {
+      $('#apply-transcript').addClass('usa-input-error');        
+      $('#apply-transcript>.field-validation-error').show();    
+      abort=true;
+    }
+   
   
     _.each( children, function ( child ) {
       var iAbort = validate( { currentTarget: child } );
