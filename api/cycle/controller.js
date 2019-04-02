@@ -4,6 +4,7 @@ const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
 const communityService = require('../community/service');
+const elasticService = require('../../elastic/service');
 
 function initializeAuditData (ctx) { 
   return {
@@ -47,6 +48,9 @@ router.post('/api/cycle', auth, async (ctx, next) => {
 router.put('/api/cycle/:id', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.request.body.communityId)) {
     await service.updateCycle(_.extend(ctx.request.body, { updatedBy: ctx.state.user.id }), (cycle, err) => {
+      if (!err) {
+        elasticService.reindexCycleOpportunities(cycle.cycleId);
+      }
       ctx.status = err ? 400 : 200;
       ctx.body = err ? err.message : cycle;
     });
