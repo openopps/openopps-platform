@@ -220,15 +220,16 @@ var education = {
       this.data.editEducation='';
     }
     this.$el.html(templates.applyEducation(this.data));
-    initializeFormFieldsEducation.bind(this)();
-    Transcripts.renderTranscripts.bind(this)();  
+    initializeFormFieldsEducation.bind(this)();    
     renderEducation.bind(this)();
+    Transcripts.renderTranscripts.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 3), selectedStep: 3 });
     window.scrollTo(0, 0);
   },
    
   saveEducation:function (){
-    var data = getDataFromAddEducationPage();
+    var data = getDataFromAddEducationPage(); 
+    var callback= education.toggleAddEducationOff.bind(this);
     if(!validateFields.bind(this)()) {
       if(this.data.editEducation){
         data.educationId = this.data.editEducation;
@@ -248,8 +249,9 @@ var education = {
             this.data.education.push(education);
           } else {
             this.data.education[index] = education;
-          }
-          this.updateApplicationStep(3);
+          } 
+          callback();                 
+                 
         }.bind(this),
         error: function (err) {
           // display modal alert type error
