@@ -212,6 +212,9 @@ var ApplyView = Backbone.View.extend({
   // process flow section 
   renderProcessFlowTemplate: function (data) {
     $('#process-title-banners').html(templates.processflow(data));
+    if (this.data.selectedStep == 1) {
+      this.renderSavedInternships();
+    }
   },
   // end process flow section
 
