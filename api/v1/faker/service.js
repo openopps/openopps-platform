@@ -65,7 +65,7 @@ service.generateFakeData = async function(user, params) {
             country_id: loc.country_id,
             country_subdivision_id: loc.country_subdivision_id,
             city_name: faker.address.city(),
-            interns: faker.random.number({ min: 1,  max: 30}),
+            interns: faker.random.number({ min: 1,  max: 15 }),
             cycle_id: cycle.cycleId,
             bureau_id: bureau.bureau_id,
             office_id: bureau.office_id,
