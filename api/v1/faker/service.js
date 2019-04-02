@@ -370,9 +370,9 @@ service.deleteFakeData = async function(params) {
             where cycle_id = ?
         `, params.cycleId);
         yield dao.User.query(`
-            delete from midas_user 
-            left outer join application on midas_user.id = application.user_id
-            where bio = 'Created by Faker' and application_id is null
+            delete from midas_user
+            where bio = 'Created by Faker'
+            and id not in (select user_id from application)
         `);
         yield dao.TaskTag.query(`
             delete from tagentity_tasks__task_tags
