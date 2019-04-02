@@ -1,11 +1,109 @@
 const db = require('../../../db');
 const dao = require('./dao')(db);
 const faker = require('faker');
+const moment = require('moment');
 
 var service = {};
 
-service.generateFakeData = async function(params) {
+service.generateFakeData = async function(user, params) {
+    if (params.numberOfTasks < 3) {
+        return { 'error': 'Number of tasks must be greater or equal than 3' };
+    }
+    var community = (await dao.Community.find('community_name = ?', params.community || 'U.S. Department of State Student Internship Program (Unpaid)'))[0];
+    if (community == null) {
+        return { 'error': 'No community passed in' };
+    }
+    var results = {users: []};
+    var newCycle = {
+        name: params.cycle || faker.company.companyName() + '_faker',
+        posting_start_date: params.postingStartDate || moment().subtract(30, 'days'),
+        posting_end_date: params.postingEndDate || moment().subtract(1, 'days'),
+        apply_start_date: params.applyStartDate || moment().subtract(30, 'days'),
+        apply_end_date: params.applyEndDate || moment().subtract(1, 'days'),
+        cycle_start_date: params.cycleStartDate || moment().add(7, 'days'),
+        cycle_end_date: params.cycleEndDate || moment().add(1, 'second'),
+        community_id: community.communityId,
+        created_at: new Date,
+        updated_at: new Date,
+        updated_by: user.id          
+    }
+    var cycle = await dao.Cycle.insert(newCycle);
+    results.cycle = cycle;
+
     var locations = (await dao.Task.db.query(dao.query.countryData)).rows;
+    var bureaus = (await dao.Task.db.query(dao.query.bureauData)).rows;
+    var languages = await dao.Language.find('is_disabled = false');
+    var languageProficiencyList = await dao.LookupCode.find('lookup_code_type = ?', 'LANGUAGE_PROFICIENCY');
+    var availableTaskSkills = await dao.TagEntity.query(`
+        select tag.id 
+        from tagentity_tasks__task_tags tags inner join tagentity tag on tags.tagentity_tasks = tag.id
+        where tag.type = 'skill'
+    `);
+
+    results.task = [];
+
+    for (var a = 0; a < params.numberOfTasks; a++) {
+        var loc = faker.random.arrayElement(locations);
+        var bureau = faker.random.arrayElement(bureaus);
+
+        var newTask = {
+            state: "open",
+            userId: user.id,
+            title: faker.company.bs(),
+            description: faker.lorem.paragraph(),
+            createdAt: new Date,
+            updatedAt: new Date,
+            publishedAt: new Date,
+            submittedAt: new Date,
+            restrict: "{}",
+            accepting_applicants: true,
+            updatedBy: user.id,
+            details: faker.company.catchPhrase(),
+            about: faker.lorem.paragraphs(2),
+            community_id: community.communityId,
+            agency_id: user.agency_id,
+            country_id: loc.country_id,
+            country_subdivision_id: loc.country_subdivision_id,
+            city_name: faker.address.city(),
+            interns: faker.random.number({ min: 1,  max: 15 }),
+            cycle_id: cycle.cycleId,
+            bureau_id: bureau.bureau_id,
+            office_id: bureau.office_id,
+            gpa_weight: 1.0,
+            random_weight: 1.0
+        }
+        var task = await dao.Task.insert(newTask);
+        results.task.push(task);
+
+        var lanCount = faker.random.number({min: 0, max: 8});
+        task.language = [];
+        for (var b=0; b < lanCount; b++) {           
+            var language = {
+                task_id: task.id,
+                language_id: faker.random.arrayElement(languages).languageId,
+                speaking_proficiency_id: faker.random.arrayElement(languageProficiencyList).lookupCodeId,
+                writing_proficiency_id: faker.random.arrayElement(languageProficiencyList).lookupCodeId,
+                reading_proficiency_id: faker.random.arrayElement(languageProficiencyList).lookupCodeId,
+                created_at: new Date,
+                updated_at: new Date,
+                weight_factor: 1
+            }
+            await dao.LanguageSkill.insert(language);
+            task.language.push(language);
+        }
+
+        task.skill = [];
+        var skillCount = faker.random.number({min: 0, max: 5});
+        for (var c=0; c < skillCount; c++) {
+            var skill = {
+                tagentity_tasks: faker.random.arrayElement(availableTaskSkills).id,
+                task_tags: task.id
+            }
+
+            await dao.TaskTag.insert(skill);
+            task.skill.push(skill);
+        }
+    }
 
     var availableSkills = await dao.TagEntity.query(`
         select tag.id 
@@ -17,16 +115,8 @@ service.generateFakeData = async function(params) {
     var referenceTypeList = await dao.LookupCode.find('lookup_code_type = ?', 'REFERENCE_TYPE');
     var degreeLevelList = await dao.LookupCode.find('lookup_code_type = ?', 'DEGREE_LEVEL');
     var honorsList = await dao.LookupCode.find('lookup_code_type = ?', 'HONORS');
-    var languageProficiencyList = await dao.LookupCode.find('lookup_code_type = ?', 'LANGUAGE_PROFICIENCY');
-    var languages = await dao.Language.find('is_disabled = false');
-    var tasks = await dao.Task.query(`
-        select *
-        from task
-        where id in ?
-    `, [[params.task1, params.task2, params.task3]]);
     var experienceTypes = ['Student','Dependent','Peace Corps','Military','Government','Other'];
 
-    var results = {users: []};
     for (var i = 0; i < params.numberOfApplicants; i++)
     {
         var midas_user = {
@@ -56,8 +146,8 @@ service.generateFakeData = async function(params) {
             created_at: new Date,
             updated_at: new Date,
             submitted_at: new Date,
-            community_id: tasks[0].communityId,
-            cycle_id: tasks[0].cycleId,
+            community_id: community.communityId,
+            cycle_id: cycle.cycleId,
             is_currently_enrolled: faker.random.boolean(),
             is_minimum_completed: faker.random.boolean(),
             is_education_continued: faker.random.boolean(),
@@ -77,7 +167,14 @@ service.generateFakeData = async function(params) {
         var applicationResult = await dao.Application.insert(application);
         midas_user.application = applicationResult;
       
-        var taskArr = [params.task1, params.task2, params.task3];
+        var ranNum = faker.random.number( {min: 0, max: results.task.length });
+        var taskArr = [];
+        for (var d=0; d < 3; d++) {
+            if (ranNum + d >= results.task.length) {
+                ranNum = 0;
+            }
+            taskArr.push(results.task[ranNum + d]);       
+        }
         taskArr = faker.helpers.shuffle(taskArr);
 
         midas_user.applicationTask = [];
@@ -85,7 +182,7 @@ service.generateFakeData = async function(params) {
             var applicationTask = {
                 application_id: applicationResult.applicationId,
                 user_id: midas_user.id,
-                task_id: taskArr[j],
+                task_id: taskArr[j].id,
                 sort_order: j + 1,
                 created_at: new Date,
                 updated_at: new Date,
@@ -225,80 +322,82 @@ service.deleteFakeData = async function(params) {
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id from midas_user where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             )
-        `);
+        `, params.cycleId);
         yield dao.ApplicationLanguageSkill.query(`
             delete from application_language_skill 
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id from midas_user where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             );
-        `);
+        `, params.cycleId);
         yield dao.Education.query(`
             delete from education 
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id from midas_user where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             );
-        `);
+        `, params.cycleId);
         yield dao.Reference.query(`
             delete from reference 
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id 
-                    from midas_user where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             );
-        `);
+        `, params.cycleId);
         yield dao.Experience.query(`
             delete from experience 
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id 
-                    from midas_user 
-                    where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             );
-        `);
+        `, params.cycleId);
         yield dao.ApplicationTask.query(`
             delete from application_task 
             where application_id in (
                 select application_id 
                 from application 
-                where user_id in (
-                    select id 
-                    from midas_user where bio = 'Created by Faker'
-                )
+                where cycle_id = ?
             );
-        `);
+        `, params.cycleId);
         yield dao.Application.query(`
             delete from application 
-            where application_id in (
-                select application_id 
-                from application 
-                where user_id in (
-                    select id 
-                    from midas_user 
-                    where bio = 'Created by Faker'
-                )
-            );
-        `);
+            where cycle_id = ?
+        `, params.cycleId);
         yield dao.User.query(`
-            delete from midas_user where bio = 'Created by Faker'
+            delete from midas_user
+            where bio = 'Created by Faker'
+            and id not in (select user_id from application)
         `);
+        yield dao.TaskTag.query(`
+            delete from tagentity_tasks__task_tags
+            where task_tags in (
+                select id
+                from task
+                where cycle_id = ?
+            );
+        `, params.cycleId);
+        yield dao.LanguageSkill.query(`
+            delete from language_skill
+            where task_id in (
+                select id
+                from task
+                where cycle_id = ?
+            );
+        `, params.cycleId);
+        yield dao.Task.query(`
+            delete from task
+            where cycle_id = ?      
+        `, params.cycleId);
+        yield dao.Cycle.query(`   
+            delete from cycle
+            where cycle_id = ?        
+        `, params.cycleId);
     }).then(async () => {
         return true;
     }).catch((err) => {
