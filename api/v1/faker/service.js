@@ -75,6 +75,13 @@ service.generateFakeData = async function(user, params) {
         var task = await dao.Task.insert(newTask);
         results.task.push(task);
 
+        await dao.TaskShare.query(`
+            insert into task_share
+            select ?, community_user.user_id, ?
+            from community_user
+            where community_id = ?
+        `, task.id, user.id, community.communityId);
+
         var lanCount = faker.random.number({min: 0, max: 8});
         task.language = [];
         for (var b=0; b < lanCount; b++) {           
@@ -125,7 +132,7 @@ service.generateFakeData = async function(user, params) {
             bio: 'Created by Faker',
             isAdmin: false,
             disabled: false,
-            linked_id: '200001662',
+            linked_id: '',
             government_uri: '',
             hiring_path: 'student',
             createdAt: new Date,
@@ -384,6 +391,14 @@ service.deleteFakeData = async function(params) {
         `, params.cycleId);
         yield dao.LanguageSkill.query(`
             delete from language_skill
+            where task_id in (
+                select id
+                from task
+                where cycle_id = ?
+            );
+        `, params.cycleId);
+        yield dao.TaskShare.query(`
+            delete from task_share
             where task_id in (
                 select id
                 from task

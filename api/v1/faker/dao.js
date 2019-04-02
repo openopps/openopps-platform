@@ -25,6 +25,7 @@ module.exports = function (db) {
     dao.User = pgdao({ db: db, table: 'midas_user' });
     dao.Task = pgdao({ db: db, table: 'task' });
     dao.TaskList = pgdao({ db: db, table: 'task_list' });
+    dao.TaskShare = pgdao({ db: db, table: 'task_share' });
     dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
     dao.LookupCode = pgdao({ db: db, table: 'lookup_code' });
     dao.ApplicationLanguageSkill = pgdao({ db: db, table: 'application_language_skill' });
