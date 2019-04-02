@@ -27,6 +27,17 @@ dao.taskToIndex = async function (id){
   }
 };
 
+dao.cycleTasksToIndex = async function (cycleId) {
+  var query = util.format(tasksToIndexQuery,'where cy.cycle_id = $1');
+  try {
+    var result = await db.query(query, [cycleId]);
+    return _.map(result.rows, toElasticOpportunity);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 function toElasticOpportunity (value, index, list) {
   var doc = value.task;
   var locationType = 'Virtual';
