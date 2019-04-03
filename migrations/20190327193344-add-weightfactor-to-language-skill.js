@@ -22,7 +22,7 @@ exports.up = function(db, callback) {
     alter column cumulative_gpa set default 0;
   `)
   db.addColumn('language_skill', 'weight_factor', { type: 'float(4)', defaultValue: '1' });
-  db.addColumn('application', 'random_factor', { type: 'numeric(30,29)', notNull: true, defaultValue: new String(`cast(concat(floor(random() * 10),'.',substr(cast(random() as text),3,14), substr(cast(random() as text),3,15)) as numeric(30,29))`) });
+  db.addColumn('application', 'random_factor', { type: 'numeric(30,29)', notNull: true, defaultValue: new String(`cast(concat(floor(random() * 10),'.',substr(cast(random() as text),3,14), substr(cast(random() as text),3,14)) as numeric(30,29))`) });
   db.addColumn('task', 'gpa_weight', { type: 'float(4)', defaultValue: '1' });
   return db.addColumn('task', 'random_weight', { type: 'float(4)', defaultValue: '1' });
 };
