@@ -472,11 +472,11 @@ var InternshipListView = Backbone.View.extend({
     
   renderResultsCount: function (start, stop, pageSize, numResults, pagedNumResults) {
     if (numResults <= pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' internship opportunities');
     } else if (pagedNumResults < pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' internship opportunities');
     } else {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
+      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' internship opportunities');
     }
     $('#results-count').show();
   },
