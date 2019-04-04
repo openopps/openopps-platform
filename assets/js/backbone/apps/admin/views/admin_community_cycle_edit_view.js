@@ -80,6 +80,8 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         postingEndDate: this.getDateFromFormGroup('last-day-date'),
         applyStartDate: this.getDateFromFormGroup('start-application-date'),
         applyEndDate: this.getDateFromFormGroup('stop-application-date'),
+        reviewStartDate: this.getDateFromFormGroup('start-review-date'),
+        reviewEndDate: this.getDateFromFormGroup('end-review-date'),
         cycleStartDate: this.getDateFromFormGroup('start-internship-date'),
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
         updatedAt: this.cycle.get('updatedAt'),
@@ -146,6 +148,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     var invalidDates = _.reduce([
       ['first-day-date', 'last-day-date'],
       ['start-application-date', 'stop-application-date'],
+      ['start-review-date', 'end-review-date'],
       ['start-internship-date', 'stop-internship-date'],
     ], function (abort, dateRange) {
       return !this.validDateRange(dateRange) || abort;

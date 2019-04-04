@@ -106,6 +106,51 @@
         </div>
     </fieldset>
     <fieldset class="usajobs-fieldset">
+        <h3>Date range for review applications</h3>
+        <div class="form-group required-input" id="start-review-date">
+            <label class="start-review-date-label">
+                <h4>Start date</h4>
+            </label>
+            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="start-review-date" data-valmsg-replace="true">You must enter a valid date.</span>
+            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Start day must occur before stop day.</span>
+            <div class="start-review-date">
+                <div class="usa-form-group usa-form-group-month">
+                    <label for="start-review-date-1">Month</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-review-date-1" name="start-review-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.reviewStartDate) { %> value="<%- moment(cycle.reviewStartDate).format('MM') %>" <% } %> >
+                </div>
+                    <div class="usa-form-group usa-form-group-day">
+                    <label for="start-review-date-2">Day</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-review-date-2" name="start-review-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.reviewStartDate) { %> value="<%- moment(cycle.reviewStartDate).format('DD') %>" <% } %> >
+                </div>
+                <div class="usa-form-group usa-form-group-year">
+                    <label for="start-review-date-3">Year</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="start-review-date-3" name="start-review-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.reviewStartDate) { %> value="<%- moment(cycle.reviewStartDate).format('YYYY') %>" <% } %> >
+                </div>
+            </div>
+        </div>
+        <div class="form-group required-input" id="end-review-date">
+            <label class="end-review-date-label">
+                <h4>End date</h4>
+            </label>
+            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="end-review-date" data-valmsg-replace="true">You must enter a valid date.</span>
+            <span class="field-validation-error error-date-range" style="display:none;" data-valmsg-for="first-day-date" data-valmsg-replace="true">Stop day must occur after start day.</span>
+            <div class="end-review-date">
+                <div class="usa-form-group usa-form-group-month">
+                    <label for="end-review-date-1">Month</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="end-review-date-1" name="end-review-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.reviewEndDate) { %> value="<%- moment(cycle.reviewEndDate).format('MM') %>" <% } %> >
+                </div>
+                <div class="usa-form-group usa-form-group-day">
+                    <label for="end-review-date-2">Day</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="end-review-date-2" name="end-review-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.reviewEndDate) { %> value="<%- moment(cycle.reviewEndDate).format('DD') %>" <% } %> >
+                </div>
+                <div class="usa-form-group usa-form-group-year">
+                    <label for="end-review-date-3">Year</label>
+                    <input class="usa-input-inline" aria-describedby="dateHint" id="end-review-date-3" name="end-review-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.reviewEndDate) { %> value="<%- moment(cycle.reviewEndDate).format('YYYY') %>" <% } %> >
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="usajobs-fieldset">
         <h3>Date range of internship</h3>
         <div class="form-group required-input" id="start-internship-date">
             <label class="start-internship-date-label">
@@ -150,6 +195,14 @@
             </div>
         </div>
     </fieldset>
+    <div id="alternate-application">
+        <label for="secondary-application-url">
+            <h3 class="usa-input-optional">Secondary application link</h3>
+        </label>
+        <span class="field-validation-error error-html" style="display:none;">The special characters '
+            < ' or '>' are not allowed</span>
+        <input type="text" id="secondary-application-url" class="fullwidth form-control validate" value="<%= cycle.secondaryApplicationUrl %>" data-validate="html" />
+    </div>
     <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">
             <a href="#" class="usa-button usa-button-secondary usa-button-left" id="cycle-cancel">Cancel</a>
