@@ -205,7 +205,7 @@ dao.query.communityByTaskAndEmail = `
     inner join midas_user on community_user.user_id = midas_user.id
   where
     task.id = ?
-    and midas_user.government_uri = ?
+    and lower(midas_user.government_uri) = lower(?)
 `;
 
 module.exports = function (db) {
