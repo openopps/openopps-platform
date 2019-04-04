@@ -59,13 +59,14 @@ var InternshipEditFormView = Backbone.View.extend({
           el: '#site-modal',
           id: 'submit-opp',
           modalTitle: 'Submitted',
-          modalBody: 'Thanks for submitting the <strong>' + data.attributes.title + '</strong>. We\'ll review it and let you know if it\'s approved or if we need more information.',
+          modalBody: 'Thanks for submitting <strong>' + data.attributes.title + '</strong>. We\'ll review it and let you know if it\'s approved or if we need more information.',
           primary: {
             text: 'Close',
             action: function () {
               this.modalComponent.cleanup();
             }.bind(this),
           },
+          secondary: {},
         }).render();
       }
     });
