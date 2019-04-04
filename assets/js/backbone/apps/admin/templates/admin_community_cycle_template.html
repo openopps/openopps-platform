@@ -20,6 +20,7 @@
         <th>Name</th>
         <th>Posting Dates</th>
         <th>Application Dates</th>
+        <th>Review Dates</th>
         <th>Internship Dates</th>
         <th class="center" data-target="publish-delete">Edit</th>
         <th class="center" data-target="publish-delete">Delete</th>
@@ -36,6 +37,9 @@
           </td>
           <td class="metrics-table__date">
               <%- moment(cycle.applyStartDate).format('MM/DD/YY') %> - <%- moment(cycle.applyEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+            <%- moment(cycle.reviewStartDate).format('MM/DD/YY') %> - <%- moment(cycle.reviewEndDate).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__date">
               <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
@@ -69,10 +73,3 @@
     </tbody>
   </table>
 </div>
-
-<!--<div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
-    title="Download list of tasks as a comma-separated file ready for import into Excel">
-  <a href="/api/task/export" >
-    <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
-  </a>
-</div>-->
