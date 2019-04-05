@@ -25,7 +25,10 @@ service.generateFakeData = async function(user, params) {
         community_id: community.communityId,
         created_at: new Date,
         updated_at: new Date,
-        updated_by: user.id          
+        updated_by: user.id,
+        review_start_date: params.reviewStartDate || moment().subtract(7, 'days'),
+        review_end_date: params.reviewEndDate || moment().add(7, 'days'),
+        secondary_application_url: ''         
     }
     var cycle = await dao.Cycle.insert(newCycle);
     results.cycle = cycle;
