@@ -10,6 +10,7 @@ dao.query.ApplicantSummary = `
     midas_user.given_name,
     midas_user.last_name,
     task_list_application.date_last_contacted,	
+    task_list_application.template_name,
     midas_user.username as email,
     (
       select json_agg(item)
