@@ -29,12 +29,28 @@ dao.query.internshipListQuery = `
   from 
     task 
     inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
-    inner join community on task.community_id = community.community_id
     inner join task_share on task.id = task_share."task_id"
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
     and "cycle".apply_end_date < current_date
+    and "cycle".review_end_date > current_date
+`;
+
+dao.query.internshipArchiveListQuery = `
+  select 
+    "cycle".name as "Cycle", 
+    task.title as "Title", 
+    coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
+	  "cycle".review_end_date
+  from 
+    task 
+    inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
+    inner join task_share on task.id = task_share."task_id"
+    left outer join country on task."country_id" = country."country_id"
+  where
+    task_share.user_id = ?
+    and "cycle".review_end_date < current_date
 `;
 
 dao.query.internshipSummaryQuery = `
