@@ -57,6 +57,7 @@ var TaskEditFormView = Backbone.View.extend({
               this.modalComponent.cleanup();
             }.bind(this),
           },
+          secondary: {},
         }).render();
       }
     });
