@@ -58,6 +58,7 @@ var Modal = BaseComponent.extend({
     this.options.disableClose = this.options.disableClose || false;
     this.options.disablePrimary = this.options.disablePrimary || false;
     this.options.disableSecondary = this.options.disableSecondary || false;
+    this.options.modalSubtitle = this.options.modalSubtitle || '';
   },
 
   render: function () {
@@ -80,6 +81,7 @@ var Modal = BaseComponent.extend({
     this.options.alert = 'error';
     this.options.modalBody = alertText;
     this.options.modalTitle = alertTitle || this.options.modalTitle;
+    this.options.modalSubtitle = this.options.modalSubtitle || '';
     this.refresh();
   },
 

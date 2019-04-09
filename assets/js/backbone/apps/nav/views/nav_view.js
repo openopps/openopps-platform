@@ -110,6 +110,7 @@ var NavView = Backbone.View.extend({
   activePage: function () {
     $('.usajobs-nav--openopps__section-active').switchClass('usajobs-nav--openopps__section-active', 'usajobs-nav--openopps__section', 0);
     $('.usajobs-nav--openopps__section-link').switchClass('is-active', '', 0);
+    $('.usajobs-openopps-secondary-nav__link').switchClass('is-active', '', 0);
     if (window.cache.currentUser && window.location.pathname.match('profile/' + window.cache.currentUser.id)) {
       this.showSubMenu1();
       this.activateProfile();

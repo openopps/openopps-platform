@@ -17,6 +17,7 @@ var Statement = require('./statement');
 var Skill = require('./skill');
 var ModalComponent = require('../../../components/modal');
 var TagFactory = require('../../../components/tag_factory');
+var SubmittedApplication = require('./submitted_application');
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -87,6 +88,9 @@ var ApplyView = Backbone.View.extend({
     'click .apply-submit'                                         : 'submitApplication',
     'click .read-more'                                            : 'readMore',
     'change [name=is_consent_to_share]'                           : 'enableSubmit',
+
+    //submitted_application events
+    'click .withdraw-application'                                 : function (e) { this.callMethod(SubmittedApplication.withdrawApplication, e); },
   },
 
   // initialize components and global functions
@@ -116,7 +120,13 @@ var ApplyView = Backbone.View.extend({
   },
 
   render: function () {
-    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    if (this.data.submittedAt !== null) {
+      this.$el.html(templates.submittedApplication(this.data));
+      this.$el.localize();
+      window.scrollTo(0, 0);
+    } else {
+      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    }
     $('#search-results-loading').hide();
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
@@ -214,8 +224,13 @@ var ApplyView = Backbone.View.extend({
   // process flow section 
   renderProcessFlowTemplate: function (data) {
     $('#process-title-banners').html(templates.processflow(data));
-    if (this.data.selectedStep == 1) {
-      this.renderSavedInternships();
+    if (this.data.submittedAt !== null) {
+      $('.usajobs-progress_indicator__step').addClass('hidden');
+      $('.usajobs-progress_indicator__body').addClass('no-steps');
+    } else {
+      if (this.data.selectedStep == 1) {
+        this.renderSavedInternships();
+      }
     }
   },
   // end process flow section
