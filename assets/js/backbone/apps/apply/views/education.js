@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 var $ = require('jquery');
 const templates = require('./templates');
 const _ = require('underscore');
@@ -259,6 +260,27 @@ var education = {
       });
     }   
   },
+  gpaKeyDown: function (e){
+     
+    var val= $(e.currentTarget).val();   
+    if(val.indexOf('.')!= -1 && (val.substring(val.indexOf('.')).length > 2)){    
+      if (e.keyCode !== 8 && e.keyCode !== 46 ){ //exception
+        e.preventDefault();
+      }    
+    }
+   
+  },
+  gpaBlur: function (e){ 
+    var val= $(e.currentTarget).val();
+    if(val && val>'4.00'){
+      $('#apply-gpa').addClass('usa-input-error');  
+      $('#apply-gpa>.gpa-error').show();      
+    }
+    else{      
+      $('#apply-gpa>.gpa-error').hide();  
+    }   
+  },
+
   getCompletedDateMonth:function (month){
   
     var completionMonth= month.toString();
@@ -354,9 +376,17 @@ var education = {
 
     ].forEach(function (item) {
       if ($("input[name='" + item.name + "']:checked").length == 0) {
-        $('#' + item.id).addClass('usa-input-error');    
-        $('#' + item.id + ' > .field-validation-error').show();
-        abort = true;
+        if(item.name=='transcripts'){
+          $('#' + item.id).addClass('usa-input-error');            
+          $('#' + item.id + ' >.upload-error').show(); 
+          $('#' + item.id + ' >.refresh-error').hide();
+          abort=true;
+        }
+        else{
+          $('#' + item.id).addClass('usa-input-error');    
+          $('#' + item.id + ' > .field-validation-error').show();
+          abort = true;
+        }
       }
     });
     
@@ -365,21 +395,35 @@ var education = {
       $('.add-education>.field-validation-error').show();
       abort = true;
     }
+
     
 
     if($('#refresh-transcripts').css('display') != 'none')
    
     {
       $('#apply-transcript').addClass('usa-input-error');        
-      $('#apply-transcript>.field-validation-error').show();    
+      $('#apply-transcript>.upload-error').hide(); 
+      $('#apply-transcript>.refresh-error').show();    
       abort=true;
     }
+    
+
+    // eslint-disable-next-line no-empty
+    if(this.$('#cumulative-gpa').val()>'4.00'){    
+      $('#apply-gpa>.gpa-error').show(); 
+      $('#apply-gpa>.error-empty').hide();   
+      $('#apply-gpa').addClass('usa-input-error');
+     
+      abort=true;   
+    }
+    if(this.$('#cumulative-gpa').val()==''){    
+      $('#apply-gpa>.error-empty').show();  
+      $('#apply-gpa').addClass('usa-input-error');
+      $('#apply-gpa>.gpa-error').hide();  
+      abort=true;   
+    }
    
-  
-    _.each( children, function ( child ) {
-      var iAbort = validate( { currentTarget: child } );
-      abort = abort || iAbort;
-    } );
+    
 
     if(abort) {
       $('.usa-input-error').get(0).scrollIntoView();
@@ -419,7 +463,7 @@ var education = {
   educationContinue: function () {
     var validationEduFields= education.validateEducationFields.bind(this);
     var selectedTranscript = $('input[name=transcripts]:checked').val();
-    if(!validationEduFields()){
+    if(!validationEduFields() ){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
         method: 'PUT',

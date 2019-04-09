@@ -65,6 +65,8 @@ var ApplyView = Backbone.View.extend({
     'change input[name=transcripts]'                             : function () { this.callMethod(Education.changeTranscripts); }, 
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
+    'keydown .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
+    'blur .gpa-input'                                            : function (e) { this.callMethod(Education.gpaBlur, e); },
 
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -136,7 +138,7 @@ var ApplyView = Backbone.View.extend({
   },
   
   isSelected: function (taskId, applicationTasks) {
-    return _.find(applicationTasks, function(applicationTask) {
+    return _.find(applicationTasks, function (applicationTask) {
       return applicationTask.taskId == taskId;
     });
   },
