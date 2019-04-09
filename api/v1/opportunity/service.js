@@ -8,6 +8,11 @@ service.getInternships = async function (userId) {
   return results.rows;
 };
 
+service.getInternshipsArchive = async function (userId) {
+  var results = await dao.Task.db.query(dao.query.internshipArchiveListQuery, userId);
+  return results.rows;
+};
+
 service.getInternshipSummary = async function (taskId) {
   var results = await dao.Task.db.query(dao.query.internshipSummaryQuery, taskId);
   return results.rows[0];
