@@ -2,7 +2,8 @@
     <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>  
     <p>Please upload your current or most recent academic transcript. We accept unofficial transcripts.</p>
     <div id="apply-transcript">      
-      <span class="field-validation-error" style="display:none;" >Please refresh and choose one transcript once uploaded.</span>      
+      <span class="field-validation-error upload-error" style="display:none;" >You must select one transcript or upload a new one.</span> 
+      <span class="field-validation-error refresh-error" style="display:none;" >You must click the Refresh transcripts button to see your changes.</span>           
       <fieldset id="transcripts" class="usajobs-fieldset" >          
         <ul class="transcript-card-buttons">   
           <% _.each(transcripts, function (transcript) { %>

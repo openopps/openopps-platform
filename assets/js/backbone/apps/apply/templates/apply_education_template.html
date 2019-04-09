@@ -68,10 +68,15 @@
                 </li>
               </ul>
             </div>
-            <div class="form-group required-input">
+            <div class="form-group required-input" id="apply-gpa">
               <h5><label for="cumulative-gpa" class="no-margin-top">What is your cumulative GPA on a 4.0 scale?</label></h5>
               <span class="field-validation-error error-empty" style="display:none;">Please enter a GPA.</span>
-              <input type="text" class="usa-input-tiny form-control validate" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty" onkeyup="if(this.value>4){this.value='4';}" value="<%= cumulativeGpa %>">
+              <span class="field-validation-error gpa-error" style="display:none;">You must enter a GPA on a 4.0 scale.</span>
+              <%if (cumulativeGpa==0.000) {%>
+              <input type="number" class="usa-input-tiny form-control validate" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty"  value="">
+              <% } else { %>
+                <input type="number" class="usa-input-tiny form-control validate gpa-input" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty" value="<%= Number(cumulativeGpa).toFixed(2) %>">
+                <% } %>
             </div>
           </fieldset>
 
