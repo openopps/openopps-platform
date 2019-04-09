@@ -73,9 +73,9 @@
               <span class="field-validation-error error-empty" style="display:none;">Please enter a GPA.</span>
               <span class="field-validation-error gpa-error" style="display:none;">You must enter a GPA on a 4.0 scale.</span>
               <%if (cumulativeGpa==0.000) {%>
-              <input type="number" class="usa-input-tiny form-control validate" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty"  value="">
+              <input type="number" class="usa-input-tiny form-control validate gpa-input" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty"  value="">
               <% } else { %>
-                <input type="number" class="usa-input-tiny form-control validate gpa-input" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty" value="<%= Number(cumulativeGpa).toFixed(2) %>">
+                <input type="number" class="usa-input-tiny form-control validate gpa-input" id="cumulative-gpa" name="cumulative-gpa" data-validate="empty" value="<%= parseFloat(cumulativeGpa).toFixed(2) %>">
                 <% } %>
             </div>
           </fieldset>
