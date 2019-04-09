@@ -39,6 +39,13 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
   }
 });
 
+router.delete('/api/application/:id', auth, async (ctx, next) => {
+  await service.deleteApplication(ctx.state.user.id, ctx.params.id, (err) => {
+    ctx.status = err ? 400 : 200;
+    ctx.body = err ? err.message : 'success';
+  });
+});
+
 router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
     await service.apply(ctx.state.user, ctx.params.taskId, (ctx.request.body || {}).getTasks, (err, results) => {

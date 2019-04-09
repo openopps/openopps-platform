@@ -56,21 +56,32 @@ const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup
   'FROM application join lookup_code on application.security_clearance_id = lookup_code.lookup_code_id ' +
   'WHERE application.application_id = ?';
 
+const submittedApplicationCycleQuery = 'SELECT cycle.name ' +
+'FROM cycle ' +
+'JOIN application on cycle.cycle_id = application.cycle_id ' +
+'WHERE application.application_id = ?';
+
+const submittedApplicationCommunityQuery = 'SELECT community.community_name ' +
+'FROM community ' +
+'JOIN application on community.community_id = application.community_id ' +
+'WHERE application.application_id = ?';
+
 module.exports = function (db) {
   return {
     Application: dao({ db: db, table: 'application' }),
     ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
-    ApplicationSkill:dao({ db:db, table:'application_skill' }),
+    ApplicationSkill: dao({ db:db, table:'application_skill' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
     Community: dao({ db: db, table: 'community' }),
-    Country:dao({ db: db, table: 'country' }),
+    Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    Cycle: dao({ db: db, table: 'cycle' }),
     Education: dao({ db: db, table: 'education' }),
     ErrorLog: dao({ db: db, table: 'error_log' }),
     Experience: dao({ db: db, table: 'experience' }),
     Language: dao({ db: db, table: 'language' }),
-    LookUpCode:dao({ db: db, table: 'lookup_code' }),
-    Reference:dao({ db:db, table:'reference'}),
+    LookUpCode: dao({ db: db, table: 'lookup_code' }),
+    Reference: dao({ db:db, table:'reference'}),
     TagEntity: dao({ db: db, table: 'tagentity' }),
     Task: dao({ db: db, table: 'task' }),
 
@@ -84,6 +95,8 @@ module.exports = function (db) {
       applicationSkill: applicationSkillQuery,
       country: countryQuery,
       securityClearance: securityClearanceQuery,
+      submittedApplicationCycle: submittedApplicationCycleQuery,
+      submittedApplicationCommunity: submittedApplicationCommunityQuery,
     },
   };
 };
