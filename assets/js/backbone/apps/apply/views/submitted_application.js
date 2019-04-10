@@ -26,14 +26,32 @@ var submittedApplication = {
         primary: {
           text: 'Withdraw',
           action: function () {
-            submittedApplication.submitDelete.bind(this)(this.data.applicationId);
+            _.each(this.data.tasks, function (index) {
+              submittedApplication.submitApplicationTasksDelete.bind(index)(index.applicationId, index.taskId);
+            });
+            _.each(this.data.experience, function (index) {
+              submittedApplication.submitApplicationExperienceDelete.bind(index)(index.applicationId, index.experienceId);
+            });
+            _.each(this.data.reference, function (index) {
+              submittedApplication.submitApplicationReferenceDelete.bind(index)(index.applicationId, index.referenceId);
+            });
+            _.each(this.data.education, function (index) {
+              submittedApplication.submitApplicationEducationDelete.bind(index)(index.applicationId, index.educationId);
+            });
+            _.each(this.data.language, function (index) {
+              submittedApplication.submitApplicationLanguageSkillDelete.bind(index)(index.applicationId, index.applicationLanguageSkillId);
+            });
+            _.each(this.data.skill, function (index) {
+              submittedApplication.submitApplicationSkillDelete.bind(index)(index.applicationId, index.id);
+            });
+            submittedApplication.submitApplicationDelete.bind(this)(this.data.applicationId);
           }.bind(this),
         },
       }).render();
     }
   },
 
-  submitDelete: function (applicationId) {
+  submitApplicationDelete: function (applicationId) {
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       type: 'DELETE',
@@ -50,6 +68,96 @@ var submittedApplication = {
       $('a[title="Account"]').addClass('is-active');
       $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section');
       $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section-active');
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationTasksDelete: function (applicationId, taskId) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/task/' + this.taskId,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        taskId: this.taskId,
+      },
+    }).done(function ( model, response, options ) {
+      
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationExperienceDelete: function (applicationId, experienceId) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/experience/' + this.experienceId,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        experienceId: this.experienceId,
+      },
+    }).done(function ( model, response, options ) {
+      
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationReferenceDelete: function (applicationId, referenceId) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/reference/' + this.referenceId,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        referenceId: this.referenceId,
+      },
+    }).done(function ( model, response, options ) {
+      
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationEducationDelete: function (applicationId, educationId) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/Education/' + this.educationId,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        educationId: this.educationId,
+      },
+    }).done(function ( model, response, options ) {
+      
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationLanguageSkillDelete: function (applicationId, applicationLanguageSkillId) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/applicationLanguageSkill/' + this.applicationLanguageSkillId,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        applicationLanguageSkillId: this.applicationLanguageSkillId,
+      },
+    }).done(function ( model, response, options ) {
+      
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
+  },
+
+  submitApplicationSkillDelete: function (applicationId, id) {
+    $.ajax({
+      url: '/api/application/' + this.applicationId + '/applicationSkill/' + this.id,
+      type: 'DELETE',
+      data: {
+        applicationId: this.applicationId,
+        id: this.id,
+      },
+    }).done(function ( model, response, options ) {
+      
     }.bind(this)).fail(function (error) {
       this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
     }.bind(this));
