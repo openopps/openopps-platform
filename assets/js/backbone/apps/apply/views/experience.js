@@ -144,22 +144,22 @@ var experience = {
   },
 
   saveExperience: function () {
-    var data = experience.getDataFromAddExperiencePage.bind(this)();    
+    var data = experience.getDataFromAddExperiencePage.bind(this)();   
     var experienceValidation=experience.validateAddExperienceFields(data);
     if(!this.validateFields() && !experienceValidation) {
+      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience',
         type: 'POST',
         data: JSON.stringify(data),
         contentType: 'application/json',
-        success: function (experience) {
-          console.log(experience);
+        success: function (experience) {      
           if (this.data.experience && $.isArray(this.data.experience)) {
             this.data.experience.push(experience);
           } else {
             this.data.experience = [experience];
           }
-          this.updateApplicationStep(2);
+          callback();
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -171,6 +171,7 @@ var experience = {
   updateExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();
     if(!this.validateFields() && !experience.validateAddExperienceFields(data)) {
+      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/experience/' + data.experienceId,
         type: 'PUT',
@@ -179,7 +180,7 @@ var experience = {
         success: function (experience) {
           var index = _.findIndex(this.data.experience, { experienceId: experience.experienceId });
           this.data.experience[index] = experience;
-          this.updateApplicationStep(2);
+          callback();
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -432,6 +433,7 @@ var experience = {
   saveReference: function () {
     var data = experience.getDataFromAddReferencePage.bind(this)();
     if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/reference',
         type: 'POST',
@@ -444,7 +446,7 @@ var experience = {
           } else {
             this.data.reference = [reference];
           }
-          this.updateApplicationStep(2);
+          callback();
         }.bind(this),
         error: function (err) {
           // display modal alert type error
@@ -456,6 +458,7 @@ var experience = {
   updateReference: function () {
     var data = experience.getDataFromAddReferencePage.bind(this)();
     if(!this.validateFields()) {
+      var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
         url: '/api/application/' + this.data.applicationId + '/reference/' + data.referenceId,
         type: 'PUT',
@@ -465,7 +468,7 @@ var experience = {
           reference.referenceType = { value: data.referenceTypeName };
           var index = _.findIndex(this.data.reference, { referenceId: reference.referenceId });
           this.data.reference[index] = reference;
-          this.updateApplicationStep(2);
+          callback();
         }.bind(this),
         error: function (err) {
           // display modal alert type error

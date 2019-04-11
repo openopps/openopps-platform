@@ -61,6 +61,16 @@ const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup
   'FROM application join lookup_code on application.security_clearance_id = lookup_code.lookup_code_id ' +
   'WHERE application.application_id = ?';
 
+const submittedApplicationCycleQuery = 'SELECT cycle.name ' +
+'FROM cycle ' +
+'JOIN application on cycle.cycle_id = application.cycle_id ' +
+'WHERE application.application_id = ?';
+
+const submittedApplicationCommunityQuery = 'SELECT community.community_name ' +
+'FROM community ' +
+'JOIN application on community.community_id = application.community_id ' +
+'WHERE application.application_id = ?';
+
 module.exports = function (db) {
   return {
     Application: dao({ db: db, table: 'application' }),
@@ -70,6 +80,7 @@ module.exports = function (db) {
     Community: dao({ db: db, table: 'community' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    Cycle: dao({ db: db, table: 'cycle' }),
     Education: dao({ db: db, table: 'education' }),
     ErrorLog: dao({ db: db, table: 'error_log' }),
     Experience: dao({ db: db, table: 'experience' }),
@@ -90,6 +101,8 @@ module.exports = function (db) {
       country: countryQuery,
       profileSkills: profileSkillsQuery,
       securityClearance: securityClearanceQuery,
+      submittedApplicationCycle: submittedApplicationCycleQuery,
+      submittedApplicationCommunity: submittedApplicationCommunityQuery,
     },
   };
 };

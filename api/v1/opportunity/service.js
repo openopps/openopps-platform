@@ -8,6 +8,11 @@ service.getInternships = async function (userId) {
   return results.rows;
 };
 
+service.getInternshipsArchive = async function (userId) {
+  var results = await dao.Task.db.query(dao.query.internshipArchiveListQuery, userId);
+  return results.rows;
+};
+
 service.getInternshipSummary = async function (taskId) {
   var results = await dao.Task.db.query(dao.query.internshipSummaryQuery, taskId);
   return results.rows[0];
@@ -22,7 +27,7 @@ service.getTaskList = async function (userId, taskId) {
   var results = await dao.Task.db.query(dao.query.taskListQuery, taskId);
 
   if (results.rows.length == 0) {
-    var listNames = ['For review', 'Interviewing', 'Interviewed', 'Offer out', 'Accepted - Primary', 'Accepted - Alternate'];
+    var listNames = ['For review', 'Interviewing', 'Interviewed', 'Offer out', 'Accepted', 'Alternate'];
     for (let i = 0; i < listNames.length; i++) {
       await createTaskList(listNames[i], taskId, userId, i);
     }

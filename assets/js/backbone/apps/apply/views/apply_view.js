@@ -17,6 +17,7 @@ var Statement = require('./statement');
 var Skill = require('./skill');
 var ModalComponent = require('../../../components/modal');
 var TagFactory = require('../../../components/tag_factory');
+var SubmittedApplication = require('./submitted_application');
 
 var ApplyView = Backbone.View.extend({
   events: {
@@ -65,6 +66,8 @@ var ApplyView = Backbone.View.extend({
     'change input[name=transcripts]'                             : function () { this.callMethod(Education.changeTranscripts); }, 
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
+    'keydown .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
+    'blur .gpa-input'                                            : function (e) { this.callMethod(Education.gpaBlur, e); },
 
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -85,6 +88,9 @@ var ApplyView = Backbone.View.extend({
     'click .apply-submit'                                         : 'submitApplication',
     'click .read-more'                                            : 'readMore',
     'change [name=is_consent_to_share]'                           : 'enableSubmit',
+
+    //submitted_application events
+    'click .withdraw-application'                                 : function (e) { this.callMethod(SubmittedApplication.withdrawApplication, e); },
   },
 
   // initialize components and global functions
@@ -114,7 +120,13 @@ var ApplyView = Backbone.View.extend({
   },
 
   render: function () {
-    this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    if (this.data.submittedAt !== null) {
+      this.$el.html(templates.submittedApplication(this.data));
+      this.$el.localize();
+      window.scrollTo(0, 0);
+    } else {
+      this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
+    }
     $('#search-results-loading').hide();
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
@@ -136,7 +148,7 @@ var ApplyView = Backbone.View.extend({
   },
   
   isSelected: function (taskId, applicationTasks) {
-    return _.find(applicationTasks, function(applicationTask) {
+    return _.find(applicationTasks, function (applicationTask) {
       return applicationTask.taskId == taskId;
     });
   },
@@ -212,8 +224,13 @@ var ApplyView = Backbone.View.extend({
   // process flow section 
   renderProcessFlowTemplate: function (data) {
     $('#process-title-banners').html(templates.processflow(data));
-    if (this.data.selectedStep == 1) {
-      this.renderSavedInternships();
+    if (this.data.submittedAt !== null) {
+      $('.usajobs-progress_indicator__step').addClass('hidden');
+      $('.usajobs-progress_indicator__body').addClass('no-steps');
+    } else {
+      if (this.data.selectedStep == 1) {
+        this.renderSavedInternships();
+      }
     }
   },
   // end process flow section
@@ -433,13 +450,14 @@ var ApplyView = Backbone.View.extend({
             success: function (data) {
               var recordList = [];
               _.each(applicationData[recordData.section], function (element) {
-                if (element[recordData.section + '_id'] != recordData.id) {
+                if (element[recordData.section + 'Id'] != recordData.id) {
                   recordList.push(element);
                 }
               });
               applicationData[recordData.section] = recordList;
-              //$(e.currentTarget).closest('li').remove();
-              this.updateApplicationStep(this.data.selectedStep);
+            
+              $(e.currentTarget).closest('li').remove();
+              //  this.updateApplicationStep(this.data.selectedStep);
               this.modalComponent.cleanup();
             }.bind(this),
             error: function (err) {

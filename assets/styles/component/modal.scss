@@ -126,6 +126,11 @@ $modal-width-large: 930px;
     color: $color-primary-darkest;
   }
 
+  &__subtitle {
+    margin-top: 0;
+    color: $color-primary-darkest;
+  }
+
   &__close {
     @include makeCloseButton();
   }

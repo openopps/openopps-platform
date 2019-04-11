@@ -15,6 +15,7 @@ const ApplyIneligibleGPATemplate = require('../templates/apply_ineligible_gpa_te
 const ApplyProgramTemplate = require('../templates/apply_program_template.html');
 const ApplyReviewTemplate = require('../templates/apply_review_template.html');
 const ApplyStatementTemplate = require('../templates/apply_statement_template.html');
+const SubmittedApplicationTemplate = require('../templates/submitted_application_template.html');
 var ApplyEducationPreviewTemplate = require('../templates/apply_education_preview_template.html');
 const ApplyTranscriptTemplate=require('../templates/apply_transcript_template.html');
 
@@ -34,6 +35,7 @@ var templates = {
   applyProgram: _.template(ApplyProgramTemplate),
   applyReview: _.template(ApplyReviewTemplate),
   applyStatement: _.template(ApplyStatementTemplate),
+  submittedApplication: _.template(SubmittedApplicationTemplate),
   applyeducationPreview:_.template(ApplyEducationPreviewTemplate),
   applyTranscript:_.template(ApplyTranscriptTemplate),
 };

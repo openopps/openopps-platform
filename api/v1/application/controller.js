@@ -34,4 +34,9 @@ router.post('/api/v1/application/removeApplicationTask', auth.bearer, async(ctx,
     }
 });
 
+router.post('/api/v1/application/updateLastContacted', auth.bearer, async (ctx, next) => {
+  var data = await service.updateLastContacted(ctx.request.fields.emails);
+  ctx.body = data;
+});
+
 module.exports = router.routes();
