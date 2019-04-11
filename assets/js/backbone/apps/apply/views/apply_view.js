@@ -450,13 +450,14 @@ var ApplyView = Backbone.View.extend({
             success: function (data) {
               var recordList = [];
               _.each(applicationData[recordData.section], function (element) {
-                if (element[recordData.section + '_id'] != recordData.id) {
+                if (element[recordData.section + 'Id'] != recordData.id) {
                   recordList.push(element);
                 }
               });
               applicationData[recordData.section] = recordList;
-              //$(e.currentTarget).closest('li').remove();
-              this.updateApplicationStep(this.data.selectedStep);
+            
+              $(e.currentTarget).closest('li').remove();
+              //  this.updateApplicationStep(this.data.selectedStep);
               this.modalComponent.cleanup();
             }.bind(this),
             error: function (err) {
