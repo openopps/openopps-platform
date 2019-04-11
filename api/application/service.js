@@ -268,6 +268,12 @@ module.exports.apply = async function (user, taskId, getTasks, callback) {
 };
 
 module.exports.deleteApplication = async (userId, applicationId, callback) => {
+  await dao.ApplicationTask.delete('application_id = ?', applicationId);
+  await dao.Experience.delete('application_id = ?', applicationId);
+  await dao.Reference.delete('application_id = ?', applicationId);
+  await dao.Education.delete('application_id = ?', applicationId);
+  await dao.ApplicationLanguageSkill.delete('application_id = ?', applicationId);
+  await dao.ApplicationSkill.delete('application_id = ?', applicationId);
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
     await dao.Application.delete(application).then(() => {
       callback();
