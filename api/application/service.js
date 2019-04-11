@@ -46,13 +46,15 @@ function sortApplicationTasks (tasks) {
 }
 
 function importProfileData (user, applicationId) {
-  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(() => {
+  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
+    var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
     Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(profile => {
       Promise.all([
         Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
         Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
         Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
         Import.profileReferences(user.id, applicationId, profile.Profile.References),
+        Import.profileSkills(user.id, applicationId, profileSkillObject),
       ]).catch((err) => {
         // record data import error
       });
@@ -91,7 +93,7 @@ async function processUnpaidApplication (user, data, callback) {
   }
 }
 
-async function updateEducation ( educationId,data) {
+async function updateEducation ( educationId, data ) {
   return await dao.Education.findOne('education_id = ? and user_id = ?',educationId,data.userId).then(async (e) => { 
     return await dao.Education.update(data).then((education) => {
       return education;
