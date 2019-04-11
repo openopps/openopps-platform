@@ -118,7 +118,6 @@ router.put('/api/application/:applicationId/skill', auth, async (ctx, next) =>{
   }
 });
 
-
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;
