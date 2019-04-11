@@ -118,16 +118,6 @@ router.put('/api/application/:applicationId/skill', auth, async (ctx, next) =>{
   }
 });
 
-router.delete('/api/application/:applicationId/applicationSkill/:id',auth, async (ctx,next) =>{ 
-  var result = await service.deleteSkill(ctx.state.user.id, ctx.params.id).then(() => {
-    ctx.body = result;
-    ctx.status = 200;
-  }).catch((err) => {
-    ctx.status = err.status;
-    ctx.body = err.message;
-  });
-});
-
 router.put('/api/application/:applicationId/Education',auth, async (ctx,next) =>{
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.applicationId=ctx.params.applicationId;

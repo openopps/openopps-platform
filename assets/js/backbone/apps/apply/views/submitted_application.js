@@ -26,14 +26,14 @@ var submittedApplication = {
         primary: {
           text: 'Withdraw',
           action: function () {
-            submittedApplication.submitApplicationDelete.bind(this)(this.data.applicationId, this.data.userId);
+            submittedApplication.submitDelete.bind(this)(this.data.applicationId, this.data.userId);
           }.bind(this),
         },
       }).render();
     }
   },
 
-  submitApplicationDelete: function (applicationId, userId) {
+  submitDelete: function (applicationId, userId) {
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       type: 'DELETE',

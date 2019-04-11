@@ -176,20 +176,6 @@ module.exports.saveSkill = async function (userId, applicationId, attributes) {
   });
 };
 
-module.exports.deleteSkill = async function (userId, id) {
-  return await dao.ApplicationSkill.findOne('skill_id = ? and user_id =  ?', id, userId).then(async (l) => {
-    return await dao.ApplicationSkill.delete('skill_id = ?', id).then(async (skill) => {
-      return skill;
-    }).catch(err => {
-      log.info('delete: failed to delete skill ', err);
-      return false;
-    });
-  }).catch(err => {
-    log.info('delete: record to delete not found ', err);
-    return false;
-  });
-};
-
 function processUserTags (user, applicationId, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(_.isNaN(_.parseInt(tag.id))) {
@@ -268,12 +254,12 @@ module.exports.apply = async function (user, taskId, getTasks, callback) {
 };
 
 module.exports.deleteApplication = async (userId, applicationId, callback) => {
-  await dao.ApplicationTask.delete('application_id = ?', applicationId);
-  await dao.Experience.delete('application_id = ?', applicationId);
-  await dao.Reference.delete('application_id = ?', applicationId);
-  await dao.Education.delete('application_id = ?', applicationId);
-  await dao.ApplicationLanguageSkill.delete('application_id = ?', applicationId);
-  await dao.ApplicationSkill.delete('application_id = ?', applicationId);
+  await dao.ApplicationTask.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Experience.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Reference.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Education.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.ApplicationLanguageSkill.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.ApplicationSkill.delete('application_id = ? and user_id = ?', applicationId, userId);
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
     await dao.Application.delete(application).then(() => {
       callback();
