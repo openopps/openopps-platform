@@ -21,8 +21,8 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
         applicationId: applicationId,
         countryId: (await dao.Country.findOne('code = ?', record.CountryCode).catch(() => { return {}; })).countryId,
         countrySubdivisionId : (await dao.CountrySubdivision.findOne('parent_code = ? and code = ?', record.CountryCode, record.CountrySubdivisionCode).catch(() => { return {}; })).countrySubdivisionId,
-        degreeLevelId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'DEGREE_LEVEL', record.DegreeLevelCode).catch(() => { return {}; })).lookupCodeId,
-        honorsId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId,
+        degreeLevelId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'DEGREE_LEVEL', record.DegreeLevelCode).catch(() => { return {}; })).lookupCodeId,
+        honorsId: record.HonorsCode? ((await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId):null,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -60,9 +60,9 @@ module.exports.profileLanguages = (userId, applicationId, languageRecords) => {
         userId: userId,
         applicationId: applicationId,
         languageId: (await dao.Language.findOne('code = ?', record.LanguageISOCode).catch(() => { return {}; })).languageId,
-        readingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.ReadingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
-        speakingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.SpeakingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
-        writingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.WritingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        readingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.ReadingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        speakingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.SpeakingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        writingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.WritingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -80,7 +80,7 @@ module.exports.profileReferences = (userId, applicationId, referenceRecords) => 
       var reference = {
         userId: userId,
         applicationId: applicationId,
-        referenceTypeId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'REFERENCE_TYPE', record.TypeCode).catch(() => { return {}; })).lookupCodeId,
+        referenceTypeId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'REFERENCE_TYPE', record.TypeCode).catch(() => { return {}; })).lookupCodeId,
         referenceName: record.Name,
         referenceEmployer: record.Employer,
         referenceTitle: record.Title,
