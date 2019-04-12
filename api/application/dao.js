@@ -52,6 +52,11 @@ const countryQuery= 'SELECT country.country_id as "id", country.country_id as "c
   'from country ' + 'join education on country.country_id = education.country_id ' + 
   'where education.education_id = ? ';
 
+const profileSkillsQuery = `SELECT tags.* 
+  from tagentity tags
+  inner join tagentity_users__user_tags user_tags on tags.id = user_tags.tagentity_users
+  where tags.type = 'skill' and user_tags.user_tags = ?`;  
+
 const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup_code.value ' +
   'FROM application join lookup_code on application.security_clearance_id = lookup_code.lookup_code_id ' +
   'WHERE application.application_id = ?';
@@ -94,6 +99,7 @@ module.exports = function (db) {
       applicationReference: applicationReferenceQuery,
       applicationSkill: applicationSkillQuery,
       country: countryQuery,
+      profileSkills: profileSkillsQuery,
       securityClearance: securityClearanceQuery,
       submittedApplicationCycle: submittedApplicationCycleQuery,
       submittedApplicationCommunity: submittedApplicationCommunityQuery,
