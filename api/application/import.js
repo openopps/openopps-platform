@@ -21,15 +21,15 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
         applicationId: applicationId,
         countryId: (await dao.Country.findOne('code = ?', record.CountryCode).catch(() => { return {}; })).countryId,
         countrySubdivisionId : (await dao.CountrySubdivision.findOne('parent_code = ? and code = ?', record.CountryCode, record.CountrySubdivisionCode).catch(() => { return {}; })).countrySubdivisionId,
-        degreeLevelId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'DEGREE_LEVEL', record.DegreeLevelCode).catch(() => { return {}; })).lookupCodeId,
-        honorsId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId,
+        degreeLevelId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'DEGREE_LEVEL', record.DegreeLevelCode).catch(() => { return {}; })).lookupCodeId,
+        honorsId: record.HonorsCode? ((await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId):null,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
       return dao.Education.insert(education);
     } catch (err) {
       dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
-      return { err: 'An error occured trying to import profile data.' };
+      return { err: 'An error occurred trying to import profile data.' };
     }
   }));
 };
@@ -48,7 +48,7 @@ module.exports.profileExperience = (userId, applicationId, experienceRecords) =>
       return dao.Experience.insert(experience);
     } catch (err) {
       dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
-      return { err: 'An error occured trying to import profile data.' };
+      return { err: 'An error occurred trying to import profile data.' };
     }
   }));
 };
@@ -60,16 +60,16 @@ module.exports.profileLanguages = (userId, applicationId, languageRecords) => {
         userId: userId,
         applicationId: applicationId,
         languageId: (await dao.Language.findOne('code = ?', record.LanguageISOCode).catch(() => { return {}; })).languageId,
-        readingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.ReadingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
-        speakingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.SpeakingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
-        writingProficiencyId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.WritingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        readingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.ReadingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        speakingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.SpeakingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
+        writingProficiencyId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'LANGUAGE_PROFICIENCY', record.WritingProficiencyCode).catch(() => { return {}; })).lookupCodeId,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       return dao.ApplicationLanguageSkill.insert(language);
     } catch (err) {
       dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
-      return { err: 'An error occured trying to import profile data.' };
+      return { err: 'An error occurred trying to import profile data.' };
     }
   }));
 };
@@ -80,7 +80,7 @@ module.exports.profileReferences = (userId, applicationId, referenceRecords) => 
       var reference = {
         userId: userId,
         applicationId: applicationId,
-        referenceTypeId: (await dao.LookupCode.findOne('lookup_code_type = ? and code = ?', 'REFERENCE_TYPE', record.TypeCode).catch(() => { return {}; })).lookupCodeId,
+        referenceTypeId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'REFERENCE_TYPE', record.TypeCode).catch(() => { return {}; })).lookupCodeId,
         referenceName: record.Name,
         referenceEmployer: record.Employer,
         referenceTitle: record.Title,
@@ -92,7 +92,25 @@ module.exports.profileReferences = (userId, applicationId, referenceRecords) => 
       return dao.Reference.insert(reference);
     } catch (err) {
       dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
-      return { err: 'An error occured trying to import profile data.' };
+      return { err: 'An error occurred trying to import profile data.' };
+    }
+  }));
+};
+
+module.exports.profileSkills = (userId, applicationId, skillRecords) => {
+  return Promise.all(_.map(skillRecords, async (record) => {
+    try {
+      var skill = {
+        userId: userId,
+        applicationId: applicationId,
+        skillId: record.id,
+        createdAt: new Date(),
+      };
+      var data = dao.ApplicationSkill.insert(skill);
+      return data;
+    } catch (err) {
+      dao.ErrorLog.insert({ userId: userId, errorData: err}).catch();
+      return {err: 'An error occurred trying to import profile data.'};
     }
   }));
 };

@@ -45,6 +45,11 @@
       @include media($L) {
         padding: 0;
       }
+
+      &.no-steps {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+      }
     }
 
     &__step {
@@ -91,6 +96,10 @@
           color: $color-white;
           font-weight: 700;
         }
+      }
+
+      &.hidden {
+        display: none;
       }
     }
 
@@ -754,7 +763,6 @@
     overflow-y: scroll;
     height: 33rem;
     padding-right: $size-S;
-    // padding-left: $size-base;
     margin-bottom: $size-default;
 
     @include media($M-down) {
@@ -768,6 +776,10 @@
         margin-right: 0;
       }
 
+      @include media($L) {
+        padding: $size-default $size-S;
+      }
+
       &:first-child {
         margin-top: $size-base;
       }
@@ -778,7 +790,7 @@
 
       .usajobs-card__title {
         font-size: 1.9rem;
-        width: 70%;
+        width: 68%;
         display: inline-block;
 
         @include media($XXL) {
@@ -1382,11 +1394,49 @@
           right: 2rem;
         }
 
-        svg {
-          width: 3rem;
+        &::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
           height: 4rem;
-          display: block;
+          width: 3rem;
+          content: url(../../img/icons/document/file-alt.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
           margin: 0 auto;
+        }
+
+        &.word::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-word.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+        }
+
+        &.pdf::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-pdf.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+        }
+
+        &.image::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-image.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
         }
 
         h6 {
@@ -1446,6 +1496,18 @@
     -webkit-hyphens: auto;
     hyphens: auto;
   }
+
+  .update-application {
+    margin-right: $size-L;
+  }
  
-  
+  .usa-button-secondary-alert-outline {
+    background-color: $color-white;
+    box-shadow: inset 0 0 0 2px $color-secondary;
+    color: $color-secondary;
+  }
+
+  .submitted-application-last {
+    padding: $size-SM;
+  }
 }

@@ -10,6 +10,11 @@ router.get('/api/v1/task/internships', auth.bearer, async (ctx, next) => {
   ctx.body = data;
 });
 
+router.get('/api/v1/task/internshipsArchive', auth.bearer, async (ctx, next) => {
+  var data = await service.getInternshipsArchive(ctx.state.user.id);
+  ctx.body = data;
+});
+
 router.get('/api/v1/task/internshipSummary', auth.bearer, async (ctx, next) => {
   var data = await service.getInternshipSummary(ctx.query.taskId); 
   data.owners = await service.getTaskShareList(ctx.query.taskId);

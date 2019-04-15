@@ -46,13 +46,15 @@ function sortApplicationTasks (tasks) {
 }
 
 function importProfileData (user, applicationId) {
-  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(() => {
+  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
+    var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
     Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(profile => {
       Promise.all([
         Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
         Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
         Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
         Import.profileReferences(user.id, applicationId, profile.Profile.References),
+        Import.profileSkills(user.id, applicationId, profileSkillObject),
       ]).catch((err) => {
         // record data import error
       });
@@ -91,7 +93,7 @@ async function processUnpaidApplication (user, data, callback) {
   }
 }
 
-async function updateEducation ( educationId,data) {
+async function updateEducation ( educationId, data ) {
   return await dao.Education.findOne('education_id = ? and user_id = ?',educationId,data.userId).then(async (e) => { 
     return await dao.Education.update(data).then((education) => {
       return education;
@@ -253,6 +255,26 @@ module.exports.apply = async function (user, taskId, getTasks, callback) {
   });
 };
 
+module.exports.deleteApplication = async (userId, applicationId, callback) => {
+  await dao.ApplicationTask.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Experience.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Reference.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Education.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.ApplicationLanguageSkill.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.ApplicationSkill.delete('application_id = ? and user_id = ?', applicationId, userId);
+  await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
+    await dao.Application.delete(application).then(() => {
+      callback();
+    }).catch((err) => {
+      log.error('An error was encountered trying to withdraw an application', err);
+      callback({ message: 'An error was encountered trying to withdraw this application.' });
+    });
+  }).catch((err) => {
+    log.error('An error was encountered trying to widthraw an application', err);
+    callback({ message: 'An error was encountered trying to withdraw this application.' });
+  });
+};
+
 module.exports.deleteApplicationTask = async function (userId, applicationId, taskId) {
   return new Promise((resolve, reject) => {
     dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then((application) => {
@@ -291,6 +313,8 @@ module.exports.findById = async function (userId, applicationId) {
         dao.Reference.query(dao.query.applicationReference, applicationId, { fetch: { referenceType: '' }}),
         db.query(dao.query.applicationSkill, applicationId, { fetch: { name: ''}}),
         dao.LookUpCode.query(dao.query.securityClearance, applicationId, { fetch: { securityClearance: ''}}),
+        db.query(dao.query.submittedApplicationCommunity, applicationId, { fetch: { communityName: ''}}),
+        db.query(dao.query.submittedApplicationCycle, applicationId, { fetch: { cycleName: ''}}),
       ]);
       application.tasks = sortApplicationTasks(results[0].rows);
       application.education = results[1];
@@ -299,6 +323,8 @@ module.exports.findById = async function (userId, applicationId) {
       application.reference = results[4];
       application.skill = results[5].rows;
       application.securityClearance = results[6];
+      application.communityName = results[7].rows[0];
+      application.cycleName = results[8].rows[0];
       resolve(application);
     }).catch((err) => {
       reject();

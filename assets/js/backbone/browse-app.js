@@ -50,6 +50,7 @@ var BrowseRouter = Backbone.Router.extend({
     'login(/)'                                      : 'showLogin',
     'apply/congratulations'                         : 'showApplyCongratulations',
     'apply/:id(/)'                                  : 'showApply',
+    'application/:id(/)'                            : 'showApply',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'unauthorized(/)'                               : 'showUnauthorized',
     'expired(/)'                                    : 'showExpired',
@@ -429,7 +430,7 @@ var BrowseRouter = Backbone.Router.extend({
             el: '#site-modal',
             id: 'submit-opp',
             modalTitle: 'Submitted',
-            modalBody: 'Thanks for submitting the <strong>' + data.attributes.title + '</strong>. We\'ll review it and let you know if it\'s approved or if we need more information.',
+            modalBody: 'Thanks for submitting <strong>' + data.attributes.title + '</strong>. We\'ll review it and let you know if it\'s approved or if we need more information.',
             primary: {
               text: 'Close',
               action: function () {
@@ -464,7 +465,7 @@ var BrowseRouter = Backbone.Router.extend({
       id = id.toLowerCase();
     }
 
-    if (window.cache.currentUser.hiringPath == 'student') {
+    if (window.cache.currentUser && window.cache.currentUser.hiringPath == 'student') {
       this.studentHomeController = new StudentHomeController({
         target: 'home',
         el: '#container',
@@ -490,9 +491,6 @@ var BrowseRouter = Backbone.Router.extend({
 
   showApply: function (id) {
     this.cleanupChildren();
-    // if (id) {
-    //   id = id.toLowerCase();
-    // }
     this.applyController = new ApplyController({
       target: 'apply',
       el: '#container',
