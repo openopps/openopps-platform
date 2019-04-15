@@ -42,6 +42,7 @@ module.exports.profileExperience = (userId, applicationId, experienceRecords) =>
         applicationId: applicationId,
         countryId: (await dao.Country.findOne('code = ?', record.CountryCode).catch(() => { return {}; })).countryId,
         countrySubdivisionId : (await dao.CountrySubdivision.findOne('parent_code = ? and code = ?', record.CountryCode, record.CountrySubdivisionCode).catch(() => { return {}; })).countrySubdivisionId,
+        isPresent: record.EndDate ? false : true,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
