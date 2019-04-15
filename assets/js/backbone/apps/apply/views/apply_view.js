@@ -58,7 +58,7 @@ var ApplyView = Backbone.View.extend({
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
     'click #cancel-education'                                     : function () { this.callMethod(Education.toggleAddEducationOff); },
     'click #save-education'                                       : function () { this.callMethod(Education.saveEducation); },
-    'click #education-edit'                                       : 'editEducation',
+    'click #education-edit'                                       : function (e) { this.callMethod(Education.editEducation,e); },
     'click #saveEducationContinue'                                : function () { this.callMethod(Education.educationContinue); },
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
@@ -130,7 +130,7 @@ var ApplyView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
-    this.renderComponentEducation();
+    Education.renderComponentEducation.bind(this)();
     Experience.renderExperienceComponent.bind(this)();
     Transcripts.renderTranscripts.bind(this)();
     Statement.characterCount();
@@ -272,29 +272,12 @@ var ApplyView = Backbone.View.extend({
   },
   // end summary section
 
-  // education section
-  renderComponentEducation: function (){
-    this.renderEducation();
-    if(this.data.editEducation && this.data.selectedStep =='3'){
-      Education.getEducation.bind(this)();
-      Education.initializeAddEducationFields.bind(this)();
-    }
-  },
+ 
   
-  editEducation:function (e){
-    var educationId= $(e.currentTarget).attr('data-id');
-    var dataEducation= Education.getDataFromEducationPage.bind(this)();
-    localStorage.setItem('eduKey', JSON.stringify(dataEducation));
-    Backbone.history.navigate('/apply/'+this.data.applicationId+'?step=3&editEducation='+educationId, { trigger: true, replace: true });  
-    return this;       
-  },
+  
+  
 
-  renderEducation:function (){   
-    var data= _.extend({data:this.data}, { completedMonthFunction: Education.getCompletedDateMonth.bind(this) }); 
   
-    $('#education-preview-id').html(templates.applyeducationPreview(data));
-  },
-  // end education section
   
   initializeCountriesSelect: function () {  
     

@@ -763,7 +763,6 @@
     overflow-y: scroll;
     height: 33rem;
     padding-right: $size-S;
-    // padding-left: $size-base;
     margin-bottom: $size-default;
 
     @include media($M-down) {
@@ -777,6 +776,10 @@
         margin-right: 0;
       }
 
+      @include media($L) {
+        padding: $size-default $size-S;
+      }
+
       &:first-child {
         margin-top: $size-base;
       }
@@ -787,7 +790,7 @@
 
       .usajobs-card__title {
         font-size: 1.9rem;
-        width: 70%;
+        width: 68%;
         display: inline-block;
 
         @include media($XXL) {
