@@ -8,6 +8,11 @@ const userQuery = 'select @m_user.*, @agency.*, @tags.* ' +
   'left join @agency on agency.agency_id = m_user.agency_id ' +
   'where m_user.disabled = false and m_user.id = ?';
 
+const userUpdateQuery = 'update midas_user set ' +
+  'government_uri = \'\' ' +
+  'where linked_id != ? and government_uri = ?';
+
+
 const tagEntityQuery = 'select tagentity_users__user_tags.* ' +
   'from tagentity_users__user_tags ' +
   'join tagentity on tagentity.id = tagentity_users ' +
@@ -57,6 +62,7 @@ module.exports = function (db) {
     query: {
       user: userQuery,
       tagEntity: tagEntityQuery,
+      updateUser: userUpdateQuery,
     },
     options: options,
     clean: clean,
