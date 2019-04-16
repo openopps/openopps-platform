@@ -62,6 +62,12 @@ async function userFound (user, tokenset, done) {
   }
 }
 
+function removeDuplicateFederalURI (tokenset) {
+  dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).catch(() => {
+    var i = 1;
+  });
+}
+
 function processFederalEmployeeLogin (tokenset, done) {
   dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
     userFound(user, tokenset, done);
@@ -179,6 +185,9 @@ if (openopps.auth.oidc) {
     },
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
+    if (tokenset.claims['usaj:governmentURI']) {
+      removeDuplicateFederalURI(tokenset);
+    }
     if (tokenset.claims['usaj:hiringPath'] == 'fed' && tokenset.claims['usaj:governmentURI']) {
       processFederalEmployeeLogin(tokenset, done);
     } else if (tokenset.claims['usaj:hiringPath'] == 'student') {
