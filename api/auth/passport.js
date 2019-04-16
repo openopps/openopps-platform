@@ -53,6 +53,9 @@ async function userFound (user, tokenset, done) {
     };
     if (tokenset.claims['usaj:hiringPath'] == 'student') {
       data.username = tokenset.claims.email;
+      data.isAdmin = false;
+      data.isAgencyAdmin = false;
+      data.isCommunityAdmin = false;
     }
     data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
     await dao.User.update(data);
