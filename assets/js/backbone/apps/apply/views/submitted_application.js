@@ -5,6 +5,34 @@ var $ = require('jquery');
 var ModalComponent = require('../../../components/modal');
 
 var submittedApplication = {
+  updateApplication: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+  
+    if (this.data.submittedAt !== null) {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'update-app',
+        modalTitle: 'Update application',
+        modalBody: '<p>You are about to make edits to an application you have already submitted. Follow these steps to resubmit your application:</p> ' +
+        '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
+        'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
+        'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
+        'your application and click <strong>Submit application</strong>.</li></ol>',
+        primary: {
+          text: 'Update application',
+          action: function () {
+            this.data.submittedAt = null;
+            this.data.selectedStep = 1;
+            Backbone.history.navigate('apply/' + this.data.applicationId, { trigger: false });
+            this.render();
+            this.modalComponent.cleanup();
+          }.bind(this),
+        },
+      }).render();
+    }
+  },
+
   withdrawApplication: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
