@@ -90,6 +90,7 @@ var ApplyView = Backbone.View.extend({
     'change [name=is_consent_to_share]'                           : 'enableSubmit',
 
     //submitted_application events
+    'click .update-application'                                   : function (e) { this.callMethod(SubmittedApplication.updateApplication, e); },
     'click .withdraw-application'                                 : function (e) { this.callMethod(SubmittedApplication.withdrawApplication, e); },
   },
 
