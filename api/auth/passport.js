@@ -66,9 +66,7 @@ async function userFound (user, tokenset, done) {
 }
 
 function removeDuplicateFederalURI (tokenset) {
-  dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).catch(() => {
-    var i = 1;
-  });
+  dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']);
 }
 
 function processFederalEmployeeLogin (tokenset, done) {
