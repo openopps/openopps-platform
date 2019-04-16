@@ -120,17 +120,17 @@ var TaskListView = Backbone.View.extend({
         });
         if(tag == 'location') {
           if($('#virtual').is(':checked')) {
-            this.filters.location.push('virtual');
+            this.filters.locationType.push('virtual');
           }
           if($('#in-person').is(':checked')) {
-            this.filters.location.push('in person');
+            this.filters.locationType.push('in person');
           }
         }
         this.filters.page = 1;
         this.filter();
       }.bind(this));
     }.bind(this));
-    if(!_.contains(this.filters.location, 'in person')) {
+    if(!_.contains(this.filters.locationType, 'in person')) {
       $('#location').siblings('.select2-container').hide();
     }
     
@@ -459,11 +459,12 @@ var TaskListView = Backbone.View.extend({
     this.filters.location = _.map($('#location').select2('data'), function (item) {
       return _.pick(item, 'type', 'name', 'id');
     });
+    this.filters.locationType = [];
     if($('#virtual').is(':checked')) {
-      this.filters.location.push('virtual');
+      this.filters.locationType.push('virtual');
     }
     if($('#in-person').is(':checked')) {
-      this.filters.location.push('in person');
+      this.filters.locationType.push('in person');
     }
     this.filters.page = 1;
     this.filter();
