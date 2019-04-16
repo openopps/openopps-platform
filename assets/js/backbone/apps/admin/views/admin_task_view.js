@@ -83,18 +83,19 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   renderTasks: function (tasks) {
-    var data = { tasks: [] };
-    $('.filter-radio:checked').each(function (index, item) {
-      data.tasks = data.tasks.concat(tasks[item.id]);
-    });
+    var data = {
+      tasks: tasks[$('.filter-radio:checked').attr('id')],
+      status:$('.filter-radio:checked').attr('id'),
+    };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
   },
 
   filterChanged: function () {
     this.renderTasks(this.tasks);
-    var t = $('input[name=opp-status]:checked').val(); 
-    if (t == 'submitted') {
+    var t = $('input[name=opp-status]:checked').val();
+    
+    if (t == 'submitted' || t=='approved') {
       $('[data-target=change-add]').addClass('hide');
       $('[data-target=publish-delete]').removeClass('hide');
     } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {

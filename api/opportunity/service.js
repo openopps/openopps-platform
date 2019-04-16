@@ -183,7 +183,7 @@ async function getSavedOpportunities (user) {
 }
 
 async function canUpdateOpportunity (user, id) {
-  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
   if (!task) {
     return false;
   } else if (task.userId == user.id || user.isAdmin
@@ -196,7 +196,7 @@ async function canUpdateOpportunity (user, id) {
 }
 
 async function canAdministerTask (user, id) {
-  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null });;
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
   if (!task) {
     return false;
   } else if (user.isAdmin
@@ -527,7 +527,7 @@ async function copyOpportunity (attributes, user, done) {
             user_id: user.id,
             shared_by_user_id: user.id,
             last_modified: new Date,
-          }
+          };
           await dao.TaskShare.insert(share);
         }
         await elasticService.indexOpportunity(intern.id);
@@ -562,7 +562,24 @@ function getRestrictValues (user) {
   return restrict;
 }
 
-async function deleteTask (id) {
+async function deleteTask (id,cycleId) {
+  if(cycleId){
+    var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
+      return null;
+    });
+    if(cycle && cycle.applyStartDate>new Date()){
+      return await removeTask(id);
+    }
+    else {
+      return false;
+    }
+  }
+  else{
+    return await removeTask(id);
+  }
+}
+
+async function removeTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
@@ -632,7 +649,7 @@ async function sendTasksDueNotifications (action, i) {
     });
 }
 
-async function saveOpportunity(user, data, callback) {
+async function saveOpportunity (user, data, callback) {
   var savedTask = await dao.SavedTask.findOne('task_id = ? and user_id = ?', data.taskId, user.id).catch(() => { return null; });
   if(data.action == 'unsave' && !savedTask || (data.action == 'save' && savedTask && !savedTask.deletedAt)) {
     callback();
