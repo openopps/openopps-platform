@@ -4,7 +4,7 @@
       <th>Title</th>
       <th>Creator</th>
       <th class="center">Date</th>
-      <th class="center" data-target="publish-delete">Publish</th>
+      <th id="publishId" class="center" data-target="publish-delete">Publish</th>
       <th class="center" data-target="publish-delete">Delete</th> 
       <th class="center hide" data-target="change-add">Change<br/> owner</th>
       <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
@@ -41,7 +41,7 @@
             <%- moment(task.createdAt).format('MM/DD/YY') %>
         </td>
         
-          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
+          <% if (_.contains(['submitted'], status.toLowerCase())) { %>
             <td class="metrics-table__button">
               <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
@@ -52,7 +52,7 @@
                 <span class='fa fa-check'></span>
               </a>
             </td>
-          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['open','notopen', 'inprogress'], status.toLowerCase())) { %>
             <td class="metrics-table__button">
               <a href="#change-owner/<%- task.id %>"
                 data-task-id="<%- task.id %>"
@@ -63,12 +63,12 @@
                 <i class="fas fa-user-cog"></i>
               </a>
             </td>
-          <% } else if (_.contains(['completed', 'canceled', 'draft'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['completed', 'canceled', 'draft','approved'], status.toLowerCase())) { %>
             <td>&nbsp;</td>
           <% } %>   
         
         
-          <% if (_.contains(['submitted'], task.state.toLowerCase())) { %>
+          <% if (_.contains(['submitted','approved'], status.toLowerCase())) { %>
             <td class="metrics-table__button">
               <a href="#delete/<%- task.id %>"
                 data-task-id="<%- task.id %>"
@@ -79,7 +79,7 @@
                 <span class='fa fa-times'></span>
               </a>
             </td>
-          <% } else if (_.contains(['open', 'not open', 'in progress'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['open', 'notopen', 'inprogress'], status.toLowerCase())) { %>
             <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
               <td class="metrics-table__button">
                 <a href="#add-participant/<%- task.id %>"
@@ -92,7 +92,7 @@
                 </a>
               </td>
             <% } %>
-          <% } else if (_.contains(['completed', 'canceled', 'draft'], task.state.toLowerCase())) { %>
+          <% } else if (_.contains(['completed', 'canceled', 'draft'], status.toLowerCase())) { %>
             <td>&nbsp;</td>
           <% } %>
       </tr>
