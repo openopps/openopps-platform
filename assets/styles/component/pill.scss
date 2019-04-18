@@ -240,6 +240,12 @@ $color-completed: $color-primary-alt;
     color: $color-white;
   }
 
+  &.status-approved {
+    background-color: #4c2c92;
+    border-color:  #4c2c92;
+    color: $color-white;
+  }
+
   &.status-in-progress {
     background-color: $color-paused;
     border-color: $color-paused;
