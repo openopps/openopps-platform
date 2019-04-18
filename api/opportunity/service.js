@@ -1,10 +1,12 @@
 const _ = require ('lodash');
+const fs = require('fs');
 const log = require('log')('app:opportunity:service');
 const db = require('../../db');
 const elasticService = require('../../elastic/service');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
+const communityService = require('../community/service');
 const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
@@ -686,4 +688,22 @@ module.exports = {
   getCommunities: getCommunities,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
+};
+
+module.exports.getApplicantsForTask = async (user, taskId) => {
+  return new Promise((resolve, reject) => {
+    dao.Task.findOne('id = ?', taskId).then(async task => {
+      if(await communityService.isCommunityManager(user, task.communityId)) {
+        db.query(fs.readFileSync(__dirname + '/sql/getInternshipApplicants.sql', 'utf8'), task.id).then(results => {
+          resolve(results.rows);
+        }).catch(err => {
+          reject({ status: 401 });
+        });
+      } else {
+        reject({ status: 403 });
+      }
+    }).catch(err => {
+      reject({ status: 404 });
+    })
+  });
 };
