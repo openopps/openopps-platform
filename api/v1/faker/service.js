@@ -13,6 +13,7 @@ service.generateFakeData = async function(user, params) {
     if (community == null) {
         return { 'error': 'No community passed in' };
     }
+    var numOfInterns = [1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,6,6,7,8,9,10,11,12,13,14,15];
     var results = {users: []};
     var newCycle = {
         name: params.cycle || faker.company.companyName() + '_faker',
@@ -68,7 +69,7 @@ service.generateFakeData = async function(user, params) {
             country_id: loc.country_id,
             country_subdivision_id: loc.country_subdivision_id,
             city_name: faker.address.city(),
-            interns: faker.random.number({ min: 1,  max: 15 }),
+            interns: faker.random.arrayElement(numOfInterns),
             cycle_id: cycle.cycleId,
             bureau_id: bureau.bureau_id,
             office_id: bureau.office_id,
@@ -423,8 +424,16 @@ service.deleteFakeData = async function(params) {
     });
 }
 
-service.deleteBoardData = async function(taskId) {
-   return await db.transaction(function* () {
+service.deleteBoardData = async function(cycleId) {
+    var boardList = await dao.Task.find('cycle_id = ?', cycleId);
+    for (var i=0; i < boardList.length; i++) {
+        await deleteBoard(boardList[i].id);
+    }   
+    return true;
+}
+
+async function deleteBoard(taskId) {
+    return await db.transaction(function* () {
         yield dao.TaskList.query(`delete from task_list where task_id = ?`, taskId);
         yield dao.TaskListApplication.query(`
             delete from task_list_application 
