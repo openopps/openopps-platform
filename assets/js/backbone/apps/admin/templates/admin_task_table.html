@@ -22,12 +22,16 @@
       <tr>
         <td class="metrics-table__title">
           <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-          <% if ( task.volunteers.length ) { %>
+          <% if ( task.volunteers && task.volunteers.length ) { %>
           <div class="sign-ups">Sign-ups:
              <% _( task.volunteers ).forEach( function( vol ) { %>
                <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
              <% } ); %>
           </div>
+          <% } else if (task.applicants)  { %>
+            <div class="sign-ups">
+              <a href="#"><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %></a>
+            </div>
           <% } %>
         </td>
         <td class="metrics-table__author">
