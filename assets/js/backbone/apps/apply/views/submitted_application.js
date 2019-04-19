@@ -49,7 +49,7 @@ var submittedApplication = {
         this.data.cycleName.name + '? This action cannot be undone.</p>' +
         '<p><strong>Want to keep your application, but choose another internship opportunity?</strong></p>' +
         '<ol><li>Close this window or choose <strong>Cancel</strong>.</li><li>Choose <strong>Update</strong>.</li>' +
-        '<li>Search for a new internship opportunity &emdash; you\'ll need to delete one of your selected internships to replace it with a new one.</li>' +
+        '<li>Search for a new internship opportunity &mdash; you\'ll need to delete one of your selected internships to replace it with a new one.</li>' +
         '<li>Make sure to save and re-submit your application.</li></ol>',
         primary: {
           text: 'Withdraw',
