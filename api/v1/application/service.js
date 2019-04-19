@@ -15,7 +15,7 @@ service.getApplicationSummary = async function (taskListApplicationId, sub, auth
   return results;
 };
 
-service.removeApplicationTask  = async function(application_task_id, task_list_application_id, user){
+service.removeApplicationTask  = async function(task_id, application_task_id, task_list_application_id, user){
   var taskListApplicationRecord = await dao.TaskListApplication.findOne('task_list_application_id = ?', task_list_application_id);
   var historyRecord = {
     taskListApplicationId: task_list_application_id,
@@ -33,7 +33,9 @@ service.removeApplicationTask  = async function(application_task_id, task_list_a
         'created_at': taskListApplicationRecord.createdAt,
         'updated_at': taskListApplicationRecord.updatedAt,
         'updated_by': taskListApplicationRecord.updatedBy,
-    }
+    },
+    taskId: task_id,
+    application_id: taskListApplicationRecord.applicationId,
   }
   return await db.transaction(function* () {
     yield dao.ApplicationTask.query('UPDATE application_task SET is_removed = true, updated_at = NOW() WHERE application_task_id = ?', application_task_id);
