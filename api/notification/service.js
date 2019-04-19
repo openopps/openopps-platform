@@ -25,6 +25,8 @@ function createNotification (notification) {
       return done(err);
     }
     data._action = notification.action;
+    data._layout = notification.layout || 'layout.html';
+    data.moment = require('moment');
     data.globals = {
       httpProtocol: openopps.httpProtocol,
       hostName: openopps.hostName,
@@ -50,8 +52,8 @@ function createNotification (notification) {
 }
 
 function renderTemplate (template, data, done) {
-  var html = __dirname + '/../notification/' + data._action + '/template.html';
-  var layout = __dirname + '/../notification/layout.html';
+  var html = __dirname + '/' + data._action + '/template.html';
+  var layout = __dirname + '/' + data._layout;
   var mailOptions = {
     to: _.template(template.to)(data),
     cc: _.template(template.cc)(data),
@@ -83,7 +85,7 @@ function renderTemplate (template, data, done) {
 
 function renderIncludes (template, data) {
   try {
-    var html = __dirname + '/../notification/' + template + '/template.html';
+    var html = __dirname + '/' + template + '/template.html';
     var htmlTemplate = fs.readFileSync(html);
     return _.template(htmlTemplate)(data);
   } catch (err) {

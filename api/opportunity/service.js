@@ -170,11 +170,21 @@ async function createOpportunity (attributes, done) {
 async function sendTaskNotification (user, task, action) {
   var data = {
     action: action,
+    layout: 'layout.html',
     model: {
       task: task,
       user: user,
     },
   };
+  if (task.communityId) {
+    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
+    data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
+    if (templateOverride) {
+      data.action = templateOverride.template,
+      data.layout = templateOverride.layout || data.layout;
+    }
+  }
   if(!data.model.user.bounced) {
     notification.createNotification(data);
   }
