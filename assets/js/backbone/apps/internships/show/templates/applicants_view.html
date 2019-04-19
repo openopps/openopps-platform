@@ -1,0 +1,13 @@
+<h3>Applicants</h3>
+<% _.each(applicants, function (applicant) { %>
+  <div class="internship-applicant">
+    <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+      <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
+        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(applicant.name) %></div>
+      </div>
+      <div class="usajobs-open-opps-opportunity-requestor__body">
+        <div class="usajobs-open-opps-opportunity-requestor__name"><%- applicant.name %></div>
+      </div>
+    </div>
+  </div>
+<% }); %>

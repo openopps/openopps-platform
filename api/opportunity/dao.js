@@ -67,7 +67,7 @@ const savedTaskQuery = 'select ' +
   'left join country on country.country_id = task.country_id ' +
   'left join bureau on bureau.bureau_id = task.bureau_id ' +
   'left join office on office.office_id = task.office_id ' +
-  'where saved_task.deleted_at is null and saved_task.user_id = ?';
+  'where saved_task.deleted_at is null and saved_task.user_id = ? and cycle.apply_end_date > now()::date';
 
 const tasksDueQuery = 'select task.* ' +
   'from task ' +
@@ -232,6 +232,7 @@ module.exports = function (db) {
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
     Cycle: dao({ db: db, table: 'cycle' }),
+    CommunityEmailTemplate: dao({ db: db, table: 'community_email_template' }),
     LanguageSkill:dao({ db: db, table: 'language_skill' }),
     Country:dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),

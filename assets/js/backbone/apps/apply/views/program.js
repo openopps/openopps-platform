@@ -47,13 +47,13 @@ module.exports.getSavedOpportunities = function () {
 
 module.exports.selectSavedOpportunity = function (e) {
   e.preventDefault && e.preventDefault();
-    $.ajax({
-        url: '/api/application/apply/' + e.currentTarget.getAttribute('data-id'),
-        method: 'POST',
-        data: { getTasks: true },
-    }).done(onSuccess.bind(this)).fail(function () {
-      showWhoopsPage();
-    }.bind(this));
+  $.ajax({
+    url: '/api/application/apply/' + e.currentTarget.getAttribute('data-id'),
+    method: 'POST',
+    data: { getTasks: true },
+  }).done(onSuccess.bind(this)).fail(function () {
+    showWhoopsPage();
+  }.bind(this));
 };
 
 module.exports.saveProgramContinue = function (e) {
