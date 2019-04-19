@@ -14,8 +14,8 @@ if (_.indexOf(['DEV', 'TEST', 'LOCAL'], process.env.APP_ENV) > -1) {
         ctx.body = await service.deleteFakeData(ctx.params);
     });
 
-    router.delete('/api/v1/faker/resetboard/:taskId', auth.bearer, async(ctx, next) => {
-        ctx.body = await service.deleteBoardData(ctx.params.taskId);
+    router.delete('/api/v1/faker/resetCycle/:cycleId', auth.bearer, async(ctx, next) => {
+        ctx.body = await service.deleteBoardData(ctx.params.cycleId);
     });
 }
 
