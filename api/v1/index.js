@@ -6,6 +6,7 @@ loadFeature = function (name) {
 };
 
 module.exports = (app) => {
+  app.use(loadFeature('cycle'));
   app.use(loadFeature('faker'));
   app.use(loadFeature('application'));
   app.use(loadFeature('opportunity'));

@@ -1,0 +1,174 @@
+const db = require('../../../db');
+const dao = require('./dao')(db);
+var _ = require('lodash');
+
+var service = {};
+
+var internships = null;
+var numOfApplicants = 0;
+var numOfInternships = 0;
+var remainingApplicants = 0;
+var internsAssigned = 0;
+
+service.drawMany = async function (userId, cycleId) {   
+    await initializeDraw(cycleId);
+    await initializeBoard(userId);
+    var internshipIndex = 0;
+    var internshipIndex = getNextInternshipIndex(internshipIndex);
+    var currentInternship = internships[internshipIndex];
+    do
+    {      
+        await assignIntern(currentInternship, userId);       
+        remainingApplicants--;
+        currentInternship.remainingInternships--;
+        internshipIndex++;
+        internshipIndex = getNextInternshipIndex(internshipIndex);
+        currentInternship = internships[internshipIndex];
+        console.log(haveMoreApplicants(), haveMoreEmptyInternships());
+    } while (haveMoreApplicants() && haveMoreEmptyInternships())
+    
+    var stats = {
+        numOfApplicants: numOfApplicants,
+        numOfInternships: numOfInternships,
+        internsAssigned: internsAssigned,
+        internshipsLength: internships.length,
+    }
+    console.log(stats);
+    return stats;
+};
+
+function getNextInternshipIndex(internshipIndex) {
+    var counter = 0;
+    if(internshipIndex >= internships.length) {
+        internshipIndex = 0;
+    }
+    while (internships[internshipIndex].remainingInternships <= 0 && counter <= internships.length) {
+        internshipIndex++;
+        if(internshipIndex >= internships.length) {
+            internshipIndex = 0;
+        }
+        counter++;
+    }
+    return internshipIndex;
+}
+
+async function initializeBoard(userId) {
+    if (internships == null) {
+        return;
+    }
+    for(let i=0; i < internships.length; i++) {
+        if (!(await boardExists(internships[i].task_id))) {
+            await createBoard(internships[i].task_id, userId);            
+        }
+        internships[i].reviewList = await getReviewList(internships[i].task_id);
+        internships[i].remainingInternships = Number(internships[i].interns) + (Number(internships[i].interns) * Number(internships[i].alternate_rate));
+    }
+}
+
+async function getReviewList(taskId) {
+    var result = (await dao.Task.db.query(dao.query.taskListQuery, taskId)).rows;
+    if (result != null && result.length > 0) {
+        return result[0].task_list_id;
+    }
+    return null;
+}
+
+async function initializeDraw(cycleId) {
+    internships = (await dao.Task.db.query(dao.query.getTaskTotalScore, cycleId)).rows;
+    numOfApplicants = (await dao.Application.db.query(dao.query.getApplicationCount, cycleId)).rows[0].applicant_count;
+    remainingApplicants = numOfApplicants;
+    numOfInternships = _.sumBy(internships, function(i) { return Number(i.interns) + (Number(i.interns) * Number(i.alternate_rate)) });
+}
+
+async function boardExists(taskId) {
+    var reviewList = await dao.Task.db.query(dao.query.taskListQuery, taskId);
+    return reviewList.rows.length > 0;
+}
+
+async function createBoard(taskId, userId) {
+    var listNames = ['For review', 'Interviewing', 'Interviewed', 'Accepted', 'Alternate'];
+    for (let i = 0; i < listNames.length; i++) {
+        await createTaskList(listNames[i], taskId, userId, i);
+    }
+}
+
+async function createTaskList (listName, taskId, userId, sortOrder) {
+    var list = {
+      task_id: taskId,
+      title: listName,
+      sort_order: sortOrder,
+      created_at: new Date(),
+      updated_at: new Date(),
+      updated_by: userId,
+    };
+    return await dao.TaskList.insert(list);
+}
+
+function haveMoreApplicants() {
+    return remainingApplicants > 0;
+}
+
+function haveMoreEmptyInternships() {
+    for (let i=0; i < internships.length; i++) {
+        if (internships[i].remainingInternships > 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+async function assignIntern (internship, userId) {
+    var intern = await getTopApplicantScoreByTaskWithPreference(internship)
+    if (!intern) {
+        intern = await getInternWithApplication(internship);
+    }
+    await updateBoard(internship, intern, userId);
+}
+
+async function getInternWithApplication(internship) {
+    var result = (await dao.Task.db.query(dao.query.getTopApplicantScoreByTask, internship.task_id)).rows;
+    if (result != null && result.length > 0) {
+        return result[0];
+    }
+    return null;
+}
+
+async function getTopApplicantScoreByTaskWithPreference(internship) {
+    var result = (await dao.Task.db.query(dao.query.getTopApplicantScoreByTaskWithPreference, internship.task_id)).rows;
+    if (result != null && result.length > 0) {
+        return result[0];
+    }
+    return null;
+}
+
+async function updateBoard(internship, intern, userId) {
+    internsAssigned++;
+    await createTaskListApplication(intern, internship.reviewList, userId);
+}
+  
+async function createTaskListApplication (item, taskListId, userId) {
+    var list = {
+        task_list_id: taskListId,
+        application_id: item.application_id,
+        sort_order: numOfApplicants - remainingApplicants,
+        created_at: new Date(),
+        updated_at: new Date(),
+        updated_by: userId,
+    };
+    return await db.transaction(function*() {
+        var record = yield dao.TaskListApplication.insert(list);
+        var historyRecord = {
+            taskListApplicationId: record.taskListApplicationId,
+            action: 'insert',
+            actionBy: userId,
+            actionDate: new Date,
+            details: { 
+                'task_list_id': taskListId,
+                'sort_order': numOfApplicants - remainingApplicants,
+            },
+        };
+        return yield dao.TaskListApplicationHistory.insert(historyRecord);      
+    });
+}
+
+module.exports = service;
