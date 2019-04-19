@@ -67,7 +67,7 @@ const savedTaskQuery = 'select ' +
   'left join country on country.country_id = task.country_id ' +
   'left join bureau on bureau.bureau_id = task.bureau_id ' +
   'left join office on office.office_id = task.office_id ' +
-  'where saved_task.deleted_at is null and saved_task.user_id = ?';
+  'where saved_task.deleted_at is null and saved_task.user_id = ? and cycle.apply_end_date > now()::date';
 
 const tasksDueQuery = 'select task.* ' +
   'from task ' +

@@ -52,7 +52,7 @@ const savedTaskQuery = 'select ' +
   'left join cycle on cycle.cycle_id = task.cycle_id ' +
   'left join country_subdivision csub on csub.country_subdivision_id = task.country_subdivision_id ' +
   'left join country on country.country_id = task.country_id ' +
-  'where saved_task.deleted_at is null and saved_task.user_id = ?';
+  'where saved_task.deleted_at is null and saved_task.user_id = ? and cycle.apply_end_date > now()::date';
 
 const options = {
   user: {
