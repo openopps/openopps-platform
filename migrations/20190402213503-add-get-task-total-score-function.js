@@ -80,7 +80,7 @@ exports.up = function (db, callback) {
 }
 
 exports.down = function (db, callback) {
-  db.runSql('drop function get_applicant_language_score(bigint)', callback);
+  db.runSql('drop function get_task_total_score(bigint)', callback);
 }
 
 exports._meta = {
