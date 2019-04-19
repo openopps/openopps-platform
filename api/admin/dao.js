@@ -61,6 +61,15 @@ const taskCommunityStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'left join cycle on cycle.cycle_id = task.cycle_id ' +
   'where task.community_id= ? and ';
 
+const internshipCommunityStateQuery = 'select @task.*, @owner.*, @applicants.* ' +
+  'from @task task ' +
+  'inner join @midas_user owner on task."userId" = owner.id ' +
+  'left join cycle on cycle.cycle_id = task.cycle_id ' +
+  'left join application_task on application_task.task_id = task.id ' +
+  'left join application on application.application_id = application_task.application_id and application.submitted_at is not null ' +
+  'left join @midas_user applicants on applicants.id = application.user_id ' +
+  'where task.community_id = ? and ';
+
 const communityTaskQuery = 'select count(*) from task where "community_id" = ? ';
 
 const withTasksQuery = 'select count(distinct "userId") from task ';
@@ -285,6 +294,20 @@ const options = {
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
     },
   },
+  internship: {
+    fetch: {
+      owner: '',
+      applicants: [],
+    },
+    exclude: {
+      task: [ 'projectId', 'description', 'userId', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
+        'completedAt', 'completedBy', 'submittedAt', 'restrict' ],
+      owner: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+        'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
+      applicants: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+        'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
+    },
+  },
   taskMetrics: {
     fetch: {
       tags: [],
@@ -375,6 +398,7 @@ module.exports = function (db) {
       userAgencyQuery: userAgencyQuery,
       userCommunityQuery: userCommunityQuery,
       taskCommunityStateUserQuery: taskCommunityStateUserQuery,
+      internshipCommunityStateQuery: internshipCommunityStateQuery,
       ownerCommunityListQuery: ownerCommunityListQuery,
       communityListQuery: communityListQuery,
     },

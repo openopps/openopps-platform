@@ -50,6 +50,15 @@ router.get('/api/task/saved', auth, async (ctx, next) => {
   ctx.body = await service.getSavedOpportunities(ctx.state.user);
 });
 
+router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
+  await service.getApplicantsForTask(ctx.state.user, ctx.params.id).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  })
+})
+
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user);
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
