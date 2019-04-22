@@ -1,0 +1,7 @@
+<p>Hello <% if (admin.name) { %><%- admin.name %><% } %>,</p>
+
+<p><%- user.name %> has submitted a new internship opportunity for your review: 
+  <a href="<%- globals.urlPrefix %>/internships/<%- task.id %>"><%- task.title %></a></p>
+
+<p>Please review this and either approve or ask for more information if it's needed. This internship opportunity will be available 
+  to applicants starting <%- moment(cycle.applyStartDate).format('MMMM DD, YYYY') %>.</p>
