@@ -35,27 +35,34 @@
           <div class="usajobs-width-one-third">
             <div class="usajobs-open-opps-opportunity-requestor__wrapper">
               <div class="usajobs-open-opps-opportunity-requestor">
+                  <% if (model.community && model.community.community_logo) { %>
+                    <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                <div class="usajobs-open-opps-opportunity-requestor__figure" >                                        
+                    <img src= "<%-model.community.community_logo %>" alt="">                                   
+                 </div>
+             <div class="usajobs-open-opps-opportunity-requestor__body">                                       
+               <a> <%- model.community.community_name %></a>                                                      
+              <span class="usajobs-open-opps-opportunity-requestor__on">
+                   Posted on
+              <span><%- model.publishedAt ? moment(model.publishedAt).format('MM/DD/YY') : '-/-/-' %></span>
+               </span class="usajobs-open-opps-opportunity-requestor__date">
+               </div>
+              </div>
+              <% }                             
+             else { %>
                 <a href="/profile/<%- model.owner.id %>">
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure <% if (user) { %><%- getInitialsColor(model.owner.id) %><% } %>" <% if (user) { %> data-userid="<%- model.userId %>" <% } %>>
                       <% if (model.owner.photoId) { %>
                         <img src="/api/user/photo/<%- model.owner.id %>" alt="Profile picture of <%- model.owner.name %>">
-                      <% }
-                       else if (model.community && model.community.community_logo) { %>
-                        <img src="<%-model.community.community_logo %>" alt="">
-                      <% }
+                      <% }                  
                        else { %>
                         <div class="usajobs-open-opps-opportunity-requestor__initials" title="<%- model.owner.name %>"><%- getInitials(model.owner.name) %></div>
                       <% } %>
                     </div>
-                    <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <p class="usajobs-open-opps-opportunity-requestor__name">
-                          <% if (model.community && model.community.community_logo) { %>
-                            <%- model.community.community_name %>
-                        <% }
-                       else { %>
-                        <%- model.owner.name %> <% if(model.owner.agency && model.owner.agency.abbr) { %>(<%- model.owner.agency.abbr %>)<% } %>
-                        <% } %>
+                    <div class="usajobs-open-opps-opportunity-requestor__body">                                           
+                        <p class="usajobs-open-opps-opportunity-requestor__name">
+                        <%- model.owner.name %> <% if(model.owner.agency && model.owner.agency.abbr) { %>(<%- model.owner.agency.abbr %>)<% } %>                
                       </p>
                       <span class="usajobs-open-opps-opportunity-requestor__on">
                         Posted on
@@ -64,6 +71,7 @@
                     </div>
                   </div>
                 </a>
+                <% } %>
               </div>
             </div>
             <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">
