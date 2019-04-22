@@ -10,4 +10,9 @@ router.post('/api/v1/cycle/drawMany', auth.bearer, async (ctx, next) => {
     ctx.body = data;
 });
 
+router.post('/api/v1/cycle/drawOne', auth.bearer, async (ctx, next) => {
+    var data = await service.drawOne(ctx.state.user.id, ctx.request.fields.taskId);
+    ctx.body = data.rows[0];
+});
+
 module.exports = router.routes();

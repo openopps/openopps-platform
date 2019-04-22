@@ -195,7 +195,7 @@ var InternshipView = BaseView.extend({
   },
 
   updateInternshipEmail: function () {
-    var subject = 'Take A Look At This Opportunity',
+    var subject = 'Take a look at this internship opportunity',
         data = {
           opportunityTitle: this.model.get('title'),
           opportunityLink: window.location.protocol +
