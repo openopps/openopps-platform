@@ -22,12 +22,12 @@ async function getCommunityTaskStateMetrics (communityId){
   var community = await communityService.findById(communityId);
 
   if (community.duration == 'Cyclical') {
-    states.approved = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'open' and \"apply_start_date\" > now()", communityId, dao.options.task));
-    states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'open' and \"apply_start_date\" <= now()", communityId, dao.options.task));
-    states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
-    states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId, dao.options.task));
-    states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
-    states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
+    states.approved = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" > now()", communityId, dao.options.internship));
+    states.open = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" <= now()", communityId, dao.options.internship));
+    states.completed = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'completed'", communityId, dao.options.internship));
+    states.draft = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'draft'",communityId, dao.options.internship));
+    states.submitted = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'submitted'", communityId, dao.options.internship));
+    states.canceled = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'canceled'", communityId, dao.options.internship));
     return states;
   } else {
     states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId, dao.options.task));

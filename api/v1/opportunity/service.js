@@ -46,7 +46,7 @@ service.updateTaskList = async function (user, toUpdate) {
       throw new Error('Error updating task list');
     }
   }
-  return new Date;
+  return true;
 };
 
 service.getCommunityUserByTaskAndEmail = async function (taskId, email) {

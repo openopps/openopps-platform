@@ -1,10 +1,12 @@
 const _ = require ('lodash');
+const fs = require('fs');
 const log = require('log')('app:opportunity:service');
 const db = require('../../db');
 const elasticService = require('../../elastic/service');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
+const communityService = require('../community/service');
 const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
@@ -168,11 +170,21 @@ async function createOpportunity (attributes, done) {
 async function sendTaskNotification (user, task, action) {
   var data = {
     action: action,
+    layout: 'layout.html',
     model: {
       task: task,
       user: user,
     },
   };
+  if (task.communityId) {
+    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
+    data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
+    if (templateOverride) {
+      data.action = templateOverride.template,
+      data.layout = templateOverride.layout || data.layout;
+    }
+  }
   if(!data.model.user.bounced) {
     notification.createNotification(data);
   }
@@ -686,4 +698,22 @@ module.exports = {
   getCommunities: getCommunities,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
+};
+
+module.exports.getApplicantsForTask = async (user, taskId) => {
+  return new Promise((resolve, reject) => {
+    dao.Task.findOne('id = ?', taskId).then(async task => {
+      if(await communityService.isCommunityManager(user, task.communityId)) {
+        db.query(fs.readFileSync(__dirname + '/sql/getInternshipApplicants.sql', 'utf8'), task.id).then(results => {
+          resolve(results.rows);
+        }).catch(err => {
+          reject({ status: 401 });
+        });
+      } else {
+        reject({ status: 403 });
+      }
+    }).catch(err => {
+      reject({ status: 404 });
+    })
+  });
 };

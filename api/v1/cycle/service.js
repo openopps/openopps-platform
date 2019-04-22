@@ -24,7 +24,6 @@ service.drawMany = async function (userId, cycleId) {
         internshipIndex++;
         internshipIndex = getNextInternshipIndex(internshipIndex);
         currentInternship = internships[internshipIndex];
-        console.log(haveMoreApplicants(), haveMoreEmptyInternships());
     } while (haveMoreApplicants() && haveMoreEmptyInternships())
     
     var stats = {
@@ -35,6 +34,18 @@ service.drawMany = async function (userId, cycleId) {
     }
     console.log(stats);
     return stats;
+};
+
+service.drawOne = async function (userId, taskId) {
+    var applicationId = null;
+    var internship = (await dao.Task.db.query(dao.query.getTaskIdAndListId, taskId)).rows[0];
+    if (internship != null) {
+        applicationId = await assignIntern(internship, userId);
+    }
+    if (applicationId !== null) {
+        return await dao.Application.db.query(dao.query.getOneIntern, applicationId);
+    }
+    return null;
 };
 
 function getNextInternshipIndex(internshipIndex) {
@@ -60,6 +71,7 @@ async function initializeBoard(userId) {
         if (!(await boardExists(internships[i].task_id))) {
             await createBoard(internships[i].task_id, userId);            
         }
+        internships[i].max_sort = 0;
         internships[i].reviewList = await getReviewList(internships[i].task_id);
         internships[i].remainingInternships = Number(internships[i].interns) + (Number(internships[i].interns) * Number(internships[i].alternate_rate));
     }
@@ -123,6 +135,7 @@ async function assignIntern (internship, userId) {
         intern = await getInternWithApplication(internship);
     }
     await updateBoard(internship, intern, userId);
+    return intern.application_id;
 }
 
 async function getInternWithApplication(internship) {
@@ -143,14 +156,14 @@ async function getTopApplicantScoreByTaskWithPreference(internship) {
 
 async function updateBoard(internship, intern, userId) {
     internsAssigned++;
-    await createTaskListApplication(intern, internship.reviewList, userId);
+    await createTaskListApplication(intern, internship, userId);
 }
   
-async function createTaskListApplication (item, taskListId, userId) {
+async function createTaskListApplication (item, internship, userId) {
     var list = {
-        task_list_id: taskListId,
+        task_list_id: internship.reviewList,
         application_id: item.application_id,
-        sort_order: numOfApplicants - remainingApplicants,
+        sort_order: internship.max_sort,
         created_at: new Date(),
         updated_at: new Date(),
         updated_by: userId,
@@ -163,12 +176,13 @@ async function createTaskListApplication (item, taskListId, userId) {
             actionBy: userId,
             actionDate: new Date,
             details: { 
-                'task_list_id': taskListId,
-                'sort_order': numOfApplicants - remainingApplicants,
+                'task_list_id': internship.reviewList,
+                'sort_order': internship.max_sort,
             },
         };
+        internship.max_sort = internship.max_sort + 1;
         return yield dao.TaskListApplicationHistory.insert(historyRecord);      
-    });
+    }); 
 }
 
 module.exports = service;
