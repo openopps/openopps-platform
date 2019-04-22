@@ -710,7 +710,7 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
           reject({ status: 401 });
         });
       } else {
-        reject({ status: 403 });
+        reject({ status: 404 });
       }
     }).catch(err => {
       reject({ status: 404 });
