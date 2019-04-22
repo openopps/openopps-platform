@@ -33,7 +33,9 @@ async function findById (id, user) {
   if(user && user.hiringPath=='student'){
     task.application=(await dao.Application.db.query(dao.query.applicationTasks,user.id,task.id)).rows[0];
   }
-  
+  if(task.communityId){
+    task.community=(await dao.Community.db.query(dao.query.communityTaskQuery,task.communityId)).rows[0];
+  }
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
   

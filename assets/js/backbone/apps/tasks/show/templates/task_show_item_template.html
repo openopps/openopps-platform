@@ -40,13 +40,22 @@
                     <div class="usajobs-open-opps-opportunity-requestor__figure <% if (user) { %><%- getInitialsColor(model.owner.id) %><% } %>" <% if (user) { %> data-userid="<%- model.userId %>" <% } %>>
                       <% if (model.owner.photoId) { %>
                         <img src="/api/user/photo/<%- model.owner.id %>" alt="Profile picture of <%- model.owner.name %>">
-                      <% } else { %>
+                      <% }
+                       else if (model.community && model.community.community_logo) { %>
+                        <img src="<%-model.community.community_logo %>" alt="">
+                      <% }
+                       else { %>
                         <div class="usajobs-open-opps-opportunity-requestor__initials" title="<%- model.owner.name %>"><%- getInitials(model.owner.name) %></div>
                       <% } %>
                     </div>
                     <div class="usajobs-open-opps-opportunity-requestor__body">
                       <p class="usajobs-open-opps-opportunity-requestor__name">
+                          <% if (model.community && model.community.community_logo) { %>
+                            <%- model.community.community_name %>
+                        <% }
+                       else { %>
                         <%- model.owner.name %> <% if(model.owner.agency && model.owner.agency.abbr) { %>(<%- model.owner.agency.abbr %>)<% } %>
+                        <% } %>
                       </p>
                       <span class="usajobs-open-opps-opportunity-requestor__on">
                         Posted on
