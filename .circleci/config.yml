@@ -1,47 +1,49 @@
 version: 2.1
-jobs:
-  - build:
-      working_directory: ~/openopps/openopps-platform
-      parallelism: 4
-      environment:
-        CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
-      docker:
-        - image: circleci/node:8.11.3
-        - image: circleci/postgres:9.6-alpine
-          environment:
-            POSTGRES_USER: midas
-            POSTGRES_PASSWORD: midas
-            POSTGRES_DB: midastest
-      steps:
-        - checkout
-        - run: if [[ `npm -v` != 6* ]]; then npm i npm@6.1.0; fi
-        - run: rm -rvf node_modules
-        - run: npm install
-        - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        - run: chmod +x ./cc-test-reporter
-        - run: ./cc-test-reporter before-build
-        - run:
-            name: Setup testing database
-            command: npm run init:test-db
-        - run: 
-            name: Runnning tests
-            command: npm run cover
-        - run: ./cc-test-reporter after-build --exit-code $?
-  - tag:
-      docker:
-        - image: circleci/node:8.11.3
-      filters:
-        branches:
-          only: 'bmcorum'
-      steps:
-        - run:
-            name: 'Get current package number'
-            command: |
-              echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")'' >> $BASH_ENV
-              echo ${PACKAGE_VERSION}
-        - run:
-            name: 'Generate new git tag'
-            command: |
-              echo 'export NEW_GIT_TAG=${PACKAGE_VERSION}-$CIRCLE_BUILD_NUM' >> $BASH_ENV
-              echo ${NEW_GIT_TAG}
-            
+workflows:
+  version: 2
+  build_and_tag:
+    jobs:
+      build:
+        working_directory: ~/openopps/openopps-platform
+        parallelism: 4
+        environment:
+          CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
+        docker:
+          - image: circleci/node:8.11.3
+          - image: circleci/postgres:9.6-alpine
+            environment:
+              POSTGRES_USER: midas
+              POSTGRES_PASSWORD: midas
+              POSTGRES_DB: midastest
+        steps:
+          - checkout
+          - run: if [[ `npm -v` != 6* ]]; then npm i npm@6.1.0; fi
+          - run: rm -rvf node_modules
+          - run: npm install
+          - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          - run: chmod +x ./cc-test-reporter
+          - run: ./cc-test-reporter before-build
+          - run:
+              name: Setup testing database
+              command: npm run init:test-db
+          - run: 
+              name: Runnning tests
+              command: npm run cover
+          - run: ./cc-test-reporter after-build --exit-code $?
+      tag:
+        docker:
+          - image: circleci/node:8.11.3
+        filters:
+          branches:
+            only: 'bmcorum'
+        steps:
+          - run:
+              name: 'Get current package number'
+              command: |
+                echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")'' >> $BASH_ENV
+                echo ${PACKAGE_VERSION}
+          - run:
+              name: 'Generate new git tag'
+              command: |
+                echo 'export NEW_GIT_TAG=${PACKAGE_VERSION}-$CIRCLE_BUILD_NUM' >> $BASH_ENV
+                echo ${NEW_GIT_TAG}
