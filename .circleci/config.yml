@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build-and-test:
+  "build-and-test":
       working_directory: ~/openopps/openopps-platform
       parallelism: 1
       environment:
@@ -29,7 +29,7 @@ jobs:
             command: npm run cover
         - run: ./cc-test-reporter after-build --exit-code $?
   
-  build-test-and-tag:
+  "build-test-and-tag":
     working_directory: ~/openopps/openopps-platform
       parallelism: 1
       environment:
@@ -77,11 +77,11 @@ workflows:
   version: 2
   build-test-tag:
     jobs:
-      - build-and-test:
+      - "build-and-test":
           filters:
             branches:
               ignore: 'bmcorum'
-      - buid-test-and-tag:
+      - "build-test-and-tag":
           filters:
             branches:
               only: 'bmcorum'
