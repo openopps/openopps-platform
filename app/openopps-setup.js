@@ -6,11 +6,13 @@ var appEnv = cfenv.getAppEnv();
 var envVars = appEnv.getServiceCreds('env-openopps');
 if (envVars) _.extend(process.env, envVars);
 
-// If settings present, start New Relic
-if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) {
-  console.log('Activating New Relic: ', process.env.NEW_RELIC_APP_NAME);
-  require('newrelic');
-}
+// If settings present, start Azure Application Insights
+if (process.env.APPLICATION_INSIGHTS_INSTRUMENTATION_KEY) {
+  console.log('Initializing Azure Application Insights...');
+  const appInsights = require("applicationinsights");
+  appInsights.setup(process.env.APPLICATION_INSIGHTS_INSTRUMENTATION_KEY);
+  appInsights.start();
+ }
 
 var psqlConnection = appEnv.getServiceCreds('psql-openopps');
 if(psqlConnection) process.env.DB_CONNECTION = psqlConnection;
