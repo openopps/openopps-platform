@@ -1,46 +1,46 @@
 version: 2
 
 jobs:
-  "build-and-test":
-      working_directory: ~/openopps/openopps-platform
-      parallelism: 1
-      environment:
-        CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
-      docker:
-        - image: circleci/node:8.11.3
-        - image: circleci/postgres:9.6-alpine
-          environment:
-            POSTGRES_USER: midas
-            POSTGRES_PASSWORD: midas
-            POSTGRES_DB: midastest
-      steps:
-        - checkout
-        - run: if [[ `npm -v` != 6* ]]; then npm i npm@6.1.0; fi
-        - run: rm -rvf node_modules
-        - run: npm install
-        - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        - run: chmod +x ./cc-test-reporter
-        - run: ./cc-test-reporter before-build
-        - run:
-            name: Setup testing database
-            command: npm run init:test-db
-        - run: 
-            name: Runnning tests
-            command: npm run cover
-        - run: ./cc-test-reporter after-build --exit-code $?
-  
-  "build-test-and-tag":
+  build:
     working_directory: ~/openopps/openopps-platform
-      parallelism: 1
-      environment:
-        CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
-      docker:
-        - image: circleci/node:8.11.3
-        - image: circleci/postgres:9.6-alpine
-          environment:
-            POSTGRES_USER: midas
-            POSTGRES_PASSWORD: midas
-            POSTGRES_DB: midastest
+    parallelism: 1
+    environment:
+      CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
+    docker:
+      - image: circleci/node:8.11.3
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: midas
+          POSTGRES_PASSWORD: midas
+          POSTGRES_DB: midastest
+    steps:
+      - checkout
+      - run: if [[ `npm -v` != 6* ]]; then npm i npm@6.1.0; fi
+      - run: rm -rvf node_modules
+      - run: npm install
+      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - run: chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter before-build
+      - run:
+          name: Setup testing database
+          command: npm run init:test-db
+      - run: 
+          name: Runnning tests
+          command: npm run cover
+      - run: ./cc-test-reporter after-build --exit-code $?
+  
+  "build-and-tag":
+    working_directory: ~/openopps/openopps-platform
+    parallelism: 1
+    environment:
+      CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
+    docker:
+      - image: circleci/node:8.11.3
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: midas
+          POSTGRES_PASSWORD: midas
+          POSTGRES_DB: midastest
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -75,13 +75,13 @@ jobs:
       
 workflows:
   version: 2
-  build-test-tag:
+  build_and_tag:
     jobs:
-      - "build-and-test":
+      - build
           filters:
             branches:
               ignore: 'bmcorum'
-      - "build-test-and-tag":
+      - "build-and-tag":
           filters:
             branches:
               only: 'bmcorum'
