@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
       working_directory: ~/openopps/openopps-platform
-      parallelism: 4
+      parallelism: 1
       environment:
         CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
       docker:
@@ -36,12 +36,12 @@ jobs:
       - run:
           name: 'Get current package number'
           command: |
-            export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")'
+            export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")
             echo $PACKAGE_VERSION
       - run:
           name: 'Generate new git tag'
           command: |
-            export NEW_GIT_TAG=$PACKAGE_VERSION-$CIRCLE_BUILD_NUM'
+            export NEW_GIT_TAG=$PACKAGE_VERSION-$CIRCLE_BUILD_NUM
             echo $NEW_GIT_TAG
 
 workflows:
