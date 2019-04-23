@@ -223,6 +223,9 @@ var InternshipEditFormView = Backbone.View.extend({
   initializeFormFields: function (){
     $('#needed-interns').val(this.model.attributes.interns);
     $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);
+    if (this.model.attributes.suggestedClearance) {
+      $('#task_tag_suggested_clearance').val(this.model.attributes.suggestedClearance);
+    }
     if (this.model.attributes.bureau) {
       $('#task_tag_bureau').val(this.model.attributes.bureau.bureauId);
     }
@@ -270,11 +273,30 @@ var InternshipEditFormView = Backbone.View.extend({
       maximumInputLength: 35,
     });
 
+    $('#task_tag_suggested_clearance').select2({
+      placeholder: 'Select a suggested security clearance',
+      width: '100%',
+      allowClear: true,
+      data: [
+        {text: 'Low Risk Public Trust Domestic'},
+        {text: 'Low Risk Public Trust Overseas'},
+        {text: 'Interim Secret Domestic'},
+        {text: 'Interim Secret Overseas'},
+        {text: 'Full Secret Domestic'},
+        {text: 'Full Secret Overseas'},
+        {text: 'Interim Top Secret Domestic'},
+        {text: 'Interim Top Secret Overseas'},
+        {text: 'Full Top Secret Domestic'},
+        {text: 'Full Top Secret Overseas'},
+      ],
+    });
+
     $('#task_tag_bureau').select2({
       placeholder: 'Select a bureau',
       width: '100%',
       allowClear: true,
     });
+
     if($('#task_tag_bureau').select2('data')) {
       this.showOfficeDropdownOnRender();
     }
