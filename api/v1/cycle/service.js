@@ -98,7 +98,7 @@ async function boardExists(taskId) {
 }
 
 async function createBoard(taskId, userId) {
-    var listNames = ['For review', 'Interviewing', 'Interviewed', 'Accepted', 'Alternate'];
+    var listNames = ['For review', 'Interviewing', 'Interviewed', 'Primary', 'Alternate'];
     for (let i = 0; i < listNames.length; i++) {
         await createTaskList(listNames[i], taskId, userId, i);
     }
