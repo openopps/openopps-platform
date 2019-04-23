@@ -40,8 +40,8 @@ jobs:
       - run:
           name: 'Setting up custom environment variables'
           command: |
-            export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")
-            export NEW_GIT_TAG='v'$PACKAGE_VERSION-$CIRCLE_BUILD_NUM
+            echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")' >> $BASH_ENV
+            echo 'export NEW_GIT_TAG='v'$PACKAGE_VERSION-$CIRCLE_BUILD_NUM' >> $BASH_ENV
       - run:
           name: 'Verifing custom environment variables'
           command: echo -e 'Package version:' $PACKAGE_VERSION '\nGit tag:' $NEW_GIT_TAG
@@ -50,10 +50,7 @@ jobs:
           command: |
             git tag $NEW_GIT_TAG
             echo `git describe --tags --abbrev=0`
-      - run:
-          name: 'Push new git tag'
-          command: git push --tags
-
+      
 workflows:
   version: 2
   build_and_tag:
