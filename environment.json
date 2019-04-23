@@ -1,5 +1,6 @@
 {
     "APP_ENV": "",
+    "APPLICATION_INSIGHTS_INSTRUMENTATION_KEY": "",
     "CLIENT_ID": "",
     "CLIENT_SECRET": "",
     "CRON_TOKEN": "",
@@ -19,8 +20,6 @@
     "HOST": "",
     "LOGINGOV": false,
     "LOGOUT_URL": "",
-    "NEW_RELIC_APP_NAME": "",
-    "NEW_RELIC_LICENSE_KEY": "",
     "NODE_ENV": "production",
     "NOTIFICATIONS_BCC": "",
     "NOTIFICATIONS_CC": "",
