@@ -28,6 +28,8 @@ jobs:
           command: npm run cover
       - run: ./cc-test-reporter after-build --exit-code $?
   tag:
+    docker:
+      - image: circleci/node:8.11.3
     filters:
       branches:
         only: 'bmcorum'
