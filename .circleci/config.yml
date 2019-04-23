@@ -27,3 +27,19 @@ jobs:
           name: Runnning tests
           command: npm run cover
       - run: ./cc-test-reporter after-build --exit-code $?
+  tag:
+    filters:
+      branches:
+        only: 'bmcorum'
+    steps:
+      - run:
+          name: 'Get current package number'
+          command: |
+            echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")'' >> $BASH_ENV
+            echo ${PACKAGE_VERSION}
+      - run:
+          name: 'Generate new git tag'
+          command: |
+            echo 'export NEW_GIT_TAG=${PACKAGE_VERSION}.$CIRCLE_BUILD_NUM' >> $BASH_ENV
+            echo ${NEW_GIT_TAG}
+            
