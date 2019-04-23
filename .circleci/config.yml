@@ -36,7 +36,7 @@ jobs:
       - run:
           name: 'Get current package number'
           command: |
-            echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")'' >> $BASH_ENV
+            echo 'export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")' >> $BASH_ENV
             echo ${PACKAGE_VERSION}
       - run:
           name: 'Generate new git tag'
