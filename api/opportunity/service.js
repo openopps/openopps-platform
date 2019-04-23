@@ -33,7 +33,9 @@ async function findById (id, user) {
   if(user && user.hiringPath=='student'){
     task.application=(await dao.Application.db.query(dao.query.applicationTasks,user.id,task.id)).rows[0];
   }
-  
+  if(task.communityId){
+    task.community=(await dao.Community.db.query(dao.query.communityTaskQuery,task.communityId)).rows[0];
+  }
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
   
@@ -166,25 +168,8 @@ async function createOpportunity (attributes, done) {
   });
 }
 
-
 async function sendTaskNotification (user, task, action) {
-  var data = {
-    action: action,
-    layout: 'layout.html',
-    model: {
-      task: task,
-      user: user,
-    },
-  };
-  if (task.communityId) {
-    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
-    data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
-    if (templateOverride) {
-      data.action = templateOverride.template,
-      data.layout = templateOverride.layout || data.layout;
-    }
-  }
+  var data = await getNotificationTemplateData(user, task, action);
   if(!data.model.user.bounced) {
     notification.createNotification(data);
   }
@@ -412,11 +397,21 @@ function sendTaskStateUpdateNotification (user, task) {
 async function getNotificationTemplateData (user, task, action) {
   var data = {
     action: action,
+    layout: 'layout.html',
     model: {
       task: task,
       user: user,
     },
   };
+  if (task.communityId) {
+    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
+    data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
+    if (templateOverride) {
+      data.action = templateOverride.template,
+      data.layout = templateOverride.layout || data.layout;
+    }
+  }
   return data;
 }
 
@@ -710,7 +705,7 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
           reject({ status: 401 });
         });
       } else {
-        reject({ status: 403 });
+        reject({ status: 404 });
       }
     }).catch(err => {
       reject({ status: 404 });

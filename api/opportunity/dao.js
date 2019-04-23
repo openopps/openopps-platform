@@ -43,6 +43,10 @@ const communitiesQuery = 'SELECT ' +
     'community.is_closed_group = true ' +
     'AND community_user.user_id = ?';
 
+const communityTaskQuery = 'select * from community ' +
+'join task on task.community_id = community.community_id ' + 
+'where task.community_id = ?';
+
 const commentsQuery = 'select @comment.*, @user.* ' +
   'from @comment comment ' +
   'join @midas_user "user" on "user".id = comment."userId" ' +
@@ -248,6 +252,7 @@ module.exports = function (db) {
       communityUserQuery: communityUserQuery,
       communityAdminsQuery: communityAdminsQuery,
       communitiesQuery: communitiesQuery,
+      communityTaskQuery:communityTaskQuery,
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,
