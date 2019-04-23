@@ -33,16 +33,21 @@ jobs:
     docker:
       - image: circleci/node:8.11.3
     steps:
+      - checkout
       - run:
-          name: 'Get current package number'
+          name: 'Setting up custom environment variables'
           command: |
             export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")
-            echo $PACKAGE_VERSION
+            export NEW_GIT_TAG=$PACKAGE_VERSION-$CIRCLE_BUILD_NUM
+            echo -e 'Package version:' $PACKAGE_VERSION '\nGit tag:' $NEW_GIT_TAG
       - run:
           name: 'Generate new git tag'
           command: |
-            export NEW_GIT_TAG=$PACKAGE_VERSION-$CIRCLE_BUILD_NUM
-            echo $NEW_GIT_TAG
+            git tag 'v'$NEW_GIT_TAG
+            echo `git describe --tags --abbrev=0`
+      - run:
+          name: 'Push new git tag'
+          command: git push --tags
 
 workflows:
   version: 2
