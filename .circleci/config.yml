@@ -69,6 +69,9 @@ jobs:
             echo 'Generate new git tag'
             git tag $NEW_GIT_TAG
             echo `git describe --tags --abbrev=0`
+      - run:
+          name: 'Push new git tag'
+          command: 'git push --tags'
       
 workflows:
   version: 2
