@@ -103,13 +103,6 @@ gulp.task('bump', function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('bump:patch', function () {
-  var bump = require('gulp-bump');
-  return gulp.src('./package.json')
-    .pipe(bump({ type: 'patch' }))
-    .pipe(gulp.dest('./'));
-});
-
 // Build an octopus release
 gulp.task('create-release', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');
@@ -145,7 +138,7 @@ gulp.task('create-release', function (done) {
   });
 });
 
-gulp.task('publish', gulp.series('create-release', function (done) {
+gulp.task('publish', gulp.series('build', 'create-release', function (done) {
   const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
   const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
