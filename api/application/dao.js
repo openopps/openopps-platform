@@ -78,6 +78,7 @@ module.exports = function (db) {
     ApplicationSkill: dao({ db:db, table:'application_skill' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
     Community: dao({ db: db, table: 'community' }),
+    CommunityEmailTemplate: dao({ db: db, table: 'community_email_template' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     Cycle: dao({ db: db, table: 'cycle' }),
@@ -89,6 +90,7 @@ module.exports = function (db) {
     Reference: dao({ db:db, table:'reference'}),
     TagEntity: dao({ db: db, table: 'tagentity' }),
     Task: dao({ db: db, table: 'task' }),
+    User: dao({ db: db, table: 'midas_user' }),
 
     query: {
       application: applicationQuery,
