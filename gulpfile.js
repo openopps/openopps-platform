@@ -115,23 +115,33 @@ gulp.task('create-release', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');
   const git = require('gulp-git');
   git.revParse({args:'--abbrev-ref HEAD'}, function (err, branch) {
-    if (err) { throw(err); }
-    if (branch != 'dev') {
+    if (err) {
+      throw(err);
+    } else if (branch != 'dev') {
       throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'))
+    } else {
+      git.status({args: '--ahead-behind'}, function (err, stdout) {
+        if (err) {
+          throw(err);
+        } else if (stdout.indexOf('Your branch is up to date') < 0) {
+          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'))
+        } else {
+          git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+            if(err) { throw(err); }
+            var pack = gulp.src(releaseFiles)
+              .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }));
+            if(process.env.OctoHost && process.env.OctoKey) {
+              pack.pipe(octo.push({
+                host: process.env.OctoHost,
+                apiKey: process.env.OctoKey,
+              })).on('finish', done).on('error', done);
+            } else {
+              pack.pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+            }
+          });
+        }
+      });
     }
-    git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
-      if(err) { throw(err); }
-      var pack = gulp.src(releaseFiles)
-        .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }));
-      if(process.env.OctoHost && process.env.OctoKey) {
-        pack.pipe(octo.push({
-          host: process.env.OctoHost,
-          apiKey: process.env.OctoKey,
-        })).on('finish', done).on('error', done);
-      } else {
-        pack.pipe(gulp.dest('./bin').on('finish', done).on('error', done));
-      }
-    });
   });
 });
 
