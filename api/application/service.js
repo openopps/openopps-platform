@@ -2,6 +2,7 @@ const _ = require ('lodash');
 const log = require('log')('app:application:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
+const notification = require('../notification/service');
 const Profile = require('../auth/profile');
 const Import = require('./import');
 
@@ -357,6 +358,9 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
 module.exports.updateApplication = async function (userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
     return await dao.Application.update(data).then((application) => {
+      if (application.submittedAt) {
+        sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
+      }
       return application;
     }).catch((err) => {
       return false;
@@ -522,3 +526,33 @@ module.exports.deleteReference= async function (referenceId, userId){
     return false;
   });
 };
+
+async function sendApplicationNotification (userId, applicationId, action) {
+  Promise.all([
+    dao.User.findOne('id = ?', userId),
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId),
+    db.query(dao.query.applicationTasks, applicationId, { fetch: { securityClearance: '' }}),
+  ]).then(async (results) => {
+    results[1].tasks = _.sortBy(results[2].rows, 'sortOrder');
+    var data = {
+      user: results[0],
+      application: results[1],
+      cycle: await dao.Cycle.findOne('cycle_id = ?', results[1].cycleId),
+    };
+    var notificationData = await getNotificationTemplateData(data, action);
+    if(!notificationData.model.user.bounced) {
+      notification.createNotification(notificationData);
+    }
+  }).catch((err) => {
+    log.error(err);
+    // maybe some error handling
+  }); 
+}
+
+async function getNotificationTemplateData (data, action) {
+  return {
+    action: action,
+    layout: 'state.department/layout.html',
+    model: data,
+  };
+}
