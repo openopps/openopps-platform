@@ -46,6 +46,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.cycles                 = [];
     this.bureaus                = [];
     this.offices                = {};
+    this.suggestedClearances    = [];
     this.currentOffices         = [];
     this.tagSources = options.tagTypes;  
     this.countryCode            = '';
@@ -177,6 +178,7 @@ var InternshipEditFormView = Backbone.View.extend({
     var compiledTemplate;
     this.initializeCycle();
     this.initializeBureaus();
+    this.initializeSuggestedClearance();
    
     this.data = {
       data: this.model.toJSON(),
@@ -188,6 +190,7 @@ var InternshipEditFormView = Backbone.View.extend({
       ui: UIConfig,
       agency: this.agency,
       languageProficiencies: this.options.languageProficiencies,
+      suggestedClearances: this.suggestedClearances,
       cycles: this.cycles,
       bureaus: this.bureaus,
     },
@@ -223,6 +226,9 @@ var InternshipEditFormView = Backbone.View.extend({
   initializeFormFields: function (){
     $('#needed-interns').val(this.model.attributes.interns);
     $('input[name=internship-timeframe][value=' + this.model.attributes.cycleId +']').prop('checked', true);
+    if (this.model.attributes.suggestedSecurityClearance) {
+      $('#task_tag_suggested_clearance').val(this.model.attributes.suggestedSecurityClearance);
+    }
     if (this.model.attributes.bureau) {
       $('#task_tag_bureau').val(this.model.attributes.bureau.bureauId);
     }
@@ -270,11 +276,18 @@ var InternshipEditFormView = Backbone.View.extend({
       maximumInputLength: 35,
     });
 
+    $('#task_tag_suggested_clearance').select2({
+      placeholder: 'Select a suggested security clearance',
+      width: '100%',
+      allowClear: true,
+    });
+
     $('#task_tag_bureau').select2({
       placeholder: 'Select a bureau',
       width: '100%',
       allowClear: true,
     });
+
     if($('#task_tag_bureau').select2('data')) {
       this.showOfficeDropdownOnRender();
     }
@@ -405,6 +418,21 @@ var InternshipEditFormView = Backbone.View.extend({
         });
       }.bind(this),
     });
+  },
+
+  initializeSuggestedClearance: function () {
+    this.suggestedClearances =  [
+      {id: 0, name: 'Low Risk Public Trust Domestic'},
+      {id: 1, name: 'Low Risk Public Trust Overseas'},
+      {id: 2, name: 'Interim Secret Domestic'},
+      {id: 3, name: 'Interim Secret Overseas'},
+      {id: 4, name: 'Full Secret Domestic'},
+      {id: 5, name: 'Full Secret Overseas'},
+      {id: 6, name: 'Interim Top Secret Domestic'},
+      {id: 7, name: 'Interim Top Secret Overseas'},
+      {id: 8, name: 'Full Top Secret Domestic'},
+      {id: 9, name: 'Full Top Secret Overseas'},
+    ];
   },
 
   initializeListeners: function () {
@@ -759,34 +787,35 @@ var InternshipEditFormView = Backbone.View.extend({
   
   getDataFromPage: function () {
     var modelData = {
-      id                    : this.model.get('id'),
-      description           : this.$('#opportunity-details').val(),
-      communityId           : this.model.get('communityId'),
-      title                 : this.$('#intern-title').val(),
-      details               : this.$('#opportunity-details').val(),  
-      about                 : this.$('#opportunity-team').val(),
-      submittedAt           : this.$('#js-edit-date-submitted').val() || null,
-      publishedAt           : this.$('#publishedAt').val() || null,
-      assignedAt            : this.$('#assignedAt').val() || null,
-      completedAt           : this.$('#completedAt').val() || null,
-      state                 : this.model.get('state'),
-      restrict              : this.model.get('restrict'),
-      language              : this.dataLanguageArray,
-      location              : this.$('.opportunity-location .selected').attr('id'),
-      countryId             : this.$('#task_tag_country').val() || null,
-      countrySubdivisionId  : this.$('#task_tag_countrySubdivision').select2('data') ? this.$('#task_tag_countrySubdivision').val() : null,
-      country               : null,
-      countrySubdivision    : null,
-      cityName              : null,
-      bureau_id             : this.$('#task_tag_bureau').select2('data').id,
-      office_id             : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').id : null,
-      bureauName            : this.$('#task_tag_bureau').select2('data').text,
-      officeName            : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').text : null,
-      interns               : this.$('#needed-interns').val(),
-      cycleId               : this.$('input[name=internship-timeframe]:checked').attr('id'),
-      cycleStartDate        : this.$('input[name=internship-timeframe]:checked').attr('data-cycleStartDate'),
-      cycleEndDate          : this.$('input[name=internship-timeframe]:checked').attr('data-cycleEndDate'),
-      cycleName             : this.$('input[name=internship-timeframe]:checked').val(),
+      id                            : this.model.get('id'),
+      description                   : this.$('#opportunity-details').val(),
+      communityId                   : this.model.get('communityId'),
+      title                         : this.$('#intern-title').val(),
+      details                       : this.$('#opportunity-details').val(),  
+      about                         : this.$('#opportunity-team').val(),
+      submittedAt                   : this.$('#js-edit-date-submitted').val() || null,
+      publishedAt                   : this.$('#publishedAt').val() || null,
+      assignedAt                    : this.$('#assignedAt').val() || null,
+      completedAt                   : this.$('#completedAt').val() || null,
+      state                         : this.model.get('state'),
+      restrict                      : this.model.get('restrict'),
+      language                      : this.dataLanguageArray,
+      location                      : this.$('.opportunity-location .selected').attr('id'),
+      countryId                     : this.$('#task_tag_country').val() || null,
+      countrySubdivisionId          : this.$('#task_tag_countrySubdivision').select2('data') ? this.$('#task_tag_countrySubdivision').val() : null,
+      country                       : null,
+      countrySubdivision            : null,
+      cityName                      : null,
+      bureau_id                     : this.$('#task_tag_bureau').select2('data').id,
+      office_id                     : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').id : null,
+      suggestedSecurityClearance    : this.$('#task_tag_suggested_clearance').select2('data').text,
+      bureauName                    : this.$('#task_tag_bureau').select2('data').text,
+      officeName                    : this.$('#task_tag_office').select2('data') ? this.$('#task_tag_office').select2('data').text : null,
+      interns                       : this.$('#needed-interns').val(),
+      cycleId                       : this.$('input[name=internship-timeframe]:checked').attr('id'),
+      cycleStartDate                : this.$('input[name=internship-timeframe]:checked').attr('data-cycleStartDate'),
+      cycleEndDate                  : this.$('input[name=internship-timeframe]:checked').attr('data-cycleEndDate'),
+      cycleName                     : this.$('input[name=internship-timeframe]:checked').val(),
     };
 
     if($('.opportunity-location.selected').val() !== 'anywhere') {

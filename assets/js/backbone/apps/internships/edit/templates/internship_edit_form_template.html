@@ -132,6 +132,18 @@
               <div id="lang-1">
                 </div>  
               <button class="usa-button-secondary" id="add-language">Add language</button>
+            </div>
+            <div class="required-input task_tag_suggested_clearance">
+              <label for="suggested-clearance">Suggested security clearance</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must select a suggested security clearance for this internship.</span>
+              <select id="task_tag_suggested_clearance" name="suggestedSecuruityClearance" class="dropdown validate" data-validate="empty">
+                <option></option>
+                <% if (suggestedClearances.length) { %>
+                  <% _(suggestedClearances).forEach(function (suggestedClearance, i) { %>
+                    <option value="<%= suggestedClearance.name %>" ><%= suggestedClearance.name %></option>
+                  <% }); %>
+                <% } %>
+              </select>
             </div> 
             <div class="required-input" id="description">
               <label for="opportunity-team">
