@@ -256,10 +256,17 @@ module.exports.apply = async function (user, taskId, getTasks, callback) {
   });
 };
 
-module.exports.deleteApplication = async (userId, applicationId, callback) => {
+module.exports.deleteApplication = async (userId, applicationId, callback) => { 
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
-    await dao.Application.delete(application).then(() => {
-      callback();
+    var applicationNotificationData= await getNotificationApplicationData(userId, applicationId );     
+    await dao.Application.delete(application).then(async () => {  
+      if(applicationNotificationData) {
+        var notificationData = await getNotificationTemplateData(applicationNotificationData, 'state.department/internship.application.withdraw');
+        if(!notificationData.model.user.bounced) {
+          notification.createNotification(notificationData);
+        }       
+      }   
+      callback();       
     }).catch((err) => {
       log.error('An error was encountered trying to withdraw an application', err);
       callback({ message: 'An error was encountered trying to withdraw this application.' });
@@ -547,6 +554,26 @@ async function sendApplicationNotification (userId, applicationId, action) {
     log.error(err);
     // maybe some error handling
   }); 
+}
+
+function getNotificationApplicationData (userId, applicationId){
+  return Promise.all([
+    dao.User.findOne('id = ?', userId),
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId),
+    db.query(dao.query.applicationTasks, applicationId, { fetch: { securityClearance: '' }}),
+  ]).then(async (results) => {
+    results[1].tasks = _.sortBy(results[2].rows, 'sortOrder');
+    var data = {
+      user: results[0],
+      application: results[1],
+      cycle: await dao.Cycle.findOne('cycle_id = ?', results[1].cycleId),
+    };
+    return data;
+  }).catch((err) => {
+    log.error(err);
+    return err; 
+  }); 
+ 
 }
 
 async function getNotificationTemplateData (data, action) {
