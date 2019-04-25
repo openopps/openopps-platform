@@ -33,16 +33,16 @@
             <%- cycle.name %>
           </td>
           <td class="metrics-table__date">
-              <%- moment(cycle.postingStartDate).format('MM/DD/YY') %> - <%- moment(cycle.postingEndDate).format('MM/DD/YY') %>
+              <%- moment(cycle.postingStartDate.split('T')[0]).format('MM/DD/YY') %> - <%- moment(cycle.postingEndDate.split('T')[0]).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__date">
-              <%- moment(cycle.applyStartDate).format('MM/DD/YY') %> - <%- moment(cycle.applyEndDate).format('MM/DD/YY') %>
+              <%- moment(cycle.applyStartDate.split('T')[0]).format('MM/DD/YY') %> - <%- moment(cycle.applyEndDate.split('T')[0]).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__date">
-            <%- moment(cycle.reviewStartDate).format('MM/DD/YY') %> - <%- moment(cycle.reviewEndDate).format('MM/DD/YY') %>
+            <%- moment(cycle.reviewStartDate.split('T')[0]).format('MM/DD/YY') %> - <%- moment(cycle.reviewEndDate.split('T')[0]).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__date">
-              <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
+              <%- moment(cycle.cycleStartDate.split('T')[0]).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate.split('T')[0]).format('MM/DD/YY') %>
           </td>
           <td class="metrics-table__button">
             <a href="/admin/community/<%- communityId %>/cycles?edit=<%- cycle.cycleId %>"
@@ -54,7 +54,7 @@
               <span class='fas fa-edit'></span>
             </a>
           </td>
-          <% if (new Date(cycle.applyStartDate) > new Date()) { %>
+          <% if (new Date(moment(cycle.applyStartDate.split('T')[0]).format('MM/DD/YY')) > new Date()) { %>
             <td class="metrics-table__button">
               <a href="#delete"
                 data-cycle-id="<%- cycle.cycleId %>"

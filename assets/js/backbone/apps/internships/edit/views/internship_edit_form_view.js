@@ -291,9 +291,8 @@ var InternshipEditFormView = Backbone.View.extend({
     if($('#task_tag_bureau').select2('data')) {
       this.showOfficeDropdownOnRender();
     }
-    $('#task_tag_bureau').on('change', function (e) {
-      $('#task_tag_office').val(null).trigger('change');
-      this.showOfficeDropdown();
+    $('#task_tag_bureau').on('change', function (e) {    
+      this.showOfficeDropdown();   
     }.bind(this));
 
     //adding this for select 2 as binding messed with it
@@ -319,26 +318,26 @@ var InternshipEditFormView = Backbone.View.extend({
         $('.task_tag_office .error-empty').hide();
       }
     } else {
-      $('.task_tag_office').hide();
+      $('.task_tag_office').hide();   
     }
   },
 
   showOfficeDropdown: function () {
     if($('#task_tag_bureau').select2('data')) {
+      $('#task_tag_office').select2('data', null);
       var selectData = $('#task_tag_bureau').select2('data');
       this.currentOffices = this.offices[selectData.id];
       if (this.currentOffices.length) {
         $('.task_tag_office').show();
-        $('#task_tag_office').removeAttr('disabled', true).addClass('validate');
-        $('.task_tag_office').addClass('usa-input-error');
-        $('.task_tag_office .error-empty').show();
+        $('#task_tag_office').removeAttr('disabled', true);
+        $('#task_tag_office').addClass('validate');
       } else {
         $('#task_tag_office').attr('disabled', true).removeClass('validate').select2('data', null);
         $('.task_tag_office').removeClass('usa-input-error');
         $('.task_tag_office .error-empty').hide();
       }
     } else {
-      $('.task_tag_office').hide();
+      $('.task_tag_office').hide();  
     }
   },
 
@@ -394,7 +393,8 @@ var InternshipEditFormView = Backbone.View.extend({
       success: function (data) {
         var cycle = this.model.get('cycle');
         this.cycles = data;
-        if (!_.findWhere(this.cycles, { cycleId: cycle.cycleId })) {
+
+        if (cycle && !_.findWhere(this.cycles, { cycleId: cycle.cycleId })) {
           this.cycles.push(cycle);
         }
         this.cycles = _.sortBy(this.cycles, 'postingStartDate');
@@ -615,7 +615,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
     $('#task_tag_country').on('change', function (e) {
       validate({ currentTarget: $('#task_tag_country') });
-      this.countryCode = $('#task_tag_country').select2('data').code;
+      this.countryCode = $('#task_tag_country').select2('data')?$('#task_tag_country').select2('data').code:null;
       this.countryCode && this.loadCountrySubivisionData();
     }.bind(this));
 

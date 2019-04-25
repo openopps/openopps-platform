@@ -43,8 +43,8 @@
                         <input id="<%-cycle.cycleId%>" type="radio" name="internship-timeframe" value="<%-cycle.name%>"
                         <% if (cycle.cycleId == data.cycleId) {%>
                           <%- checked="checked" %>
-                        <% } %> data-cycleStartDate="<%-moment(cycle.cycleStartDate).format('MM/DD/YYYY')%>" data-cycleEndDate="<%-moment(cycle.cycleEndDate).format('MM/DD/YYYY')%>">
-                        <label for="<%-cycle.cycleId%>"><%-cycle.name %> <span class="usajobs-form__help-brief">(<%-moment(cycle.cycleStartDate).format('MM/DD/YYYY')%> thru <%-moment(cycle.cycleEndDate).format('MM/DD/YYYY')%>)</span></label> 
+                        <% } %> data-cycleStartDate="<%-moment(cycle.cycleStartDate.split('T')[0]).format('MM/DD/YY')%>" data-cycleEndDate="<%-moment(cycle.cycleEndDate.split('T')[0]).format('MM/DD/YY')%>">
+                        <label for="<%-cycle.cycleId%>"><%-cycle.name %> <span class="usajobs-form__help-brief">(<%-moment(cycle.cycleStartDate.split('T')[0]).format('MM/DD/YY')%> thru <%-moment(cycle.cycleEndDate.split('T')[0]).format('MM/DD/YY')%>)</span></label> 
                       </li>
                     <% }); %>
                   <% } %>                 

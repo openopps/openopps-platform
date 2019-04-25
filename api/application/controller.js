@@ -41,8 +41,13 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
 
 router.delete('/api/application/:id', auth, async (ctx, next) => {
   await service.deleteApplication(ctx.state.user.id, ctx.params.id, (err) => {
-    ctx.status = err ? 400 : 200;
-    ctx.body = err ? err.message : 'success';
+    if (err) {
+      ctx.status = 400;
+      ctx.body = err.message;
+    } else {   
+      ctx.status = 200;
+      ctx.body = 'success';
+    }
   });
 });
 

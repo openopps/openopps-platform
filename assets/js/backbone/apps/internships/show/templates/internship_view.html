@@ -99,7 +99,7 @@
               <% if (model.cycle) { %>
                 <h4>Time commitment</h4>
                 <div>
-                  <%-moment(model.cycle.cycleStartDate).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate).format('MMMM YYYY')%> 
+                  <%-moment(model.cycle.cycleStartDate.split('T')[0]).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate.split('T')[0]).format('MMMM YYYY')%> 
                 </div>  
                 <div>32-40 hours per week</div>
               <% } %>   
@@ -177,7 +177,7 @@
               <% if (model.cycle) { %>
                 <h4>Time commitment</h4>
                 <div>
-                  <%-moment(model.cycle.cycleStartDate).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate).format('MMMM YYYY')%>
+                  <%-moment(model.cycle.cycleStartDate.split('T')[0]).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate.split('T')[0]).format('MMMM YYYY')%>
                 </div>    
                 <div> 32-40 hours per week</div>
               <% } %>

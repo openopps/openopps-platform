@@ -103,67 +103,65 @@ gulp.task('bump', function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('bump:patch', function () {
-  var bump = require('gulp-bump');
-  return gulp.src('./package.json')
-    .pipe(bump({ type: 'patch' }))
-    .pipe(gulp.dest('./'));
-});
-
 // Build an octopus release
-gulp.task('create-release', function () {
-  var octo = require('@octopusdeploy/gulp-octo');
-  var pack = gulp.src(releaseFiles)
-    .pipe(octo.pack('zip'));
-  if(process.env.OctoHost && process.env.OctoKey) {
-    return pack.pipe(octo.push({
-      host: process.env.OctoHost,
-      apiKey: process.env.OctoKey,
-      replace: true,
-    }));
-  } else {
-    return pack.pipe(gulp.dest('./bin'));
-  }
+gulp.task('create-release', function (done) {
+  const octo = require('@octopusdeploy/gulp-octo');
+  const git = require('gulp-git');
+  git.revParse({args:'--abbrev-ref HEAD'}, function (err, branch) {
+    if (err) {
+      throw(err);
+    } else if (branch != 'dev') {
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'))
+    } else {
+      git.status({args: '--ahead-behind'}, function (err, stdout) {
+        if (err) {
+          throw(err);
+        } else if (stdout.indexOf('Your branch is up to date') < 0) {
+          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'))
+        } else {
+          git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+            if(err) { throw(err); }
+            var pack = gulp.src(releaseFiles)
+              .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }));
+            if(process.env.OctoHost && process.env.OctoKey) {
+              pack.pipe(octo.push({
+                host: process.env.OctoHost,
+                apiKey: process.env.OctoKey,
+              })).on('finish', done).on('error', done);
+            } else {
+              pack.pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+            }
+          });
+        }
+      });
+    }
+  });
 });
 
-gulp.task('publish', gulp.series('create-release', function (done) {
+gulp.task('publish', gulp.series('build', 'create-release', function (done) {
   const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
   const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
-  const package = require('./package.json');
   octopusApi.init({
     host: process.env.OctoHost,
     apiKey: process.env.OctoKey,
   });
-  git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+  git.exec({ args: 'tag --sort=creatordate', maxBuffer: Infinity }, (err, results) => {
     if(err) { throw(err); }
-    var logCMD = 'log ' + tag.replace(/\r?\n?/g, '') + '..@ --no-merges ' +
+    var tags = results.split('\n').reverse().filter(Boolean).splice(0,2);
+    var logCMD = 'log ' + tags[1] + '..' + tags[0] + ' --no-merges ' +
       '--pretty=format:"[%h](http://github.com/openopps/openopps-platform/commit/%H): %s%n"';
     git.exec({ args: logCMD, maxBuffer: Infinity }, (err, releaseNotes) => {
       if(err) { throw(err); }
       const releaseParams = {
         projectSlugOrId: 'openopps',
-        version: package.version,
-        packageVersion: package.version,
+        version: tags[0].replace('v', ''),
+        packageVersion: tags[0].replace('v', ''),
         releaseNotes: releaseNotes,
       };
       simpleCreateRelease(releaseParams).then((release) => {
         console.log('Octopus release created:', release);
-        // Update current version in README
-        var readme = fs.readFileSync('README.md');
-        fs.writeFileSync('README.md', readme.toString().replace(/v\d+\.\d+.\d+/, 'v' + package.version));
-        // Commit the new version
-        git.exec({ args: 'add --all', maxBuffer: Infinity }, (err) => {
-          if(err) { throw(err); }
-          var commitMsg = 'commit -m "Create release package ' + package.version + '"';
-          git.exec({ args: commitMsg, maxBuffer: Infinity }, (err) => {
-            if(err) { throw(err); }
-            git.tag('v' + package.version, '', function (err) {
-              if (err) throw err;
-              done();
-            });
-          });
-        });
+        done();
       }, (error) => {
         console.log('Octopus release creation failed!', error);
         done();
