@@ -67,6 +67,7 @@ var ApplyView = Backbone.View.extend({
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
     'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
     'keydown .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
+    'mouseleave .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'blur .gpa-input'                                            : function (e) { this.callMethod(Education.gpaBlur, e); },
 
     //language events

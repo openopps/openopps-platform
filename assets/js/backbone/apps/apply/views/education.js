@@ -247,16 +247,17 @@ var education = {
   },
   gpaKeyDown: function (e){
      
-    var val= $(e.currentTarget).val();   
+    var val= $(e.currentTarget).val(); 
     if(val.indexOf('.')!= -1 && (val.substring(val.indexOf('.')).length > 2)){    
       if (e.keyCode !== 8 && e.keyCode !== 46 ){ //exception
-        e.preventDefault();
+        e.preventDefault();       
+        $('#cumulative-gpa').val(val.substring(0, val.indexOf('.') + 3));      
       }    
     }  
   },
   gpaBlur: function (e){ 
     var val= $(e.currentTarget).val();
-    if(val && val>'4.00'){
+    if((val && val>'4.00') || (val && val>4)){
       $('#apply-gpa').addClass('usa-input-error');  
       $('#apply-gpa>.gpa-error').show();      
     }
