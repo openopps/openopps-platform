@@ -59,8 +59,7 @@ async function userFound (user, tokenset, done) {
     }
     data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
     await dao.User.update(data);
-    user.access_token = tokenset.access_token;
-    user.id_token = tokenset.id_token;
+    user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
     done(null, user);
   }
 }
@@ -81,8 +80,7 @@ function processFederalEmployeeLogin (tokenset, done) {
     });
     done(null, _.extend(account, {
       type: 'staging',
-      access_token: tokenset.access_token,
-      id_token: tokenset.id_token,
+      tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
     }));
   });
 }
@@ -109,8 +107,7 @@ function processStudentLogin (tokenset, done) {
       };
       await dao.User.insert(user).then(user => {
         done(null, _.extend(user, {
-          access_token: tokenset.access_token,
-          id_token: tokenset.id_token,
+          tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
         }));
       });
     });
@@ -120,15 +117,13 @@ function processStudentLogin (tokenset, done) {
 passport.serializeUser(function (user, done) {
   done(null, {
     id: user.id,
-    access_token: user.access_token,
-    id_token: user.id_token,
+    tokenset: user.tokenset,
   });
 });
 
 passport.deserializeUser(async function (userObj, done) {
   var user = await fetchUser(userObj.id);
-  user.access_token = userObj.access_token,
-  user.id_token = userObj.id_token,
+  user.tokenset = userObj.tokenset;
   done(null, user);
 });
 
@@ -182,7 +177,7 @@ if (openopps.auth.oidc) {
     client: openopps.auth.oidc,
     params: {
       redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/api/auth/oidc/callback',
-      scope: 'openid profile email phone address opendataread',
+      scope: 'openid profile email phone address opendataread offline_access',
     },
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
