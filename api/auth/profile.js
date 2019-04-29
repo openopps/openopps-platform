@@ -76,8 +76,6 @@ module.exports = {
   sync: async (user, tokenset, callback) => {
     await module.exports.get(tokenset).then(async (profile) => {
       user = await updateProfileData(user, profile, tokenset);
-      user.access_token = tokenset.access_token,
-      user.id_token = tokenset.id_token,
       callback(null, user);
     }).catch(callback);
   },

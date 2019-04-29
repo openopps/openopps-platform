@@ -6,7 +6,7 @@ const service = require('./service');
 
 var router = new Router();
 
-router.get('/api/application/user/transcripts', auth, async (ctx, next) => {
+router.get('/api/application/user/transcripts', auth, auth.checkToken, async (ctx, next) => {
   await service.getTranscripts(ctx.state.user).then(transcripts => {
     ctx.status = 200;
     ctx.body = transcripts;
@@ -15,7 +15,7 @@ router.get('/api/application/user/transcripts', auth, async (ctx, next) => {
   });
 });
 
-router.get('/api/application/:id', auth, async (ctx, next) => {
+router.get('/api/application/:id', auth, auth.checkToken, async (ctx, next) => {
   await service.findById(ctx.state.user.id, ctx.params.id).then(async application => {
     await service.getTranscripts(ctx.state.user).then(transcripts => {
       application.transcripts = transcripts;
@@ -51,7 +51,7 @@ router.delete('/api/application/:id', auth, async (ctx, next) => {
   });
 });
 
-router.post('/api/application/apply/:taskId', auth, async (ctx, next) => {
+router.post('/api/application/apply/:taskId', auth, auth.checkToken, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
     await service.apply(ctx.state.user, ctx.params.taskId, (ctx.request.body || {}).getTasks, (err, results) => {
       ctx.status = err ? 400 : 200;
