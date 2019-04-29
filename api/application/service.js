@@ -329,7 +329,7 @@ module.exports.findById = async function (userId, applicationId) {
 
 module.exports.getTranscripts = async function (user) {
   return new Promise((resolve, reject) => {
-    Profile.getDocuments({ access_token: user.access_token, id_token: user.id_token }, 'transcripts').then(documents => {
+    Profile.getDocuments(user.tokenset, 'transcripts').then(documents => {
       resolve(documents);
     }).catch((err) => {
       // record error getting USAJOBS profile

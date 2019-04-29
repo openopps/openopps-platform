@@ -86,3 +86,19 @@ module.exports.bearer = async (ctx, next) => {
     return await next();
   })(ctx, next);
 };
+
+module.exports.checkToken = async (ctx, next) => {
+  // if access_token expires in the next 5 minutes request a new one
+  var timeDifference = new Date(0).setUTCSeconds(ctx.state.user.tokenset.expires_at) - new Date().getTime()
+  if(timeDifference < (1000 * 60 * 5)) {
+    await openopps.auth.oidc.refresh(ctx.state.user.tokenset.refresh_token).then(async (tokenset) => {
+      ctx.session.passport.user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
+      ctx.state.user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
+      await next();
+    }).catch(async (err) => {
+      await next();
+    });
+  } else {
+    await next();
+  }
+};
