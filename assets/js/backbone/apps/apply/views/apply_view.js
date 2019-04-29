@@ -69,7 +69,7 @@ var ApplyView = Backbone.View.extend({
     'keydown .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'mouseleave .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'blur .gpa-input'                                            : function (e) { this.callMethod(Education.gpaBlur, e); },
-
+    'blur .completionYear-input'                                   : function (e) { this.callMethod(Education.completionYearBlur, e); },
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  

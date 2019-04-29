@@ -847,9 +847,9 @@
         width: 100%;
       }
     }
-
+    
     .usa-input-error {
-      &.exp-start-date, &.exp-end-date {
+      &.exp-start-date, &.exp-end-date, &.completionYear {
         clear: none;
         display: block;
         float: left;
