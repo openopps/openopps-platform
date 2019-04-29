@@ -53,13 +53,13 @@
             </label>
             <div>
               <div class="usa-datefield usa-form-group-month">
-                <label for="completion-month" class="no-margin-top">Month</label>
-               
+                <label for="completion-month" class="no-margin-top">Month</label>               
                 <input  class="usa-input-tiny form-control" id="completion-month" name="completion-month"  maxlength="2" type="number" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
               </div>
-              <div class="usa-datefield usa-form-group-year">
+              <div class="usa-datefield usa-form-group-year completionYear"  id="eduCompletionYear">             
                 <label for="completion-year" class="no-margin-top">Year</label>
-                <input name="completion-year" id="completion-year" aria-invalid="false" aria-describedby="completion-year-error" type="text" maxlength="4" value="" data-val="true" data-val-range-min="1900" data-val-range-max="3000" data-val-range="Completion Year must be valid" data-val-number="The field CompletionYear must be a number.">
+                <span class="field-validation-error completionYear-error" style="display:none;">Completion Year must be valid.</span>
+                <input name="completion-year" class="completionYear-input" id="completion-year"  type="text" maxlength="4" min="1990" max="3000" value="">
               </div>
             </div>
           </div>
