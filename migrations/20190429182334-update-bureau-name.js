@@ -23,7 +23,7 @@ exports.up = function (db) {
 
 exports.down = function (db) {
   return Promise.all([
-    db.runSql('UPDATE office SET name = \'United States Mission to the UN (USN)\' where name=\'United States Mission to the UN (USUN)\''),
+    db.runSql('UPDATE bureau SET name = \'United States Mission to the UN (USN)\' where name=\'United States Mission to the UN (USUN)\''),
 
   ]);
 };
