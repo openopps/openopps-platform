@@ -166,7 +166,18 @@ function validateFields () {
     var iAbort = validate( { currentTarget: child } );
     abort = abort || iAbort;
   } );
-  
+
+  var completionYear=$('#completion-year').val();
+  if(completionYear && completionYear.length<4 || completionYear >3000){
+    $('#eduCompletionYear').addClass('usa-input-error');  
+    $('#eduCompletionYear>.completionYear-error').show(); 
+    abort=true; 
+  }
+  else{
+    $('#eduCompletionYear').removeClass('usa-input-error'); 
+    $('#eduCompletionYear>.completionYear-error').hide();  
+  }
+
   if(abort) {
     $('.usa-input-error').get(0).scrollIntoView();
   }
@@ -264,6 +275,17 @@ var education = {
     else{      
       $('#apply-gpa>.gpa-error').hide();  
     }   
+  },
+  completionYearBlur : function (e){
+    var val= $(e.currentTarget).val();
+    if(val && val.length<4 || val >3000){
+      $('#eduCompletionYear').addClass('usa-input-error');  
+      $('#eduCompletionYear>.completionYear-error').show();  
+    }
+    else{
+      $('#eduCompletionYear').removeClass('usa-input-error'); 
+      $('#eduCompletionYear>.completionYear-error').hide();  
+    }
   },
 
   getCompletedDateMonth:function (month){
