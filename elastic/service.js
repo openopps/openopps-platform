@@ -1,6 +1,7 @@
 const elasticClient = require('./index');
 const dao = require('./dao');
 const _ = require('lodash');
+const moment = require('moment-timezone');
 
 var service = {};
 
@@ -103,8 +104,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     },
     addCycleDate () {
-      filter_must.push({range: { "cycle.applyEndDate" : { gte: Date.now() } }});
-      filter_must.push({range: { "cycle.applyStartDate" : { lte: Date.now() } }});
+      filter_must.push({range: { "cycle.applyEndDate" : { gte: new Date(moment().tz("America/New_York").format('MM-DD-YYYY')) } }});
+      filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date(moment().tz("America/New_York").format('MM-DD-YYYY')) } }});
     },
     addLocations (location) { 
       should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})

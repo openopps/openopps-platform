@@ -108,7 +108,8 @@ var InternshipListView = Backbone.View.extend({
 
   renderCycle:function (){
     //communityId for Usdos
-    var communityId = 3;
+    var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+    var communityId = USDOS.communityId;
     var cycleData = [];
     if (communityId in this.cycles) {
       cycleData = this.cycles[communityId];
@@ -133,18 +134,17 @@ var InternshipListView = Backbone.View.extend({
           var cycleStartDate = new Date(data[i].cycleStartDate);
           var startDate = new Date(data[i].applyStartDate);
           var endDate = new Date(data[i].applyEndDate);
-          var today = new Date();
+          var today = new Date(moment().tz("America/New_York").format('MM-DD-YYYY'));
           if (!(communityId in this.cycles)) {
             this.cycles[communityId] = [];
           }
           if (today >= startDate && endDate >= today) {
-            this.cycles[communityId].push({ 
-              name: data[i].name,
+            this.cycles[communityId].push(_.extend(data[i], { 
               applyEndMonth: months[endDate.getMonth()],
               applyEndDay: endDate.getDate(), 
               applyEndYear: endDate.getFullYear(),
               cycleStartYear: cycleStartDate.getFullYear(),
-            });
+            }));
           }
         } 
       }.bind(this),
