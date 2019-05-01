@@ -483,8 +483,18 @@ var education = {
         this.data.isEducationContinued=result.isEducationContinued;
         this.data.cumulativeGpa = result.cumulativeGpa;
         this.data.transcriptId = result.transcriptId;
-        if(result.cumulativeGpa>=0 && result.cumulativeGpa<=2.99){       
-          this.$el.html(templates.applyIneligibleGPA);
+        if(result.cumulativeGpa>=0 && result.cumulativeGpa<=2.99){    
+          $.ajax({
+            url: '/api/application/' + this.data.applicationId,
+            method: 'PUT',
+            data: {
+              applicationId: this.data.applicationId,
+              currentStep: 3,
+              updatedAt: this.data.updatedAt,
+              submittedAt: null,
+            },
+          });
+          this.$el.html(templates.applyIneligibleGPA);               
         }
         else{      
           this.updateApplicationStep(4);
