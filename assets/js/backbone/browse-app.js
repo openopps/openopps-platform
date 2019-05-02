@@ -23,6 +23,7 @@ var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
 var ApplyCongratulationsView = require('./apps/apply/views/apply_congratulations_view');
 var LoginController = require('./apps/login/controllers/login_controller');
+var WelcomeView = require('./apps/welcome/views/welcome_view');
 var Modal = require('./components/modal');
 
 var BrowseRouter = Backbone.Router.extend({
@@ -52,7 +53,7 @@ var BrowseRouter = Backbone.Router.extend({
     'apply/:id(/)'                                  : 'showApply',
     'application/:id(/)'                            : 'showApply',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
-    'unauthorized(/)'                               : 'showUnauthorized',
+    'welcome(/)'                                    : 'showWelcome',
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
     'loggedOut'                                     : 'showLogout',
@@ -110,6 +111,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.applyController && this.applyController.cleanup();
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
+    this.welcomeView && this.welcomeView.cleanup();
     this.data = { saved: false };
   },
 
@@ -137,16 +139,17 @@ var BrowseRouter = Backbone.Router.extend({
     }
   },
 
-  showUnauthorized: function () {
-    Backbone.history.navigate('/', { replace: true });
+  showWelcome: function () {
     this.navView = new NavView({
       el: '.navigation',
       accessForbidden: true, 
     }).render();
-    var UnauthorizedTemplate = require('./apps/login/templates/unauthorized.html');
-    $('#container').html(_.template(UnauthorizedTemplate)());
-    $('#search-results-loading').hide();
-    $('.usa-footer-return-to-top').hide();
+    this.welcomeView = new WelcomeView({
+      target: 'home',
+      el: '#container',
+      router: this,
+      data: this.data,
+    }).render();
   },
 
   showIneligibleCitizenship: function () {
