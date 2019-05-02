@@ -343,6 +343,136 @@
   }
 }
 
+.unauthorized {
+  background-color: $color-white;
+
+  .openopps-welcome {
+    background-color: #009688;
+    color: $color-white;
+
+    &__container {
+      padding: $size-M;
+    }
+
+    h1 {
+      color: $color-white;
+      margin-top: 0;
+      padding-top: $size-default;
+    }
+  }
+
+  .openopps-create-profile {
+    padding-top: $size-M;
+ 
+    .usajobs-card-buttons {
+      display: block;
+      display: block;
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+
+      &::after {
+        clear: both;
+        content: "";
+        display: block;
+      }
+
+      & > li {
+        display: list-item;
+        margin: 0;
+      
+        &:before {
+          display: none;
+        }
+
+        &:after {
+          display: none;
+        }
+      }
+
+      .usajobs-card-button--slim {
+        position: relative;
+        background-color: $color-white;
+        margin: 1.5rem 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+        &:focus-within {
+          outline: 2px dotted $color-gray-light;
+          outline-offset: 3px;
+        }
+
+        [type="radio"] + label, [type="checkbox"] + label {
+          width: 100%;
+          height: 100%;
+          max-width: inherit;
+          margin: 0;
+          padding: 1.5rem;
+          font-size: 1.9rem;
+        }
+
+        [type="radio"] + label::before, [type="checkbox"] + label::before {
+          display: none;
+        }
+
+        [type="radio"]:checked + label, [type="checkbox"]:checked + label {
+          border: 1px inset $color-green;
+          background-color: $color-green-lightest;
+          margin: -2px 0;
+        }
+
+        [type="radio"]:checked + label::before, [type="checkbox"]:checked + label::before {
+          display: none;
+        }
+
+        &__sub-text-with-icon {
+          margin-left: 5.4rem;
+        }
+      }
+
+      .usajobs-card-button__sub-text {
+        display: block;
+        font-size: 1.4rem;
+      }
+    }
+
+    .usajobs-unique-hiring-paths__icon {
+      display: inline-block;
+      text-align: center;
+      margin-right: 0.5rem;
+
+      img {
+        width: 4.4rem;
+        height: 4.4rem;
+        vertical-align: middle;
+      }
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    h2 {
+      margin-bottom: $size-M;
+    }
+
+    .missing-info {
+      color: $color-base;
+    }
+
+    &-header__icon {
+      width: 7.6rem;
+      height: 7.6rem;
+      vertical-align: middle;
+      margin-right: $size-SM;
+    }
+
+    .usajobs-button_bar--slim {
+      border-top: none;
+      margin: 0;
+    }
+  }
+}
+
 .signout {
   .usajobs-error__img--signed-out {
     background-image: url(../../../../img/errors/signed-out.svg);
