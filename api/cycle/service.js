@@ -3,6 +3,7 @@ const log = require('log')('app:cycle:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const Audit = require('../model/Audit');
+const moment = require('moment-timezone');
 
 async function findCycleApplyOverlap (data) {
   var cycles = await dao.Cycle.find('community_id = ?', data.communityId);
@@ -15,9 +16,19 @@ async function findCycleApplyOverlap (data) {
   })[0];
 }
 
+function forceEasternTimezone (data) {
+  Object.keys(data).forEach(key => {
+    if(key.match(/.*Date$/)) {
+      var internationalDateFormat = moment(data[key]).format('YYYY-MM-DD');
+      data[key] = moment.tz(internationalDateFormat, 'America/New_York').format();
+    }
+  })
+}
+
 module.exports = {};
 
 module.exports.addCycle = async function (data, callback) {
+  forceEasternTimezone(data);
   var cycleOverlap = await findCycleApplyOverlap(data);
   if (cycleOverlap) {
     callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycleOverlap.name + '</b>'});
@@ -66,6 +77,7 @@ module.exports.list = function (communityId) {
 };
 
 module.exports.updateCycle = async (data, callback) => {
+  forceEasternTimezone(data);
   await dao.Cycle.findOne('community_id = ? and cycle_id = ?', data.communityId, data.cycleId).then(async () => {
     var cycleOverlap = await findCycleApplyOverlap(data);
     if (cycleOverlap) {

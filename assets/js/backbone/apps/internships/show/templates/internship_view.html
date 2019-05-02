@@ -48,7 +48,7 @@
               </div>
             </div>
             <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">
-                <% if (user) { %>
+                <% if (user && user.hiringPath != 'student') { %>
                   <div><a class="usajobs-opop-actions__duplicate" href="#duplicate" id="task-copy"><i class="fa fa-copy"></i> Duplicate</a></div>
                 <% } %>
               <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
@@ -202,7 +202,7 @@
           <li>Be able to receive and maintain a security clearance.</li>
         </ul>
         <h4>For more information</h4>
-        <p>Visit <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid)'s</a> website.</p>
+        <p>Visit the <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid) </a> website.</p>
         <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
           <% if (model.application) { %>
             <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>

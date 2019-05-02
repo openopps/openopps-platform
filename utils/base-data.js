@@ -23,14 +23,14 @@ const dataTypes = {
 };
 
 async function updateRecord (record, newValues) {
-  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.id]).catch(err => {
-    console.log('Error updating record for ' + type + ' id ' + record.id, err);
+  await db.none(queries.updateRecord, [newValues.Value, newValues.IsDisabled, newValues.LastModified, record.lookup_code_id]).catch(err => {
+    console.log('Error updating record for ' + type + ' lookup_code_id ' + record.lookup_code_id, err);
   });
 }
 
 async function insertRecord (type, newRecord) {
   await db.none(queries.insertRecord, [type, newRecord.Code, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified]).catch(err => {
-    console.log('Error creating record for ' + type + ' code ' + newRecord.code, err);
+    console.log('Error creating record for ' + type + ' code ' + newRecord.Code, err);
   });
 }
 
@@ -92,10 +92,10 @@ module.exports = {
   import: function (dataType, callback) {
     if (dataType == 'all') {
       processDataTypes(Object.keys(dataTypes), callback);
-      // Object.keys(dataTypes).forEach(function (key) {
-      //   this.import(dataTypes[key]);
-      // }.bind(module.exports));
     } else {
+      if(_.isString(dataType)) {
+        dataType = dataTypes[dataType];
+      }
       request(process.env.DATA_IMPORT_URL + dataType.value, (error, response, body) => {
         console.log('Importing data for ' + dataType.value);
         if(error || !response || response.statusCode != 200) {
@@ -112,3 +112,7 @@ module.exports = {
     }
   },
 };
+
+if(process.argv[2] == 'import') {
+  module.exports.import(process.argv[3]);
+}

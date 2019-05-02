@@ -28,7 +28,7 @@ $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 // Install jQuery plugins
 // TODO: maybe this shouldn't be global vvv
 require('blueimp-file-upload/js/vendor/jquery.ui.widget');
-window.moment = require('moment');
+window.moment = require('moment-timezone');
 window.numeral = require('numeral');
 
 // Set markdown defaults

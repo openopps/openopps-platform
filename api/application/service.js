@@ -49,7 +49,7 @@ function sortApplicationTasks (tasks) {
 function importProfileData (user, applicationId) {
   dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
     var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
-    Profile.get({ access_token: user.access_token, id_token: user.id_token }).then(profile => {
+    Profile.get(user.tokenset).then(profile => {
       Promise.all([
         Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
         Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),

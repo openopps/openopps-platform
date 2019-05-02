@@ -4,6 +4,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const Audit = require('../model/Audit');
 const Notification = require('../notification/service');
+const moment = require('moment-timezone');
 
 const communityTypes = [ 'Career', 'Program' ];
 const durationTypes = [ 'Ad Hoc', 'Cyclical' ];
@@ -65,7 +66,7 @@ module.exports.findById = async function (id) {
 };
 
 module.exports.getActiveCycles = async function (communityId) {
-  var currentDate = new Date();
+  var currentDate = moment.tz('America/New_York').startOf('day').format()
   return await dao.Cycle.find('community_id = ? and posting_start_date <= ? and posting_end_date >= ?', [communityId, currentDate, currentDate]);
 };
 
