@@ -34,8 +34,8 @@ function generatePasswordReset (user) {
 }
 
 async function register (ctx, attributes, done) {
-  attributes.username = attributes.username.toLowerCase().trim();
-  if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
+  attributes.uri = attributes.uri.toLowerCase().trim();
+  if((await dao.User.find('lower(uri) = ?', attributes.uri)).length > 0) {
     done({ message: 'The email address provided is not a valid government email address or is already in use.' });
   } else {
     var newUser = _.extend(_.clone(baseUser), attributes);
@@ -57,7 +57,7 @@ async function register (ctx, attributes, done) {
         return done(true);
       });
     }).catch(async (err) => {
-      log.info('register: failed to create user ', attributes.username, err);
+      log.info('register: failed to create user ', attributes.uri, err);
       await createAudit('ACCOUNT_CREATED', ctx, { userId: user.id, status: 'failed' });
       return done(true);
     });
@@ -69,7 +69,7 @@ async function sendUserCreateNotification (user, action) {
     action: action,
     model: {
       name: user.name,
-      username: user.username,
+      uri: user.uri,
       token: user.token,
     },
   };
@@ -102,11 +102,11 @@ async function resetPassword (ctx, token, password, done) {
   });
 }
 
-async function forgotPassword (username, error) {
-  if (!validator.isEmail(username)) {
+async function forgotPassword (uri, error) {
+  if (!validator.isEmail(uri)) {
     return done('Please enter a valid email address.');
   }
-  await dao.User.findOne('username = ?', username).then(async (user) => {
+  await dao.User.findOne('uri = ?', uri).then(async (user) => {
     await dao.UserPasswordReset.insert(generatePasswordReset(user)).then((obj) => {
       return error(obj.token, false);
     }).catch((err) => {
@@ -114,17 +114,17 @@ async function forgotPassword (username, error) {
       return error(null, 'An error has occurred processing your request. Please reload the page and try again.');
     });
   }).catch((err) => {
-    log.info('Forgot password attempt', 'No user found for email', username);
+    log.info('Forgot password attempt', 'No user found for email', uri);
     return error(null, false); // Make it look like a success
   });
 }
 
-async function sendUserPasswordResetNotification (username, token, action) {
-  await dao.User.findOne('username = ?', username).then((user) => {
+async function sendUserPasswordResetNotification (uri, token, action) {
+  await dao.User.findOne('uri = ?', uri).then((user) => {
     var data = {
       action: action,
       model: {
-        user: { name: user.name, username: username },
+        user: { name: user.name, uri: uri },
         token: token,
       },
     };
@@ -139,7 +139,7 @@ async function checkToken (token, done) {
   expiry.setTime(expiry.getTime() - openopps.auth.local.tokenExpiration);
   await dao.UserPasswordReset.findOne('token = ? and "createdAt" > ? and "deletedAt" is null', [token, expiry]).then(async (passwordReset) => {
     await dao.User.findOne('id = ?', passwordReset.userId).then((user) => {
-      return done(null, _.extend(_.clone(passwordReset), { email: user.username }));
+      return done(null, _.extend(_.clone(passwordReset), { email: user.uri }));
     }).catch((err) => {
       return done({ message: 'Not a valid password reset code.'}, null);
     });
@@ -165,7 +165,7 @@ async function getProfileData (params, done) {
     if (bcrypt.compareSync([account.linkedId, account.uuid].join('|'), params.h)) {
       await profile.get({ access_token: account.accessToken, id_token: account.idToken }).then(async profile => {
         var user = _.extend(_.clone(baseUser), {
-          username: profile.URI,
+          uri: profile.URI,
           name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
           title: profile.Profile.JobTitle,
           governmentUri: profile.Profile.GovernmentURI,
@@ -188,10 +188,10 @@ async function getProfileData (params, done) {
 
 async function linkAccount (user, data, done) {
   var account = await dao.AccountStaging.findOne('linked_id = ?', user.linkedId).catch(() => { return null; });
-  if(!account || user.linkedId !== account.linkedId || !validate([account.linkedId, account.uuid, account.username], data.h)) {
+  if(!account || user.linkedId !== account.linkedId || !validate([account.linkedId, account.uuid, account.uri], data.h)) {
     done({ message: 'This link is no longer valid.' });
   } else {
-    await dao.User.findOne('username = ? and linked_id = \'\'', account.username).then(async u => {
+    await dao.User.findOne('uri = ? and linked_id = \'\'', account.uri).then(async u => {
       u.linkedId = account.linkedId;
       u.governmentUri = account.governmentUri;
       await dao.User.update(u);
@@ -210,13 +210,13 @@ async function sendFindProfileConfirmation (ctx, data, done) {
   if(!account || !validate([account.linkedId, account.uuid], data.h)) {
     done({ message: 'Invalid request' });
   } else {
-    await dao.User.findOne('username = ? and linked_id = \'\'', data.email).then(async user => {
-      await dao.AccountStaging.update(_.extend(account, { username: user.username })).then(account => {
+    await dao.User.findOne('uri = ? and linked_id = \'\'', data.email).then(async user => {
+      await dao.AccountStaging.update(_.extend(account, { uri: user.uri })).then(account => {
         notification.createNotification({
           action: 'find.profile.confirmation',
           model: {
-            user: { name: user.name, username: user.username },
-            hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
+            user: { name: user.name, uri: user.uri },
+            hash: bcrypt.hashSync([account.linkedId, account.uuid, account.uri].join('|'), 10),
           },
         });
         done();

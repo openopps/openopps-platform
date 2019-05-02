@@ -3,7 +3,7 @@ var dao = require('postgres-gen-dao');
 
 const tagByType = 'select @tagentity.* from @tagentity tagentity where tagentity.type = ?';
 
-const userByName = 'select midas_user.id, midas_user.name, midas_user.title, midas_user.username, midas_user.government_uri from midas_user where disabled = false and LOWER(name) like ?';
+const userByName = 'select midas_user.id, midas_user.name, midas_user.title, midas_user.uri, midas_user.government_uri from midas_user where disabled = false and LOWER(name) like ?';
 
 const agencyQuery = 'select * from agency where is_disabled = false and parent_code is not null and (lower(name) like ? or lower(abbr) like ?)';
 

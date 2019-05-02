@@ -28,7 +28,7 @@ module.exports = {
     secure              : isSecure(),
     // 25 (non-secure) or 465 (secure)
     port                : JSON.parse(process.env.EMAIL_PORT || 465),
-    // username and password settings for secure connections
+    // uri and password settings for secure connections
     auth                : {
       user              : process.env.EMAIL_USER || '',
       pass              : process.env.EMAIL_PASS || '',

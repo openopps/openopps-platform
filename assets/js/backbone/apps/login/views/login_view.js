@@ -36,7 +36,7 @@ var LoginView = Backbone.View.extend({
     }).render();
 
     setTimeout(function () {
-      self.$('#username').focus();
+      self.$('#uri').focus();
     }, 500);
     return this;
   },
@@ -59,7 +59,7 @@ var LoginView = Backbone.View.extend({
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var data = {
-      identifier: this.$('#username').val() || '',
+      identifier: this.$('#uri').val() || '',
       password: this.$('#password').val() || '',
       json: true,
     };
@@ -84,8 +84,8 @@ var LoginView = Backbone.View.extend({
         var d = JSON.parse(error.responseText);
         self.$('#login-error-text').html(d.message);
         self.$('#login-error').show();
-        self.$('#username').closest('.required-input').addClass('usa-input-error');
-        self.$('#username').closest('.required-input').find('.field-validation-error.error-email').show();
+        self.$('#uri').closest('.required-input').addClass('usa-input-error');
+        self.$('#uri').closest('.required-input').find('.field-validation-error.error-email').show();
 
         self.$('#password').closest('.required-input').addClass('usa-input-error');
         self.$('#password').closest('.required-input').find('.field-validation-error.error-password').show();

@@ -119,7 +119,7 @@ var ProfileEditView = Backbone.View.extend({
       ui: UIConfig,
     };
     
-    data.email = data.data.username;
+    data.email = data.data.uri;
     data.career = this.getTags(['career'])[0];
     
     if (data.data.bio) {
@@ -233,10 +233,10 @@ var ProfileEditView = Backbone.View.extend({
           name:  $('#name').val().trim(),
           title: $('#jobtitle').val(),
           bio: $('#bio').val(),
-          username: $('#profile-email').val(),
+          uri: $('#profile-email').val(),
           agencyId: ($('#agency').select2('data') || {}).agencyId,
         },
-        email = this.model.get('username'),
+        email = this.model.get('uri'),
         tags = _(newTags).chain().filter(function (tag) {
           return _(tag).isObject() && !tag.context;
         }).map(function (tag) {

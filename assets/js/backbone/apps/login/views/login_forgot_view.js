@@ -31,7 +31,7 @@ var LoginForgotView = Backbone.View.extend({
     this.$el.localize();
 
     setTimeout(function () {
-      self.$('#fusername').focus();
+      self.$('#furi').focus();
     }, 500);
     return this;
   },
@@ -51,7 +51,7 @@ var LoginForgotView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     $('#forgot-submit').attr('disabled', 'disabled');
     var data = {
-      username: this.$('#fusername').val(),
+      uri: this.$('#furi').val(),
     };
     // Post the registration request to the server
     $.ajax({

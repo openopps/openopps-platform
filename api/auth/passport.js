@@ -12,7 +12,7 @@ const _ = require('lodash');
 const Profile = require('./profile');
 
 const localStrategyOptions = {
-  usernameField: 'identifier',
+  uriField: 'identifier',
   passwordField: 'password',
 };
 
@@ -52,7 +52,7 @@ async function userFound (user, tokenset, done) {
       governmentUri: tokenset.claims['usaj:governmentURI'],
     };
     if (tokenset.claims['usaj:hiringPath'] == 'student') {
-      data.username = tokenset.claims.email;
+      data.uri = tokenset.claims.email;
       data.isAdmin = false;
       data.isAgencyAdmin = false;
       data.isCommunityAdmin = false;
@@ -69,7 +69,7 @@ function removeDuplicateFederalURI (tokenset) {
 }
 
 function processFederalEmployeeLogin (tokenset, done) {
-  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
+  dao.User.findOne('linked_id = ? or (linked_id = \'\' and uri = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
     var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
@@ -98,7 +98,7 @@ function processStudentLogin (tokenset, done) {
         middleName: profile.MiddleName,
         lastName: profile.LastName,
         linkedId: tokenset.claims.sub,
-        username: profile.URI,
+        uri: profile.URI,
         hiringPath: 'student',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -127,10 +127,10 @@ passport.deserializeUser(async function (userObj, done) {
   done(null, user);
 });
 
-passport.use(new LocalStrategy(localStrategyOptions, async (username, password, done) => {
+passport.use(new LocalStrategy(localStrategyOptions, async (uri, password, done) => {
   var maxAttempts = openopps.auth.local.passwordAttempts;
-  log.info('local login attempt for:', username);
-  await dao.User.findOne('username = ?', username.toLowerCase().trim()).then(async (user) => {
+  log.info('local login attempt for:', uri);
+  await dao.User.findOne('uri = ?', uri.toLowerCase().trim()).then(async (user) => {
     if (maxAttempts > 0 && user.passwordAttempts >= maxAttempts) {
       log.info('max passwordAttempts (1)', user.passwordAttempts, maxAttempts);
       done({ message: 'locked', data: { userId: user.id } }, false);
@@ -166,8 +166,8 @@ passport.use(new LocalStrategy(localStrategyOptions, async (username, password, 
       }
     }
   }).catch(err => {
-    log.info('Error.Passport.Username.NotFound', username, err);
-    done({ message: 'Username not found.' }, false);
+    log.info('Error.Passport.URI.NotFound', uri, err);
+    done({ message: 'URI not found.' }, false);
   });
 }));
 

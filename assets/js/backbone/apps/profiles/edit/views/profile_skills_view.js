@@ -103,7 +103,7 @@ var ProfileSkillsView = Backbone.View.extend({
           $('#tag_skill').select2('data'),
         ),
         data = {
-          username: this.model.attributes.username,
+          uri: this.model.attributes.uri,
         },
         tags = _(newTags).chain().filter(function (tag) {
           return _(tag).isObject() && !tag.context;

@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'Find my <%- globals.systemName %> Profile',
-  to: '<%= user.username %>',
+  to: '<%= user.uri %>',
   data: function (model, done) {
     var data = {
       user: model.user,

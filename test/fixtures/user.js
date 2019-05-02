@@ -1,13 +1,13 @@
 module.exports = {
   'minAttrs': {
     'name': 'Default User',
-    'username': 'tester1@midascrowd.com',
+    'uri': 'tester1@midascrowd.com',
     'password': 'TestTest123#',
   },
   'allAttrs': {
     id: 1,
     name: 'Maria Sanchez',
-    username: 'maria@openopps.org',
+    uri: 'maria@openopps.org',
     password: 'TestTest123#',
     title: 'Test User',
     disabled: false,
@@ -20,13 +20,13 @@ module.exports = {
   'emmy': {
     'id': 2,
     'name': 'Emmy Noether',
-    'username': 'emmy@midascrowd.com',
+    'uri': 'emmy@midascrowd.com',
     'password': 'TestTest123#',
   },
   'alan': {
     'id' : 3,
     'name': 'Alan Turing',
-    'username': 'alan@midascrowd.com',
+    'uri': 'alan@midascrowd.com',
     'password': 'TestTest123#',
   },
 

@@ -5,10 +5,10 @@ chai.use(require('chai-datetime'));
 const users = require('../../fixtures/user');
 const User = require('../../../api/model').User;
 
-const isUsernameUsed = (id, username) => {
+const isURIUsed = (id, uri) => {
   return Object.keys(users).filter(key => {
     var user = users[key];
-    return user.id !== id && user.username === username;
+    return user.id !== id && user.uri === uri;
   });
 };
 
@@ -16,7 +16,7 @@ describe('UserModel', function () {
   var createAttrs, expectedAttrs;
   beforeEach(function () {
     createAttrs = (JSON.parse(JSON.stringify(users.allAttrs)));
-    createAttrs.username.toUpperCase();   // shouldn't matter, saves as lower
+    createAttrs.uri.toUpperCase();   // shouldn't matter, saves as lower
     expectedAttrs = (JSON.parse(JSON.stringify(users.allAttrs)));
     expectedAttrs.id = 1;
     delete expectedAttrs.password;
@@ -28,8 +28,8 @@ describe('UserModel', function () {
       user = User.create(createAttrs);
     });
     describe('#create', function () {
-      it('should have username', function () {
-        assert.equal(user.username, expectedAttrs.username);
+      it('should have uri', function () {
+        assert.equal(user.uri, expectedAttrs.uri);
       });
       it('should have name', function () {
         assert.equal(user.name, expectedAttrs.name);
@@ -58,26 +58,26 @@ describe('UserModel', function () {
       user = User.create(createAttrs);
     });
     it('a valid user should have no errors', async () => {
-      errors = await User.validateUser(user, isUsernameUsed);
+      errors = await User.validateUser(user, isURIUsed);
       assert.equal(_.isEmpty(errors.invalidAttributes), true);
     });
-    it('a user with an invalid username should have email errors', async () => {
-      user.username = 'notvalid@email';
-      errors = await User.validateUser(user, isUsernameUsed);
+    it('a user with an invalid uri should have email errors', async () => {
+      user.uri = 'notvalid@email';
+      errors = await User.validateUser(user, isURIUsed);
       assert.equal((errors.invalidAttributes.email || []).length > 0, true);
     });
-    it('a user with a <> in the username should have multiple email errors', async () => {
-      user.username = 'some<evil>@email.com';
-      errors = await User.validateUser(user, isUsernameUsed);
+    it('a user with a <> in the uri should have multiple email errors', async () => {
+      user.uri = 'some<evil>@email.com';
+      errors = await User.validateUser(user, isURIUsed);
       assert.equal((errors.invalidAttributes.email || []).length > 1, true);
     });
-    it('a user attempting to use an existing username should have email errors', async () => {
-      user.username = users.emmy.username;
-      errors = await User.validateUser(user, isUsernameUsed);
+    it('a user attempting to use an existing uri should have email errors', async () => {
+      user.uri = users.emmy.uri;
+      errors = await User.validateUser(user, isURIUsed);
       assert.equal((errors.invalidAttributes.email || []).length > 0, true);
     });
-    it('a user with a username longer than 60 should have email errors', async () => {
-      user.username = 'mySuperReallyReallyReallyReallyReallyReallyLongEmail@address.com';
+    it('a user with a uri longer than 60 should have email errors', async () => {
+      user.uri = 'mySuperReallyReallyReallyReallyReallyReallyLongEmail@address.com';
       errors = await User.validateUser(user, () => { return false; });
       assert.equal((errors.invalidAttributes.email || []).length > 0, true);
     });

@@ -55,11 +55,11 @@
           <% } %>
           <div id="profile" class="usajobs-opop-profile-title profile usa-width-one-fourth">
               <div class="profile-photo"></div>
-              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
+              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.uri %><% } %></h3>
           </div>
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-name-role">
-              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
+              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.uri %><% } %></h3>
               <% if (data.isAdmin || data.isAgencyAdmin) { %>
               <span class="role-label"><% if (user.isAgencyAdmin) { %> Agency <% } %> Administrator</span>
               <% } %>
@@ -96,9 +96,9 @@
                 <% } else { %>
                   <span><%= email %></span>
                 <% } %>
-              <% } else if (data.hiringPath == 'student' && data.username) { %>
+              <% } else if (data.hiringPath == 'student' && data.uri) { %>
                 <div class="usajobs-profile-home-section__field-label">Email address</div>
-                <span><%= data.username %></span>
+                <span><%= data.uri %></span>
               <% } %>
             </div>
             <div class="profile-biography"> 

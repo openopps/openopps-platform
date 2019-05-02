@@ -22,7 +22,7 @@ async function updateProfileTag (userId, tagType, tagName) {
       await dao.TagEntity.insert({ type: tagType, name: tagName }).then(async (t) => {
         await dao.UserTags.insert({ tagentity_users: t.id, user_tags: userId });
       }).catch(err => {
-        log.info('user: failed to create tag ', user.username, tag, err);
+        log.info('user: failed to create tag ', user.uri, tag, err);
       });
     }
   } else {

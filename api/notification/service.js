@@ -133,7 +133,7 @@ function processNotification (notification) {
     case 'Bounce':
       if(notification.bounce.bounceType == 'Permanent') {
         _.forEach(notification.bounce.bouncedRecipients, (recipient) => {
-          dao.User.findOne('username = ?', recipient.emailAddress.toLowerCase()).then((user) => {
+          dao.User.findOne('uri = ?', recipient.emailAddress.toLowerCase()).then((user) => {
             user.bounced = true;
             user.updatedAt = new Date();
             dao.User.update(user);
@@ -152,7 +152,7 @@ function processNotification (notification) {
       break;
     case 'Complaint':
       _.forEach(notification.complaint.complainedRecipients, (recipient) => {
-        dao.User.findOne('username = ?', recipient.emailAddress.toLowerCase()).then((user) => {
+        dao.User.findOne('uri = ?', recipient.emailAddress.toLowerCase()).then((user) => {
           user.complained = _.indexOf(['abuse', 'fraud'], notification.complaint.complaintFeedbackType);
           user.updatedAt = new Date();
           dao.User.update(user);

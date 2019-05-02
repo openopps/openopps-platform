@@ -167,7 +167,7 @@ module.exports.saveLanguage = async function (userId, data) {
 module.exports.saveSkill = async function (userId, applicationId, attributes) {
   return await dao.ApplicationSkill.delete('application_id = ? ', [applicationId]).then(async () => { 
     var tags = [].concat(attributes || []);
-    return await processUserTags({ userId: userId, username: attributes.username }, applicationId, tags).then(async () => {
+    return await processUserTags({ userId: userId, uri: attributes.uri }, applicationId, tags).then(async () => {
       return await db.query(dao.query.applicationSkill, applicationId, { fetch: { name: ''}});
     }).catch(err => {
       log.error('save: failed to save skill ',  err);
@@ -205,7 +205,7 @@ async function createNewSkillTag (user, applicationId, tag) {
   }).then(async (t) => {
     return await createApplicationSkill(user, applicationId, t);
   }).catch(err => {
-    log.info('skill: failed to create skill tag ', user.username, tag, err);
+    log.info('skill: failed to create skill tag ', user.uri, tag, err);
   });
 }
 
@@ -216,7 +216,7 @@ async function createApplicationSkill (user, applicationId, tag) {
     skillId: tag.id,
     createdAt: new Date(),
   }).catch(err => {
-    log.info('skill: failed to create tag ', user.username, application_id, err);
+    log.info('skill: failed to create tag ', user.uri, application_id, err);
   });
 }
 

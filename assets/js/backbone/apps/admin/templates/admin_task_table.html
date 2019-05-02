@@ -38,7 +38,7 @@
         <td class="metrics-table__author">
           <% if (!task.owner) { console.log('no owner for task', task) } else { %>
           <a href="/profile/<%- task.owner.id %>">
-            <%- task.owner.name || task.owner.username %>
+            <%- task.owner.name || task.owner.uri %>
           </a>
           <% } %>
         </td>

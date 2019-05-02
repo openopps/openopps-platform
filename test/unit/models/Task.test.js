@@ -142,7 +142,7 @@ describe('Task model', function () {
 
     it('populates object with correct data', function (done) {
       assert.property(task, 'owner');
-      assert.equal(task.owner.username, userFixtures.minAttrs.username);
+      assert.equal(task.owner.uri, userFixtures.minAttrs.uri);
       done();
     });
   });

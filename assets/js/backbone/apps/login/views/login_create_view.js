@@ -12,8 +12,8 @@ var LoginCreateView = Backbone.View.extend({
   events: {
     'click .oauth-link' : 'link',
     'blur .validate'    : 'validateField',
-    'blur #rusername'  : 'checkUsername',
-    'click #rusername-button'     : 'clickUsername',
+    'blur #ruri'  : 'checkuri',
+    'click #ruri-button'     : 'clickuri',
     'blur .select2-container'     : 'checkSelect2',
     'blur #ragency'             : 'checkSelect2',
     'blur #rlocation'           : 'checkSelect2',
@@ -87,7 +87,7 @@ var LoginCreateView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
 
     // validate input fields
-    var validateIds = ['#rname', '#rusername', '#rterms', '#ragency', '#rlocation'];
+    var validateIds = ['#rname', '#ruri', '#rterms', '#ragency', '#rlocation'];
 
     var abort = false;
     for (var i in validateIds) {
@@ -104,7 +104,7 @@ var LoginCreateView = Backbone.View.extend({
     // Create a data object with the required fields
     var data = {
       name: this.$('#rname').val(),
-      username: this.$('#rusername').val(),
+      uri: this.$('#ruri').val(),
       terms: (this.$('#rterms').val() === 'on'),
       tags: [
         this.$('#ragency').select2('data'),
@@ -149,34 +149,34 @@ var LoginCreateView = Backbone.View.extend({
     });
   },
 
-  checkUsername: function (e) {
-    var username = $('#rusername').val();
-    if(_.isEmpty(username)) {
-      $('#rusername').closest('.required-input').addClass('usa-input-error');
-      $('#rusername').closest('.required-input').find('.field-validation-error.error-empty').show();
-      $('#rusername').closest('.required-input').find('.field-validation-error.error-email').hide();
+  checkuri: function (e) {
+    var uri = $('#ruri').val();
+    if(_.isEmpty(uri)) {
+      $('#ruri').closest('.required-input').addClass('usa-input-error');
+      $('#ruri').closest('.required-input').find('.field-validation-error.error-empty').show();
+      $('#ruri').closest('.required-input').find('.field-validation-error.error-email').hide();
       return true;
     } else {
-      $('#rusername').closest('.required-input').find('.field-validation-error.error-empty').hide();
+      $('#ruri').closest('.required-input').find('.field-validation-error.error-empty').hide();
       $.ajax({
-        url: '/api/user/username/' + username,
+        url: '/api/user/uri/' + uri,
       }).done(function (data) {
         if (data) {
-          // username is taken
-          $('#rusername').closest('.required-input').addClass('usa-input-error');
-          $('#rusername').closest('.required-input').find('.field-validation-error.error-email').show();
+          // uri is taken
+          $('#ruri').closest('.required-input').addClass('usa-input-error');
+          $('#ruri').closest('.required-input').find('.field-validation-error.error-email').show();
           return true;
         } else {
-          // username is available
-          $('#rusername').closest('.required-input').removeClass('usa-input-error');
-          $('#rusername').closest('.required-input').find('.field-validation-error.error-email').hide();
+          // uri is available
+          $('#ruri').closest('.required-input').removeClass('usa-input-error');
+          $('#ruri').closest('.required-input').find('.field-validation-error.error-email').hide();
           return false;
         }
       });
     }
   },
 
-  clickUsername: function (e) {
+  clickuri: function (e) {
     e.preventDefault();
   },
 

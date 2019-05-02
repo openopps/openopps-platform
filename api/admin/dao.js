@@ -138,14 +138,14 @@ const communityListQuery = 'select community.* from community ' +
 
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
-  'where lower(username) like ? or lower(name) like ? ' +
+  'where lower(uri) like ? or lower(name) like ? ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
 const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
-  'where (lower(username) like ? or lower(midas_user.name) like ?) and agency_id = ? ' +
+  'where (lower(uri) like ? or lower(midas_user.name) like ?) and agency_id = ? ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -154,7 +154,7 @@ const userCommunityListFilteredQuery = 'select midas_user.*, count(*) over() as 
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
   'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  'where (lower(tag.name) like ? or lower(username) like ? or lower(midas_user.name) like ?) ' +
+  'where (lower(tag.name) like ? or lower(uri) like ? or lower(midas_user.name) like ?) ' +
   "and tag.type = 'agency' and community_user.community_id = ? " +
   'order by "created_at" desc ' +
   'limit 25 ' +
@@ -165,7 +165,7 @@ const userTaskState = 'select state from task where "userId" = ? ';
 const participantTaskState = 'select task.state from task inner join volunteer on volunteer."taskId" = task.id where volunteer."userId" = ? ';
 
 const exportUserData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.uri, m_user.title, m_user.bio, ' +
   'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
@@ -174,7 +174,7 @@ const exportUserData = 'SELECT ' +
   'ORDER BY m_user.id';
 
 const exportUserAgencyData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.uri, m_user.title, m_user.bio, ' +
   'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
@@ -183,7 +183,7 @@ const exportUserAgencyData = 'SELECT ' +
   'WHERE m_user.agency_id = ? ORDER BY m_user.id';
 
 const exportUserCommunityData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
+  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.uri, m_user.title, m_user.bio, ' +
   'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
@@ -223,19 +223,19 @@ const activityQuery = 'select comment."createdAt", comment.id, ' + "'comment' as
   'order by "createdAt" desc ' +
   'limit 10';
 
-const activityCommentQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", comment.value, comment."createdAt" ' +
+const activityCommentQuery = 'select midas_user.name, midas_user.uri, task.title, task.id "taskId", midas_user.id "userId", comment.value, comment."createdAt" ' +
   'from midas_user ' +
   'inner join comment on midas_user.id = comment."userId" ' +
   'left join task on comment."taskId" = task.id ' +
   'where comment.id = ? ';
 
-const activityVolunteerQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", volunteer."createdAt" ' +
+const activityVolunteerQuery = 'select midas_user.name, midas_user.uri, task.title, task.id "taskId", midas_user.id "userId", volunteer."createdAt" ' +
   'from volunteer ' +
   'left join midas_user on midas_user.id = volunteer."userId" ' +
   'left join task on volunteer."taskId" = task.id ' +
   'where volunteer.id = ? ';
 
-const activityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task."createdAt" ' +
+const activityTaskQuery = 'select midas_user.name, midas_user.uri, task.title, task.id "taskId", midas_user.id "userId", task."createdAt" ' +
   'from midas_user ' +
   'inner join task on midas_user.id = task."userId" ' +
   'where task.id = ? ';
@@ -263,7 +263,7 @@ const userCommunityQuery = '';
 var exportFormat = {
   'user_id': 'id',
   'name': {field: 'name', filter: nullToEmptyString},
-  'username': {field: 'username', filter: nullToEmptyString},
+  'uri': {field: 'uri', filter: nullToEmptyString},
   'title': {field: 'title', filter: nullToEmptyString},
   'agency': {field: 'agency', filter: nullToEmptyString},
   'location': {field: 'location', filter: nullToEmptyString},
@@ -288,9 +288,9 @@ const options = {
     exclude: {
       task: [ 'projectId', 'description', 'userId', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
         'completedAt', 'completedBy', 'submittedAt', 'restrict' ],
-      owner: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+      owner: [ 'uri', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
-      volunteers: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+      volunteers: [ 'uri', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
     },
   },
@@ -302,9 +302,9 @@ const options = {
     exclude: {
       task: [ 'projectId', 'description', 'userId', 'updatedAt', 'deletedAt', 'publishedAt', 'assignedAt',
         'completedAt', 'completedBy', 'submittedAt', 'restrict' ],
-      owner: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+      owner: [ 'uri', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
-      applicants: [ 'username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+      applicants: [ 'uri', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin' ],
     },
   },
@@ -322,7 +322,7 @@ const options = {
       tags: [],
     },
     exclude: {
-      m_user: ['username', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
+      m_user: ['uri', 'title', 'bio', 'photoId', 'photoUrl', 'isAdmin', 'disabled', 'passwordAttempts', 
         'createdAt', 'updatedAt', 'deletedAt', 'completedTasks', 'isAgencyAdmin'],
       tags: [ 'deletedAt', 'createdAt', 'updatedAt', 'data' ],
     },

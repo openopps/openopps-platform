@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'You earned a new badge',
-  to: '<%= user.username %>',
+  to: '<%= user.uri %>',
   data: function (data, done) {
     done(null, data);
   },

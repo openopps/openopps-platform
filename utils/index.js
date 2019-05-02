@@ -17,14 +17,14 @@ module.exports = {
       return object;
     }
   },
-  validatePassword: function (password, username) {
-    var notUsername = password.toLowerCase().trim() !== username.split('@',1)[0].toLowerCase().trim();
+  validatePassword: function (password, uri) {
+    var notURI = password.toLowerCase().trim() !== uri.split('@',1)[0].toLowerCase().trim();
     var minLength = password.length >= 8;
     var lowercase = /[a-z]/.test(password);
     var uppercase = /[A-Z]/.test(password);
     var number = /[0-9]/.test(password);
     var symbol = /[^\w\s]/.test(password);
-    return (notUsername && minLength && lowercase && uppercase && number && symbol);
+    return (notURI && minLength && lowercase && uppercase && number && symbol);
   },
   badgeDescriptions: {
     // should be able to follow "You are awared this badge because you "

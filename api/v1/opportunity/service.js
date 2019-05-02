@@ -67,7 +67,7 @@ service.addTaskOwner = async function (taskId, shareWithUserId, sharedByUserId, 
     actionDate: new Date,
     details: { 
       'shared_by_user_id': sharedByUserId, 
-      'action_by_username': user.username, 
+      'action_by_uri': user.uri, 
     },
   };
   var taskShare = await dao.TaskShare.find('task_id = ? and user_id = ?', taskId, shareWithUserId);

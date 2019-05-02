@@ -94,7 +94,7 @@ async function sendAddedVolunteerNotification (user, volunteer, action) {
     action: action,
     model: {
       task: { id: notificationInfo[0].id, title: notificationInfo[0].title },
-      owner: { username: notificationInfo[0].ownerusername },
+      owner: { uri: notificationInfo[0].owneruri },
       user: user,
     },
   };
@@ -108,8 +108,8 @@ async function sendDeletedVolunteerNotification (notificationInfo, action) {
     action: action,
     model: {
       task: { id: notificationInfo.id, title: notificationInfo.title },
-      owner: { name: notificationInfo.ownername, username: notificationInfo.ownerusername },
-      user: { name: notificationInfo.name, username: notificationInfo.username},
+      owner: { name: notificationInfo.ownername, uri: notificationInfo.owneruri },
+      user: { name: notificationInfo.name, uri: notificationInfo.uri},
     },
   };
   if(!notificationInfo.bounced) {

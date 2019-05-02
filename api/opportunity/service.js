@@ -524,7 +524,7 @@ async function copyOpportunity (attributes, user, done) {
 
         tags.map(tag => {
           dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: intern.id }).catch(err => {
-            log.info('register: failed to update tag ', attributes.username, tag, err);
+            log.info('register: failed to update tag ', attributes.uri, tag, err);
           });
         });
         if (results.communityId != null)
@@ -547,7 +547,7 @@ async function copyOpportunity (attributes, user, done) {
       .then(async (task) => {
         tags.map(tag => {
           dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: task.id }).catch(err => {
-            log.info('register: failed to update tag ', attributes.username, tag, err);
+            log.info('register: failed to update tag ', attributes.uri, tag, err);
           });
         });
         await elasticService.indexOpportunity(task.id);
@@ -644,9 +644,9 @@ async function sendTasksDueNotifications (action, i) {
             },
             owner: {
               name: taskDetail.name,
-              username: taskDetail.username,
+              uri: taskDetail.uri,
             },
-            volunteers: _.map((await dao.Task.db.query(dao.query.volunteerListQuery, tasks[i].id)).rows, 'username').join(', '),
+            volunteers: _.map((await dao.Task.db.query(dao.query.volunteerListQuery, tasks[i].id)).rows, 'uri').join(', '),
           },
         };
         if (data.model.volunteers.length > 0) {

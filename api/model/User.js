@@ -13,11 +13,11 @@ module.exports = {
     }, user);
   },
 
-  validateUser: async (attributes, isUsernameUsed) => {
+  validateUser: async (attributes, isURIUsed) => {
     var obj = {};
-    var usernameUsed = await isUsernameUsed(attributes.id, attributes.username);
+    var uriUsed = await isURIUsed(attributes.id, attributes.uri);
     obj['invalidAttributes'] = {};
-    obj = validateUsername(obj, usernameUsed, attributes);
+    obj = validateURI(obj, uriUsed, attributes);
     obj = validateBio(obj, attributes);
     obj = validateName(obj, attributes);
     obj = validateTitle(obj, attributes);
@@ -28,24 +28,24 @@ module.exports = {
   validateTags: validateTags,
 };
 
-function validateUsername (obj, usernameUsed, attributes) {
-  if (usernameUsed.length > 0) {
+function validateURI (obj, uriUsed, attributes) {
+  if (uriUsed.length > 0) {
     obj['invalidAttributes']['email'] = [];
-    obj['invalidAttributes']['email'].push({'message': 'A user with that email already exists (`' + attributes.username + '`).'});
+    obj['invalidAttributes']['email'].push({'message': 'A user with that email already exists (`' + attributes.uri + '`).'});
   }
-  if (attributes.username.match(/[<>]/g)) {
+  if (attributes.uri.match(/[<>]/g)) {
     if (_.isEmpty(obj['invalidAttributes']['email'])) {
       obj['invalidAttributes']['email'] = [];
     }
     obj['invalidAttributes']['email'].push({'message': 'Email must not contain the special characters < or >.'});
   }
-  if (!validator.isEmail(attributes.username)) {
+  if (!validator.isEmail(attributes.uri)) {
     if (_.isEmpty(obj['invalidAttributes']['email'])) {
       obj['invalidAttributes']['email'] = [];
     }
     obj['invalidAttributes']['email'].push({'message': 'Email must be a valid email address.'});
   }
-  if (attributes.username.length > 60) {
+  if (attributes.uri.length > 60) {
     if (_.isEmpty(obj['invalidAttributes']['email'])) {
       obj['invalidAttributes']['email'] = [];
     }

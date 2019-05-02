@@ -245,7 +245,7 @@ helpful:
 
      psql midas
      update midas_user set disabled='f';
-     update midas_user set "isAdmin"='t' where username='alan@test.gov';
+     update midas_user set "isAdmin"='t' where uri='alan@test.gov';
 
 Note the quotes around "isAdmin". Postgres by default lowercases all non-keywords, which includes column names.
 

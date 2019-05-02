@@ -170,7 +170,7 @@ dao.query.taskListApplicationQuery = `
     task_list_application.date_last_contacted,
     midas_user.given_name,
     midas_user.last_name,
-    midas_user.username as email,
+    midas_user.uri as email,
     (
       select application_task.sort_order as choice
       from

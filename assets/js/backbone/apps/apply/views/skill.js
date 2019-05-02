@@ -18,21 +18,21 @@ function initializeSelect2(data) {
 
 function getSkills () {
   var newTags = [].concat(
-    $('#application_skills').select2('data'),
-  ),
-  data = {
-    username: this.window.cache.currentUser.username,
-  },
-  tags = _(newTags).chain().filter(function (tag) {
-    return _(tag).isObject() && !tag.context;
-  }).map(function (tag) {
-    return (tag.id && tag.id !== tag.name) ? +tag.id : {
-      name: tag.name,
-      type: tag.type,
-      data: tag.data,
-    };
-  }).unique().value();
-return newTags;
+        $('#application_skills').select2('data'),
+      ),
+      data = {
+        uri: this.window.cache.currentUser.uri,
+      },
+      tags = _(newTags).chain().filter(function (tag) {
+        return _(tag).isObject() && !tag.context;
+      }).map(function (tag) {
+        return (tag.id && tag.id !== tag.name) ? +tag.id : {
+          name: tag.name,
+          type: tag.type,
+          data: tag.data,
+        };
+      }).unique().value();
+  return newTags;
 }
 
 var skill = {

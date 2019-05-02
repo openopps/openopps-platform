@@ -16,7 +16,7 @@ function afterCreate (badge) {
     if (badge.silent === true) {
       resolve({ badge: badge });
     } else {
-      dao.Badge.db.query('select username, name, bounced from midas_user where id = ?', badge.user).then(function (results) {
+      dao.Badge.db.query('select uri, name, bounced from midas_user where id = ?', badge.user).then(function (results) {
         var data = {
           action: 'badge.create.owner',
           model: {

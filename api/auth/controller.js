@@ -147,11 +147,11 @@ router.post('/api/auth/register', async (ctx, next) => {
 
   delete(ctx.request.body.isAdmin);
   delete(ctx.request.body.isAgencyAdmin);
-  if (!ctx.request.body.username) {
-    ctx.flash('error', 'Error.Passport.Username.Missing');
+  if (!ctx.request.body.uri) {
+    ctx.flash('error', 'Error.Passport.uri.Missing');
     ctx.status = 400;
     return ctx.body = { message: 'The email address is required.' };
-  } else if (!validGovtEmail(ctx.request.body.username)) {
+  } else if (!validGovtEmail(ctx.request.body.uri)) {
     ctx.status = 400;
     return ctx.body = { message: 'The email address provided is not a valid government email address.' };
   }
@@ -170,21 +170,21 @@ router.post('/api/auth/register', async (ctx, next) => {
 });
 
 router.post('/api/auth/forgot', async (ctx, next) => {
-  if (!ctx.request.body.username) {
+  if (!ctx.request.body.uri) {
     ctx.flash('error', 'Error.Auth.Forgot.Email.Missing');
     ctx.status = 400;
     return ctx.body = { message: 'You must enter an email address.'};
   }
 
-  await service.forgotPassword(ctx.request.body.username.toLowerCase().trim(), function (token, err) {
+  await service.forgotPassword(ctx.request.body.uri.toLowerCase().trim(), function (token, err) {
     if (err) {
       ctx.status = 400;
       return ctx.body = { message: err };
     }
     try {
-      service.sendUserPasswordResetNotification(ctx.request.body.username.toLowerCase().trim(), token, 'userpasswordreset.create.token');
+      service.sendUserPasswordResetNotification(ctx.request.body.uri.toLowerCase().trim(), token, 'userpasswordreset.create.token');
     } finally {
-      ctx.body = { success: true, email: ctx.request.body.username };
+      ctx.body = { success: true, email: ctx.request.body.uri };
     }
   });
 });

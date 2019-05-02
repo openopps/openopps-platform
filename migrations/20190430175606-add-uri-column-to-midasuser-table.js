@@ -14,10 +14,10 @@ exports.setup = function (options, seedLink) {
   seed = seedLink;
 };
 
-exports.up = function (db) {
-  return db.runSql('update midas_user set uri=lower(uri);');
+exports.up = function (db, callback) {
+  db.addColumn('midas_user', 'uri', { type: 'character varying', unique: true }, callback);
 };
 
-exports.down = function (db) {
-  return null;
+exports.down = function (db, callback) {
+  db.removeColumn('midas_user', 'uri', callback);
 };

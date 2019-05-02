@@ -35,7 +35,7 @@ module.exports.connections = {
   },
 
   // POSTGRES
-  // Set your postgres database settings here, including the username, password
+  // Set your postgres database settings here, including the uri, password
   // and database name
   postgresql: {
     adapter     : 'sails-postgresql',

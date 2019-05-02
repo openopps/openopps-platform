@@ -13,7 +13,7 @@ router.get('/api/location/suggest', async (ctx, next) => {
     type: 'json',
     style: 'full',
     maxRows: 10,
-    username: 'midas',
+    uri: 'midas',
     countryBias: 'US',
     featureClass: 'P',
   });

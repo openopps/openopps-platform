@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'New opportunity submitted by a task creator',
-  to: '<%- admin.username %>',
+  to: '<%- admin.uri %>',
   data: function (model, done) {
     var data = {
       task: model.task,

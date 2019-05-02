@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'Welcome to the <%- community.communityName %> community',
-  to: '<%- user.username %>',
+  to: '<%- user.uri %>',
   data: function (model, done) {
     var data = {
       user: model.user,

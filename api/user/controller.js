@@ -49,15 +49,15 @@ router.get('/api/user/:id', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/user/username/:username', async (ctx, next) => {
-  if (!ctx.params.username || !validator.isEmail(ctx.params.username) || !validGovtEmail(ctx.params.username)) {
+router.get('/api/user/uri/:uri', async (ctx, next) => {
+  if (!ctx.params.uri || !validator.isEmail(ctx.params.uri) || !validGovtEmail(ctx.params.uri)) {
     return ctx.body = true;
   }
-  log.info('looking up username', ctx.params.username);
-  await service.findOneByUsername(ctx.params.username.toLowerCase().trim(), function (err, user) {
+  log.info('looking up uri', ctx.params.uri);
+  await service.findOneByURI(ctx.params.uri.toLowerCase().trim(), function (err, user) {
     if (err) {
       ctx.status = 400;
-      return ctx.body = { message:'Error looking up username.' };
+      return ctx.body = { message:'Error looking up uri.' };
     } else if (!user) {
       return ctx.body = false;
     } else {

@@ -77,7 +77,7 @@ const tasksDueQuery = 'select task.* ' +
   'from task ' +
   'where "completedBy"::date - ?::date = 0 and state = ? ';
 
-const tasksDueDetailQuery = 'select owner.name, owner.username, owner.bounced ' +
+const tasksDueDetailQuery = 'select owner.name, owner.uri, owner.bounced ' +
   'from task join midas_user owner on task."userId" = owner.id ' +
   'where task.id = ? ';
 
@@ -113,20 +113,20 @@ const userQuery = 'select @midas_user.*, @agency.* ' +
   'where midas_user.id = ? ';
    
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
-  'midas_user.username, midas_user.name, midas_user.bounced ' +
+  'midas_user.uri, midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
   'join volunteer v on v."userId" = midas_user.id ' +
   'join task t on t.id = v."taskId" and t."completedAt" is not null ' +
   'where midas_user.id in ? ' +
-  'group by midas_user.id, midas_user.username, midas_user.name';
+  'group by midas_user.id, midas_user.uri, midas_user.name';
 
 const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned, ' +
-  'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.bounced, midas_user."photoId" ' +
+  'volunteer."taskComplete", midas_user.name, midas_user.uri, midas_user.bounced, midas_user."photoId" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ?';
 
-const volunteerListQuery = 'select midas_user.username, midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
+const volunteerListQuery = 'select midas_user.uri, midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';

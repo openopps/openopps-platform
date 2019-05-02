@@ -133,7 +133,7 @@ describe('TaskController', function() {
         agent = request.agent(sails.hooks.http.app);
         agent.post('/api/auth/local')
         .send({
-          identifier: newUserAttrs.username,
+          identifier: newUserAttrs.uri,
           password: newUserAttrs.password,
           json: true
         })

@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'Reset your password on <%- globals.systemName %>',
-  to: '<%= user.username %>',
+  to: '<%= user.uri %>',
   data: function (model, done) {
     var data = {
       user: model.user,

@@ -43,7 +43,7 @@ async function sendCommentNotification (user, comment, action) {
       comment: { id: notificationData[0].commentid, value: notificationData[0].value },
       commenter: { id: user.id, name: user.name },
       task: { id: notificationData[0].taskid, title: notificationData[0].tasktitle},
-      owner: { name: notificationData[0].ownername, username: notificationData[0].ownerusername },
+      owner: { name: notificationData[0].ownername, uri: notificationData[0].owneruri },
     },
   };
   if(!notificationData[0].ownerbounced) {

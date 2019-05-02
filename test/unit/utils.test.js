@@ -5,7 +5,7 @@ describe('Testing utils.js', function () {
   describe('.validatePassword', function () {
     var tests = [
       {
-        message: 'Validating a password that matches the username should return false.',
+        message: 'Validating a password that matches the uri should return false.',
         method: 'validatePassword',
         args: ['TestUser', 'testuser@example.com'],
         expected: false,

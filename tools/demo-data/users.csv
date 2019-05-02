@@ -1,4 +1,4 @@
-name,username,password,title,agency,location,photo
+name,uri,password,title,agency,location,photo
 Tammy Craig,kids@test.gov,kidskidsT1!,Social Media Director,Dept of Education,"Washington, DC",assets/users/tammy.jpg
 Pran Mhasalkar,pran@test.gov,pranpranT1!,Special Advisor,Office of Science & Technology Policy,"Washington, DC",assets/users/pran.jpg
 Alan Barret,alan@test.gov,alanalanT1!,Deputy Secretary,Dept of Agriculture,"Washington, DC",assets/users/alan.jpg

@@ -15,7 +15,7 @@ service.getApplicationSummary = async function (taskListApplicationId, sub, auth
   return results;
 };
 
-service.removeApplicationTask  = async function(task_id, application_task_id, task_list_application_id, user){
+service.removeApplicationTask  = async function (task_id, application_task_id, task_list_application_id, user){
   var taskListApplicationRecord = await dao.TaskListApplication.findOne('task_list_application_id = ?', task_list_application_id);
   var historyRecord = {
     taskListApplicationId: task_list_application_id,
@@ -23,16 +23,16 @@ service.removeApplicationTask  = async function(task_id, application_task_id, ta
     actionBy: user.id,
     actionDate: new Date,
     details: { 
-        'removed_by_userId': user.id, 
-        'action_by_username': user.username,
-        'task_list_id': taskListApplicationRecord.taskListId,
-        'application_id': taskListApplicationRecord.applicationId,
-        'sort_order': taskListApplicationRecord.sortOrder,
-        'date_last_viewed': taskListApplicationRecord.dateLastViewed,
-        'date_last_contacted': taskListApplicationRecord.dateLastContacted,
-        'created_at': taskListApplicationRecord.createdAt,
-        'updated_at': taskListApplicationRecord.updatedAt,
-        'updated_by': taskListApplicationRecord.updatedBy,
+      'removed_by_userId': user.id, 
+      'action_by_uri': user.uri,
+      'task_list_id': taskListApplicationRecord.taskListId,
+      'application_id': taskListApplicationRecord.applicationId,
+      'sort_order': taskListApplicationRecord.sortOrder,
+      'date_last_viewed': taskListApplicationRecord.dateLastViewed,
+      'date_last_contacted': taskListApplicationRecord.dateLastContacted,
+      'created_at': taskListApplicationRecord.createdAt,
+      'updated_at': taskListApplicationRecord.updatedAt,
+      'updated_by': taskListApplicationRecord.updatedBy,
     },
     taskId: task_id,
     application_id: taskListApplicationRecord.applicationId,

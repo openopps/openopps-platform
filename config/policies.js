@@ -111,7 +111,7 @@ module.exports.policies = {
     'photo': 'requireId',
     'info': 'requireId',
     'update': ['requireAuth', 'requireId', 'user'],
-    'username': true,
+    'uri': true,
     'all': 'requireAuth',
     'activities': 'requireAuth',
     'disable': ['requireAuth', 'requireId', 'admin'],

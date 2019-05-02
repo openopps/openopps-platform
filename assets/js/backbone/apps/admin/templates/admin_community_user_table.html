@@ -9,7 +9,7 @@
     <tr>
       <th class="admin-user-id">User #</th>
       <th class="admin-table-name">Name</th>
-      <th>Email</th>
+      <th>Federal email</th>
       <th>Agency</th>
       <th>Joined date</th>
       <th>Community<br/>opportunities</th>
@@ -37,8 +37,8 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
-        <td class="admin-table-username">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+        <td class="admin-table-uri">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
         <td>
           <%- u.agency %>

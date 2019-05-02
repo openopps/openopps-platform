@@ -3,35 +3,35 @@
 
 <script type="text/template" id="newComment">
   <li>
-    &ldquo;{{comment.value}}&rdquo; said <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> on <a href="/{{itemType}}s/{{item.id}}">{{item.title}}</a>
+    &ldquo;{{comment.value}}&rdquo; said <a href="/profile/{{user.id}}">{{user.name || user.uri}}</a> on <a href="/{{itemType}}s/{{item.id}}">{{item.title}}</a>
     <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newVolunteer">
   <li>
-    <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> signed up for <a href="/tasks/{{task.id}}">{{task.title}}</a>
+    <a href="/profile/{{user.id}}">{{user.name || user.uri}}</a> signed up for <a href="/tasks/{{task.id}}">{{task.title}}</a>
     <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newUser">
   <li>
-    <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> joined!
+    <a href="/profile/{{user.id}}">{{user.name || user.uri}}</a> joined!
     <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="updatedUser">
   <li>
-    <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> updated their profile
+    <a href="/profile/{{user.id}}">{{user.name || user.uri}}</a> updated their profile
     <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newTask">
   <li>
-    <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> posted a new opportunity: <a href="/tasks/{{task.id}}">{{task.title}}</a>
+    <a href="/profile/{{user.id}}">{{user.name || user.uri}}</a> posted a new opportunity: <a href="/tasks/{{task.id}}">{{task.title}}</a>
     <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>

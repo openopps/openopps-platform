@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'U.S. Department of State Student Internship Program (Unpaid) – Application withdrawn',
-  to: '<%- user.username %>',
+  to: '<%- user.uri %>',
   data: function (model, done) {
     var data = {
       application: model.application,

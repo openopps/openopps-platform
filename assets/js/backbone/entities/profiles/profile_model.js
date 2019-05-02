@@ -92,7 +92,7 @@ var ProfileModel = Backbone.Model.extend({
         method: 'PUT',
         data: {
           id: +this.id,
-          username: form.username, 
+          uri: form.uri, 
           tags: form.tags },
       }).done(function (data) {
         _this.trigger('skills:save:success', data);

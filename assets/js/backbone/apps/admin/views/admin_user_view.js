@@ -280,12 +280,12 @@ var AdminUserView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var id = $(t.parents('tr')[0]).data('id');
-    var username = $(t.parents('tr')[0]).data('user-name');
+    var uri = $(t.parents('tr')[0]).data('user-name');
 
     if (t.hasClass('assign-admin')) {
       this.confirmAdminAssign(t, {
         id: id,
-        name: username,
+        name: uri,
         agency: this.agency.name,
         checked: t.prop('checked'),
         url: this.getUrlFor(id, t),
@@ -357,7 +357,7 @@ var AdminUserView = Backbone.View.extend({
     var user = {
       id: tr.data('id'),
       name: $(tr.find('td.admin-table-name')[0]).text().trim(),
-      email: $(tr.find('td.admin-table-username')[0]).text().trim(),
+      email: $(tr.find('td.admin-table-uri')[0]).text().trim(),
     };
 
     $('body').addClass('modal-is-open');
@@ -384,7 +384,7 @@ var AdminUserView = Backbone.View.extend({
 
   submitReset: function (email) {
     var data = {
-      username: email,
+      uri: email,
     };
     $.ajax({
       url: '/api/auth/forgot',

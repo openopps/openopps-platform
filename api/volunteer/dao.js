@@ -3,14 +3,14 @@ const dao = require('postgres-gen-dao');
 
 const volunteerQuery = 'select ' +
 'task.id, task.title, volunteer."userId", midas_user.name as ownername, midas_user.bounced as bounced, ' +
-'midas_user.username as ownerusername, m2.name as name, m2.username as username ' +
+'midas_user.uri as owneruri, m2.name as name, m2.uri as uri ' +
 'from volunteer inner join task on volunteer."taskId" = task.id ' +
 'inner join midas_user on midas_user.id = task."userId" ' +
 'inner join midas_user m2 on m2.id = volunteer."userId" ' +
 'where volunteer.id = ? ';
 
 const assignedVolunteerQuery = 'select ' +
-'volunteer."userId", midas_user.name, midas_user.bounced, midas_user.username ' +
+'volunteer."userId", midas_user.name, midas_user.bounced, midas_user.uri ' +
 'from volunteer ' +
 'inner join midas_user on midas_user.id = volunteer."userId" ' +
 'where volunteer.id = ? ';

@@ -41,7 +41,7 @@ describe('AuthController', function() {
 
     var isValidMinUserResult = function(res) {
       assert.equal(res.body.name, userFixtures.minAttrs.name);
-      assert.equal(res.body.username, userFixtures.minAttrs.username);
+      assert.equal(res.body.uri, userFixtures.minAttrs.uri);
       assert.equal(res.body.isAdmin, false, 'isAdmin should be false');
       assert.equal(res.body.isAgencyAdmin, false, 'isAgencyAdmin should be false');
       assert.notProperty(res.body, 'password');
@@ -73,7 +73,7 @@ describe('AuthController', function() {
         request(sails.hooks.http.app)
           .post('/api/auth/local')
           .send({
-            identifier: newUserAttrs.username,
+            identifier: newUserAttrs.uri,
             password: newUserAttrs.password,
             json: true
           })
@@ -97,12 +97,12 @@ describe('AuthController', function() {
       it('should respond with success when email is valid', function (done) {
         request(sails.hooks.http.app)
           .post('/api/auth/forgot')
-          .send({username: user.username})
+          .send({uri: user.uri})
           .expect(200)
           .expect(function(res) {
             assert.deepEqual(res.body, {
                   success:true,
-                  email: user.username
+                  email: user.uri
             });
           })
           .end(done)
@@ -110,7 +110,7 @@ describe('AuthController', function() {
       it('should report error when email is blank', function (done) {
         request(sails.hooks.http.app)
           .post('/api/auth/forgot')
-          .send({username: ''})
+          .send({uri: ''})
           .expect(400)
           .expect(function(res) {
             assert.equal(res.body.message, 'You must enter an email address.');
@@ -120,7 +120,7 @@ describe('AuthController', function() {
       it('should report error when email is invalid', function (done) {
         request(sails.hooks.http.app)
           .post('/api/auth/forgot')
-          .send({username: 'foo'})
+          .send({uri: 'foo'})
           .expect(400)
           .expect(function(res) {
             assert.equal(res.body.message, 'Please enter a valid email address.');

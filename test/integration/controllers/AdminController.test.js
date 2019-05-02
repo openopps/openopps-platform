@@ -24,7 +24,7 @@ describe('AdminController', function() {
         agent = request.agent(sails.hooks.http.app);
         agent.post('/api/auth/local')
           .send({
-            identifier: newUserAttrs.username,
+            identifier: newUserAttrs.uri,
             password: newUserAttrs.password,
             json: true
           })
@@ -54,7 +54,7 @@ describe('AdminController', function() {
         agent = request.agent(sails.hooks.http.app);
         agent.post('/api/auth/local')
           .send({
-            identifier: newUserAttrs.username,
+            identifier: newUserAttrs.uri,
             password: newUserAttrs.password,
             json: true
           })
@@ -71,7 +71,7 @@ describe('AdminController', function() {
     });
 
     it('can set another user to be an admin', function(done) {
-      newUserAttrs.username = "bob@usda.gov"
+      newUserAttrs.uri = "bob@usda.gov"
       newUserAttrs.isAdmin = false;
       User.register(newUserAttrs, function(err, user) {
         assert.isNull(err);
@@ -79,7 +79,7 @@ describe('AdminController', function() {
           .expect(200)
           .expect(function(res) {
             assert.isNotNull(res.body);
-            assert.equal(res.body.username, newUserAttrs.username);
+            assert.equal(res.body.uri, newUserAttrs.uri);
             assert.equal(res.body.isAdmin, true, 'isAdmin should be true');
           })
           .end(done);

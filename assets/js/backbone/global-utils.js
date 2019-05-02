@@ -101,20 +101,20 @@ global.removeView = function (view) {
   view.$el.html('');
 };
 
-global.validatePassword = function (username, password) {
+global.validatePassword = function (uri, password) {
   var rules = {
-    username: false,
+    uri: false,
     length: false,
     upper: false,
     lower: false,
     number: false,
     symbol: false,
   };
-  var _username = username.toLowerCase().trim();
+  var _uri = uri.toLowerCase().trim();
   var _password = password.toLowerCase().trim();
-  // check username is not the same as the password, in any case
-  if (_username != _password && _username.split('@',1)[0] != _password) {
-    rules['username'] = true;
+  // check uri is not the same as the password, in any case
+  if (_uri != _password && _uri.split('@',1)[0] != _password) {
+    rules['uri'] = true;
   }
   // length > 8 characters
   if (password && password.length >= 8) {

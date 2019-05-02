@@ -103,7 +103,7 @@ function buildCommentObj (result) {
   };
   activity.user = {
     id: result[0].userId,
-    username: result[0].username,
+    uri: result[0].uri,
     name: result[0].name,
   };
   return activity;
@@ -115,7 +115,7 @@ function buildUserObj (result) {
   activity.createdAt = result.createdAt;
   activity.user = {
     id: result.id,
-    username: result.username,
+    uri: result.uri,
     name: result.name,
   };
   return activity;
@@ -131,7 +131,7 @@ function activityObjBase (result, type) {
   };
   activity.user = {
     id: result[0].userId,
-    username: result[0].username,
+    uri: result[0].uri,
     name: result[0].name,
   };
   return activity;
@@ -456,14 +456,14 @@ async function changeOwner (ctx, data, done) {
     return undefined;
   });
   if (task) {
-    var originalOwner = _.pick(await dao.User.findOne('id = ?', task.userId), 'id', 'name', 'username');
+    var originalOwner = _.pick(await dao.User.findOne('id = ?', task.userId), 'id', 'name', 'uri');
     task.userId = data.userId;
     task.updatedAt = new Date();
     await dao.Task.update(task).then(async () => {
       var audit = Audit.createAudit('TASK_CHANGE_OWNER', ctx, {
         taskId: task.id, 
         originalOwner: originalOwner,
-        newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
+        newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'uri'),
       });
       elasticService.indexOpportunity(task.id);
       await dao.AuditLog.insert(audit).then(() => {
@@ -495,7 +495,7 @@ async function assignParticipant (ctx, data, done) {
     }).then(async (volunteer) => {
       var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', ctx, {
         taskId: data.taskId,
-        participant: _.pick(await dao.User.findOne('id = ?', volunteer.userId), 'id', 'name', 'username'),
+        participant: _.pick(await dao.User.findOne('id = ?', volunteer.userId), 'id', 'name', 'uri'),
       });
       await dao.AuditLog.insert(audit).catch((err) => {
         // TODO: Log audit errors

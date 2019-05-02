@@ -16,16 +16,16 @@ async function findOne (id) {
   });
 }
 
-async function findOneByUsername (username, done) {
-  await dao.User.find('username = ?', username).then(users => {
+async function findOneByURI (uri, done) {
+  await dao.User.find('uri = ?', uri).then(users => {
     done(null, users[0]);
   }).catch(err => {
     done(err);
   });
 }
 
-async function isUsernameUsed (id, username) {
-  return await dao.User.find('id != ? and username = ?', id, username);
+async function isURIUsed (id, uri) {
+  return await dao.User.find('id != ? and uri = ?', id, uri);
 }
 
 async function getProfile (id) {
@@ -85,7 +85,7 @@ async function createNewUserTag (tag, user) {
   return await dao.TagEntity.insert(tag).then(async (t) => {
     return await createUserTag(t.id, user);
   }).catch(err => {
-    log.info('user: failed to create tag ', user.username, tag, err);
+    log.info('user: failed to create tag ', user.uri, tag, err);
   });
 }
 
@@ -95,18 +95,18 @@ async function createUserTag (tagId, user) {
       log.info('user: failed to load tag entity ', user.id, tagId, err);
     });
   }).catch(err => {
-    log.info('user: failed to create tag ', user.username, tagId, err);
+    log.info('user: failed to create tag ', user.uri, tagId, err);
   });
 }
 
 async function updateProfile (attributes, done) {
-  var errors = await User.validateUser(attributes, isUsernameUsed);
+  var errors = await User.validateUser(attributes, isURIUsed);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(errors);
   }
   attributes.updatedAt = new Date();
   var origUser = await dao.User.findOne('id = ?', attributes.id).catch(() => { return {}; });
-  if(origUser && origUser.username !== attributes.username) {
+  if(origUser && origUser.uri !== attributes.uri) {
     attributes.bounced = false; // email has been updated so we can reset the bounced flag
   }
   await dao.User.update(attributes).then(async (user) => {
@@ -131,7 +131,7 @@ async function updateSkills (attributes, done) {
   }
   await dao.UserTags.db.query(dao.query.deleteSkillTags, attributes.id).then(async () => {
     var tags = [].concat(attributes.tags || attributes['tags[]'] || []);
-    await processUserTags({ id: attributes.id, username: attributes.username }, tags).then(result => {
+    await processUserTags({ id: attributes.id, uri: attributes.uri }, tags).then(result => {
       tags = result;
     });
     return done(null, tags);
@@ -233,7 +233,7 @@ module.exports = {
   createAudit: createAudit,
   list: list,
   findOne: findOne,
-  findOneByUsername: findOneByUsername,
+  findOneByURI: findOneByURI,
   getProfile: getProfile,
   populateBadgeDescriptions: populateBadgeDescriptions,
   getActivities: getActivities,
