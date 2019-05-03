@@ -59,6 +59,8 @@ function loginError (ctx, err) {
     service.logAuthenticationError(ctx, 'UNAUTHORIZED_APPLICATION_ACCESS', err.data);
     ctx.status = 403;
     ctx.redirect('/unauthorized');
+  } else if (err.message == 'Incomplete profile') {
+    ctx.redirect('/welcome?u=' + new Buffer(JSON.stringify(err.data)).toString('base64'));
   } else {
     log.info('Authentication Error: ', err);
     ctx.status = 503;

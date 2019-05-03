@@ -10,6 +10,7 @@ const dao = require('./dao')(db);
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const Profile = require('./profile');
+const Login = require('./login');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -40,78 +41,6 @@ async function fetchUser (id) {
 
 async function fetchPassport (user, protocol) {
   return (await dao.Passport.find('"user" = ? and protocol = ? and "deletedAt" is null', user, protocol))[0];
-}
-
-async function userFound (user, tokenset, done) {
-  if (user.disabled) {
-    done({ message: 'Not authorized' });
-  } else {
-    var data = {
-      id: user.id,
-      hiringPath: tokenset.claims['usaj:hiringPath'],
-      governmentUri: tokenset.claims['usaj:governmentURI'],
-    };
-    if (tokenset.claims['usaj:hiringPath'] == 'student') {
-      data.username = tokenset.claims.email;
-      data.isAdmin = false;
-      data.isAgencyAdmin = false;
-      data.isCommunityAdmin = false;
-    }
-    data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
-    await dao.User.update(data);
-    user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
-    done(null, user);
-  }
-}
-
-function removeDuplicateFederalURI (tokenset) {
-  dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']);
-}
-
-function processFederalEmployeeLogin (tokenset, done) {
-  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
-    userFound(user, tokenset, done);
-  }).catch(async () => {
-    var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
-      return {
-        linkedId: tokenset.claims.sub,
-        governmentUri: tokenset.claims['usaj:governmentURI'],
-      };
-    });
-    done(null, _.extend(account, {
-      type: 'staging',
-      tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-    }));
-  });
-}
-
-function processStudentLogin (tokenset, done) {
-  //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
-  dao.User.findOne('linked_id = ? ', tokenset.claims.sub).then(user => {
-    userFound(user, tokenset, done);
-  }).catch(async () => {
-    // create new account
-    await Profile.get(tokenset).then(async (profile) => {
-      var user = {
-        name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
-        givenName: profile.GivenName,
-        middleName: profile.MiddleName,
-        lastName: profile.LastName,
-        linkedId: tokenset.claims.sub,
-        username: profile.URI,
-        hiringPath: 'student',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        disabled: false,
-        isAdmin: false,
-      };
-      await dao.User.insert(user).then(user => {
-        done(null, _.extend(user, {
-          tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-        }));
-      });
-    });
-  });
 }
 
 passport.serializeUser(function (user, done) {
@@ -182,14 +111,14 @@ if (openopps.auth.oidc) {
   };
   passport.use('oidc', new Strategy(OpenIDStrategyOptions, (tokenset, userinfo, done) => {
     if (tokenset.claims['usaj:governmentURI']) {
-      removeDuplicateFederalURI(tokenset);
+      Login.removeDuplicateFederalURI(tokenset);
     }
     if (tokenset.claims['usaj:hiringPath'] == 'fed' && tokenset.claims['usaj:governmentURI']) {
-      processFederalEmployeeLogin(tokenset, done);
+      Login.processFederalEmployeeLogin(tokenset, done);
     } else if (tokenset.claims['usaj:hiringPath'] == 'student') {
-      processStudentLogin(tokenset, done);
+      Login.processStudentLogin(tokenset, done);
     } else {
-      done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub } });
+      Login.processIncompleteProfile(tokenset, done);
     }
   }));
 
