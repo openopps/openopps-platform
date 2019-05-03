@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div id="create-your-profile" class="usajobs-grid openopps-create-profile">
+      <div id="create-your-profile" class="usajobs-grid openopps-create-profile <% if(!isGuest) { %>hidden<% } %>">
         <div class="usa-form-xl">
           <h2>Create your profile</h2>
           <ul class="usajobs-card-buttons">
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile hidden">
+      <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath != 'fed') { %>hidden<% } %>">
         <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
         <div class="usa-form-xl">
           <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
@@ -95,7 +95,7 @@
         </div>
       </div>
 
-      <div id="missing-info-both" class="usajobs-grid openopps-create-profile hidden">
+      <div id="missing-info-both" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath == 'fed') { %>hidden<% } %>">
         <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
         <div class="usa-form-xl"><p><strong>If you are a student trying to apply for an internship:</strong></p>
           <ul>
