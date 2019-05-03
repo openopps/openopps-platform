@@ -14,11 +14,11 @@ async function userFound (user, tokenset, done) {
       governmentUri: tokenset.claims['usaj:governmentURI'],
     };
     if (tokenset.claims['usaj:hiringPath'] == 'student') {
-      data.username = tokenset.claims.email;
       data.isAdmin = false;
       data.isAgencyAdmin = false;
       data.isCommunityAdmin = false;
     }
+    data.username = tokenset.claims.email;
     data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
     await dao.User.update(data);
     user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
