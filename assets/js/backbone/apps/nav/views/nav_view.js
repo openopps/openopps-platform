@@ -96,6 +96,8 @@ var NavView = Backbone.View.extend({
     data.login = Login;
     data.ui = UIConfig;
     data.accessForbidden = this.options.accessForbidden;
+    data.welcome = this.options.welcome;
+    data.name = this.options.name;
     var template = _.template(NavTemplate)(data);
     this.$el.html(template);
     this.$el.localize();

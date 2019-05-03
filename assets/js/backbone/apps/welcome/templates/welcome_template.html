@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div id="create-your-profile" class="usajobs-grid openopps-create-profile">
+      <div id="create-your-profile" class="usajobs-grid openopps-create-profile <% if(!isGuest) { %>hidden<% } %>">
         <div class="usa-form-xl">
           <h2>Create your profile</h2>
           <ul class="usajobs-card-buttons">
@@ -67,7 +67,7 @@
           <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
           <ul>
             <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
-            <li>Include your current agency in the experience section.</li>
+            <li>Include your current agency in the Experience section.</li>
             <li>Add and validate your federal email address.</li>
           </ul>
           <div class="usajobs-button_bar--slim">
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile hidden">
+      <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath != 'fed') { %>hidden<% } %>">
         <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
         <div class="usa-form-xl">
           <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
@@ -95,7 +95,7 @@
         </div>
       </div>
 
-      <div id="missing-info-both" class="usajobs-grid openopps-create-profile hidden">
+      <div id="missing-info-both" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath == 'fed') { %>hidden<% } %>">
         <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
         <div class="usa-form-xl"><p><strong>If you are a student trying to apply for an internship:</strong></p>
           <ul>
@@ -104,7 +104,7 @@
           <p><strong>If you are a federal employee trying to access Open Opportunities:</strong></p>
           <ul>
             <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
-            <li>Include your current agency in the experience section.</li>
+            <li>Include your current agency in the Experience section.</li>
             <li>Add and validate your federal email address.</li>
           </ul>
           <div class="usajobs-button_bar--slim">
@@ -116,12 +116,8 @@
       </div>
 
       <div id="validate-email-address" class="usajobs-grid openopps-create-profile hidden">
-        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Validate your email address.</h2>
         <div class="usa-form-xl"><p><strong>To complete your profile and access Open Opportunities you must validate your federal email address.</strong></p>
-          <ul>
-            <li>Choose <strong>Student</strong> as your hiring path.</li>
-          </ul>
-          <p><strong>If you are a federal employee trying to access Open Opportunities:</strong></p>
           <ol>
             <li>Check your federal email inbox. You may need to check your spam folder.</li>
             <li>Follow the instructions in the email to validate your email address.</li>

@@ -140,16 +140,25 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showWelcome: function () {
-    this.navView = new NavView({
-      el: '.navigation',
-      accessForbidden: true, 
-    }).render();
-    this.welcomeView = new WelcomeView({
-      target: 'home',
-      el: '#container',
-      router: this,
-      data: this.data,
-    }).render();
+    try {
+      var user = JSON.parse(atob(new URLSearchParams(window.location.search).get('u')));
+    } catch (err) { }
+    if (user) {
+      Backbone.history.navigate('/welcome', { replace: true, trigger: false });
+      this.navView = new NavView({
+        el: '.navigation',
+        welcome: true,
+        name: user.givenName, 
+      }).render();
+      this.welcomeView = new WelcomeView({
+        target: 'home',
+        el: '#container',
+        router: this,
+        user: user,
+      }).render();
+    } else {
+      Backbone.history.navigate('/', { replace: true, trigger: true });
+    }
   },
 
   showIneligibleCitizenship: function () {

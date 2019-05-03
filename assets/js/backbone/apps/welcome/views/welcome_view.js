@@ -21,7 +21,7 @@ var WelcomeView = Backbone.View.extend({
   },
 
   render: function () {
-    this.$el.html(_.template(WelcomeTemplate)());
+    this.$el.html(_.template(WelcomeTemplate)(this.options.user));
     this.$el.localize();
     $('#search-results-loading').hide();
     $('.usa-footer-return-to-top').hide();
