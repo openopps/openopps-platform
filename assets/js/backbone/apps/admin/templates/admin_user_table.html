@@ -9,6 +9,7 @@
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Federal email</th>
       <th>Created</th>
+      <% if (target == 'sitewide') { %><th>Last login</th><% } %>
       <th class="admin-user-checkbox">Account<br />enabled</th>
       <% if (!loginGov) { %>
         <% if (login.local.enabled === true) { %>
@@ -50,6 +51,11 @@
         <td class="admin-table-createdat">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>
+        <% if (target == 'sitewide') { %>
+        <td class="admin-table-lastLogin">
+          <%- u.last_login ? moment(u.last_login).format('MM/DD/YYYY hh:mma'):'' %>
+        </td>
+        <% } %>
         <td>
           <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
             <input class="user-enable" id="user-enable-<%- u.id %>" type="checkbox" data-action='user' <% if (!u.disabled) { %> checked <% } %> />
