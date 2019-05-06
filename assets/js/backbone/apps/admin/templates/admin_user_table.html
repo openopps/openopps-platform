@@ -6,8 +6,10 @@
     <tr>
       <th class="admin-user-id">User #</th>
       <th class="admin-table-name">Name</th>
-      <th>Email</th>
+      <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
+      <th>Federal email</th>
       <th>Created</th>
+      <% if (target == 'sitewide') { %><th>Last login</th><% } %>
       <th class="admin-user-checkbox">Account<br />enabled</th>
       <% if (!loginGov) { %>
         <% if (login.local.enabled === true) { %>
@@ -38,12 +40,22 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
-        <td class="admin-table-username">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+        <td class="admin-table-uri">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.uri %></a>
         </td>
+        <% if (target == 'sitewide') { %>
+        <td class="admin-table-federalEmail">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
+        </td>
+        <% } %>
         <td class="admin-table-createdat">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>
+        <% if (target == 'sitewide') { %>
+        <td class="admin-table-lastLogin">
+          <%- u.last_login ? moment(u.last_login).format('MM/DD/YYYY hh:mma'):'' %>
+        </td>
+        <% } %>
         <td>
           <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
             <input class="user-enable" id="user-enable-<%- u.id %>" type="checkbox" data-action='user' <% if (!u.disabled) { %> checked <% } %> />
