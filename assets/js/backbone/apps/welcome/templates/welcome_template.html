@@ -46,12 +46,12 @@
       <div id="profile-student" class="usajobs-grid openopps-create-profile hidden">
         <div class="usa-form-xl">
           <h2><img class="openopps-create-profile-header__icon" src="/img/icons/hiring-paths/svg/students.svg" alt="Students icon">Student</h2>
-          <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
+          <p><strong>To access Open Opportunities, you need to create a USAJOBS profile. Make sure you:</strong></p>
           <ul>
-            <li>Choose <strong>Student</strong> as your hiring path.</li>
+            <li>Choose <strong>Student</strong> as one of your hiring paths.</li>
+            <li>Complete as much of your profile as possible.</li>
           </ul>
-          <p>To save time and effort later, make sure your profile is as complete as possible. This information will automatically populate in your 
-            internship application if you choose to apply.</p>
+          <p>A complete profile will save you time and effort later. If you apply to an internship, we'll use this information to automatically populate your application(s).</p>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-student-create-profile">Back</button>
@@ -64,11 +64,12 @@
       <div id="profile-federal-employee" class="usajobs-grid openopps-create-profile hidden">
         <div class="usa-form-xl">
           <h2><img class="openopps-create-profile-header__icon" src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal Employees icon">Federal Employee</h2>
-          <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
+          <p><strong>To access Open Opportunities, you need to create a USAJOBS profile. Make sure you:</strong></p>
           <ul>
             <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
-            <li>Include your current agency in the Experience section.</li>
-            <li>Add and validate your federal email address.</li>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
           </ul>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
@@ -80,12 +81,13 @@
       </div>
 
       <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath != 'fed') { %>hidden<% } %>">
-        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Your profile is missing information.</h2>
         <div class="usa-form-xl">
-          <p><strong>To complete your profile and access Open Opportunities make sure you:</strong></p>
+          <p><strong>To access Open Opportunities, you need to update your USAJOBS profile to:</strong></p>
           <ul>
-            <li>Include your current agency in the experience section.</li>
-            <li>Add and validate your federal email address.</li>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
           </ul>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
@@ -96,16 +98,19 @@
       </div>
 
       <div id="missing-info-both" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath == 'fed') { %>hidden<% } %>">
-        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">You are missing information from your profile.</h2>
-        <div class="usa-form-xl"><p><strong>If you are a student trying to apply for an internship:</strong></p>
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Your profile is missing information.</h2>
+        <div class="usa-form-xl">
+          <p>Only students and federal employees can access Open Opportunities. Updates your USAJOBS profile to tell us if you're a student or federal employee.</p>
+          <p><strong>If you're a student:</strong></p>
           <ul>
-            <li>Choose <strong>Student</strong> as your hiring path.</li>
+            <li>Choose <strong>Student</strong> as one of your hiring paths.</li>
           </ul>
           <p><strong>If you are a federal employee trying to access Open Opportunities:</strong></p>
           <ul>
             <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
-            <li>Include your current agency in the Experience section.</li>
-            <li>Add and validate your federal email address.</li>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
           </ul>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
@@ -116,15 +121,16 @@
       </div>
 
       <div id="validate-email-address" class="usajobs-grid openopps-create-profile hidden">
-        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Validate your email address.</h2>
-        <div class="usa-form-xl"><p><strong>To complete your profile and access Open Opportunities you must validate your federal email address.</strong></p>
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Confirm your federal email address.</h2>
+        <div class="usa-form-xl">
+          <p><strong>To access Open Opportunities, you need to update your USAJOBS profile to:</strong></p>
           <ol>
-            <li>Check your federal email inbox. You may need to check your spam folder.</li>
-            <li>Follow the instructions in the email to validate your email address.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
           </ol>
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
-              <a href="<%- usajobsURL %>/applicant/profile/openopportunities" id="resend-email" class="usa-button usa-button-primary usa-button-left">Resend validation email</a>
+              <a href="<%- usajobsURL %>/applicant/profile/openopportunities" id="confirm-email-address" class="usa-button usa-button-primary usa-button-left">Edit your profile</a>
             </div>
           </div>
         </div>

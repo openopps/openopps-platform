@@ -13,7 +13,7 @@ service.generateFakeData = async function(user, params) {
     if (community == null) {
         return { 'error': 'No community passed in' };
     }
-    var numOfInterns = [1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,6,6,7,8,9,10,11,12,13,14,15];
+    var numOfInterns = params.numOfInterns || [1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,6,6,7,8,9,10,11,12,13,14,15];
     var results = {users: []};
     var newCycle = {
         name: params.cycle || faker.company.companyName() + '_faker',
