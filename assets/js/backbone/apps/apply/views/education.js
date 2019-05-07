@@ -17,6 +17,7 @@ function initializeFormFieldsEducation (){
   $('input[name=Enrolled][value=' + data.isCurrentlyEnrolled +']').prop('checked', true);
   $('input[name=Junior][value=' + data.isMinimumCompleted +']').prop('checked', true);
   $('input[name=ContinueEducation][value=' + data.isEducationContinued +']').prop('checked', true);
+  $('input[name=InternshipAvailability][value=' + data.isAbleToWork +']').prop('checked', true);
   $('#cumulative-gpa').val(data.cumulativeGpa);
   $('input[name=transcripts][id=' + data.transcriptId +']').prop('checked', true);
 }
@@ -55,6 +56,7 @@ function getDataFromEducationPage (){
     isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val(),
     isMinimumCompleted:this.$('input[name=Junior]:checked').val(),
     isEducationContinued: this.$('input[name=ContinueEducation]:checked').val(),
+    isAbleToWork: this.$('input[name=InternshipAvailability]:checked').val(),
     cumulativeGpa: this.$('#cumulative-gpa').val(),
     transcriptId:selectedTranscript ?selectedTranscript.split('|')[0]:null,
   };
@@ -371,6 +373,7 @@ var education = {
     var abort = false;
     [
       { name: 'ContinueEducation', id: 'apply-continue-education' },
+      { name: 'InternshipAvailability', id: 'apply-internship-availability' },
       { name: 'Junior', id: 'apply-junior' },
       { name: 'Enrolled', id: 'apply-enrolled' },
       { name: 'transcripts', id: 'apply-transcript' },
@@ -453,6 +456,14 @@ var education = {
 
   },
 
+  changeInternshipAvailability: function (){
+    if($('[name=InternshipAvailability]:checked').length>0){ 
+      $('#apply-internship-availability').removeClass('usa-input-error');    
+      $('#apply-internship-availability>.field-validation-error').hide();   
+    }
+
+  },
+
   changeTranscripts: function (e){
     if($('[name=transcripts]:checked').length>0){ 
       $('#apply-transcript').removeClass('usa-input-error');        
@@ -472,18 +483,20 @@ var education = {
           isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val()=='true' ? true : false,
           isMinimumCompleted:this.$('input[name=Junior]:checked').val()=='true' ? true : false,
           isEducationContinued: this.$('input[name=ContinueEducation]:checked').val()=='true' ? true : false,
+          isAbleToWork: this.$('input[name=InternshipAvailability]:checked').val()=='true' ? true : false,
           transcriptId: selectedTranscript ? selectedTranscript.split('|')[0] : null,
           transcriptName: selectedTranscript ? selectedTranscript.split('|')[1] : null,
           cumulativeGpa: this.$('#cumulative-gpa').val(),
         },
       }).done(function (result) {
         this.data.updatedAt = result.updatedAt;
-        this.data.isCurrentlyEnrolled = result.isCurrentlyEnrolled;
-        this.data.isMinimumCompleted = result.isMinimumCompleted;
-        this.data.isEducationContinued=result.isEducationContinued;
+        this.data.isCurrentlyEnrolled = /^true$/i.test(result.isCurrentlyEnrolled);
+        this.data.isMinimumCompleted = /^true$/i.test(result.isMinimumCompleted);
+        this.data.isEducationContinued = /^true$/i.test(result.isEducationContinued);
+        this.data.isAbleToWork = /^true$/i.test(result.isAbleToWork);
         this.data.cumulativeGpa = result.cumulativeGpa;
         this.data.transcriptId = result.transcriptId;
-        if(result.cumulativeGpa>=0 && result.cumulativeGpa<=2.99){    
+        if (!this.data.isCurrentlyEnrolled || !this.data.isMinimumCompleted || !this.data.isEducationContinued || !this.data.isAbleToWork) {
           $.ajax({
             url: '/api/application/' + this.data.applicationId,
             method: 'PUT',
@@ -494,9 +507,21 @@ var education = {
               submittedAt: null,
             },
           });
-          this.$el.html(templates.applyIneligibleGPA);               
+          this.$el.html(templates.applyIneligibleEducation({ ineligible: 'education'}));
+        } else if (this.data.cumulativeGpa>=0 && this.data.cumulativeGpa<=2.99) {    
+          $.ajax({
+            url: '/api/application/' + this.data.applicationId,
+            method: 'PUT',
+            data: {
+              applicationId: this.data.applicationId,
+              currentStep: 3,
+              updatedAt: this.data.updatedAt,
+              submittedAt: null,
+            },
+          });
+          this.$el.html(templates.applyIneligibleEducation({ ineligible: 'GPA'}));
         }
-        else{      
+        else {      
           this.updateApplicationStep(4);
         }      
         this.$el.localize();
