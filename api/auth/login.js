@@ -20,6 +20,7 @@ async function userFound (user, tokenset, done) {
     }
     data.username = tokenset.claims.email;
     data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set
+    data.lastLogin = new Date();
     await dao.User.update(data);
     user.tokenset = _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']);
     done(null, user);
@@ -33,25 +34,29 @@ module.exports.removeDuplicateFederalURI = (tokenset) => {
 }
 
 module.exports.processFederalEmployeeLogin = (tokenset, done) => {
-  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims['usaj:governmentURI']).then(user => {
+  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims.email).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
-      return {
-        linkedId: tokenset.claims.sub,
-        governmentUri: tokenset.claims['usaj:governmentURI'],
-      };
+    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+      userFound(user, tokenset, done);
+    }).catch(async () => {
+      var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
+        return {
+          linkedId: tokenset.claims.sub,
+          governmentUri: tokenset.claims['usaj:governmentURI'],
+        };
+      });
+      done(null, _.extend(account, {
+        type: 'staging',
+        tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
+      }));
     });
-    done(null, _.extend(account, {
-      type: 'staging',
-      tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-    }));
   });
 }
 
 module.exports.processStudentLogin = (tokenset, done) => {
   //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
-  dao.User.findOne('linked_id = ? ', tokenset.claims.sub).then(user => {
+  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims.email).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
     // create new account
