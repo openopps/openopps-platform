@@ -6,8 +6,8 @@
     <tr>
       <th class="admin-user-id">User #</th>
       <th class="admin-table-name">Name</th>
-      <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Federal email</th>
+      <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Created</th>
       <% if (target == 'sitewide') { %><th>Last login</th><% } %>
       <th class="admin-user-checkbox">Account<br />enabled</th>
@@ -40,14 +40,14 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
-        <td class="admin-table-username">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
-        </td>
         <% if (target == 'sitewide') { %>
         <td class="admin-table-federalEmail">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
         <% } %>
+        <td class="admin-table-username">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+        </td>
         <td class="admin-table-createdat">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>
