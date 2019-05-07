@@ -40,8 +40,8 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
-        <td class="admin-table-uri">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.uri ? u.uri : u.username %></a>
+        <td class="admin-table-username">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
         </td>
         <% if (target == 'sitewide') { %>
         <td class="admin-table-federalEmail">
