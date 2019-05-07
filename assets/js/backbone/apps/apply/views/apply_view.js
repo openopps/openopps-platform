@@ -141,7 +141,8 @@ var ApplyView = Backbone.View.extend({
     this.closeSubNav();
 
     $('.apply-hide').hide();
-
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     return this;
   },
 
@@ -275,12 +276,6 @@ var ApplyView = Backbone.View.extend({
   // end summary section
 
  
-  
-  
-  
-
-  
-  
   initializeCountriesSelect: function () {  
     
     $('#apply_country').select2({    
@@ -414,6 +409,8 @@ var ApplyView = Backbone.View.extend({
 
   cleanup: function () {
     $('.apply-hide').show();
+    $('.usa-footer-search--intern-hide').show();
+    $('.usa-footer-search--intern').hide();
     removeView(this);
   },
 
