@@ -34,50 +34,58 @@ module.exports.removeDuplicateFederalURI = (tokenset) => {
 }
 
 module.exports.processFederalEmployeeLogin = (tokenset, done) => {
-  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims.email).then(user => {
+  dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims.email).then(user => {
       userFound(user, tokenset, done);
     }).catch(async () => {
-      var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
-        return {
-          linkedId: tokenset.claims.sub,
-          governmentUri: tokenset.claims['usaj:governmentURI'],
-        };
+      dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+        userFound(user, tokenset, done);
+      }).catch(async () => {
+        var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
+          return {
+            linkedId: tokenset.claims.sub,
+            governmentUri: tokenset.claims['usaj:governmentURI'],
+          };
+        });
+        done(null, _.extend(account, {
+          type: 'staging',
+          tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
+        }));
       });
-      done(null, _.extend(account, {
-        type: 'staging',
-        tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-      }));
     });
   });
 }
 
 module.exports.processStudentLogin = (tokenset, done) => {
   //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
-  dao.User.findOne('linked_id = ? or (linked_id = \'\' and username = ?)', tokenset.claims.sub, tokenset.claims.email).then(user => {
+  dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    // create new account
-    await Profile.get(tokenset).then(async (profile) => {
-      var user = {
-        name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
-        givenName: profile.GivenName,
-        middleName: profile.MiddleName,
-        lastName: profile.LastName,
-        linkedId: tokenset.claims.sub,
-        username: profile.URI,
-        hiringPath: 'student',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        disabled: false,
-        isAdmin: false,
-      };
-      await dao.User.insert(user).then(user => {
-        done(null, _.extend(user, {
-          tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-        }));
+    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims.email).then(user => {
+      userFound(user, tokenset, done);
+    }).catch(async () => {
+      // create new account
+      await Profile.get(tokenset).then(async (profile) => {
+        var user = {
+          name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+          givenName: profile.GivenName,
+          middleName: profile.MiddleName,
+          lastName: profile.LastName,
+          linkedId: tokenset.claims.sub,
+          username: profile.URI,
+          hiringPath: 'student',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          disabled: false,
+          isAdmin: false,
+        };
+        await dao.User.insert(user).then(user => {
+          done(null, _.extend(user, {
+            tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
+          }));
+        });
       });
     });
   });
