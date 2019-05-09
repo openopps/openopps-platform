@@ -21,7 +21,8 @@ var ApplyCongratulationsView = Backbone.View.extend({
     this.$el.localize();
 
     $('.apply-hide').hide();
-
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     return this;
   },
   
@@ -68,6 +69,8 @@ var ApplyCongratulationsView = Backbone.View.extend({
 
   cleanup: function () {
     $('.apply-hide').show();
+    $('.usa-footer-search--intern').hide();
+    $('.usa-footer-search--intern-hide').show();
     removeView(this);
   },
 
