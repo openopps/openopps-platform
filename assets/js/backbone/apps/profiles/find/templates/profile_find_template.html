@@ -1,3 +1,95 @@
+<section class="usajobs-shell">
+  <div id="container" class="unauthorized">
+    <main class="usajobs-opop">
+
+      <div class="openopps-welcome">
+        <div class="usajobs-grid openopps-welcome__container">
+          <h1>Welcome to Open Opportunities!</h2>
+          <p>Discover opportunities that will help you find new connections, advance your career, and make a difference across government.</p>
+        </div>
+      </div>
+
+      <div class="usajobs-grid openopps-create-profile-empty">
+        <div class="usa-width-one-half new-user">
+          <div class="usa-form-xl">
+            <h2>New user? Start here.</h2>
+            <div class="openopps-create-profile-empty--item">
+              <div class="openopps-create-profile-empty__figure">
+                <img src="/img/icons/find-profile/search-circle.svg" class="openopps-create-profile-empty__icon" alt="Search for new opportunities">
+              </div>
+              <div class="openopps-create-profile-empty__body">
+                <h4 class="openopps-create-profile-empty__title">
+                  Search for new opportunities
+                </h4>
+                <p class="openopps-create-profile-empty__text">
+                  Search by skill, location, agency and more.
+                </p>
+              </div>
+            </div>
+            <div class="openopps-create-profile-empty--item">
+              <div class="openopps-create-profile-empty__figure">
+                <img src="/img/icons/find-profile/cogs-circle.svg" class="openopps-create-profile-empty__icon" alt="Add skills to your profile">
+              </div>
+              <div class="openopps-create-profile-empty__body">
+                <h4 class="openopps-create-profile-empty__title">
+                  Add skills to your profile
+                </h4>
+                <p class="openopps-create-profile-empty__text">
+                  Let people know your areas of expertise and what skills you want to develop.
+              </div>
+            </div>
+            <div class="openopps-create-profile-empty--item">
+              <div class="openopps-create-profile-empty__figure">
+                <img src="/img/icons/find-profile/comments-circle.svg" class="openopps-create-profile-empty__icon" alt="Make new connections">
+              </div>
+              <div class="openopps-create-profile-empty__body">
+                <h4 class="openopps-create-profile-empty__title">
+                  Make new connections
+                </h4>
+                <p class="openopps-create-profile-empty__text">
+                  Find colleagues with similar goals and interests &mdash; down the hall or across the country. 
+                </p>
+              </div>
+            </div>
+            <div class="usajobs-button_bar--slim">
+              <div class="usajobs-button_bar__body">
+                <button id="create-account" class="usa-button usa-button-big usa-button-primary">Start</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="usa-width-one-half returning-user">
+          <div class="usa-form-xl">
+            <h2>Returning user? Link your profile.</h2>
+            <p class="link-profile"><strong>USAJOBS and Open Opportunities now share one profile.</strong> To save your information and 
+              link your profile, enter the email address you use for Open Opportunities. You'll get a confirmation email with further instructions.</p>
+            <p>Didn't get a confirmation email? Contact us at <a href="mailto:OpenOpps@usajobs.gov">OpenOpps@usajobs.gov</a> or start as a 
+              <strong>New user</strong>.</p>
+          
+            <form id="form-find-profile" title="Find profile">
+              <div class="usajobs-grid-full">
+                <div class="usa-width-two-thirds">
+                  <div class="required-input">
+                    <label for="email-address" class="control-label">Open Opportunities email address</label>
+                    <span class="field-validation-error error-email" style="display:none;">Must be a valid email address.</span>
+                    <input id="email-address" type="text" class="form-control validate" data-validate="email"/>
+                  </div>
+                </div>
+                <div class="usa-width-one-third">
+                  <button type="submit" class="usa-button-secondary">Link account</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</section>
+
+
 <section class="usajobs-canvas">
     <div class="usajobs-content-gutter profile-gutter">
       <div class="usa-alert usajobs-alert usajobs-alert--info" role="alert" data-object="alert" id="profile-find-done" style="display:none;">
@@ -13,38 +105,6 @@
               </p>
           </div>
       </div>
-  
-      <main id="main-content" class="main-content" role="main" aria-label="Find profile">
-        <div class="usajobs-open-opps-opportunity profile-find">
-          <div class="profile-reset">
-            <form class="usa-form-large" id="form-find-profile" title="Find profile">
-              <h1>
-                Find your Open<br/>
-                Opportunities profile
-              </h1>
-              <div>
-                  Enter the <strong>email address</strong> that's associated with your Open Opportunities profile.
-              </div>
-              <div class="required-input">
-                <label for="email-address" class="control-label">Email address</label>
-                <span class="field-validation-error error-email" style="display:none;">Must be a valid email address.</span>
-                <input id="email-address" type="text" class="form-control validate" data-validate="email" autofocus/>
-              </div>
-              <div class="usajobs-button_bar--split">
-                <div class="usajobs-button_bar__body">
-                  <button type="button" id="find-cancel" class="usa-button usa-button-secondary">Cancel</button>
-                  <button type="submit" class="usa-button usajobs-button-primary">Send email</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="center" id="profile-find-submit" style="display: none;">
-            <i class="fa fa-spin fa-spinner"></i> Performing profile search.  Please stand by...
-          </div>
-          <h4>Don't have an Open Opportunities account?</h3>
-          <button id="create-account" class="usa-button usa-button-secondary">Create a new account</button>
-        </div>
-      </main>
     </div>
   </section>
   

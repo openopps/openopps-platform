@@ -42,7 +42,7 @@
                     <%= getStatus(d) %>
                   </td>
                   <td class="application-program-title">
-                    <% var today = new Date(); if (new Date(d.applyEndDate) >= today) { %>
+                    <% var today = new Date(moment().tz("America/New_York").format('MM-DD-YYYY')); if (new Date(d.applyEndDate) >= today) { %>
                       <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- d.id %>"><%- d.communityName %></a>
                     <% } else { %>
                       <%- d.communityName %>

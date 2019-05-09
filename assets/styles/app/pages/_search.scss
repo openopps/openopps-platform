@@ -315,6 +315,17 @@ padding: $size-default $size-default $size-M $size-default;
       overflow-wrap: break-word;
       hyphens: auto;
       color: #000;
+
+      &::before {
+        content: "";
+        width: 100%;
+        height: #{$base-line-height * 3.5}em;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        display: block;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #ffffff 100%);
+      }
     }
   }
 }

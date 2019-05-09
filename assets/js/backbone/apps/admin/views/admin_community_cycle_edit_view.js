@@ -68,10 +68,11 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
   },
 
   save: function (e) {
-    e.preventDefault && e.preventDefault();
+    e.preventDefault && e.preventDefault();    
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
+      var abort=false;
       var data = {
         cycleId: this.cycle.get('cycleId'),
         communityId: this.data.community.communityId,
@@ -86,10 +87,42 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
         updatedAt: this.cycle.get('updatedAt'),
       };
-      this.cycle.trigger('cycle:save', data);
+      if(new Date(data.postingEndDate)>new Date(data.applyEndDate)){ 
+        $('#last-day-date').addClass('usa-input-error');  
+        $('#last-day-date>.exceed-date-error').show(); 
+        abort=true; 
+      }
+      else{
+        $('#last-day-date').removeClass('usa-input-error');  
+        $('#last-day-date>.exceed-date-error').hide(); 
+      }
+      if(new Date(data.applyEndDate)>new Date(data.reviewStartDate)){
+        $('#stop-application-date').addClass('usa-input-error');  
+        $('#stop-application-date>.exceed-date-error').show(); 
+        abort=true;
+      }
+      else{
+        $('#stop-application-date').removeClass('usa-input-error');  
+        $('#stop-application-date>.exceed-date-error').hide(); 
+      }
+      if(new Date(data.reviewEndDate)>new Date(data.cycleStartDate)){
+        $('#end-review-date').addClass('usa-input-error');  
+        $('#end-review-date>.exceed-date-error').show(); 
+        abort=true;      
+      }
+      else{
+        $('#end-review-date').removeClass('usa-input-error');  
+        $('#end-review-date>.exceed-date-error').hide(); 
+      }
+      if(!abort){
+        this.cycle.trigger('cycle:save', data);
+      }
+      else{
+        $('.usa-input-error').get(0).scrollIntoView();
+      }
     }
   },
-
+ 
   getDateFromFormGroup: function (formGroup) {
     return [
       $('#' + formGroup + '-1').val(),
@@ -122,7 +155,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
       return this.validDateGroup(dateGroup) && valid;
     }.bind(this), true);
     if(validDates) {
-      var startDate = new Date(this.getDateFromFormGroup(dateRange[0]));
+      var startDate = new Date(this.getDateFromFormGroup(dateRange[0]));    
       var endDate = new Date(this.getDateFromFormGroup(dateRange[1]));
       if(startDate < endDate) {
         _.each(dateRange, function (dateGroup) {

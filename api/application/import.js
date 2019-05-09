@@ -22,7 +22,9 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
         countryId: (await dao.Country.findOne('code = ?', record.CountryCode).catch(() => { return {}; })).countryId,
         countrySubdivisionId : (await dao.CountrySubdivision.findOne('parent_code = ? and code = ?', record.CountryCode, record.CountrySubdivisionCode).catch(() => { return {}; })).countrySubdivisionId,
         degreeLevelId: (await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'DEGREE_LEVEL', record.DegreeLevelCode).catch(() => { return {}; })).lookupCodeId,
-        honorsId: record.HonorsCode? ((await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId):null,
+        honorsId: record.HonorsCode? ((await dao.LookUpCode.findOne('lookup_code_type = ? and code = ?', 'HONORS', record.HonorsCode).catch(() => { return null; })).lookupCodeId):null,      
+        gpa:record.GPA ? record.GPA : '',
+        gpaMax:record.GPAMax ? record.GPAMax :'',
         createdAt: new Date(),
         updatedAt: new Date(),
       });

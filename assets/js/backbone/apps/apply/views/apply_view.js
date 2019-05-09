@@ -63,13 +63,15 @@ var ApplyView = Backbone.View.extend({
     'change input[name=Enrolled]'                                 : function () { this.callMethod(Education.changeCurrentlyEnrolled); },
     'change input[name=Junior]'                                   : function () { this.callMethod(Education.changeJunior); },
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); }, 
-    'change input[name=transcripts]'                             : function () { this.callMethod(Education.changeTranscripts); }, 
+    'change input[name=InternshipAvailability]'                   : function () { this.callMethod(Education.changeInternshipAvailability); }, 
+    'change input[name=transcripts]'                              : function () { this.callMethod(Education.changeTranscripts); }, 
     'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
-    'click #refresh-transcripts'                                   : function (e) { this.callMethod(Transcripts.refresh, e); },
-    'keydown .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
-    'mouseleave .gpa-input'                                        : function (e) { this.callMethod(Education.gpaKeyDown, e); },
-    'blur .gpa-input'                                            : function (e) { this.callMethod(Education.gpaBlur, e); },
-    'blur .completionYear-input'                                   : function (e) { this.callMethod(Education.completionYearBlur, e); },
+    'click #refresh-transcripts'                                  : function (e) { this.callMethod(Transcripts.refresh, e); },
+    'keydown .gpa-input'                                          : function (e) { this.callMethod(Education.gpaKeyDown, e); },
+    'mouseleave .gpa-input'                                       : function (e) { this.callMethod(Education.gpaKeyDown, e); },
+    'blur .gpa-input'                                             : function (e) { this.callMethod(Education.gpaBlur, e); },
+    'blur .completionYear-input'                                  : function (e) { this.callMethod(Education.completionYearBlur, e); },
+    
     //language events
     'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
@@ -141,7 +143,8 @@ var ApplyView = Backbone.View.extend({
     this.closeSubNav();
 
     $('.apply-hide').hide();
-
+    $('.usa-footer-search--intern').show();
+    $('.usa-footer-search--intern-hide').hide();
     return this;
   },
 
@@ -275,12 +278,6 @@ var ApplyView = Backbone.View.extend({
   // end summary section
 
  
-  
-  
-  
-
-  
-  
   initializeCountriesSelect: function () {  
     
     $('#apply_country').select2({    
@@ -414,6 +411,8 @@ var ApplyView = Backbone.View.extend({
 
   cleanup: function () {
     $('.apply-hide').show();
+    $('.usa-footer-search--intern-hide').show();
+    $('.usa-footer-search--intern').hide();
     removeView(this);
   },
 
