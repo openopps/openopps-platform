@@ -16,8 +16,8 @@
         "no-undef": [ "off" ],
         "space-before-function-paren": [ "error", "always" ]
     },
-    parserOptions: {
-      ecmaVersion: 8
+    "parserOptions": {
+      "ecmaVersion": 8
     },
     "env": {
         "node": true,

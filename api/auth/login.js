@@ -31,7 +31,7 @@ module.exports = {};
 
 module.exports.removeDuplicateFederalURI = (tokenset) => {
   dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']);
-}
+};
 
 module.exports.processFederalEmployeeLogin = (tokenset, done) => {
   dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
@@ -56,10 +56,9 @@ module.exports.processFederalEmployeeLogin = (tokenset, done) => {
       });
     });
   });
-}
+};
 
 module.exports.processStudentLogin = (tokenset, done) => {
-  //done({ message: 'Not implemented', data: { documentId: tokenset.claims.sub }});
   dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
@@ -89,11 +88,9 @@ module.exports.processStudentLogin = (tokenset, done) => {
       });
     });
   });
-}
+};
 
 module.exports.processIncompleteProfile = (tokenset, done) => {
-  //done({ message: 'Not authorized', data: { documentId: tokenset.claims.sub } });
-  // TODO: Pull user profile and send back cleaned up object
   Profile.get(tokenset).then(profile => {
     done({ message: 'Incomplete profile', data: {
       isGuest: (profile.GivenName || tokenset.claims.name).toLowerCase() == 'guest',
@@ -105,5 +102,4 @@ module.exports.processIncompleteProfile = (tokenset, done) => {
       agencyName: profile.Profile.OrganizationName,
     }});
   }).catch(done);
-
-}
+};

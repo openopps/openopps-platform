@@ -163,7 +163,7 @@ async function createStagingRecord (user, done) {
 async function getProfileData (params, done) {
   await dao.AccountStaging.findOne('linked_id = ? ', params.id).then(async account => {
     if (bcrypt.compareSync([account.linkedId, account.uuid].join('|'), params.h)) {
-      await profile.get({ access_token: account.accessToken, id_token: account.idToken }).then(async profile => {
+      await profile.get(account.tokenset).then(async profile => {
         var user = _.extend(_.clone(baseUser), {
           username: profile.URI,
           name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
@@ -210,21 +210,29 @@ async function sendFindProfileConfirmation (ctx, data, done) {
   if(!account || !validate([account.linkedId, account.uuid], data.h)) {
     done({ message: 'Invalid request' });
   } else {
-    await dao.User.findOne('username = ? and linked_id = \'\'', data.email).then(async user => {
-      await dao.AccountStaging.update(_.extend(account, { username: user.username })).then(account => {
+    await dao.User.findOne('username = ?', data.email).then(async user => {
+      if(user.linkedId) {
         notification.createNotification({
           action: 'find.profile.confirmation',
-          model: {
-            user: { name: user.name, username: user.username },
-            hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
-          },
+          model: { user: { name: user.name, username: user.username, linkedId: user.linkedId } },
         });
         done();
-      }).catch(err => {
-        // TODO: Something bad happened
-        log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
-        done({ message: 'Unkown error occurred' });
-      });
+      } else {
+        await dao.AccountStaging.update(_.extend(account, { username: user.username })).then(account => {
+          notification.createNotification({
+            action: 'find.profile.confirmation',
+            model: {
+              user: { name: user.name, username: user.username },
+              hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
+            },
+          });
+          done();
+        }).catch(err => {
+          // TODO: Something bad happened
+          log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
+          done({ message: 'Unkown error occurred' });
+        });
+      }
     }).catch(async () => {
       await createAudit('UNKNOWN_USER_PROFILE_FIND', ctx, {
         documentId: account.linkedId,
