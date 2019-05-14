@@ -93,7 +93,7 @@ var ModalIdle = BaseComponent.extend({
   logout: function () {
     this.toggleModal(false);
     setTimeout(function () {
-      window.cache.userEvents.trigger('user:request:logout');
+      Backbone.history.navigate('/logout', { trigger: true });
     }, 500);
   },
 });
