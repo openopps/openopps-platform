@@ -56,11 +56,11 @@ var ProfileFindView = Backbone.View.extend({
           h: getUrlParameter('h'),
         },
         success: function (data) {
-          self.$('#profile-find-done').show();
-          self.$('#main-content').hide();
+          $('#profile-find-done').show();
+          $('#main-content').hide();
         }.bind(this),
         error: function (err) {
-          // display modal alert type error
+          showWhoopsPage();
         }.bind(this),
       });
     }
@@ -81,7 +81,7 @@ var ProfileFindView = Backbone.View.extend({
       }.bind(this),
       error: function (err) {
         $('#search-results-loading').hide();
-        // display modal error
+        showWhoopsPage();
       }.bind(this),
     });
   },
