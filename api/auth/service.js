@@ -228,7 +228,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
           });
           done();
         }).catch(err => {
-          // TODO: Something bad happened
+          dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
           log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
           done({ message: 'Unkown error occurred' });
         });
