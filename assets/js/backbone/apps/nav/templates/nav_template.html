@@ -8,7 +8,7 @@
             <img src="/img/logo/svg/openopps_logo.svg" alt="Open Opportunities logo">
           </a>
         </div>
-        <% if(!accessForbidden) { %>
+        <% if(!accessForbidden && !welcome) { %>
         <div class="usajobs-nav__menu" id="usajobs-menu">
           <ul>
             <% if (user) { %>
