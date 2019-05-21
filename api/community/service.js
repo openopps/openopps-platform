@@ -54,7 +54,8 @@ module.exports.detailsByAudienceType = async function (audienceType) {
 
 module.exports.findById = async function (id) {
   var community = await dao.Community.findOne('community_id = ?', id).catch(() => { return null; });
-  if(community) { 
+  if(community) {
+    community.agency = await dao.Agency.findOne('agency_id = ?', community.agencyId).catch(() => { return null; });
     community.communityType = communityTypes[community.communityType - 1];
     if(community.communityType && community.communityTypeValue) {
       community.communityTypeValue = await dao.TagEntity.findOne('id = ? and type = ?', [community.communityTypeValue, community.communityType.toLowerCase()]).catch(() => { return null; });
@@ -96,4 +97,16 @@ module.exports.sendCommunityInviteNotification = async function (admin, data) {
   } catch (err) {
     log.error('Unable to email community invitation notification', err);
   }
+};
+
+module.exports.updateCommunity = async function (data, callback) {
+  data.communityType = communityTypes.indexOf(data.communityType) + 1 || null;
+  data.duration = durationTypes.indexOf(data.duration) + 1 || null;
+  data.targetAudience = audienceTypes.indexOf(data.targetAudience) + 1 || null;
+  await dao.Community.update(data).then(() => {
+    callback();
+  }).catch((err) => {
+    log.error('An error was encountered trying to update a community', err);
+    callback({ message: 'An error was encountered trying to update this community.' });
+  });
 };
