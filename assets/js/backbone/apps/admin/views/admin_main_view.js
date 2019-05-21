@@ -8,6 +8,7 @@ var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
 var AdminDashboardView = require('./admin_dashboard_view');
 var AdminCommunityView = require('./admin_community_view');
+var AdminCommunityEditView = require('./admin_community_edit_view');
 var NavSecondaryView = require('./nav_secondary_view');
 
 var AdminMainTemplate = require('../templates/admin_main_template.html');
@@ -82,6 +83,9 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminCommunityCycleView(target, this.options[target + 'Id']);
           this.adminCommunityCycleView.render();
           break;
+        case 'edit':
+          this.initializeAdminEdit(target, this.options[target + 'Id']);
+          break;
         case 'tasks':
           this.initializeAdminTaskView(target, this.options[target + 'Id']);
           this.adminTaskView.render();
@@ -112,6 +116,16 @@ var AdminMainView = Backbone.View.extend({
         default:
           break;
       }
+    }
+  },
+
+  initializeAdminEdit: function (target, targetId) {
+    switch (target) {
+      case 'community':
+        this.initializeAdminCommunityEditView(targetId);
+        break;
+      default:
+        break;
     }
   },
 
@@ -150,6 +164,17 @@ var AdminMainView = Backbone.View.extend({
       target: target,
       targetId: targetId,
     });
+  },
+
+  initializeAdminCommunityEditView: function (targetId) {
+    if (this.adminCommunityEditView) {
+      this.adminCommunityEditView.cleanup();
+    }
+    this.adminCommunityEditView = new AdminCommunityEditView({
+      el: '#main-content',
+      communityId: targetId,
+    });
+    this.adminCommunityEditView.render();
   },
 
   initializeAdminTaskView: function (target, targetId) {

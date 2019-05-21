@@ -18,6 +18,18 @@ router.get('/api/community/:id', async (ctx, next) => {
   ctx.body = await service.findById(ctx.params.id);
 });
 
+router.put('/api/community/:id', auth, async (ctx, next) => {
+  if(await service.isCommunityManager(ctx.state.user, ctx.request.body.communityId)) {
+    await service.updateCommunity(ctx.request.body, (err) => {
+      ctx.status = err ? 400 : 200;
+      ctx.body = err ? '': { message: 'success' };
+    });
+  } else {
+    await service.createAudit('FORBIDDEN_ACCESS', ctx, initializeAuditData(ctx));
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/community/:id/cycles', async (ctx, next) => {
   ctx.body = await service.getActiveCycles(ctx.params.id);
 });

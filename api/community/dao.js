@@ -29,6 +29,7 @@ const communitiesQuery = 'SELECT ' +
 
 module.exports = function (db) {
   return {
+    Agency: dao({ db: db, table: 'agency' }),
     AuditLog: dao({ db: db, table: 'audit_log' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),

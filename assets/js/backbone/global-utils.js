@@ -250,7 +250,7 @@ global.validate = function (e) {
           }
         }
       }
-      if ( !correctLength || bits[0].length < 2 ) {
+      if (val !== '' && (!correctLength || bits[0].length < 2)) {
         $(parent).find('.error-email').show();
         result = true;
       } else {
