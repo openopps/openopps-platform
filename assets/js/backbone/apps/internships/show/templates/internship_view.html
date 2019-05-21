@@ -203,14 +203,16 @@
         </ul>
         <h4>For more information</h4>
         <p>Visit the <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid) </a> website.</p>
+        <% var today = new Date(moment().tz("America/New_York").format('MM-DD-YYYY')); if (today <= new Date(d.applyStartDate) && today >= new Date(d.applyEndDate)) { %>
         <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
           <% if (model.application) { %>
             <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>
   
             <% } else { %>
               <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
-              <% } %>
-          <% } %>
+            <% } %>
+        <% } %>
+        <% } %>
       </div>
     </aside>
   </div>
