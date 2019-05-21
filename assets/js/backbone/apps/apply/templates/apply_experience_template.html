@@ -190,12 +190,13 @@
                   <span class="field-validation-error error-empty" style="display:none;">You must select the type of security clearance.</span>
                   <select id="security-clearance-type" name="security_clearance_id" class="dropdown" data-validate="empty">
                     <option value=""></option>  
-                   <% _.each(securityClearances, function (h) { %>                     
-                  <option value=<%- h.lookupCodeId %>
-                    <% if (securityClearanceId == h.lookupCodeId) { %>selected<% } %>>
-                        <%- h.value %>
-                  </option>
-
+                    <% _.each(securityClearances, function (h) { %>
+                      <% if (h.lookupCodeId !== 1) { %>
+                        <option value=<%- h.lookupCodeId %>
+                          <% if (securityClearanceId == h.lookupCodeId) { %>selected<% } %>>
+                            <%- h.value %>
+                        </option>
+                      <% } %>
                     <% }); %>
                   </select>
                 </div>
