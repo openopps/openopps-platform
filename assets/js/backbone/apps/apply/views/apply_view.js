@@ -21,6 +21,7 @@ var SubmittedApplication = require('./submitted_application');
 
 var ApplyView = Backbone.View.extend({
   events: {
+    'click .program-empty'                                        : linkBackbone,
     'blur .validate'                                              : 'validateField',
     'change .validate'                                            : 'validateField',
     'click .apply-continue'                                       : 'applyContinue',

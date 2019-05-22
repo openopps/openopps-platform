@@ -233,6 +233,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   searchTasks: function (action, queryStr) {
+    this.navView && this.navView.render();
     this.cleanupChildren();
     this.taskSearchController = new TaskSearchController({
       el: '#container',
@@ -260,6 +261,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showTask: function (id, action, queryStr) {
+    this.navView && this.navView.render();
     $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();
@@ -288,6 +290,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showInternship: function (id, action, queryStr) {
+    this.navView && this.navView.render();
     $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();

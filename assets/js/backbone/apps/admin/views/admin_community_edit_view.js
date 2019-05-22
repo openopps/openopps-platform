@@ -26,10 +26,10 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeListeners: function () {
-    this.listenTo(this.community, 'community:save:success', function (cycle) {
-      
+    this.listenTo(this.community, 'community:save:success', function () {
+      Backbone.history.navigate('/admin/community/' + this.options.communityId + '?saveSuccess', { trigger: true })
     }.bind(this));
-    this.listenTo(this.community, 'community:save:error', function (model, response, options) {
+    this.listenTo(this.community, 'community:save:error', function () {
       $('#community-save-error').show();
       $('#community-save-error').get(0).scrollIntoView();
     });

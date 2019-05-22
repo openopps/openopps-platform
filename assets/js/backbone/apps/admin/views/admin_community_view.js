@@ -5,14 +5,16 @@ var AdminCommunityTemplate = require('../templates/admin_community_template.html
 var AdminCommunityView = Backbone.View.extend({
 
   events: {
-    'change #communities': 'changeCommunity',
-    'click #community-edit': linkBackbone,
+    'change #communities'         : 'changeCommunity',
+    'click #community-edit'       : linkBackbone,
+    'click .usajobs-alert__close' : 'closeAlert',
   },
 
   initialize: function (options) {
     this.options = options;
     this.adminMainView = options.adminMainView;
     this.communityId = options.communityId || options.communities[0].communityId;
+    this.params = new URLSearchParams(window.location.search);
   },
 
   render: function (replace) {
@@ -22,6 +24,10 @@ var AdminCommunityView = Backbone.View.extend({
     $('#search-results-loading').hide();
     Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
     return this;
+  },
+
+  closeAlert: function (event) {
+    $(event.currentTarget).closest('.usajobs-alert').hide();
   },
 
   loadCommunityData: function () {
@@ -35,6 +41,7 @@ var AdminCommunityView = Backbone.View.extend({
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
+            saveSuccess: this.params.has('saveSuccess'),
           });
           this.$el.html(template);
           if(this.options.communities) {
