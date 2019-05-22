@@ -52,7 +52,8 @@ var TaskItemView = BaseView.extend({
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
-    this.initializeTags();
+    this.render();
+    $('#search-results-loading').hide();
   },
 
   render: function () {
@@ -174,29 +175,6 @@ var TaskItemView = BaseView.extend({
       '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
-  },
-
-  initializeTags: function () {
-    var types = ['task-skills-required', 'task-time-required', 'task-people', 'task-length', 'task-time-estimate', 'career'];
-
-    this.tagSources = {};
-
-    var requestAllTagsByType = function (type, cb) {
-      $.ajax({
-        url: '/api/ac/tag?type=' + type + '&list',
-        type: 'GET',
-        async: false,
-        success: function (data) {
-          this.tagSources[type] = data;
-          return cb();
-        }.bind(this),
-      });
-    }.bind(this);
-
-    async.each(types, requestAllTagsByType, function (err) {
-      this.model.trigger('task:tag:types', this.tagSources);
-      this.render();
-    }.bind(this));
   },
 
   toggleAccordion: function (e) {

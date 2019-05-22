@@ -260,6 +260,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showTask: function (id, action, queryStr) {
+    $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();
     this.listenTo(model, 'task:model:fetch:success', function (model) {
@@ -287,6 +288,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   showInternship: function (id, action, queryStr) {
+    $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();
     this.listenTo(model, 'task:model:fetch:success', function (model) {
@@ -320,6 +322,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   createTask: function () {
+    this.navView && this.navView.render();
     this.cleanupChildren();
     this.taskAudienceFormView = new TaskAudienceFormView({
       el: '#container',
@@ -404,16 +407,13 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   renderInternshipView: function (model, community) {
-    model.tagTypes(function (tagTypes) {
-      this.internshipView = new InternshipView({
-        el: '#container',
-        model: model,
-        community: community,
-        tags: [],
-        madlibTags: {},
-        tagTypes: tagTypes,
-      }).render();
-    }.bind(this));
+    this.internshipView = new InternshipView({
+      el: '#container',
+      model: model,
+      community: community,
+      tags: [],
+      madlibTags: {},
+    }).render();
   },
 
   renderInternshipEdit: function (model, community, languageProficiencies) {
