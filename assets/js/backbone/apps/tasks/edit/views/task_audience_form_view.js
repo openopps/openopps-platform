@@ -7,11 +7,11 @@ var TaskAudienceFormTemplate = require('../templates/task_audience_form_template
 var TaskAudienceFormView = Backbone.View.extend({
   events: {
     'click .usa-button' : 'submit',
-    'click .opportunity-target-audience__button' : 'selectAudience',    
+    'click .opportunity-target-audience__button' : 'selectAudience',
   },
 
   initialize: function (options){
-    this.options = options;       
+    this.options = options;
   },
 
   render: function () {    
@@ -37,12 +37,18 @@ var TaskAudienceFormView = Backbone.View.extend({
               this.target = 'federal';
               $('#federal-employees').addClass('selected');
               $('.student-programs').hide();
-              $('#continue').removeAttr('disabled'); 
+              $('#continue').removeAttr('disabled');
+              if(!$('#federal-programs').next('div')[0]) {
+                initializeSelectWrapping($('#student-programs').get());
+              } 
             } else if (data.student.length > 0 && (params.get('target') == 'students' || data.federal.length == 0)) {
               this.target = 'student';
               $('#students').addClass('selected'); 
               $('.federal-programs').hide();
               $('#continue').removeAttr('disabled'); 
+              if(!$('#student-programs').next('div')[0]) {
+                initializeSelectWrapping($('#student-programs').get());
+              }
             } else {
               $('.federal-programs').hide();
               $('.student-programs').hide();
@@ -60,13 +66,19 @@ var TaskAudienceFormView = Backbone.View.extend({
       $('.student-programs').show();
       $('.federal-programs').hide(); 
       $('#students').addClass('selected');
-      $('#federal-employees').removeClass('selected');  
+      $('#federal-employees').removeClass('selected');
+      if(!$('#student-programs').next('div')[0]) {
+        initializeSelectWrapping($('#student-programs').get());
+      }
     } else {
       this.target = 'federal';
       $('.student-programs').hide();
       $('.federal-programs').show();
       $('#students').removeClass('selected');  
-      $('#federal-employees').addClass('selected');      
+      $('#federal-employees').addClass('selected');
+      if(!$('#federal-programs').next('div')[0]) {
+        initializeSelectWrapping($('#federal-programs').get());
+      }    
     } 
     $('#continue').removeAttr('disabled');    
   },
