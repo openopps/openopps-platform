@@ -165,4 +165,9 @@ async function updateListApplicant (userId, item) {
   }
 }
 
+service.getLastUpdated = async function (userId) {
+  var results = await dao.Task.db.query(dao.query.LastUpdatedByUserID, userId);
+  return results.rows;
+};
+
 module.exports = service;

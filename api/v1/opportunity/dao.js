@@ -224,6 +224,20 @@ dao.query.communityByTaskAndEmail = `
     and lower(midas_user.government_uri) = lower(?)
 `;
 
+dao.query.LastUpdatedByUserID = `
+  select task.id, tlah.details -> 'previous' -> 'updated_at' as updated_at, task.title
+  from 
+    task_list_application_history tlah
+    inner join task_list_application tlapp on tlapp.task_list_application_id = tlah.task_list_application_id
+    inner join task_list tl on tl.task_list_id = tlapp.task_list_id 
+    inner join task on task.id = tl.task_id
+  where 
+    action_by = ?
+  order by  
+    action_date desc
+  limit 1
+`;
+
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' });
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
