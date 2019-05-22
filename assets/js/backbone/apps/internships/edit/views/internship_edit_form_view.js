@@ -422,16 +422,13 @@ var InternshipEditFormView = Backbone.View.extend({
 
   initializeSuggestedClearance: function () {
     this.suggestedClearances =  [
-      {id: 0, name: 'Low Risk Public Trust Domestic'},
-      {id: 1, name: 'Low Risk Public Trust Overseas'},
-      {id: 2, name: 'Interim Secret Domestic'},
-      {id: 3, name: 'Interim Secret Overseas'},
-      {id: 4, name: 'Full Secret Domestic'},
-      {id: 5, name: 'Full Secret Overseas'},
-      {id: 6, name: 'Interim Top Secret Domestic'},
-      {id: 7, name: 'Interim Top Secret Overseas'},
-      {id: 8, name: 'Full Top Secret Domestic'},
-      {id: 9, name: 'Full Top Secret Overseas'},
+      {id: 0, name: 'None'},
+      {id: 1, name: 'Classified'},
+      {id: 2, name: 'Interim Secret'},
+      {id: 3, name: 'Interim Top Secret'},
+      {id: 4, name: 'Secret'},
+      {id: 5, name: 'Top Secret'},
+      {id: 6, name: 'Top Secret/SCI'},
     ];
   },
 
