@@ -225,7 +225,7 @@ dao.query.communityByTaskAndEmail = `
 `;
 
 dao.query.LastUpdatedByUserID = `
-  select task.id, tlah.details -> 'previous' -> 'updated_at' as updated_at, task.title
+  select task.id, tlah.action_date, task.title
   from 
     task_list_application_history tlah
     inner join task_list_application tlapp on tlapp.task_list_application_id = tlah.task_list_application_id
