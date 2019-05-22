@@ -7,7 +7,7 @@
       <th id="publishId" class="center" data-target="publish-delete">Publish</th>
       <th class="center" data-target="publish-delete">Delete</th> 
       <th class="center hide" data-target="change-add">Change<br/> owner</th>
-      <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+      <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
         <th class="center hide" data-target="change-add">Add<br/> participant</th>
       <% } %>
     </tr>
@@ -85,7 +85,7 @@
               </a>
             </td>
           <% } else if (_.contains(['open', 'notopen', 'inprogress'], status.toLowerCase())) { %>
-            <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+            <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
               <td class="metrics-table__button">
                 <a href="#add-participant/<%- task.id %>"
                   data-task-id="<%- task.id %>"
