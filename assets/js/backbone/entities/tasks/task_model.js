@@ -139,7 +139,6 @@ var TaskModel = Backbone.Model.extend({
       $.ajax({
         url: '/api/ac/tag?type=' + type + '&list',
         type: 'GET',
-        async: false,
         success: function (data) {
           tagSources[type] = data;
           return cb();
