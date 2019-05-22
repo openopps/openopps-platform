@@ -132,6 +132,12 @@ var ApplyView = Backbone.View.extend({
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
     }
     $('#search-results-loading').hide();
+    if (this.data.selectedStep == 1) {
+      var emptySelections = $('.program-empty');
+      if (emptySelections.length < 1) {
+        $('#saveProgramContinue').removeAttr('disabled');
+      }
+    }
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     Education.renderComponentEducation.bind(this)();
