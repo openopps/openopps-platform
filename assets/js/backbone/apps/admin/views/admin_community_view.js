@@ -6,8 +6,7 @@ var AdminCommunityView = Backbone.View.extend({
 
   events: {
     'change #communities': 'changeCommunity',
-    // 'change .group': 'renderTasks',
-    // 'change .filter': 'renderTasks',
+    'click #community-edit': linkBackbone,
   },
 
   initialize: function (options) {

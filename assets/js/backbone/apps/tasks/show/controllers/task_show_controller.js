@@ -82,17 +82,22 @@ var TaskShowController = BaseView.extend({
       this.madlibTags = this.madlibTags || {};
       this.madlibTags[this.options.community.communityType.toLowerCase()] = [this.options.community.communityTypeValue];
     }
-    this.taskEditFormView = new TaskEditFormView({
-      el: this.el,
-      elVolunteer: '#task-volunteers',
-      edit: true,
-      taskId: this.model.attributes.id,
-      model: this.model,
-      community: this.options.community,
-      tags: this.tags,
-      madlibTags: this.madlibTags,
-      tagTypes: this.tagTypes,
-    }).render();
+    $('#search-results-loading').show();
+    this.model.tagTypes(function (tagTypes) {
+      this.model.trigger('task:tag:types', tagTypes);
+      this.taskEditFormView = new TaskEditFormView({
+        el: this.el,
+        elVolunteer: '#task-volunteers',
+        edit: true,
+        taskId: this.model.attributes.id,
+        model: this.model,
+        community: this.options.community,
+        tags: this.tags,
+        madlibTags: this.madlibTags,
+        tagTypes: tagTypes,
+      }).render();
+      $('#search-results-loading').hide();
+    }.bind(this));
     this.$('.task-container').hide();
   },
 

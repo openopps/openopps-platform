@@ -21,6 +21,7 @@ var InternshipListView = Backbone.View.extend({
     'click .usajobs-search-filter-nav__back'  : 'toggleFilter',
     'click .usajobs-search-pills__item'       : 'removeFilter',
     'click #search-pills-remove-all'          : 'removeAllFilters',
+    'click .internship-link'                  : 'loadInternship',
     // 'change input[type=radio][name=internship-program]'  : 'changedInternsPrograms',
   },
     
@@ -80,6 +81,11 @@ var InternshipListView = Backbone.View.extend({
     $('.usa-footer-search--intern-hide').show();
     $('.usa-footer-search--intern').hide();
     removeView(this);
+  },
+
+  loadInternship: function (event) {
+    event.preventDefault && event.preventDefault();
+    Backbone.history.navigate(event.currentTarget.pathname + event.currentTarget.search, { trigger: true });
   },
 
   // changedInternsPrograms: function (e){

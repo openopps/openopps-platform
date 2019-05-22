@@ -86,6 +86,7 @@ var AdminTaskView = Backbone.View.extend({
     var data = {
       tasks: tasks[$('.filter-radio:checked').attr('id')],
       status:$('.filter-radio:checked').attr('id'),
+      targetAudience: tasks.community.targetAudience,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);

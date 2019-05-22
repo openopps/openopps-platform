@@ -5,7 +5,7 @@ var HomeView = require('../views/home_view');
 
 var HomeController = BaseController.extend({
   events: {
-    'click .add-opportunity' : 'add',
+    'click .add-opportunity' : linkBackbone,
   },
 
   initialize: function (options) {
@@ -19,10 +19,6 @@ var HomeController = BaseController.extend({
       }).render();
     }
     return this;
-  },
-
-  add: function (e) {
-    Backbone.history.navigate('/tasks/create', { trigger: true });
   },
 
   cleanup: function () {

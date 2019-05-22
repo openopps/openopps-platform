@@ -27,6 +27,7 @@ var TaskListView = Backbone.View.extend({
     'click .usajobs-search-filter-nav__back'  : 'toggleFilter',
     'click .usajobs-search-pills__item'       : 'removeFilter',
     'click #search-pills-remove-all'          : 'removeAllFilters',
+    'click .task-link'                        : 'loadTask',
   },
 
   initialize: function (options) {
@@ -182,6 +183,11 @@ var TaskListView = Backbone.View.extend({
         }.bind(this));
       }.bind(this),
     });
+  },
+
+  loadTask: function (event) {
+    event.preventDefault && event.preventDefault();
+    Backbone.history.navigate(event.currentTarget.pathname + event.currentTarget.search, { trigger: true });
   },
 
   removeFilter: function (event) {

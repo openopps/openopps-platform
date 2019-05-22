@@ -17,9 +17,10 @@ var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_c
 
 var InternshipView = BaseView.extend({
   events: {
-    'click #apply'      : 'apply',
-    'click #task-copy'  : 'copy',
-    'click #save'       : 'toggleSave',
+    'click #apply'            : 'apply',
+    'click #internship-copy'  : 'copy',
+    'click #internship-edit'  : linkBackbone,
+    'click #save'             : 'toggleSave',
   },
 
   initialize: function (options) {

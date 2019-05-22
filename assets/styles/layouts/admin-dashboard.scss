@@ -410,8 +410,25 @@
   }
 }
 
-#s2id_agencies, #s2id_communities {
+#s2id_agencies {
   margin-bottom: $size-M;
+}
+
+.label-brief {
+  margin-top: $size-XS;
+  margin-bottom: $size-XS;
+}
+
+#community-header {
+  margin-bottom: $size-M;
+
+  .community-header-link {
+    vertical-align: middle;
+
+    &:visited {
+      color: $color-primary;
+    }
+  }
 }
 
 .capitalize-target {

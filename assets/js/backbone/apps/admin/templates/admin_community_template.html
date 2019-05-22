@@ -7,7 +7,7 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-<div class="usajobs-grid-full">
+<div id="community-header" class="usajobs-grid-full">
   <div class="usa-width-one-whole">
     <select id="communities" class="dropdown">
       <option value=""></option>
@@ -15,6 +15,7 @@
           <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
       <% }); %>
     </select>
+    <a href="/admin/community/<%=community.communityId %>/edit" id="community-edit" class="community-header-link">Manage community</a>
   </div>
 </div>
 <div class="usajobs-grid-full">

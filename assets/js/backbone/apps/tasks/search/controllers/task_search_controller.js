@@ -9,6 +9,11 @@ var TaskListView = require('../views/task_search_view');
 var InternshipListView = require('../views/internship_search_view');
 
 TaskController = Backbone.View.extend({
+  events: {
+    'click #create-opportunity' : linkBackbone,
+    'click #create-internship' : linkBackbone,
+  },
+
   initialize: function (options) {
     this.options = options;
     var hiringPath = window.cache.currentUser ? window.cache.currentUser.hiringPath : '';

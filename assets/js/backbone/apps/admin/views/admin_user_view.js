@@ -83,7 +83,7 @@ var AdminUserView = Backbone.View.extend({
     this.modalComponent = new Modal({
       el: '#site-modal',
       id: 'invite-member-modal',
-      modalTitle: 'Invite member to community',
+      modalTitle: 'Add member to community',
       modalBody: modalContent,
       validateBeforeSubmit: true,
       secondary: {
