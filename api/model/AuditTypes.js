@@ -92,4 +92,10 @@ module.exports = {
     severity: 'info',
     data: ['communityId', 'userId'],
   },
+  'COMMUNITY_MEMBERSHIP_UPDATED': {
+    action: 'COMMUNITY_MEMBERSHIP_UPDATED',
+    description: 'A user\'s membership has been reactivated or revoked from a community.',
+    severity: 'info',
+    data: ['communityId', 'userId', 'action'],
+  },
 };

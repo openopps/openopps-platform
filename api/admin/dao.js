@@ -48,8 +48,8 @@ const agencyUsersQuery = 'select ' +
 
 const communityUsersQuery = 'select ' +
   'count(*) as "total", ' +
-  'sum(case when disabled = \'f\' then 1 else 0 end) as "active", ' +
-  'sum(case when disabled= \'f\' and "is_manager" then 1 else 0 end) as "admins" ' +
+  'sum(case when (midas_user.disabled = \'f\' and community_user.disabled =\'f\') then 1 else 0 end) as "active", ' +
+  'sum(case when (midas_user.disabled = \'f\' and community_user.disabled =\'f\') and "is_manager" then 1 else 0 end) as "admins" ' +
   'from community_user ' +
   'join midas_user on midas_user.id = user_id ' +
   'where community_id = ?';
@@ -120,10 +120,12 @@ const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count 
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
-const userCommunityListQuery = 'select midas_user.*, count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, community_user.is_manager as "isCommunityAdmin" ' +
+const userCommunityListQuery = 'select midas_user.id, midas_user.name, midas_user.username, midas_user.government_uri, ' +
+  'count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, ' +
+  'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
   'left join agency on agency.agency_id = midas_user.agency_id ' +
-  'where community_user.community_id = ? ' +
+  'where midas_user.disabled = \'f\' and community_user.community_id = ? ' +
   'order by community_user.created_at desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
@@ -150,11 +152,13 @@ const userAgencyListFilteredQuery = 'select midas_user.*, count(*) over() as ful
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 
-const userCommunityListFilteredQuery = 'select midas_user.*, count(*) over() as full_count, tag.name as agency, community_user.created_at as joined_at, community_user.is_manager as "isCommunityAdmin" ' +
+const userCommunityListFilteredQuery = 'select midas_user.id, midas_user.name, midas_user.username, midas_user.government_uri, ' +
+  'count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, ' +
+  'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
   'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  'where (lower(tag.name) like ? or lower(username) like ? or lower(midas_user.name) like ?) ' +
+  'where midas_user.disabled = \'f\' and (lower(tag.name) like ? or lower(username) like ? or lower(midas_user.name) like ?) ' +
   "and tag.type = 'agency' and community_user.community_id = ? " +
   'order by "created_at" desc ' +
   'limit 25 ' +
