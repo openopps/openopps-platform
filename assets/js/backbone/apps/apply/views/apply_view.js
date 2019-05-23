@@ -42,7 +42,6 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
-    'change [name=country]'                                       : function () { this.callMethod(Experience.postalCodeDisable); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
     'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
@@ -316,8 +315,9 @@ var ApplyView = Backbone.View.extend({
 
     $('#apply_country').on('change', function (e) {
       validate({ currentTarget: $('#apply_country') });
-      this.countryCode = $('#apply_country').select2('data').code;
-      this.countryCode && this.loadCountrySubivisionData();
+      this.countryCode = ($('#apply_country').select2('data') || {}).code;
+      this.loadCountrySubivisionData();
+      this.callMethod(Experience.postalCodeDisable);
     }.bind(this));
 
     $('#apply_country').focus();
@@ -348,12 +348,15 @@ var ApplyView = Backbone.View.extend({
     if (data.length) {
       $('#apply_countrySubdivision').removeAttr('disabled', true);
       $('#apply_countrySubdivision').addClass('validate');
-      
     } else {
       $('#apply_countrySubdivision').attr('disabled', true);
       $('#apply_countrySubdivision').removeClass('validate');
       $('.apply_countrySubdivision').removeClass('usa-input-error');
       $('.apply_countrySubdivision > .field-validation-error').hide();
+    }
+
+    if(!$('#apply_countrySubdivision').select2('data')) {
+      $('#apply_countrySubdivision').val('');
     }
   
     $('#apply_countrySubdivision').on('change', function (e) {
