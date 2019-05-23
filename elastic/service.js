@@ -104,8 +104,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     },
     addCycleDate () {
-      filter_must.push({range: { "cycle.applyEndDate" : { gte: new Date(moment.tz("America/New_York").startOf('day').format()) } }});
-      filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date(moment.tz("America/New_York").startOf('day').format()) } }});
+      filter_must.push({range: { "cycle.applyEndDate" : { gte: new Date() } }});
+      filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date() } }});
     },
     addLocations (location) { 
       should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
