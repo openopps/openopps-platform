@@ -206,6 +206,23 @@ router.get('/api/admin/communityAdmin/:id/:communityId', auth, async (ctx, next)
   }
 });
 
+router.get('/api/admin/community/:communityId/member/:userId', auth, async (ctx, next) => {
+  if (await communityService.isCommunityManager(ctx.state.user, ctx.params.communityId)) {
+    await communityService.updateCommunityMembership(ctx.params, ctx.query.action, function (error) {
+      service.createAuditLog('COMMUNITY_MEMBERSHIP_UPDATED', ctx, {
+        userId: ctx.params.userId,
+        communityId: ctx.params.communityId,
+        action: (ctx.query.action === 'remove' ? 'Community member removed' : ctx.query.action === 'true' ? 'Community membership enabled' : 'Community membership disabled'),
+        status: (error ? 'failed' : 'successful'),
+      });
+      ctx.status = error ? 400 : 200;
+      ctx.body = { message: (error ? 'failed' : 'success') };
+    });
+  } else {
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getOwnerOptions(ctx.params.taskId, function (results, err) {
@@ -221,6 +238,7 @@ router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (c
     ctx.status = 403;
   }
 });
+
 router.get('/api/admin/community/changeOwner/:taskId', auth, async (ctx, next) => {
   if (ctx.state.user.isAdmin || await service.canCommunityChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getCommunityOwnerOptions(ctx.params.taskId, function (results, err) {
