@@ -20,7 +20,11 @@ function forceEasternTimezone (data) {
   Object.keys(data).forEach(key => {
     if(key.match(/.*Date$/)) {
       var internationalDateFormat = moment(data[key]).format('YYYY-MM-DD');
-      data[key] = moment.tz(internationalDateFormat, 'America/New_York').format();
+      if(key.match(/.*EndDate$/)) {
+        data[key] = moment.tz(internationalDateFormat, 'America/New_York').endOf('day').format();
+      } else {
+        data[key] = moment.tz(internationalDateFormat, 'America/New_York').startOf('day').format();
+      }
     }
   })
 }

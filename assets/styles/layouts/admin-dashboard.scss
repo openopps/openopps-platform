@@ -89,7 +89,9 @@
     padding-left: 0;
   }
 
-  .user-enable[type=checkbox]:checked, .assign-admin[type=checkbox]:checked {
+  .user-enable[type=checkbox]:checked,
+  .assign-admin[type=checkbox]:checked,
+  .member-enable[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -103,7 +105,9 @@
     }
   }
 
-  .user-enable[type=checkbox], .assign-admin[type=checkbox] {
+  .user-enable[type=checkbox],
+  .assign-admin[type=checkbox],
+  .member-enable[type=checkbox] {
     border: none;
     height: auto;
 
