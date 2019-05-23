@@ -42,6 +42,7 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
+    'change [name=country]'                                       : function () { this.callMethod(Experience.postalCodeDisable); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
     'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },

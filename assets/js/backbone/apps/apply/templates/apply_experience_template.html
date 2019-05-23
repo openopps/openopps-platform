@@ -65,11 +65,12 @@
                         <p class="usajobs-drawer-content__item-content"><%= e.countrySubdivision.value %></p>
                       </li>
                       <% } %>
-
+                      <% if (e.postalCode) { %>
                       <li class="usajobs-drawer-content__item">
                         <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
                         <p class="usajobs-drawer-content__item-content"><%= e.postalCode %></p>
                       </li>
+                      <% } %>
                     </ul>
                   </div>
                 </div>
