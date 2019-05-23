@@ -50,6 +50,11 @@ router.get('/api/v1/task/taskList', auth.bearer, async (ctx, next) => {
   }
 });
 
+router.get('/api/v1/task/getLastUpdated', auth.bearer, async (ctx, next) => {
+  var data = await service.getLastUpdated(ctx.state.user.id); 
+  ctx.body = data;
+});
+
 router.post('/api/v1/task/:taskId/share', auth.bearer, async (ctx, next) => {
   var owner = await service.getTaskShareList(ctx.params.taskId, ctx.state.user.id);
   if (owner)

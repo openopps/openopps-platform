@@ -65,6 +65,7 @@
                   <div class="form-group required-input student-programs">
                     <span class="field-validation-error error-empty" style="display:none;">You must select a program for this opportunity.</span>
                     <select id="student-programs" class="dropdown validate" data-validate="empty">
+                      <option disabled></option>
                       <% _.each(communities.student, function (community) { %>
                         <option value=<%- community.communityId %>>
                               <%- community.communityName %>
