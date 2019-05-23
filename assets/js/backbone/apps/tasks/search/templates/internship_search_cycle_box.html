@@ -4,7 +4,7 @@
     <div class="open-opps--info__body">
       <p>
         U.S. Department of State Student Internship Program (Unpaid)  is now accepting applications for <%= cycle.name %>.  
-        <strong>Application deadline: <%= moment(cycle.applyEndDate.split('T')[0]).format('MMMM DD, YYYY') %> at 11:59 p.m. EST.</strong>
+        <strong>Application deadline: <%= moment.tz(cycle.applyEndDate, 'America/New_York').format('MMMM DD, YYYY') %> at 11:59 p.m. EST.</strong>
       </p>
     </div>
   </div>
