@@ -83,7 +83,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       $('#community-save-error').hide();
       this.community.trigger('community:save', {
         communityId: this.options.communityId,
-        name: $('#community-name').val(),
+        communityName: $('#community-name').val(),
         description: $('#description').val(),
         supportEmail: $('#community-support-email').val(),
         isClosedGroup: $("input[name='community-group']:checked").val(),

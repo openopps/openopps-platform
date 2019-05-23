@@ -13,9 +13,10 @@
       <th>Agency</th>
       <th>Joined date</th>
       <th>Community<br/>opportunities</th>
-      <% if (user.isAdmin || user.isCommunityAdmin) { %>
-        <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
+      <% if (community.isClosedGroup) { %>
+        <th class="admin-user-checkbox">Member<br />enabled</th>
       <% } %>
+      <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
     </tr>
   </thead>
   <tbody>
@@ -46,16 +47,21 @@
         <td class="admin-table-joineddate">
           <%- moment(u.joined_at).format('MM/DD/YYYY hh:mma') %>
         </td>
-       <td>
+        <td>
           Created: <%- u.communityTaskCreated %> <br/>
           Participated: <%- u.communityTaskParticipated %>
-       </td>
-        <td>
-          <% if (user.isAdmin || (user.isCommunityAdmin && !u.isAdmin)) { %>
-            <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
-            <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+        </td>
+        <% if (community.isClosedGroup) { %>
+          <td>
+            <input class="member-enable" id="member-enable-<%- u.id %>" type="checkbox" data-action='member' <% if (!u.disabled) { %> checked <% } %> />
+            <label class="no-label" for="member-enable-<%- u.id %>"><span class="sr-only">Enable</span></label>
             <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
-          <% } %>
+          </td>
+        <% } %>
+        <td>
+          <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
+          <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+          <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
         </td>
       </tr>
     <% }); %>

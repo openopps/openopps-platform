@@ -257,6 +257,8 @@ var AdminUserView = Backbone.View.extend({
       data: data,
       success: function (data) {
         this.data = data;
+        this.data.community = this.community;
+        this.data.agency = this.agency,
         this.renderUsers(data);
         $('.tip').tooltip();
       }.bind(this),
