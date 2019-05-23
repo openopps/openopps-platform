@@ -192,7 +192,7 @@
                   <select id="security-clearance-type" name="security_clearance_id" class="dropdown" data-validate="empty">
                     <option value=""></option>  
                     <% _.each(securityClearances, function (h) { %>
-                      <% if (h.lookupCodeId !== 1) { %>
+                      <% if (h.code !== '0') { %>
                         <option value=<%- h.lookupCodeId %>
                           <% if (securityClearanceId == h.lookupCodeId) { %>selected<% } %>>
                             <%- h.value %>
