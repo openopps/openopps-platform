@@ -533,6 +533,9 @@ var InternshipListView = Backbone.View.extend({
   },
   
   addLocation: function (location) {
+    if(location == 'USA') {
+      location = 'United States';
+    }
     if (this.filters.location && _.isArray(this.filters.location)) {
       this.filters.location.push(location.trim());
     } else {
