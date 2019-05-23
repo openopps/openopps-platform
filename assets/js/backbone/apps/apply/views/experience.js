@@ -95,7 +95,7 @@ var experience = {
       addressLineTwo: $('#street-address2').val(),
       country: countryData,
       countrySubdivision: countrySubdivisionData,
-      postalCode: $('#postal-code').val(),
+      postalCode: $('#postal-code').val() || '',
       cityName: $('#city').val(),
       formalTitle: $('#job-title').val(),
       isPresent: $('#Present').is(':checked'),
@@ -345,6 +345,27 @@ var experience = {
     }
 
     return abort;
+  },
+
+  postalCodeDisable: function () {
+    // var country = $('#apply_country').select2('data');
+    if (this.countryCode == 'US') {
+      $('#postal-code')
+        .attr('data-validate', 'empty,count100,html')
+        .removeAttr('disabled')
+        .addClass('validate')
+        .parent().addClass('required-input');
+    } else {
+      $('#postal-code')
+        .attr('value', '')
+        .removeAttr('data-validate')
+        .prop('disabled', true)
+        .removeClass('validate')
+        .closest('.required-input').removeClass('required-input usa-input-error');
+      $('.error-empty').css('display', 'none');
+      $('.error-count100').css('display', 'none');
+      $('.error-html').css('display', 'none');
+    }
   },
 
   formatExperienceDates: function (data) {
