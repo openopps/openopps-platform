@@ -1,10 +1,11 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
 
 <div class="usajobs-content-gutter opportunity-gutter internship">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div class="usajobs-profile-home-section">
       <h2 class="usajobs-profile-home-section__title">Review Application</h2>
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Applying to these internship opportunities</legend>
         <div class="usajobs-profile-home-section__body">
           <p>Before you submit your application, please review your information below to confirm it's complete and correct.</p>
           <h3 class="usajobs-profile-home-section__sub-section">
@@ -67,6 +68,7 @@
 
     <div class="usajobs-profile-home-section">
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Experience and references</legend>
         <div class="usajobs-profile-home-section__body">
           <h3 class="usajobs-profile-home-section__sub-section">
             Experience
@@ -77,8 +79,8 @@
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
           <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
             <% _.each(experience, function (e, index) { %>
-            <li class="usajobs-drawer" data-section="experience" data-id="exp-1">
-              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-1"><%= e.formalTitle %></button>
+            <li class="usajobs-drawer" data-section="experience" data-id="exp-<%= e.experienceId %>">
+              <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-<%= e.experienceId %>"><%= e.formalTitle %></button>
               <dl class="usajobs-drawer-face">
                 <dt><%= e.employerName %></dt>
                 <dd>
@@ -96,7 +98,7 @@
                   <%= formattedStartDate %> - <%= formattedEndDate %>
                 </dd>
               </dl>
-              <div id="exp-1" class="usa-accordion-content usajobs-drawer-content">
+              <div id="exp-<%= e.experienceId %>" class="usa-accordion-content usajobs-drawer-content">
                 <div class="usajobs-grid">
                   <div class="usajobs-width-one-half">
                     <ul class="usajobs-drawer-content__list">
@@ -259,6 +261,7 @@
 
     <div class="usajobs-profile-home-section">
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Education &amp; Transcript</legend>
         <div class="usajobs-profile-home-section__body">
           <h3 class="usajobs-profile-home-section__sub-section">
             Education &amp; Transcript
@@ -300,6 +303,7 @@
 
     <div class="usajobs-profile-home-section">
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Languages and skills</legend>
         <div class="usajobs-profile-home-section__body">
           <h3 class="usajobs-profile-home-section__sub-section">
             Languages
@@ -361,6 +365,7 @@
 
     <div class="usajobs-profile-home-section">
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Statement of Interest</legend>
         <div class="usajobs-profile-home-section__body">
           <h3 class="usajobs-profile-home-section__sub-section">
             Statement of Interest
@@ -376,24 +381,25 @@
 
     <div class="consent-to-share">
       <fieldset class="usajobs-fieldset">
-          <div class="form-group required-input usa-fieldset-inputs">
-            <h4>Consent to share information</h4>
-            <label for="ShareConsent" class="usajobs-profile-question__title">
-              Do you authorize the U.S. Department of State to share any of the information in this internship application, 
-              including any official financial aid statement from any college or university, to organizations or individuals who 
-              are a potential funding source?
-            </label>
-            <ul class="usa-unstyled-list" id="share-consent">
-              <li>
-                <input id="share-consent-yes" name="is_consent_to_share" type="radio" value="yes" <% if (isConsentToShare) { %><%= "checked" %><% } %>>
-                <label for="share-consent-yes">Yes</label>
-              </li>
-              <li>
-                <input id="share-consent-no" name="is_consent_to_share" type="radio" value="no" <% if (isConsentToShare == false) { %><%= "checked" %><% } %>>
-                <label for="share-consent-no">No</label>
-              </li>
-            </ul>
-          </div>
+        <legend class="usa-sr-only">Consent to share information</legend>
+        <div class="form-group required-input usa-fieldset-inputs">
+          <h4>Consent to share information</h4>
+          <label for="ShareConsent" class="usajobs-profile-question__title">
+            Do you authorize the U.S. Department of State to share any of the information in this internship application, 
+            including any official financial aid statement from any college or university, to organizations or individuals who 
+            are a potential funding source?
+          </label>
+          <ul class="usa-unstyled-list" id="share-consent">
+            <li>
+              <input id="share-consent-yes" name="is_consent_to_share" type="radio" value="yes" <% if (isConsentToShare) { %><%= "checked" %><% } %>>
+              <label for="share-consent-yes">Yes</label>
+            </li>
+            <li>
+              <input id="share-consent-no" name="is_consent_to_share" type="radio" value="no" <% if (isConsentToShare == false) { %><%= "checked" %><% } %>>
+              <label for="share-consent-no">No</label>
+            </li>
+          </ul>
+        </div>
       </fieldset>
     </div>
 

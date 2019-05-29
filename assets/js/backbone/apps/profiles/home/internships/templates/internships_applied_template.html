@@ -10,10 +10,10 @@
       </div>
       <% if (data.length > 0) { %>
         <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
-          <label class="usajobs-search-controls__sort-label" for="sort_attribute">
+          <label class="usajobs-search-controls__sort-label" for="sort-applied">
             Sort by
           </label>
-          <select name="sort_attribute" id="sort-applied" class="usajobs-search-controls__sort-control">
+          <select name="sort-applied" id="sort-applied" class="usajobs-search-controls__sort-control">
             <option value="" disabled>- Sort By -</option>
             <option value="submittedAt" <% if (sort == 'submittedAt') { %>selected<% } %>>Application status</option>
             <option value="communityName" <% if (sort == 'communityName') { %>selected<% } %>>Program</option>
