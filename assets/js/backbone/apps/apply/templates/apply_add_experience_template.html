@@ -1,4 +1,4 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
 <% 
 var getValue = function (field) {
   return obj[field] ? obj[field] : '';
@@ -53,7 +53,7 @@ var getValue = function (field) {
             <input type="text" class="fullwidth form-control validate" id="city" name="city" value="<%= getValue('cityName') %>" data-validate="empty,count100,html">
           </div>
           <div class="required-input apply_countrySubdivision">
-            <label for="state">State, Territory, or Province</label>
+            <label for="apply_countrySubdivision">State, Territory, or Province</label>
             <span class="field-validation-error error-empty" style="display:none;">You must select a state, territory, or province.<br /></span>
             <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" value="<% if (obj['countrySubdivision']) { %><%= countrySubdivision.countrySubdivisionId %><% } %>" disabled /> 
           </div>

@@ -4,7 +4,8 @@
     <div id="apply-transcript">      
       <span class="field-validation-error upload-error" style="display:none;" >You must select one transcript or upload a new one.</span> 
       <span class="field-validation-error refresh-error" style="display:none;" >You must click the Refresh transcripts button to see your changes.</span>           
-      <fieldset id="transcripts" class="usajobs-fieldset" >          
+      <fieldset id="transcripts" class="usajobs-fieldset">
+        <legend class="usa-sr-only">Transcript</legend>
         <ul class="transcript-card-buttons">   
           <% _.each(transcripts, function (transcript) { %>
             <li class="transcript-card-button">
