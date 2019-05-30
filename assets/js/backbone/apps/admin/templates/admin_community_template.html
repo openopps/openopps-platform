@@ -24,13 +24,17 @@
 <% } %>
 <div id="community-header" class="usajobs-grid-full">
   <div class="usa-width-one-whole">
-    <select id="communities" class="dropdown">
-      <option value=""></option>
-      <% _.each(communities, function (c) { %>
-          <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
-      <% }); %>
-    </select>
-    <a href="/admin/community/<%=community.communityId %>/edit" id="community-edit" class="community-header-link">Manage community</a>
+    <fieldset class="usajobs-fieldset">
+      <legend class="usa-sr-only">Select community</legend>
+      <label for="communities" class="usa-sr-only">Community</label>
+      <select id="communities" class="dropdown">
+        <option value=""></option>
+        <% _.each(communities, function (c) { %>
+            <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
+        <% }); %>
+      </select>
+      <a href="/admin/community/<%=community.communityId %>/edit" id="community-edit" class="community-header-link">Manage community</a>
+    </fieldset>
   </div>
 </div>
 <div class="usajobs-grid-full">

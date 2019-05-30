@@ -11,55 +11,58 @@
 <h2><%- agency.name || community.communityName || 'Sitewide' %></h2>
 <h3>Opportunities</h3>
 <div class="usajobs-grid-full">
-  <ul class="usa-unstyled-list__radio--horizontal" id="opp-status">
-    <% if (community.duration == 'Cyclical') { %>
-      <li>
-        <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft">
-        <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- draft.length %></label>
-      </li>
-      <li>
-        <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
-        <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
-      </li>
-      <li>
-        <input id="approved" name="opp-status" type="radio" class="filter-radio" value="approved" >
-        <label for="approved"><span class="usajobs-pill--opportunity-status status-approved">Approved</span> <%- approved.length %></label>
-      </li>
-      <li>
-        <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
-        <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
-      </li>
-      <li>
-        <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
-        <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
-      </li>
-    <% } else { %>
-      <li>
-        <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
-        <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
-      </li>
-      <li>
-        <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
-        <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
-      </li>
-      <li>
-        <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="notOpen">
-        <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- notOpen.length %></label>
-      </li>
-      <li>
-        <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="inProgress">
-        <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- inProgress.length %></label>
-      </li>
-      <li>
-        <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
-        <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
-      </li>
-      <li>
-        <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled">
-        <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- canceled.length %></label>
-      </li>
-    <% } %>
-  </ul>
+  <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Opportunity status</legend>
+    <ul class="usa-unstyled-list__radio--horizontal" id="opp-status">
+      <% if (community.duration == 'Cyclical') { %>
+        <li>
+          <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft">
+          <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- draft.length %></label>
+        </li>
+        <li>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
+        </li>
+        <li>
+          <input id="approved" name="opp-status" type="radio" class="filter-radio" value="approved" >
+          <label for="approved"><span class="usajobs-pill--opportunity-status status-approved">Approved</span> <%- approved.length %></label>
+        </li>
+        <li>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
+        </li>
+        <li>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
+        </li>
+      <% } else { %>
+        <li>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
+        </li>
+        <li>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
+        </li>
+        <li>
+          <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="notOpen">
+          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- notOpen.length %></label>
+        </li>
+        <li>
+          <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="inProgress">
+          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- inProgress.length %></label>
+        </li>
+        <li>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
+        </li>
+        <li>
+          <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled">
+          <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- canceled.length %></label>
+        </li>
+      <% } %>
+    </ul>
+  </fieldset>
 </div>
 
 <div id="task-table" class="table-responsive"></div>
