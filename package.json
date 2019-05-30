@@ -124,6 +124,7 @@
     "migrate:down": "node ./node_modules/db-migrate/bin/db-migrate down",
     "migrate:check": "node ./node_modules/db-migrate/bin/db-migrate up --dry-run",
     "publish": "gulp publish",
+    "patch": "gulp patch",
     "start": "npm run migrate:up && node app.js",
     "test": "npm run test:unit",
     "test:unit": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/unit/setup.js test/unit/*.test.js test/unit/**/*.test.js --opts test/test/mocha.opts",
