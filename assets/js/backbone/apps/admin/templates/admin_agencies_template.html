@@ -10,15 +10,19 @@
 <% if (departments) { %>
   <div class="usajobs-grid-full">
     <div class="usa-width-one-whole">
-      <select id="agencies" class="dropdown">
-        <% _.each(departments, function (d) { %>
-          <optgroup label="<%- d.name %>">
-            <% _.each(d.agencies, function (a) { %>}
-              <option value=<%- a.agencyId %> <% if (a.agencyId == agency.agencyId) { %>selected<% } %>><%- a.name %></option>
-            <% }); %>
-          </optgroup>
-        <% }); %>
-      </select>
+      <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Select agency</legend>
+        <label for="agencies" class="usa-sr-only">Agency</label>
+        <select id="agencies" class="dropdown">
+          <% _.each(departments, function (d) { %>
+            <optgroup label="<%- d.name %>">
+              <% _.each(d.agencies, function (a) { %>}
+                <option value=<%- a.agencyId %> <% if (a.agencyId == agency.agencyId) { %>selected<% } %>><%- a.name %></option>
+              <% }); %>
+            </optgroup>
+          <% }); %>
+        </select>
+      </fieldset>
     </div>
   </div>
 <% } else { %>

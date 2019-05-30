@@ -61,7 +61,10 @@
           </td>
         <% } else { %>
           <td class="admin-user__button">
-            <a href="#remove" data-user-id="<%- u.id %>" class="remove-member" alt="Remove member" title="Remove member"><span class='fa fa-times'></span></a>
+            <a href="#remove" data-user-id="<%- u.id %>" class="remove-member" alt="Remove member" title="Remove member">
+              <span class='fa fa-times'></span>
+              <span class="usa-sr-only">Remove member</span>
+            </a>
           </td>
         <% } %>
         <td>

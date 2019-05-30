@@ -11,9 +11,10 @@
 <div>All fields are required unless otherwise noted</div>
 <form action="javascript:void(0)" class="usa-form-xl" role="form" id="form-community-edit">
   <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Community attributes</legend>
     <h2>Community attributes</h2>
     <div class="usa-fieldset-inputs">
-      <label for="community-type"><h5>Community type</h5></label>
+      <h5>Community type</h5>
       <div id="community-type">
         <% if (communityType == 'Career') { %>
           Career field - <%= communityTypeValue.name %>
@@ -23,30 +24,34 @@
       </div>
     </div>
     <div class="usa-fieldset-inputs">
-      <label for="community-audience"><h5>Target audience</h5></label>
+      <h5>Target audience</h5>
       <div id="community-audience"><%= targetAudience %></div>
     </div>
     <div class="usa-fieldset-inputs">
-      <label for="community-agency"><h5>Agency</h5></label>
+      <h5>Agency</h5>
       <div id="community-agency"><%= agency ? agency.name : '' %></div>
     </div>
     <div class="form-group required-input usa-fieldset-inputs">
-        <label for="community-group"><h5>Closed group</h5></label>
+      <h5>Closed group</h5>
+      <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Select agency</legend>
         <p class="label-brief">Require new members to request to join your community?</p>
         <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
         <ul class="usa-unstyled-list" id="community-group">
           <li>
             <input id="closed-yes" name="community-group" type="radio" value="true" <% if (isClosedGroup) { %><%= "checked" %><% } %>>
-            <label for="enrolled-yes">Yes</label>
+            <label for="closed-yes">Yes</label>
           </li>
           <li>
             <input id="closed-no" name="community-group" type="radio" value="false" <% if (isClosedGroup == false) { %><%= "checked" %><% } %>>
-            <label for="enrolled-no">No</label>
+            <label for="closed-no">No</label>
           </li>
         </ul>
-      </div>
+      </fieldset>
+    </div>
   </fieldset>
   <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Community information</legend>
     <h2>Community information</h2>
     <div class="required-input">
       <label for="community-name">Name</label>
@@ -78,6 +83,7 @@
     </div>
   </fieldset>
   <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Save or cancel</legend>
     <div class="usajobs-button_bar--slim">
       <div class="usajobs-button_bar__body">
         <a href="#" class="usa-button usa-button-secondary usa-button-left" id="community-edit-cancel">Cancel</a>
