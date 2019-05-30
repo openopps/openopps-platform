@@ -80,8 +80,17 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: 'dev'
+              ignore:
+                - 'dev'
+                - 'staging'
       - "build-and-tag":
           filters:
             branches:
               only: 'dev'
+      - "build-patch-and-tag":
+          filters:
+            branches:
+              only: 'staging'
+          requires:
+            - hold
+            
