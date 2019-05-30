@@ -36,17 +36,21 @@
             </div>
         </div>
         <h4 class="usajobs-search-filters__title skill">Skill</h4>
+        <label class="sr-only" for="skill">Skill</label>
         <input type="text" id="skill" title="Skill" />
 
         <h4 class="usajobs-search-filters__title career">Language</h4>
+        <label class="sr-only" for="language">Language</label>
         <input type="text" id="language" title="Language" />
 
         <div class="agencyselect">
-            <h4 class="usajobs-search-filters__title career ">Agency</h4>
+            <h4 class="usajobs-search-filters__title career">Agency</h4>
+            <label class="sr-only" for="agency">Agency</label>
             <input type="text" id="agency" title="Agency" />
         </div>
         <div id="dossection" class="dossection">
             <h4 class="usajobs-search-filters__title career">Bureau</h4>
+            <label class="sr-only" for="bureau">Bureau</label>
             <select id="bureau" class="dropdown">
                 <option></option>
             <% if (bureaus.length) { %>
@@ -58,6 +62,7 @@
             </select>
             <div class="office_section" style="display: none;">
                 <h4 class="usajobs-search-filters__title career">Office/post</h4>
+                <label class="sr-only" for="office">Office/post</label>
                 <input type="hidden" id="office" name="office_id" value="<% if (filters.office) { %><%= filters.office.id %><% } %>" class="dropdown">
             </div>
         </div>
