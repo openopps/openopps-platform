@@ -88,9 +88,8 @@ workflows:
             branches:
               only: 'dev'
       - "build-patch-and-tag":
+          type: approval
           filters:
             branches:
               only: 'staging'
-          requires:
-            - hold
             
