@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     working_directory: ~/openopps/openopps-platform
-    parallelism: 4
+    parallelism: 1
     environment:
       CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
     docker:
@@ -29,36 +29,14 @@ jobs:
           command: npm run cover
       - run: ./cc-test-reporter after-build --exit-code $?
   
-  "build-and-tag":
+  tag:
     working_directory: ~/openopps/openopps-platform
     parallelism: 1
-    environment:
-      CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
-    docker:
-      - image: circleci/node:8.11.3
-      - image: circleci/postgres:9.6-alpine
-        environment:
-          POSTGRES_USER: midas
-          POSTGRES_PASSWORD: midas
-          POSTGRES_DB: midastest
     steps:
       - add_ssh_keys:
           fingerprints:
             - "39:a2:09:7b:82:09:ad:3d:f6:bf:01:94:ab:29:e9:6f"
       - checkout
-      - run: if [[ `npm -v` != 6* ]]; then npm i npm@6.1.0; fi
-      - run: rm -rvf node_modules
-      - run: npm install
-      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - run: chmod +x ./cc-test-reporter
-      - run: ./cc-test-reporter before-build
-      - run:
-          name: Setup testing database
-          command: npm run init:test-db
-      - run: 
-          name: Runnning tests
-          command: npm run cover
-      - run: ./cc-test-reporter after-build --exit-code $?
       - run:
           name: 'Generate new tag for build'
           command: |
@@ -78,18 +56,13 @@ workflows:
   openopps-build:
     jobs:
       - build:
+      - tag:
+          requires:
+            - build
           filters:
             branches:
-              ignore:
+              only:
                 - 'dev'
                 - 'staging'
-      - "build-and-tag":
-          filters:
-            branches:
-              only: 'dev'
-      - "build-patch-and-tag":
-          type: approval
-          filters:
-            branches:
-              only: 'staging'
+                - 'master'
             
