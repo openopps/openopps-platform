@@ -29,7 +29,7 @@ jobs:
           command: npm run cover
       - run: ./cc-test-reporter after-build --exit-code $?
   
-  tag:
+  tag-build:
     working_directory: ~/openopps/openopps-platform
     parallelism: 1
     steps:
@@ -55,8 +55,8 @@ workflows:
   version: 2
   openopps-build:
     jobs:
-      - build:
-      - tag:
+      - build
+      - tag-build:
           requires:
             - build
           filters:
