@@ -364,6 +364,7 @@ var BrowseRouter = Backbone.Router.extend({
       Backbone.history.navigate('/login?internships/new', { trigger: true });
       return;
     }
+    $('#search-results-loading').show();
     this.cleanupChildren();
     var params = this.parseQueryParams(queryString);
     if (params.cid) {
