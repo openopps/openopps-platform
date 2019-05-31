@@ -66,7 +66,7 @@ var ApplyView = Backbone.View.extend({
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); }, 
     'change input[name=InternshipAvailability]'                   : function () { this.callMethod(Education.changeInternshipAvailability); }, 
     'change input[name=transcripts]'                              : function () { this.callMethod(Education.changeTranscripts); }, 
-    'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
+    'click #upload-transcript'                                    : function (e) { this.callMethod(Transcripts.upload,e); },
     'click #refresh-transcripts'                                  : function (e) { this.callMethod(Transcripts.refresh, e); },
     'keydown .gpa-input'                                          : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'mouseleave .gpa-input'                                       : function (e) { this.callMethod(Education.gpaKeyDown, e); },
