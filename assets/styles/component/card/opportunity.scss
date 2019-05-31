@@ -1355,6 +1355,10 @@
 
       .usa-button-secondary {
         margin: 0 0 1.5rem 0;
+
+        &[data-state="draft"], &[data-state="save"] {
+          margin-right: .5em;
+        }
       }
     }
   }
