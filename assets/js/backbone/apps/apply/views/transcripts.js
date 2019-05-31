@@ -14,11 +14,14 @@ module.exports.refresh = function (e) {
     url: '/api/application/user/transcripts',
     method: 'GET',
   }).done(function (transcripts) { 
-    this.data.transcripts = transcripts;
+    this.data.transcripts = transcripts;  
     module.exports.renderTranscripts.bind(this)();
+ 
   }.bind(this)).fail(function () {
     showWhoopsPage();
   });
+ 
+  
 };
 
 module.exports.upload = function () {
@@ -27,4 +30,7 @@ module.exports.upload = function () {
 };
 module.exports.renderTranscripts= function (){ 
   $('#transcript-preview-id').html(templates.applyTranscript(this.data));
+  if(this.data.transcripts.length && this.data.transcripts.length==1){    
+    $('input[name=transcripts][id=' + this.data.transcripts[0].CandidateDocumentID +']').prop('checked', true);
+  }
 }; 
