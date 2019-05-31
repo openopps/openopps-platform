@@ -113,7 +113,7 @@ var TaskItemView = BaseView.extend({
     this.model.trigger('task:show:render:done');
     this.initializeProgress();
 
-    if ('#apply' === window.location.hash && !this.model.attributes.volunteer) {
+    if (window.cache.currentUser && this.params.get('action') == 'apply' && !this.model.attributes.volunteer) {
       $('#apply').click();
 
       Backbone.history.navigate(window.location.pathname, {
@@ -489,7 +489,7 @@ var TaskItemView = BaseView.extend({
   apply: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '#apply', { trigger: true });
+      Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '?action=apply', { trigger: true });
       //window.cache.userEvents.trigger('user:request:login');
     } else {
       var locationTag = window.cache.currentUser.tags.filter(function (t) {
