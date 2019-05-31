@@ -47,38 +47,43 @@ var InternshipView = BaseView.extend({
     $('#search-results-loading').hide();
     this.updateInternshipEmail();
     this.loadApplicants();
-    if (window.location.hash == '#apply') {
+    if (window.cache.currentUser && this.params.has('action')) {
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
-      this.apply({});
+      var action = this.params.get('action');
+      this[action] && this[action](action);
     }
     $('.usa-footer-search--intern').show();
     $('.usa-footer-search--intern-hide').hide();
     return this;
   },
 
+  save: function (action) {
+    $.ajax({
+      url: '/api/task/save',
+      method: 'POST',
+      data: {
+        taskId: this.model.attributes.id, 
+        action: action,
+      },
+    }).done(function () {
+      if (action == 'save') {
+          $('#save').html('<i class="fa fa-star"></i> Saved');
+          $('#save')[0].setAttribute('data-action', 'unsave');
+        } else {
+          $('#save').html('<i class="far fa-star"></i> Save');
+          $('#save')[0].setAttribute('data-action', 'save');
+        }
+    }).fail(function (err) {
+      showWhoopsPage();
+    }.bind(this));
+  },
+
   toggleSave: function (e) {
     e.preventDefault && e.preventDefault();
     if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?internships/' + this.model.attributes.id, { trigger: true });
+      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '?action=save', { trigger: true });
     } else {
-      $.ajax({
-        url: '/api/task/save',
-        method: 'POST',
-        data: {
-          taskId: this.model.attributes.id, 
-          action: e.currentTarget.getAttribute('data-action'),
-        },
-      }).done(function () {
-        if (e.currentTarget.getAttribute('data-action') == 'save') {
-          $('#save').html('<i class="fa fa-star"></i> Saved');
-          e.currentTarget.setAttribute('data-action', 'unsave');
-        } else {
-          $('#save').html('<i class="far fa-star"></i> Save');
-          e.currentTarget.setAttribute('data-action', 'save');
-        }
-      }).fail(function (err) {
-
-      }.bind(this));
+      this.save(e.currentTarget.getAttribute('data-action'));
     }
   },
 
@@ -109,7 +114,7 @@ var InternshipView = BaseView.extend({
   apply: function (e) {
     e.preventDefault && e.preventDefault();
     if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '#apply', { trigger: true });
+      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '?action=apply', { trigger: true });
     } else if (window.cache.currentUser.isUsCitizen) {
       if(this.model.attributes.application){
         this.updateApplication();
