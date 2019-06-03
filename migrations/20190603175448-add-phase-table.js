@@ -20,7 +20,7 @@ exports.up = function (db, callback) {
     name: { type: 'text', notNull: true, defaultValue: '' },
     description: { type: 'text', notNull: true, defaultValue: '' },     
     sequence: { type: 'integer', notNull: true, defaultValue: 1},
-    config: { type: 'jsonb', notNull: true, defaultValue: '' },
+    config: { type: 'jsonb', notNull: true, defaultValue: '{}' },
   }, callback );
 }
 
