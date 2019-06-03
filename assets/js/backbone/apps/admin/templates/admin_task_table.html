@@ -52,9 +52,10 @@
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
                 class="task-open"
-                alt="Publish Task"
-                title="Publish Task">
+                alt="Publish Opportunity"
+                title="Publish Opportunity">
                 <span class='fa fa-check'></span>
+                <span class="usa-sr-only">Publish Opportunity</span>
               </a>
             </td>
           <% } else if (_.contains(['open','notopen', 'inprogress'], status.toLowerCase())) { %>
@@ -66,6 +67,7 @@
                 alt="Change Owner"
                 title="Change Owner">
                 <i class="fas fa-user-cog"></i>
+                <span class="usa-sr-only">Change Owner</span>
               </a>
             </td>
           <% } else if (_.contains(['completed', 'canceled', 'draft','approved'], status.toLowerCase())) { %>
@@ -79,9 +81,10 @@
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
                 class="delete-task"
-                alt="Delete Task"
-                title="Delete Task">
+                alt="Delete Opportunity"
+                title="Delete Opportunity">
                 <span class='fa fa-times'></span>
+                <span class="usa-sr-only">Delete Opportunity</span>
               </a>
             </td>
           <% } else if (_.contains(['open', 'notopen', 'inprogress'], status.toLowerCase())) { %>
@@ -94,6 +97,7 @@
                   alt="Add participant"
                   title="Add participant">
                   <i class="fas fa-user-plus"></i>
+                  <span class="usa-sr-only">Add participant</span>
                 </a>
               </td>
             <% } %>

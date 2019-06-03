@@ -44,7 +44,7 @@ var ApplyView = Backbone.View.extend({
     'change [name=has_security_clearance]'                        : function () { this.callMethod(Experience.toggleSecurityClearanceDetails); },
     'click #saveExperienceContinue'                               : function () { this.callMethod(Experience.saveExperienceContinue); },
     'click #add-experience'                                       : function () { this.callMethod(Experience.toggleAddExperience); },
-    'click #edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
+    'click .edit-experience'                                      : function (e) { this.callMethod(Experience.toggleUpdateExperience, e); },
     'click .cancel-add-experience-reference'                      : function () { this.callMethod(Experience.toggleExperienceOff); },
     'click #save-add-experience'                                  : function () { this.callMethod(Experience.saveExperience); },
     'click #save-update-experience'                               : function () { this.callMethod(Experience.updateExperience); },
@@ -66,7 +66,7 @@ var ApplyView = Backbone.View.extend({
     'change input[name=ContinueEducation]'                        : function () { this.callMethod(Education.changeContinueEducation); }, 
     'change input[name=InternshipAvailability]'                   : function () { this.callMethod(Education.changeInternshipAvailability); }, 
     'change input[name=transcripts]'                              : function () { this.callMethod(Education.changeTranscripts); }, 
-    'click #upload-transcript'                                    : function () { this.callMethod(Transcripts.upload); },
+    'click #upload-transcript'                                    : function (e) { this.callMethod(Transcripts.upload,e); },
     'click #refresh-transcripts'                                  : function (e) { this.callMethod(Transcripts.refresh, e); },
     'keydown .gpa-input'                                          : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'mouseleave .gpa-input'                                       : function (e) { this.callMethod(Education.gpaKeyDown, e); },
@@ -74,7 +74,7 @@ var ApplyView = Backbone.View.extend({
     'blur .completionYear-input'                                  : function (e) { this.callMethod(Education.completionYearBlur, e); },
     
     //language events
-    'click #add-language, #edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
+    'click #add-language, .edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
     'click #cancel-language'                                      : function () { this.callMethod(Language.toggleLanguagesOff); },  
     'click #save-language'                                        : function (e) { this.callMethod(Language.saveLanguage, e); },
     'click #saveLanguageContinue'                                 : function () { this.callMethod(Language.saveLanguageContinue); },

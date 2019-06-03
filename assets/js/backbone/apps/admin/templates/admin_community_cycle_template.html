@@ -7,7 +7,7 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-<p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<p class="back-link" role="navigation" aria-label="Back"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
 <h2><%- communityName %>
 </h2>
 <h3>Cycles<a href="/admin/community/<%- communityId %>/cycles?edit=new" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
@@ -52,6 +52,7 @@
               alt="Edit cycle"
               title="Edit cycle">
               <span class='fas fa-edit'></span>
+              <span class="usa-sr-only">Edit cycle</span>
             </a>
           </td>
           <% if (new Date(cycle.applyStartDate) > new Date()) { %>
@@ -63,6 +64,7 @@
                 alt="Delete cycle"
                 title="Delete cycle">
                 <span class='fa fa-times'></span>
+                <span class="usa-sr-only">Delete cycle</span>
               </a>
             </td>
           <% } else { %>

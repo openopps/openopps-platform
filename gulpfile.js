@@ -170,5 +170,65 @@ gulp.task('publish', gulp.series('build', 'create-release', function (done) {
   });
 }));
 
+// Build an octopus patch release
+gulp.task('patch-release', function (done) {
+  const octo = require('@octopusdeploy/gulp-octo');
+  const git = require('gulp-git');
+  git.revParse({args:'--abbrev-ref HEAD'}, function (err, branch) {
+    if (err) {
+      throw(err);
+    } else if (branch != 'staging') {
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the staging branch.'))
+    } else {
+      git.status({args: '--ahead-behind'}, function (err, stdout) {
+        if (err) {
+          throw(err);
+        } else if (stdout.indexOf('Your branch is up to date') < 0) {
+          throw(new Error('Your copy of the staging branch is not current. Please pull latest version and try again.'))
+        } else {
+          git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+            if(err) { throw(err); }
+            var pack = gulp.src(releaseFiles)
+              .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }));
+            if(process.env.OctoHost && process.env.OctoKey) {
+              pack.pipe(octo.push({
+                host: process.env.OctoHost,
+                apiKey: process.env.OctoKey,
+              })).on('finish', done).on('error', done);
+            } else {
+              pack.pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+gulp.task('patch', gulp.series('build', 'patch-release', function (done) {
+  const octopusApi = require('octopus-deploy');
+  const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
+  octopusApi.init({
+    host: process.env.OctoHost,
+    apiKey: process.env.OctoKey,
+  });
+  git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+    if(err) { throw(err); }
+    const releaseParams = {
+      projectSlugOrId: 'openopps',
+      version: tag.replace('v', ''),
+      packageVersion: tag.replace('v', ''),
+      releaseNotes: 'Patch release ' + tag.replace('v', '').split('-')[0],
+    };
+    simpleCreateRelease(releaseParams).then((release) => {
+      console.log('Octopus release created:', release);
+      done();
+    }, (error) => {
+      console.log('Octopus release creation failed!', error);
+      done();
+    });
+  });
+}));
+
 //Default task
 gulp.task('default', gulp.series('lint', 'sass', 'scripts', 'move', 'watch'));

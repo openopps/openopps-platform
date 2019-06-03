@@ -1,4 +1,4 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
 
 <div class="usajobs-content-gutter opportunity-gutter internship education-apply">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
@@ -6,6 +6,7 @@
       <h2>Education &amp; Transcript</h2>
       <form class="usa-form-xl">
         <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Education</legend>
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
           <h3 class="usajobs-profile-home-section__sub-section">Education</h3>
           <div class="form-group required-input">
@@ -14,7 +15,7 @@
             <input type="text" class="fullwidth form-control validate" id="school-name" name="school-name" data-validate="empty">
           </div>
           <div class="required-input apply_country">
-            <label for="country">Country</label>
+            <label for="apply_country">Country</label>
             <span class="field-validation-error error-empty" style="display:none;">You must select a country.</span>              
             <input  id="apply_country" class="dropdown validate" data-validate="empty" />
           </div>
@@ -30,7 +31,7 @@
             <input type="text" class="fullwidth form-control validate" id="city" name="city" data-validate="empty">
           </div>
           <div class="required-input apply_countrySubdivision">
-            <label for="countrySubdivision">State, Territory, or Province</label>
+            <label for="apply_countrySubdivision">State, Territory, or Province</label>
             <span class="field-validation-error error-empty" style="display:none;">You must select a state.</span>
             <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" disabled /> 
           </div>
@@ -47,6 +48,7 @@
         </fieldset>
 
         <fieldset class="usajobs-fieldset--horizontal">
+          <legend class="usa-sr-only">Completion date</legend>
           <div class="form-group required-input usa-fieldset-inputs">
             <label for="CompletionDate">
               <h5 class="usa-input-optional usajobs-form__label-header">Completion date</h5>
@@ -66,6 +68,7 @@
         </fieldset>
 
         <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Major and minor</legend>
           <div>
             <label for="major" class="usa-input-optional">Major</label>
             <input type="text" class="fullwidth form-control" id="major" name="major">
@@ -77,49 +80,53 @@
         </fieldset>
 
         <fieldset class="usajobs-fieldset--horizontal">
-          <label for="GPA">
+          <legend class="usa-sr-only">Grade Point Average (GPA)</legend>
+          <label for="GPAverage">
             <h5 class="usajobs-form__label-header">Grade Point Average (GPA)</h5>
           </label>
           <div>
           <div class="gpa form-group required-input">
             <label for="GPA" class="no-margin-top">GPA</label>
             <span class="field-validation-error error-empty" style="display:none;">You must select GPA.</span>
-            <input id="GPA" maxlength="6" name="GPA" type="text" class="validate" data-validate="empty">
+            <input id="GPA" maxlength="6" name="GPAverage" type="text" class="validate" data-validate="empty">
           </div>
           <div class="gpa form-group required-input gpa-max">
             <label for="GPAMax" class="no-margin-top">of GPA Max.</label>
             <span class="field-validation-error error-empty" style="display:none;">You must select GPA Max.</span>
-            <input id="GPAMax" maxlength="6" name="GPAMax" type="text" class="validate" data-validate="empty">
+            <input id="GPAMax" maxlength="6" name="GPAverage" type="text" class="validate" data-validate="empty">
           </div>
-          
         </fieldset>
 
         <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Total credits earned</legend>
           <div>
-            <label for="credits" class="usa-input-optional">Total credits earned</label>
+            <label for="credit-earned" class="usa-input-optional">Total credits earned</label>
             <input type="text" class="fullwidth form-control" id="credit-earned" name="credits">
           </div>
-          <div class="form-group required-input usa-fieldset-inputs">
-            <label for="GPA">
-              <h5 class="usa-input-optional usajobs-form__label-header">System for awarded credits</h5>
-            </label>
-            <ul class="usa-unstyled-list usa-fieldset-inputs">
-              <li>
-                <input id="credit-S" name="CreditSystem" type="radio" value="Semester hours">
-                <label for="credit-S">Semester hours</label>
-              </li>
-              <li>
-                <input id="credit-Q" name="CreditSystem" type="radio" value="Quarter hours">
-                <label for="credit-Q">Quarter hours</label>
-              </li>
-              <li>
-                <input id="credit-C" name="CreditSystem" type="radio" value="Continuing education units">
-                <label for="credit-C">Continuing education units</label>
-              </li>
-            </ul>
-          </div>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">System for awarded credits</legend>
+            <div class="form-group required-input usa-fieldset-inputs">
+              <label for="CreditSystem">
+                <h5 class="usa-input-optional usajobs-form__label-header">System for awarded credits</h5>
+              </label>
+              <ul class="usa-unstyled-list usa-fieldset-inputs">
+                <li>
+                  <input id="credit-S" name="CreditSystem" type="radio" value="Semester hours">
+                  <label for="credit-S">Semester hours</label>
+                </li>
+                <li>
+                  <input id="credit-Q" name="CreditSystem" type="radio" value="Quarter hours">
+                  <label for="credit-Q">Quarter hours</label>
+                </li>
+                <li>
+                  <input id="credit-C" name="CreditSystem" type="radio" value="Continuing education units">
+                  <label for="credit-C">Continuing education units</label>
+                </li>
+              </ul>
+            </div>
+          </fieldset>
           <div class="required-input">
-            <label for="honor-field" class="usa-input-optional">Honors</label>
+            <label for="honors" class="usa-input-optional">Honors</label>
             <select id="honors" class="dropdown">
               <option value=""> </option>
               <% _.each(honors, function (h) { %>             
@@ -135,8 +142,8 @@
 
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
-            <button class="usa-button usa-button-secondary usa-button-left"data-state="cancel"  id="cancel-education">Cancel and return</button>
-            <a href="#success" id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</a>
+            <button class="usa-button usa-button-secondary usa-button-left"data-state="cancel" id="cancel-education">Cancel and return</button>
+            <button id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</button>
           </div>
         </div>
       </form>

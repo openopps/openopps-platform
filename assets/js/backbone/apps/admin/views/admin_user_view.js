@@ -20,9 +20,11 @@ var AdminUserView = Backbone.View.extend({
     'click .link-backbone'      : linkBackbone,
     'click .user-enable'        : 'toggleCheckbox',
     'click .assign-admin'       : 'toggleCheckbox',
+    'click .member-enable'      : 'toggleCheckbox',
     'click .user-reset'         : 'resetPassword',
     'click #invite-members'     : 'inviteMembers',
     'keyup #user-filter'        : 'filter',
+    'click .remove-member'      : 'removeMember',
   },
 
   initialize: function (options) {
@@ -162,6 +164,17 @@ var AdminUserView = Backbone.View.extend({
     $('#community-add-member').focus();
   },
 
+  removeMember: function (event) {
+    event.preventDefault && event.preventDefault();
+    $.ajax({
+      url: '/api/admin/community/' + this.community.communityId + '/member/' + $(event.currentTarget).data('userId') + '?action=remove',
+      dataType: 'json',
+      success: function () {
+        $(event.currentTarget).closest('tr').remove();
+      },
+    });
+  },
+
   renderUsers: function (data) {
     data.urlbase = '/admin/users';
     data.q = data.q || '';
@@ -275,6 +288,8 @@ var AdminUserView = Backbone.View.extend({
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
       case 'community':
         return '/api/admin/communityAdmin/' + id + '/' + this.community.communityId + '?action=' + elem.prop('checked');
+      case 'member':
+        return '/api/admin/community/' + this.community.communityId + '/member/' + id + '?action=' + elem.prop('checked');
     }
   },
 

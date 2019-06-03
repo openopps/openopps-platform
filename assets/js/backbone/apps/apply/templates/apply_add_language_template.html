@@ -1,4 +1,5 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
+
 <div class="usajobs-content-gutter opportunity-gutter internship">
   <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
       <div class="usajobs-alert__figure">
@@ -17,6 +18,7 @@
       <h2>Languages &amp; Skills</h2>
       <form class="usa-form-xl">
         <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Languages</legend>
           <span class="usajobs-form__legend">All fields are required</span>
           <h3 class="usajobs-profile-home-section__sub-section">Languages</h3>
           <div class="form-group required-input" id="language-select">
@@ -81,7 +83,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button id="cancel-language" class="usa-button usa-button-secondary usa-button-left" data-state="cancel">Cancel and return</button>
-              <a href="#success" id="save-language" class="usa-button usa-button-primary usajobs-button_bar__save" data-action="<%= action %>" data-id="<%= id %>">Save language</a>
+              <button id="save-language" class="usa-button usa-button-primary usajobs-button_bar__save" data-action="<%= action %>" data-id="<%= id %>">Save language</button>
             </div>
           </div>
         </fieldset>

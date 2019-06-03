@@ -1,15 +1,17 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
 
 <div class="usajobs-content-gutter opportunity-gutter internship education">
   <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
     <div class="usajobs-profile-home-section">
       <h2 class="usajobs-profile-home-section__title">Education &amp; Transcript</h2>
       <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Education</legend>
         <div class="usajobs-profile-home-section__body">
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
           <h3 class="usajobs-profile-home-section__sub-section">Education</h3>
           <p>Please tell us about your current academic standing and list any other education that you have completed to date.</p>
           <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Currently enrolled</legend>
             <div class="form-group required-input usa-fieldset-inputs" id="apply-enrolled">
               <h5>
                 <label for="Enrolled" class="usajobs-profile-question__title">
@@ -28,6 +30,9 @@
                 </li>
               </ul>
             </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Junior</legend>
             <div class="form-group required-input usa-fieldset-inputs" id="apply-junior">
               <h5>
                 <label for="Junior" class="usajobs-profile-question__title">
@@ -49,6 +54,9 @@
                 </li>
               </ul>
             </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Continue education</legend>
             <div class="form-group required-input usa-fieldset-inputs" id="apply-continue-education">
             <h5>
               <label for="ContinueEducation" class="usajobs-profile-question__title">
@@ -67,6 +75,9 @@
                 </li>
               </ul>
             </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Able to work</legend>
             <div class="form-group required-input usa-fieldset-inputs" id="apply-internship-availability">
               <h5>
                 <label for="InternshipAvailability" class="usajobs-profile-question__title">
@@ -85,6 +96,9 @@
                 </li>
               </ul>
             </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Cumulative GPA</legend>
             <div class="form-group required-input" id="apply-gpa">
               <h5><label for="cumulative-gpa" class="no-margin-top">What is your cumulative GPA on a 4.0 scale?</label></h5>
               <span class="field-validation-error error-empty" style="display:none;">Please enter a GPA.</span>
@@ -96,7 +110,6 @@
                 <% } %>
             </div>
           </fieldset>
-
         </div>
         
         <div id="education-preview-id"></div>
@@ -112,7 +125,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
-              <a href="#success" id="saveEducationContinue" class="usa-button usa-button-primary usajobs-button_bar__save apply-continue" data-action="educationContinue">Save and continue</a>
+              <button id="saveEducationContinue" class="usa-button usa-button-primary usajobs-button_bar__save apply-continue" data-action="educationContinue">Save and continue</button>
             </div>
           </div>
         </div>

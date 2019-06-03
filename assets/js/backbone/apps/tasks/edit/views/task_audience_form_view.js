@@ -16,6 +16,7 @@ var TaskAudienceFormView = Backbone.View.extend({
 
   render: function () {    
     this.loadAudienceCommunityData();
+    $('#search-results-loading').hide();
     return this;
   },
 
@@ -53,7 +54,6 @@ var TaskAudienceFormView = Backbone.View.extend({
               $('.federal-programs').hide();
               $('.student-programs').hide();
             }
-            $('#search-results-loading').hide();
           }.bind(this), 50);
         }
       }.bind(this),

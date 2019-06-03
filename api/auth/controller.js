@@ -246,7 +246,7 @@ router.get('/api/auth/logout', async (ctx, next) => {
   if(openopps.auth.oidc) {
     response.redirectURL = openopps.auth.oidc.endSessionUrl({
       post_logout_redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/loggedOut',
-      id_token_hint: ctx.session.passport.user.id_token,
+      id_token_hint: ctx.session.passport.user.tokenset.id_token,
     });
   }
   ctx.logout();

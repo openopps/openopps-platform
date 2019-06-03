@@ -110,3 +110,18 @@ module.exports.updateCommunity = async function (data, callback) {
     callback({ message: 'An error was encountered trying to update this community.' });
   });
 };
+
+module.exports.updateCommunityMembership = async function (params, action, callback) {
+  await dao.CommunityUser.findOne('user_id = ? and community_id = ?', params.userId, params.communityId).then(async user => {
+    if (action == 'remove') {
+      await dao.CommunityUser.delete(user).then(() => { callback(); }).catch(err => {
+        callback({ message: 'An error was encountered trying to remove the user from the community.' });
+      });
+    } else {
+      user.disabled = (action != 'true');
+      await dao.CommunityUser.update(user).then(() => { callback(); }).catch(err => {
+        callback({ message: 'An error was encountered trying to update the user\'s membership to the community.' });
+      });
+    }
+  }).catch(callback);
+};

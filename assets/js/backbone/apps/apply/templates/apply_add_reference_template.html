@@ -1,4 +1,4 @@
-<div id="process-title-banners"></div>
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
 <% 
 var getValue = function (field) {
   return obj[field] ? obj[field] : '';
@@ -10,64 +10,77 @@ var getValue = function (field) {
       <h2>Experience &amp; References</h2>
       <form class="usa-form-xl">
         <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">References</legend>
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
           <h3 class="usajobs-profile-home-section__sub-section">References</h3>
-          <div class="required-input">
-            <label for="name" class="no-margin-top">Name</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must enter a name.</span>
-            <span class="field-validation-error error-count100" style="display:none;">The name must be no more than 100 characters.</span>
-            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="name" name="name" value="<%= getValue('referenceName') %>" data-validate="empty,count100,html">
-          </div>
-          <div class="required-input">
-            <label for="telephone">Phone</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must enter a phone.</span>
-            <span class="field-validation-error error-count100" style="display:none;">The phone must be no more than 100 characters.</span>
-            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <input type="text" class="fullwidth form-control validate" id="telephone" name="telephone" value="<%= getValue('referencePhone') %>" data-validate="empty,count100,html">
-          </div>
-          <div class="required-input">
-            <label for="email">Email</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must enter an email.</span>
-            <span class="field-validation-error error-count100" style="display:none;">The email must be no more than 100 characters.</span>
-            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <span class="field-validation-error error-email" style="display:none;">You must enter a valid email.</span>
-            <input type="text" class="fullwidth form-control validate" id="email" name="email" value="<%= getValue('referenceEmail') %>" data-validate="empty,count100,html,email">
-          </div>
-          <div class="form-group required-input">
-            <h5><label for="ReferenceType" class="usajobs-profile-question__title">Reference type</label></h5>
-            <ul class="usa-unstyled-list" id="reference-type">
-              <li>
-                <input id="reference-type-professional" name="ReferenceType" type="radio" value="<%= referenceTypes['PROFESSIONAL'].lookupCodeId %>" data-name="Professional" <% if (getValue('referenceTypeId') == '' || getValue('referenceTypeId') == referenceTypes['PROFESSIONAL'].lookupCodeId) { %>checked<% } %>>
-                <label for="reference-type-professional">Professional</label>
-              </li>
-              <li>
-                <input id="reference-type-personal" name="ReferenceType" type="radio" value="<%= referenceTypes['PERSONAL'].lookupCodeId %>" data-name="Personal" <% if (getValue('referenceTypeId') == referenceTypes['PERSONAL'].lookupCodeId) { %>checked<% } %>>
-                <label for="reference-type-personal">Personal</label>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <label for="employer" class="usa-input-optional">Employer</label>
-            <input type="text" class="fullwidth form-control" id="employer" name="employer" value="<%= getValue('referenceEmployer') %>">
-          </div>
-          <div>
-            <label for="title" class="usa-input-optional">Title</label>
-            <input type="text" class="fullwidth form-control" id="reference_title" name="title" value="<%= getValue('referenceTitle') %>">
-          </div>
-          <div class="form-group required-input">
-            <h5><label for="Contact" class="usajobs-profile-question__title">May we contact this person about you?</label></h5>
-            <ul class="usa-unstyled-list" id="contact">
-              <li>
-                <input id="contact-yes" name="Contact" type="radio" value="yes" <% if (getValue('isReferenceContact') != '' || !obj.hasOwnProperty('isReferenceContact')) { %>checked <% } %>>
-                <label for="contact-yes">Yes</label>
-              </li>
-              <li>
-                <input id="contact-no" name="Contact" type="radio" value="no" <% if (obj['isReferenceContact'] == false) { %>checked <% } %>>
-                <label for="contact-no">No</label>
-              </li>
-            </ul>
-          </div>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Reference name, phone, and email</legend>
+            <div class="required-input">
+              <label for="name" class="no-margin-top">Name</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a name.</span>
+              <span class="field-validation-error error-count100" style="display:none;">The name must be no more than 100 characters.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+              <input type="text" class="fullwidth form-control validate" id="name" name="name" value="<%= getValue('referenceName') %>" data-validate="empty,count100,html">
+            </div>
+            <div class="required-input">
+              <label for="telephone">Phone</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a phone.</span>
+              <span class="field-validation-error error-count100" style="display:none;">The phone must be no more than 100 characters.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+              <input type="text" class="fullwidth form-control validate" id="telephone" name="telephone" value="<%= getValue('referencePhone') %>" data-validate="empty,count100,html">
+            </div>
+            <div class="required-input">
+              <label for="email">Email</label>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter an email.</span>
+              <span class="field-validation-error error-count100" style="display:none;">The email must be no more than 100 characters.</span>
+              <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+              <span class="field-validation-error error-email" style="display:none;">You must enter a valid email.</span>
+              <input type="text" class="fullwidth form-control validate" id="email" name="email" value="<%= getValue('referenceEmail') %>" data-validate="empty,count100,html,email">
+            </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Reference type</legend>
+            <div class="form-group required-input">
+              <h5><label for="ReferenceType" class="usajobs-profile-question__title">Reference type</label></h5>
+              <ul class="usa-unstyled-list" id="reference-type">
+                <li>
+                  <input id="reference-type-professional" name="ReferenceType" type="radio" value="<%= referenceTypes['PROFESSIONAL'].lookupCodeId %>" data-name="Professional" <% if (getValue('referenceTypeId') == '' || getValue('referenceTypeId') == referenceTypes['PROFESSIONAL'].lookupCodeId) { %>checked<% } %>>
+                  <label for="reference-type-professional">Professional</label>
+                </li>
+                <li>
+                  <input id="reference-type-personal" name="ReferenceType" type="radio" value="<%= referenceTypes['PERSONAL'].lookupCodeId %>" data-name="Personal" <% if (getValue('referenceTypeId') == referenceTypes['PERSONAL'].lookupCodeId) { %>checked<% } %>>
+                  <label for="reference-type-personal">Personal</label>
+                </li>
+              </ul>
+            </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">Reference employer and title</legend>
+            <div>
+              <label for="employer" class="usa-input-optional">Employer</label>
+              <input type="text" class="fullwidth form-control" id="employer" name="employer" value="<%= getValue('referenceEmployer') %>">
+            </div>
+            <div>
+              <label for="reference_title" class="usa-input-optional">Title</label>
+              <input type="text" class="fullwidth form-control" id="reference_title" name="title" value="<%= getValue('referenceTitle') %>">
+            </div>
+          </fieldset>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">May we contact this person about you?</legend>
+            <div class="form-group required-input">
+              <h5><label for="Contact" class="usajobs-profile-question__title">May we contact this person about you?</label></h5>
+              <ul class="usa-unstyled-list" id="contact">
+                <li>
+                  <input id="contact-yes" name="Contact" type="radio" value="yes" <% if (getValue('isReferenceContact') != '' || !obj.hasOwnProperty('isReferenceContact')) { %>checked <% } %>>
+                  <label for="contact-yes">Yes</label>
+                </li>
+                <li>
+                  <input id="contact-no" name="Contact" type="radio" value="no" <% if (obj['isReferenceContact'] == false) { %>checked <% } %>>
+                  <label for="contact-no">No</label>
+                </li>
+              </ul>
+            </div>
+          </fieldset>
         </fieldset>
         <% if (obj['referenceId']) { %>
           <input type="hidden" name="reference-id" id="reference-id" value="<%= referenceId %>" />

@@ -689,6 +689,7 @@ var InternshipEditFormView = Backbone.View.extend({
 
   preview: function (showPreview) {
     if(showPreview) {
+      $('#search-results-loading').show();
       var data = this.getDataFromPage();
       _.each(['description', 'details', 'about'], function (part) {
         if(data[part]) {
@@ -706,6 +707,9 @@ var InternshipEditFormView = Backbone.View.extend({
       });
   
       $('#internship-preview').html(compiledTemplate);
+      setTimeout(function () {
+        $('#search-results-loading').hide();
+      }, 50);
     }
     _.each(['#cancel', '#edit', '#preview', '#save', '#internship-edit', '#internship-preview'], function (id) {
       $(id).toggle();
