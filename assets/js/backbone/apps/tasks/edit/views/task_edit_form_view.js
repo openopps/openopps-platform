@@ -389,6 +389,7 @@ var TaskEditFormView = Backbone.View.extend({
 
   preview: function (showPreview) {
     if(showPreview) {
+      $('#search-results-loading').show();
       var data = this.getDataFromPage();
       _.each(['description', 'details', 'outcome', 'about'], function (part) {
         if(data[part]) {
@@ -404,6 +405,9 @@ var TaskEditFormView = Backbone.View.extend({
         madlibTags: organizeTags(tags),
       });
       $('#step-3').html(compiledTemplate);
+      setTimeout(function () {
+        $('#search-results-loading').hide();
+      }, 50);
     }
     _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3'], function (id) {
       $(id).toggle();
