@@ -8,6 +8,7 @@ var InternshipListItem = require('../templates/internship_search_item.html');
 var InternshipListTemplate = require('../templates/internship_search_template.html');
 var SearchPills = require('../templates/search_pills.html');
 var NoListItem = require('../templates/no_search_results.html');
+var NoCurrentCycle = require('../templates/no_internship_search_results.html');
 var Pagination = require('../../../../components/pagination.html');
 var InternshipFilters = require('../templates/internship_filters.html');
 var InternshipCycle = require('../templates/internship_search_cycle_box.html');
@@ -23,6 +24,7 @@ var InternshipListView = Backbone.View.extend({
     'click #search-pills-remove-all'          : 'removeAllFilters',
     'click .internship-link'                  : 'loadInternship',
     // 'change input[type=radio][name=internship-program]'  : 'changedInternsPrograms',
+    'click .save-internship'                  : 'toggleSave',
   },
     
   initialize: function (options) {
@@ -33,6 +35,7 @@ var InternshipListView = Backbone.View.extend({
     this.filters = { term: this.queryParams.search, page: 1 };
     this.options = options;
     this.cycles = {};
+    this.futureCycles = {};
     this.programs = [];
     this.bureaus = [];
     this.offices = {};
@@ -67,10 +70,14 @@ var InternshipListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
-    this.filter();
     this.renderCycle();
     this.initializeKeywordSearch();
-    this.initializeLocationSearch(); 
+    this.initializeLocationSearch();
+    if (window.cache.currentUser && window.cache.currentUser.hiringPath == 'student') {
+      this.loadSavedInternships();
+    } else {
+      this.filter();
+    }
     $('.usa-footer-search--intern').show();
     $('.usa-footer-search--intern-hide').hide();
     this.$('.usajobs-open-opps-search__box').show();
@@ -81,6 +88,17 @@ var InternshipListView = Backbone.View.extend({
     $('.usa-footer-search--intern-hide').show();
     $('.usa-footer-search--intern').hide();
     removeView(this);
+  },
+
+  loadSavedInternships: function () {
+    $.ajax({
+      url: '/api/user/internship/activities',
+      method: 'GET',
+      success: function (data) {
+        this.savedInternships = data.savedOpportunities;
+        this.filter();
+      }.bind(this),
+    });
   },
 
   loadInternship: function (event) {
@@ -134,15 +152,17 @@ var InternshipListView = Backbone.View.extend({
       async: false,
       success: function (data) {     
         this.cycles = {};
+        this.futureCycles = {};
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         for (var i = 0; i < data.length; i++) {
           var communityId = data[i].communityId;
           var cycleStartDate = new Date(data[i].cycleStartDate);
           var startDate = new Date(data[i].applyStartDate);
           var endDate = new Date(data[i].applyEndDate);
-          var today = new Date(moment().tz("America/New_York").format('MM-DD-YYYY'));
+          var today = new Date(moment().tz('America/New_York').format('MM-DD-YYYY'));
           if (!(communityId in this.cycles)) {
             this.cycles[communityId] = [];
+            this.futureCycles[communityId] = [];
           }
           if (today >= startDate && endDate >= today) {
             this.cycles[communityId].push(_.extend(data[i], { 
@@ -152,7 +172,10 @@ var InternshipListView = Backbone.View.extend({
               cycleStartYear: cycleStartDate.getFullYear(),
             }));
           }
-        } 
+          if (today < startDate) {
+            this.futureCycles[communityId].push(data[i]);
+          }
+        }
       }.bind(this),
     });
   },
@@ -441,7 +464,11 @@ var InternshipListView = Backbone.View.extend({
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
     this.renderFilters();
     
-    if (searchResults.totalHits === 0) {
+    var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+    var communityId = USDOS.communityId;
+    if (!this.cycles[communityId].length) {
+      this.renderNoCurrentCycle();
+    } else if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
@@ -460,6 +487,19 @@ var InternshipListView = Backbone.View.extend({
       ui: UIConfig,
     };
     compiledTemplate = _.template(NoListItem)(settings);
+    $('#task-list').append(compiledTemplate);
+    $('#task-page').hide();      
+    $('#results-count').hide();
+  },
+    
+  renderNoCurrentCycle: function () {
+    var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+    var communityId = USDOS.communityId;
+    var settings = {
+      ui: UIConfig,
+      futureCycles: _.sortBy(this.futureCycles[communityId], 'applyStartDate'),
+    };
+    compiledTemplate = _.template(NoCurrentCycle)(settings);
     $('#task-list').append(compiledTemplate);
     $('#task-page').hide();      
     $('#results-count').hide();
@@ -490,6 +530,7 @@ var InternshipListView = Backbone.View.extend({
   renderItem: function (searchResult) {
     searchResult.tags = {};   
     searchResult.owner.initials = getInitials(searchResult.owner.name);
+    searchResult.saved = !_.isUndefined(_.findWhere(this.savedInternships, { id: searchResult.id }));
     var item = {
       item: searchResult,
       user: window.cache.currentUser,
@@ -690,6 +731,28 @@ var InternshipListView = Backbone.View.extend({
           });
         }
       }
+    }.bind(this));
+  },
+
+  toggleSave: function (e) {
+    e.preventDefault && e.preventDefault();
+    $.ajax({
+      url: '/api/task/save',
+      method: 'POST',
+      data: {
+        taskId: $(e.currentTarget.parentElement).data('id'), 
+        action: e.currentTarget.getAttribute('data-action'),
+      },
+    }).done(function () {
+      if (e.currentTarget.getAttribute('data-action') == 'save') {
+        $(e.currentTarget).html('<i class="fa fa-star"></i> Saved');
+        e.currentTarget.setAttribute('data-action', 'unsave');
+      } else {
+        $(e.currentTarget).html('<i class="far fa-star"></i> Save');
+        e.currentTarget.setAttribute('data-action', 'save');
+      }
+    }).fail(function (err) {
+      showWhoopsPage();
     }.bind(this));
   },
 });
