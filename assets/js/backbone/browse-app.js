@@ -142,6 +142,7 @@ var BrowseRouter = Backbone.Router.extend({
   showWelcome: function () {
     try {
       var user = JSON.parse(atob(new URLSearchParams(window.location.search).get('u')));
+    // eslint-disable-next-line no-empty
     } catch (err) { }
     if (user) {
       Backbone.history.navigate('/welcome', { replace: true, trigger: false });
@@ -438,8 +439,8 @@ var BrowseRouter = Backbone.Router.extend({
 
   initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
-      Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });
-      if(data.attributes.state != 'draft' && data.attributes.communityId=='4') {
+      Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });     
+      if(data.attributes.state != 'draft') {
         setTimeout(function () {
           $('body').addClass('modal-is-open');
           this.modal = new Modal({
@@ -454,26 +455,9 @@ var BrowseRouter = Backbone.Router.extend({
               }.bind(this),
             },           
             secondary: {
-              text: 'Create another internship',
+              text: 'Create another' + ' ' + (((data.attributes.community|| {}).targetAudience == 'Students') ? 'internship' : 'opportunity'),
               action: function () {
-                Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
-                this.modal.cleanup();
-              }.bind(this),
-            },
-          }).render();
-        }, 500);
-      }
-      if(data.attributes.state != 'draft' && data.attributes.communityId!='4') {
-        setTimeout(function () {
-          $('body').addClass('modal-is-open');
-          this.modal = new Modal({
-            el: '#site-modal',
-            id: 'submit-opp',
-            modalTitle: 'Submitted',
-            modalBody: 'Thanks for submitting <strong>' + data.attributes.title + '</strong>. We\'ll review it and let you know if it\'s approved or if we need more information.',
-            primary: {
-              text: 'Close',
-              action: function () {
+                Backbone.history.navigate('/tasks/create?target=' + ((data.attributes.community || {}).targetAudience == 'Students' ? 'students' : 'feds'), { trigger: true });
                 this.modal.cleanup();
               }.bind(this),
             },
@@ -481,6 +465,7 @@ var BrowseRouter = Backbone.Router.extend({
         }, 500);
       }
     });
+   
 
     this.listenTo(model, 'task:save:error', function (model, response, options) {
       var error = options.xhr.responseJSON;
