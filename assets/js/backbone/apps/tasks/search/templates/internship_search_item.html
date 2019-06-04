@@ -1,7 +1,18 @@
 <div class="usajobs-open-opps-opportunity student-internship" data-id="<%- item.id %>">
+  <% if (user && user.hiringPath == 'student') { %>
+    <% if (item.saved) { %>
+      <a class="usajobs-open-opps-opportunity__save-opportunity save-internship" href="#" data-action='unsave'>
+        <i class="fa fa-star"></i> Saved
+      </a>
+    <% } else { %>
+      <a class="usajobs-open-opps-opportunity__save-opportunity save-internship" href="#" data-action='save'>
+        <i class="far fa-star"></i> Save
+      </a>
+    <% } %>
+  <% } %>
   <a class="internship-link" href="/internships/<%- item.id %>?fromSearch">
     <div class="usajobs-open-opps-opportunity__body">
-      <span class="usajobs-open-opps-opportunity__title" itemprop="title">
+      <span class="usajobs-open-opps-opportunity__title <% if (user && user.hiringPath == 'student') { %>title-student<% } %>" itemprop="title">
         <%- item.title %>
       </span>
       <div class="usajobs-open-opps-opportunity__desc">
