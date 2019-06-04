@@ -39,8 +39,9 @@ const exportUserCommunityData = 'SELECT ' +
   ') as signups, ' +
   'task.state, ' +
   'agency.name as agency_name, task."completedAt" ' +
-  'from task inner join midas_user on task."userId" = midas_user.id ' + 
-  'inner join agency on task.agency_id = agency.agency_id ' +
+  'from task ' +
+  'inner join midas_user on task."userId" = midas_user.id ' + 
+  'left join agency on task.agency_id = agency.agency_id ' +
   'where task.community_id = ? ';
 
 var exportFormat = {

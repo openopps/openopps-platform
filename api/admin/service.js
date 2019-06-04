@@ -174,7 +174,7 @@ module.exports.getUsers = async function (page, limit) {
   result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userListQuery, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
-  result = await getUserTaskMetrics (result);
+  result = await this.getUserTaskMetrics (result);
   return result;
 };
 
@@ -184,7 +184,7 @@ module.exports.getUsersForAgency = async function (page, limit, agencyId) {
   result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
-  result = await getUserTaskMetrics (result);
+  result = await this.getUserTaskMetrics (result);
   return result;
 };
 
@@ -194,8 +194,8 @@ module.exports.getUsersForCommunity = async function (page, limit, communityId) 
   result.page = +page || 1;
   result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
-  result = await getUserTaskMetrics (result);
-  result = await getUserTaskCommunityMetrics (result, communityId);
+  result = await this.getUserTaskMetrics (result);
+  result = await this.getUserTaskCommunityMetrics (result, communityId);
   return result;
 };
 
@@ -205,7 +205,7 @@ module.exports.getUsersFiltered = async function (page, query) {
     '%' + query.toLowerCase() + '%',
     '%' + query.toLowerCase() + '%',
     page)).rows;
-  result = await getUserTaskMetrics (result);
+  result = await this.getUserTaskMetrics (result);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 };
@@ -217,7 +217,7 @@ module.exports.getUsersForAgencyFiltered = async function (page, query, agencyId
     '%' + query.toLowerCase() + '%',
     agencyId,
     page)).rows;
-  result = await getUserTaskMetrics (result);
+  result = await this.getUserTaskMetrics (result);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 };
@@ -230,8 +230,8 @@ module.exports.getUsersForCommunityFiltered = async function (page, query, commu
     '%' + query.toLowerCase() + '%',
     communityId,
     page)).rows;
-  result = await getUserTaskMetrics (result);
-  result = await getUserTaskCommunityMetrics(result, communityId);
+  result = await this.getUserTaskMetrics (result);
+  result = await this.getUserTaskCommunityMetrics(result, communityId);
   result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 };
