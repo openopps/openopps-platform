@@ -57,7 +57,13 @@ var TaskEditFormView = Backbone.View.extend({
               this.modalComponent.cleanup();
             }.bind(this),
           },
-          secondary: {},
+          secondary: {
+            text: 'Create another opportunity',
+            action: function () {
+              Backbone.history.navigate('/tasks/create?target=feds', { trigger: true });
+              this.modalComponent.cleanup();
+            }.bind(this),
+          },
         }).render();
       }
     });

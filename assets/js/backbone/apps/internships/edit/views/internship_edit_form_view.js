@@ -67,7 +67,13 @@ var InternshipEditFormView = Backbone.View.extend({
               this.modalComponent.cleanup();
             }.bind(this),
           },
-          secondary: {},
+          secondary: {
+            text: 'Create another internship',
+            action: function () {
+              Backbone.history.navigate('/tasks/create?target=students', { trigger: true });
+              this.modalComponent.cleanup();
+            }.bind(this),
+          },
         }).render();
       }
     });

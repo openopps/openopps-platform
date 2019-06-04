@@ -146,11 +146,12 @@ async function createOpportunity (attributes, done) {
           done(err);
         });  
       });
-    }
-
+    }  
+   
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     if (attributes.communityId != null)
     {
+      task.community = await communityService.findById(attributes.communityId);
       var share = {
         task_id: task.id,
         user_id: attributes.userId,
@@ -709,6 +710,6 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
       }
     }).catch(err => {
       reject({ status: 404 });
-    })
+    });
   });
 };
