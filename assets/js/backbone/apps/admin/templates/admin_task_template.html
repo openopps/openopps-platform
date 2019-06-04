@@ -69,8 +69,16 @@
 
 <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
     title="Download list of tasks as a comma-separated file ready for import into Excel">
-  <a href="/api/task/export" >
-    <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
-  </a>
+    <% if (community.communityName) { %>
+      <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
+        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+      </a>
+    <% } else { %>
+      <a href="/api/task/export" >
+        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+      </a>
+  <% } %>
 </div>
+
+
 

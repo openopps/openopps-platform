@@ -8,6 +8,7 @@ loadFeature = function (name) {
 module.exports = (app) => {
   app.use(loadFeature('activity'));
   app.use(loadFeature('admin'));
+  app.use(loadFeature('admin/export'));
   app.use(loadFeature('announcement'));
   app.use(loadFeature('application'));
   app.use(loadFeature('auth'));
