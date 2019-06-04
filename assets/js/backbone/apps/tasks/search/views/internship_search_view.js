@@ -175,7 +175,7 @@ var InternshipListView = Backbone.View.extend({
           if (today < startDate) {
             this.futureCycles[communityId].push(data[i]);
           }
-        } 
+        }
       }.bind(this),
     });
   },
@@ -497,7 +497,7 @@ var InternshipListView = Backbone.View.extend({
     var communityId = USDOS.communityId;
     var settings = {
       ui: UIConfig,
-      futureCycles: this.futureCycles[communityId],
+      futureCycles: _.sortBy(this.futureCycles[communityId], 'applyStartDate'),
     };
     compiledTemplate = _.template(NoCurrentCycle)(settings);
     $('#task-list').append(compiledTemplate);
@@ -734,34 +734,26 @@ var InternshipListView = Backbone.View.extend({
     }.bind(this));
   },
 
-  save: function (action) {
+  toggleSave: function (e) {
+    e.preventDefault && e.preventDefault();
     $.ajax({
       url: '/api/task/save',
       method: 'POST',
       data: {
-        taskId: this.model.attributes.id, 
-        action: action,
+        taskId: $(e.currentTarget.parentElement).data('id'), 
+        action: e.currentTarget.getAttribute('data-action'),
       },
     }).done(function () {
-      if (action == 'save') {
-        $('.save-internship').html('<i class="fa fa-star"></i> Saved');
-        $('.save-internship')[0].setAttribute('data-action', 'unsave');
+      if (e.currentTarget.getAttribute('data-action') == 'save') {
+        $(e.currentTarget).html('<i class="fa fa-star"></i> Saved');
+        e.currentTarget.setAttribute('data-action', 'unsave');
       } else {
-        $('.save-internship').html('<i class="far fa-star"></i> Save');
-        $('.save-internship')[0].setAttribute('data-action', 'save');
+        $(e.currentTarget).html('<i class="far fa-star"></i> Save');
+        e.currentTarget.setAttribute('data-action', 'save');
       }
     }).fail(function (err) {
       showWhoopsPage();
     }.bind(this));
-  },
-
-  toggleSave: function (e) {
-    e.preventDefault && e.preventDefault();
-    if (!window.cache.currentUser) {
-      Backbone.history.navigate('/login?internships/' + this.model.attributes.id + '?action=save', { trigger: true });
-    } else {
-      this.save(e.currentTarget.getAttribute('data-action'));
-    }
   },
 });
     
