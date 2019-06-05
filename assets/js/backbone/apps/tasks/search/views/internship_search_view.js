@@ -159,7 +159,7 @@ var InternshipListView = Backbone.View.extend({
           var cycleStartDate = new Date(data[i].cycleStartDate);
           var startDate = new Date(data[i].applyStartDate);
           var endDate = new Date(data[i].applyEndDate);
-          var today = new Date(moment().tz('America/New_York').format('MM-DD-YYYY'));
+          var today = new Date(moment().tz('America/New_York').format('MM/DD/YYYY'));
           if (!(communityId in this.cycles)) {
             this.cycles[communityId] = [];
             this.futureCycles[communityId] = [];
