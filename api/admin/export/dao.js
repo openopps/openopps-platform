@@ -42,7 +42,7 @@ const exportUserCommunityData = 'SELECT ' +
   'from task ' +
   'inner join midas_user on task."userId" = midas_user.id ' + 
   'left join agency on task.agency_id = agency.agency_id ' +
-  'where task.community_id = ? ';
+  'where task.community_id = ?  order by task."createdAt" desc';
 
 var exportFormat = {
   'user_id': 'id',
