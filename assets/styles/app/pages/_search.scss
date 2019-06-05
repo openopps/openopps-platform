@@ -328,6 +328,13 @@ padding: $size-default $size-default $size-M $size-default;
       }
     }
   }
+
+  .usajobs-open-opps-noresults {
+    a {
+      color: $color-primary;
+      text-decoration: underline;
+    }
+  }
 }
 
 #rightrail {
