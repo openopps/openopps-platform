@@ -209,18 +209,20 @@ var InternshipEditFormView = Backbone.View.extend({
       this.dataLanguageArray = this.model.attributes.language; 
     }
 
-    this.renderLanguages();
-    this.initializeFormFields();
-    this.initializeCountriesSelect();
-    this.initializeLanguagesSelect();
-    this.initializeSelect2(); 
-    this.initializeTextAreaDetails();
-    this.initializeTextAreaSkills();
-    this.initializeTextAreaTeam();
+    if (this.cycles.length > 0) {
+      this.renderLanguages();
+      this.initializeFormFields();
+      this.initializeCountriesSelect();
+      this.initializeLanguagesSelect();
+      this.initializeSelect2(); 
+      this.initializeTextAreaDetails();
+      this.initializeTextAreaSkills();
+      this.initializeTextAreaTeam();
     
-    if(!_.isEmpty(this.data['madlibTags'].keywords)) {
-      $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
-      $('#keywords').attr('aria-hidden', false);
+      if(!_.isEmpty(this.data['madlibTags'].keywords)) {
+        $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
+        $('#keywords').attr('aria-hidden', false);
+      }
     }
 
     this.$( '.js-success-message' ).hide();
