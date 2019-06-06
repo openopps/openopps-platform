@@ -100,15 +100,20 @@ dao.query.taskShareQuery = `
 `;
 
 dao.query.taskListQuery = `
-  select
-    task_list_id,
-    task_id,
-    title,
-    sort_order
-  from
-    task_list
-  where task_id = ?
-  order by sort_order
+select
+  tl.task_list_id,
+  tl.task_id,
+  tl.title,
+  tl.sort_order
+from
+  task_list tl
+  inner join task t on t.id = tl.task_id
+  inner join cycle c on c.cycle_id = t.cycle_id
+  inner join phase p on c.phase_id = p.phase_id
+where 
+  case when p.name = 'Primary phase' then tl.title != 'Alternate' and tl.task_id = ? else tl.task_id = ? end
+order by 
+  tl.sort_order
 `;
 
 dao.query.taskListAndOwner = `

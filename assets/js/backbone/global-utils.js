@@ -59,8 +59,6 @@ global.initializeSelectWrapping = function (ele) {
     case 'Chrome': renderWidthFixed = renderWidth - 30; break;
     case 'Firefox': 
       renderWidthFixed = renderWidth - 27; 
-      borderRightParsed= '0'; 
-      if (index > 0) topParsed++;
       break; 
   }
   //wrap + add a overlapping layer that will hide content and calculate the correct height:

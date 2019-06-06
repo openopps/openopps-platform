@@ -98,4 +98,11 @@ module.exports = {
     severity: 'info',
     data: ['communityId', 'userId', 'action'],
   },
+  // Data export events
+  'DATA_EXPORTED': {
+    action: 'DATA_EXPORTED',
+    description: 'A user has exported data from the system.',
+    severity: 'info',
+    data: ['userId', 'action'],
+  },
 };

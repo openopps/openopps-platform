@@ -1,7 +1,6 @@
 const log = require('log')('app:admin');
 const Router = require('koa-router');
 const _ = require('lodash');
-const moment = require('moment');
 const auth = require('../../auth/auth');
 const service = require('./service');
 const communityService = require('../../community/service');
@@ -62,12 +61,15 @@ router.get('/api/admin/export/community/:id', auth, async (ctx, next) => {
   });
 
 router.get('/api/admin/task/export/community/:id', auth.isAdmin, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user)) {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     await service.getExportTaskCommunityData(ctx.state.user, ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
-      ctx.response.set('Content-disposition', 'attachment; filename=community_tasks.csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community-tasks.csv');
       ctx.body = rendered;
-      log.info("Community Task Report run by " + ctx.state.user.lastName + ', ' + ctx.state.user.givenName + ' ' + moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'))
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Task data exported for community id ' + ctx.params.id,
+      });
     }).catch(err => {
       log.info(err);
     });
