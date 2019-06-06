@@ -1,6 +1,7 @@
 const db = require('../../../db');
 const dao = require('./dao')(db);
 var _ = require('lodash');
+const Audit = require('../../model/Audit');
 
 var service = {};
 
@@ -9,6 +10,32 @@ var numOfApplicants = 0;
 var numOfInternships = 0;
 var remainingApplicants = 0;
 var internsAssigned = 0;
+
+service.startPhaseProcessing = async function (cycleId) {
+    var cycle = await dao.Cycle.findOne("cycle_id = ?", cycleId);
+    cycle.isProcessing = true;
+    return await dao.Cycle.update(cycle);
+}
+
+service.updatePhaseForCycle = async function (cycleId) {
+    var cycle = await dao.Cycle.findOne("cycle_id = ?", cycleId);
+    if (cycle != null) {
+        var phaseId = cycle.phaseId;
+        if (cycle.phaseId == null) {
+            await dao.Phase.findOne("sequence = ?", 1).then(phase => {
+                phaseId = phase.phaseId;
+            });
+        } else {
+            var currentPhase = await dao.Phase.findOne("phase_id = ?", cycle.phaseId);
+            var nextPhase = await dao.Phase.findOne("sequence = ?", currentPhase.sequence + 1);
+            phaseId = nextPhase.phaseId;
+        }
+        cycle.phaseId = phaseId;
+        cycle.isProcessing = false;
+        await dao.Cycle.update(cycle);
+        return phaseId;
+    }
+};
 
 service.drawMany = async function (userId, cycleId) {   
     await initializeDraw(cycleId);
@@ -46,6 +73,15 @@ service.drawOne = async function (userId, taskId) {
         return await dao.Application.db.query(dao.query.getOneIntern, applicationId);
     }
     return null;
+};
+
+service.createAuditLog = async function (type, ctx, auditData) {
+    var audit = Audit.createAudit(type, ctx, auditData);
+    await dao.AuditLog.insert(audit).catch(() => {});
+};
+
+service.recordError = async function (userId, err) {
+    dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
 };
 
 function getNextInternshipIndex(internshipIndex) {
