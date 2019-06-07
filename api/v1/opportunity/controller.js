@@ -55,11 +55,6 @@ router.get('/api/v1/task/getLastUpdated', auth.bearer, async (ctx, next) => {
   ctx.body = data;
 });
 
-router.get('/api/v1/task/getPhaseData', auth.bearer, async (ctx, next) => {
-  var data = await service.getPhaseData(ctx.query.cycleID);
-  ctx.body = data;
-});
-
 router.post('/api/v1/task/:taskId/share', auth.bearer, async (ctx, next) => {
   var owner = await service.getTaskShareList(ctx.params.taskId, ctx.state.user.id);
   if (owner)
