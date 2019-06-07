@@ -170,18 +170,4 @@ service.getLastUpdated = async function (userId) {
   return results.rows;
 };
 
-service.getPhaseData = async function (cycleId) {
-  var results = {};
-  var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, cycleId);
-  results.current_sequence = phaseData.rows[0].current_sequence;
-  results.cycle_name = phaseData.rows[0].cycle_name;
-  results.in_review = phaseData.rows[0].in_review;
-  results.total_phases = phaseData.rows[0].total_phases;
-  var sequence = phaseData.rows[0].current_sequence === 0 ? 1 : phaseData.rows[0].current_sequence;
-  var phases = await dao.Task.db.query(dao.query.GetPhases, sequence, sequence + 1);
-  results.phase_one = phases.rows[0];
-  results.phase_two = phases.rows[1];
-  return results;
-};
-
 module.exports = service;

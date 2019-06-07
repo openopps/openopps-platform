@@ -93,15 +93,48 @@ dao.query.taskListQuery = `
   where task_id = ? and sort_order = 0
 `;
 
+dao.query.GetPhaseData = `
+  select
+    c."name" as cycle_name,
+    c.cycle_id,
+    case when c.is_processing then coalesce(p."sequence", 0) + 1 else coalesce(p."sequence", 0) end as current_sequence,
+    c.is_processing,
+    case when c.is_processing and coalesce(p."sequence", 0) < 1 then true
+      when coalesce(p."sequence", 0) < 1 then false
+      else true end as phases_started,
+    (select count(*) from phase) as total_phases
+  from
+    "cycle" c
+    left join phase p on p.phase_id = c.phase_id
+  where
+    c.cycle_id = ?
+    and now() between c.review_start_date and c.review_end_date
+`;
+
+dao.query.GetPhases = `
+  select
+    phase_id,
+    "name",
+    description,
+    "sequence",
+    config
+  from
+    phase
+  where
+    "sequence" between ? and ?
+  order by
+    "sequence"
+`;
+
 module.exports = function (db) {
-    dao.Application = pgdao({ db: db, table: 'application' });
-    dao.Task = pgdao({ db: db, table: 'task' });
-    dao.TaskList = pgdao({ db: db, table: 'task_list' });
-    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-    dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
-    dao.Cycle = pgdao({ db: db, table: 'cycle' });
-    dao.Phase = pgdao({ db: db, table: 'phase' });
-    dao.AuditLog = pgdao({ db: db, table: 'audit_log' });
-    dao.ErrorLog = pgdao({ db: db, table: 'error_log' });
-    return dao;
+  dao.Application = pgdao({ db: db, table: 'application' });
+  dao.Task = pgdao({ db: db, table: 'task' });
+  dao.TaskList = pgdao({ db: db, table: 'task_list' });
+  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
+  dao.Cycle = pgdao({ db: db, table: 'cycle' });
+  dao.Phase = pgdao({ db: db, table: 'phase' });
+  dao.AuditLog = pgdao({ db: db, table: 'audit_log' });
+  dao.ErrorLog = pgdao({ db: db, table: 'error_log' });
+  return dao;
 };
