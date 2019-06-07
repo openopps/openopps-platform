@@ -99,5 +99,9 @@ module.exports = function (db) {
     dao.TaskList = pgdao({ db: db, table: 'task_list' });
     dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
     dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
+    dao.Cycle = pgdao({ db: db, table: 'cycle' });
+    dao.Phase = pgdao({ db: db, table: 'phase' });
+    dao.AuditLog = pgdao({ db: db, table: 'audit_log' });
+    dao.ErrorLog = pgdao({ db: db, table: 'error_log' });
     return dao;
 };

@@ -105,4 +105,11 @@ module.exports = {
     severity: 'info',
     data: ['userId', 'action'],
   },
+  // API events
+  'PHASE_STARTED': {
+    action: 'PHASE_STARTED',
+    description: 'The boards have been drawn and the phase has begun.',
+    severity: 'info',
+    data: ['cycleId', 'phaseId', 'results'],
+  },
 };
