@@ -153,6 +153,8 @@ var AdminTaskView = Backbone.View.extend({
     var data = this.collectEventData(event);
     var deleteModal = new Modal({
       id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
       modalTitle: 'Confirm deletion',
       modalBody: 'Are you sure you want to delete <strong>' + data.title + '</strong>? <strong>This cannot be undone</strong>.',
       primary: {
