@@ -244,34 +244,6 @@ dao.query.LastUpdatedByUserID = `
   limit 1
 `;
 
-dao.query.GetPhaseData = `
-  select
-    c."name" as cycle_name,
-    coalesce(p."sequence", 0) as current_sequence,
-    case when now() between c.review_start_date and c.review_end_date and coalesce(p."sequence", 0) < 1 then true else false end as in_review,
-    (select count(*) from phase) as total_phases
-  from
-    "cycle" c
-    left join phase p on p.phase_id = c.phase_id
-  where
-    c.cycle_id = ?
-`;
-
-dao.query.GetPhases = `
-  select
-    phase_id,
-    "name",
-    description,
-    "sequence",
-    config
-  from
-    phase
-  where
-    "sequence" between ? and ?
-  order by
-    "sequence"
-`;
-
 module.exports = function (db) {
   dao.Task = pgdao({ db: db, table: 'task' });
   dao.TaskShare = pgdao({ db: db, table: 'task_share' });
