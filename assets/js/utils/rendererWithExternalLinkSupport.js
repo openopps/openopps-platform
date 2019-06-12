@@ -3,9 +3,9 @@ var exports = module.exports = {};
 var marked = require('marked');
 var renderer = new marked.Renderer();
 
-function unescape(html) {
-	// explicitly match decimal, hex, and named HTML entities
-  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(\w+))/g, function(_, n) {
+function unescape (html) {
+  // explicitly match decimal, hex, and named HTML entities
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(\w+))/g, function (_, n) {
     console.log('found', n);
     n = n.toLowerCase();
     if (n === 'colon') return ':';
@@ -18,7 +18,7 @@ function unescape(html) {
   });
 }
 
-renderer.link = function(href, title, text) {
+renderer.link = function (href, title, text) {
   if (this.options.sanitize) {
     try {
       var prot = decodeURIComponent(unescape(href))
@@ -35,7 +35,7 @@ renderer.link = function(href, title, text) {
   if (title) {
     out += ' title="' + title + '"';
   }
-  if ( href && /^http/i.test( href ) ) { out += ' target="blank"'; }
+  if ( href && /^http/i.test( href ) ) { out += ' target="_blank"'; }
   out += '>' + text + '</a>';
   return out;
 };

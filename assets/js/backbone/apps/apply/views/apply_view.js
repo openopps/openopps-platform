@@ -434,7 +434,7 @@ var ApplyView = Backbone.View.extend({
     this.modalComponent = new ModalComponent({
       el: '#site-modal',
       id: 'delete-record',
-      modalTitle: 'Delete ' + recordData.section,
+      modalTitle: (recordData.section == 'applicationLanguageSkill' ? 'Delete language' : 'Delete ' + recordData.section),
       modalBody: 'Are you sure you want to delete ' + recordData.name + '?',
       primary: {
         text: 'Delete',
