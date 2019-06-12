@@ -68,4 +68,9 @@ router.post('/api/v1/cycle/drawOne', auth.bearer, async (ctx, next) => {
   ctx.body = data.rows[0];
 });
 
+router.get('/api/v1/cycle/getCommunityUsers', auth.bearer, async (ctx, next) => {
+  var data = await service.getCommunityUsers(ctx.query.cycleID);
+  ctx.body = data;
+});
+
 module.exports = router.routes();
