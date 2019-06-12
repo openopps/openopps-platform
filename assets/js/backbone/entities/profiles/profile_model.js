@@ -86,15 +86,16 @@ var ProfileModel = Backbone.Model.extend({
       });
     });
 
-    this.listenTo(this, 'skills:save', function (form) {
+    this.listenTo(this, 'skills:save', function (form) {         
       $.ajax({
         url: this.urlRoot +  '/skills/' + this.id,
         method: 'PUT',
+        dataType: 'json',     
         data: {
           id: +this.id,
           username: form.username, 
-          tags: form.tags },
-      }).done(function (data) {
+          tags:JSON.stringify(form.tags)  },        
+      }).done(function (data) {     
         _this.trigger('skills:save:success', data);
       }).fail(function (data) {
         _this.trigger('skills:save:fail', data);

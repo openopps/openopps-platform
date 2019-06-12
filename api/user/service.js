@@ -125,6 +125,7 @@ async function updateProfile (attributes, done) {
 }
 
 async function updateSkills (attributes, done) {
+  attributes.tags=JSON.parse(attributes.tags);
   var errors = User.validateTags({ invalidAttributes: {} }, attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(errors);
