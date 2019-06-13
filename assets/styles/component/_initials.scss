@@ -34,3 +34,41 @@
     }
   }
 }
+
+
+.people-search-result__figure {
+  &.initials-color-1 {
+    background: $color-cool-blue-lightest;
+    .people-search-result__initials {
+      color: $color-cool-blue;
+    }
+  }
+
+  &.initials-color-2 {
+    background: $color-gold-lightest;
+    .people-search-result__initials {
+      color: $color-gray;
+    }
+  }
+
+  &.initials-color-3 {
+    background: $color-secondary-lightest;
+    .people-search-result__initials {
+      color: $color-secondary-darkest;
+    }
+  }
+
+  &.initials-color-4 {
+    background: $color-primary-alt-lightest;
+    .people-search-result__initials {
+      color:  $color-primary-alt-darkest;
+    }
+  }
+
+  &.initials-color-5 {
+    background: $color-green-lightest;
+    .people-search-result__initials {
+      color: $color-gray;
+    }
+  }
+}

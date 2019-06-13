@@ -57,9 +57,8 @@ global.initializeSelectWrapping = function (ele) {
     case 'MSIE': renderWidthFixed = renderWidth - 28; break;
     case 'I': renderWidthFixed = renderWidth - 28; break;                 
     case 'Chrome': renderWidthFixed = renderWidth - 30; break;
-    case 'Firefox': 
-      renderWidthFixed = renderWidth - 27; 
-      break; 
+    case 'Firefox': renderWidthFixed = renderWidth - 27; break;
+    case 'Safari': renderWidthFixed = renderWidth - 27; break;
   }
   //wrap + add a overlapping layer that will hide content and calculate the correct height:
   $(ele).wrap($('<div />').css({width:renderWidth, margin:0, padding:0, position:'relative'}));
