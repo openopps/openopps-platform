@@ -19,7 +19,7 @@ async function usersList (user) {
   }) || {};
   return {
     title: (await dao.User.query(dao.query.userByTitle, user.id, user.title, dao.options.user)).splice(0,2),
-    agency: await dao.User.query(dao.query.userByAgency, user.id, agency.name, dao.options.user),
+    agency: await dao.User.query(dao.query.userByAgency, user.id, user.agencyId,dao.options.user ),
   };
 }
 
