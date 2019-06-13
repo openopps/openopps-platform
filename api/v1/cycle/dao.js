@@ -126,6 +126,20 @@ dao.query.GetPhases = `
     "sequence"
 `;
 
+dao.query.getCommunityUsers = `
+  select 
+    mu.given_name, 
+    mu.username as email, 
+    task.title, 
+    task.id as task_id
+  from "cycle"
+    inner join community on cycle.community_id = community.community_id
+    inner join community_user cu on cu.community_id = community.community_id
+    inner join midas_user mu on cu.user_id = mu.id
+    inner join task on task.community_id = community.community_id
+    where cycle.cycle_id = ?
+`;
+
 module.exports = function (db) {
   dao.Application = pgdao({ db: db, table: 'application' });
   dao.Task = pgdao({ db: db, table: 'task' });
@@ -133,6 +147,9 @@ module.exports = function (db) {
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
   dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
   dao.Cycle = pgdao({ db: db, table: 'cycle' });
+  dao.Community = pgdao({ db: db, table: 'community' });
+  dao.Community_User = pgdao({ db: db, table: 'community_user' });
+  dao.Midas_User = pgdao({ db: db, table: 'midas_user' });
   dao.Phase = pgdao({ db: db, table: 'phase' });
   dao.AuditLog = pgdao({ db: db, table: 'audit_log' });
   dao.ErrorLog = pgdao({ db: db, table: 'error_log' });
