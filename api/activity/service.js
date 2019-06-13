@@ -19,7 +19,7 @@ async function usersList (user) {
   }) || {};
   return {
     title: (await dao.User.query(dao.query.userByTitle, user.id, user.title, dao.options.user)).splice(0,2),
-    agency: await dao.User.query(dao.query.userByAgency, user.id, agency.name, dao.options.user),
+    agency: await dao.User.query(dao.query.userByAgency, user.id, user.agencyId,dao.options.user ),
   };
 }
 
@@ -41,7 +41,7 @@ function generateByProfileQuery (user) {
   var career = _.filter(user.tags, { type: 'career' })[0];
   var location = _.filter(user.tags, { type: 'location' })[0];
   var skills = _.filter(user.tags, { type: 'skill' }).slice(0, 5);
-  var query = '?'
+  var query = '?';
   if(!_.isEmpty(career)) {
     query += 'career=' + career.name + ':' + career.id + '&';
   }
