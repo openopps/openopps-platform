@@ -31,6 +31,29 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
+  const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task."submittedAt", midas_user.name as creator_name, ' +
+  '(' +
+    'select count(*) ' +
+    'from volunteer where "taskId" = task.id' +
+  ') as signups, ' +
+  'task.state, ' +
+  'agency.name as agency_name, task."completedAt" ' +
+  'from task inner join midas_user on task."userId" = midas_user.id ' +
+  'left join agency on task.agency_id = agency.agency_id ';
+
+  const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task."submittedAt", midas_user.name as creator_name, ' +
+  '(' +
+    'select count(*) ' +
+    'from volunteer where "taskId" = task.id' +
+  ') as signups, ' +
+  'task.state, ' +
+  'agency.name as agency_name, task."completedAt" ' +
+  'from task inner join midas_user on task."userId" = midas_user.id ' +
+  'left join agency on task.agency_id = agency.agency_id ' + 
+  'where task.agency_id = ?';
+
   const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
@@ -44,7 +67,7 @@ const exportUserCommunityData = 'SELECT ' +
   'left join agency on task.agency_id = agency.agency_id ' +
   'where task.community_id = ?  order by task."createdAt" desc';
 
-var exportFormat = {
+var exportUserFormat = {
   'user_id': 'id',
   'name': {field: 'name', filter: nullToEmptyString},
   'username': {field: 'username', filter: nullToEmptyString},
@@ -140,11 +163,13 @@ module.exports = function (db) {
       exportUserData: exportUserData,
       exportUserAgencyData: exportUserAgencyData,
       exportUserCommunityData: exportUserCommunityData,
+      exportTaskAgencyData: exportTaskAgencyData,
       exportTaskCommunityData: exportTaskCommunityData,
+      exportTaskData: exportTaskData,
     },
     clean: clean,
     options: options,
-    exportFormat: exportFormat,
+    exportUserFormat: exportUserFormat,
     exportTaskFormat: exportTaskFormat,
   };
 };
