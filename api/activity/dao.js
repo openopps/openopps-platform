@@ -2,11 +2,10 @@ const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 const badgeDescriptions = require('../../utils').badgeDescriptions;
 
-const userByAgencyQuery = 'select @midas_user.*, @agency.* ' +
+const userByAgencyQuery = 'select @midas_user.*, @agency.* '+
 'from @midas_user midas_user ' +
-'left join tagentity_users__user_tags user_tags on user_tags.user_tags = midas_user.id ' +
-'left join @tagentity agency on agency.id = user_tags.tagentity_users and agency.type = \'agency\' ' +
-'where midas_user.id <> ? and agency.name = ? ' +
+ 'join @agency on agency.agency_id = midas_user.agency_id '+
+ 'where midas_user.id <> ? and midas_user.agency_id=?' +
 'order by midas_user."createdAt" desc ' +
 'limit 2';
 
