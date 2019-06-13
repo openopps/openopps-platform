@@ -131,7 +131,7 @@
               <h3>I have experience with</h3>
               <div>
                 <% _.each(skillsTags, function (t) { %>
-                  <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                  <a class="skill-label" href="/search?skill=<%= t.name %>"><%= t.name %></a>
                 <% }) %>
               </div>
               <% } %>  
@@ -139,7 +139,7 @@
                 <h3>I want to develop</h3>
                 <div>
                   <% _.each(interestsTags, function (t) { %>
-                    <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                    <a class="skill-label" href="/search?skill=<%= t.name %>"><%= t.name %></a>
                   <% }) %>
                 </div>
               <% } %>

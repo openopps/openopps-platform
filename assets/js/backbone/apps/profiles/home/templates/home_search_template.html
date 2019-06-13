@@ -3,11 +3,11 @@
         <div class="usa-width-two-thirds">
             <div class="search-title">
                 <h2>Search opportunities by</h2>
-                <a href="/tasks" class="side-link">View all opportunities</a>
+                <a href="/search" class="side-link">View all opportunities</a>
             </div>
         </div>
         <div class="usa-width-one-third">
-            <a href="/tasks<%= search.byProfile %>" class="usa-button usa-button-secondary align-right">Search based on your profile</a>
+            <a href="/search<%= search.byProfile %>" class="usa-button usa-button-secondary align-right">Search based on your profile</a>
         </div>
     </div>
     <div class="usajobs-grid-full">
@@ -15,11 +15,11 @@
             <h3>Career field</h3>
             <ul class="usa-unstyled-list">
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/tasks?career=Acquisition">Acquisition</a>
+                    <a href="/search?career=<%- search.acquisition[0].id %>"><%- search.acquisition[0].name %></a>
                 </li>
                 <% _.forEach(search.careers, function(career) { %>
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/tasks?career=<%- career.name %>:<%- career.id %>"><%- career.name %></a>
+                    <a href="/search?career=<%- career.id %>"><%- career.name %></a>
                 </li>
                 <% }); %>
             </ul>
@@ -29,7 +29,7 @@
             <ul class="usa-unstyled-list">
                 <% _.forEach(search.skills, function(skill) { %>
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/tasks?skill=<%- skill.name %>:<%- skill.id %>"><%- skill.name %></a>
+                    <a href="/search?skill=<%- skill.name %>"><%- skill.name %></a>
                 </li>
                 <% }); %>
             </ul>
@@ -38,11 +38,11 @@
             <h3>Location</h3>
             <ul class="usa-unstyled-list">
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/tasks?location=virtual">Virtual</a>
+                    <a href="/search?locationType=virtual">Virtual</a>
                 </li>
                 <% _.forEach(search.locations, function(location) { %>
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/tasks?location=<%- location.name %>:<%- location.id %>"><%- location.name %></a>
+                    <a href="/search?locationType=in%20person&location=<%- location.name %>"><%- location.name %></a>
                 </li>
                 <% }); %>
             </ul>
