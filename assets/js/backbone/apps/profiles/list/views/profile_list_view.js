@@ -5,7 +5,7 @@ var ProfileListTable = require('../templates/profile_list_table.html');
 
 var PeopleListView = Backbone.View.extend({
   events: {
-    'keyup #search': 'search',
+    'keyup #nav-keyword': 'search',
   },
 
   initialize: function (options) {
@@ -15,7 +15,6 @@ var PeopleListView = Backbone.View.extend({
 
   render: function () {
     $('#search-results-loading').show();
-    //var peopleToRender = this.collection.chain().pluck('attributes').value();
     var template = _.template(ProfileListTemplate)({});
     this.$el.html(template);
     this.$el.localize();
@@ -28,8 +27,7 @@ var PeopleListView = Backbone.View.extend({
       success: function (collection) {
         var peopleToRender = collection.chain().pluck('attributes').value();
         var template = _.template(ProfileListTable)({ people: peopleToRender });
-        // self.$('.loading-container').hide();
-        self.$('.table-responsive').html(template);
+        self.$('#usajobs-search-results').html(template);
         $('#search-results-loading').hide();
       },
     });
@@ -43,7 +41,7 @@ var PeopleListView = Backbone.View.extend({
       .filter( _.bind( filterPeople, this, term ) )
       .value();
     var template = _.template(ProfileListTable)({ people: items });
-    self.$('.table-responsive').html(template);
+    self.$('#usajobs-search-results').html(template);
   },
 
   empty: function () {
@@ -62,11 +60,13 @@ function filterPeople ( term, person ) {
   var location = person.location ? person.location.name.toLowerCase() : '';
   var agency = person.agency ? person.agency.name.toLowerCase() : '';
   var abbreviation = person.agency && person.agency.abbr ? person.agency.abbr.toLowerCase() : '';
+  // var skill = person.tags[i];
   return (name.indexOf(term.toLowerCase()) > -1) ||
     (title.indexOf(term.toLowerCase()) > -1) ||
     (location.indexOf(term.toLowerCase()) > -1) ||
     (agency.indexOf(term.toLowerCase()) > -1) ||
     (abbreviation.indexOf(term.toLowerCase()) > -1);
+    // (skill.indexOf(term.toLowerCase()) > -1);
 }
 
 module.exports = PeopleListView;

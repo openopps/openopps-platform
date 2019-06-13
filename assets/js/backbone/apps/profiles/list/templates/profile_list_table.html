@@ -1,38 +1,34 @@
-<div id="profile-list">
-  <table class="usa-table-borderless" role="presentation">
-    <thead>
-    <tr class="usajobs-grid open-opps-row header">
-      <th scope="col" class="col-name">Name</th>
-      <th scope="col" class="col-title">Title</th>
-      <th scope="col" class="col-agency">Agency</th>
-      <th scope="col" class="col-location">Location</th>
-    </tr>
-    </thead>
-    <tbody>
-      <% _.each(people, function(person) { %>
-      <% if (!_.isUndefined(person.name)) { %>
-      <tr>
-        <td class="col-name">
-          <a href="/profile/<%= person.id %>">
-            <%= person.name %>
-          </a>
-        </td>
-        <td class="col-title">
-          <%= person.title %>
-        </td>
-        <td class="col-agency">
-          <% if (!_.isUndefined(person.agency)) { %>
-          <%= person.agency.name %>
+<% _.each(people, function(person) { %>
+  <% if (!_.isUndefined(person.name)) { %>
+    <div class="people-search-result">
+      <div class="people-search-result__figure-body">
+        <div class="people-search-result__figure <%- getInitialsColor(person.id) %>">
+          <% if (person.photoId) { %>
+            <img src="/api/user/photo/<%- person.id %>" alt="Profile picture of <%- person.name %>">
+          <% } else { %>
+            <div class="people-search-result__initials"><%- getInitials(person.name) %></div>
           <% } %>
-        </td>
-        <td class="col-location">
-          <% if (!_.isUndefined(person.location)) { %>
-          <%= person.location.name %>
-          <% } %>
-        </td>
-      </tr>
-      <% } %>
-      <% }); %>
-    </tbody>
-  </table>
-</div>
+        </div>
+      </div>
+
+      <a class="people-search-result__save" href="#" data-action='save'>
+        <i class="far fa-star"></i>
+      </a>
+      <div class="people-search-result__body">
+        <a href="/profile/<%= person.id %>" class="people-search-result__name">
+          <%= person.name %>
+        </a>
+        <p class="people-search-result__title"><%= person.title %></p>
+        <p class="people-search-result__info">
+          <% if (!_.isUndefined(person.agency)) { %><%= person.agency.name %> | <% } %>
+          <% if (!_.isUndefined(person.location)) { %><%= person.location.name %><% } %>              
+        </p>
+        <div class="people-search-result__skills">
+          <!-- <span class="skill-label clickable-filter"><% if (!_.isUndefined(person.skill)) { %><%= person.skill %><% } %></span> -->
+          <span class="skill-label clickable-filter">Data</span>
+          <span class="skill-label clickable-filter">Communication Skills</span>
+        </div>
+      </div>
+    </div>
+  <% } %>
+<% }); %>
