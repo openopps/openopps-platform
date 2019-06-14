@@ -82,21 +82,6 @@ const tasksDueDetailQuery = 'select owner.name, owner.username, owner.bounced ' 
   'from task join midas_user owner on task."userId" = owner.id ' +
   'where task.id = ? ';
 
-const taskExportQuery = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
-  'task."submittedAt", midas_user.name as creator_name, ' +
-  '(' +
-    'select count(*) ' +
-    'from volunteer where "taskId" = task.id' +
-  ') as signups, ' +
-  'task.state, ' +
-  '(' +
-    'select tagentity.name ' +
-    'from tagentity inner join tagentity_users__user_tags tags on tagentity.id = tags.tagentity_users ' +
-    'where tags.user_tags = task."userId" and tagentity.type = ? ' +
-    'limit 1' +
-  ') as agency_name, task."completedAt" ' +
-  'from task inner join midas_user on task."userId" = midas_user.id ';
-
 const taskCommunitiesQuery='SELECT community.community_id, community.community_name, community.target_audience ' +
   'FROM community JOIN task  ON community.community_id = task.community_id ' + 'where task."userId"= ? and task.id = ? ';  
 
@@ -131,29 +116,6 @@ const volunteerListQuery = 'select midas_user.username, midas_user."photoId", mi
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';
-
-var exportFormat = {
-  'task_id': 'id',
-  'name': {field: 'title', filter: nullToEmptyString},
-  'description': {field: 'description', filter: nullToEmptyString},
-  'created_date': {field: 'createdAt', filter: excelDateFormat},
-  'published_date': {field: 'publishedAt', filter: excelDateFormat},
-  'assigned_date': {field: 'assignedAt', filter: excelDateFormat},
-  'submitted_date': {field: 'submittedAt', filter: excelDateFormat},
-  'creator_name': {field: 'creator_name', filter: nullToEmptyString},
-  'signups': 'signups',
-  'task_state': 'state',
-  'agency_name': {field: 'agency_name', filter: nullToEmptyString},
-  'completion_date': {field: 'completedAt', filter: excelDateFormat},
-};
-
-function nullToEmptyString (str) {
-  return str ? str : '';
-}
-
-function excelDateFormat (date) {
-  return date != null ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
-}
 
 const options = {
   task: {
@@ -257,8 +219,7 @@ module.exports = function (db) {
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,
-      intern:countryQuery,
-      taskExportQuery: taskExportQuery,   
+      intern:countryQuery,   
       userTasks: userTasksQuery,
       savedTask: savedTaskQuery,
       task: taskQuery,
@@ -271,6 +232,5 @@ module.exports = function (db) {
     },
     options: options,
     clean: clean,
-    exportFormat: exportFormat,
   };
 };
