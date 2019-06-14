@@ -1,0 +1,38 @@
+{
+  "user": {
+    "properties": {
+      "id": { "type": "long" },
+      "name": { "type": "keyword", "normalizer": "lowercase"  },
+      "givenName": { "type": "keyword", "normalizer": "lowercase" },
+      "middleName": { "type": "keyword", "normalizer": "lowercase" },
+      "lastName": { "type": "keyword", "normalizer": "lowercase" },
+      "title": { "type": "keyword", "normalizer": "lowercase" },
+      "bio": { "type": "keyword", "normalizer": "lowercase" },
+      "agency": {
+        "properties": {
+          "agencyId": { "type": "long" },
+          "name": { "type": "keyword", "normalizer": "lowercase" }
+        }
+      },
+      "career": {
+        "properties": {
+          "id": { "type": "long" },
+          "name": { "type": "keyword", "normalizer": "lowercase" }
+        }
+      },
+      "location": { 
+        "properties": {
+          "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+          "countrySubdivision": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+          "country": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" }
+        }
+      },
+      "skills": {
+        "properties": {
+          "id": { "type": "long" },
+          "name": { "type": "keyword", "normalizer": "lowercase" }
+        }
+      }
+    }
+  }
+}
