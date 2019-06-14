@@ -4,5 +4,8 @@ const elasticClient = require('../elastic');
 const elasticInitilizer = require('../elastic/initializer');
 
 module.exports = async () => {
-  await elasticInitilizer.InitializeTaskTemplate(elasticClient);
+  await Promise.all([
+    elasticInitilizer.InitializeTaskTemplate(elasticClient),
+    elasticInitilizer.InitializeUserTemplate(elasticClient),
+  ]);
 };
