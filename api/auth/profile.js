@@ -41,7 +41,7 @@ async function updateProfileData (user, profile, tokenset) {
   user.agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
   user.agencyId = user.agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
-  var location = _.filter([profile.AddressCity, profile.AddressCountrySubdivision], _.identity).join(', ');
+  var location = _.filter([profile.AddressCity, profile.AddressCountrySubdivision, profile.AddressCountry === 'United States' ? '' :  profile.AddressCountry], _.identity).join(', ');
   await updateProfileTag(user.id, 'location', location);
   await dao.User.update(user);
   return user;
