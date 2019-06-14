@@ -126,8 +126,8 @@ router.get('/api/admin/task/export/agency/:id', auth.isAdminOrAgencyAdmin, async
       method: ctx.method,
       status: 'blocked',
     });
-  }
     ctx.status = 403;
+  } 
 });
 
 router.get('/api/admin/task/export/community/:id', auth.isAdmin, async (ctx, next) => {
