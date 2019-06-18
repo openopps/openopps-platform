@@ -40,6 +40,12 @@ Handler.startPrimaryPhase = async function (ctx) {
   });
 };
 
+Handler.startAlternatePhase = async function (ctx) {
+  //TO DO 
+  return true;
+};
+
+
 async function drawMany (ctx) {
   return new Promise((resolve, reject) => {
     service.drawMany(ctx.state.user.id, ctx.request.fields.cycleId).then(async results => {
