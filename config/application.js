@@ -12,7 +12,8 @@ module.exports = {
   hostName: process.env.HOST || 'localhost:3000',
 
   usajobsURL: process.env.USAJOBS_URL || 'https://www.usajobs.gov',
-
+  
+  agencyportalURL: process.env.AGENCYPORTAL_URL || 'https://agencyportal.usajobs.gov',
   // redirect domain not matching hostName
   redirect: (process.env.REDIRECT || '').match(/^true$/i) || false,
 

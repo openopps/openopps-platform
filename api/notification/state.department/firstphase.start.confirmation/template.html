@@ -1,0 +1,19 @@
+<p>Hello <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>The primary phase of the applicant review process, for the U.S. Department of State Student Internship Program (Unpaid), has started. 
+  Hiring managers can now see their applicant review boards and select their primary interns. They have two weeks to complete this phase.</p>
+
+<p style="font-weight:bold">What happens next?</p>
+
+<p>In <span style="font-weight:bold">two weeks</span> you need to <a href="<%- agencyportallink %>">sign back into the Agency Talent Portal</a> 
+  and start the alternate phase for the U.S. Department of State Student Internship Program (Unpaid).</p>
+
+<p><a href="<%- alternatephaselink %>">Sign in to start the alternate phase</a></p>
+
+<p>
+  <ul>
+    <li>boards populated with applicants: <%- boardspopulated %></li>
+    <li>emails sent to community members: <%- emailsqueued %></li>
+  </ul>
+</p>
+

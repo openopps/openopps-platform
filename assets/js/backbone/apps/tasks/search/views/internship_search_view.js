@@ -42,10 +42,6 @@ var InternshipListView = Backbone.View.extend({
     this.currentOffices = [];
     this.filterLookup = {};
     this.firstFilter = true;
-    this.userAgency =  {};
-    if (window.cache.currentUser && window.cache.currentUser.agency) {
-      this.userAgency = window.cache.currentUser.agency;
-    }
     this.initAgencyFilter();
     this.initializeHideFields();
     this.initializeCycle();
@@ -53,7 +49,7 @@ var InternshipListView = Backbone.View.extend({
     this.initializeCommunityDetails();
     this.parseURLToFilters();
     this.taskFilteredCount = 0;
-    this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+    this.appliedFilterCount = getAppliedFiltersCount(this.filters);
   },
     
   render: function () {
@@ -62,7 +58,6 @@ var InternshipListView = Backbone.View.extend({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
-      agencyName: this.userAgency.name,
       term: this.filters.term ? this.filters.term : '',
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
@@ -105,30 +100,6 @@ var InternshipListView = Backbone.View.extend({
     event.preventDefault && event.preventDefault();
     Backbone.history.navigate(event.currentTarget.pathname + event.currentTarget.search, { trigger: true });
   },
-
-  // changedInternsPrograms: function (e){
-  //   this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
-  //   this.checkInternsPrograms();
-  //   this.filters.page = 1;
-  //   this.filter();
-  // },
-
-  // checkInternsPrograms: function () {
-  //   var studentProgram= $('[name=internship-program]:checked + label').text();
-  //   var communityId= $('[name=internship-program]:checked').attr('id');
-    
-  //   if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
-  //     delete this.filters.agency;        
-  //     $('.dossection').show();
-  //     $('.agencyselect').hide();
-  //   }
-  //   else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service (VSFS)') {          
-  //     $('.dossection').hide();
-  //     $('.agencyselect').show();
-  //   } 
-  //   this.selected= studentProgram;
-   
-  // },
 
   renderCycle:function (){
     //communityId for Usdos
@@ -461,7 +432,7 @@ var InternshipListView = Backbone.View.extend({
     $('#search-results-loading').hide();
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
-    this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+    this.appliedFilterCount = getAppliedFiltersCount(this.filters);
     this.renderFilters();
     
     var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
@@ -768,14 +739,14 @@ function formatObjectForURL (value) {
   }
 }
   
-function getAppliedFiltersCount (filters, agency) {
+function getAppliedFiltersCount (filters) {
   var count = 0;
   _.each(filters, function ( value, key ) {
     if (key != 'term' && key != 'page') {
       count += (_.isArray(value) ? value.length : 1);
     }
   });
-  return count + (_.isEqual(agency, { data: {} }) ? 0 : 1);
+  return count;
 }
 
 function splitTermHighlighter (s, t) {

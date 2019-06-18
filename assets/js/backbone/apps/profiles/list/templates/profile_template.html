@@ -1,0 +1,42 @@
+<div class="people-search-result">
+  <a href="/profile/<%= person.id %>">
+    <div class="people-search-result__figure-body">
+      <div class="people-search-result__figure <%- getInitialsColor(person.id) %>">
+        <% if (person.photoId) { %>
+          <img src="/api/user/photo/<%- person.id %>" alt="Profile picture of <%- person.name %>">
+        <% } else { %>
+          <div class="people-search-result__initials"><%- getInitials(person.name) %></div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- <a class="people-search-result__save" href="#" data-action='save'>
+      <i class="far fa-star"></i>
+    </a> -->
+    <div class="people-search-result__body">
+      <span href="/profile/<%= person.id %>" class="people-search-result__name<% if (!person.title && ((!person.agency || !person.career) && (!person.location.cityName || !person.location.countrySubdivision || !person.location.country)) && !person.skills) { %> just-name<% } %>">
+        <% if (person.givenName && person.lastName) { %>
+          <%= person.givenName %> <%= person.lastName %>
+        <% } else { %>
+          <%= person.name %>
+        <% } %>
+      </span>
+      <p class="people-search-result__title"><%= person.title %></p>
+      <p class="people-search-result__info">
+        <% if (person.agency) { %><%= person.agency.name %><% } %><% if (person.agency && person.career) { %> | <% } %>
+        <% if (person.career) { %><%= person.career.name %><% } %>
+        <% if ((person.agency || person.career) && (person.location.cityName || person.location.countrySubdivision || person.location.country)) { %> | <% } %>
+        <% if (person.location.cityName) { %><%= person.location.cityName %><% } %><% if (person.location.cityName && (person.location.countrySubdivision || person.location.country)) { %>, <% } %>
+        <% if (person.location.countrySubdivision) { %><%= person.location.countrySubdivision %><% } %><% if (person.location.countrySubdivision && person.location.country) { %>, <% } %>
+        <% if (person.location.country) { %><%= person.location.country %><% } %>
+      </p>
+      <div class="people-search-result__skills">
+        <% if (person.skills) { %>
+          <% _.each(person.skills, function(skill) { %>
+            <span class="skill-label clickable-filter"><%= skill.name %></span>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </a>
+</div>

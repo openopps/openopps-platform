@@ -324,7 +324,7 @@ padding: $size-default $size-default $size-M $size-default;
         left: 0;
         bottom: 0;
         display: block;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #ffffff 100%);
+        background: linear-gradient(rgba(255, 255, 255, 0), white);
       }
     }
   }
@@ -493,13 +493,24 @@ padding: $size-default $size-default $size-M $size-default;
 
   .people-search-result {
     position: relative;
-    padding: 1.5rem;
     border-bottom: 1px solid $color-gray-lighter;
-    display: flex;
+    // display: flex;
 
-    @include media($XL) {
-      align-items: flex-start;
-      flex-direction: row;
+    // @include media($XL) {
+    //   align-items: flex-start;
+    //   flex-direction: row;
+    // }
+
+    a {
+      padding: 1.5rem;
+      display: flex;
+      color: inherit;
+      text-decoration: none;
+
+      @include media($XL) {
+        align-items: flex-start;
+        flex-direction: row;
+      }
     }
 
     &:last-child {
@@ -574,10 +585,7 @@ padding: $size-default $size-default $size-M $size-default;
       text-decoration: none;
       max-width: -webkit-calc(100% - 6.5rem);
       max-width: calc(100% - 6.5rem);
-
-      &:visited {
-        color: $color-primary;
-      }
+      color: $color-primary;
 
       @include media($ML) {
         font-size: 2.4rem;
