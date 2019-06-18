@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const auth = require('../../auth/auth');
 const service = require('./service');
+const cycleService = require('../../cycle/service');
 var _ = require('lodash');
 
 var router = new Router();
@@ -83,8 +84,14 @@ router.post('/api/v1/task/:taskId/share', auth.bearer, async (ctx, next) => {
 });
 
 router.put('/api/v1/taskList', auth.bearer, async (ctx, next) => {
-  var data = await service.updateTaskList(ctx.state.user, ctx.request.fields);
-  ctx.body = data;
+  var status = await cycleService.checkProcessingStatus(ctx.request.fields[0].task_id);
+  if (status.is_processing) {
+    ctx.status = 409;
+    ctx.body = { 'message': 'Unable to process request due to another request already processing' };
+  } else {
+    var data = await service.updateTaskList(ctx.state.user, ctx.request.fields);
+    ctx.body = data;
+  }
 });
 
 router.delete('/api/v1/task/:taskId/unshare/:userId', auth.bearer, async (ctx, next) => {
