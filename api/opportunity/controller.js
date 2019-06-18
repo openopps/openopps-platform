@@ -14,16 +14,6 @@ router.get('/api/task', async (ctx, next) => {
   ctx.body = await service.list(ctx.state.user);
 });
 
-router.get('/api/task/export', auth.isAdmin, async (ctx, next) => {
-  var exportData = await service.getExportData().then(rendered => {
-    ctx.response.set('Content-Type', 'text/csv');
-    ctx.response.set('Content-disposition', 'attachment; filename=tasks.csv');
-    ctx.body = rendered;
-  }).catch(err => {
-    log.info(err);
-  });
-});
-
 router.get('/api/task/remap', auth.isAdmin, async (ctx, next) => {
   var tasks = await elasticService.remapOpportunities();
   ctx.body = tasks.length;
