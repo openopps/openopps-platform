@@ -2,6 +2,7 @@ const db = require('../../../db');
 const dao = require('./dao')(db);
 var _ = require('lodash');
 const Audit = require('../../model/Audit');
+const notification = require('../../notification/service');
 
 var service = {};
 
@@ -93,6 +94,20 @@ service.createAuditLog = async function (type, ctx, auditData) {
 
 service.recordError = async function (userId, err) {
   dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+};
+
+service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopulated) {
+  var data = {
+    action: 'state.department/firstphase.start.confirmation',
+    model: {
+      user: user,
+      agencyportallink: process.env.AGENCYPORTAL_URL,
+      alternatephaselink: process.env.AGENCYPORTAL_URL + '/review',
+      boardspopulated: boardsPopulated ? 'success' : 'fail',
+      emailsqueued: 'success',
+    },
+  };
+  notification.createNotification(data);
 };
 
 function getNextInternshipIndex (internshipIndex) {
