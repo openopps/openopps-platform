@@ -103,6 +103,18 @@ gulp.task('bump', function () {
     .pipe(gulp.dest('./'));
 });
 
+// TFS build task
+gulp.task('tfs-build', gulp.series('build', function (done) {
+  const octo = require('@octopusdeploy/gulp-octo');
+  const git = require('gulp-git');
+  git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+    if(err) { throw(err); }
+    gulp.src(releaseFiles)
+      .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }))
+      .pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+  });
+}));
+
 // Build an octopus release
 gulp.task('create-release', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');

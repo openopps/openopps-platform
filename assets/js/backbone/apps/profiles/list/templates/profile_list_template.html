@@ -38,42 +38,39 @@
     </div>
   </div>
 </section>
-
 <section class="usajobs-canvas people-search">
   <div class="usajobs-content-gutter usajobs-open-opps-search">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
 
       <div class="usajobs-grid usajobs-search-controls">
         <div class="usajobs-search-controls__results-count-container no-params">
-      
-              <h4 id="results-count" class="usajobs-search-controls__results-count">
-                Viewing 1 – X of Y people
-              </h4>
-      
+          <h4 id="people-count" class="usajobs-search-controls__results-count">
+            Viewing 1 – X of Y people
+          </h4>
         </div>
-        
-          <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
-            <label class="usajobs-search-controls__sort-label" for="sort-results">
-              Sort by
-            </label>
-            <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
-              <option value="relevance">Relevance</option>
-              <option value="name">Name</option>
-              <option value="title">Title</option>
-              <option value="agency">Agency</option>
-              <option value="location">Location</option>
-            </select>
-          </div>
-        
+        <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+          <label class="usajobs-search-controls__sort-label" for="sort-results">
+            Sort by
+          </label>
+          <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+            <option value="relevance">Relevance</option>
+            <option value="name">Name</option>
+            <option value="title">Title</option>
+            <option value="agency">Agency</option>
+            <option value="location">Location</option>
+          </select>
+        </div>
       </div>
-
       <div class="usajobs-search-results-container">
-        <div id="usajobs-search-results" class="usajobs-search-results no-params" data-object="search-results">
-
+        <div id="people-list" class="usajobs-search-results no-params" data-object="search-results">
+          <div class="usajobs-open-opps-search-results__loading" id="search-results-loading">
+            <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
+            <span class="sr-only">Loading</span>
+          </div>
         </div>
       </div>
+      <div id="people-page"></div>
     </main>
-
     <aside class="usajobs-rightrail" id="rightrail">
       <div class="see-people">
         <div class="see-people-section">
