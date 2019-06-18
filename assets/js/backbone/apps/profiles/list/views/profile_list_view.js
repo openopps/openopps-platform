@@ -5,7 +5,8 @@ var ProfileListTable = require('../templates/profile_list_table.html');
 
 var PeopleListView = Backbone.View.extend({
   events: {
-    'keyup #nav-keyword': 'search',
+    'keyup #nav-keyword'    : 'search',
+    'change #sort-results'  : 'sortPeople',
   },
 
   initialize: function (options) {
@@ -19,6 +20,46 @@ var PeopleListView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     this.fetchData();
+  },
+
+  filter: function () {
+    this.addFiltersToURL();
+    $.ajax({
+      url: '/api/user/search' + location.search,
+      type: 'GET',
+      async: true,
+      success: function (data) {
+        this.renderList(data, this.filters.page || 1);
+      }.bind(this),
+    });
+  },
+
+  renderList: function (searchResults, page) {
+    $('#search-results-loading').hide();
+    $('#people-list').html('');
+    this.peopleFilteredCount = searchResults.totalHits;
+
+    if (searchResults.totalHits === 0) {
+      this.renderNoResults();
+    } else {
+      var pageSize = 10;
+      this.renderPage(searchResults, page, pageSize);
+      this.renderPagination({
+        page: page,
+        numberOfPages: Math.ceil(searchResults.totalHits/pageSize),
+        pages: [],
+      });
+    }
+  },
+
+  renderNoResults: function () {
+    var settings = {
+      ui: UIConfig,
+    };
+    compiledTemplate = _.template(NoListItem)(settings);
+    $('#people-list').append(compiledTemplate);
+    $('#people-page').hide();
+    $('#results-count').hide();
   },
 
   fetchData: function () {
@@ -44,6 +85,36 @@ var PeopleListView = Backbone.View.extend({
     self.$('#usajobs-search-results').html(template);
   },
 
+  sortPeople: function (e) {
+    var target = $(e.currentTarget)[0];
+    // var data = this.collection.models[target.id == 'sort-results'];
+    var data = this.collection.chain().pluck('attributes').value();
+    var sortedData = [];
+    if(target.value == 'name'){
+      sortedData = _.sortBy(data, function (person){
+        return person.name;
+      });
+    }
+    if(target.value == 'title'){
+      sortedData = _.sortBy(data, function (person){
+        return person.title.toLowerCase();
+      });
+    }
+    if(target.value == 'agency'){
+      sortedData = _.sortBy(data, function (person){
+        return person.agency.toLowerCase();
+      });
+    }
+    if(target.value == 'location'){
+      sortedData = _.sortBy(data, function (person){
+        return person.location.toLowerCase();
+      });
+    }
+    this.peopleToRender.options.sort = target.value;
+    this.peopleToRender.options.data = sortedData;
+    this.peopleToRender.render();
+  },
+
   empty: function () {
     this.$el.html('');
   },
@@ -59,14 +130,16 @@ function filterPeople ( term, person ) {
   var title = person.title ? person.title.toLowerCase() : '';
   var location = person.location ? person.location.name.toLowerCase() : '';
   var agency = person.agency ? person.agency.name.toLowerCase() : '';
+  var career = person.career ? person.career.name.toLowerCase() : '';
   var abbreviation = person.agency && person.agency.abbr ? person.agency.abbr.toLowerCase() : '';
-  // var skill = person.tags[i];
+  var skill = person.skill ? person.skill.name.toLowerCase() : '';
   return (name.indexOf(term.toLowerCase()) > -1) ||
     (title.indexOf(term.toLowerCase()) > -1) ||
     (location.indexOf(term.toLowerCase()) > -1) ||
     (agency.indexOf(term.toLowerCase()) > -1) ||
-    (abbreviation.indexOf(term.toLowerCase()) > -1);
-    // (skill.indexOf(term.toLowerCase()) > -1);
+    (career.indexOf(term.toLowerCase()) > -1) ||
+    (abbreviation.indexOf(term.toLowerCase()) > -1) ||
+    (skill.indexOf(term.toLowerCase()) > -1);
 }
 
 module.exports = PeopleListView;
