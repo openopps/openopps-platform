@@ -3,6 +3,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
 const request = require('request');
+const elasticService = require('../../elastic/service');
 
 const requestOptions = {
   headers: {
@@ -41,9 +42,17 @@ async function updateProfileData (user, profile, tokenset) {
   user.agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
   user.agencyId = user.agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
-  var location = _.filter([profile.AddressCity, profile.AddressCountrySubdivision], _.identity).join(', ');
-  await updateProfileTag(user.id, 'location', location);
+  var country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
+  var countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, country.code).catch(() => { return {}; });
+  user.countryId = country.countryId;
+  user.countrySubdivisionId = countrySubdivision.countrySubdivisionId;
+  user.cityName = profile.AddressCity;
   await dao.User.update(user);
+  if (user.hiringPath == 'fed') {
+    try {
+      elasticService.indexUser(user.id);
+    } catch (err) {}
+  }
   return user;
 }
 

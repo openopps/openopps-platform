@@ -16,6 +16,32 @@ dao.tasksToIndex = async function (){
   }
 };
 
+dao.usersToIndex = async function () {
+  var query = util.format(usersToIndexQuery,'where u.hiring_path = \'fed\' order by u.id');
+  try {
+    var result = await db.query(query);
+    return _.map(result.rows, (row) => { 
+      return row.user
+    });
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+dao.userToIndex = async function (id) {
+  var query = util.format(usersToIndexQuery, 'where u.id = $1');
+  try {
+    var result = await db.query(query, [id]);
+    return _.map(result.rows, (row) => { 
+      return row.user
+    });
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 dao.taskToIndex = async function (id){
   var query = util.format(tasksToIndexQuery,'where t.id = $1');
   try {
@@ -253,7 +279,7 @@ from (
     ) as keywords,
     (
       select
-       array_to_json(array_agg(row_to_json(k)))
+        array_to_json(array_agg(row_to_json(k)))
       from (
         select
           topictags.id,
@@ -286,6 +312,85 @@ from (
   left join cycle cy on cy.cycle_id = t.cycle_id
   left join bureau b on b.bureau_id = t.bureau_id
   left join office o on o.office_id = t.office_id
+  %s
+) row`;
+
+const usersToIndexQuery = `select row_to_json(row) as user
+from
+(
+select
+  u.id,
+  u.name,
+  u.given_name as "givenName",
+  u.middle_name as "middleName",
+  u.last_name as "lastName",
+  u.title,
+  u.bio,
+  (
+    select
+      row_to_json(l)
+    from (
+      select
+        midas_user.city_name as "cityName",
+        country.value,
+        country_subdivision.value as "countrySudivision"
+      from
+        midas_user
+      left join country on country.country_id = u.country_id
+      left join country_subdivision on country_subdivision.country_subdivision_id = u.country_subdivision_id
+      where midas_user.id = u.id
+    ) l
+  ) as location,
+  (
+    select
+      row_to_json(a)
+    from
+    (
+      select
+        agency_id,
+        "name"
+      from
+        agency
+      where
+        agency.agency_id = u.agency_id
+    ) a
+  ) as agency,
+  (
+    select
+      row_to_json(c)
+    from
+    (
+      select
+        careertags.id,
+        careertags.name
+      from
+        tagentity_users__user_tags ut
+      left join tagentity careertags on
+        careertags.id = ut.tagentity_users
+      where
+        careertags.type = 'career'
+        and ut."user_tags" = u.id
+    ) c
+  ) as career,
+  (
+    select
+      array_to_json(array_agg(row_to_json(s)))
+    from
+    (
+      select
+        userskilltags.id,
+        userskilltags.name
+      from
+        tagentity_users__user_tags ut
+      left join tagentity userskilltags on
+        userskilltags.id = ut.tagentity_users
+      where
+        userskilltags.type = 'skill'
+        and ut."user_tags" = u.id
+    ) s
+  ) as skills
+from
+  midas_user u
   %s
 ) row`;
 

@@ -42,6 +42,12 @@ Handler.startPrimaryPhase = async function (ctx) {
   });
 };
 
+Handler.startAlternatePhase = async function (ctx) {
+  //TO DO 
+  return true;
+};
+
+
 async function drawMany (ctx) {
   return new Promise((resolve, reject) => {
     service.drawMany(ctx.state.user.id, ctx.request.fields.cycleId).then(async results => {
@@ -68,6 +74,11 @@ router.post('/api/v1/cycle/drawMany', auth.bearer, async (ctx, next) => {
 router.post('/api/v1/cycle/drawOne', auth.bearer, async (ctx, next) => {
   var data = await service.drawOne(ctx.state.user.id, ctx.request.fields.taskId);
   ctx.body = data.rows[0];
+});
+
+router.get('/api/v1/cycle/getCommunityUsers', auth.bearer, async (ctx, next) => {
+  var data = await service.getCommunityUsers(ctx.query.cycleID);
+  ctx.body = data;
 });
 
 module.exports = router.routes();

@@ -71,13 +71,13 @@
     title="Download list of tasks as a comma-separated file ready for import into Excel">
     <% if (community.communityName) { %>
       <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
-        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
-      </a>
+    <% } else if (agency.name) { %>
+      <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
     <% } else { %>
-      <a href="/api/task/export" >
+      <a href="/api/admin/task/export" >
+    <% } %>
         <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
       </a>
-  <% } %>
 </div>
 
 

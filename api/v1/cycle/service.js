@@ -247,4 +247,10 @@ async function createTaskListApplication (item, internship, userId) {
   }); 
 }
 
+service.getCommunityUsers = async function (cycleId) {
+  var results = await dao.Task.db.query(dao.query.getCommunityUsers, cycleId);  
+  return results.rows;
+};
+
+
 module.exports = service;
