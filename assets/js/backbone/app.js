@@ -13,6 +13,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 require('./global-utils');
+require('./global-search-utils');
 
 Backbone.$ = $;
 

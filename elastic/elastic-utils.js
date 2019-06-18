@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 var utils = {};
 
-function initializeRequest(index, type) {
+function initializeRequest (index, type) {
   return {
     index: index,
     type: type,
@@ -14,12 +14,12 @@ function initializeRequest(index, type) {
           filter : {
             bool: {
               must: [] ,
-              must_not: []
+              must_not: [],
             },
           },
           should : [],
-          minimum_should_match : 0
-        }
+          minimum_should_match : 0,
+        },
       },
     },
   };
@@ -31,11 +31,11 @@ function addTerms (request, filter, field, defaultFilter) {
   if((filter && filter !== '_all')){
     filter_must.push({terms: { [field] : asArray(filter) }});
   }
-};
+}
 
 function addLocations (request, location) {
   var should_match = request.body.query.bool.should;
-  should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
+  should_match.push({ multi_match: { fields: ['location.cityName', 'location.countrySubdivision', 'location.country'], query: location}});
 }
 
 utils.convertQueryStringToUserSearchRequest = function (ctx) {
@@ -48,7 +48,7 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
   request.from = from || request.from;
   request.size = resultsperpage || request.size;
 
-  var keywords = []
+  var keywords = [];
   if (query.term) {
     keywords = Array.isArray(query.term) ? query.term : [query.term];
   }
@@ -64,8 +64,9 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
   }
 
   if (query.location) {
+    request.body.query.bool.minimum_should_match = 1;
     if (_.isArray(query.location)) {
-      _.each(query.location, function(location) {
+      _.each(query.location, function (location) {
         addLocations(request, location);
       });
     } else {
