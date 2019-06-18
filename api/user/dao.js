@@ -2,7 +2,7 @@ const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 const badgeDescriptions = require('../../utils').badgeDescriptions;
 
-const userQuery = 'select @m_user.id, @m_user.name, @m_user.given_name, @m_user.middle_name, @m_user.last_name, ' +
+const userQuery = 'select @m_user.id, @m_user.name, ' +
   '@m_user.title, @agency.*, @tags.* ' +
   'from @midas_user m_user ' +
   'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
