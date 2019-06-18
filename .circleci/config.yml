@@ -37,7 +37,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - $OPENOPPS_SSH_KEY
+            - "39:a2:09:7b:82:09:ad:3d:f6:bf:01:94:ab:29:e9:6f"
       - checkout
       - run:
           name: 'Generate new tag for build'
