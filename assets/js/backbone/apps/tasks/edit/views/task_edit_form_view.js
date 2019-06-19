@@ -37,6 +37,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;
     this.data                   = {};
     this.data.newTag            = {};
+    this.communities            =  {};
 
     TaskFormViewHelper.annotateTimeRequired(options.tagTypes['task-time-required'], this.agency);
     this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
@@ -102,7 +103,7 @@ var TaskEditFormView = Backbone.View.extend({
 
   render: function () {
     var compiledTemplate;
-
+    this.loadAudienceCommunityData();
     this.data = {
       data: this.model.toJSON(),
       community: this.options.community,
@@ -113,6 +114,7 @@ var TaskEditFormView = Backbone.View.extend({
       madlibTags: this.options.madlibTags,
       ui: UIConfig,
       agency: this.agency,
+      communities:this.communities,
       accordion1: {
         open: false,
       },
@@ -123,7 +125,7 @@ var TaskEditFormView = Backbone.View.extend({
         open: false,
       },
     };
-
+   
     compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();
@@ -134,6 +136,8 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaDetails();
     this.initializeTextAreaSkills();
     this.initializeTextAreaTeam();
+    this.initializeCommunityDropDown();
+    
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
       $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
       $('#keywords').attr('aria-hidden', false);
@@ -145,6 +149,18 @@ var TaskEditFormView = Backbone.View.extend({
     this.toggleCareerField();
     $('#search-results-loading').hide();
     return this;
+  },
+
+  loadAudienceCommunityData:function (){
+    $.ajax({
+      url: '/api/task/communities',  
+      type: 'GET',
+      async: false,
+      success: function (data){ 
+        console.log(data);
+        this.communities= data;      
+      }.bind(this),
+    });
   },
 
   initializeSelect2: function () {
@@ -281,7 +297,14 @@ var TaskEditFormView = Backbone.View.extend({
       $('#team').attr('aria-hidden', false);
     }
   },
-
+  initializeCommunityDropDown: function (){
+    var communityId= this.model.toJSON().communityId;
+    console.log(this.model.toJSON().communityId);
+    // eslint-disable-next-line no-empty
+    if(communityId){
+      $('#federal-programs').val(communityId);
+    }
+  },
   /*
    * Initialize the `task:tags:save:done` listener for this view.
    * The event is triggered from the `submit` & `saveDraft` methods.
@@ -546,7 +569,7 @@ var TaskEditFormView = Backbone.View.extend({
   getDataFromPage: function () {
     var modelData = {
       id          : this.model.get('id'),
-      communityId : this.model.get('communityId'),
+      communityId : $('#federal-programs').val(),
       title       : this.$('#task-title').val(),
       description : this.$('#opportunity-introduction').val(),
       details     : this.$('#opportunity-details').val(),
@@ -559,7 +582,7 @@ var TaskEditFormView = Backbone.View.extend({
       state       : this.model.get('state'),
       restrict    : this.model.get('restrict'),
     };
-
+    
     if (this.agency) {
       modelData.restrict.projectNetwork = this.$('#task-restrict-agency').prop('checked');
     }
