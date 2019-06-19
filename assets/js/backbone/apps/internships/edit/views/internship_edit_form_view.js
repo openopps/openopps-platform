@@ -10,6 +10,8 @@ var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
 var InternshipEditFormTemplate = require('../templates/internship_edit_form_template.html');
 var InternshipPreviewTemplate = require('../templates/internship_preview_template.html');
 var InternshipLanguagePreviewTemplate = require('../templates/internship_language_preview.html');
+var InternshipCommunityTemplate = require('../templates/internship_community_template.html');
+var InternshipStepsTemplate = require('../templates/internship_step_template.html');
 var ModalComponent = require('../../../../components/modal');
 
 var InternshipEditFormView = Backbone.View.extend({
@@ -29,6 +31,8 @@ var InternshipEditFormView = Backbone.View.extend({
     'click .expandorama-button-keywords'        : 'toggleAccordion3',
     'click #deleteLink'                         : 'deleteLanguage',
     'change input[name=internship-timeframe]'   : 'changedInternsTimeFrame',
+    'change #student-programs'                  : 'communitySelected',
+    
   },
 
   initialize: function (options) {
@@ -50,6 +54,8 @@ var InternshipEditFormView = Backbone.View.extend({
     this.currentOffices         = [];
     this.tagSources = options.tagTypes;  
     this.countryCode            = '';
+    this.communityId= '';
+    this.communities=  {};
 
     this.initializeListeners();
 
@@ -95,6 +101,68 @@ var InternshipEditFormView = Backbone.View.extend({
     });
   },
 
+ 
+
+  render: function () {
+    var compiledTemplate;
+    
+    this.initializeBureaus();
+    this.initializeSuggestedClearance();
+    this.loadAudienceCommunityData();
+    this.data = {
+      data: this.model.toJSON(),
+      tagTypes: this.options.tagTypes,
+      newTags: [],
+      newItemTags: [],
+      tags: this.options.tags,
+      madlibTags: organizeTags(this.model.toJSON().tags),
+      ui: UIConfig,
+      agency: this.agency,
+      languageProficiencies: this.options.languageProficiencies,
+      suggestedClearances: this.suggestedClearances,
+      cycles: this.cycles, 
+      bureaus: this.bureaus,
+    },
+   
+    compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
+    this.$el.html(compiledTemplate);
+    this.$el.localize(); 
+    this.renderCommunity();
+    this.communitySelected();
+    // eslint-disable-next-line no-empty
+   
+    if(this.data.data.canEditTask){
+      this.initializeCycle(this.data.data.communityId);
+      this.renderSteps(); 
+    }
+    
+    if(this.model.attributes.language && this.model.attributes.language.length>0){
+      this.dataLanguageArray = this.model.attributes.language; 
+    }
+    
+    // if (this.cycles.length > 0) {
+    this.renderLanguages();
+    this.initializeFormFields();
+    this.initializeCountriesSelect();
+    this.initializeLanguagesSelect();
+    this.initializeSelect2(); 
+    this.initializeTextAreaDetails();
+    this.initializeTextAreaSkills();
+    this.initializeTextAreaTeam();
+    this.initializeCommunityDropDown();
+     
+    
+    if(!_.isEmpty(this.data['madlibTags'].keywords)) {
+      $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#keywords').attr('aria-hidden', false);
+    }
+    // }
+
+    this.$( '.js-success-message' ).hide();
+    this.toggleInternLocationOptions();  
+    $('#search-results-loading').hide();
+    return this;
+  },
   renderSaveSuccessModal: function () {
     var $modal = this.$( '.js-success-message' );
     $modal.slideDown( 'slow' );
@@ -180,55 +248,56 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#lang-1').html(languageTemplate);
   }, 
 
-  render: function () {
+  renderCommunity:function (){
+    this.loadAudienceCommunityData();
     var compiledTemplate;
-    this.initializeCycle();
+    var communityData;
+    communityData ={
+      communities:this.communities,
+    },
+    compiledTemplate = _.template(InternshipCommunityTemplate)(communityData);  
+    $('#community-preview-id').html(compiledTemplate);    
+    setTimeout(function () {
+      $('#search-results-loading').hide();
+    }, 50);
+   
+  },
+ 
+
+  renderInitialize: function (){
+    
     this.initializeBureaus();
     this.initializeSuggestedClearance();
-   
-    this.data = {
-      data: this.model.toJSON(),
-      tagTypes: this.options.tagTypes,
-      newTags: [],
-      newItemTags: [],
-      tags: this.options.tags,
-      madlibTags: organizeTags(this.model.toJSON().tags),
-      ui: UIConfig,
-      agency: this.agency,
-      languageProficiencies: this.options.languageProficiencies,
-      suggestedClearances: this.suggestedClearances,
-      cycles: this.cycles,
-      bureaus: this.bureaus,
-    },
-
-    compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
-    this.$el.html(compiledTemplate);
-    this.$el.localize();
-   
-    if(this.model.attributes.language && this.model.attributes.language.length>0){
-      this.dataLanguageArray = this.model.attributes.language; 
-    }
-
-    if (this.cycles.length > 0) {
-      this.renderLanguages();
-      this.initializeFormFields();
-      this.initializeCountriesSelect();
-      this.initializeLanguagesSelect();
-      this.initializeSelect2(); 
-      this.initializeTextAreaDetails();
-      this.initializeTextAreaSkills();
-      this.initializeTextAreaTeam();
+  
+    this.renderLanguages();
+    this.initializeFormFields();
+    this.initializeCountriesSelect();
+    this.initializeLanguagesSelect();
+    this.initializeSelect2(); 
+    this.initializeTextAreaDetails();
+    this.initializeTextAreaSkills();
+    this.initializeTextAreaTeam();
+    this.initializeCommunityDropDown();
+     
     
-      if(!_.isEmpty(this.data['madlibTags'].keywords)) {
-        $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
-        $('#keywords').attr('aria-hidden', false);
-      }
+    if(!_.isEmpty(this.data['madlibTags'].keywords)) {
+      $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#keywords').attr('aria-hidden', false);
     }
-
     this.$( '.js-success-message' ).hide();
     this.toggleInternLocationOptions();  
     $('#search-results-loading').hide();
     return this;
+  },
+  renderSteps:function (){
+     
+    var stepTemplate;
+    stepTemplate = _.template(InternshipStepsTemplate)(this.data);  
+    $('#internships-form-steps').html(stepTemplate);    
+    setTimeout(function () {
+      $('#search-results-loading').hide();
+    }, 50);
+    
   },
 
   initializeFormFields: function (){
@@ -245,6 +314,23 @@ var InternshipEditFormView = Backbone.View.extend({
     }
   },
 
+  loadAudienceCommunityData:function (){
+    $.ajax({
+      url: '/api/task/communities',  
+      type: 'GET',
+      async: false,
+      success: function (data){ 
+        this.communities= data;              
+      }.bind(this),
+    });
+  },
+  communitySelected: function (){  
+    this.communityId= $('#student-programs').val();
+    this.initializeCycle(this.communityId);
+    if(this.communityId){
+      initializeSelectWrapping($('#student-programs').get());
+    }
+  },
   initializeSelect2: function () {
     var formatResult = function (object) {
       var formatted = '<div class="select2-result-title">';
@@ -296,8 +382,10 @@ var InternshipEditFormView = Backbone.View.extend({
       allowClear: true,
     });
 
-    if($('#task_tag_bureau').select2('data')) {
-      this.showOfficeDropdownOnRender();
+    if(this.cycles.length>0){
+      if($('#task_tag_bureau').select2('data')) {
+        this.showOfficeDropdownOnRender();
+      }
     }
     $('#task_tag_bureau').on('change', function (e) {    
       this.showOfficeDropdown();   
@@ -348,7 +436,7 @@ var InternshipEditFormView = Backbone.View.extend({
       $('.task_tag_office').hide();  
     }
   },
-
+  
   initializeTextAreaDetails: function () {
     if (this.md2) { this.md2.cleanup(); }
     this.md2= new MarkdownEditor({
@@ -392,22 +480,39 @@ var InternshipEditFormView = Backbone.View.extend({
       validate: ['empty','html'],
     }).render();
   },
-
-  initializeCycle: function () {
+  initializeCommunityDropDown: function (){
+    var communityId= this.model.toJSON().communityId;
+    
+    if(communityId){
+      $('#student-programs').val(communityId);
+    }
+  },
+  initializeCycle: function (communityId) {
+    
     $.ajax({
-      url: '/api/community/' + this.options.community.communityId + '/cycles', 
+      url: '/api/community/' + communityId + '/cycles', 
       type: 'GET',
       async: false,
       success: function (data) {
         var cycle = this.model.get('cycle');
-        this.cycles = data;
-
+        this.cycles = data;    
         if (cycle && !_.findWhere(this.cycles, { cycleId: cycle.cycleId })) {
           this.cycles.push(cycle);
         }
         this.cycles = _.sortBy(this.cycles, 'postingStartDate');
+        if(this.cycles.length>0){
+          this.data.cycles=this.cycles;       
+          this.renderSteps();                      
+          this.renderInitialize();                      
+        }
+        else{
+          this.$('#cycle-error').show();
+        }       
       }.bind(this),
+       
     });
+    
+   
   },
 
   initializeBureaus: function () {
@@ -494,6 +599,7 @@ var InternshipEditFormView = Backbone.View.extend({
     $('#step-3').hide();
     $('#step-3').attr('aria-hidden');
     $('#button-bar').hide();    
+    $('#community-preview-id').hide();
     $('#button-bar').attr('aria-hidden');
     $('#add-languages-fieldset').show();
     $('#add-languages-fieldset').removeAttr('aria-hidden');
@@ -798,7 +904,7 @@ var InternshipEditFormView = Backbone.View.extend({
     var modelData = {
       id                            : this.model.get('id'),
       description                   : this.$('#opportunity-details').val(),
-      communityId                   : this.model.get('communityId'),
+      communityId                   : $('#student-programs').val(),
       title                         : this.$('#intern-title').val(),
       details                       : this.$('#opportunity-details').val(),  
       about                         : this.$('#opportunity-team').val(),

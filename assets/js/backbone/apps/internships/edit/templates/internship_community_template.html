@@ -1,0 +1,11 @@
+<div class="form-group required-input ">
+    <span class="field-validation-error error-empty" style="display:none;">You must select a program for this opportunity.</span>
+    <label for="community" class="no-margin-top">Community</label>
+    <select id="student-programs" class="dropdown validate" data-validate="empty">                
+      <% _(communities.student).forEach(function (community, i) { %>
+        <option value=<%- community.communityId %>>
+              <%- community.communityName %>
+        </option>
+      <% }); %>
+    </select>
+  </div>
