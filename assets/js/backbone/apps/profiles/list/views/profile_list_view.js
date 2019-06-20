@@ -6,11 +6,14 @@ var ProfileTemplate = require('../templates/profile_template.html');
 var ProfileListTable = require('../templates/profile_list_table.html');
 var Pagination = require('../../../../components/pagination.html');
 var NoResults = require('../templates/no_search_results.html');
+var SearchPills = require('../templates/search_pills.html');
 
 var PeopleListView = Backbone.View.extend({
   events: {
-    'click #search-button'    : 'search',
-    'change #sort-results'    : 'sortPeople',
+    'click #search-button'              : 'search',
+    'change #sort-results'              : 'sortPeople',
+    'click .usajobs-search-pills__item' : 'removeFilter',
+    'click #search-pills-remove-all'    : 'removeAllFilters',
   },
 
   initialize: function (options) {
@@ -72,6 +75,7 @@ var PeopleListView = Backbone.View.extend({
 
   filter: function () {
     addFiltersToURL.bind(this)();
+    this.renderPills();
     $.ajax({
       url: '/api/user/search' + location.search,
       type: 'GET',
@@ -86,7 +90,7 @@ var PeopleListView = Backbone.View.extend({
     $('#search-results-loading').hide();
     $('#people-list').html('');
     this.peopleFilteredCount = searchResults.totalHits;
-
+    
     if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
@@ -111,6 +115,20 @@ var PeopleListView = Backbone.View.extend({
     $('#profile-search-controls').hide();
   },
 
+  renderPills: function () {
+    appliedFilterCount = 0;
+    _.each(this.filters, function ( value, key ) {
+      if (key != 'term' && key != 'page') {
+        appliedFilterCount += (_.isArray(value) ? value.length : 1);
+      }
+    });
+    compiledTemplate = _.template(SearchPills)({
+      filters: this.filters,
+      appliedFilterCount: appliedFilterCount,
+    });
+    $('#usajobs-search-pills').html(compiledTemplate);
+  },
+
   fetchData: function () {
     var self = this;
     self.collection.fetch({
@@ -130,6 +148,28 @@ var PeopleListView = Backbone.View.extend({
     }
     this.$('#nav-location').val('');
     this.filters.page = 1;
+    this.filter();
+  },
+
+  removeFilter: function (event) {
+    event.preventDefault();
+    var element = $(event.target).closest('.usajobs-search-pills__item');
+    var type = element.data('type');
+    var value = element.data('value');
+    if(_.isArray(this.filters[type])) {
+      this.filters[type] = _.filter(this.filters[type], function (filter) {
+        return !_.isEqual(filter, value);
+      });
+    } else if (_.isEqual(this.filters[type], value)) {
+      this.filters[type] = [];
+    }
+    this.filters.page = 1;
+    this.filter();
+  },
+
+  removeAllFilters: function (event) {
+    event.preventDefault();
+    this.filters = { page: 1 };
     this.filter();
   },
 
