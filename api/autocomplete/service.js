@@ -29,6 +29,15 @@ module.exports.userByName =  async function (name) {
   });
 };
 
+module.exports.keywordAutocomplete = async function (term) {
+  var searchString = term ? '%' + term.toLowerCase() + '%' : ''
+  return Promise.all([
+    db.query(dao.query.agencyAutocomplete, [searchString, searchString]),
+    db.query(dao.query.tagAutocomplete, ['career', searchString]),
+    db.query(dao.query.tagAutocomplete, ['skill', searchString]),
+  ]);
+};
+
 module.exports.languageByValue = async function (value) {
   var result = await dao.Language.query(
     dao.query.language, value ? '%' + value.toLowerCase() + '%' || value.toLowerCase() + '%' || '%' + value.toLowerCase() : null);
