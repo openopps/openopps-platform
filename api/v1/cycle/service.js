@@ -29,6 +29,12 @@ service.startPhaseProcessing = async function (cycleId) {
   return await dao.Cycle.update(cycle);
 };
 
+service.startAlternateProcessing = async function (cycleId) {
+  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
+  cycle.isProcessing = true;
+  return await dao.Cycle.update(cycle);
+};
+
 service.updatePhaseForCycle = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
   if (cycle != null) {
@@ -108,6 +114,25 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
     },
   };
   notification.createNotification(data);
+};
+
+service.sendAlternatePhaseStartedNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/alternatephase.start.confirmation',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
+        },
+      };
+      notification.createNotification(data);
+    }
+  } 
 };
 
 function getNextInternshipIndex (internshipIndex) {
@@ -248,7 +273,7 @@ async function createTaskListApplication (item, internship, userId) {
 }
 
 service.getCommunityUsers = async function (cycleId) {
-  var results = await dao.Task.db.query(dao.query.getCommunityUsers, cycleId);  
+  var results = await dao.Task.db.query(dao.query.getAllCommunityUsers, cycleId);  
   return results.rows;
 };
 
