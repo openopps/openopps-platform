@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const auth = require('../../auth/auth');
 const service = require('./service');
+const cycleService = require('../../cycle/service');
 var _ = require('lodash');
 
 var router = new Router();
@@ -93,6 +94,10 @@ router.post('/api/v1/cycle/drawOne', auth.bearer, async (ctx, next) => {
 router.get('/api/v1/cycle/getCommunityUsers', auth.bearer, async (ctx, next) => {
   var data = await service.getCommunityUsers(ctx.query.cycleID);
   ctx.body = data;
+});
+
+router.get('/api/v1/cycle/checkProcessingStatus', auth.bearer, async (ctx, next) => {
+  ctx.body = await cycleService.checkProcessingStatus(ctx.query.taskId);
 });
 
 module.exports = router.routes();

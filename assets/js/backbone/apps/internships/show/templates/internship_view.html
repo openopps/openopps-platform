@@ -53,7 +53,7 @@
                 <% } %>
               <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
               <% if (model.canEditTask && model.state != 'completed') { %>
-                <div><a class="usajobs-opop-actions__save" href="/internships/<%- model.id %>/edit" id="internship-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
+                <div><a class="usajobs-opop-actions__edit" href="/internships/<%- model.id %>/edit" id="internship-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
               <% } else { %>
                 <% if (model.saved) { %>
                   <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='unsave'><i class="fa fa-star"></i> Saved</a></div>

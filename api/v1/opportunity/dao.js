@@ -170,6 +170,7 @@ dao.query.applicationsNotInListQuery = `
 
 dao.query.taskListApplicationQuery = `
   select
+    task_list.task_id,
     task_list_application_id,
     task_list_application.task_list_id,
     task_list_application.application_id,

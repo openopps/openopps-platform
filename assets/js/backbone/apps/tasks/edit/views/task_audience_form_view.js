@@ -15,7 +15,7 @@ var TaskAudienceFormView = Backbone.View.extend({
   },
 
   render: function () {    
-    this.loadAudienceCommunityData();
+    this.loadAudienceCommunityData(); 
     $('#search-results-loading').hide();
     return this;
   },
@@ -36,24 +36,13 @@ var TaskAudienceFormView = Backbone.View.extend({
             var params = new URLSearchParams(window.location.search);
             if(data.federal.length > 0 && (params.get('target') == 'feds' || data.student.length == 0)) {
               this.target = 'federal';
-              $('#federal-employees').addClass('selected');
-              $('.student-programs').hide();
-              $('#continue').removeAttr('disabled');
-              if(!$('#federal-programs').next('div')[0]) {
-                initializeSelectWrapping($('#student-programs').get());
-              } 
+              $('#federal-employees').addClass('selected');        
+              $('#continue').removeAttr('disabled');           
             } else if (data.student.length > 0 && (params.get('target') == 'students' || data.federal.length == 0)) {
               this.target = 'student';
-              $('#students').addClass('selected'); 
-              $('.federal-programs').hide();
-              $('#continue').removeAttr('disabled'); 
-              if(!$('#student-programs').next('div')[0]) {
-                initializeSelectWrapping($('#student-programs').get());
-              }
-            } else {
-              $('.federal-programs').hide();
-              $('.student-programs').hide();
-            }
+              $('#students').addClass('selected');            
+              $('#continue').removeAttr('disabled');          
+            } 
           }.bind(this), 50);
         }
       }.bind(this),
@@ -62,23 +51,13 @@ var TaskAudienceFormView = Backbone.View.extend({
 
   selectAudience: function (e) {   
     if($(e.currentTarget).val() == 'Students') {
-      this.target = 'student';
-      $('.student-programs').show();
-      $('.federal-programs').hide(); 
+      this.target = 'student';   
       $('#students').addClass('selected');
-      $('#federal-employees').removeClass('selected');
-      if(!$('#student-programs').next('div')[0]) {
-        initializeSelectWrapping($('#student-programs').get());
-      }
+      $('#federal-employees').removeClass('selected');    
     } else {
-      this.target = 'federal';
-      $('.student-programs').hide();
-      $('.federal-programs').show();
+      this.target = 'federal';   
       $('#students').removeClass('selected');  
-      $('#federal-employees').addClass('selected');
-      if(!$('#federal-programs').next('div')[0]) {
-        initializeSelectWrapping($('#federal-programs').get());
-      }    
+      $('#federal-employees').addClass('selected');    
     } 
     $('#continue').removeAttr('disabled');    
   },
@@ -91,9 +70,9 @@ var TaskAudienceFormView = Backbone.View.extend({
         window.history.back();
         break;
       default:
-        var communityId = $('#' + this.target + '-programs').val();
+       
         var baseURL = (this.target == 'student' ? '/internships/new' : 'tasks/new');
-        Backbone.history.navigate(baseURL + (communityId ? '?cid=' + communityId : ''), { trigger: true });
+        Backbone.history.navigate(baseURL , { trigger:true });
         break;
     }
   },
