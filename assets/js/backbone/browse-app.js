@@ -37,7 +37,7 @@ var BrowseRouter = Backbone.Router.extend({
     'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
     //'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id(/:action)(/)(?:queryStr)'            : 'showTask',
-    'internships/new(?*queryString)'                : 'newInternship',
+    'internships/new'                                :'newInternship',
     'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/find(/)'                               : 'findProfile',
@@ -266,7 +266,7 @@ var BrowseRouter = Backbone.Router.extend({
     $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();
-    this.listenTo(model, 'task:model:fetch:success', function (model) {
+    this.listenTo(model, 'task:model:fetch:success', function (model) {   
       model.loadCommunity(model.get('communityId'), function (community) {
         if (!_.isEmpty(community) && community.targetAudience == 'Students') {
           Backbone.history.navigate('/internships/' + id + (action ? '/' + action : '') + (queryStr ? '?' + queryStr : ''), { replace: true });
@@ -294,7 +294,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.navView && this.navView.render();
     $('#search-results-loading').show();
     this.cleanupChildren();
-    var model = new TaskModel();
+    var model = new TaskModel();   
     this.listenTo(model, 'task:model:fetch:success', function (model) {
       model.loadCommunity(model.get('communityId'), function (community) {
         if (_.isEmpty(community) || community.targetAudience !== 'Students') {
@@ -312,9 +312,9 @@ var BrowseRouter = Backbone.Router.extend({
             url: '/api/lookup/languageProficiencies',
           }).done(function (languageProficiencies) {
             if (action && action == 'edit') {
-              this.renderInternshipEdit(model, community, languageProficiencies);
+              this.renderInternshipEdit(model,community,languageProficiencies);
             } else {
-              this.renderInternshipView(model, community, languageProficiencies);
+              this.renderInternshipView(model,community,languageProficiencies);
             }
           }.bind(this)).fail(function () {
             // throw error;
@@ -360,37 +360,30 @@ var BrowseRouter = Backbone.Router.extend({
     return model;
   },
 
-  newInternship: function (queryString) {
+  newInternship: function () {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?internships/new', { trigger: true });
       return;
     }
     $('#search-results-loading').show();
     this.cleanupChildren();
-    var params = this.parseQueryParams(queryString);
-    if (params.cid) {
-      this.renderViewWithCommunity(params.cid, 'Students', this.renderInternshipEdit);
-    } else {
-      Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
-    }
+   
+    this.renderViewWithCommunity('Students', this.renderInternshipEdit);
+   
   },
 
-  renderViewWithCommunity: function (communityId, target, view) {
+  renderViewWithCommunity: function ( target, view) {
     var model = this.initializeTaskModel();
-    model.loadCommunity(communityId, function (community) {
-      if (_.isEmpty(community) || community.targetAudience !== target) {
-        Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
-      } else {
-        model.set('communityId', community.communityId);
-        $.ajax({
-          url: '/api/lookup/languageProficiencies',
-        }).done(function (languageProficiencies) {
-          view.bind(this)(model, community, languageProficiencies);
-        }.bind(this)).fail(function () {
-          // throw error;
-        });
-      }
-    }.bind(this));
+    
+   
+    $.ajax({
+      url: '/api/lookup/languageProficiencies',
+    }).done(function (languageProficiencies) {  
+      view.bind(this)(model,'',languageProficiencies);
+    }.bind(this)).fail(function () {
+      // throw error;
+    });
+    
   },
 
   renderTaskView: function (model, community) {
@@ -421,7 +414,7 @@ var BrowseRouter = Backbone.Router.extend({
     }).render();
   },
 
-  renderInternshipEdit: function (model, community, languageProficiencies) {
+  renderInternshipEdit: function (model,community,languageProficiencies) {
     model.tagTypes(function (tagTypes) {
       this.internshipEditFormView = new InternshipEditFormView({
         el: '#container',

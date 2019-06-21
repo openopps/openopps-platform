@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const auth = require('../../auth/auth');
 const service = require('./service');
+const cycleService = require('../../cycle/service');
 var _ = require('lodash');
 
 var router = new Router();
@@ -33,16 +34,25 @@ Handler.startPrimaryPhase = async function (ctx) {
   await service.startPhaseProcessing(ctx.request.fields.cycleId);
   return new Promise((resolve, reject) => {
     drawMany(ctx).then(results => {
+      service.sendPrimaryPhaseStartedNotification(ctx.state.user, true);
       resolve(results);
     }).catch(err => {
+      service.sendPrimaryPhaseStartedNotification(ctx.state.user, false);
       reject(err);
     });
   });
 };
 
 Handler.startAlternatePhase = async function (ctx) {
-  //TO DO 
-  return true;
+  await service.startAlternateProcessing(ctx.request.fields.cycleId);
+  return new Promise((resolve, reject) => {
+    drawAlterate(ctx).then(results => {
+      service.sendAlternatePhaseStartedNotification(ctx.request.fields.cycleId);
+      resolve(results);
+    }).catch(err => {      
+      reject(err);
+    });
+  });
 };
 
 
@@ -55,6 +65,13 @@ async function drawMany (ctx) {
     }).catch(err => {
       reject(err);
     });
+  });
+}
+
+async function drawAlterate (ctx) {
+  return new Promise((resolve, reject) => {
+    //TO DO
+    resolve(true);
   });
 }
 
@@ -77,6 +94,10 @@ router.post('/api/v1/cycle/drawOne', auth.bearer, async (ctx, next) => {
 router.get('/api/v1/cycle/getCommunityUsers', auth.bearer, async (ctx, next) => {
   var data = await service.getCommunityUsers(ctx.query.cycleID);
   ctx.body = data;
+});
+
+router.get('/api/v1/cycle/checkProcessingStatus', auth.bearer, async (ctx, next) => {
+  ctx.body = await cycleService.checkProcessingStatus(ctx.query.taskId);
 });
 
 module.exports = router.routes();

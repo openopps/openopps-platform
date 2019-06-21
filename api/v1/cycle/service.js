@@ -2,6 +2,7 @@ const db = require('../../../db');
 const dao = require('./dao')(db);
 var _ = require('lodash');
 const Audit = require('../../model/Audit');
+const notification = require('../../notification/service');
 
 var service = {};
 
@@ -23,6 +24,12 @@ service.getPhaseData = async function (cycleId) {
 };
 
 service.startPhaseProcessing = async function (cycleId) {
+  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
+  cycle.isProcessing = true;
+  return await dao.Cycle.update(cycle);
+};
+
+service.startAlternateProcessing = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
   cycle.isProcessing = true;
   return await dao.Cycle.update(cycle);
@@ -93,6 +100,39 @@ service.createAuditLog = async function (type, ctx, auditData) {
 
 service.recordError = async function (userId, err) {
   dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+};
+
+service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopulated) {
+  var data = {
+    action: 'state.department/firstphase.start.confirmation',
+    model: {
+      user: user,
+      agencyportallink: process.env.AGENCYPORTAL_URL,
+      alternatephaselink: process.env.AGENCYPORTAL_URL + '/review',
+      boardspopulated: boardsPopulated ? 'success' : 'fail',
+      emailsqueued: 'success',
+    },
+  };
+  notification.createNotification(data);
+};
+
+service.sendAlternatePhaseStartedNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/alternatephase.start.confirmation',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
+        },
+      };
+      notification.createNotification(data);
+    }
+  } 
 };
 
 function getNextInternshipIndex (internshipIndex) {
@@ -233,7 +273,7 @@ async function createTaskListApplication (item, internship, userId) {
 }
 
 service.getCommunityUsers = async function (cycleId) {
-  var results = await dao.Task.db.query(dao.query.getCommunityUsers, cycleId);  
+  var results = await dao.Task.db.query(dao.query.getAllCommunityUsers, cycleId);  
   return results.rows;
 };
 

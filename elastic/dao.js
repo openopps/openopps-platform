@@ -17,7 +17,7 @@ dao.tasksToIndex = async function (){
 };
 
 dao.usersToIndex = async function () {
-  var query = util.format(usersToIndexQuery,'where u.hiring_path = \'fed\' order by u.id');
+  var query = util.format(usersToIndexQuery,'where u.name is not null and u.hiring_path = \'fed\' order by u.id desc');
   try {
     var result = await db.query(query);
     return _.map(result.rows, (row) => { 
@@ -332,8 +332,8 @@ select
     from (
       select
         midas_user.city_name as "cityName",
-        country.value,
-        country_subdivision.value as "countrySudivision"
+        country.value as country,
+        country_subdivision.value as "countrySubdivision"
       from
         midas_user
       left join country on country.country_id = u.country_id
