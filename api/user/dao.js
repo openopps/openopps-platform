@@ -4,7 +4,7 @@ const badgeDescriptions = require('../../utils').badgeDescriptions;
 
 const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @agency.*, country.value, @countrySubdivision.value, @tags.* ' +
   'from @midas_user m_user ' +
-  'left join tagentity_users__user_tags user_tags on user_tagsuserQuery.user_tags = m_user.id ' +
+  'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
   'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
   'left join @agency on agency.agency_id = m_user.agency_id ' +
   'left join country on country.country_id = m_user.country_id ' +
