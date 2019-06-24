@@ -41,6 +41,7 @@ const communitiesQuery = 'SELECT ' +
     'ON community_user.community_id = community.community_id ' +
   'WHERE ' +
     'community.is_closed_group = true ' +
+    'AND community.is_disabled = false ' +
     'AND community_user.disabled = false ' +
     'AND community_user.user_id = ?';
 
