@@ -32,6 +32,8 @@ async function getProfile (id) {
   var profile = await findOne(id).catch((err) => { return undefined; });
   if(profile) {
     profile.badges = dao.clean.badge(await dao.Badge.find('"user" = ?', id));
+    profile.country = await dao.Country.findOne('country_id = ?', profile.countryId).catch(() => { return undefined; });
+    profile.countrySubdivision = await dao.CountrySubdivision.findOne('country_subdivision_id = ?', profile.countrySubdivisionId).catch(() => { return undefined; });
     profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
     profile.agency = await dao.Agency.findOne('agency_id = ?', profile.agencyId).catch(() => { return undefined; });
     return dao.clean.profile(profile);
@@ -67,9 +69,9 @@ function processUserTags (user, tags) {
       return await createUserTag(tag, user);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
-      if (tag.type == 'location' && !tag.id) {
-        tag.id = ((await dao.TagEntity.find('type = ? and name = ?', 'location', tag.name))[0] || {}).id;
-      }
+      // if (tag.type == 'location' && !tag.id) {
+      //   tag.id = ((await dao.TagEntity.find('type = ? and name = ?', 'location', tag.name))[0] || {}).id;
+      // }
       tag = _.pickBy(tag, _.identity);
       if (tag.id) {
         return await createUserTag(tag.id, user);

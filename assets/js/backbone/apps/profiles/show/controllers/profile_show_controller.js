@@ -47,8 +47,7 @@ var Profile = BaseController.extend({
       this.$el.html(template);
       return;
     }
-    // var fetchId = null;
-    // if (this.id && this.id != 'edit') { fetchId = this.id; }
+
     if(!window.cache.currentUser) {
       Backbone.history.navigate('/login?profile/' + this.routeId, { trigger: true });
     } else {
@@ -63,10 +62,6 @@ var Profile = BaseController.extend({
         if (modelJson.tags[i].type == 'agency') {
           self.model.agency = modelJson.tags[i];
           self.model.agency.tagId = modelJson.tags[i].id;
-        }
-        else if (modelJson.tags[i].type == 'location') {
-          self.model.location = modelJson.tags[i];
-          self.model.location.tagId = modelJson.tags[i].id;
         }
       });
       self.initializeProfileViewInstance();
