@@ -10,13 +10,6 @@ describe('User Service', () => {
     setTimeout(done, 500);
   });
 
-  describe('.list', () => {
-    it('should return 12 users', async () => {
-      var users = await userService.list();
-      assert.equal(users.length, 12);
-    });
-  });
-
   describe('.findOne', () => {
     it('should return truthy if user exist', async () => {
       var user = await userService.findOne(1);

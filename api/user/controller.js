@@ -29,10 +29,6 @@ router.get('/api/user/search', auth, async (ctx, next) => {
   ctx.body = results;
 });
 
-router.get('/api/user/all', auth, async (ctx, next) => {
-  ctx.body = await service.list();
-});
-
 router.get('/api/user', async (ctx, next) => {
   if(ctx.state.user) {
     if(openopps.auth.loginGov.enabled) {

@@ -6,10 +6,6 @@ const _ = require('lodash');
 const User = require('../model/User');
 const Audit = require('../model/Audit');
 
-async function list () {
-  return dao.clean.users(await dao.User.query(dao.query.user, {}, dao.options.user));
-}
-
 async function findOne (id) {
   return await dao.User.findOne('id = ?', id).catch(err => {
     return null;
@@ -69,9 +65,6 @@ function processUserTags (user, tags) {
       return await createUserTag(tag, user);
     } else {
       _.extend(tag, { 'createdAt': new Date(), 'updatedAt': new Date() });
-      // if (tag.type == 'location' && !tag.id) {
-      //   tag.id = ((await dao.TagEntity.find('type = ? and name = ?', 'location', tag.name))[0] || {}).id;
-      // }
       tag = _.pickBy(tag, _.identity);
       if (tag.id) {
         return await createUserTag(tag.id, user);
@@ -234,7 +227,6 @@ async function createAudit (type, ctx, auditData) {
 
 module.exports = {
   createAudit: createAudit,
-  list: list,
   findOne: findOne,
   findOneByUsername: findOneByUsername,
   getProfile: getProfile,
