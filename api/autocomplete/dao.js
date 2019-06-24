@@ -14,7 +14,7 @@ const countryQuery='select country.country_id,country.code,country.value from co
 
 const stateQuery='select country_subdivision.country_subdivision_id,country_subdivision.code,country_subdivision.value from country_subdivision where LOWER(value) like ? and parent_code = ?';
 
-const agencyAutocompleteQuery = `select agency_id as "agencyId", name, abbr from (
+const agencyAutocompleteQuery = `select agency_id as id, name, abbr from (
 	select ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower(abbr) like ? and parent_code is not null
 	union select 5 + ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower("name") like ? and parent_code is not null
 ) a order by row_number limit 5`;
