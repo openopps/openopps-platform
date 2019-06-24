@@ -2,13 +2,6 @@ const _ = require('lodash');
 const dao = require('postgres-gen-dao');
 const badgeDescriptions = require('../../utils').badgeDescriptions;
 
-const userQuery = 'select @m_user.id, @m_user.name, @m_user.title, @agency.*, @tags.* ' +
-  'from @midas_user m_user ' +
-  'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
-  'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
-  'left join @agency on agency.agency_id = m_user.agency_id ' +
-  'where disabled = false and hiring_path = \'fed\'';
-
 const tagQuery = 'select tags.* ' +
   'from tagentity tags ' +
   'inner join tagentity_users__user_tags user_tags on tags.id = user_tags.tagentity_users ' +
@@ -118,7 +111,6 @@ module.exports = function (db) {
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     query: {
-      user: userQuery,
       tag: tagQuery,
       participated: taskParticipatedQuery,
       userAgencyQuery: userAgencyQuery,

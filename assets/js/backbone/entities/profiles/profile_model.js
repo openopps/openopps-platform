@@ -1,7 +1,5 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-
-
 var ProfileModel = Backbone.Model.extend({
 
   urlRoot: '/api/user',
