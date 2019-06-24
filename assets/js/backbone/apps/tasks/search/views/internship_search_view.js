@@ -434,6 +434,7 @@ var InternshipListView = Backbone.View.extend({
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters);
     this.renderFilters();
+    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
     
     var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
     var communityId = USDOS.communityId;
@@ -442,7 +443,6 @@ var InternshipListView = Backbone.View.extend({
     } else if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
-      $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 10;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
