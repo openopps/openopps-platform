@@ -108,7 +108,6 @@ var InternshipEditFormView = Backbone.View.extend({
     
     this.initializeBureaus();
     this.initializeSuggestedClearance();
-    this.loadAudienceCommunityData();
     this.data = {
       data: this.model.toJSON(),
       tagTypes: this.options.tagTypes,
@@ -127,9 +126,7 @@ var InternshipEditFormView = Backbone.View.extend({
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize(); 
-    this.renderCommunity();
-    this.communitySelected();
-    // eslint-disable-next-line no-empty
+    this.loadAudienceCommunityData();
    
     if(this.data.data.canEditTask){
       this.initializeCycle(this.data.data.communityId);
@@ -292,6 +289,7 @@ var InternshipEditFormView = Backbone.View.extend({
   renderSteps:function (){
      
     var stepTemplate;
+  
     stepTemplate = _.template(InternshipStepsTemplate)(this.data);  
     $('#internships-form-steps').html(stepTemplate);    
     setTimeout(function () {
@@ -320,17 +318,16 @@ var InternshipEditFormView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data){ 
-        this.communities= data;              
+        this.communities= data;  
+       
+        var USDOS = _.findWhere(this.communities.student, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+        this.communityId = USDOS.communityId;
+        this.initializeCycle(this.communityId);
+       
       }.bind(this),
     });
   },
-  communitySelected: function (){  
-    this.communityId= $('#student-programs').val();
-    this.initializeCycle(this.communityId);
-    if(this.communityId){
-      initializeSelectWrapping($('#student-programs').get());
-    }
-  },
+  
   initializeSelect2: function () {
     var formatResult = function (object) {
       var formatted = '<div class="select2-result-title">';
@@ -507,6 +504,7 @@ var InternshipEditFormView = Backbone.View.extend({
         }
         else{
           this.$('#cycle-error').show();
+          this.$('#internship-edit').hide();
         }       
       }.bind(this),
        
@@ -904,7 +902,7 @@ var InternshipEditFormView = Backbone.View.extend({
     var modelData = {
       id                            : this.model.get('id'),
       description                   : this.$('#opportunity-details').val(),
-      communityId                   : $('#student-programs').val(),
+      communityId                   : this.communityId,
       title                         : this.$('#intern-title').val(),
       details                       : this.$('#opportunity-details').val(),  
       about                         : this.$('#opportunity-team').val(),
@@ -932,7 +930,7 @@ var InternshipEditFormView = Backbone.View.extend({
       cycleEndDate                  : this.$('input[name=internship-timeframe]:checked').attr('data-cycleEndDate'),
       cycleName                     : this.$('input[name=internship-timeframe]:checked').val(),
     };
-
+  
     if($('.opportunity-location.selected').val() !== 'anywhere') {
       modelData.country             = this.$('#task_tag_country').select2('data').value;
       modelData.countrySubdivision  = this.$('#task_tag_countrySubdivision').select2('data') ? this.$('#task_tag_countrySubdivision').select2('data').value : null;
