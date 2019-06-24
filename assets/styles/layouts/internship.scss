@@ -1406,7 +1406,7 @@
           margin: 0 auto;
         }
 
-        &.word::before {
+        &.doc::before, &.docx::before, &.rtf::before {
           display: inline-block;
           background-size: 3rem 4rem;
           height: 4rem;
@@ -1428,7 +1428,7 @@
           vertical-align: middle;
         }
 
-        &.image::before {
+        &.jpg::before, &.jpeg::before, &.png::before, &.gif::before {
           display: inline-block;
           background-size: 3rem 4rem;
           height: 4rem;
