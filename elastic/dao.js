@@ -126,7 +126,7 @@ from (
     c.community_name,
     c.community_short_name,
     c.community_logo,
-    t.city_name || ', ' || cs.value as city_name,
+    t.city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
 	  cy.cycle_id,
