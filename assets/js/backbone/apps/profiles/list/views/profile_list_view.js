@@ -33,7 +33,9 @@ var PeopleListView = Backbone.View.extend({
     this.$el.html(template);
     this.$el.localize();
     initializeKeywordSearch.bind(this)('#nav-keyword');
+    initializeLocationSearch.bind(this)('#nav-location');
     this.filter();
+    return this;
   },
 
   renderPage: function (searchResults, page, pageSize) {
