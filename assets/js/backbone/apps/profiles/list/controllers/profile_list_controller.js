@@ -12,7 +12,7 @@ var ProfileController = BaseController.extend({
 
   // Initialize the People view
   initialize: function (options) {
-    new ProfileListView(options).render();
+    this.profileListView = new ProfileListView(options).render();
   },
 
   // Cleanup controller and views

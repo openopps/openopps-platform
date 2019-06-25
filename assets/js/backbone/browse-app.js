@@ -99,6 +99,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.profileShowController) { this.profileShowController.cleanup(); }
     if (this.profileFindController) { this.profileFindController.cleanup(); }
     if (this.profileEditController) { this.profileEditController.cleanup(); }
+    this.profileListController && this.profileListController.cleanup();
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskSearchController) { this.taskSearchController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }

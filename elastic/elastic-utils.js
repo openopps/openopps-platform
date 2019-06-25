@@ -33,6 +33,10 @@ function addTerms (request, filter, field, defaultFilter) {
   }
 }
 
+function asArray (value) {
+  return Array.isArray(value) ? value: [value];
+}
+
 function addLocations (request, location) {
   var should_match = request.body.query.bool.should;
   should_match.push({ multi_match: { fields: ['location.cityName', 'location.countrySubdivision', 'location.country'], query: location}});
@@ -74,9 +78,9 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
     }
   }
   
-  addTerms(request, query.skill, 'skills.name');
-  addTerms(request, query.career, 'career.id');
-  addTerms(request, query.agency, 'agency.id');
+  addTerms(request, query.skills, 'skills.name');
+  addTerms(request, query.career, 'career.name');
+  addTerms(request, query.agency, 'agency.name');
 
   return request;
 };

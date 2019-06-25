@@ -14,6 +14,7 @@ var PeopleListView = Backbone.View.extend({
     'change #sort-results'              : 'sortPeople',
     'click .usajobs-search-pills__item' : 'removeFilter',
     'click #search-pills-remove-all'    : 'removeAllFilters',
+    'click a.page'                      : 'clickPage',
   },
 
   initialize: function (options) {
@@ -31,7 +32,10 @@ var PeopleListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
+    initializeKeywordSearch.bind(this)('#nav-keyword');
+    initializeLocationSearch.bind(this)('#nav-location');
     this.filter();
+    return this;
   },
 
   renderPage: function (searchResults, page, pageSize) {
@@ -71,6 +75,13 @@ var PeopleListView = Backbone.View.extend({
     var pagination = _.template(Pagination)(data);
     $('#people-page').html(pagination);
     $('#people-page').show();
+  },
+
+  clickPage: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.filters.page = $(e.currentTarget).data('page');
+    this.filter();
+    window.scrollTo(0, 0);
   },
 
   filter: function () {
