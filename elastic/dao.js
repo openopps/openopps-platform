@@ -326,6 +326,7 @@ select
   u.last_name as "lastName",
   u.title,
   u.bio,
+  u."photoId",
   (
     select
       row_to_json(l)
