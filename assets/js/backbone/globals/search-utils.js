@@ -88,8 +88,8 @@ global.addLocation = function (location) {
 };
 
 /**
- * Initializes a jQuery autocomplete field and updates the
- * bound context filters.
+ * Initializes a jQuery autocomplete field for keyword search
+ * and updates the bound context filters.
  * 
  * Example: initializeKeywordSearch.bind(this)('#keyword-search')
  * 
@@ -124,34 +124,85 @@ global.initializeKeywordSearch = function (element) {
   });
 }
 
-var keywordAC = $.widget("custom.keywordAC", $.ui.autocomplete, {
-  _create: function () {
-      this._super();
-      this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
-  },
-  _renderMenu: function (ul, items) {
-    ul.addClass("profiles-search-keywords-autocomplete");
-    var currentCategory = "",
-        header = '<li class="ui-autocomplete-close-header">Close &nbsp;&nbsp;&times;</li>',
-        $header = $(header);
+/**
+ * Initializes a jQuery autocomplete field for location search
+ * and updates the bound context filters.
+ * 
+ * Example: initializeLocationSearch.bind(this)('#location-search')
+ * 
+ * @param {string} element the id of the autocomplete field
+ */
+global.initializeLocationSearch = function (element) {
+  $(element).locationAC({
+    source: function (request, response) {
+      $.ajax({
+        url: usajobsDataURL + '/api/autocomplete/location',
+        dataType: 'json',
+        data: {
+          term: request.term.trim(),
+        },
+        crossDomain: true,
+        success: function (data) {
+          var results = [];
 
-    $.each(items, function (index, item) {
-      var li;
-      if (item.type !== currentCategory) {
-        ul.append('<li class="ui-autocomplete-category ' + item.type + ' ">' + item.type + '</li>');
-        currentCategory = item.type;
-      }
-      li = this._renderItemData(ul, item);
-    }.bind(this));
-  },
-  _renderItem: function (ul, item) {
-    return $("<li>")
-      .addClass(item.type)
-      .attr("data-value", item.value)
-      .append($("<a>").html(item.label))
-      .appendTo(ul);
+          for (var key in data) {
+            if (key != 'continents' && key != 'counties') {
+              for (var i = 0; i < data[key].length; i++) {
+                var label = data[key][i].Name;
+                var code = data[key][i].Code;
+                var parentName = '';
+
+                var autocompleteItem = {
+                  value: label,
+                  label: splitTermHighlighter(label, request.term),
+                  type: key,
+                  actualValue: code,
+                  parentName: parentName,
+                };
+
+                results.push(autocompleteItem);
+              }
+            }
+          }
+
+          response(results);
+          $('#search-results-loading').hide();
+        }.bind(this),
+      });
+    }.bind(this),
+    minLength: 2,
+    select: function (event, ui) {
+      event.preventDefault();
+      addLocation.bind(this)(ui.item.actualValue);
+
+      $('#nav-location').val('');
+      this.filter();
+    }.bind(this),
+  });
+},
+
+/**
+ * Highlights (bold) matching part of string S from term T
+ * 
+ * @param {string} s string to match on
+ * @param {string} t term or substring to highlight
+ * 
+ */
+global.splitTermHighlighter = function (s, t) {
+  var splitString = t.split(' ').sort(function (a, b) { return b.length - a.length; }),
+      matcherString = '';
+
+  for (var i = 0; i < splitString.length; i++) {
+    if (splitString[i] !== '') {
+      matcherString = matcherString + '(' + $.ui.autocomplete.escapeRegex(splitString[i]) + ')|';
+    }
   }
-});
+
+  var matcher = new RegExp(matcherString, 'ig');
+  s = s.replace(matcher, '<strong>$&</strong>');
+
+  return s;
+};
 
 function formatObjectForURL (value) {
   return value.name;
