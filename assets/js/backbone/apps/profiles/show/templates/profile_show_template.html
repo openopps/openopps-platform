@@ -85,8 +85,7 @@
             <div class="profile-location">
               <div class="usajobs-profile-home-section__field-label">Location</div>
               <span>
-                <% if (data.cityName) { %><%-data.cityName + ', ' %><% } %>
-                <% if (data.countrySubdivision) { %><%-data.countrySubdivision%><% } %><% if (data.country && data.country !== 'United States') { %><%-', ' + data.country%><% } %>
+                <%= _.filter([data.cityName, data.countrySubdivision, data.country != 'United States' ? data.country : ''], _.identity).join(', ') %>
               </span>
             </div>
             <div class="profile-email">
