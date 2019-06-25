@@ -137,6 +137,7 @@ dao.query.getAllCommunityUsers = `
     inner join community_user cu on cu.community_id = community.community_id
     inner join midas_user mu on cu.user_id = mu.id
     inner join task on task.cycle_id = cycle.cycle_id
+    inner join task_share on task_share.user_id =  mu.id and task_share.task_id = task.id 
     where cycle.cycle_id = ?
 `;
 
@@ -151,6 +152,7 @@ dao.query.getCommunityUsers = `
     inner join community_user cu on cu.community_id = community.community_id
     inner join midas_user mu on cu.user_id = mu.id
     inner join task on task.cycle_id = cycle.cycle_id
+    inner join task_share on task_share.user_id =  mu.id and task_share.task_id = task.id 
     where cycle.cycle_id = ? and cu.is_manager = false
 `;
 
