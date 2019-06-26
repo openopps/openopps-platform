@@ -39,7 +39,10 @@ function asArray (value) {
 
 function addLocations (request, location) {
   var should_match = request.body.query.bool.should;
-  should_match.push({ multi_match: { fields: ['location.cityName', 'location.countrySubdivision', 'location.country'], query: location}});
+  should_match.push({ multi_match: { 
+    fields: ['location.cityName', 'location.countrySubdivision', 'location.country', 'location.cityCountrySubdivision', 'location.cityCountry'],
+    query: location,
+  } });
 }
 
 utils.convertQueryStringToUserSearchRequest = function (ctx) {
