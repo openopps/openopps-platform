@@ -126,7 +126,7 @@ from (
     c.community_name,
     c.community_short_name,
     c.community_logo,
-    t.city_name || ', ' || cs.value as city_name,
+    t.city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
     t.city_name || ', ' || cs.value as city_country_subdivision,
@@ -328,6 +328,7 @@ select
   u.last_name as "lastName",
   u.title,
   u.bio,
+  u."photoId",
   (
     select
       row_to_json(l)
