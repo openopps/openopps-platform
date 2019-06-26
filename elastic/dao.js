@@ -17,11 +17,11 @@ dao.tasksToIndex = async function (){
 };
 
 dao.usersToIndex = async function () {
-  var query = util.format(usersToIndexQuery,'where u.name is not null and u.hiring_path = \'fed\' order by u.id desc');
+  var query = util.format(usersToIndexQuery,'where u.disabled = false and u.name is not null and trim(u.name) <> \'\' and u.hiring_path = \'fed\' order by u.id desc');
   try {
     var result = await db.query(query);
     return _.map(result.rows, (row) => { 
-      return row.user
+      return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
     console.error(error);
@@ -34,7 +34,7 @@ dao.userToIndex = async function (id) {
   try {
     var result = await db.query(query, [id]);
     return _.map(result.rows, (row) => { 
-      return row.user
+      return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
     console.error(error);
@@ -322,11 +322,11 @@ from
 (
 select
   u.id,
-  u.name,
-  u.given_name as "givenName",
-  u.middle_name as "middleName",
-  u.last_name as "lastName",
-  u.title,
+  trim(u.name) as name,
+  trim(u.given_name) as "givenName",
+  trim(u.middle_name) as "middleName",
+  trim(u.last_name) as "lastName",
+  trim(u.title) as title,
   u.bio,
   u."photoId",
   (

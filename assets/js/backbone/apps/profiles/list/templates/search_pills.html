@@ -1,7 +1,7 @@
 <div class="usajobs-search-pills" data-object="search-pills" id="search-pills">
   <ul class="usajobs-search-pills__list">
     <% _.each(filters, function(value, key) { %>
-      <% if(key != "term" && key != "page") { %>
+      <% if(key != "term" && key != "page" && key != 'sort') { %>
         <% if(_.isArray(value)) { %>
           <% _.each(value, function (v) { %>
             <% if(_.isObject(v)) { %>
