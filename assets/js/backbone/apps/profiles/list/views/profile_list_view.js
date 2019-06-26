@@ -184,6 +184,15 @@ var PeopleListView = Backbone.View.extend({
     this.filter();
   },
 
+  sortPeople: function (e) {
+    var target = $(e.currentTarget)[0];
+    if (target.value == 'relevance') {
+      this.filters.sort = '';
+    } else {
+      this.filters.sort = target.value;
+    }
+  },
+
   empty: function () {
     this.$el.html('');
   },
