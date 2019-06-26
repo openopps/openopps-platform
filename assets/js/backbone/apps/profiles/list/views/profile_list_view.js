@@ -191,6 +191,8 @@ var PeopleListView = Backbone.View.extend({
     } else {
       this.filters.sort = target.value;
     }
+    this.filter.page = 1;
+    this.filter();
   },
 
   empty: function () {
