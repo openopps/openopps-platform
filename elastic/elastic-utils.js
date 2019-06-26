@@ -55,6 +55,22 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
   request.from = from || request.from;
   request.size = resultsperpage || request.size;
 
+  switch (query.sort) {
+    case 'relevance':
+    case undefined:
+      request.body.sort = ['_score'];
+      break;
+    case 'agency':
+      request.body.sort = ['agency.name'];
+      break;
+    case 'location':
+      request.body.sort = ['location.countrySubdivision', 'location.cityName'];
+      break;
+    default:
+      request.body.sort = [query.sort];
+      break;
+  }
+
   var keywords = [];
   if (query.term) {
     keywords = Array.isArray(query.term) ? query.term : [query.term];
