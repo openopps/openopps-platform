@@ -16,7 +16,9 @@
                 "properties": {
                     "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
                     "countrySubdivision": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
-                    "country": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" }
+                    "country": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+                    "cityCountrySubdivision": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
+                    "cityCountry": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" }
                 }
             },
             "acceptingApplicants":   { "type": "boolean" },

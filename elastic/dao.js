@@ -84,7 +84,7 @@ function toElasticOpportunity (value, index, list) {
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
-    'postingLocation': { cityName: doc.city_name, countrySubdivision: doc.country_subdivision, country: doc.country },
+    'postingLocation': { cityName: doc.city_name, countrySubdivision: doc.country_subdivision, country: doc.country, cityCountrySubdivision: doc.city_country_subdivision, cityCountry: doc.city_country },
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
     'timeRequired': (_.first(doc['task-time-required']) || { name: null }).name,
@@ -129,6 +129,8 @@ from (
     t.city_name || ', ' || cs.value as city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
+    t.city_name || ', ' || cs.value as city_country_subdivision,
+    t.city_name || ', ' || ct.value as city_country,
 	  cy.cycle_id,
 	  cy.name as "cycle_name",
 	  cy.apply_start_date,
@@ -332,8 +334,10 @@ select
     from (
       select
         midas_user.city_name as "cityName",
+        country_subdivision.value as "countrySubdivision",
         country.value as country,
-        country_subdivision.value as "countrySubdivision"
+        midas_user.city_name || ', ' || country_subdivision.value as "cityCountrySubdivision",
+        midas_user.city_name || ', ' || country.value as "cityCountry"
       from
         midas_user
       left join country on country.country_id = u.country_id
