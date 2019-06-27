@@ -536,6 +536,10 @@ padding: $size-default $size-default $size-M $size-default;
       display: flex;
       justify-content: center;
       align-items: center;
+
+      img {
+        max-width: 4.6rem;
+      }
     }
 
     &__initials {

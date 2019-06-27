@@ -13,7 +13,7 @@
                     <span class="student-internships-search-keywords-icon fas fa-search" title="Keywords"></span>
                     Keywords
                   </label>
-                  <input id="nav-keyword" name="k" aria-labelledby="nav-keyword-label" type="text" class="student-internships-search-keywords-input ui-autocomplete-input" value="<%= term %>" placeholder="Find people by name, skill, job title, career field, or agency">
+                  <input id="nav-keyword" name="k" aria-labelledby="nav-keyword-label" type="text" class="student-internships-search-keywords-input ui-autocomplete-input" value="<%= term %>" placeholder="Name, skill, job title, career field or agency">
                 </div>
                 <div class="student-internships-search-location-container">
                   <label for="nav-location" id="nav-location-label">
@@ -53,6 +53,7 @@
             Sort by
           </label>
           <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+            <option disabled></option>
             <option value="relevance">Relevance</option>
             <option value="name">Name</option>
             <option value="title">Title</option>

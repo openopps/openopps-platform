@@ -159,7 +159,10 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date() } }});
     },
     addLocations (location) { 
-      should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
+      should_match.push({ multi_match: { 
+        fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country", 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
+        query: location,
+      }});
     }
   };
   var filter_must = request.body.query.bool.filter.bool.must;

@@ -30,10 +30,11 @@ function createNotification (notification) {
     data.globals = {
       httpProtocol: openopps.httpProtocol,
       hostName: openopps.hostName,
-      urlPrefix: openopps.httpProtocol + '://' + openopps.hostName,
-      systemName: openopps.systemName,
+      urlPrefix: notification.model.urlprefix || openopps.httpProtocol + '://' + openopps.hostName,
+      systemName: notification.model.systemname || openopps.systemName,
       systemEmail: openopps.systemEmail,
       googleAnalytics: openopps.googleAnalytics,
+      logo: notification.model.logo,
     };
 
     renderTemplate(template, data, function (err, options) {
@@ -71,7 +72,7 @@ function renderTemplate (template, data, done) {
         return renderIncludes(include, data);
       });
     }
-    data._logo = '/img/logo/png/open-opportunities-email.png';
+    data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
       if (err) {
         log.info(err);

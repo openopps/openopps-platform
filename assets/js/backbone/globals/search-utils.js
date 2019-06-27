@@ -81,6 +81,7 @@ global.addLocation = function (location) {
   }
   if (this.filters.location && _.isArray(this.filters.location)) {
     this.filters.location.push(location.trim());
+    this.filters.location = _.unique(this.filters.location);
   } else {
     this.filters.location = [location.trim()];
   }

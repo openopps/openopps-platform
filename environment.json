@@ -36,6 +36,6 @@
     "TASK_STATE": "draft",
     "USAJOBS_URL": "https://www.usajobs.gov",
     "USAJOBS_DATA_URL": "",
-    "AGENCYPORTAL_URL": "https://localhost:44373",
+    "AGENCYPORTAL_URL": "",
     "VALIDATE_DOMAINS": true
 }

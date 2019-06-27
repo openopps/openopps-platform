@@ -236,16 +236,16 @@ module.exports.getUsersForCommunityFiltered = async function (page, query, commu
   return result;
 };
 
-async function getTaskMetrics() {
+async function getTaskMetrics () {
   var tasks = (await dao.Task.db.query(dao.query.taskStateQuery)).rows[0];
   tasks.totalCreated = Object.values(tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
   tasks.withVolunteers = (await dao.Task.db.query(dao.query.volunteerQuery, 'withVolunteers')).rows[0].count;
   return tasks;
-};
+}
 
 async function getUserMetrics () {
   return (await dao.User.db.query(dao.query.userQuery)).rows[0];
-};
+}
 
 module.exports.getUserTaskCommunityMetrics = async function (result, communityId) {
   for (var i = 0; i < result.users.length; i++) {
@@ -406,7 +406,7 @@ module.exports.getOwnerOptions = async function (taskId, done) {
     return undefined;
   });
   if (task) {
-    done(await dao.User.query(dao.query.ownerListQuery, task.restrict.name));   
+    done(await dao.User.query(dao.query.ownerListQuery, task.agencyId));   
   } else {
     done(undefined, 'Unable to locate specified task');
   }

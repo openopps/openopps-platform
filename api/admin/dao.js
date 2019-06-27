@@ -111,8 +111,8 @@ const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
 
 const ownerListQuery = 'select midas_user.id, midas_user.name ' +
 'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-"where midas_user.disabled = false and tag.type = 'agency' and tag.name = ?";
+'inner join agency on agency.agency_id = midas_user.agency_id ' +
+'where midas_user.disabled = false and agency.agency_id = ? ';
 
 const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user where agency_id = ?' +
@@ -157,9 +157,9 @@ const userCommunityListFilteredQuery = 'select midas_user.id, midas_user.name, m
   'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
   'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-  'inner join tagentity tag on tags.tagentity_users = tag.id ' +
-  'where midas_user.disabled = \'f\' and (lower(tag.name) like ? or lower(username) like ? or lower(midas_user.name) like ?) ' +
-  "and tag.type = 'agency' and community_user.community_id = ? " +
+  'inner join agency on agency.agency_id = midas_user.agency_id ' +
+  'where midas_user.disabled = \'f\'  or lower(username) like ? or lower(midas_user.name) like ?) ' +
+  'and community_user.community_id = ? ' +
   'order by "created_at" desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';

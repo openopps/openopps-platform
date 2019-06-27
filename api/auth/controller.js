@@ -253,4 +253,9 @@ router.get('/api/auth/logout', async (ctx, next) => {
   ctx.body = response;
 });
 
+router.get('/api/auth/clearSession', async (ctx, next) => {
+  ctx.logout();
+  ctx.body = { success: true };;
+});
+
 module.exports = router.routes();
