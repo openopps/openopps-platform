@@ -107,11 +107,15 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
     action: 'state.department/firstphase.start.confirmation',
     model: {
       user: user,
-      agencyportallink: process.env.AGENCYPORTAL_URL,
-      alternatephaselink: process.env.AGENCYPORTAL_URL + '/review',
+      agencyportallink: openopps.agencyportalURL,
+      alternatephaselink: openopps.agencyportalURL + '/review',
       boardspopulated: boardsPopulated ? 'success' : 'fail',
       emailsqueued: 'success',
+      systemname: 'USAJOBS Agency Talent Portal',
+      urlprefix: openopps.agencyportalURL,
+      logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
     },
+    layout: 'state.department/layout.html',
   };
   notification.createNotification(data);
 };
