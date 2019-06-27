@@ -67,7 +67,7 @@ var InternshipListView = Backbone.View.extend({
     this.$el.localize();
     this.renderCycle();
     this.initializeKeywordSearch();
-    this.initializeLocationSearch();
+    initializeLocationSearch.bind(this)('#nav-location');
     if (window.cache.currentUser && window.cache.currentUser.hiringPath == 'student') {
       this.loadSavedInternships();
     } else {
@@ -218,88 +218,6 @@ var InternshipListView = Backbone.View.extend({
       }.bind(this),
     });
   },
-  
-  initializeLocationSearch: function () {
-    var locationAC = $.widget('custom.locationAC', $.ui.autocomplete, {
-      _create: function () {
-        this._super();
-        this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
-      },
-      _renderMenu: function (ul, items) {
-        ul.addClass('usajobs-search-location-autocomplete');
-        var that = this,
-            currentCategory = '',
-            header = '<li class="ui-autocomplete-close-header">Close &nbsp;&nbsp;&times;</li>',
-            $header = $(header);
-    
-        $.each(items, function (index, item) {
-          var li;
-          if (item.type !== currentCategory) {
-            ul.append('<li class="ui-autocomplete-category ' + item.type + ' ">' + item.type + '</li>');
-            currentCategory = item.type;
-          }
-          li = that._renderItemData(ul, item);
-          if (item.Type) {
-            li.attr('aria-label', item.type + ' : ' + item.value);
-          }
-        });
-      },
-      _renderItem: function (ul, item) {
-        return $('<li>')
-          .addClass(item.type)
-          .attr('data-value', item.value)
-          .append($('<a>').html(item.label))
-          .appendTo(ul);
-      },
-    });
-
-    $('#nav-location').locationAC({
-      source: function (request, response) {
-        $.ajax({
-          url: 'https://data.test.usajobs.gov/api/autocomplete/location',
-          dataType: 'json',
-          data: {
-            term: request.term.trim(),
-          },
-          crossDomain: true,
-          success: function (data) {
-            var results = [];
-
-            for (var key in data) {
-              if (key != 'continents' && key != 'counties') {
-                for (var i = 0; i < data[key].length; i++) {
-                  var label = data[key][i].Name;
-                  var code = data[key][i].Code;
-                  var parentName = '';
-
-                  var autocompleteItem = {
-                    value: label,
-                    label: splitTermHighlighter(label, request.term),
-                    type: key,
-                    actualValue: code,
-                    parentName: parentName,
-                  };
-
-                  results.push(autocompleteItem);
-                }
-              }
-            }
-
-            response(results);
-            $('#search-results-loading').hide();
-          }.bind(this),
-        });
-      }.bind(this),
-      minLength: 2,
-      select: function (event, ui) {
-        event.preventDefault();
-        this.addLocation(ui.item.actualValue);
-
-        $('#nav-location').val('');
-        this.filter();
-      }.bind(this),
-    });
-  },
 
   initializeSelect2: function () {
     ['skill', 'language', 'agency'].forEach(function (tag) {
@@ -434,6 +352,7 @@ var InternshipListView = Backbone.View.extend({
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters);
     this.renderFilters();
+    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
     
     var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
     var communityId = USDOS.communityId;
@@ -442,7 +361,6 @@ var InternshipListView = Backbone.View.extend({
     } else if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
-      $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 10;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
@@ -543,18 +461,6 @@ var InternshipListView = Backbone.View.extend({
   isAgencyChecked: function () {
     return !!$( '#js-restrict-task-filter:checked' ).length;
   },
-  
-  addLocation: function (location) {
-    if(location == 'USA') {
-      location = 'United States';
-    }
-    if (this.filters.location && _.isArray(this.filters.location)) {
-      this.filters.location.push(location.trim());
-    } else {
-      this.filters.location = [location.trim()];
-    }
-    this.filters.page = 1;
-  },
 
   initAgencyFilter: function () {
     this.agency = { data: {} };
@@ -608,7 +514,7 @@ var InternshipListView = Backbone.View.extend({
   search: function () {
     this.filters.term = this.$('#nav-keyword').val().trim();
     if (this.$('#nav-location').val().trim() != '') {
-      this.addLocation($('#nav-location').val());
+      addLocation.bind(this)($('#nav-location').val());
     }
     this.$('#nav-location').val('');
     this.filters.page = 1;
@@ -747,22 +653,6 @@ function getAppliedFiltersCount (filters) {
     }
   });
   return count;
-}
-
-function splitTermHighlighter (s, t) {
-  var splitString = t.split(' ').sort(function (a, b) { return b.length - a.length; }),
-      matcherString = '';
-
-  for (var i = 0; i < splitString.length; i++) {
-    if (splitString[i] !== '') {
-      matcherString = matcherString + '(' + $.ui.autocomplete.escapeRegex(splitString[i]) + ')|';
-    }
-  }
-
-  var matcher = new RegExp(matcherString, 'ig');
-  s = s.replace(matcher, '<strong>$&</strong>');
-
-  return s;
 }
   
 module.exports= InternshipListView;

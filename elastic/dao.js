@@ -17,11 +17,11 @@ dao.tasksToIndex = async function (){
 };
 
 dao.usersToIndex = async function () {
-  var query = util.format(usersToIndexQuery,'where u.name is not null and u.hiring_path = \'fed\' order by u.id desc');
+  var query = util.format(usersToIndexQuery,'where u.disabled = false and u.name is not null and trim(u.name) <> \'\' and u.hiring_path = \'fed\' order by u.id desc');
   try {
     var result = await db.query(query);
     return _.map(result.rows, (row) => { 
-      return row.user
+      return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
     console.error(error);
@@ -34,7 +34,7 @@ dao.userToIndex = async function (id) {
   try {
     var result = await db.query(query, [id]);
     return _.map(result.rows, (row) => { 
-      return row.user
+      return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
     console.error(error);
@@ -84,7 +84,7 @@ function toElasticOpportunity (value, index, list) {
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
-    'postingLocation': { cityName: doc.city_name, countrySubdivision: doc.country_subdivision, country: doc.country },
+    'postingLocation': { cityName: doc.city_name, countrySubdivision: doc.country_subdivision, country: doc.country, cityCountrySubdivision: doc.city_country_subdivision, cityCountry: doc.city_country },
     'acceptingApplicants': doc.acceptingApplicants,
     'taskPeople': (_.first(doc['task-people']) || { name: null }).name,
     'timeRequired': (_.first(doc['task-time-required']) || { name: null }).name,
@@ -126,9 +126,11 @@ from (
     c.community_name,
     c.community_short_name,
     c.community_logo,
-    t.city_name || ', ' || cs.value as city_name,
+    t.city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
+    t.city_name || ', ' || cs.value as city_country_subdivision,
+    t.city_name || ', ' || ct.value as city_country,
 	  cy.cycle_id,
 	  cy.name as "cycle_name",
 	  cy.apply_start_date,
@@ -320,20 +322,23 @@ from
 (
 select
   u.id,
-  u.name,
-  u.given_name as "givenName",
-  u.middle_name as "middleName",
-  u.last_name as "lastName",
-  u.title,
+  trim(u.name) as name,
+  trim(u.given_name) as "givenName",
+  trim(u.middle_name) as "middleName",
+  trim(u.last_name) as "lastName",
+  trim(u.title) as title,
   u.bio,
+  u."photoId",
   (
     select
       row_to_json(l)
     from (
       select
         midas_user.city_name as "cityName",
+        country_subdivision.value as "countrySubdivision",
         country.value as country,
-        country_subdivision.value as "countrySubdivision"
+        midas_user.city_name || ', ' || country_subdivision.value as "cityCountrySubdivision",
+        midas_user.city_name || ', ' || country.value as "cityCountry"
       from
         midas_user
       left join country on country.country_id = u.country_id

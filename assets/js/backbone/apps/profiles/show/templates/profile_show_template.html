@@ -83,10 +83,10 @@
               <% } %>
             </div>
             <div class="profile-location">
-              <% if (data.location) { %>
               <div class="usajobs-profile-home-section__field-label">Location</div>
-              <span><%- data.location.name %></span>
-              <% } %>
+              <span>
+                <%= _.filter([data.cityName, data.countrySubdivision, data.country != 'United States' ? data.country : ''], _.identity).join(', ') %>
+              </span>
             </div>
             <div class="profile-email">
               <% if (data.hiringPath == 'fed' && email) { %>

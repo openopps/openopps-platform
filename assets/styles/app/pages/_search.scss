@@ -536,6 +536,10 @@ padding: $size-default $size-default $size-M $size-default;
       display: flex;
       justify-content: center;
       align-items: center;
+
+      img {
+        max-width: 4.6rem;
+      }
     }
 
     &__initials {
@@ -1016,7 +1020,8 @@ padding: $size-default $size-default $size-M $size-default;
   background: #fff url('../../../img/ui-anim_basic_16x16.gif') calc(100% - 0.7em) center no-repeat;
 }
 
-.usajobs-search-location-autocomplete {
+.usajobs-search-location-autocomplete,
+.profiles-search-keywords-autocomplete {
 
   @include media($L) {
     float:left;

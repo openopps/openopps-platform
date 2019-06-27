@@ -9,6 +9,7 @@ const data = {
   loginGov: openopps.auth.loginGov.enabled,
   version: openopps.version,
   usajobsURL: openopps.usajobsURL,
+  usajobsDataURL: openopps.usajobsDataURL,
   alert: null,
   jsHash: md5File.sync(path.join(__dirname, '../dist', 'js', 'bundle.min.js')),
   cssHash: md5File.sync(path.join(__dirname, '../dist', 'styles', 'main.css')),

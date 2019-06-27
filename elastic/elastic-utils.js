@@ -33,9 +33,16 @@ function addTerms (request, filter, field, defaultFilter) {
   }
 }
 
+function asArray (value) {
+  return Array.isArray(value) ? value: [value];
+}
+
 function addLocations (request, location) {
   var should_match = request.body.query.bool.should;
-  should_match.push({ multi_match: { fields: ['location.cityName', 'location.countrySubdivision', 'location.country'], query: location}});
+  should_match.push({ multi_match: { 
+    fields: ['location.cityName', 'location.countrySubdivision', 'location.country', 'location.cityCountrySubdivision', 'location.cityCountry'],
+    query: location,
+  } });
 }
 
 utils.convertQueryStringToUserSearchRequest = function (ctx) {
@@ -47,6 +54,22 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
   var request = initializeRequest('user', 'user');
   request.from = from || request.from;
   request.size = resultsperpage || request.size;
+
+  switch (query.sort) {
+    case 'relevance':
+    case undefined:
+      request.body.sort = ['_score'];
+      break;
+    case 'agency':
+      request.body.sort = ['agency.name'];
+      break;
+    case 'location':
+      request.body.sort = ['location.countrySubdivision', 'location.cityName'];
+      break;
+    default:
+      request.body.sort = [query.sort];
+      break;
+  }
 
   var keywords = [];
   if (query.term) {
@@ -74,9 +97,9 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
     }
   }
   
-  addTerms(request, query.skill, 'skills.name');
-  addTerms(request, query.career, 'career.id');
-  addTerms(request, query.agency, 'agency.id');
+  addTerms(request, query.skills, 'skills.name');
+  addTerms(request, query.career, 'career.name');
+  addTerms(request, query.agency, 'agency.name');
 
   return request;
 };

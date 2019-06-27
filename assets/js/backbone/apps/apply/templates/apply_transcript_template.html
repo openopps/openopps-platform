@@ -16,12 +16,11 @@
                   <div class="transcript-info">
                     <%- transcript.CandidateFileName %>
                     <span class="transcript-card-button__sub-text">
-                      <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- transcript.DateTimeReceived %>
+                      <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(transcript.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
                     </span>
                   </div>
                   <div class="usa-width-one-fourth">
-                    <span class="transcript-icon">
-                      <i class="far fa-file-word"></i>
+                    <span class="transcript-icon <%- transcript.FileFormat %>">
                       <h6>Transcript</h6>
                     </span>
                   </div>

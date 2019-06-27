@@ -14,6 +14,7 @@ var PeopleListView = Backbone.View.extend({
     'change #sort-results'              : 'sortPeople',
     'click .usajobs-search-pills__item' : 'removeFilter',
     'click #search-pills-remove-all'    : 'removeAllFilters',
+    'click a.page'                      : 'clickPage',
   },
 
   initialize: function (options) {
@@ -31,7 +32,10 @@ var PeopleListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
+    initializeKeywordSearch.bind(this)('#nav-keyword');
+    initializeLocationSearch.bind(this)('#nav-location');
     this.filter();
+    return this;
   },
 
   renderPage: function (searchResults, page, pageSize) {
@@ -71,6 +75,13 @@ var PeopleListView = Backbone.View.extend({
     var pagination = _.template(Pagination)(data);
     $('#people-page').html(pagination);
     $('#people-page').show();
+  },
+
+  clickPage: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.filters.page = $(e.currentTarget).data('page');
+    this.filter();
+    window.scrollTo(0, 0);
   },
 
   filter: function () {
@@ -118,7 +129,7 @@ var PeopleListView = Backbone.View.extend({
   renderPills: function () {
     appliedFilterCount = 0;
     _.each(this.filters, function ( value, key ) {
-      if (key != 'term' && key != 'page') {
+      if (key != 'term' && key != 'page' && key != 'sort') {
         appliedFilterCount += (_.isArray(value) ? value.length : 1);
       }
     });
@@ -170,6 +181,17 @@ var PeopleListView = Backbone.View.extend({
   removeAllFilters: function (event) {
     event.preventDefault();
     this.filters = { page: 1 };
+    this.filter();
+  },
+
+  sortPeople: function (e) {
+    var target = $(e.currentTarget)[0];
+    if (target.value == 'relevance') {
+      this.filters.sort = '';
+    } else {
+      this.filters.sort = target.value;
+    }
+    this.filter.page = 1;
     this.filter();
   },
 
