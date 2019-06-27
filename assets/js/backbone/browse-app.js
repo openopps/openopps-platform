@@ -186,18 +186,23 @@ var BrowseRouter = Backbone.Router.extend({
     }.bind(this)).always(function () {
       window.cache.currentUser = null;
     });
-    
   },
 
   showLogout: function () {
-    this.navView = new NavView({
-      el: '.navigation',
-      accessForbidden: true, 
-    }).render();
-    var LogOutTemplate = require('./apps/login/templates/logout.html');
-    $('#container').html(_.template(LogOutTemplate)());
-    $('#search-results-loading').hide();
-    $('.usa-footer-return-to-top').hide();
+    $.ajax({
+      url: '/api/auth/clearSession?json=true',
+    }).done(function (data) {
+      this.navView = new NavView({
+        el: '.navigation',
+        accessForbidden: true, 
+      }).render();
+      var LogOutTemplate = require('./apps/login/templates/logout.html');
+      $('#container').html(_.template(LogOutTemplate)());
+      $('#search-results-loading').hide();
+      $('.usa-footer-return-to-top').hide();
+    }.bind(this)).fail(function () {
+      showWhoopsPage();
+    });
   },
 
   showExpired: function () {
