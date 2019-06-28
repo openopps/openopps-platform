@@ -4,7 +4,13 @@
       <th>Title</th>
       <th>Creator</th>
       <th class="center">Date</th>
-      <th id="publishId" class="center" data-target="publish-delete">Publish</th>
+      <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+        <% if (targetAudience !== 'Students') { %>
+          <th id="publishId" class="center" data-target="publish-delete">Publish</th>
+        <% } else { %>
+          <th id="publishId" class="center" data-target="publish-delete">Approve</th>
+        <% } %>
+      <% } %>
       <th class="center" data-target="publish-delete">Delete</th> 
       <th class="center hide" data-target="change-add">Change<br/> owner</th>
       <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
@@ -52,10 +58,23 @@
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
                 class="task-open"
-                alt="Publish Opportunity"
-                title="Publish Opportunity">
+                <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+                  <% if (targetAudience !== 'Students') { %>
+                    alt="Publish Opportunity"
+                    title="Publish Opportunity">
+                  <% } else { %>
+                    alt="Approve Opportunity"
+                    title="Approve Opportunity">
+                  <% } %>
+                <% } %>
                 <span class='fa fa-check'></span>
-                <span class="usa-sr-only">Publish Opportunity</span>
+                <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+                  <% if (targetAudience !== 'Students') { %>
+                    <span class="usa-sr-only">Publish Opportunity</span>
+                  <% } else { %>
+                    <span class="usa-sr-only">Approve Opportunity</span>
+                  <% } %>
+                <% } %>
               </a>
             </td>
           <% } else if (_.contains(['open','notopen', 'inprogress'], status.toLowerCase())) { %>
