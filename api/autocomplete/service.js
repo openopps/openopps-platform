@@ -23,7 +23,7 @@ module.exports.userByName =  async function (name) {
   );
   return result.map(tag => {
     tag.field = 'value';
-    tag.value = [tag.name, openopps.auth.loginGov.enabled ? tag.governmentUri : tag.username].join(' - ');
+    tag.value = [tag.name, (openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username)].join(' - ');
     
     return tag;
   });
