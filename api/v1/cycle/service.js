@@ -30,9 +30,11 @@ service.startPhaseProcessing = async function (cycleId) {
 };
 
 service.startAlternateProcessing = async function (cycleId) {
-  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
-  cycle.isProcessing = true;
-  return await dao.Cycle.update(cycle);
+  await dao.Cycle.db.query(dao.query.RemoveApplicationsForPhase, cycleId).then(async () => {
+    var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
+    cycle.isProcessing = true;
+    return await dao.Cycle.update(cycle);
+  }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -59,11 +61,14 @@ service.drawMany = async function (userId, cycleId) {
   await initializeDraw(cycleId);
   await initializeBoard(userId);
   var internshipIndex = 0;
-  var internshipIndex = getNextInternshipIndex(internshipIndex);
+  internshipIndex = getNextInternshipIndex(internshipIndex);
   var currentInternship = internships[internshipIndex];
   do
   {      
-    await assignIntern(currentInternship, userId);       
+    var applicationId = await assignIntern(currentInternship, userId);   
+    if (applicationId == null) { 
+      break; 
+    }    
     remainingApplicants--;
     currentInternship.remainingInternships--;
     internshipIndex++;
@@ -158,9 +163,10 @@ async function initializeBoard (userId) {
     if (!(await boardExists(internships[i].task_id))) {
       await createBoard(internships[i].task_id, userId);            
     }
+    var existingApplicationsCount = (await dao.Application.db.query(dao.query.getTaskApplicationCount, internships[i].task_id)).rows[0].applicant_count;
     internships[i].max_sort = 0;
     internships[i].reviewList = await getReviewList(internships[i].task_id);
-    internships[i].remainingInternships = Number(internships[i].interns) + (Number(internships[i].interns) * Number(internships[i].alternate_rate));
+    internships[i].remainingInternships = (Number(internships[i].interns) + (Number(internships[i].interns) * Number(internships[i].alternate_rate))) - existingApplicationsCount;
   }
 }
 
@@ -173,9 +179,10 @@ async function getReviewList (taskId) {
 }
 
 async function initializeDraw (cycleId) {
+  var numOnBoards = (await dao.Application.db.query(dao.query.getApplicationExistingCount, cycleId)).rows[0].applicant_count;
   internships = (await dao.Task.db.query(dao.query.getTaskTotalScore, cycleId)).rows;
   numOfApplicants = (await dao.Application.db.query(dao.query.getApplicationCount, cycleId)).rows[0].applicant_count;
-  remainingApplicants = numOfApplicants;
+  remainingApplicants = numOfApplicants - numOnBoards;
   numOfInternships = _.sumBy(internships, function (i) { return Number(i.interns) + (Number(i.interns) * Number(i.alternate_rate)); });
 }
 
@@ -220,6 +227,9 @@ async function assignIntern (internship, userId) {
   var intern = await getTopApplicantScoreByTaskWithPreference(internship);
   if (!intern) {
     intern = await getInternWithApplication(internship);
+  }
+  if (!intern) {
+    return null;
   }
   await updateBoard(internship, intern, userId);
   return intern.application_id;
