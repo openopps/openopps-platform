@@ -1,7 +1,7 @@
 <div class="people-search-result">
   <a href="/profile/<%= person.id %>">
     <div class="people-search-result__figure-body">
-      <div class="people-search-result__figure <%- getInitialsColor(person.id) %>">
+      <div class="people-search-result__figure <% if (!person.photoId) { %><%- getInitialsColor(person.id) %><% } %>">
         <% if (person.photoId) { %>
           <img src="/api/user/photo/<%- person.id %>" alt="Profile picture of <%- person.name %>">
         <% } else { %>
