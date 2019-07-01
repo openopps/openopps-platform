@@ -191,7 +191,7 @@ async function linkAccount (user, data, done) {
   if(!account || user.linkedId !== account.linkedId || !validate([account.linkedId, account.uuid, account.username], data.h)) {
     done({ message: 'This link is no longer valid.' });
   } else {
-    await dao.User.findOne('username = ? and linked_id = \'\'', account.username).then(async u => {
+    await dao.User.findOne('lower(username) = ? and linked_id = \'\'', account.username.toLowerCase()).then(async u => {
       u.linkedId = account.linkedId;
       u.governmentUri = account.governmentUri;
       await dao.User.update(u);
@@ -210,7 +210,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
   if(!account || !validate([account.linkedId, account.uuid], data.h)) {
     done({ message: 'Invalid request' });
   } else {
-    await dao.User.findOne('username = ?', data.email).then(async user => {
+    await dao.User.findOne('lower(username) = ?', data.email.toLowerCase()).then(async user => {
       if(user.linkedId) {
         notification.createNotification({
           action: 'find.profile.confirmation',
