@@ -93,4 +93,8 @@ router.get('/api/v1/cycle/checkProcessingStatus', auth.bearer, async (ctx, next)
   ctx.body = await cycleService.checkProcessingStatus(ctx.query.taskId);
 });
 
+router.get('/api/v1/cycle/checkCycleStatus', auth.bearer, async (ctx, next) => {
+  ctx.body = await service.checkCycleStatus(ctx.query.cycleId);
+});
+
 module.exports = router.routes();

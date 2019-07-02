@@ -23,6 +23,11 @@ service.getPhaseData = async function (cycleId) {
   return results;
 };
 
+service.checkCycleStatus = async function (cycleId) {
+  var results = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });;
+  return results.isProcessing;
+};
+
 service.startPhaseProcessing = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
   cycle.isProcessing = true;
