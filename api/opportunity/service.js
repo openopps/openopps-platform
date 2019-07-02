@@ -271,11 +271,20 @@ async function updateOpportunity (attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
+  if (origTask.communityId != attributes.communityId) {
+    attributes.state = 'submitted';
+    attributes.submittedAt = null;
+    attributes.publishedAt = null;
+    attributes.assignedAt = null;
+    attributes.completedAt = null;
+    attributes.canceledAt = null;
+  }
   attributes.assignedAt = attributes.state === 'assigned' && origTask.state !== 'assigned' ? new Date : origTask.assignedAt;
   attributes.publishedAt = attributes.state === 'open' && origTask.state !== 'open' ? new Date : origTask.publishedAt;
   attributes.completedAt = attributes.state === 'completed' && origTask.state !== 'completed' ? new Date : origTask.completedAt;
   attributes.submittedAt = attributes.state === 'submitted' && origTask.state !== 'submitted' ? new Date : origTask.submittedAt;
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+  
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
     
@@ -317,7 +326,7 @@ async function updateOpportunity (attributes, done) {
         await processTaskTags(task, tags).then(async tags => {
           task.tags = tags;
           await elasticService.indexOpportunity(task.id);
-          return done(task, origTask.state !== task.state);
+          return done(task, origTask.state !== task.state || origTask.communityId !== task.communityId);
         });
       }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
   }).catch (err => {
