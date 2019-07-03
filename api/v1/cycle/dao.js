@@ -185,6 +185,20 @@ dao.query.getCommunityUsers = `
     where cycle.cycle_id = ? and cu.is_manager = false
 `;
 
+dao.query.getCommunityCreators = `
+  select 
+    mu.given_name,
+    mu.username as email,
+    task.title,
+    task.id as task_id
+  from "cycle"
+    inner join community on cycle.community_id = community.community_id
+    inner join community_user cu on cu.community_id = community.community_id
+    inner join midas_user mu on cu.user_id = mu.id
+    inner join task on task.cycle_id = cycle.cycle_id and task."userId" = mu.id 
+  where cycle.cycle_id = ?
+`;
+
 module.exports = function (db) {
   dao.Application = pgdao({ db: db, table: 'application' });
   dao.Task = pgdao({ db: db, table: 'task' });
