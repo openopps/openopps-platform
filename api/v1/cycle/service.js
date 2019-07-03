@@ -24,7 +24,7 @@ service.getPhaseData = async function (cycleId) {
 };
 
 service.checkCycleStatus = async function (cycleId) {
-  var results = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });;
+  var results = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
   return results.isProcessing;
 };
 
@@ -40,6 +40,13 @@ service.startAlternateProcessing = async function (cycleId) {
     cycle.isProcessing = true;
     return await dao.Cycle.update(cycle);
   }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
+};
+
+service.archivePhase = async function (cycleId) {
+  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
+  cycle.isArchived = true;
+  await dao.Cycle.update(cycle);
+  return await service.sendCloseCyclePhaseCreaterNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
