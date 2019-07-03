@@ -43,9 +43,10 @@ service.startAlternateProcessing = async function (cycleId) {
 };
 
 service.archivePhase = async function (cycleId) {
-    var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
-    cycle.isArchived = true;
-    return await dao.Cycle.update(cycle);
+  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
+  cycle.isArchived = true;
+  await dao.Cycle.update(cycle);
+  return await service.sendCloseCyclePhaseCreaterNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -148,12 +149,39 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
           email: results[i].email,
           title: results[i].title,
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
         },
+        layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
     }
   } 
 };
+
+service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityCreators, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.creators',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
 
 function getNextInternshipIndex (internshipIndex) {
   var counter = 0;
