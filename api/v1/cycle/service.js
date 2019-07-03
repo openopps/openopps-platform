@@ -43,7 +43,7 @@ service.startAlternateProcessing = async function (cycleId) {
 };
 
 service.archivePhase = async function (cycleId) {
-    var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });;
+    var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
     cycle.isArchived = true;
     return await dao.Cycle.update(cycle);
 };
