@@ -55,6 +55,9 @@ Handler.startAlternatePhase = async function (ctx) {
   });
 };
 
+Handler.closeCycle = async function (ctx) {
+  await service.archivePhase(ctx.request.fields.cycleId);
+};
 
 async function drawMany (ctx) {
   return new Promise((resolve, reject) => {
