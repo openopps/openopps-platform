@@ -4,9 +4,8 @@ module.exports = {
   data: function (model, done) {
     var data = {
       email: model.email,
-      given_name: model.given_name,         
-      title: model.title,
-      archivelink: model.archivelink
+      given_name: model.given_name,
+      archivelink: model.agencyportallink,
     };
     done(null, data);
   },
