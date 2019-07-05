@@ -14,11 +14,13 @@ exports.setup = function (options, seedLink) {
   seed = seedLink;
 };
 
-exports.up = function (db, callback) {
-  db.runSql(`
+exports.up = function (db) {
+  return Promise.all([
+    db.runSql(`
     update phase set config = '{"modal_text": "Are you sure you want to close the cycle? Hiring managers will not be able to make selections once the cycle is closed. Emails will go to all applicants to inform them of their status and we''ll archive all review boards. Once review boards are archived, they can''t be reopened.", "button_name": "Close cycle", "modal_header": "Confirm Close cycle.", "confirm_action": "closeCycle"}'
-    where name = 'Close phase'`, callback);
-  return db.addColumn('cycle', 'is_archived', { type: 'boolean', notNull: true, defaultValue: false });
+    where name = 'Close phase'`),
+    db.addColumn('cycle', 'is_archived', { type: 'boolean', notNull: true, defaultValue: false }),
+  ]);
 };
 
 exports.down = function (db) {
