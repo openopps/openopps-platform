@@ -119,6 +119,28 @@ service.recordError = async function (userId, err) {
   dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
 };
 
+service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getAllCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/firstphase.start.community',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          reviewboardlink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  }
+}; 
+
 service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopulated) {
   var data = {
     action: 'state.department/firstphase.start.confirmation',
@@ -171,6 +193,7 @@ service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
           given_name: results[i].given_name,
           email: results[i].email,
           title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/review/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
           logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       

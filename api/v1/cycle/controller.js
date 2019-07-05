@@ -34,6 +34,7 @@ Handler.startPrimaryPhase = async function (ctx) {
   await service.startPhaseProcessing(ctx.request.fields.cycleId);
   return new Promise((resolve, reject) => {
     drawMany(ctx).then(results => {
+      service.sendPrimaryPhaseStartedCommunityNotification(ctx.request.fields.cycleId);
       service.sendPrimaryPhaseStartedNotification(ctx.state.user, true);
       resolve(results);
     }).catch(err => {
