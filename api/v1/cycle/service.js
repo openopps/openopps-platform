@@ -46,7 +46,9 @@ service.archivePhase = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
-  return await service.sendCloseCyclePhaseCreaterNotification(cycleId);
+  await service.sendCloseCyclePhaseCreaterNotification(cycleId);
+  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -165,7 +167,7 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
       var data = {
-        action: 'state.department/alternatephase.start.confirmation',
+        action: 'state.department/alternatephase.start.communityusers',
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
@@ -193,7 +195,53 @@ service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
           given_name: results[i].given_name,
           email: results[i].email,
           title: results[i].title,
-          archivelink: process.env.AGENCYPORTAL_URL + '/review/',
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.communityusers',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityManagers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.communitymanagers',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
           logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       

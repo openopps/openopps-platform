@@ -1,11 +1,10 @@
 module.exports = {
-  subject: 'Your review board is now closed.',
+  subject: 'U.S. Department of State Student Internship Program (Unpaid) – The cycle has closed.',
   to: '<%= email %>',
   data: function (model, done) {
     var data = {
       email: model.email,
-      given_name: model.given_name,         
-      title: model.title,
+      given_name: model.given_name,
       archivelink: model.archivelink,
     };
     done(null, data);
