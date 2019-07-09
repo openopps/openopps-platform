@@ -159,11 +159,18 @@
   margin-right: auto;
   background: $color-white;
   padding: $size-default $size-SM $size-L $size-SM;
+  position: relative;
 
   @include media($L) {
     padding: $size-SM $size-M $size-M $size-M;
     margin-bottom: $size-default;
     border-bottom: none;
+  }
+
+  .usajobs-nav--openopps__section-link {
+    position: absolute;
+    top: $size-default;
+    right: 0;
   }
 
   h2 {

@@ -34,8 +34,9 @@ dao.query.internshipListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
-    and "cycle".apply_end_date < current_date
-    and "cycle".review_end_date > current_date
+    and "cycle".is_archived = false
+    and "cycle".apply_end_date <= current_date
+    and "cycle".review_end_date >= current_date
 `;
 
 dao.query.internshipArchiveListQuery = `
@@ -51,7 +52,7 @@ dao.query.internshipArchiveListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
-    and "cycle".review_end_date < current_date
+    and "cycle".is_archived = true
 `;
 
 dao.query.internshipSummaryQuery = `

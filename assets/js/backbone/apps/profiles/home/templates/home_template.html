@@ -1,8 +1,13 @@
 <main class="usajobs-opop" id="main-content" role="main">
   <div class="usajobs-grid usajobs-opop-dashboard">
-    <h1>Welcome <%- window.cache.currentUser.name %><a href="/logout" class="logout">Sign out</a></h1>
+    <h1>Welcome <%- window.cache.currentUser.givenName %><a href="/logout" class="logout">Sign out</a></h1>
     <div class="usajobs-opop-dashboard__body">
       <div class="usajobs-open-opps-participated__body">
+        <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/application-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+          <span class="usajobs-nav--openopps__section">
+            <span class="fas fa-question-circle" title="Help"></span>Help
+          </span>
+        </a>
         <h2>Your opportunities</h2>
         <h3>Participated</h3>
         <div class="opportunity-participated"></div>

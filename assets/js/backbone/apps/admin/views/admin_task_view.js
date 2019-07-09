@@ -122,12 +122,13 @@ var AdminTaskView = Backbone.View.extend({
    */
   openTask: function (event) {
     var data = this.collectEventData(event);
+    var action = (this.community.targetAudience !== 'Students') ? 'publish' : 'approve';
     var displayModal = new Modal({
       id: 'confirm-publish',
-      modalTitle: 'Confirm publish',
-      modalBody: 'Are you sure you want to publish <strong>' + data.title + '</strong>?',
+      modalTitle: 'Confirm ' + action,
+      modalBody: 'Are you sure you want to ' + action + ' <strong>' + data.title + '</strong>?',
       primary: {
-        text: 'Publish',
+        text: action.charAt(0).toUpperCase() + action.slice(1),
         action: function () {
           this.submitPublish.bind(this)(data.id, displayModal);
         }.bind(this),
