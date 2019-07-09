@@ -137,7 +137,7 @@ dao.query.GetPhaseData = `
     left join phase p on p.phase_id = c.phase_id
   where
     c.cycle_id = ?
-    and current_date between c.review_start_date and c.review_end_date
+    and current_date between date(c.review_start_date) and date(c.review_end_date)
 `;
 
 dao.query.GetPhases = `
