@@ -35,8 +35,8 @@ dao.query.internshipListQuery = `
   where
     task_share.user_id = ?
     and "cycle".is_archived = false
-    and "cycle".apply_end_date <= current_date
-    and "cycle".review_end_date >= current_date
+    and date("cycle".apply_end_date) <= current_date
+    and date("cycle".review_end_date) >= current_date
 `;
 
 dao.query.internshipArchiveListQuery = `
