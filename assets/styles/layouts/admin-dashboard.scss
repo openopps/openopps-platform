@@ -83,7 +83,25 @@
     .usajobs-nav--openopps__section-link {
       position: absolute;
       top: -$size-default;
-      right: -$size-M;
+      right: -$size-S;
+      line-height: 2.9rem;
+      font-size: 1.7rem;
+      text-decoration: none;
+
+      @include media($ML) {
+        top: -$size-default;
+        right: -$size-M;
+        line-height: 2.4rem;
+      }
+
+      span {
+        display: block;
+      }
+
+      svg {
+        display: inline-block;
+        padding-bottom: 0;
+      }
     }
   }
 
