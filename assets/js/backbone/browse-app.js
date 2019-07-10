@@ -19,6 +19,7 @@ var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_v
 var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
 var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
+var AdminCommunityEditView=require('./apps/admin/views/admin_community_edit_view');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
 var ApplyCongratulationsView = require('./apps/apply/views/apply_congratulations_view');
@@ -32,6 +33,7 @@ var BrowseRouter = Backbone.Router.extend({
     ''                                              : 'showLanding',
     'home'                                          : 'showHome',
     'tasks/create'                                  : 'createTask',
+    'admin/community/create'                        :'createCommunity',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'searchTasks',
     'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
@@ -108,8 +110,9 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
     if (this.internshipEditFormView) { this.internshipEditFormView.cleanup(); }
-    if (this.internshipView) { this.internshipView.cleanup(); }
+    if (this.internshipView) { this.internshipView.cleanup(); }   
     this.applyController && this.applyController.cleanup();
+    if (this.adminCommunityEditView) { this.adminCommunityEditView.cleanup(); }
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
     this.welcomeView && this.welcomeView.cleanup();
@@ -338,6 +341,16 @@ var BrowseRouter = Backbone.Router.extend({
       el: '#container',
     }).render();
   },
+
+  createCommunity: function () {
+    this.navView && this.navView.render();
+    $('#search-results-loading').show();
+    this.cleanupChildren();
+    this.adminCommunityEditView = new AdminCommunityEditView({
+      el: '#container',         
+    }).render();
+  },
+
 
   /*
    * Create a new task. This method first populates and generates a new collection
