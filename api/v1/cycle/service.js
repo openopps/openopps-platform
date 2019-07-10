@@ -46,6 +46,9 @@ service.archivePhase = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
+  await service.sendCloseCyclePhaseSelectedNotification(cycleId);
+  await service.sendCloseCyclePhaseAlternateNotification(cycleId);
+  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
   await service.sendCloseCyclePhaseCreaterNotification(cycleId);
   await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
   return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
@@ -162,7 +165,6 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
 };
 
 service.sendAlternatePhaseStartedNotification = async function (cycleId) {
-  
   var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
@@ -183,6 +185,81 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
     }
   } 
 };
+
+service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantSelected, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.selected',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          office: results[i].office,
+          session: results[i].session,
+          jobLink: results[i].joblink,
+          title: results[i].title,
+          contact_email: results[i].contact_email,  //todo
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseNotSelectedNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantNotSelected, cycleId)).rows;
+  var numOfApplicants = (await dao.Application.db.query(dao.query.getApplicationCount, cycleId)).rows[0].applicant_count;  
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.notselected',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          session: results[i].session,
+          applicationsCount: numOfApplicants,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantAlternate, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.alternate',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          office: results[i].office, 
+          session: results[i].session,
+          jobLink: results[i].joblink,
+          contact_email: results[i].contact_email,  //todo
+          title: results[i].title,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+
 
 service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
   
