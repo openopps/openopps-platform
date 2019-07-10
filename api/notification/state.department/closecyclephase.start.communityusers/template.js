@@ -5,7 +5,7 @@ module.exports = {
     var data = {
       email: model.email,
       given_name: model.given_name,
-      archivelink: model.agencyportallink,
+      archivelink: model.archivelink,
     };
     done(null, data);
   },
