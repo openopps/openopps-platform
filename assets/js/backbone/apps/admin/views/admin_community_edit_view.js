@@ -73,10 +73,10 @@ var AdminCommunityEditView = Backbone.View.extend({
     });
   },
 
-  initializeformFields: function (community){
-    this.$('#communityType').val(community.communityType);
-    $('#targetAudience').val(community.targetAudience);
-    $('#duration').val(community.duration);
+  initializeformFields: function (community){  
+    $('#communityType option:contains('+ community.communityType +')').attr('selected', true);
+    $('#targetAudience option:contains('+ community.targetAudience +')').attr('selected', true);
+    $('#duration option:contains('+ community.duration +')').attr('selected', true);
     $('#agencies').val(community.agency.agencyId); 
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
     $('#community-name').val(community.communityName);
