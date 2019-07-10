@@ -152,7 +152,7 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
     model: {
       user: user,
       agencyportallink: openopps.agencyportalURL,
-      alternatephaselink: openopps.agencyportalURL + '/review',
+      alternatephaselink: openopps.agencyportalURL + '/reviews',
       boardspopulated: boardsPopulated ? 'success' : 'fail',
       emailsqueued: 'success',
       systemname: 'USAJOBS Agency Talent Portal',
