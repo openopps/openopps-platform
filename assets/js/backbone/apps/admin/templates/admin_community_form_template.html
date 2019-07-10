@@ -9,7 +9,7 @@
   </div>
 </div>
  <div class=" usajobs-canvas usajobs-open-opps-admin-dashboard"> 
-<h1 ><% if(communityId) { %>Manage<% } else {%>Create <% } %> Community</h1>
+<h1 ><% if(communityId) { %>Manage<% } else {%>Create<% } %> Community</h1>
 
 <div>All fields are required unless otherwise noted</div>
 <form action="javascript:void(0)" class="usa-form-xl " role="form" id="form-community-edit">
@@ -17,7 +17,7 @@
     <legend class="usa-sr-only">Community attributes</legend>  
     <h2>Community attributes</h2>
     <div class="form-group required-input "> 
-      <h5>Community Types</h5>     
+      <h5>Community types</h5>     
       <span class="field-validation-error error-empty" style="display:none;">You must select communityType.</span>
       <select id="communityType" class="dropdown validate" data-validate="empty">
           <option value="" hidden></option>
@@ -118,22 +118,22 @@
       <input type="text" id="community-support-email" class="fullwidth form-control validate"  data-validate="empty,email" />
     </div>
     <div class="form-group required-input">
-      <label for="application-process">Application Process</label>
+      <label for="application-process">Application process</label>
       <span class="field-validation-error error-empty" style="display:none;">You must enter application process.</span>
       <input type="text" id="application-process" class="fullwidth form-control validate"  data-validate="empty" />
     </div>
     <div class="form-group required-input">
-      <label for="microsite-url">Microsite Url</label>
+      <label for="microsite-url">Microsite url</label>
       <span class="field-validation-error error-empty" style="display:none;">You must enter microsite url.</span>
       <input type="text" id="microsite-url" class="fullwidth form-control validate"  data-validate="empty" />
     </div>
     <div class="form-group required-input">
-      <label for="community-mgr-name"> Manager Name</label>
+      <label for="community-mgr-name">Manager name</label>
       <span class="field-validation-error error-empty" style="display:none;">You must enter manager name.</span>
       <input type="text" id="community-mgr-name" class="fullwidth form-control validate"  data-validate="empty" />
     </div>
     <div class="form-group required-input">
-      <label for="community-mgr-email"> Manager Email</label>
+      <label for="community-mgr-email">Manager email</label>
       <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid email address.</span>
       <span class="field-validation-error error-empty" style="display:none;">You must enter manager email.</span>
       <input type="text" id="community-mgr-email" class="fullwidth form-control validate"  data-validate="empty,email" />
