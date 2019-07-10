@@ -56,7 +56,10 @@ module.exports.findById = async function (id) {
   var community = await dao.Community.findOne('community_id = ?', id).catch(() => { return null; });
   if(community) {
     community.agency = await dao.Agency.findOne('agency_id = ?', community.agencyId).catch(() => { return null; });
+    community.communityType = communityTypes[community.communityType - 1];
   }
+  community.duration = durationTypes[community.duration - 1];
+  community.targetAudience = audienceTypes[community.targetAudience - 1];
   return community;
 };
 
