@@ -41,7 +41,8 @@ var AdminCommunityView = Backbone.View.extend({
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
-            saveSuccess: this.params.has('saveSuccess'),
+            updateSuccess: this.params.has('updateSuccess'),
+            saveSuccess:this.params.has('saveSuccess'),
           });
           this.$el.html(template);
           if(this.options.communities) {
