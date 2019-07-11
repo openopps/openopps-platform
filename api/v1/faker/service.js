@@ -426,9 +426,15 @@ service.deleteFakeData = async function(params) {
 
 service.deleteBoardData = async function(cycleId) {
     var boardList = await dao.Task.find('cycle_id = ?', cycleId);
-    for (var i=0; i < boardList.length; i++) {
-        await deleteBoard(boardList[i].id);
-    }   
+    var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
+    cycle.phaseId = null;
+    cycle.isProcessing = false;
+    cycle.isArchived = false;
+    await dao.Cycle.update(cycle).then(async () => {
+        for (var i=0; i < boardList.length; i++) {
+            await deleteBoard(boardList[i].id);
+        }   
+    });    
     return true;
 }
 
