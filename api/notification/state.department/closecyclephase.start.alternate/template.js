@@ -8,7 +8,7 @@ module.exports = {
       office: model.office,
       session: model.session,
       jobLink: model.jobLink,
-      contact_email: model.jobLink,
+      contact_email: model.contact_email,
       title: model.title,
     };
     done(null, data);
