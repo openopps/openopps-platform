@@ -16,7 +16,7 @@ var experience = {
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
     $('#overseas-experienceQn').removeClass('usa-input-error');    
-    $('#overseas-experienceQn>.field-validation-error').hide();
+    $('#overseas-experienceQn .field-validation-error').hide();
     $('#overseas-experience-details').removeClass('usa-input-error');    
     $('#overseas-experience-details>.field-validation-error').hide();
     if($('input#overseas-experience-yes').is(':checked')) {
@@ -66,7 +66,7 @@ var experience = {
   toggleSecurityClearanceDetails: function () {
     $('#security-clearance-details').hide();
     $('#security_clearenceQn').removeClass('usa-input-error');    
-    $('#security_clearenceQn>.field-validation-error').hide();
+    $('#security_clearenceQn .field-validation-error').hide();
     if($('input#SecurityClearanceYes').is(':checked')) {   
       $('#security-clearance-details').show();      
       $('#security-clearance-issuer').addClass('validate');    
@@ -195,7 +195,7 @@ var experience = {
     var abort = false;
     if($('[name=has_overseas_experience]:checked').length==0){ 
       $('#overseas-experienceQn').addClass('usa-input-error');    
-      $('#overseas-experienceQn>.field-validation-error').show();
+      $('#overseas-experienceQn .field-validation-error').show();
       abort = true;
     }
     
@@ -209,7 +209,7 @@ var experience = {
       }
       else{
         $('#overseas-experienceQn').removeClass('usa-input-error');    
-        $('#overseas-experienceQn>.field-validation-error').hide();
+        $('#overseas-experienceQn .field-validation-error').hide();
         $('#overseas-experience-details').removeClass('usa-input-error');    
         $('#overseas-experience-details>.field-validation-error').hide();
       }     
@@ -217,7 +217,7 @@ var experience = {
 
     if($('[name=has_security_clearance]:checked').length==0){ 
       $('#security_clearenceQn').addClass('usa-input-error');    
-      $('#security_clearenceQn>.field-validation-error').show();
+      $('#security_clearenceQn .field-validation-error').show();
       abort = true;
     }
 
