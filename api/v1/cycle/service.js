@@ -390,6 +390,8 @@ async function createTaskListApplication (item, internship, userId) {
         'task_list_id': internship.reviewList,
         'sort_order': internship.max_sort,
       },
+      taskId: item.task_id,
+      applicationId: item.application_id
     };
     internship.max_sort = internship.max_sort + 1;
     return yield dao.TaskListApplicationHistory.insert(historyRecord);      

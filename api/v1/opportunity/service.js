@@ -141,6 +141,8 @@ async function updateListApplicant (userId, item) {
         'task_list_id': item.task_list_id,
         'sort_order': item.sort_order,
       },
+      taskId: item.task_id,
+      applicationId: item.application_id,
     };  
     if (historyRecord.details.task_list_id == historyRecord.details.previous.task_list_id)
     {
