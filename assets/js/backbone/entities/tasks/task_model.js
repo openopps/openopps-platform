@@ -152,11 +152,15 @@ var TaskModel = Backbone.Model.extend({
   },
 
   loadCommunity: function (communityId, callback) {
-    $.ajax({
-      url: '/api/community/' + communityId,
-      type: 'GET',
-      success: callback,
-    });
+    if (communityId) {
+      $.ajax({
+        url: '/api/community/' + communityId,
+        type: 'GET',
+        success: callback,
+      });
+    } else {
+      callback(null);
+    }
   },
 
 });
