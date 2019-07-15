@@ -7,11 +7,26 @@ const service = require('./service');
 const documentService = require('../document/service');
 const validGovtEmail = require('../model').ValidGovtEmail;
 const profile = require('../auth/profile');
+const elasticService = require('../../elastic/service');
+const elasticUtils = require('../../elastic/elastic-utils');
 
 var router = new Router();
 
-router.get('/api/user/all', auth, async (ctx, next) => {
-  ctx.body = await service.list();
+router.get('/api/user/remap', auth.isAdmin, async (ctx, next) => {
+  var users = await elasticService.remapUsers();
+  ctx.body = users.length;
+});
+
+router.get('/api/user/reindex', auth.isAdmin, async (ctx, next) => {
+  var users = await elasticService.reindexUsers();
+  ctx.body = users.length;
+});
+
+router.get('/api/user/search', auth, async (ctx, next) => {
+  var request = elasticUtils.convertQueryStringToUserSearchRequest(ctx, 'user');
+  var results = await elasticService.searchUsers(request);
+
+  ctx.body = results;
 });
 
 router.get('/api/user', async (ctx, next) => {

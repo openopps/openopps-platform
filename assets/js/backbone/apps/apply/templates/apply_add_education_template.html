@@ -23,12 +23,12 @@
           <div class="required-input">
             <label for="postal-code">Postal code</label>
             <span class="field-validation-error error-empty" style="display:none;">You must enter Postal code</span>
-            <input type="text" class="usa-input-medium form-control" id="postal-code" name="postal-code">
+            <input type="text" class="usa-input-medium form-control" id="postal-code" autocomplete="new-code" name="postal-code">
           </div>
           <div class="form-group required-input">
             <label for="city">City or Town</label>
             <span class="field-validation-error error-empty" style="display:none;">You must enter city</span>
-            <input type="text" class="fullwidth form-control validate" id="city" name="city" data-validate="empty">
+            <input type="text" class="fullwidth form-control validate" id="city" name="city" autocomplete="new-city" data-validate="empty">
           </div>
           <div class="required-input apply_countrySubdivision">
             <label for="apply_countrySubdivision">State, Territory, or Province</label>
@@ -143,7 +143,7 @@
         <div class="usajobs-button_bar--slim">
           <div class="usajobs-button_bar__body">
             <button class="usa-button usa-button-secondary usa-button-left"data-state="cancel" id="cancel-education">Cancel and return</button>
-            <button id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</button>
+            <a href="javascript:void(0)" id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</a>
           </div>
         </div>
       </form>

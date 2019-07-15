@@ -26,19 +26,26 @@
 
 }
 
-@media screen and (min-width: 37.5em) {
-    .usajobs-opop-section__edit {
-        top: 1.5rem;
-        right: 1.5rem;
-      }
-    }
+@include media($M) {
+  .usajobs-opop-section__edit {
+    top: $size-default;
+    right: $size-default;
+  }
+}
 
-    .usajobs-opop-section-edit, .usajobs-opop-section-edit a:visited {
-        position: absolute;
-        right: 3rem;
-        text-decoration: none;
-        color: #0D71B9;
-    }
+.usajobs-opop-section-edit, .usajobs-opop-section-edit a:visited {
+  text-decoration: none;
+  color: #0D71B9;
+
+  @include media($ML-down) {
+    padding-bottom: $size-SM;
+  }
+
+  @include media($ML) {
+    position: absolute;
+    right: $size-M;
+  }
+}
 
 .usajobs-open-opps-participated__body {
     h2 {

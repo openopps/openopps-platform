@@ -23,10 +23,19 @@ module.exports.userByName =  async function (name) {
   );
   return result.map(tag => {
     tag.field = 'value';
-    tag.value = [tag.name, openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username].join(' - ');
+    tag.value = [tag.name, (openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username)].join(' - ');
     
     return tag;
   });
+};
+
+module.exports.keywordAutocomplete = async function (term) {
+  var searchString = term ? '%' + term.toLowerCase() + '%' : ''
+  return Promise.all([
+    db.query(dao.query.agencyAutocomplete, [searchString, searchString]),
+    db.query(dao.query.tagAutocomplete, ['career', searchString]),
+    db.query(dao.query.tagAutocomplete, ['skill', searchString]),
+  ]);
 };
 
 module.exports.languageByValue = async function (value) {

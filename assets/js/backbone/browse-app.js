@@ -19,6 +19,7 @@ var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_v
 var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
 var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
+var AdminCommunityEditView=require('./apps/admin/views/admin_community_edit_view');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
 var ApplyCongratulationsView = require('./apps/apply/views/apply_congratulations_view');
@@ -32,12 +33,13 @@ var BrowseRouter = Backbone.Router.extend({
     ''                                              : 'showLanding',
     'home'                                          : 'showHome',
     'tasks/create'                                  : 'createTask',
+    'admin/community/create'                        :'createCommunity',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'searchTasks',
     'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
     //'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id(/:action)(/)(?:queryStr)'            : 'showTask',
-    'internships/new(?*queryString)'                : 'newInternship',
+    'internships/new'                                :'newInternship',
     'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/find(/)'                               : 'findProfile',
@@ -99,6 +101,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.profileShowController) { this.profileShowController.cleanup(); }
     if (this.profileFindController) { this.profileFindController.cleanup(); }
     if (this.profileEditController) { this.profileEditController.cleanup(); }
+    this.profileListController && this.profileListController.cleanup();
     if (this.taskShowController) { this.taskShowController.cleanup(); }
     if (this.taskSearchController) { this.taskSearchController.cleanup(); }
     if (this.taskCreateController) { this.taskCreateController.cleanup(); }
@@ -107,8 +110,9 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.homeController) { this.homeController.cleanup(); }
     if (this.loginController) { this.loginController.cleanup(); }
     if (this.internshipEditFormView) { this.internshipEditFormView.cleanup(); }
-    if (this.internshipView) { this.internshipView.cleanup(); }
+    if (this.internshipView) { this.internshipView.cleanup(); }   
     this.applyController && this.applyController.cleanup();
+    if (this.adminCommunityEditView) { this.adminCommunityEditView.cleanup(); }
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
     this.welcomeView && this.welcomeView.cleanup();
@@ -142,6 +146,7 @@ var BrowseRouter = Backbone.Router.extend({
   showWelcome: function () {
     try {
       var user = JSON.parse(atob(new URLSearchParams(window.location.search).get('u')));
+    // eslint-disable-next-line no-empty
     } catch (err) { }
     if (user) {
       Backbone.history.navigate('/welcome', { replace: true, trigger: false });
@@ -184,18 +189,23 @@ var BrowseRouter = Backbone.Router.extend({
     }.bind(this)).always(function () {
       window.cache.currentUser = null;
     });
-    
   },
 
   showLogout: function () {
-    this.navView = new NavView({
-      el: '.navigation',
-      accessForbidden: true, 
-    }).render();
-    var LogOutTemplate = require('./apps/login/templates/logout.html');
-    $('#container').html(_.template(LogOutTemplate)());
-    $('#search-results-loading').hide();
-    $('.usa-footer-return-to-top').hide();
+    $.ajax({
+      url: '/api/auth/clearSession?json=true',
+    }).done(function (data) {
+      this.navView = new NavView({
+        el: '.navigation',
+        accessForbidden: true, 
+      }).render();
+      var LogOutTemplate = require('./apps/login/templates/logout.html');
+      $('#container').html(_.template(LogOutTemplate)());
+      $('#search-results-loading').hide();
+      $('.usa-footer-return-to-top').hide();
+    }.bind(this)).fail(function () {
+      showWhoopsPage();
+    });
   },
 
   showExpired: function () {
@@ -265,7 +275,7 @@ var BrowseRouter = Backbone.Router.extend({
     $('#search-results-loading').show();
     this.cleanupChildren();
     var model = new TaskModel();
-    this.listenTo(model, 'task:model:fetch:success', function (model) {
+    this.listenTo(model, 'task:model:fetch:success', function (model) {   
       model.loadCommunity(model.get('communityId'), function (community) {
         if (!_.isEmpty(community) && community.targetAudience == 'Students') {
           Backbone.history.navigate('/internships/' + id + (action ? '/' + action : '') + (queryStr ? '?' + queryStr : ''), { replace: true });
@@ -293,7 +303,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.navView && this.navView.render();
     $('#search-results-loading').show();
     this.cleanupChildren();
-    var model = new TaskModel();
+    var model = new TaskModel();   
     this.listenTo(model, 'task:model:fetch:success', function (model) {
       model.loadCommunity(model.get('communityId'), function (community) {
         if (_.isEmpty(community) || community.targetAudience !== 'Students') {
@@ -311,9 +321,9 @@ var BrowseRouter = Backbone.Router.extend({
             url: '/api/lookup/languageProficiencies',
           }).done(function (languageProficiencies) {
             if (action && action == 'edit') {
-              this.renderInternshipEdit(model, community, languageProficiencies);
+              this.renderInternshipEdit(model,community,languageProficiencies);
             } else {
-              this.renderInternshipView(model, community, languageProficiencies);
+              this.renderInternshipView(model,community,languageProficiencies);
             }
           }.bind(this)).fail(function () {
             // throw error;
@@ -331,6 +341,16 @@ var BrowseRouter = Backbone.Router.extend({
       el: '#container',
     }).render();
   },
+
+  createCommunity: function () {
+    this.navView && this.navView.render();
+    $('#search-results-loading').show();
+    this.cleanupChildren();
+    this.adminCommunityEditView = new AdminCommunityEditView({
+      el: '#container',         
+    }).render();
+  },
+
 
   /*
    * Create a new task. This method first populates and generates a new collection
@@ -359,36 +379,30 @@ var BrowseRouter = Backbone.Router.extend({
     return model;
   },
 
-  newInternship: function (queryString) {
+  newInternship: function () {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?internships/new', { trigger: true });
       return;
     }
+    $('#search-results-loading').show();
     this.cleanupChildren();
-    var params = this.parseQueryParams(queryString);
-    if (params.cid) {
-      this.renderViewWithCommunity(params.cid, 'Students', this.renderInternshipEdit);
-    } else {
-      Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
-    }
+   
+    this.renderViewWithCommunity('Students', this.renderInternshipEdit);
+   
   },
 
-  renderViewWithCommunity: function (communityId, target, view) {
+  renderViewWithCommunity: function ( target, view) {
     var model = this.initializeTaskModel();
-    model.loadCommunity(communityId, function (community) {
-      if (_.isEmpty(community) || community.targetAudience !== target) {
-        Backbone.history.navigate('/tasks/create', { trigger: true, replace: true });
-      } else {
-        model.set('communityId', community.communityId);
-        $.ajax({
-          url: '/api/lookup/languageProficiencies',
-        }).done(function (languageProficiencies) {
-          view.bind(this)(model, community, languageProficiencies);
-        }.bind(this)).fail(function () {
-          // throw error;
-        });
-      }
-    }.bind(this));
+    
+   
+    $.ajax({
+      url: '/api/lookup/languageProficiencies',
+    }).done(function (languageProficiencies) {  
+      view.bind(this)(model,'',languageProficiencies);
+    }.bind(this)).fail(function () {
+      // throw error;
+    });
+    
   },
 
   renderTaskView: function (model, community) {
@@ -419,7 +433,7 @@ var BrowseRouter = Backbone.Router.extend({
     }).render();
   },
 
-  renderInternshipEdit: function (model, community, languageProficiencies) {
+  renderInternshipEdit: function (model,community,languageProficiencies) {
     model.tagTypes(function (tagTypes) {
       this.internshipEditFormView = new InternshipEditFormView({
         el: '#container',
@@ -437,7 +451,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   initializeTaskListeners: function (model) {
     this.listenTo(model, 'task:save:success', function (data) {
-      Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });
+      Backbone.history.navigate('/tasks/' + data.attributes.id, { trigger: true });     
       if(data.attributes.state != 'draft') {
         setTimeout(function () {
           $('body').addClass('modal-is-open');
@@ -451,11 +465,19 @@ var BrowseRouter = Backbone.Router.extend({
               action: function () {
                 this.modal.cleanup();
               }.bind(this),
+            },           
+            secondary: {
+              text: 'Create another' + ' ' + (((data.attributes.community|| {}).targetAudience == 'Students') ? 'internship' : 'opportunity'),
+              action: function () {
+                Backbone.history.navigate('/tasks/create?target=' + ((data.attributes.community || {}).targetAudience == 'Students' ? 'students' : 'feds'), { trigger: true });
+                this.modal.cleanup();
+              }.bind(this),
             },
           }).render();
         }, 500);
       }
     });
+   
 
     this.listenTo(model, 'task:save:error', function (model, response, options) {
       var error = options.xhr.responseJSON;

@@ -77,6 +77,36 @@
     margin-bottom: $size-M;
   }
 
+  .admin-container {
+    position: relative;
+
+    .usajobs-nav--openopps__section-link {
+      position: absolute;
+      top: -$size-default;
+      right: -$size-S;
+      line-height: 2.9rem;
+      font-size: 1.7rem;
+      text-decoration: none;
+
+      @include media($ML) {
+        top: -$size-default;
+        right: -$size-M;
+        line-height: 2.4rem;
+      }
+
+      span {
+        display: block;
+      }
+
+      svg {
+        display: inline-block;
+        padding-bottom: 0;
+      }
+    }
+  }
+  .add-community {
+    margin-bottom: $size-default;
+  }
   .back-link {
     color: $color-primary;
 

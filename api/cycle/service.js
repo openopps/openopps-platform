@@ -26,7 +26,7 @@ function forceEasternTimezone (data) {
         data[key] = moment.tz(internationalDateFormat, 'America/New_York').startOf('day').format();
       }
     }
-  })
+  });
 }
 
 module.exports = {};
@@ -60,12 +60,12 @@ module.exports.deleteCycle = async (communityId, cycleId, callback) => {
       callback();
     }).catch((err) => {
       log.error('An error was encountered trying to delete a cycle', err);
-    callback({ message: 'An error was encountered trying to delete this cycle.' });
+      callback({ message: 'An error was encountered trying to delete this cycle.' });
     });
   }).catch((err) => {
     log.error('An error was encountered trying to delete a cycle', err);
     callback({ message: 'An error was encountered trying to delete this cycle.' });
-  })
+  });
 };
 
 module.exports.findById = function (cycleId) {
@@ -74,7 +74,7 @@ module.exports.findById = function (cycleId) {
 
 module.exports.getAll = function () {
   return dao.Cycle.find();
-}
+};
 
 module.exports.list = function (communityId) {
   return dao.Cycle.find('community_id = ?', communityId);
@@ -97,5 +97,10 @@ module.exports.updateCycle = async (data, callback) => {
   }).catch((err) => {
     log.error('An error was encountered trying to update a cycle', err);
     callback(null, { message: 'An error was encountered trying to update this cycle.' });
-  })
+  });
+};
+
+module.exports.checkProcessingStatus = async function (taskId) {
+  var results = await dao.Cycle.db.query(dao.query.checkProcessingStatus, taskId);
+  return results.rows[0];
 };

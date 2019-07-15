@@ -6,7 +6,8 @@ dao.query = {};
 dao.query.internshipListQuery = `
   select 
     task.id, 
-    "cycle".name as "Cycle", 
+    "cycle".name as "Cycle",
+    "cycle".cycle_id,
     task.title as "Title", 
     task.interns as "NumberOfPositions",
     coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
@@ -33,8 +34,9 @@ dao.query.internshipListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
-    and "cycle".apply_end_date < current_date
-    and "cycle".review_end_date > current_date
+    and "cycle".is_archived = false
+    and date("cycle".apply_end_date) <= current_date
+    and date("cycle".review_end_date) >= current_date
 `;
 
 dao.query.internshipArchiveListQuery = `
@@ -50,14 +52,15 @@ dao.query.internshipArchiveListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
-    and "cycle".review_end_date < current_date
+    and "cycle".is_archived = true
 `;
 
 dao.query.internshipSummaryQuery = `
   select 
     task.id,
     community.community_name,
-    "cycle".name as "cycleName", 
+    "cycle".name as "cycleName",
+    "cycle".is_processing,
     task.title as "taskTitle", 
     bureau.name as "bureauName",
     office.name as "officeName",
@@ -99,15 +102,20 @@ dao.query.taskShareQuery = `
 `;
 
 dao.query.taskListQuery = `
-  select
-    task_list_id,
-    task_id,
-    title,
-    sort_order
-  from
-    task_list
-  where task_id = ?
-  order by sort_order
+select
+  tl.task_list_id,
+  tl.task_id,
+  tl.title,
+  tl.sort_order
+from
+  task_list tl
+  inner join task t on t.id = tl.task_id
+  inner join cycle c on c.cycle_id = t.cycle_id
+  inner join phase p on c.phase_id = p.phase_id
+where 
+  case when p.name = 'Primary phase' then tl.title != 'Alternate' and tl.task_id = ? else tl.task_id = ? end
+order by 
+  tl.sort_order
 `;
 
 dao.query.taskListAndOwner = `
@@ -163,6 +171,7 @@ dao.query.applicationsNotInListQuery = `
 
 dao.query.taskListApplicationQuery = `
   select
+    task_list.task_id,
     task_list_application_id,
     task_list_application.task_list_id,
     task_list_application.application_id,

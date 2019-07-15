@@ -11,7 +11,7 @@
               </label>
               <ul class="usa-unstyled-list" id="target-audience">
                 <li class="opportunity-target-audience__item">
-                  <button type="button" class="opportunity-target-audience__button" id="federal-employees" value="Federal employees">
+                  <button type="button" class="opportunity-target-audience__button " id="federal-employees" value="Federal employees">
                     <div class="opportunity-target-audience__figure">
                       <div class="opportunity-target-audience__icon">
                         <i class="federal-employees"></i>
@@ -25,26 +25,11 @@
                         </span>
                       </h4>
                     </div>
-                  </button>
-                  <% if(communities.federal.length > 0) { %>
-                  <label for="federal-programs" class="federal-programs">
-                    <h4>Choose a community <span class="usa-input-optional"></span></h4>
-                  </label>
-                  <div class="form-group required-input federal-programs">
-                    <select id="federal-programs" class="dropdown">
-                      <option></option>
-                      <% _.each(communities.federal, function (community) { %>
-                        <option value=<%- community.communityId %>>
-                              <%- community.communityName %>
-                        </option>
-                      <% }); %>
-                    </select>
-                  </div>
-                <% } %>
+                  </button>                
                 </li>
-                <% if (communities.student.length > 0) { %>
+                <% if (communities.student && communities.student.length) { %>
                 <li class="opportunity-target-audience__item">
-                  <button type="button" class="opportunity-target-audience__button" id="students" value="Students">
+                  <button type="button" class="opportunity-target-audience__button " id="students" value="Students">
                     <div class="opportunity-target-audience__figure">
                       <div class="opportunity-target-audience__icon">
                         <i class="students"></i>
@@ -58,21 +43,7 @@
                         </span>
                       </h4>
                     </div>
-                  </button>
-                  <label for="student-programs" class="student-programs">
-                    <h4>Choose a community</h4>
-                  </label>
-                  <div class="form-group required-input student-programs">
-                    <span class="field-validation-error error-empty" style="display:none;">You must select a program for this opportunity.</span>
-                    <select id="student-programs" class="dropdown validate" data-validate="empty">
-                      <option disabled></option>
-                      <% _.each(communities.student, function (community) { %>
-                        <option value=<%- community.communityId %>>
-                              <%- community.communityName %>
-                        </option>
-                      <% }); %>
-                    </select>
-                  </div>
+                  </button>              
                 </li>
                 <% } %>
               </ul>

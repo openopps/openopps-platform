@@ -8,11 +8,18 @@ const userByName = 'select midas_user.id, midas_user.name, midas_user.title, mid
 
 const agencyQuery = 'select * from agency where is_disabled = false and parent_code is not null and (lower(name) like ? or lower(abbr) like ?)';
 
-const languageQuery=' select language.language_id,language.value from language where LOWER(value) like ?';
+const languageQuery=' select language.language_id,language.value from language where LOWER(value) like ? and language.is_disabled = false';
 
 const countryQuery='select country.country_id,country.code,country.value from country where LOWER(value) like ?';
 
 const stateQuery='select country_subdivision.country_subdivision_id,country_subdivision.code,country_subdivision.value from country_subdivision where LOWER(value) like ? and parent_code = ?';
+
+const agencyAutocompleteQuery = `select agency_id as id, name, abbr from (
+	select ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower(abbr) like ? and parent_code is not null
+	union select 5 + ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower("name") like ? and parent_code is not null
+) a order by row_number limit 5`;
+
+const tagAutocompleteQuery = 'select id, name from tagentity where type = ? and lower(name) like ? limit 5';
 
 const options = {
   tagByType: {
@@ -37,6 +44,8 @@ module.exports = function (db) {
       language:languageQuery,
       country:countryQuery,
       state: stateQuery,
+      agencyAutocomplete: agencyAutocompleteQuery,
+      tagAutocomplete: tagAutocompleteQuery,
     },
     options: options,
   };

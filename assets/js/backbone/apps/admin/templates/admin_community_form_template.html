@@ -1,3 +1,4 @@
+
 <div id='community-save-error' class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
   <div class="usajobs-alert__figure">
     <div class="usajobs-alert__icon">
@@ -7,30 +8,64 @@
     <p class="usa-alert-text">An unexpected error occured trying to save your changes.</p>
   </div>
 </div>
-<h1>Manage community</h1>
+ <div class=" usajobs-canvas usajobs-open-opps-admin-dashboard"> 
+<h1 ><% if(communityId) { %>Manage<% } else {%>Create<% } %> Community</h1>
+
 <div>All fields are required unless otherwise noted</div>
-<form action="javascript:void(0)" class="usa-form-xl" role="form" id="form-community-edit">
+<form action="javascript:void(0)" class="usa-form-xl " role="form" id="form-community-edit">
   <fieldset class="usajobs-fieldset">
-    <legend class="usa-sr-only">Community attributes</legend>
+    <legend class="usa-sr-only">Community attributes</legend>  
     <h2>Community attributes</h2>
-    <div class="usa-fieldset-inputs">
-      <h5>Community type</h5>
-      <div id="community-type">
-        <% if (communityType == 'Career') { %>
-          Career field - <%= communityTypeValue.name %>
-        <% } else { %>
-          <%= communityType %>
-        <% } %>
-      </div>
-    </div>
-    <div class="usa-fieldset-inputs">
-      <h5>Target audience</h5>
-      <div id="community-audience"><%= targetAudience %></div>
-    </div>
-    <div class="usa-fieldset-inputs">
+    <div class="form-group required-input "> 
+      <h5>Community types</h5>     
+      <span class="field-validation-error error-empty" style="display:none;">You must select a community type.</span>
+      <select id="communityType" class="dropdown validate" data-validate="empty">
+          <option value="" hidden></option>
+          <option value="1">Career</option>              
+          <option value="2">Program</option>      
+        </select>
+    </div>      
+      <div class="form-group required-input">       
+          <h5>Target audience</h5>     
+          <span class="field-validation-error error-empty" style="display:none;">You must select a target audience.</span>
+          <select id="targetAudience" class="dropdown validate" data-validate="empty">
+              <option value="" hidden ></option>
+              <option value="1">Federal Employees</option>              
+              <option value="2">Students</option>      
+            </select>
+        </div>
+        <div class="form-group required-input">       
+          <h5>Duration</h5>     
+          <span class="field-validation-error error-empty" style="display:none;">You must select a duration.</span>
+          <select id="duration" class="dropdown validate" data-validate="empty">
+              <option value="" hidden ></option>
+              <option value="1">Ad Hoc</option>              
+              <option value="2">Cyclical</option>      
+            </select>
+        </div>
+  <% if (departments) { %>
+    <div class="form-group required-input ">    
       <h5>Agency</h5>
-      <div id="community-agency"><%= agency ? agency.name : '' %></div>
+      <span class="field-validation-error error-empty" style="display:none;">You must select an agency.</span>
+      <select id="agencies" class="dropdown validate" data-validate="empty">
+          <option value=""></option>
+        <% _.each(departments, function (d) { %>
+          <optgroup label="<%- d.name %>">         
+            <% _.each(d.agencies, function (a) { %>}           
+              <option value=<%- a.agencyId %>><%- a.name %></option>
+              <% if (communityId && (d.agencyId == agency.agencyId)) { %>
+                <option value=<%- d.agencyId %>><%- d.name %></option>
+                <% } %>
+            <% }); %>
+          </optgroup>
+        <% }); %>
+      </select>
     </div>
+    <% }
+    else { %>
+      <div id="agencies"><%= agency.name %></div>
+    <% } %>
+   
     <div class="form-group required-input usa-fieldset-inputs">
       <h5>Closed group</h5>
       <fieldset class="usajobs-fieldset">
@@ -39,16 +74,16 @@
         <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
         <ul class="usa-unstyled-list" id="community-group">
           <li>
-            <input id="closed-yes" name="community-group" type="radio" value="true" <% if (isClosedGroup) { %><%= "checked" %><% } %>>
+            <input id="closed-yes" name="community-group" type="radio" value="true" >
             <label for="closed-yes">Yes</label>
           </li>
           <li>
-            <input id="closed-no" name="community-group" type="radio" value="false" <% if (isClosedGroup == false) { %><%= "checked" %><% } %>>
+            <input id="closed-no" name="community-group" type="radio" value="false" checked >
             <label for="closed-no">No</label>
           </li>
         </ul>
       </fieldset>
-    </div>
+    </div>  
   </fieldset>
   <fieldset class="usajobs-fieldset">
     <legend class="usa-sr-only">Community information</legend>
@@ -59,14 +94,14 @@
       <span class="field-validation-error error-count100" style="display:none;">The headline must be no more than 100 characters.</span>
       <span class="field-validation-error error-html" style="display:none;">The special characters '
           < ' or '>' are not allowed</span>
-      <input type="text" id="community-name" class="fullwidth form-control validate" value="<%= communityName %>" data-validate="empty,count100,html" />
+      <input type="text" id="community-name" class="fullwidth form-control validate"  data-validate="empty,count100,html" />
       <p id="community-name-count" class="usajobs-form__help-brief">(100 characters remaining)</p>
     </div>
-    <div class="">
+    <div class="form-group required-input">
       <label for="description">Description<span class="usa-input-optional"></span></label>
       <span class="field-validation-error error-count2500" style="display:none;">The description must be no more than 500 characters.</span>
       <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-      <textarea id="description" class="fullwidth form-control validate" name="description" data-validate="empty,count500,html"><%- description %></textarea>
+      <textarea id="description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
       <p class="usajobs-form__help-brief" id="description-count">
         (500 characters remaining)
       </p>
@@ -77,10 +112,36 @@
       <input type="text" id="community-career-field" />
     </div>
     <div class="required-input">
-      <label for="community-support-email">Support contact email<span class="usa-input-optional"></span></label>
+      <label for="community-support-email">Support contact email</label>
       <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid email address.</span>
-      <input type="text" id="community-support-email" class="fullwidth form-control validate" value="<%= supportEmail %>" data-validate="email" />
+      <span class="field-validation-error error-empty" style="display:none;">You must enter a support contact Email.</span>
+      <input type="text" id="community-support-email" class="fullwidth form-control validate"  data-validate="empty,email" />
     </div>
+    <div class="form-group required-input">
+      <label for="application-process">Application process</label>
+      <span class="field-validation-error error-empty" style="display:none;">You must enter an application process.</span>
+      <input type="text" id="application-process" class="fullwidth form-control validate"  data-validate="empty" />
+    </div>
+    <div class="form-group required-input">
+      <label for="microsite-url">Microsite URL</label>
+      <span class="field-validation-error error-empty" style="display:none;">You must enter a microsite URL.</span>
+      <input type="text" id="microsite-url" class="fullwidth form-control validate"  data-validate="empty" />
+    </div>
+    <div class="form-group required-input">
+      <label for="community-mgr-name">Manager name</label>
+      <span class="field-validation-error error-empty" style="display:none;">You must enter a manager name.</span>
+      <input type="text" id="community-mgr-name" class="fullwidth form-control validate"  data-validate="empty" />
+    </div>
+    <div class="form-group required-input">
+      <label for="community-mgr-email">Manager email</label>
+      <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid email address.</span>
+      <span class="field-validation-error error-empty" style="display:none;">You must enter a manager email.</span>
+      <input type="text" id="community-mgr-email" class="fullwidth form-control validate"  data-validate="empty,email" />
+    </div>
+    
+    <% if(communityId){ %>
+    <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />
+    <% } %>
   </fieldset>
   <fieldset class="usajobs-fieldset">
     <legend class="usa-sr-only">Save or cancel</legend>
@@ -92,3 +153,4 @@
     </div>
   </fieldset>
 </form>
+</div> 

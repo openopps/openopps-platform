@@ -12,7 +12,8 @@ require('jquery-ui-dist/jquery-ui');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-require('./global-utils');
+// Import global functions
+require('./globals');
 
 Backbone.$ = $;
 

@@ -8,6 +8,11 @@
   </div>
 </div>
 <p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/opportunity-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+  <span class="usajobs-nav--openopps__section">
+    <span class="fas fa-question-circle" title="Help"></span>Help
+  </span>
+</a>
 <h2><%- agency.name || community.communityName || 'Sitewide' %></h2>
 <h3>Opportunities</h3>
 <div class="usajobs-grid-full">
@@ -69,8 +74,16 @@
 
 <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
     title="Download list of tasks as a comma-separated file ready for import into Excel">
-  <a href="/api/task/export" >
-    <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
-  </a>
+    <% if (community.communityName) { %>
+      <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
+    <% } else if (agency.name) { %>
+      <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
+    <% } else { %>
+      <a href="/api/admin/task/export" >
+    <% } %>
+        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+      </a>
 </div>
+
+
 

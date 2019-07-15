@@ -40,6 +40,43 @@
     }
   }
 
+  & &__save-opportunity {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.4rem;
+    margin: 0;
+    padding: 1.5rem;
+    cursor: pointer;
+    color: $color-primary;
+    text-decoration: none;
+
+    @include media($M) {
+      display: inline-block;
+      float: inherit;
+      width: auto;
+      top: 0;
+      right: 0;
+      bottom: auto;
+      margin: 0;
+      padding: 1.5rem;
+    }
+
+    .fa-star {
+      color: $color-gold;
+    }
+  }
+
+  & &__save-opportunity-link:visited {
+    color: $color-primary;
+    text-decoration: none;
+  }
+
+  & &__save-opportunity-text {
+    display: inline-block;
+    font-size: 1.4rem;
+  }
+
   & &__title {
     @include h3();
     display: block;
@@ -51,6 +88,10 @@
     overflow-wrap: break-word; // This prevents whack titles from breaking the card
   }
 
+  & .title-student {
+    width: calc(100% - 65px);
+  }
+  
   &-item__header {
     min-height: 17rem;
 
@@ -220,6 +261,10 @@
   .skill-label {
     margin: 0.5rem 1rem 0.5rem 0;
     display: inline-block;
+  }
+
+  .usajobs-opop-actions__save svg {
+    color: $color-gold;
   }
 
   .usajobs-opop-actions__col-sub-actions {
@@ -1355,6 +1400,10 @@
 
       .usa-button-secondary {
         margin: 0 0 1.5rem 0;
+
+        &[data-state="draft"], &[data-state="save"] {
+          margin-right: .5em;
+        }
       }
     }
   }

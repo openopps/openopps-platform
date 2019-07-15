@@ -57,12 +57,9 @@ module.exports.findById = async function (id) {
   if(community) {
     community.agency = await dao.Agency.findOne('agency_id = ?', community.agencyId).catch(() => { return null; });
     community.communityType = communityTypes[community.communityType - 1];
-    if(community.communityType && community.communityTypeValue) {
-      community.communityTypeValue = await dao.TagEntity.findOne('id = ? and type = ?', [community.communityTypeValue, community.communityType.toLowerCase()]).catch(() => { return null; });
-    }
-    community.duration = durationTypes[community.duration - 1];
-    community.targetAudience = audienceTypes[community.targetAudience - 1];
   }
+  community.duration = durationTypes[community.duration - 1];
+  community.targetAudience = audienceTypes[community.targetAudience - 1];
   return community;
 };
 
@@ -100,12 +97,23 @@ module.exports.sendCommunityInviteNotification = async function (admin, data) {
 };
 
 module.exports.updateCommunity = async function (data, callback) {
-  data.communityType = communityTypes.indexOf(data.communityType) + 1 || null;
-  data.duration = durationTypes.indexOf(data.duration) + 1 || null;
-  data.targetAudience = audienceTypes.indexOf(data.targetAudience) + 1 || null;
+
   await dao.Community.update(data).then(() => {
     callback();
   }).catch((err) => {
+    log.error('An error was encountered trying to update a community', err);
+    callback({ message: 'An error was encountered trying to update this community.' });
+  });
+};
+
+module.exports.saveCommunity = async function (data, callback) {
+  data.createdAt= new Date();
+  data.updatedAt= new Date(); 
+  
+  await dao.Community.insert(data).then(async (community) => {   
+    callback(null,community);
+   
+  }).catch(err => {
     log.error('An error was encountered trying to update a community', err);
     callback({ message: 'An error was encountered trying to update this community.' });
   });

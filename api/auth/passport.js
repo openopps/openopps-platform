@@ -31,6 +31,8 @@ async function fetchUser (id) {
       var GetCommunities = require('../opportunity/service').getCommunities;
       user.communities = await GetCommunities(user.id);
       user = dao.clean.user(user);
+      user.countrySubdivision = (await dao.CountrySubdivision.findOne('country_subdivision_id = ?', user.countrySubdivisionId).catch(() => { return {}; })).value;
+      user.country = (await dao.Country.findOne('country_id = ?', user.countryId).catch(() => { return {}; })).value;
     }
     return user;
   }).catch(err => {

@@ -1,17 +1,136 @@
-<div class="usajobs-content-gutter usajobs-open-opps-people">
-  <h1 class="usajobs-opop-people__section-title">People</h1>
-  <div class="usajobs-grid usajobs-open-opps-people-search__title">
-    <div class="usa-width-one-half">
-      <input type="text" id="search" title="Search" class="usajobs-open-opps-people-search__input" placeholder="Find people by name, title, agency or location">
-      <span class="fa fa-search search-icon">
+<section class="usajobs-canvas people-search" role="search">
+  <div class="people-search__box">
+    <div class="usajobs-content-gutter usajobs-open-opps-search">
+      <div class="usajobs-grid-full">
+        <div class="usa-width-two-thirds">
+          <h1>People</h1>
+          <h3>Find people who share similar skills or interests.</h3>
+          <div class="usajobs-grid-full">
+            
+              <fieldset class="people-search-fieldset">
+                <div class="student-internships-search-keywords-container">
+                  <label for="nav-keyword" id="nav-keyword-label">
+                    <span class="student-internships-search-keywords-icon fas fa-search" title="Keywords"></span>
+                    Keywords
+                  </label>
+                  <input id="nav-keyword" name="k" aria-labelledby="nav-keyword-label" type="text" class="student-internships-search-keywords-input ui-autocomplete-input" value="<%= term %>" placeholder="Name, skill, job title, career field or agency">
+                </div>
+                <div class="student-internships-search-location-container">
+                  <label for="nav-location" id="nav-location-label">
+                    <span class="student-internships-search-location-icon fas fa-map-marker-alt" title="Location"></span>
+                    Location
+                  </label>
+                  <input id="nav-location" name="l" aria-labelledby="nav-location-label" type="text" class="student-internships-search-location-input ui-autocomplete-input usaj-autocomplete-default" placeholder="City, state or country">
+                </div>
+                <div class="student-internships-search-button-container">
+                  <button id="search-button" class="clearcriteria usa-button student-internships-search-button">
+                    Search
+                  </button>
+                </div>
+              </fieldset>
+
+          </div>
+        </div>
+        <div class="usa-width-one-third">
+          
+        </div>
+      </div>      
     </div>
   </div>
-  <div class="table-responsive">
-    <div class="loading-container">
-      <div class="usajobs-open-opps-search-results__loading" id="search-results-loading">
-        <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
-        <span class="sr-only">Loading</span>
+</section>
+<section class="usajobs-canvas people-search">
+  <div class="usajobs-content-gutter usajobs-open-opps-search">
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
+      <div id="usajobs-search-pills"></div>
+      <div id="profile-search-controls" class="usajobs-grid usajobs-search-controls">
+        <div class="usajobs-search-controls__results-count-container no-params">
+          <h4 id="people-count" class="usajobs-search-controls__results-count">
+            Viewing 1 – X of Y people
+          </h4>
+        </div>
+        <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+          <label class="usajobs-search-controls__sort-label" for="sort-results">
+            Sort by
+          </label>
+          <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+            <option disabled></option>
+            <option value="relevance">Relevance</option>
+            <option value="name">Name</option>
+            <option value="title">Title</option>
+            <option value="agency">Agency</option>
+            <option value="location">Location</option>
+          </select>
+        </div>
       </div>
-    </div>
+      <div class="usajobs-search-results-container">
+        <div id="people-list" class="usajobs-search-results no-params" data-object="search-results">
+          <div class="usajobs-open-opps-search-results__loading" id="search-results-loading">
+            <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
+            <span class="sr-only">Loading</span>
+          </div>
+        </div>
+      </div>
+      <div id="people-page"></div>
+    </main>
+    <!-- <aside class="usajobs-rightrail" id="rightrail">
+      <div class="see-people">
+        <div class="see-people-section">
+          <i class="fas fa-users"></i>
+          <p class="no-margin-bottom">See people in your community</p>
+          <a href="#" class="usa-button usa-button-secondary">Join community</a>
+        </div>
+        <div class="see-people-section">
+          <i class="fas fa-rocket"></i>
+          <p class="no-margin-bottom">See people in your career field</p>
+          <a href="#" class="usa-button usa-button-secondary">See list</a>
+        </div>
+        <h3>See people with your skill set</h3>
+          <ul class="list-unstyled">
+            <li>
+              <div class="usajobs-open-opps-opportunity-requestor people">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
+                    <div class="usajobs-open-opps-opportunity-requestor__initials">BC</div>
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name">
+                      <a href="/profile/4070">Brice Corum5</a>
+                    </p>
+                    <p class="usajobs-open-opps-opportunity-requestor__jobtitle">
+                      Scrum Master Extraordinaire 
+                    </p>
+                    <div class="skills">
+                      <span class="skill-label clickable-filter">Data</span>
+                      <span class="skill-label clickable-filter">Communication Skills</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="usajobs-open-opps-opportunity-requestor people">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-4">
+                    <div class="usajobs-open-opps-opportunity-requestor__initials">BC</div>
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name">
+                      <a href="/profile/4068">Brice Corum2</a>
+                    </p>
+                    <p class="usajobs-open-opps-opportunity-requestor__jobtitle">
+                      Developer
+                    </p>
+                    <div class="skills">
+                      <span class="skill-label clickable-filter">Data</span>
+                      <span class="skill-label clickable-filter">JavaScript</span>
+                      <span class="skill-label clickable-filter">PostgreSQL</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+        </ul>
+      </div>
+    </aside> -->
   </div>
-</div>
+</section>

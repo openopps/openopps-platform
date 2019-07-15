@@ -30,6 +30,18 @@ router.put('/api/community/:id', auth, async (ctx, next) => {
   }
 });
 
+router.post('/api/community', auth, async (ctx, next) => {
+  await service.saveCommunity(ctx.request.body, function (errors,community)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = community;
+    }
+  });
+});
+
 router.get('/api/community/:id/cycles', async (ctx, next) => {
   ctx.body = await service.getActiveCycles(ctx.params.id);
 });

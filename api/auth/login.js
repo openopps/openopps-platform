@@ -37,16 +37,16 @@ module.exports.processFederalEmployeeLogin = (tokenset, done) => {
   dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims.email).then(user => {
+    dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims.email.toLowerCase()).then(user => {
       userFound(user, tokenset, done);
     }).catch(async () => {
-      dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims['usaj:governmentURI']).then(user => {
+      dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims['usaj:governmentURI'].toLowerCase()).then(user => {
         userFound(user, tokenset, done);
       }).catch(async () => {
         var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
           return {
             linkedId: tokenset.claims.sub,
-            governmentUri: tokenset.claims['usaj:governmentURI'],
+            governmentUri: tokenset.claims['usaj:governmentURI'].toLowerCase(),
           };
         });
         done(null, _.extend(account, {
@@ -62,7 +62,7 @@ module.exports.processStudentLogin = (tokenset, done) => {
   dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
-    dao.User.findOne('linked_id = \'\' and username = ?', tokenset.claims.email).then(user => {
+    dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims.email.toLowerCase()).then(user => {
       userFound(user, tokenset, done);
     }).catch(async () => {
       // create new account

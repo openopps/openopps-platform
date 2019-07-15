@@ -55,11 +55,11 @@
           <% } %>
           <div id="profile" class="usajobs-opop-profile-title profile usa-width-one-fourth">
               <div class="profile-photo"></div>
-              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
+              <h3 class="usajobs-opop-profile-name"><% if (data.givenName && data.lastName ) { %><%- data.givenName + ' ' + data.lastName %><% } else { %><%- data.username %><% } %></h3>
           </div>
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-name-role">
-              <h3 class="usajobs-opop-profile-name"><% if (data.name) { %><%- data.name %><% } else { %><%- data.username %><% } %></h3>
+              <h3 class="usajobs-opop-profile-name"><% if (data.givenName && data.lastName) { %><%- data.givenName + ' ' + data.lastName %><% } else { %><%- data.username %><% } %></h3>
               <% if (data.isAdmin || data.isAgencyAdmin) { %>
               <span class="role-label"><% if (user.isAgencyAdmin) { %> Agency <% } %> Administrator</span>
               <% } %>
@@ -83,10 +83,10 @@
               <% } %>
             </div>
             <div class="profile-location">
-              <% if (data.location) { %>
               <div class="usajobs-profile-home-section__field-label">Location</div>
-              <span><%- data.location.name %></span>
-              <% } %>
+              <span>
+                <%= _.filter([data.cityName, data.countrySubdivision, data.country != 'United States' ? data.country : ''], _.identity).join(', ') %>
+              </span>
             </div>
             <div class="profile-email">
               <% if (data.hiringPath == 'fed' && email) { %>
@@ -131,7 +131,7 @@
               <h3>I have experience with</h3>
               <div>
                 <% _.each(skillsTags, function (t) { %>
-                  <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                  <a class="skill-label" href="/search?skill=<%= t.name %>"><%= t.name %></a>
                 <% }) %>
               </div>
               <% } %>  
@@ -139,7 +139,7 @@
                 <h3>I want to develop</h3>
                 <div>
                   <% _.each(interestsTags, function (t) { %>
-                    <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                    <a class="skill-label" href="/search?skill=<%= t.name %>"><%= t.name %></a>
                   <% }) %>
                 </div>
               <% } %>

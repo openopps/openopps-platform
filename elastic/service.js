@@ -1,7 +1,6 @@
 const elasticClient = require('./index');
 const dao = require('./dao');
 const _ = require('lodash');
-const moment = require('moment-timezone');
 
 var service = {};
 
@@ -24,6 +23,27 @@ service.remapOpportunities = async function () {
   }
 
   return service.reindexOpportunities();
+}
+
+service.reindexUsers = async function () {
+  var records = await dao.usersToIndex();
+  var bulk_request = [];
+  
+  for(i=0; i<records.length; i++){
+    bulk_request.push({index: { _index: 'user', _type: 'user', _id: records[i].id }});
+    bulk_request.push(records[i]);
+  }
+  
+  await elasticClient.bulk({ body: bulk_request });
+  return records;
+};
+
+service.remapUsers = async function () {
+  if (await elasticClient.indices.exists({ index: 'user'})) {
+    await elasticClient.indices.delete({ index: 'user' });
+  }
+
+  return service.reindexUsers();
 }
 
 service.reindexCycleOpportunities = async function (cycleId) {
@@ -57,6 +77,24 @@ service.indexOpportunity =  async function (taskId) {
   return records;
 };
 
+service.indexUser =  async function (userId) {
+  if (!(await elasticClient.IsAlive()))
+  {
+    return null;
+  }
+  var records = await dao.userToIndex(userId);
+  
+  var bulk_request = [];
+  
+  for(i=0; i<records.length; i++){
+    bulk_request.push({index: { _index: 'user', _type: 'user', _id: records[i].id }});
+    bulk_request.push(records[i]);
+  }
+  
+  await elasticClient.bulk({ body: bulk_request });
+  return records;
+};
+
 service.searchOpportunities = async function (request) {
   var searchResults = null;
   if(request){
@@ -71,6 +109,19 @@ service.searchOpportunities = async function (request) {
   result.hits = _.map(searchResults.hits.hits, convertSearchResultsToResultModel);
   return result;
 };
+
+service.searchUsers = async function (request) {
+  var searchResults = await elasticClient.search(request || { index: 'user' });
+  return {
+    totalHits: searchResults.hits.total,
+    hits: _.map(searchResults.hits.hits, (hit) => {
+      return {
+        score: hit._score,
+        result: hit._source,
+      }
+    }),
+  }
+}
   
 service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var query = ctx.query;
@@ -108,7 +159,10 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date() } }});
     },
     addLocations (location) { 
-      should_match.push({ multi_match: { fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country"], query: location}})
+      should_match.push({ multi_match: { 
+        fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country", 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
+        query: location,
+      }});
     }
   };
   var filter_must = request.body.query.bool.filter.bool.must;

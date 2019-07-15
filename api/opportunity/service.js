@@ -146,11 +146,12 @@ async function createOpportunity (attributes, done) {
           done(err);
         });  
       });
-    }
-
+    }  
+   
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     if (attributes.communityId != null)
     {
+      task.community = await communityService.findById(attributes.communityId);
       var share = {
         task_id: task.id,
         user_id: attributes.userId,
@@ -270,11 +271,20 @@ async function updateOpportunity (attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
+  if (origTask.communityId != attributes.communityId) {
+    attributes.state = 'submitted';
+    attributes.submittedAt = null;
+    attributes.publishedAt = null;
+    attributes.assignedAt = null;
+    attributes.completedAt = null;
+    attributes.canceledAt = null;
+  }
   attributes.assignedAt = attributes.state === 'assigned' && origTask.state !== 'assigned' ? new Date : origTask.assignedAt;
   attributes.publishedAt = attributes.state === 'open' && origTask.state !== 'open' ? new Date : origTask.publishedAt;
   attributes.completedAt = attributes.state === 'completed' && origTask.state !== 'completed' ? new Date : origTask.completedAt;
   attributes.submittedAt = attributes.state === 'submitted' && origTask.state !== 'submitted' ? new Date : origTask.submittedAt;
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+  
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
     
@@ -316,7 +326,7 @@ async function updateOpportunity (attributes, done) {
         await processTaskTags(task, tags).then(async tags => {
           task.tags = tags;
           await elasticService.indexOpportunity(task.id);
-          return done(task, origTask.state !== task.state);
+          return done(task, origTask.state !== task.state || origTask.communityId !== task.communityId);
         });
       }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
   }).catch (err => {
@@ -574,7 +584,7 @@ async function deleteTask (id,cycleId) {
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
-    if(cycle && cycle.applyStartDate>new Date()){
+    if((cycle) && (cycle.applyStartDate < new Date())) {
       return await removeTask(id);
     }
     else {
@@ -603,27 +613,6 @@ async function removeTask (id) {
   }).catch(err => {
     log.info('delete: failed to delete task tags ', err);
     return false;
-  });
-}
-
-async function getExportData () {
-  var records = (await dao.Task.db.query(dao.query.taskExportQuery, 'agency')).rows;
-  var fieldNames = _.keys(dao.exportFormat);
-  var fields = _.values(dao.exportFormat);
-
-  fields.forEach(function (field, fIndex, fields) {
-    if (typeof(field) === 'object') {
-      records.forEach(function (rec, rIndex, records) {
-        records[rIndex][field.field] = field.filter.call(this, rec[field.field]);
-      });
-      fields[fIndex] = field.field;
-    }
-  });
-
-  return json2csv({
-    data: records,
-    fields: fields,
-    fieldNames: fieldNames,
   });
 }
 
@@ -681,7 +670,6 @@ module.exports = {
   publishTask: publishTask,
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
-  getExportData: getExportData,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
   sendTaskStateUpdateNotification: sendTaskStateUpdateNotification,
@@ -709,6 +697,6 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
       }
     }).catch(err => {
       reject({ status: 404 });
-    })
+    });
   });
 };

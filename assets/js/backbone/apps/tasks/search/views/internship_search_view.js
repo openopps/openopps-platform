@@ -8,6 +8,7 @@ var InternshipListItem = require('../templates/internship_search_item.html');
 var InternshipListTemplate = require('../templates/internship_search_template.html');
 var SearchPills = require('../templates/search_pills.html');
 var NoListItem = require('../templates/no_search_results.html');
+var NoCurrentCycle = require('../templates/no_internship_search_results.html');
 var Pagination = require('../../../../components/pagination.html');
 var InternshipFilters = require('../templates/internship_filters.html');
 var InternshipCycle = require('../templates/internship_search_cycle_box.html');
@@ -23,6 +24,7 @@ var InternshipListView = Backbone.View.extend({
     'click #search-pills-remove-all'          : 'removeAllFilters',
     'click .internship-link'                  : 'loadInternship',
     // 'change input[type=radio][name=internship-program]'  : 'changedInternsPrograms',
+    'click .save-internship'                  : 'toggleSave',
   },
     
   initialize: function (options) {
@@ -33,16 +35,13 @@ var InternshipListView = Backbone.View.extend({
     this.filters = { term: this.queryParams.search, page: 1 };
     this.options = options;
     this.cycles = {};
+    this.futureCycles = {};
     this.programs = [];
     this.bureaus = [];
     this.offices = {};
     this.currentOffices = [];
     this.filterLookup = {};
     this.firstFilter = true;
-    this.userAgency =  {};
-    if (window.cache.currentUser && window.cache.currentUser.agency) {
-      this.userAgency = window.cache.currentUser.agency;
-    }
     this.initAgencyFilter();
     this.initializeHideFields();
     this.initializeCycle();
@@ -50,7 +49,7 @@ var InternshipListView = Backbone.View.extend({
     this.initializeCommunityDetails();
     this.parseURLToFilters();
     this.taskFilteredCount = 0;
-    this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+    this.appliedFilterCount = getAppliedFiltersCount(this.filters);
   },
     
   render: function () {
@@ -59,7 +58,6 @@ var InternshipListView = Backbone.View.extend({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
-      agencyName: this.userAgency.name,
       term: this.filters.term ? this.filters.term : '',
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
@@ -67,10 +65,14 @@ var InternshipListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
-    this.filter();
     this.renderCycle();
     this.initializeKeywordSearch();
-    this.initializeLocationSearch(); 
+    initializeLocationSearch.bind(this)('#nav-location');
+    if (window.cache.currentUser && window.cache.currentUser.hiringPath == 'student') {
+      this.loadSavedInternships();
+    } else {
+      this.filter();
+    }
     $('.usa-footer-search--intern').show();
     $('.usa-footer-search--intern-hide').hide();
     this.$('.usajobs-open-opps-search__box').show();
@@ -83,34 +85,21 @@ var InternshipListView = Backbone.View.extend({
     removeView(this);
   },
 
+  loadSavedInternships: function () {
+    $.ajax({
+      url: '/api/user/internship/activities',
+      method: 'GET',
+      success: function (data) {
+        this.savedInternships = data.savedOpportunities;
+        this.filter();
+      }.bind(this),
+    });
+  },
+
   loadInternship: function (event) {
     event.preventDefault && event.preventDefault();
     Backbone.history.navigate(event.currentTarget.pathname + event.currentTarget.search, { trigger: true });
   },
-
-  // changedInternsPrograms: function (e){
-  //   this.filters['program'] = { 'type': 'program', 'name': $('[name=internship-program]:checked').val(), 'id': $('[name=internship-program]:checked').attr('id') };
-  //   this.checkInternsPrograms();
-  //   this.filters.page = 1;
-  //   this.filter();
-  // },
-
-  // checkInternsPrograms: function () {
-  //   var studentProgram= $('[name=internship-program]:checked + label').text();
-  //   var communityId= $('[name=internship-program]:checked').attr('id');
-    
-  //   if($('[name=internship-program]:checked').val()=='U.S. Department of State Student Internship Program (Unpaid)'){ 
-  //     delete this.filters.agency;        
-  //     $('.dossection').show();
-  //     $('.agencyselect').hide();
-  //   }
-  //   else if ($('[name=internship-program]:checked').val()=='Virtual Student Federal Service (VSFS)') {          
-  //     $('.dossection').hide();
-  //     $('.agencyselect').show();
-  //   } 
-  //   this.selected= studentProgram;
-   
-  // },
 
   renderCycle:function (){
     //communityId for Usdos
@@ -134,15 +123,17 @@ var InternshipListView = Backbone.View.extend({
       async: false,
       success: function (data) {     
         this.cycles = {};
+        this.futureCycles = {};
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         for (var i = 0; i < data.length; i++) {
           var communityId = data[i].communityId;
           var cycleStartDate = new Date(data[i].cycleStartDate);
           var startDate = new Date(data[i].applyStartDate);
           var endDate = new Date(data[i].applyEndDate);
-          var today = new Date(moment().tz("America/New_York").format('MM-DD-YYYY'));
+          var today = new Date(moment().tz('America/New_York').format('MM/DD/YYYY'));
           if (!(communityId in this.cycles)) {
             this.cycles[communityId] = [];
+            this.futureCycles[communityId] = [];
           }
           if (today >= startDate && endDate >= today) {
             this.cycles[communityId].push(_.extend(data[i], { 
@@ -152,7 +143,10 @@ var InternshipListView = Backbone.View.extend({
               cycleStartYear: cycleStartDate.getFullYear(),
             }));
           }
-        } 
+          if (today < startDate) {
+            this.futureCycles[communityId].push(data[i]);
+          }
+        }
       }.bind(this),
     });
   },
@@ -221,88 +215,6 @@ var InternshipListView = Backbone.View.extend({
         this.filters.page = 1;
         this.filter();
         $('#search').val('');
-      }.bind(this),
-    });
-  },
-  
-  initializeLocationSearch: function () {
-    var locationAC = $.widget('custom.locationAC', $.ui.autocomplete, {
-      _create: function () {
-        this._super();
-        this.widget().menu('option', 'items', '> :not(.ui-autocomplete-category)');
-      },
-      _renderMenu: function (ul, items) {
-        ul.addClass('usajobs-search-location-autocomplete');
-        var that = this,
-            currentCategory = '',
-            header = '<li class="ui-autocomplete-close-header">Close &nbsp;&nbsp;&times;</li>',
-            $header = $(header);
-    
-        $.each(items, function (index, item) {
-          var li;
-          if (item.type !== currentCategory) {
-            ul.append('<li class="ui-autocomplete-category ' + item.type + ' ">' + item.type + '</li>');
-            currentCategory = item.type;
-          }
-          li = that._renderItemData(ul, item);
-          if (item.Type) {
-            li.attr('aria-label', item.type + ' : ' + item.value);
-          }
-        });
-      },
-      _renderItem: function (ul, item) {
-        return $('<li>')
-          .addClass(item.type)
-          .attr('data-value', item.value)
-          .append($('<a>').html(item.label))
-          .appendTo(ul);
-      },
-    });
-
-    $('#nav-location').locationAC({
-      source: function (request, response) {
-        $.ajax({
-          url: 'https://data.test.usajobs.gov/api/autocomplete/location',
-          dataType: 'json',
-          data: {
-            term: request.term.trim(),
-          },
-          crossDomain: true,
-          success: function (data) {
-            var results = [];
-
-            for (var key in data) {
-              if (key != 'continents' && key != 'counties') {
-                for (var i = 0; i < data[key].length; i++) {
-                  var label = data[key][i].Name;
-                  var code = data[key][i].Code;
-                  var parentName = '';
-
-                  var autocompleteItem = {
-                    value: label,
-                    label: splitTermHighlighter(label, request.term),
-                    type: key,
-                    actualValue: code,
-                    parentName: parentName,
-                  };
-
-                  results.push(autocompleteItem);
-                }
-              }
-            }
-
-            response(results);
-            $('#search-results-loading').hide();
-          }.bind(this),
-        });
-      }.bind(this),
-      minLength: 2,
-      select: function (event, ui) {
-        event.preventDefault();
-        this.addLocation(ui.item.actualValue);
-
-        $('#nav-location').val('');
-        this.filter();
       }.bind(this),
     });
   },
@@ -438,13 +350,17 @@ var InternshipListView = Backbone.View.extend({
     $('#search-results-loading').hide();
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
-    this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+    this.appliedFilterCount = getAppliedFiltersCount(this.filters);
     this.renderFilters();
+    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
     
-    if (searchResults.totalHits === 0) {
+    var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+    var communityId = USDOS.communityId;
+    if (!this.cycles[communityId].length) {
+      this.renderNoCurrentCycle();
+    } else if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
-      $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 10;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
@@ -460,6 +376,19 @@ var InternshipListView = Backbone.View.extend({
       ui: UIConfig,
     };
     compiledTemplate = _.template(NoListItem)(settings);
+    $('#task-list').append(compiledTemplate);
+    $('#task-page').hide();      
+    $('#results-count').hide();
+  },
+    
+  renderNoCurrentCycle: function () {
+    var USDOS = _.findWhere(this.programs, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+    var communityId = USDOS.communityId;
+    var settings = {
+      ui: UIConfig,
+      futureCycles: _.sortBy(this.futureCycles[communityId], 'applyStartDate'),
+    };
+    compiledTemplate = _.template(NoCurrentCycle)(settings);
     $('#task-list').append(compiledTemplate);
     $('#task-page').hide();      
     $('#results-count').hide();
@@ -490,6 +419,7 @@ var InternshipListView = Backbone.View.extend({
   renderItem: function (searchResult) {
     searchResult.tags = {};   
     searchResult.owner.initials = getInitials(searchResult.owner.name);
+    searchResult.saved = !_.isUndefined(_.findWhere(this.savedInternships, { id: searchResult.id }));
     var item = {
       item: searchResult,
       user: window.cache.currentUser,
@@ -531,18 +461,6 @@ var InternshipListView = Backbone.View.extend({
   isAgencyChecked: function () {
     return !!$( '#js-restrict-task-filter:checked' ).length;
   },
-  
-  addLocation: function (location) {
-    if(location == 'USA') {
-      location = 'United States';
-    }
-    if (this.filters.location && _.isArray(this.filters.location)) {
-      this.filters.location.push(location.trim());
-    } else {
-      this.filters.location = [location.trim()];
-    }
-    this.filters.page = 1;
-  },
 
   initAgencyFilter: function () {
     this.agency = { data: {} };
@@ -568,6 +486,7 @@ var InternshipListView = Backbone.View.extend({
         $('#main-content').toggleClass('hide', false);
         $('.find-people').toggleClass('hide', false);
         $('#footer').toggleClass('hide', false);
+        $('.student-internships').toggleClass('hide', false);
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
       }, 250);
@@ -584,6 +503,7 @@ var InternshipListView = Backbone.View.extend({
         $('#main-content').toggleClass('hide', true);
         $('.find-people').toggleClass('hide', true);
         $('#footer').toggleClass('hide', true);
+        $('.student-internships').toggleClass('hide', true);
         $('#task-filters').css('display', 'block');
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -594,7 +514,7 @@ var InternshipListView = Backbone.View.extend({
   search: function () {
     this.filters.term = this.$('#nav-keyword').val().trim();
     if (this.$('#nav-location').val().trim() != '') {
-      this.addLocation($('#nav-location').val());
+      addLocation.bind(this)($('#nav-location').val());
     }
     this.$('#nav-location').val('');
     this.filters.page = 1;
@@ -692,6 +612,28 @@ var InternshipListView = Backbone.View.extend({
       }
     }.bind(this));
   },
+
+  toggleSave: function (e) {
+    e.preventDefault && e.preventDefault();
+    $.ajax({
+      url: '/api/task/save',
+      method: 'POST',
+      data: {
+        taskId: $(e.currentTarget.parentElement).data('id'), 
+        action: e.currentTarget.getAttribute('data-action'),
+      },
+    }).done(function () {
+      if (e.currentTarget.getAttribute('data-action') == 'save') {
+        $(e.currentTarget).html('<i class="fa fa-star"></i> Saved');
+        e.currentTarget.setAttribute('data-action', 'unsave');
+      } else {
+        $(e.currentTarget).html('<i class="far fa-star"></i> Save');
+        e.currentTarget.setAttribute('data-action', 'save');
+      }
+    }).fail(function (err) {
+      showWhoopsPage();
+    }.bind(this));
+  },
 });
     
 function formatObjectForURL (value) {
@@ -703,30 +645,14 @@ function formatObjectForURL (value) {
   }
 }
   
-function getAppliedFiltersCount (filters, agency) {
+function getAppliedFiltersCount (filters) {
   var count = 0;
   _.each(filters, function ( value, key ) {
     if (key != 'term' && key != 'page') {
       count += (_.isArray(value) ? value.length : 1);
     }
   });
-  return count + (_.isEqual(agency, { data: {} }) ? 0 : 1);
-}
-
-function splitTermHighlighter (s, t) {
-  var splitString = t.split(' ').sort(function (a, b) { return b.length - a.length; }),
-      matcherString = '';
-
-  for (var i = 0; i < splitString.length; i++) {
-    if (splitString[i] !== '') {
-      matcherString = matcherString + '(' + $.ui.autocomplete.escapeRegex(splitString[i]) + ')|';
-    }
-  }
-
-  var matcher = new RegExp(matcherString, 'ig');
-  s = s.replace(matcher, '<strong>$&</strong>');
-
-  return s;
+  return count;
 }
   
 module.exports= InternshipListView;

@@ -13,6 +13,9 @@ module.exports = {
 
   usajobsURL: process.env.USAJOBS_URL || 'https://www.usajobs.gov',
 
+  usajobsDataURL: process.env.USAJOBS_DATA_URL || 'https://data.usajobs.gov',
+  
+  agencyportalURL: process.env.AGENCYPORTAL_URL || 'https://agencyportal.usajobs.gov',
   // redirect domain not matching hostName
   redirect: (process.env.REDIRECT || '').match(/^true$/i) || false,
 

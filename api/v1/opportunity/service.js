@@ -24,7 +24,7 @@ service.getTaskShareList = async function (taskId, userId) {
 };
 
 service.getTaskList = async function (userId, taskId) {
-  var results = await dao.Task.db.query(dao.query.taskListQuery, taskId);
+  var results = await dao.Task.db.query(dao.query.taskListQuery, taskId, taskId);
   for (let i = 0; i < results.rows.length; i++) {
     results.rows[i].applicants = await getApplicants(results.rows[i].task_list_id);
   }
@@ -141,6 +141,8 @@ async function updateListApplicant (userId, item) {
         'task_list_id': item.task_list_id,
         'sort_order': item.sort_order,
       },
+      taskId: item.task_id,
+      applicationId: item.application_id,
     };  
     if (historyRecord.details.task_list_id == historyRecord.details.previous.task_list_id)
     {
