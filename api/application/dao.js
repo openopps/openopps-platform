@@ -14,7 +14,7 @@ const applicationTasksQuery = 'SELECT ' +
   'JOIN task ON task.id = application_task.task_id ' +
   'LEFT JOIN bureau ON bureau.bureau_id = task.bureau_id ' +
   'LEFT JOIN office ON office.office_id = task.office_id ' + 
-  'WHERE application_task.application_id = ?';
+  'WHERE application_task.application_id = ? and application_task.sort_order <> -1';
 
 const applicationEducationQuery = 'SELECT @education.*, @degreeLevel.*,@honor.*, @country.*, @countrySubdivision.* ' +
   'FROM @education education ' +

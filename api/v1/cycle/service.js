@@ -457,6 +457,19 @@ async function createTaskListApplication (item, internship, userId) {
     updated_by: userId,
   };
   return await db.transaction(function*() {
+    var applicationTask = yield dao.ApplicationTask.find('application_id = ? and task_id = ?', item.application_id, internship.task_id);
+    if (applicationTask.length == 0) {
+      var newApplicationTask = {
+        application_id: item.application_id,
+        user_id: item.user_id,
+        task_id: item.task_id,
+        sort_order: -1,
+        created_at: new Date,
+        updated_at: new Date,
+        is_removed: false
+      }
+      yield dao.ApplicationTask.insert(newApplicationTask);
+    }
     var record = yield dao.TaskListApplication.insert(list);
     var historyRecord = {
       taskListApplicationId: record.taskListApplicationId,
