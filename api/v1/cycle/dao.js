@@ -59,6 +59,7 @@ dao.query.getOneIntern = `
       task_list_application.application_id,
       task_list_application.sort_order,
       task_list_application.date_last_contacted,
+      task_list.task_id,
       midas_user.given_name,
       midas_user.last_name,
       midas_user.username as email,
@@ -216,6 +217,7 @@ dao.query.getCommunityCreators = `
 
 module.exports = function (db) {
   dao.Application = pgdao({ db: db, table: 'application' });
+  dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
   dao.Task = pgdao({ db: db, table: 'task' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });

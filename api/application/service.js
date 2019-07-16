@@ -69,7 +69,7 @@ function importProfileData (user, applicationId) {
 
 async function processUnpaidApplication (user, data, callback) {
   var application = await findOrCreateApplication(user, data);
-  var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
+  var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
   if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
     callback(null, application.applicationId);
   } else if (applicationTasks.length >= 3) {
