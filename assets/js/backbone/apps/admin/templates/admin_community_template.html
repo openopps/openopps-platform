@@ -8,9 +8,9 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-
+<% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
 <a href="create" id="add-community" class="usa-button usa-button-secondary add-community "><i class="fa fa-plus"></i> <span>Add Community</span></a>
-
+<% } %>
 <% if (updateSuccess) { %>
   <div class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
     <div class="usajobs-alert__figure">

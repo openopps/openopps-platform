@@ -35,7 +35,7 @@ module.exports.getCommunities = async function (userId) {
     student: _.filter(communities, { targetAudience: 2 }),
   };
   return communityTypes;
-}
+};
 
 module.exports.createAudit = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
@@ -57,9 +57,10 @@ module.exports.findById = async function (id) {
   if(community) {
     community.agency = await dao.Agency.findOne('agency_id = ?', community.agencyId).catch(() => { return null; });
     community.communityType = communityTypes[community.communityType - 1];
+    community.duration = durationTypes[community.duration - 1];
+    community.targetAudience = audienceTypes[community.targetAudience - 1];
   }
-  community.duration = durationTypes[community.duration - 1];
-  community.targetAudience = audienceTypes[community.targetAudience - 1];
+ 
   return community;
 };
 

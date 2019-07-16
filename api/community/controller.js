@@ -30,7 +30,7 @@ router.put('/api/community/:id', auth, async (ctx, next) => {
   }
 });
 
-router.post('/api/community', auth, async (ctx, next) => {
+router.post('/api/community', auth.isAdmin, async (ctx, next) => {
   await service.saveCommunity(ctx.request.body, function (errors,community)  {
     if (errors) {
       ctx.status = 400;

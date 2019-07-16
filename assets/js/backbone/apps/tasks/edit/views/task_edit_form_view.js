@@ -156,8 +156,7 @@ var TaskEditFormView = Backbone.View.extend({
       url: '/api/task/communities',  
       type: 'GET',
       async: false,
-      success: function (data){ 
-        console.log(data);
+      success: function (data){       
         this.communities= data;      
       }.bind(this),
     });
@@ -299,7 +298,6 @@ var TaskEditFormView = Backbone.View.extend({
   },
   initializeCommunityDropDown: function (){
     var communityId= this.model.toJSON().communityId;
-    console.log(this.model.toJSON().communityId);
     // eslint-disable-next-line no-empty
     if(communityId){
       $('#federal-programs').val(communityId);
