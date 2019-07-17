@@ -44,6 +44,10 @@ service.startAlternateProcessing = async function (cycleId) {
 
 service.archivePhase = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
+  var closedPhase = await dao.Phase.findOne('name = ?', "Close phase");
+  if (closedPhase != null) {
+    cycle.phaseId = closedPhase.phaseId;
+  }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
   await service.sendCloseCyclePhaseSelectedNotification(cycleId);

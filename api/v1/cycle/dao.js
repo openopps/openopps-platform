@@ -42,7 +42,7 @@ dao.query.getTaskIdAndListId = `
       id as task_id,
       task_list_id as "reviewList",
       (
-        select max(sort_order) max_sort_order
+        select coalesce(max(sort_order), 0) max_sort_order
         from task_list_application
         where task_list_application.task_list_id = task_list.task_list_id
       ) as max_sort
