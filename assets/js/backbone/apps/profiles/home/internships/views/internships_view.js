@@ -105,7 +105,15 @@ var InternshipsView = Backbone.View.extend({
 
   getStatus: function (application) {
     if (application.submittedAt == null) {
-      return 'In Progress';
+      return 'In progress';
+    } else if (application.sequence == 3) {
+      if (application.reviewProgress == 'Primary') {
+        return 'Selected';
+      } else if (application.reviewProgress == 'Alternate') {
+        return 'Alternate';
+      } else {
+        return 'Not selected';
+      }
     } else {
       return 'Applied';
     }
