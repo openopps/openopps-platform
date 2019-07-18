@@ -108,8 +108,8 @@ async function sendDeletedVolunteerNotification (notificationInfo, action) {
     action: action,
     model: {
       task: { id: notificationInfo.id, title: notificationInfo.title },
-      owner: { name: notificationInfo.ownername, username: notificationInfo.ownerusername },
-      user: { name: notificationInfo.name, username: notificationInfo.username},
+      owner: { name: notificationInfo.ownername, username: notificationInfo.ownerusername, governmentUri: notificationInfo.ownergovernmentUri },
+      user: { name: notificationInfo.name, username: notificationInfo.username, governmentUri: notificationInfo.governmentUri},
     },
   };
   if(!notificationInfo.bounced) {

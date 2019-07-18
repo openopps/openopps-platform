@@ -42,8 +42,8 @@ async function sendCommentNotification (user, comment, action) {
     model: {
       comment: { id: notificationData[0].commentid, value: notificationData[0].value },
       commenter: { id: user.id, name: user.name },
-      task: { id: notificationData[0].taskid, title: notificationData[0].tasktitle},
-      owner: { name: notificationData[0].ownername, username: notificationData[0].ownerusername },
+      task: { id: notificationData[0].taskid, title: notificationData[0].tasktitle },
+      owner: { name: notificationData[0].ownername, username: notificationData[0].ownerusername, governmentUri: notificationData[0].ownergovernmenturi },
     },
   };
   if(!notificationData[0].ownerbounced) {

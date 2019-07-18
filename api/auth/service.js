@@ -214,7 +214,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
       if(user.linkedId) {
         notification.createNotification({
           action: 'find.profile.confirmation',
-          model: { user: { name: user.name, username: user.username, linkedId: user.linkedId } },
+          model: { user: { name: user.name, username: user.username, governmentUri: user.governmentUri, linkedId: user.linkedId } },
         });
         done();
       } else {
@@ -222,7 +222,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
           notification.createNotification({
             action: 'find.profile.confirmation',
             model: {
-              user: { name: user.name, username: user.username },
+              user: { name: user.name, username: user.username, governmentUri: user.governmentUri },
               hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
             },
           });
