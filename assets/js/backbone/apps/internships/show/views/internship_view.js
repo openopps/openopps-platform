@@ -46,7 +46,12 @@ var InternshipView = BaseView.extend({
     this.$el.localize();
     $('#search-results-loading').hide();
     this.updateInternshipEmail();
-    this.loadApplicants();
+    var today = new Date();
+    if (today > new Date(this.data.model.cycle.cycleEndDate)) {
+      this.loadApplicants();
+    } else if (today <= new Date(this.data.model.cycle.cycleEndDate)) {
+      this.loadInterns();
+    }
     if (window.cache.currentUser && this.params.has('action')) {
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
       var action = this.params.get('action');
@@ -67,12 +72,12 @@ var InternshipView = BaseView.extend({
       },
     }).done(function () {
       if (action == 'save') {
-          $('#save').html('<i class="fa fa-star"></i> Saved');
-          $('#save')[0].setAttribute('data-action', 'unsave');
-        } else {
-          $('#save').html('<i class="far fa-star"></i> Save');
-          $('#save')[0].setAttribute('data-action', 'save');
-        }
+        $('#save').html('<i class="fa fa-star"></i> Saved');
+        $('#save')[0].setAttribute('data-action', 'unsave');
+      } else {
+        $('#save').html('<i class="far fa-star"></i> Save');
+        $('#save')[0].setAttribute('data-action', 'save');
+      }
     }).fail(function (err) {
       showWhoopsPage();
     }.bind(this));
@@ -221,11 +226,11 @@ var InternshipView = BaseView.extend({
   getApplicantPreference: function (preference) {
     switch (preference.toString()) {
       case '1':
-        return '1st'
+        return '1st';
       case '2':
-        return '2nd'
+        return '2nd';
       case '3':
-        return '3rd'
+        return '3rd';
     }
   },
 
@@ -241,7 +246,25 @@ var InternshipView = BaseView.extend({
           getApplicantPreference: this.getApplicantPreference,
         }));
         if(window.location.hash.indexOf('applicants') != -1) {
-          $('#internship-applicants').get(0).scrollIntoView()
+          $('#internship-applicants').get(0).scrollIntoView();
+        }
+      }.bind(this)).fail();
+    }
+  },
+
+  loadInterns: function () {
+    if(window.cache.currentUser && window.cache.currentUser.hiringPath != 'student') {
+      $.ajax({
+        url: '/api/task/interns/' + this.model.attributes.id,
+        method: 'GET',
+      }).done(function (results) {
+        $('#internship-interns').show();
+        $('#internship-interns').html(_.template(InternsTemplate)({
+          applicants: results,
+          getInternPreference: this.getInternPreference,
+        }));
+        if(window.location.hash.indexOf('interns') != -1) {
+          $('#internship-interns').get(0).scrollIntoView();
         }
       }.bind(this)).fail();
     }
