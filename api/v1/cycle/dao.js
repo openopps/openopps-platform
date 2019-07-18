@@ -174,6 +174,7 @@ dao.query.getCommunityUsers = `
   select 
     mu.given_name,
     mu.username as email,
+    mu.government_uri as govenrmentUri,
     task.title,
     task.id as task_id
   from "cycle"

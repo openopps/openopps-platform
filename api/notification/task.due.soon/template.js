@@ -1,7 +1,7 @@
 module.exports = { 
   subject: '<%- task.title %> is due soon',
   to: '<%- volunteers %>',
-  cc: '<%- owner.username %>',
+  cc: '<%= owner.governmentUri ? owner.governmentUri : owner.username %>',
   data: function (model, done) {
     var data = {
       task: model.task,

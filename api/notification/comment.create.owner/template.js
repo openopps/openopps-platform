@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'There&rsquo;s a new comment on "<%- task.title %>"',
-  to: '<%- owner.username %>',
+  to: '<%= owner.governmentUri ? owner.governmentUri : owner.username %>',
   data: function (model, done) {
     var data = {
       comment: model.comment,
