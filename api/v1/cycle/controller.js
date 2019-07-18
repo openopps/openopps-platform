@@ -34,6 +34,7 @@ Handler.startPrimaryPhase = async function (ctx) {
   await service.startPhaseProcessing(ctx.request.fields.cycleId);
   return new Promise((resolve, reject) => {
     drawMany(ctx).then(results => {
+      service.sendPrimaryPhaseStartedCommunityNotification(ctx.request.fields.cycleId);
       service.sendPrimaryPhaseStartedNotification(ctx.state.user, true);
       resolve(results);
     }).catch(err => {
@@ -55,6 +56,9 @@ Handler.startAlternatePhase = async function (ctx) {
   });
 };
 
+Handler.closeCycle = async function (ctx) {
+  await service.archivePhase(ctx.request.fields.cycleId);
+};
 
 async function drawMany (ctx) {
   return new Promise((resolve, reject) => {
@@ -91,6 +95,10 @@ router.get('/api/v1/cycle/getCommunityUsers', auth.bearer, async (ctx, next) => 
 
 router.get('/api/v1/cycle/checkProcessingStatus', auth.bearer, async (ctx, next) => {
   ctx.body = await cycleService.checkProcessingStatus(ctx.query.taskId);
+});
+
+router.get('/api/v1/cycle/checkCycleStatus', auth.bearer, async (ctx, next) => {
+  ctx.body = await service.checkCycleStatus(ctx.query.cycleId);
 });
 
 module.exports = router.routes();

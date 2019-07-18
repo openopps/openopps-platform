@@ -156,11 +156,11 @@ const userCommunityListFilteredQuery = 'select midas_user.id, midas_user.name, m
   'count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, ' +
   'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
-  'inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
   'inner join agency on agency.agency_id = midas_user.agency_id ' +
-  'where midas_user.disabled = \'f\'  or lower(username) like ? or lower(midas_user.name) like ?) ' +
+  'where midas_user.disabled = \'f\' ' +
+  'and (lower(username) like ? or lower(midas_user.name) like ? or lower(agency.name) like ?) ' +
   'and community_user.community_id = ? ' +
-  'order by "created_at" desc ' +
+  'order by community_user.created_at desc ' +
   'limit 25 ' +
   'offset ((? - 1) * 25) ';
 

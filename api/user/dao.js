@@ -31,10 +31,19 @@ const deleteSkillTags = 'delete from tagentity_users__user_tags where id in (' +
 
 const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted_at AS "submittedAt", ' +
   'comm.community_name AS "communityName", c.name AS "cycleName", c.cycle_start_date AS "cycleStartDate", ' +
-  'c.apply_end_date AS "applyEndDate", app.updated_at AS "updatedAt" ' +
+  'c.apply_end_date AS "applyEndDate", app.updated_at AS "updatedAt", phase."name", phase."sequence", ' +
+	'( ' +
+		'select ' +
+			'task_list.title ' +
+		'from application ' +
+		'inner join task_list_application tla on application.application_id = tla.application_id ' +
+		'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
+		'where application.application_id = app.application_id ' +
+	') as "reviewProgress" ' +
   'FROM application app ' +
   'INNER JOIN community comm ON app.community_id = comm.community_id ' +
   'INNER JOIN cycle c ON app.cycle_id = c.cycle_id ' +
+  'LEFT JOIN phase ON c.phase_id = phase.phase_id ' +
   'WHERE app.user_id = ? ';
 
 const savedTaskQuery = 'select ' +

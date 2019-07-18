@@ -23,6 +23,11 @@ service.getPhaseData = async function (cycleId) {
   return results;
 };
 
+service.checkCycleStatus = async function (cycleId) {
+  var results = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
+  return results.isProcessing;
+};
+
 service.startPhaseProcessing = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
   cycle.isProcessing = true;
@@ -35,6 +40,22 @@ service.startAlternateProcessing = async function (cycleId) {
     cycle.isProcessing = true;
     return await dao.Cycle.update(cycle);
   }).catch (err => { return done(null, false, {'message':'Error updating task.'}); });
+};
+
+service.archivePhase = async function (cycleId) {
+  var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
+  var closedPhase = await dao.Phase.findOne('name = ?', "Close phase");
+  if (closedPhase != null) {
+    cycle.phaseId = closedPhase.phaseId;
+  }
+  cycle.isArchived = true;
+  await dao.Cycle.update(cycle);
+  await service.sendCloseCyclePhaseSelectedNotification(cycleId);
+  await service.sendCloseCyclePhaseAlternateNotification(cycleId);
+  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
+  await service.sendCloseCyclePhaseCreaterNotification(cycleId);
+  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -107,13 +128,35 @@ service.recordError = async function (userId, err) {
   dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
 };
 
+service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getAllCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/firstphase.start.community',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          reviewboardlink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  }
+}; 
+
 service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopulated) {
   var data = {
     action: 'state.department/firstphase.start.confirmation',
     model: {
       user: user,
       agencyportallink: openopps.agencyportalURL,
-      alternatephaselink: openopps.agencyportalURL + '/review',
+      alternatephaselink: openopps.agencyportalURL + '/reviews',
       boardspopulated: boardsPopulated ? 'success' : 'fail',
       emailsqueued: 'success',
       systemname: 'USAJOBS Agency Talent Portal',
@@ -126,24 +169,172 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
 };
 
 service.sendAlternatePhaseStartedNotification = async function (cycleId) {
-  
   var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
       var data = {
-        action: 'state.department/alternatephase.start.confirmation',
+        action: 'state.department/alternatephase.start.communityusers',
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
           governmentUri: results[i].governmentUri,
           title: results[i].title,
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
         },
+        layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
     }
   } 
 };
+
+service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantSelected, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.selected',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          office: results[i].office,
+          session: results[i].session,
+          jobLink: results[i].joblink,
+          title: results[i].title,
+          contact_email: results[i].contact_email,  //todo
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseNotSelectedNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantNotSelected, cycleId)).rows;
+  var numOfApplicants = (await dao.Application.db.query(dao.query.getApplicationCount, cycleId)).rows[0].applicant_count;  
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.notselected',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          session: results[i].session,
+          applicationsCount: numOfApplicants,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.getApplicantAlternate, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.alternate',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          office: results[i].office, 
+          session: results[i].session,
+          jobLink: results[i].joblink,
+          contact_email: results[i].contact_email,  //todo
+          title: results[i].title,
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+
+
+service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityCreators, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.creators',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.communityusers',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
+service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleId) {
+  
+  var results = (await dao.Cycle.db.query(dao.query.getCommunityManagers, cycleId)).rows;
+  if (results != null && results.length > 0) {
+    for (let i = 0; i < results.length; i++) {
+      var data = {
+        action: 'state.department/closecyclephase.start.communitymanagers',
+        model: {
+          given_name: results[i].given_name,
+          email: results[i].email,
+          title: results[i].title,
+          archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
+          systemname: 'USAJOBS Agency Talent Portal',
+          urlprefix: openopps.agencyportalURL,
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+        },
+        layout: 'state.department/layout.html',
+      };
+      notification.createNotification(data);
+    }
+  } 
+};
+
 
 function getNextInternshipIndex (internshipIndex) {
   var counter = 0;
@@ -271,6 +462,19 @@ async function createTaskListApplication (item, internship, userId) {
     updated_by: userId,
   };
   return await db.transaction(function*() {
+    var applicationTask = yield dao.ApplicationTask.find('application_id = ? and task_id = ?', item.application_id, internship.task_id);
+    if (applicationTask.length == 0) {
+      var newApplicationTask = {
+        application_id: item.application_id,
+        user_id: item.user_id,
+        task_id: item.task_id,
+        sort_order: -1,
+        created_at: new Date,
+        updated_at: new Date,
+        is_removed: false
+      }
+      yield dao.ApplicationTask.insert(newApplicationTask);
+    }
     var record = yield dao.TaskListApplication.insert(list);
     var historyRecord = {
       taskListApplicationId: record.taskListApplicationId,
@@ -281,6 +485,8 @@ async function createTaskListApplication (item, internship, userId) {
         'task_list_id': internship.reviewList,
         'sort_order': internship.max_sort,
       },
+      taskId: item.task_id,
+      applicationId: item.application_id
     };
     internship.max_sort = internship.max_sort + 1;
     return yield dao.TaskListApplicationHistory.insert(historyRecord);      

@@ -27,7 +27,7 @@
                     </div>
                   </button>                
                 </li>
-              
+                <% if (communities.student && communities.student.length) { %>
                 <li class="opportunity-target-audience__item">
                   <button type="button" class="opportunity-target-audience__button " id="students" value="Students">
                     <div class="opportunity-target-audience__figure">
@@ -45,7 +45,7 @@
                     </div>
                   </button>              
                 </li>
-              
+                <% } %>
               </ul>
             </div>
           </fieldset>

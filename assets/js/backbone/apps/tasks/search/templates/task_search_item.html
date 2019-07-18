@@ -85,9 +85,11 @@
                 <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %>
                 <% } %>
             </p>
+            <% if (item.publishedAt) { %>
             <span class="usajobs-open-opps-opportunity-requestor__on">
                Posted on <%- moment(item.publishedAt).format('MM/DD/YY') %>
             </span>
+            <% } %>
           </div>
         </div>
         <div class="usajobs-open-opps-opportunity-requestor__status">

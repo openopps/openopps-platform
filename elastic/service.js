@@ -23,7 +23,7 @@ service.remapOpportunities = async function () {
   }
 
   return service.reindexOpportunities();
-}
+};
 
 service.reindexUsers = async function () {
   var records = await dao.usersToIndex();
@@ -44,7 +44,7 @@ service.remapUsers = async function () {
   }
 
   return service.reindexUsers();
-}
+};
 
 service.reindexCycleOpportunities = async function (cycleId) {
   var records = await dao.cycleTasksToIndex(cycleId);
@@ -57,7 +57,7 @@ service.reindexCycleOpportunities = async function (cycleId) {
   
   await elasticClient.bulk({ body: bulk_request });
   return records;
-}
+};
 
 service.indexOpportunity =  async function (taskId) {
   if (!(await elasticClient.IsAlive()))
@@ -118,10 +118,10 @@ service.searchUsers = async function (request) {
       return {
         score: hit._score,
         result: hit._source,
-      }
+      };
     }),
-  }
-}
+  };
+};
   
 service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var query = ctx.query;
@@ -135,17 +135,18 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     from: from > 0 ? from : 0,
     size: resultsperpage > 0 ? resultsperpage : 10,
     body: {
+      sort:[{'publishedAt':'desc'}],
       query : {
         bool : {
           filter : {
             bool: {
               must: [] ,
-              must_not: []
+              must_not: [],
             },
           },
           should : [],
-          minimum_should_match : query.isInternship == "1" && query.location ? 1 : 0
-        }
+          minimum_should_match : query.isInternship == '1' && query.location ? 1 : 0,
+        },
       },
     },
     addTerms (filter, field, defaultFilter) { 
@@ -155,42 +156,42 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }
     },
     addCycleDate () {
-      filter_must.push({range: { "cycle.applyEndDate" : { gte: new Date() } }});
-      filter_must.push({range: { "cycle.applyStartDate" : { lte: new Date() } }});
+      filter_must.push({range: { 'cycle.applyEndDate' : { gte: new Date() } }});
+      filter_must.push({range: { 'cycle.applyStartDate' : { lte: new Date() } }});
     },
     addLocations (location) { 
       should_match.push({ multi_match: { 
-        fields: ["postingLocation.cityName", "postingLocation.countrySubdivision", "postingLocation.country", 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
+        fields: ['postingLocation.cityName', 'postingLocation.countrySubdivision', 'postingLocation.country', 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
         query: location,
       }});
-    }
+    },
   };
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
   
-  var formatParamTypes = ["skill", "career", "series", "location", "keywords", "language", "agency"];
+  var formatParamTypes = ['skill', 'career', 'series', 'location', 'keywords', 'language', 'agency'];
 
   var seriesList = [];
   if (query.series && _.isArray(query.series)) {
-    _.each(query.series, function(item) {
-      seriesList.push(item.split("(")[0].trim());
+    _.each(query.series, function (item) {
+      seriesList.push(item.split('(')[0].trim());
     });
     query.series = seriesList;
   } else if (query.series) {
-    query.series = query.series.split("(")[0].trim();
+    query.series = query.series.split('(')[0].trim();
   }
   
-  var agencies = ["null"];
+  var agencies = ['null'];
   
   if (ctx.state.user && ctx.state.user.agency) {
-    if (query.restrict == "true") {
+    if (query.restrict == 'true') {
       agencies = [ctx.state.user.agency.name];
     } else {
       if (ctx.state.user.isAdmin) {
         agencies = [];
       } else {
-        agencies.push(ctx.state.user.agency.name)
+        agencies.push(ctx.state.user.agency.name);
       }
     }
   }
@@ -200,7 +201,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
 
     
 
-  var keywords = []
+  var keywords = [];
   if (query.term) {
     keywords = Array.isArray(query.term) ? query.term : [query.term];
   }
@@ -231,7 +232,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     request.addCycleDate();
     if (query.location) {
       if (_.isArray(query.location)) {
-        _.each(query.location, function(location) {
+        _.each(query.location, function (location) {
           request.addLocations(location);
         });
       } else {
@@ -289,7 +290,7 @@ function convertSearchResultsToResultModel (searchResult) {
     owner: source.owner,
     community: source.community,
     bureau: source.bureau,
-    office: source.office
+    office: source.office,
   };
   removeEmpty(model);
   return model;
@@ -305,6 +306,6 @@ const removeEmpty = (obj) => {
     if (obj[key] && typeof obj[key] === 'object') removeEmpty(obj[key]);
     else if (obj[key] == null) delete obj[key];
   });
- };
+};
   
 module.exports = service;
