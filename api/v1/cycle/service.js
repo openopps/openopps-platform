@@ -3,6 +3,7 @@ const dao = require('./dao')(db);
 var _ = require('lodash');
 const Audit = require('../../model/Audit');
 const notification = require('../../notification/service');
+const util = require('util');
 
 var service = {};
 
@@ -264,7 +265,10 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
   } 
 };
 
-
+service.downloadReport = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.GetCycleApplicantData, cycleId)).rows;
+  return results;
+};
 
 service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
   
