@@ -257,6 +257,41 @@ dao.query.getApplicantNotSelected = `
     and tl.title not in ('Primary','Alternate')
 `;
 
+dao.query.GetCycleApplicantData = `
+  select 
+      given_name,
+      last_name,
+      case when pri.task_id is not null then task.title end as "primary",
+      case when alt.task_id is not null then task.title end as "alternate",
+      board.task_id,
+      case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
+  from midas_user
+    inner join application on midas_user.id = application.user_id
+    inner join application_task on application.application_id = application_task.application_id
+    inner join task on application_task.task_id = task.id
+    left join lateral (
+      select *
+            from task_list
+                    inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+            where task.id = task_list.task_id and task_list.title = 'Primary'
+    ) as pri on true
+    left join lateral (
+        select *
+              from task_list
+                      inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+              where task.id = task_list.task_id and task_list.title = 'Alternate'
+    ) as alt on true
+    left join lateral (
+        select *
+              from task_list
+                      inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+              where task.id = task_list.task_id
+                and task_list.title in ('Alternate', 'Primary')
+    ) as board on true
+  where task.cycle_id = ?
+
+`;
+
 module.exports = function (db) {
   dao.Application = pgdao({ db: db, table: 'application' });
   dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
