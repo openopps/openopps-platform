@@ -116,8 +116,8 @@
         </div>
       </div>
       <div class="usajobs-opop-skill__body">
-        <div class="usajobs-open-opps-opportunity">
-          <div class="usajobs-open-opps-participated__body usajobs-grid-full">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+          <div class="usajobs-grid-full">
             <% if ((data.isOwner || data.canEditProfile) && (skillsTags.length > 0 || interestsTags.length > 0)) { %>
             <div class="usajobs-opop-section-edit skills-edit">
               <% if (login.profile.edit === true) { %>
@@ -144,7 +144,7 @@
                 </div>
               <% } %>
             <% } else if (data.isOwner || data.canEditProfile) { %>
-              <div>List all of your relevant skills.</div>
+              <p>List all of your relevant skills.</p>
               <a href="/profile/edit/skills/<%- data.id %>/" class="usa-button add-skills">
                 <i class="fas fa-plus-circle"></i> Add skills
               </a>
