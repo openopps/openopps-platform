@@ -19,11 +19,23 @@ dao.query.ApplicantSummary = `
           educationcode.value as "degree_level",
           education.major,
           education.school_name,
+          education.city_name,
+          cs.code as "country_subdivision",
+          c.value as "country",
           education.completion_month,
-          education.completion_year
+          education.completion_year,
+          education.gpa,
+          education.gpa_max,
+          education.total_credits_earned,
+          education.credit_system,
+          honorscode.value as "honors",
+          education.course_work
         from 
           education
           inner join lookup_code as educationcode on education.degree_level_id = educationcode.lookup_code_id
+          inner join lookup_code as honorscode on education.honors_id = honorscode.lookup_code_id
+          inner join country_subdivision as cs on cs.country_subdivision_id = education.country_subdivision_id
+          inner join country as c on c.country_id = education.country_id
         where application.application_id = education.application_id
         ) item
       ) as educations,
@@ -57,7 +69,6 @@ dao.query.ApplicantSummary = `
           where "language".language_id = application_language_skill.language_id and application_language_skill.application_id = application.application_id
         ) item
       ) as languages,
-      application.cumulative_gpa as gpa,
       (
         select json_agg(item)
         from (
@@ -97,8 +108,20 @@ dao.query.ApplicantSummary = `
     (
         select json_agg(item)
         from (
-          select formal_title, employer_name, start_date, end_date
+          select
+            formal_title,
+            employer_name,
+            start_date,
+            end_date,
+            address_line_one,
+            city_name,
+            cs.code as "country_subdivision",
+            c.code as "country",
+            postal_code,
+            duties
           from experience
+            inner join country_subdivision cs on cs.country_subdivision_id = experience.country_subdivision_id
+            inner join country c on c.country_id = experience.country_id
           where application_id = application.application_id
         ) item
       ) as experience,
@@ -132,13 +155,14 @@ dao.query.ApplicantSummary = `
     where
     task_list_application.task_list_application_id = ?
 `;
+
 module.exports = function (db) {
-    dao.Application = pgdao({ db: db, table: 'application' }),
-    dao.User = pgdao({ db: db, table: 'midas_user' });
-    dao.TaskList = pgdao({ db: db, table: 'task_list' });
-    dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
-    dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
-    dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
-    dao.pgdao = pgdao;
-    return dao;
+  dao.Application = pgdao({ db: db, table: 'application' }),
+  dao.User = pgdao({ db: db, table: 'midas_user' });
+  dao.TaskList = pgdao({ db: db, table: 'task_list' });
+  dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });
+  dao.TaskListApplicationHistory = pgdao({ db: db, table: 'task_list_application_history' });
+  dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
+  dao.pgdao = pgdao;
+  return dao;
 };
