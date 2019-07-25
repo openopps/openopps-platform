@@ -1,6 +1,7 @@
-<h3>Interns</h3>
+<h3>Selected interns</h3>
+<div class="internship-participant__wrapper">
 <% _.each(interns, function (intern) { %>
-  <div class="internship-intern">
+  <div class="internship-participant">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
       <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(intern.name) %></div>
@@ -8,6 +9,17 @@
       <div class="usajobs-open-opps-opportunity-requestor__body">
         <div class="usajobs-open-opps-opportunity-requestor__name"><%- intern.name %></div>
       </div>
+      <div class="internship-complete">
+        <i class="fas fa-question"></i>
+        <p><a href="">Internship complete</a></p>
+      </div>
+      <div class="internship-completed">
+        <i class="fas fa-check"></i>
+        <p>Internship completed</p>
+        <span>Undo</span>
+      </div>
     </div>
   </div>
 <% }); %>
+</div>
+<button class="usa-button usa-button-primary" id="close-internship">Close internship</button>
