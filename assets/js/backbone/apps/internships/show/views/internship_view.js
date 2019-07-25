@@ -11,6 +11,7 @@ var AlertTemplate = require('../../../../components/alert_template.html');
 var InternshipEditFormView = require('../../edit/views/internship_edit_form_view');
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ApplicantsTemplate = require('../templates/applicants_view.html');
+var InternsTemplate = require('../templates/interns_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
 var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
 var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_citizenship_template.html');
