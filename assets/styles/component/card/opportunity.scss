@@ -1336,6 +1336,14 @@
   }
 }
 
+.usajobs-modal__content .usajobs-open-opps-opportunity-requestor__figure-body {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: $size-M;
+  margin-bottom: $size-L;
+}
+
 .remove-participant, .confirm-participant, .not-complete-participants {
   display: flex;
   flex-direction: column;
