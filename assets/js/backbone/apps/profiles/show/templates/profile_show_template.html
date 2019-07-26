@@ -170,6 +170,19 @@
           <% } %>
         </div>
       </aside>
+    <% } else if (data.hiringPath == 'student') { %>
+      <aside class="usajobs-rightrail" id="rightrail">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <h2>Badges</h2>
+          <!-- just need a space here for css to work correctly -->
+          <ul class="profile-badges">
+            <li class="profile-badge">
+              <img src="/images/badges/intern1.svg" alt="The internship badge is awarded when you complete one internship.">
+              <p>Badge name</p>
+            </li>
+          </ul>
+        </div>
+      </aside>
     <% } %>
   </div>
 </section>

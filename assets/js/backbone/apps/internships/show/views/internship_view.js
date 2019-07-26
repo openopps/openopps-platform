@@ -11,9 +11,11 @@ var AlertTemplate = require('../../../../components/alert_template.html');
 var InternshipEditFormView = require('../../edit/views/internship_edit_form_view');
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ApplicantsTemplate = require('../templates/applicants_view.html');
+var InternsTemplate = require('../templates/interns_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
 var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
 var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_citizenship_template.html');
+var CloseInternshipTemplate = require('../templates/confirm_close_internship.html');
 
 var InternshipView = BaseView.extend({
   events: {
@@ -21,11 +23,13 @@ var InternshipView = BaseView.extend({
     'click #internship-copy'  : 'copy',
     'click #internship-edit'  : linkBackbone,
     'click #save'             : 'toggleSave',
+    'click #close-internship'   : 'closeInternship'
   },
 
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
+    this.interns = {};
   },
 
   render: function () {
@@ -258,6 +262,7 @@ var InternshipView = BaseView.extend({
         url: '/api/task/interns/' + this.model.attributes.id,
         method: 'GET',
       }).done(function (results) {
+        this.interns= results;
         $('#internship-interns').show();
         $('#internship-interns').html(_.template(InternsTemplate)({
           applicants: results,
@@ -268,6 +273,31 @@ var InternshipView = BaseView.extend({
         }
       }.bind(this)).fail();
     }
+  },
+  closeInternship: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation(); 
+  
+    var data= {
+       interns:this.interns,
+    };
+    this.modalComponent = new ModalComponent({
+      id: 'confirm-close',
+      modalTitle: 'Are you sure you want to close this internship?',  
+      modalBody:_.template(CloseInternshipTemplate)(data),
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();        
+        }.bind(this),
+      },
+    }).render(); 
   },
 
   cleanup: function () {
