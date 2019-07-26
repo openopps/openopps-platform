@@ -100,7 +100,7 @@
             <fieldset class="usajobs-fieldset">
               <legend class="usa-sr-only">Do you have any overseas experience?</legend>
               <h4><label for="has_overseas_experience" class="usajobs-profile-question__title">Do you have any overseas experience?</label></h4>
-              <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>           
+              <span class="field-validation-error" style="display:none;" >You must select Yes or No.</span>           
               <ul class="usa-unstyled-list" id="overseas-experience">
                 <li>
                   <input id="overseas-experience-yes" name="has_overseas_experience" type="radio" value="true" data-behavior="usajobs-form.reveal-fields" aria-controls="overseas-experience-details" <% if (hasOverseasExperience) { %><%= "checked" %><% } %>>
@@ -117,7 +117,7 @@
               <legend class="usa-sr-only">Please indicate what type of overseas experience you possess.</legend>
               <div id="overseas-experience-details" class="usajobs-form-reveal-fields" aria-hidden="true">
                 <h4 class="usajobs-overseas-experience__title usajobs-profile-question--spacer">Please indicate what type of overseas experience you possess.</h4>
-                <span class="field-validation-error" style="display:none;" >Please select atleast one.</span>
+                <span class="field-validation-error" style="display:none;" >You must select at least one.</span>
                 <ul id="overseasExperienceFilters" class="usa-unstyled-list">
                   <li>
                     <input type='checkbox' name='overseas_experience_types' id='overseasExperienceStudent' value='Student' data-behavior="usajobs-form.hide-fields" aria-controls="overseas-experience-filter-other"  <% if(_.contains(overseasExperienceTypes, 'Student' )) { %><%= "checked" %><% } %>>
@@ -184,7 +184,7 @@
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Do you have, or have you had, a Security Clearance?</legend>
                 <h4><label for="has_security_clearance" class="usajobs-profile-question__title">Do you have, or have you had, a Security Clearance?</label></h4>
-                <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>            
+                <span class="field-validation-error" style="display:none;" >You must select Yes or No.</span>            
                 <ul class="usa-unstyled-list usa-fieldset-inputs usajobs-profile-question__list">
                   <li>
                     <input id="SecurityClearanceYes" name="has_security_clearance" type="radio" value="true" <% if (hasSecurityClearance) { %><%= "checked" %> <% } %>>
@@ -225,7 +225,7 @@
             <legend class="usa-sr-only">Have you previously participated in the Virtual Student Federal Service (VSFS) program?</legend>
             <div class="form-group required-input" id="vsfs_experienceQn">
               <h4><label for="has_vsfs_experience" class="usajobs-profile-question__title">Have you previously participated in the Virtual Student Federal Service (VSFS) program?</label></h4>
-              <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>            
+              <span class="field-validation-error" style="display:none;" >You must select Yes or No.</span>            
               <ul class="usa-unstyled-list" id="vsfs-experience">
                 <li>
                   <input id="vsfs-experience-yes" name="has_vsfs_experience" type="radio" value="true" <% if (hasVsfsExperience) { %><%= "checked" %><% } %>>
