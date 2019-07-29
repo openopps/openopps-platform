@@ -76,7 +76,11 @@
             </div>
             <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">
               <% if (user) { %>
+                <% if (model.communityUser && model.communityUser.is_closed_group== true && model.communityUser.disabled== true) { %>         
+               <div></div>             
+              <% } else { %>
                 <div><a class="usajobs-opop-actions__duplicate" href="#duplicate" id="task-copy"><i class="fa fa-copy"></i> Duplicate</a></div>
+                <% } %>
               <% } %>
               <% if (model.canEditTask && model.state != 'completed') { %>
                 <div><a class="usajobs-opop-actions__edit" href="#edit" id="task-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
