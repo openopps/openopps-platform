@@ -19,12 +19,12 @@ var CloseInternshipTemplate = require('../templates/confirm_close_internship.htm
 
 var InternshipView = BaseView.extend({
   events: {
-    'click #apply'                : 'apply',
-    'click #internship-copy'      : 'copy',
-    'click #internship-edit'      : linkBackbone,
-    'click #save'                 : 'toggleSave',
-    'click .internship-complete'  : 'toggleInternComplete',
-    'click #close-internship'     : 'closeInternship'
+    'click #apply'                      : 'apply',
+    'click #internship-copy'            : 'copy',
+    'click #internship-edit'            : linkBackbone,
+    'click #save'                       : 'toggleSave',
+    'click .toggle-internship-complete' : 'toggleInternComplete',
+    'click #close-internship'           : 'closeInternship'
   },
 
   initialize: function (options) {
