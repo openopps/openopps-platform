@@ -193,6 +193,7 @@ dao.query.taskListApplicationQuery = `
       where
         application_task.application_id = application.application_id
         and application_task.task_id = task_list.task_id
+      limit 1
     ),
     (
       select json_build_object(
