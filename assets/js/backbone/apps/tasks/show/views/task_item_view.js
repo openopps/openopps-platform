@@ -492,11 +492,9 @@ var TaskItemView = BaseView.extend({
       Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '?action=apply', { trigger: true });
       //window.cache.userEvents.trigger('user:request:login');
     } else {
-      var locationTag = window.cache.currentUser.tags.filter(function (t) {
-        return t.type === 'location';
-      });
-      if(locationTag.length == 0 || !window.cache.currentUser.agency) {
-        this.completeProfile(locationTag, window.cache.currentUser.agency);
+      var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
+      if(location.length == 0 || !window.cache.currentUser.agency) {
+        this.completeProfile(location, window.cache.currentUser.agency);
       } else {
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
