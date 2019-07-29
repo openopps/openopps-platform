@@ -193,7 +193,7 @@
       <div id="internship-interns" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display: none"></div>
       </main>
     </main>
-    <% if (!user.isOwner || !user.isCommunityAdmin) {%>
+    <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') {%>
       <aside class="usajobs-rightrail internship" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
           <h3>Before you apply</h3>

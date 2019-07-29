@@ -19,11 +19,12 @@ var CloseInternshipTemplate = require('../templates/confirm_close_internship.htm
 
 var InternshipView = BaseView.extend({
   events: {
-    'click #apply'            : 'apply',
-    'click #internship-copy'  : 'copy',
-    'click #internship-edit'  : linkBackbone,
-    'click #save'             : 'toggleSave',
-    'click #close-internship'   : 'closeInternship'
+    'click #apply'                      : 'apply',
+    'click #internship-copy'            : 'copy',
+    'click #internship-edit'            : linkBackbone,
+    'click #save'                       : 'toggleSave',
+    'click .toggle-internship-complete' : 'toggleInternComplete',
+    'click #close-internship'           : 'closeInternship'
   },
 
   initialize: function (options) {
@@ -50,11 +51,10 @@ var InternshipView = BaseView.extend({
     this.$el.localize();
     $('#search-results-loading').hide();
     this.updateInternshipEmail();
-    var today = new Date();
-    if (today > new Date(this.data.model.cycle.cycleEndDate)) {
+    if (((this.data.model.cycle || {}).phase || {}).sequence == 3) {
+      this.loadSelections();
+    } else {
       this.loadApplicants();
-    } else if (today <= new Date(this.data.model.cycle.cycleEndDate)) {
-      this.loadInterns();
     }
     if (window.cache.currentUser && this.params.has('action')) {
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
@@ -256,21 +256,16 @@ var InternshipView = BaseView.extend({
     }
   },
 
-  loadInterns: function () {
-    if(window.cache.currentUser && window.cache.currentUser.hiringPath != 'student') {
+  loadSelections: function () {
+    if(window.cache.currentUser && this.model.attributes.canEditTask && window.cache.currentUser.hiringPath != 'student') {
       $.ajax({
-        url: '/api/task/interns/' + this.model.attributes.id,
+        url: '/api/task/selections/' + this.model.attributes.id,
         method: 'GET',
       }).done(function (results) {
         this.interns= results;
         $('#internship-interns').show();
-        $('#internship-interns').html(_.template(InternsTemplate)({
-          applicants: results,
-          getInternPreference: this.getInternPreference,
-        }));
-        if(window.location.hash.indexOf('interns') != -1) {
-          $('#internship-interns').get(0).scrollIntoView();
-        }
+        this.selectedInterns = results;
+        $('#internship-interns').html(_.template(InternsTemplate)({ interns: results }));
       }.bind(this)).fail();
     }
   },
@@ -298,6 +293,29 @@ var InternshipView = BaseView.extend({
         }.bind(this),
       },
     }).render(); 
+  },
+
+  toggleInternComplete: function (event) {
+    var complete = $(event.currentTarget).data('behavior') == 'complete';
+    var applicationId = $(event.currentTarget).data('applicationid')
+    $.ajax({
+      url: '/api/application/complete',
+      type: 'POST',
+      data: {
+        taskId: this.model.attributes.id,
+        applicationId: applicationId,
+        complete: complete,
+      },
+      success: function () {
+        _.find(this.selectedInterns, function (intern) {
+          return intern.applicationId == applicationId;
+        }).internshipComplete = complete;
+        $('#internship-interns').html(_.template(InternsTemplate)({ interns: this.selectedInterns }));
+      }.bind(this),
+      error: function () {
+        showWhoopsPage();
+      },
+    });
   },
 
   cleanup: function () {
