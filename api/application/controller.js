@@ -3,6 +3,7 @@ const Router = require('koa-router');
 const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
+const opportunityService = require('../opportunity/service');
 
 var router = new Router();
 
@@ -13,6 +14,20 @@ router.get('/api/application/user/transcripts', auth, auth.checkToken, async (ct
   }).catch(err => {
     ctx.status = 404;
   });
+});
+
+router.post('/api/application/complete', auth, async (ctx, next) => {
+  if (await opportunityService.canUpdateOpportunity(ctx.state.user, ctx.request.body.taskId)) {
+    await service.internshipCompleted(ctx.state.user.id, ctx.request.body).then(() => {
+      ctx.status = 200;
+      ctx.body = { success: true };
+    }).catch(err => {
+      ctx.status = 400;
+    });
+  } else {
+    ctx.status = 401;
+    ctx.body = null;
+  }
 });
 
 router.get('/api/application/:id', auth, auth.checkToken, async (ctx, next) => {

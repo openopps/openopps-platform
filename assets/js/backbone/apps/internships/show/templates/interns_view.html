@@ -1,13 +1,23 @@
-<h3>Interns</h3>
+<h3>Selected interns</h3>
+<div>
 <% _.each(interns, function (intern) { %>
   <div class="internship-intern">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
       <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
-        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(intern.name) %></div>
+        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials([intern.givenName, intern.lastName].join(' ')) %></div>
       </div>
       <div class="usajobs-open-opps-opportunity-requestor__body">
-        <div class="usajobs-open-opps-opportunity-requestor__name"><%- intern.name %></div>
+        <div class="usajobs-open-opps-opportunity-requestor__name"><%- [intern.givenName, intern.lastName].join(' ') %></div>
+        <% if (intern.internshipComplete) { %>
+          <span class="internship-complete-check"><i class="fa fa-check"></i>Internship completed</span>
+          <a href="javascript:void(0);" class="internship-complete" data-applicationid="<%- intern.applicationId %>" data-behavior="undo">Undo</a>
+        <% } else { %>
+          <span class="internship-complete-question"><i class="fas fa-question"></i></span>
+          <a href="javascript:void(0);" class="internship-complete" data-applicationid="<%- intern.applicationId %>" data-behavior="complete">Internship complete</a>
+        <% } %>
       </div>
     </div>
   </div>
 <% }); %>
+</div>
+<button id="complete-internship" class="usa-button usa-button-primary" <% if (_.where(interns, { internshipComplete: true }).length == 0) { %>disabled<% } %>>Close internship</button>

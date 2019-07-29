@@ -1036,9 +1036,28 @@
   }
 }
 
-.internship-applicant {
+.internship-applicant,
+.internship-intern {
+  text-align: center;
   display: inline-block;
-  margin: 0 1rem;
+  width: 85px;
+  margin-bottom: 3rem;
+  margin-top: 0;
+  padding-top: 8px;
+
+  @include media($M-down) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .internship-complete-question {
+    color: #0071bc;
+  }
+
+  .internship-complete-check {
+    color: $color-green;
+  }
 }
 
 .usajobs-open-opps-opportunity-requestor {
