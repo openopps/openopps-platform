@@ -1036,27 +1036,54 @@
   }
 }
 
-.internship-applicant,
-.internship-intern {
-  text-align: center;
+.internship-participant__wrapper {
+  display: block;
+
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+.internship-participant {
   display: inline-block;
-  width: 85px;
-  margin-bottom: 3rem;
-  margin-top: 0;
-  padding-top: 8px;
+  margin: 0 1rem;
+  width: 8.5rem;
+  text-align: center;
 
-  @include media($M-down) {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  .internship-complete {
+    text-align: center;
+    color: $color-primary;
+    margin: $size-default 0;
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      text-decoration: underline !important;
+
+      &:visited {
+        color: $color-primary;
+      }
+    }
   }
 
-  .internship-complete-question {
-    color: #0071bc;
-  }
+  .internship-completed {
+    text-align: center;
+    color: $color-green-light;
+    margin: $size-default 0;
 
-  .internship-complete-check {
-    color: $color-green;
+    p {
+      margin: 0;
+    }
+
+    span {
+      text-decoration: underline;
+      color: $color-primary;
+      font-size: $small-font-size;
+    }
   }
 }
 
@@ -1307,6 +1334,14 @@
       margin: 0 0 0 auto;
     }
   }
+}
+
+.usajobs-modal__content .usajobs-open-opps-opportunity-requestor__figure-body {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: $size-M;
+  margin-bottom: $size-L;
 }
 
 .remove-participant, .confirm-participant, .not-complete-participants {

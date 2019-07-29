@@ -3,6 +3,7 @@ const dao = require('./dao')(db);
 var _ = require('lodash');
 const Audit = require('../../model/Audit');
 const notification = require('../../notification/service');
+const util = require('util');
 
 var service = {};
 
@@ -177,6 +178,7 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
+          governmentUri: results[i].governmentUri,
           title: results[i].title,
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
           systemname: 'USAJOBS Agency Talent Portal',
@@ -263,7 +265,10 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
   } 
 };
 
-
+service.downloadReport = async function (cycleId) {
+  var results = (await dao.Cycle.db.query(dao.query.GetCycleApplicantData, cycleId)).rows;
+  return results;
+};
 
 service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
   

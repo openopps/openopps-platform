@@ -1,7 +1,7 @@
 <h3>Selected interns</h3>
-<div>
+<div class="internship-participant__wrapper">
 <% _.each(interns, function (intern) { %>
-  <div class="internship-intern">
+  <div class="internship-participant">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
       <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials([intern.givenName, intern.lastName].join(' ')) %></div>
@@ -16,8 +16,17 @@
           <a href="javascript:void(0);" class="internship-complete" data-applicationid="<%- intern.applicationId %>" data-behavior="complete">Internship complete</a>
         <% } %>
       </div>
+      <div class="internship-complete">
+        <i class="fas fa-question"></i>
+        <p><a href="">Internship complete</a></p>
+      </div>
+      <div class="internship-completed">
+        <i class="fas fa-check"></i>
+        <p>Internship completed</p>
+        <span>Undo</span>
+      </div>
     </div>
   </div>
 <% }); %>
 </div>
-<button id="complete-internship" class="usa-button usa-button-primary" <% if (_.where(interns, { internshipComplete: true }).length == 0) { %>disabled<% } %>>Close internship</button>
+<button id="close-internship" class="usa-button usa-button-primary" <% if (_.where(interns, { internshipComplete: true }).length == 0) { %>disabled<% } %>>Close internship</button>

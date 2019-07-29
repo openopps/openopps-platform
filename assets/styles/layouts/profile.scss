@@ -20,10 +20,10 @@
   margin-top: $size-SM;
   padding: 0; 
 
-  .usajobs-open-opps-participated__body {
-    margin-top: 0;
+  .skills-edit {
+    position: absolute;
+    right: $size-M;
   }
-
 }
 
 @include media($M) {
@@ -363,11 +363,11 @@
 }
 
 .profile-badges {
-    list-style-type: none;
-    padding: 0;
-  }
+  list-style-type: none;
+  padding: 0;
+  margin-top: 1em;
 
-  .profile-badges::after {
+  &::after {
     clear: both;
     content: "";
     display: block;
@@ -390,6 +390,7 @@
       margin-top: 0;
     }
   }
+}
 
 .usajobs-open-opps-profile .usajobs-fieldset h2 {
   margin-top: $size-M;
@@ -814,8 +815,6 @@ form [type=submit] {
   padding-top: $size-default;
   padding-bottom: $size-default;
   margin-bottom: 0;
-  position: absolute;
-  left: 0;
 }
 
 

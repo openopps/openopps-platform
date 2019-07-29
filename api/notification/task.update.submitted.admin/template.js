@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'New opportunity submitted by a task creator',
-  to: '<%- admin.username %>',
+  to: '<%= admin.governmentUri ? admin.governmentUri : admin.username %>',
   data: function (model, done) {
     var data = {
       task: model.task,
