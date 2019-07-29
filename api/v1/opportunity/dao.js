@@ -34,6 +34,7 @@ dao.query.internshipListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
+    and task.state = 'open'
     and "cycle".is_archived = false
     and date("cycle".apply_end_date) <= current_date
     and date("cycle".review_end_date) >= current_date
@@ -52,6 +53,7 @@ dao.query.internshipArchiveListQuery = `
     left outer join country on task."country_id" = country."country_id"
   where
     task_share.user_id = ?
+    and task.state = 'open'
     and "cycle".is_archived = true
 `;
 
@@ -191,6 +193,7 @@ dao.query.taskListApplicationQuery = `
       where
         application_task.application_id = application.application_id
         and application_task.task_id = task_list.task_id
+      limit 1
     ),
     (
       select json_build_object(
