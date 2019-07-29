@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'Application withdrawn',
-  to: '<%- owner.username %>',
+  to: '<%= owner.governmentUri ? owner.governmentUri : owner.username %>',
   cc: '',
   data: function (model, done) {
     var data = {

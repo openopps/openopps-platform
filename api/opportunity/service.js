@@ -49,7 +49,9 @@ async function findById (id, user) {
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    
+    if (task.cycle) {
+      task.cycle.phase = await dao.Phase.findOne('phase_id = ?', task.cycle.phaseId).catch(() => { return null; });
+    }
   }
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
@@ -688,6 +690,24 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
     dao.Task.findOne('id = ?', taskId).then(async task => {
       if(await communityService.isCommunityManager(user, task.communityId)) {
         db.query(fs.readFileSync(__dirname + '/sql/getInternshipApplicants.sql', 'utf8'), task.id).then(results => {
+          resolve(results.rows);
+        }).catch(err => {
+          reject({ status: 401 });
+        });
+      } else {
+        reject({ status: 404 });
+      }
+    }).catch(err => {
+      reject({ status: 404 });
+    });
+  });
+};
+
+module.exports.getSelectionsForTask = async (user, taskId) => {
+  return new Promise((resolve, reject) => {
+    dao.Task.findOne('id = ?', taskId).then(async task => {
+      if(await communityService.isCommunityManager(user, task.communityId)) {
+        db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), task.id).then(results => {
           resolve(results.rows);
         }).catch(err => {
           reject({ status: 401 });

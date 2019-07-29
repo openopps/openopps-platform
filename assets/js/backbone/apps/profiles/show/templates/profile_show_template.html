@@ -116,8 +116,8 @@
         </div>
       </div>
       <div class="usajobs-opop-skill__body">
-        <div class="usajobs-open-opps-opportunity">
-          <div class="usajobs-open-opps-participated__body usajobs-grid-full">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+          <div class="usajobs-grid-full">
             <% if ((data.isOwner || data.canEditProfile) && (skillsTags.length > 0 || interestsTags.length > 0)) { %>
             <div class="usajobs-opop-section-edit skills-edit">
               <% if (login.profile.edit === true) { %>
@@ -144,7 +144,7 @@
                 </div>
               <% } %>
             <% } else if (data.isOwner || data.canEditProfile) { %>
-              <div>List all of your relevant skills.</div>
+              <p>List all of your relevant skills.</p>
               <a href="/profile/edit/skills/<%- data.id %>/" class="usa-button add-skills">
                 <i class="fas fa-plus-circle"></i> Add skills
               </a>
@@ -168,6 +168,19 @@
             <% }); %>
           </ul>
           <% } %>
+        </div>
+      </aside>
+    <% } else if (data.hiringPath == 'student') { %>
+      <aside class="usajobs-rightrail" id="rightrail">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <h2>Badges</h2>
+          <!-- just need a space here for css to work correctly -->
+          <ul class="profile-badges">
+            <li class="profile-badge">
+              <img src="/images/badges/intern1.svg" alt="The internship badge is awarded when you complete one internship.">
+              <p>Badge name</p>
+            </li>
+          </ul>
         </div>
       </aside>
     <% } %>

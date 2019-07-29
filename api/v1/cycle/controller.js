@@ -101,4 +101,8 @@ router.get('/api/v1/cycle/checkCycleStatus', auth.bearer, async (ctx, next) => {
   ctx.body = await service.checkCycleStatus(ctx.query.cycleId);
 });
 
+router.get('/api/v1/cycle/report', auth.bearer, async (ctx, next) => {
+  ctx.body = await service.downloadReport(ctx.query.cycleId);
+});
+
 module.exports = router.routes();

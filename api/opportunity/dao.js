@@ -210,6 +210,7 @@ module.exports = function (db) {
     TaskShare:dao({ db: db, table: 'task_share'}),
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Application: dao({db:db,table:'application'}),
+    Phase: dao({ db: db, table: 'phase' }),
     query: {
       applicationTasks:applicationTaskQuery,
       comments: commentsQuery,

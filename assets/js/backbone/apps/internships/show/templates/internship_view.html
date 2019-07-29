@@ -190,30 +190,34 @@
         </div>
       </div>
       <div id="internship-applicants" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display: none"></div>
+      <div id="internship-interns" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display: none"></div>
+      </main>
     </main>
-    <aside class="usajobs-rightrail internship" id="rightrail">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-        <h3>Before you apply</h3>
-        <p>To apply to the U.S. Department of State Student Internship Program (Unpaid), you must:</p>
-        <ul>
-          <li>Be a U.S. citizen.</li>
-          <li>Be a current student.</li>
-          <li>Have at least a 3.0 GPA on a 4-point scale.</li>
-          <li>Be able to receive and maintain a security clearance.</li>
-        </ul>
-        <h4>For more information</h4>
-        <p>Visit the <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid) </a> website.</p>
-        <% var today = new Date(); if (today >= new Date(model.cycle.applyStartDate) && today <= new Date(model.cycle.applyEndDate)) { %>
-        <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
-          <% if (model.application) { %>
-            <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>
-  
-            <% } else { %>
-              <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
-            <% } %>
-        <% } %>
-        <% } %>
-      </div>
-    </aside>
+    <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') {%>
+      <aside class="usajobs-rightrail internship" id="rightrail">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <h3>Before you apply</h3>
+          <p>To apply to the U.S. Department of State Student Internship Program (Unpaid), you must:</p>
+          <ul>
+            <li>Be a U.S. citizen.</li>
+            <li>Be a current student.</li>
+            <li>Have at least a 3.0 GPA on a 4-point scale.</li>
+            <li>Be able to receive and maintain a security clearance.</li>
+          </ul>
+          <h4>For more information</h4>
+          <p>Visit the <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid) </a> website.</p>
+          <% var today = new Date(); if (today >= new Date(model.cycle.applyStartDate) && today <= new Date(model.cycle.applyEndDate)) { %>
+          <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
+            <% if (model.application) { %>
+              <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>
+    
+              <% } else { %>
+                <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+              <% } %>
+          <% } %>
+          <% } %>
+        </div>
+      </aside>
+    <% } %>
   </div>
 </section>

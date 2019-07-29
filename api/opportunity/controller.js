@@ -47,7 +47,16 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
   }).catch(err => {
     ctx.status = err.status;
   })
-})
+});
+
+router.get('/api/task/selections/:id', auth, async (ctx, next) => {
+  await service.getSelectionsForTask(ctx.state.user, ctx.params.id).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  })
+});
 
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user);

@@ -11,21 +11,26 @@ var AlertTemplate = require('../../../../components/alert_template.html');
 var InternshipEditFormView = require('../../edit/views/internship_edit_form_view');
 var InternshipShowTemplate = require('../templates/internship_view.html');
 var ApplicantsTemplate = require('../templates/applicants_view.html');
+var InternsTemplate = require('../templates/interns_view.html');
 var ShareTemplate = require('../templates/internship_share_template.txt');
 var CopyTaskTemplate = require('../templates/copy_task_template.html').toString();
 var IneligibleCitizenship = require('../../../apply/templates/apply_ineligible_citizenship_template.html');
+var CloseInternshipTemplate = require('../templates/confirm_close_internship.html');
 
 var InternshipView = BaseView.extend({
   events: {
-    'click #apply'            : 'apply',
-    'click #internship-copy'  : 'copy',
-    'click #internship-edit'  : linkBackbone,
-    'click #save'             : 'toggleSave',
+    'click #apply'                      : 'apply',
+    'click #internship-copy'            : 'copy',
+    'click #internship-edit'            : linkBackbone,
+    'click #save'                       : 'toggleSave',
+    'click .toggle-internship-complete' : 'toggleInternComplete',
+    'click #close-internship'           : 'closeInternship'
   },
 
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
+    this.interns = {};
   },
 
   render: function () {
@@ -46,7 +51,11 @@ var InternshipView = BaseView.extend({
     this.$el.localize();
     $('#search-results-loading').hide();
     this.updateInternshipEmail();
-    this.loadApplicants();
+    if (((this.data.model.cycle || {}).phase || {}).sequence == 3) {
+      this.loadSelections();
+    } else {
+      this.loadApplicants();
+    }
     if (window.cache.currentUser && this.params.has('action')) {
       Backbone.history.navigate(window.location.pathname, { trigger: false, replace: true });
       var action = this.params.get('action');
@@ -67,12 +76,12 @@ var InternshipView = BaseView.extend({
       },
     }).done(function () {
       if (action == 'save') {
-          $('#save').html('<i class="fa fa-star"></i> Saved');
-          $('#save')[0].setAttribute('data-action', 'unsave');
-        } else {
-          $('#save').html('<i class="far fa-star"></i> Save');
-          $('#save')[0].setAttribute('data-action', 'save');
-        }
+        $('#save').html('<i class="fa fa-star"></i> Saved');
+        $('#save')[0].setAttribute('data-action', 'unsave');
+      } else {
+        $('#save').html('<i class="far fa-star"></i> Save');
+        $('#save')[0].setAttribute('data-action', 'save');
+      }
     }).fail(function (err) {
       showWhoopsPage();
     }.bind(this));
@@ -221,11 +230,11 @@ var InternshipView = BaseView.extend({
   getApplicantPreference: function (preference) {
     switch (preference.toString()) {
       case '1':
-        return '1st'
+        return '1st';
       case '2':
-        return '2nd'
+        return '2nd';
       case '3':
-        return '3rd'
+        return '3rd';
     }
   },
 
@@ -241,10 +250,72 @@ var InternshipView = BaseView.extend({
           getApplicantPreference: this.getApplicantPreference,
         }));
         if(window.location.hash.indexOf('applicants') != -1) {
-          $('#internship-applicants').get(0).scrollIntoView()
+          $('#internship-applicants').get(0).scrollIntoView();
         }
       }.bind(this)).fail();
     }
+  },
+
+  loadSelections: function () {
+    if(window.cache.currentUser && this.model.attributes.canEditTask && window.cache.currentUser.hiringPath != 'student') {
+      $.ajax({
+        url: '/api/task/selections/' + this.model.attributes.id,
+        method: 'GET',
+      }).done(function (results) {
+        this.interns= results;
+        $('#internship-interns').show();
+        this.selectedInterns = results;
+        $('#internship-interns').html(_.template(InternsTemplate)({ interns: results }));
+      }.bind(this)).fail();
+    }
+  },
+  closeInternship: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation(); 
+  
+    var data= {
+       interns:this.interns,
+    };
+    this.modalComponent = new ModalComponent({
+      id: 'confirm-close',
+      modalTitle: 'Are you sure you want to close this internship?',  
+      modalBody:_.template(CloseInternshipTemplate)(data),
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();        
+        }.bind(this),
+      },
+    }).render(); 
+  },
+
+  toggleInternComplete: function (event) {
+    var complete = $(event.currentTarget).data('behavior') == 'complete';
+    var applicationId = $(event.currentTarget).data('applicationid')
+    $.ajax({
+      url: '/api/application/complete',
+      type: 'POST',
+      data: {
+        taskId: this.model.attributes.id,
+        applicationId: applicationId,
+        complete: complete,
+      },
+      success: function () {
+        _.find(this.selectedInterns, function (intern) {
+          return intern.applicationId == applicationId;
+        }).internshipComplete = complete;
+        $('#internship-interns').html(_.template(InternsTemplate)({ interns: this.selectedInterns }));
+      }.bind(this),
+      error: function () {
+        showWhoopsPage();
+      },
+    });
   },
 
   cleanup: function () {

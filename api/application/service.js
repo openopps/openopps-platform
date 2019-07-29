@@ -534,6 +534,23 @@ module.exports.deleteReference= async function (referenceId, userId){
   });
 };
 
+module.exports.internshipCompleted = async function (userId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ?', data.applicationId).then(application => {
+      data.updatedAt = application.updatedAt;
+      data.internshipUpdatedBy = userId;
+      if(data.complete.match(/^true$/)) {
+        data.internshipCompleted = data.taskId;
+        data.internshipCompletedAt = new Date();
+      } else {
+        data.internshipCompleted = null;
+        data.internshipCompletedAt = null;
+      }
+      dao.Application.update(data).then(resolve).catch(reject);
+    }).catch(reject);
+  });
+}
+
 async function sendApplicationNotification (userId, applicationId, action) {
   Promise.all([
     dao.User.findOne('id = ?', userId),
