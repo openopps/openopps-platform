@@ -3,7 +3,7 @@
 <% _.each(interns, function (intern) { %>
   <div class="internship-participant">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-      <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
+      <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(intern.applicationId) %>">
         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials([intern.givenName, intern.lastName].join(' ')) %></div>
       </div>
       <div class="usajobs-open-opps-opportunity-requestor__body">
