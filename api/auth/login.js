@@ -100,6 +100,8 @@ module.exports.processIncompleteProfile = (tokenset, done) => {
       governmentUri: profile.Profile.governmentUri,
       verified: profile.Profile.GovernmentURIVerificationDate,
       agencyName: profile.Profile.OrganizationName,
+      studentURL: openopps.usajobsURL + '/Applicant/Profile/ClientRouter?clientID=' + openopps.auth.loginGov.clientID,
+      fedURL: openopps.usajobsURL + '/Applicant/Profile/ClientRouter?clientID=' + openopps.auth.loginGov.clientID + '&rp=government_uri',
     }});
   }).catch(done);
 };
