@@ -252,6 +252,10 @@ async function logAuthenticationError (ctx, type, auditData) {
   await createAudit(type, ctx, auditData);
 }
 
+async function logError (userId, err) {
+  dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+}
+
 module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
@@ -259,6 +263,7 @@ module.exports = {
   getProfileData: getProfileData,
   linkAccount: linkAccount,
   logAuthenticationError: logAuthenticationError,
+  logError: logError,
   register: register,
   resetPassword: resetPassword,
   sendFindProfileConfirmation: sendFindProfileConfirmation,

@@ -63,6 +63,7 @@ function loginError (ctx, err) {
     ctx.redirect('/welcome?u=' + new Buffer(JSON.stringify(err.data)).toString('base64'));
   } else {
     log.info('Authentication Error: ', err);
+    service.logError(null, err);
     ctx.status = 503;
   }
 }
@@ -249,7 +250,9 @@ router.get('/api/auth/logout', async (ctx, next) => {
       id_token_hint: ctx.session.passport.user.tokenset.id_token,
     });
   }
-  ctx.logout();
+  try {  
+    ctx.logout();
+  } catch (err) {}
   ctx.body = response;
 });
 
