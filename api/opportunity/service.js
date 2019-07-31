@@ -236,7 +236,7 @@ async function isStudent (userId,taskId) {
 async function checkAgency (user, ownerId) {
   var owner = await dao.clean.user((await dao.User.query(dao.query.user, ownerId, dao.options.user))[0]);
   if (owner && owner.agency) {
-    return user.tags ? _.find(user.tags, { 'type': 'agency' }).name == owner.agency.name : false;
+    return user.agency.agencyId == owner.agency.agencyId;
   }
   return false;
 }
