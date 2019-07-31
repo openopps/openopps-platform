@@ -104,7 +104,7 @@ const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'from midas_user ' +
   'join volunteer v on v."userId" = midas_user.id ' +
   'join task t on t.id = v."taskId" and t."completedAt" is not null ' +
-  'where midas_user.id in ? ' +
+  'where v.assigned = true and v."taskComplete" = true and midas_user.id in ? ' +
   'group by midas_user.id, midas_user.username, midas_user.name';
 
 const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned, ' +
