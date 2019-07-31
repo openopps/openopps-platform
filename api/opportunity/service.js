@@ -35,8 +35,9 @@ async function findById (id, user) {
   }
   if(task.communityId){
     task.community=(await dao.Community.db.query(dao.query.communityTaskQuery,task.communityId)).rows[0];
-    task.communityUser= (await dao.CommunityUser.db.query(dao.query.communityUserQuery,task.userId,task.communityId)).rows[0];
- 
+    if (user) {
+      task.communityUser= (await dao.CommunityUser.db.query(dao.query.communityUserQuery,user.id,task.communityId)).rows[0];
+    }
   }
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
