@@ -112,7 +112,7 @@
       <% if (!user || user.hiringPath == 'fed') { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
       <% } %>
-      <% if (!user || user.isAdmin || user.communities.student.length > 0 || user.hiringPath == 'student') { %>
+      <% if (!user || user.isAdmin || (user.communities && user.communities.student.length > 0) || user.hiringPath == 'student') { %>
         <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search/internships" class="usajobs-openopps-secondary-nav__link subnav-link" title="Internships">Internships</a></li>
         <% } %>
       <% if (user && user.hiringPath == 'fed') { %>

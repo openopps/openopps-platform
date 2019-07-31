@@ -168,8 +168,10 @@ async function getProfileData (params, done) {
           username: profile.URI,
           name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
           title: profile.Profile.JobTitle,
+          givenName:profile.GivenName,
+          lastName:profile.LastName,
           governmentUri: profile.Profile.GovernmentURI,
-          linkedId: account.linkedId,
+          linkedId: account.linkedId,      
           createdAt: new Date(),
           updatedAt: new Date(),
         });
