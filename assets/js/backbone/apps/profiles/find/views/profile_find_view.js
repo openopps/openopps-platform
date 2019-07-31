@@ -78,7 +78,7 @@ var ProfileFindView = Backbone.View.extend({
       },
       success: function (data) {     
         window.cache.currentUser = new User(data);
-        Backbone.history.navigate('/home', { trigger: true});
+        Backbone.history.navigate('/home', { trigger: true, replace: true });
         this.navView = new NavView({
           el: '.navigation',
         }).render();          
