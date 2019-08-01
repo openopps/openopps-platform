@@ -47,7 +47,7 @@
           <% if (data.isOwner || (!loginGov && data.canEditProfile)) { %>
           <div class="usajobs-opop-section-edit">             
             <% if (loginGov) { %>
-              <a href="<%- usajobsURL %>/applicant/profile/openopportunities" class="usa-button usa-button-secondary">Edit at USAJOBS.gov</a>
+              <a href="<%- data.editURL %>" class="usa-button usa-button-secondary">Edit at USAJOBS.gov</a>
             <% } else { %>
               <a href="/profile/edit/<%- data.id %>" class="link-backbone">Edit</a>
             <% } %>
@@ -85,7 +85,7 @@
             <div class="profile-location">
               <div class="usajobs-profile-home-section__field-label">Location</div>
               <span>
-                <%= _.filter([data.cityName, data.countrySubdivision, data.country != 'United States' ? data.country : ''], _.identity).join(', ') %>
+                <%= _.filter([data.cityName, data.countrySubdivision.value, data.country.value != 'United States' ? data.country.value : ''], _.identity).join(', ') %>
               </span>
             </div>
             <div class="profile-email">

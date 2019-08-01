@@ -3,7 +3,7 @@
 <% _.each(interns, function (intern) { %>
   <div class="internship-participant">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-      <div class="usajobs-open-opps-opportunity-requestor__figure initials-color-1">
+      <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(intern.applicationId) %>">
         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials([intern.givenName, intern.lastName].join(' ')) %></div>
       </div>
       <div class="usajobs-open-opps-opportunity-requestor__body">
@@ -12,17 +12,23 @@
           <div class="internship-completed toggle-internship-complete" data-applicationid="<%- intern.applicationId %>" data-behavior="undo">
             <i class="fas fa-check"></i>
             <p>Internship completed</p>
+            <% if (data.state !=='completed') { %>
             <span>Undo</span>
+            <% } %>
           </div>
         <% } else { %>
+          <% if (data.state !=='completed') { %>
           <div class="internship-complete toggle-internship-complete" data-applicationid="<%- intern.applicationId %>" data-behavior="complete">
             <i class="fas fa-question"></i>
             <p><a href="javascript:void(0);">Internship complete</a></p>
           </div>
-        <% } %>
+          <% } %>
+      <% } %>
       </div>
     </div>
   </div>
 <% }); %>
 </div>
+<% if (data.state !=='completed') { %>
 <button id="close-internship" class="usa-button usa-button-primary" <% if (_.where(interns, { internshipComplete: true }).length == 0) { %>disabled<% } %>>Close internship</button>
+<% } %>

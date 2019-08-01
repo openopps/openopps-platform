@@ -168,8 +168,10 @@ async function getProfileData (params, done) {
           username: profile.URI,
           name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
           title: profile.Profile.JobTitle,
+          givenName:profile.GivenName,
+          lastName:profile.LastName,
           governmentUri: profile.Profile.GovernmentURI,
-          linkedId: account.linkedId,
+          linkedId: account.linkedId,      
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -252,6 +254,10 @@ async function logAuthenticationError (ctx, type, auditData) {
   await createAudit(type, ctx, auditData);
 }
 
+async function logError (userId, err) {
+  dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+}
+
 module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
@@ -259,6 +265,7 @@ module.exports = {
   getProfileData: getProfileData,
   linkAccount: linkAccount,
   logAuthenticationError: logAuthenticationError,
+  logError: logError,
   register: register,
   resetPassword: resetPassword,
   sendFindProfileConfirmation: sendFindProfileConfirmation,

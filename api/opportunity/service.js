@@ -35,6 +35,9 @@ async function findById (id, user) {
   }
   if(task.communityId){
     task.community=(await dao.Community.db.query(dao.query.communityTaskQuery,task.communityId)).rows[0];
+    if (user) {
+      task.communityUser= (await dao.CommunityUser.db.query(dao.query.communityUserQuery,user.id,task.communityId)).rows[0];
+    }
   }
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
@@ -234,7 +237,7 @@ async function isStudent (userId,taskId) {
 async function checkAgency (user, ownerId) {
   var owner = await dao.clean.user((await dao.User.query(dao.query.user, ownerId, dao.options.user))[0]);
   if (owner && owner.agency) {
-    return user.tags ? _.find(user.tags, { 'type': 'agency' }).name == owner.agency.name : false;
+    return user.agency.agencyId == owner.agency.agencyId;
   }
   return false;
 }
