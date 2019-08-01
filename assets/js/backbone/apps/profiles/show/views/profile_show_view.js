@@ -101,6 +101,7 @@ var ProfileShowView = Backbone.View.extend({
       ui: UIConfig,
     };
 
+    data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
     data.email = (loginGov && data.data.governmentUri ? data.data.governmentUri : data.data.username);
     data.career = this.getTags(['career'])[0];
 

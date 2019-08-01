@@ -107,6 +107,7 @@ const clean = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency' }),
+    Application: dao({ db: db, table: 'application'}),
     AuditLog: dao({ db: db, table: 'audit_log'}),
     User: dao({ db: db, table: 'midas_user' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
@@ -115,7 +116,6 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Passport: dao({ db: db, table: 'passport' }),
-    Application: dao({ db: db, table: 'application' }),
     Cycle: dao({ db: db, table: 'cycle' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),

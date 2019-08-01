@@ -52,6 +52,10 @@ async function getActivities (id) {
   };
 }
 
+async function getCompletedInternship(userId) {
+  return (await dao.Application.find('internship_completed_at is not null and user_id = ?', userId).catch(() => { return []; })).length;
+}
+
 async function getInternshipsActivities (user) {
   return {
     applications: (await dao.Application.db.query(dao.query.applicationStatus, user.id)).rows,
@@ -232,6 +236,7 @@ module.exports = {
   getProfile: getProfile,
   populateBadgeDescriptions: populateBadgeDescriptions,
   getActivities: getActivities,
+  getCompletedInternship: getCompletedInternship,
   getInternshipsActivities: getInternshipsActivities,
   updateProfile: updateProfile,
   updateProfileStatus: updateProfileStatus,
