@@ -31,6 +31,7 @@ var InternshipView = BaseView.extend({
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
     this.interns = {};
+    this.notSelectedInterns={};
   },
 
   render: function () {
@@ -261,7 +262,7 @@ var InternshipView = BaseView.extend({
       $.ajax({
         url: '/api/task/selections/' + this.model.attributes.id,
         method: 'GET',
-      }).done(function (results) {
+      }).done(function (results) {    
         this.interns= results;
         $('#internship-interns').show();
         this.selectedInterns = results;
@@ -272,9 +273,11 @@ var InternshipView = BaseView.extend({
   closeInternship: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (e.stopPropagation) e.stopPropagation(); 
-  
+    this.notSelectedInterns= _.filter(this.interns,function (result){   
+      return result.internshipComplete==false;
+    });
     var data= {
-       interns:this.interns,
+      interns:this.notSelectedInterns,
     };
     this.modalComponent = new ModalComponent({
       id: 'confirm-close',
@@ -297,7 +300,7 @@ var InternshipView = BaseView.extend({
 
   toggleInternComplete: function (event) {
     var complete = $(event.currentTarget).data('behavior') == 'complete';
-    var applicationId = $(event.currentTarget).data('applicationid')
+    var applicationId = $(event.currentTarget).data('applicationid');
     $.ajax({
       url: '/api/application/complete',
       type: 'POST',
