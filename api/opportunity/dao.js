@@ -100,7 +100,7 @@ const userQuery = 'select @midas_user.*, @agency.* ' +
   'where midas_user.id = ? ';
    
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
-  'midas_user.username, midas_user.name, midas_user.bounced ' +
+  'midas_user.username, midas_user.government_uri as "governmentUri", midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
   'join volunteer v on v."userId" = midas_user.id ' +
   'join task t on t.id = v."taskId" and t."completedAt" is not null ' +
@@ -108,12 +108,12 @@ const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'group by midas_user.id, midas_user.username, midas_user.name';
 
 const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned, ' +
-  'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.bounced, midas_user."photoId" ' +
+  'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.government_uri as "governmentUri", midas_user.bounced, midas_user."photoId" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ?';
 
-const volunteerListQuery = 'select midas_user.username, midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
+const volunteerListQuery = 'select midas_user.username, midas_user.government_uri as "governmentUri", midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';
