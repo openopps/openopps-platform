@@ -31,7 +31,7 @@ var InternshipView = BaseView.extend({
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
     this.interns = {};
-    this.notSelectedInterns={};
+    this.notCompletedInterns={};
   },
 
   render: function () {
@@ -273,11 +273,11 @@ var InternshipView = BaseView.extend({
   closeInternship: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (e.stopPropagation) e.stopPropagation(); 
-    this.notSelectedInterns= _.filter(this.interns,function (result){   
+    this.notCompletedInterns= _.filter(this.interns,function (result){   
       return result.internshipComplete==false;
     });
     var data= {
-      interns:this.notSelectedInterns,
+      interns:this.notCompletedInterns,
     };
     this.modalComponent = new ModalComponent({
       id: 'confirm-close',
