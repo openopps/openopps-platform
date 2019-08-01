@@ -32,6 +32,8 @@ var InternshipView = BaseView.extend({
     this.params = new URLSearchParams(window.location.search);
     this.interns = {};
     this.notCompletedInterns={};
+    this.selectedInterns={};
+    
   },
 
   render: function () {
@@ -266,10 +268,19 @@ var InternshipView = BaseView.extend({
         this.interns= results;
         $('#internship-interns').show();
         this.selectedInterns = results;
-        $('#internship-interns').html(_.template(InternsTemplate)({ interns: results }));
+        this.renderSelectedInterns();       
       }.bind(this)).fail();
     }
   },
+
+  renderSelectedInterns: function () {
+    var selectedInternsTemplate = _.template(InternsTemplate)({
+      interns: this.selectedInterns,
+      data: this.model.attributes,     
+    });
+    $('#internship-interns').html(selectedInternsTemplate);
+  }, 
+
   closeInternship: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (e.stopPropagation) e.stopPropagation(); 
@@ -278,7 +289,7 @@ var InternshipView = BaseView.extend({
     });
     var data= {
       interns:this.notCompletedInterns,
-    };
+    };   
     this.modalComponent = new ModalComponent({
       id: 'confirm-close',
       modalTitle: 'Are you sure you want to close this internship?',  
@@ -292,10 +303,32 @@ var InternshipView = BaseView.extend({
       primary: {
         text: 'Close',
         action: function () {
-          this.modalComponent.cleanup();        
+          this.modalComponent.cleanup();  
+          this.markComplete();      
         }.bind(this),
       },
     }).render(); 
+  },
+  markComplete: function () {
+    var state = 'completed';
+    $.ajax({
+      url: '/api/task/state/' +  this.model.attributes.id,
+      type: 'PUT',
+      data: {
+        id: this.model.attributes.id,
+        state: state,      
+      },
+      success: function (data) {      
+        this.model.attributes.state = 'completed';  
+        this.data.model.state = 'completed';    
+        this.model.attributes.completedAt = new Date(); 
+        this.data.model.completedAt = new Date();
+        this.renderSelectedInterns();              
+      }.bind(this),
+      error: function (err) {
+        // display modal alert type error
+      }.bind(this),
+    });
   },
 
   toggleInternComplete: function (event) {
@@ -313,7 +346,7 @@ var InternshipView = BaseView.extend({
         _.find(this.selectedInterns, function (intern) {
           return intern.applicationId == applicationId;
         }).internshipComplete = complete;
-        $('#internship-interns').html(_.template(InternsTemplate)({ interns: this.selectedInterns }));
+        this.renderSelectedInterns();  
       }.bind(this),
       error: function () {
         showWhoopsPage();
