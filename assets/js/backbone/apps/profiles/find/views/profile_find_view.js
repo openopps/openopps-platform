@@ -7,6 +7,7 @@ var User = require('../../../../../utils/user');
 
 // templates
 var ProfileFindTemplate = require('../templates/profile_find_template.html');
+var NavView = require('../../../nav/views/nav_view');
 
 var ProfileFindView = Backbone.View.extend({
   events: {
@@ -17,7 +18,7 @@ var ProfileFindView = Backbone.View.extend({
   },
   
   initialize: function (options) {
-    this.options = options;
+    this.options = options;  
   },
   
   render: function () {
@@ -37,7 +38,7 @@ var ProfileFindView = Backbone.View.extend({
   cancel: function (e) {
     window.history.back();
   },
-
+ 
   clearError: function (e) {
     var parent = $(e.currentTarget).parents('.required-input')[0];
     $(parent).find('.error-email').hide();
@@ -75,9 +76,12 @@ var ProfileFindView = Backbone.View.extend({
         id: getUrlParameter('id'),
         h: getUrlParameter('h'),
       },
-      success: function (data) {
+      success: function (data) {     
         window.cache.currentUser = new User(data);
         Backbone.history.navigate('/home', { trigger: true, replace: true });
+        this.navView = new NavView({
+          el: '.navigation',
+        }).render();          
       }.bind(this),
       error: function (err) {
         $('#search-results-loading').hide();
