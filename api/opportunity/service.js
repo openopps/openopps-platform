@@ -589,7 +589,7 @@ async function deleteTask (id,cycleId) {
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
-    if((cycle) && (cycle.applyStartDate < new Date())) {
+    if((cycle) && (cycle.applyStartDate > new Date())) {
       return await removeTask(id);
     }
     else {
