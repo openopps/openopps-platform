@@ -230,7 +230,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
           });
           done();
         }).catch(err => {
-          dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+          logError(userId, err);
           log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
           done({ message: 'Unkown error occurred' });
         });
@@ -255,7 +255,10 @@ async function logAuthenticationError (ctx, type, auditData) {
 }
 
 async function logError (userId, err) {
-  dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+  dao.ErrorLog.insert({
+    userId: userId,
+    errorData: JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))),
+  }).catch();
 }
 
 module.exports = {
