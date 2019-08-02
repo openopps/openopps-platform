@@ -1,5 +1,6 @@
 
 <div id="confirm-close">
+ <% if (interns.length>0) { %>
  <p>You haven't marked these interns as completed. If you close the internship, they will not get credit.</p> 
 <% _.each(interns, function (intern) { %>
 <div class="internship-participant"> 
@@ -14,5 +15,6 @@
 </div>
 <% }); %>  
  <p>Do you still want to close this internship opportunity? Once you close it, you can't reopen it.</p>
+ <% } %>
   </div>
   
