@@ -324,7 +324,7 @@ var InternshipView = BaseView.extend({
   markComplete: function () {
     var state = 'completed';
     $.ajax({
-      url: '/api/task/internship/' +  this.model.attributes.id,
+      url: '/api/task/internship/complete' +  this.model.attributes.id,
       type: 'PUT',
       data: {
         id: this.model.attributes.id,
