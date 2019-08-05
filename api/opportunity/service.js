@@ -510,14 +510,15 @@ async function copyOpportunity (attributes, user, done) {
     about: results.about,
     agencyId: results.agencyId,
     communityId: results.communityId,
-    officeId:results.officeId,
-    bureauId:results.bureauId,
-    cityName:results.cityName,
-    cycleId:results.cycleId,
-    countryId:results.countryId,
-    countrySubdivisionId:results.countrySubdivisionId,
-    interns:results.interns,
-    language:language,
+    officeId: results.officeId,
+    bureauId: results.bureauId,
+    cityName: results.cityName,
+    cycleId: results.cycleId,
+    countryId: results.countryId,
+    countrySubdivisionId: results.countrySubdivisionId,
+    interns: results.interns,
+    language: language,
+    suggestedSecurityClearance: results.suggestedSecurityClearance,
   };
   if(await isStudent(results.userId,results.id)){
     await dao.Task.insert(intern)
