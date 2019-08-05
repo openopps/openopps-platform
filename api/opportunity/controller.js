@@ -154,6 +154,17 @@ router.put('/api/publishTask/:id', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/task/internship/:id', auth, async (ctx, next) => {
+  if (await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
+    ctx.request.body.updatedBy = ctx.state.user.id;
+    await service.completedInternship(ctx.request.body, function (done) {
+      ctx.body = { success: true };
+    }).catch(err => {
+      log.info(err);
+    });
+  }
+});
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
