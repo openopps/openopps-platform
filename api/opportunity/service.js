@@ -352,6 +352,23 @@ async function publishTask (attributes, done) {
   });
 }
 
+async function completedInternship (attributes, done) {
+  attributes.updatedAt = new Date();
+  attributes.completedAt = new Date();
+  attributes.state = 'completed';
+  await dao.Task.update(attributes).then(async (t) => {
+    var task = await findById(t.id, true);
+    sendHiringManagerSurveyNotification(task.owner, task);
+    _.forEach(_.filter(task.volunteers, { assigned: true, taskComplete: true }), (volunteer) => {
+      sendInternSurveydNotification(volunteer, task, 'internship.completed.survey');
+    });
+    await elasticService.indexOpportunity(task.id);
+    return done(true);
+  }).catch (err => {
+    return done(false);
+  });
+}
+
 function volunteersCompleted (task) {
   dao.Volunteer.find('"taskId" = ? and assigned = true and "taskComplete" = true', task.id).then(volunteers => {
     var userIds = volunteers.map(v => { return v.userId; });
@@ -471,6 +488,20 @@ async function sendTaskCompletedNotification (user, task) {
 
 async function sendTaskCompletedNotificationParticipant (user, task) {
   var data = await getNotificationTemplateData(user, task, 'task.update.completed.participant');
+  if(!data.model.user.bounced) {
+    notification.createNotification(data);
+  }
+}
+
+async function sendHiringManagerSurveyNotification (user, task) {
+  var data = await getNotificationTemplateData(user, task, 'internship.hiringmanager.survey');
+  if(!data.model.user.bounced) {
+    notification.createNotification(data);
+  }
+}
+
+async function sendInternSurveydNotification (user, task) {
+  var data = await getNotificationTemplateData(user, task, 'internship.completed.survey');
   if(!data.model.user.bounced) {
     notification.createNotification(data);
   }
@@ -674,6 +705,7 @@ module.exports = {
   updateOpportunityState: updateOpportunityState,
   updateOpportunity: updateOpportunity,
   publishTask: publishTask,
+  completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
@@ -682,6 +714,8 @@ module.exports = {
   sendTaskAssignedNotification: sendTaskAssignedNotification,
   sendTaskAppliedNotification: sendTaskAppliedNotification,
   sendTasksDueNotifications: sendTasksDueNotifications,
+  sendHiringManagerSurveyNotification: sendHiringManagerSurveyNotification,
+  sendInternSurveydNotification: sendInternSurveydNotification,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,

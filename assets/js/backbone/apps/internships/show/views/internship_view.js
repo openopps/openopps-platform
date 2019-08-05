@@ -319,14 +319,16 @@ var InternshipView = BaseView.extend({
       },
     }).render(); 
   },
+
+  // url: '/api/task/state/' +  this.model.attributes.id,
   markComplete: function () {
     var state = 'completed';
     $.ajax({
-      url: '/api/task/state/' +  this.model.attributes.id,
+      url: '/api/task/internship/complete' +  this.model.attributes.id,
       type: 'PUT',
       data: {
         id: this.model.attributes.id,
-        state: state,      
+        // state: state,      
       },
       success: function (data) {      
         this.model.attributes.state = 'completed';  
