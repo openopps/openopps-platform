@@ -354,7 +354,7 @@ async function publishTask (attributes, done) {
 
 async function completedInternship (attributes, done) {
   attributes.updatedAt = new Date();
-  aatributes.completedAt = new Date();
+  attributes.completedAt = new Date();
   attributes.state = 'completed';
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
