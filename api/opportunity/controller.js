@@ -199,9 +199,10 @@ function checkTaskState (stateChange, user, task) {
 router.delete('/api/task/:id', auth, async (ctx) => {
   if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
-      if (['draft', 'submitted'].indexOf(task.state) != -1 ||
-      (task.state=='open'&& task.cycleId)) {
-        ctx.body = await service.deleteTask(ctx.params.id,task.cycleId);
+      if (['draft', 'submitted'].indexOf(task.state) != -1) {
+        ctx.body = await service.deleteTask(ctx.params.id);
+      } else if (task.state == 'open' && task.cycleId) {
+        ctx.body = await service.deleteTask(ctx.params.id, task.cycleId);	
       } else {
         log.info('Wrong state');
         ctx.status = 400;

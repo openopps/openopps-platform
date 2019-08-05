@@ -36,6 +36,16 @@ var InternshipView = BaseView.extend({
     
   },
 
+
+  modalOptions: {
+    el: '#site-modal',
+    id: 'closed-internship',
+    modalTitle: '',
+    modalBody: '',
+    disableClose: false,
+    secondary: { },
+    primary: { },
+  },
   render: function () {
     this.data = {
       user: window.cache.currentUser,
@@ -325,6 +335,18 @@ var InternshipView = BaseView.extend({
         this.data.model.state = 'completed';    
         this.model.attributes.completedAt = new Date(); 
         this.data.model.completedAt = new Date();
+        var options = _.extend(_.clone(this.modalOptions), {
+          modalTitle: 'Internship closed',
+          modalBody: 'You\'ve successfully closed <strong>' + this.model.attributes.title +
+            '</strong>.',
+          primary: {
+            text: 'Done',
+            action: function () {
+              this.modalComponent.cleanup();
+            }.bind(this),
+          },
+        });
+        this.modalComponent = new ModalComponent(options).render();
         this.renderSelectedInterns();              
       }.bind(this),
       error: function (err) {
