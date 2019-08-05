@@ -54,7 +54,8 @@ const commentsQuery = 'select @comment.*, @user.* ' +
   'join @midas_user "user" on "user".id = comment."userId" ' +
   'where comment."taskId" = ?';
 
-const completedInternsQuery= 'select midas_user.username,midas_user.bounced,midas_user.name ' +
+const completedInternsQuery= 'select midas_user.username, midas_user.bounced, ' +
+'trim(midas_user.given_name || \' \' || midas_user.last_name) as name ' +
 'from task_list_application ' +
 'inner join task_list on task_list_application.task_list_id = task_list.task_list_id ' +
 'inner join application on task_list_application.application_id = application.application_id ' +
