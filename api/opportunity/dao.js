@@ -54,6 +54,15 @@ const commentsQuery = 'select @comment.*, @user.* ' +
   'join @midas_user "user" on "user".id = comment."userId" ' +
   'where comment."taskId" = ?';
 
+const completedInternsQuery= 'select midas_user.username, midas_user.bounced, ' +
+'trim(midas_user.given_name || \' \' || midas_user.last_name) as name ' +
+'from task_list_application ' +
+'inner join task_list on task_list_application.task_list_id = task_list.task_list_id ' +
+'inner join application on task_list_application.application_id = application.application_id ' +
+'inner join midas_user  on application.user_id = midas_user.id ' +
+'where  task_list.task_id = ? and application.internship_completed_at is not null ' ;
+
+
 const deleteTaskTags = 'delete from tagentity_tasks__task_tags where task_tags = ?';
 
 const languageListQuery= 'select l1.value as "spokenSkillLevel", g.language_skill_id as "languageSkillId", l3.value as "writtenSkillLevel", l2.value as "readSkillLevel", r.value as "selectLanguage", g.speaking_proficiency_id as "speakingProficiencyId",g.writing_proficiency_id as "writingProficiencyId",g.reading_proficiency_id as "readingProficiencyId",g.language_id as "languageId" ' + 
@@ -211,6 +220,7 @@ module.exports = function (db) {
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Application: dao({db:db,table:'application'}),
     Phase: dao({ db: db, table: 'phase' }),
+    TaskListApplication:dao({ db: db, table:'task_list_application' }),
     query: {
       applicationTasks:applicationTaskQuery,
       comments: commentsQuery,
@@ -218,6 +228,7 @@ module.exports = function (db) {
       communityAdminsQuery: communityAdminsQuery,
       communitiesQuery: communitiesQuery,
       communityTaskQuery:communityTaskQuery,
+      completedInternsQuery:completedInternsQuery,
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,
