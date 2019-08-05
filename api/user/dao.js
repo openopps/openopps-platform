@@ -32,6 +32,7 @@ const deleteSkillTags = 'delete from tagentity_users__user_tags where id in (' +
 const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted_at AS "submittedAt", ' +
   'comm.community_name AS "communityName", c.name AS "cycleName", c.cycle_start_date AS "cycleStartDate", ' +
   'c.apply_end_date AS "applyEndDate", app.updated_at AS "updatedAt", phase."name", phase."sequence", ' +
+  'case when app.internship_completed_at is not null then true else false end as "internshipComplete",' + 
 	'( ' +
 		'select ' +
 			'task_list.title ' +
@@ -107,6 +108,7 @@ const clean = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency' }),
+    Application: dao({ db: db, table: 'application'}),
     AuditLog: dao({ db: db, table: 'audit_log'}),
     User: dao({ db: db, table: 'midas_user' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
@@ -115,7 +117,6 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Passport: dao({ db: db, table: 'passport' }),
-    Application: dao({ db: db, table: 'application' }),
     Cycle: dao({ db: db, table: 'cycle' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),

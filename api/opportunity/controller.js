@@ -154,6 +154,17 @@ router.put('/api/publishTask/:id', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
+  if (await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
+    ctx.request.body.updatedBy = ctx.state.user.id;
+    await service.completedInternship(ctx.request.body, function (done) {
+      ctx.body = { success: true };
+    }).catch(err => {
+      log.info(err);
+    });
+  }
+});
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
@@ -188,9 +199,10 @@ function checkTaskState (stateChange, user, task) {
 router.delete('/api/task/:id', auth, async (ctx) => {
   if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
-      if (['draft', 'submitted'].indexOf(task.state) != -1 ||
-      (task.state=='open'&& task.cycleId)) {
-        ctx.body = await service.deleteTask(ctx.params.id,task.cycleId);
+      if (['draft', 'submitted'].indexOf(task.state) != -1) {
+        ctx.body = await service.deleteTask(ctx.params.id);
+      } else if (task.state == 'open' && task.cycleId) {
+        ctx.body = await service.deleteTask(ctx.params.id, task.cycleId);	
       } else {
         log.info('Wrong state');
         ctx.status = 400;

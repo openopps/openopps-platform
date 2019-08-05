@@ -126,7 +126,10 @@ service.createAuditLog = async function (type, ctx, auditData) {
 };
 
 service.recordError = async function (userId, err) {
-  dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+  dao.ErrorLog.insert({
+    userId: userId,
+    errorData: JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))),
+  }).catch();
 };
 
 service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) {

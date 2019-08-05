@@ -89,12 +89,19 @@
               </span>
             </div>
             <div class="profile-email">
-              <% if (data.hiringPath == 'fed' && email) { %>
+              <% if (data.hiringPath == 'fed' && loginGovEmail && fedEmail) { %>
                 <div class="usajobs-profile-home-section__field-label">Official government email address</div>
                 <% if (user.id !== data.id) { %>
-                  <a href="mailto:<%= email %>"><%= email %></a>
+                  <a href="mailto:<%= fedEmail %>"><%= fedEmail %></a>
                 <% } else { %>
-                  <span><%= email %></span>
+                  <span><%= fedEmail %></span>
+                <% } %>
+              <% } else if (data.hiringPath == 'fed' && loginGovEmail) { %>
+                <div class="usajobs-profile-home-section__field-label">Contact email address</div>
+                <% if (user.id !== data.id) { %>
+                  <a href="mailto:<%= loginGovEmail %>"><%= loginGovEmail %></a>
+                <% } else { %>
+                  <span><%= loginGovEmail %></span>
                 <% } %>
               <% } else if (data.hiringPath == 'student' && data.username) { %>
                 <div class="usajobs-profile-home-section__field-label">Email address</div>
@@ -175,12 +182,14 @@
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
           <h2>Badges</h2>
           <!-- just need a space here for css to work correctly -->
+          <% if (data.internshipsCompleted > 0) { %>
           <ul class="profile-badges">
             <li class="profile-badge">
-              <img src="/images/badges/intern1.svg" alt="The internship badge is awarded when you complete one internship.">
+              <img src="/images/badges/<%- internFilename %>.svg" alt="The internship badge is awarded when you complete one internship.">
               <p>Badge name</p>
             </li>
           </ul>
+          <% } %>
         </div>
       </aside>
     <% } %>
