@@ -85,6 +85,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         reviewEndDate: this.getDateFromFormGroup('end-review-date'),
         cycleStartDate: this.getDateFromFormGroup('start-internship-date'),
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
+        secondaryApplicationUrl: $('#secondary-application-url').val(),
         updatedAt: this.cycle.get('updatedAt'),
       };
       if(new Date(data.postingEndDate)>new Date(data.applyEndDate)){ 
