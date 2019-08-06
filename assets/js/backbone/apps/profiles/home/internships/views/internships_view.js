@@ -107,17 +107,24 @@ var InternshipsView = Backbone.View.extend({
     if (application.submittedAt == null) {
       return 'In progress';
     } else if (application.sequence == 3) {
-      if ((application.reviewProgress == 'Primary' || application.reviewProgress == 'Alternate') && application.internshipComplete==true) {
-        return 'Completed';
-      } 
-      else if (application.reviewProgress == 'Primary' && application.internshipComplete ==false) {
-        return 'Not complete';
-      }
-      else if (application.reviewProgress == 'Alternate' && application.internshipComplete ==false) {
-        return 'Alternate';
-      }
-      else {
-        return 'Not selected';
+      if (application.taskState == 'completed') {
+        if (application.internshipComplete) {
+          return 'Completed';
+        } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
+          return 'Not complete';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate';
+        } else {
+          return 'Not selected';
+        }
+      } else {
+        if (application.reviewProgress == 'Primary') {
+          return 'Selected';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate';
+        } else {
+          return 'Not selected';
+        }
       }
     } else {
       return 'Applied';
