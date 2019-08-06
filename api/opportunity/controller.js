@@ -50,12 +50,17 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/task/selections/:id', auth, async (ctx, next) => {
-  await service.getSelectionsForTask(ctx.state.user, ctx.params.id).then(results => {
-    ctx.status = 200;
-    ctx.body = results;
-  }).catch(err => {
-    ctx.status = err.status;
-  })
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.params.id)) {
+    await service.getSelectionsForTask(ctx.state.user, ctx.params.id).then(results => {
+      ctx.status = 200;
+      ctx.body = results;
+    }).catch(err => {
+      ctx.status = err.status;
+    })
+  } else {
+    ctx.status = 403;
+    ctx.body = null;
+  }
 });
 
 router.get('/api/task/:id', async (ctx, next) => {

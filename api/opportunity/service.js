@@ -756,18 +756,10 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
 
 module.exports.getSelectionsForTask = async (user, taskId) => {
   return new Promise((resolve, reject) => {
-    dao.Task.findOne('id = ?', taskId).then(async task => {
-      if(await communityService.isCommunityManager(user, task.communityId)) {
-        db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), task.id).then(results => {
-          resolve(results.rows);
-        }).catch(err => {
-          reject({ status: 401 });
-        });
-      } else {
-        reject({ status: 404 });
-      }
+    db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), taskId).then(results => {
+      resolve(results.rows);
     }).catch(err => {
-      reject({ status: 404 });
+      reject({ status: 401 });
     });
   });
 };
