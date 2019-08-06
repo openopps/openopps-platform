@@ -40,7 +40,8 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
 		'inner join task_list_application tla on application.application_id = tla.application_id ' +
     'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
     'inner join task on task_list.task_id = task.id ' +
-		'where application.application_id = app.application_id ' +
+    'where application.application_id = app.application_id ' +
+    'limit 1 ' +
 	') as "taskState", ' +
 	'( ' +
 		'select ' +
@@ -48,7 +49,8 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
 		'from application ' +
 		'inner join task_list_application tla on application.application_id = tla.application_id ' +
 		'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
-		'where application.application_id = app.application_id ' +
+    'where application.application_id = app.application_id ' +
+    'limit 1 ' +
 	') as "reviewProgress" ' +
   'FROM application app ' +
   'INNER JOIN community comm ON app.community_id = comm.community_id ' +
