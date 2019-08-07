@@ -437,6 +437,15 @@ module.exports.changeOwner = async function (ctx, data, done) {
         originalOwner: originalOwner,
         newOwner: _.pick(await dao.User.findOne('id = ?', data.userId), 'id', 'name', 'username'),
       });
+      if (task.communityId != null) {
+        var share = {
+          task_id: data.taskId,
+          user_id: data.userId,
+          shared_by_user_id: ctx.state.user.id,
+          last_modified: new Date,
+        };
+        await dao.TaskShare.insert(share).catch(err => {});
+      }
       elasticService.indexOpportunity(task.id);
       await dao.AuditLog.insert(audit).then(() => {
         done(audit.data.newOwner);

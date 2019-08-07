@@ -330,6 +330,7 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
+    TaskShare:dao({ db: db, table: 'task_share'}),
     AuditLog: dao({ db: db, table: 'audit_log' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
