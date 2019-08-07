@@ -16,7 +16,7 @@ dao.query.getTopApplicantScoreByTask = `
 `;
 
 dao.query.getApplicationCount = `
-    select count(*) applicant_count from application where cycle_id = ?
+    select count(*) applicant_count from application where submitted_at is not null and cycle_id = ?
 `;
 
 dao.query.getApplicationExistingCount = `
@@ -290,7 +290,7 @@ dao.query.GetCycleApplicantData = `
                 and task_list.title in ('Alternate', 'Primary')
     ) as board on true
   where task.cycle_id = ?
-
+    and application.submitted_at is not null
 `;
 
 module.exports = function (db) {
