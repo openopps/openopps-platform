@@ -160,13 +160,16 @@ router.put('/api/publishTask/:id', auth, async (ctx, next) => {
 });
 
 router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
-  if (await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
     await service.completedInternship(ctx.request.body, function (done) {
       ctx.body = { success: true };
     }).catch(err => {
       log.info(err);
     });
+  } else {
+    ctx.status = 401;
+    ctx.body = null;
   }
 });
 
