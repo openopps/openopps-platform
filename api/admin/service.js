@@ -444,7 +444,10 @@ module.exports.changeOwner = async function (ctx, data, done) {
           shared_by_user_id: ctx.state.user.id,
           last_modified: new Date,
         };
-        await dao.TaskShare.insert(share).catch(err => {});
+        db.query('delete from task_share where task_id = ? and user_id = ?', [data.taskId, originalOwner.id]).catch(err => {
+          log.info(err);
+        });
+        dao.TaskShare.insert(share).catch(err => {});
       }
       elasticService.indexOpportunity(task.id);
       await dao.AuditLog.insert(audit).then(() => {
