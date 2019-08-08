@@ -97,6 +97,7 @@
     "chai": "^4.1.2",
     "chai-datetime": "^1.5.0",
     "gulp-bump": "^3.1.0",
+    "gulp-clean": "^0.4.0",
     "gulp-git": "^2.5.2",
     "istanbul": "^0.4.5",
     "mocha": "^5.0.0",

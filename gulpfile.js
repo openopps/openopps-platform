@@ -103,8 +103,14 @@ gulp.task('bump', function () {
     .pipe(gulp.dest('./'));
 });
 
+// Clean bin directory
+gulp.task('clean', function () {
+  const clean = require('gulp-clean');
+  return gulp.src('./bin', { read: false, allowEmpty: true }).pipe(clean());
+});
+
 // TFS build task
-gulp.task('tfs-build', gulp.series('build', function (done) {
+gulp.task('tfs-build', gulp.series('clean', 'build', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');
   const git = require('gulp-git');
   git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
