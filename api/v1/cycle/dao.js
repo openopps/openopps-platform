@@ -16,7 +16,7 @@ dao.query.getTopApplicantScoreByTask = `
 `;
 
 dao.query.getApplicationCount = `
-    select count(*) applicant_count from application where cycle_id = ?
+    select count(*) applicant_count from application where submitted_at is not null and cycle_id = ?
 `;
 
 dao.query.getApplicationExistingCount = `
@@ -42,7 +42,7 @@ dao.query.getTaskIdAndListId = `
       id as task_id,
       task_list_id as "reviewList",
       (
-        select max(sort_order) max_sort_order
+        select coalesce(max(sort_order), 0) max_sort_order
         from task_list_application
         where task_list_application.task_list_id = task_list.task_list_id
       ) as max_sort
@@ -59,6 +59,7 @@ dao.query.getOneIntern = `
       task_list_application.application_id,
       task_list_application.sort_order,
       task_list_application.date_last_contacted,
+      task_list.task_id,
       midas_user.given_name,
       midas_user.last_name,
       midas_user.username as email,
@@ -174,6 +175,7 @@ dao.query.getCommunityUsers = `
   select 
     mu.given_name,
     mu.username as email,
+    mu.government_uri as governmentUri,
     task.title,
     task.id as task_id
   from "cycle"
@@ -256,8 +258,44 @@ dao.query.getApplicantNotSelected = `
     and tl.title not in ('Primary','Alternate')
 `;
 
+dao.query.GetCycleApplicantData = `
+  select 
+      given_name,
+      last_name,
+      case when pri.task_id is not null then task.title end as "primary",
+      case when alt.task_id is not null then task.title end as "alternate",
+      board.task_id,
+      case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
+  from midas_user
+    inner join application on midas_user.id = application.user_id
+    inner join application_task on application.application_id = application_task.application_id
+    inner join task on application_task.task_id = task.id
+    left join lateral (
+      select *
+            from task_list
+                    inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+            where task.id = task_list.task_id and task_list.title = 'Primary'
+    ) as pri on true
+    left join lateral (
+        select *
+              from task_list
+                      inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+              where task.id = task_list.task_id and task_list.title = 'Alternate'
+    ) as alt on true
+    left join lateral (
+        select *
+              from task_list
+                      inner join task_list_application on task_list.task_list_id = task_list_application.task_list_id and task_list_application.application_id = application.application_id
+              where task.id = task_list.task_id
+                and task_list.title in ('Alternate', 'Primary')
+    ) as board on true
+  where task.cycle_id = ?
+    and application.submitted_at is not null
+`;
+
 module.exports = function (db) {
   dao.Application = pgdao({ db: db, table: 'application' });
+  dao.ApplicationTask = pgdao({ db: db, table: 'application_task' });
   dao.Task = pgdao({ db: db, table: 'task' });
   dao.TaskList = pgdao({ db: db, table: 'task_list' });
   dao.TaskListApplication = pgdao({ db: db, table: 'task_list_application' });

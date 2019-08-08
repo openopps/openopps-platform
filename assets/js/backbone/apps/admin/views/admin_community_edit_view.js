@@ -42,7 +42,7 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   loadDepartments: function (){ 
     $.ajax({
-      url: '/api/admin/agencies',  
+      url: '/api/admin/community/agencies',  
       type: 'GET',
       async: false,
       success: function (data){         
@@ -67,7 +67,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.listenTo(this.community, 'community:save:success', function () {
       Backbone.history.navigate('/admin/community/' + this.options.communityId + '?updateSuccess', { trigger: true });
     }.bind(this));
-    this.listenTo(this.community, 'community:update:error', function () {
+    this.listenTo(this.community, 'community:save:error', function () {
       $('#community-save-error').show();
       $('#community-save-error').get(0).scrollIntoView();
     });
@@ -110,7 +110,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $.ajax({
       url: '/api/admin/community/' + this.options.communityId,
       dataType: 'json',
-      success: function (community) {
+      success: function (community) { 
         this.community = new CommunityModel(community);
         community.departments=this.departments;      
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));

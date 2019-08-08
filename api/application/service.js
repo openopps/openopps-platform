@@ -69,7 +69,7 @@ function importProfileData (user, applicationId) {
 
 async function processUnpaidApplication (user, data, callback) {
   var application = await findOrCreateApplication(user, data);
-  var applicationTasks = await dao.ApplicationTask.find('application_id = ?', application.applicationId);
+  var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
   if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
     callback(null, application.applicationId);
   } else if (applicationTasks.length >= 3) {
@@ -533,6 +533,23 @@ module.exports.deleteReference= async function (referenceId, userId){
     return false;
   });
 };
+
+module.exports.internshipCompleted = async function (userId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ?', data.applicationId).then(application => {
+      data.updatedAt = application.updatedAt;
+      data.internshipUpdatedBy = userId;
+      if(data.complete.match(/^true$/)) {
+        data.internshipCompleted = data.taskId;
+        data.internshipCompletedAt = new Date();
+      } else {
+        data.internshipCompleted = null;
+        data.internshipCompletedAt = null;
+      }
+      dao.Application.update(data).then(resolve).catch(reject);
+    }).catch(reject);
+  });
+}
 
 async function sendApplicationNotification (userId, applicationId, action) {
   Promise.all([

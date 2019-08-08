@@ -47,7 +47,21 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
   }).catch(err => {
     ctx.status = err.status;
   })
-})
+});
+
+router.get('/api/task/selections/:id', auth, async (ctx, next) => {
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.params.id)) {
+    await service.getSelectionsForTask(ctx.state.user, ctx.params.id).then(results => {
+      ctx.status = 200;
+      ctx.body = results;
+    }).catch(err => {
+      ctx.status = err.status;
+    })
+  } else {
+    ctx.status = 403;
+    ctx.body = null;
+  }
+});
 
 router.get('/api/task/:id', async (ctx, next) => {
   var task = await service.findById(ctx.params.id, ctx.state.user);
@@ -145,6 +159,20 @@ router.put('/api/publishTask/:id', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
+    ctx.request.body.updatedBy = ctx.state.user.id;
+    await service.completedInternship(ctx.request.body, function (done) {
+      ctx.body = { success: true };
+    }).catch(err => {
+      log.info(err);
+    });
+  } else {
+    ctx.status = 401;
+    ctx.body = null;
+  }
+});
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
@@ -179,9 +207,10 @@ function checkTaskState (stateChange, user, task) {
 router.delete('/api/task/:id', auth, async (ctx) => {
   if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
-      if (['draft', 'submitted'].indexOf(task.state) != -1 ||
-      (task.state=='open'&& task.cycleId)) {
-        ctx.body = await service.deleteTask(ctx.params.id,task.cycleId);
+      if (['draft', 'submitted'].indexOf(task.state) != -1) {
+        ctx.body = await service.deleteTask(ctx.params.id);
+      } else if (task.state == 'open' && task.cycleId) {
+        ctx.body = await service.deleteTask(ctx.params.id, task.cycleId);	
       } else {
         log.info('Wrong state');
         ctx.status = 400;

@@ -35,6 +35,9 @@ async function findById (id, user) {
   }
   if(task.communityId){
     task.community=(await dao.Community.db.query(dao.query.communityTaskQuery,task.communityId)).rows[0];
+    if (user) {
+      task.communityUser= (await dao.CommunityUser.db.query(dao.query.communityUserQuery,user.id,task.communityId)).rows[0];
+    }
   }
   if(await isStudent(task.userId,task.id)){
     var country=(await dao.Country.db.query(dao.query.intern,task.userId,task.id)).rows[0];
@@ -49,7 +52,9 @@ async function findById (id, user) {
     } 
     task.language= (await dao.LookupCode.db.query(dao.query.languageList,task.id)).rows;
     task.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    
+    if (task.cycle) {
+      task.cycle.phase = await dao.Phase.findOne('phase_id = ?', task.cycle.phaseId).catch(() => { return null; });
+    }
   }
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
@@ -347,6 +352,25 @@ async function publishTask (attributes, done) {
   });
 }
 
+async function completedInternship (attributes, done) {
+  attributes.updatedAt = new Date();
+  attributes.completedAt = new Date();
+  attributes.state = 'completed';
+  await dao.Task.update(attributes).then(async (t) => {
+    var task = await findById(t.id, true);
+    var owner= await dao.User.findOne('id = ?', task.owner.id);
+    sendHiringManagerSurveyNotification(owner);
+    var completedInterns= (await dao.TaskListApplication.db.query(dao.query.completedInternsQuery,task.id)).rows;
+    _.forEach(completedInterns, (intern) => {
+      sendInternSurveydNotification(intern, 'internship.completed.survey');
+    });
+    await elasticService.indexOpportunity(task.id);
+    return done(true);
+  }).catch (err => {
+    return done(false);
+  });
+}
+
 function volunteersCompleted (task) {
   dao.Volunteer.find('"taskId" = ? and assigned = true and "taskComplete" = true', task.id).then(volunteers => {
     var userIds = volunteers.map(v => { return v.userId; });
@@ -404,6 +428,17 @@ function sendTaskStateUpdateNotification (user, task) {
   }
 }
 
+async function getInternNotificationTemplateData (intern, action) {
+  var data = {
+    action: action,
+    layout: 'state.department/layout.html',
+    model: {     
+      user: intern,
+    },
+  };
+  return data;
+
+}
 async function getNotificationTemplateData (user, task, action) {
   var data = {
     action: action,
@@ -471,6 +506,20 @@ async function sendTaskCompletedNotificationParticipant (user, task) {
   }
 }
 
+async function sendHiringManagerSurveyNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.hiringmanager.survey');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+
+async function sendInternSurveydNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.completed.survey');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+
 async function copyOpportunity (attributes, user, done) {
   var results = await dao.Task.findOne('id = ?', attributes.taskId);
   var language= await dao.LanguageSkill.find('task_id = ?',attributes.taskId);
@@ -505,14 +554,15 @@ async function copyOpportunity (attributes, user, done) {
     about: results.about,
     agencyId: results.agencyId,
     communityId: results.communityId,
-    officeId:results.officeId,
-    bureauId:results.bureauId,
-    cityName:results.cityName,
-    cycleId:results.cycleId,
-    countryId:results.countryId,
-    countrySubdivisionId:results.countrySubdivisionId,
-    interns:results.interns,
-    language:language,
+    officeId: results.officeId,
+    bureauId: results.bureauId,
+    cityName: results.cityName,
+    cycleId: results.cycleId,
+    countryId: results.countryId,
+    countrySubdivisionId: results.countrySubdivisionId,
+    interns: results.interns,
+    language: language,
+    suggestedSecurityClearance: results.suggestedSecurityClearance,
   };
   if(await isStudent(results.userId,results.id)){
     await dao.Task.insert(intern)
@@ -584,7 +634,7 @@ async function deleteTask (id,cycleId) {
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
-    if((cycle) && (cycle.applyStartDate < new Date())) {
+    if((cycle) && (cycle.applyStartDate > new Date())) {
       return await removeTask(id);
     }
     else {
@@ -668,6 +718,7 @@ module.exports = {
   updateOpportunityState: updateOpportunityState,
   updateOpportunity: updateOpportunity,
   publishTask: publishTask,
+  completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
@@ -676,6 +727,8 @@ module.exports = {
   sendTaskAssignedNotification: sendTaskAssignedNotification,
   sendTaskAppliedNotification: sendTaskAppliedNotification,
   sendTasksDueNotifications: sendTasksDueNotifications,
+  sendHiringManagerSurveyNotification: sendHiringManagerSurveyNotification,
+  sendInternSurveydNotification: sendInternSurveydNotification,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
@@ -697,6 +750,16 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
       }
     }).catch(err => {
       reject({ status: 404 });
+    });
+  });
+};
+
+module.exports.getSelectionsForTask = async (user, taskId) => {
+  return new Promise((resolve, reject) => {
+    db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), taskId).then(results => {
+      resolve(results.rows);
+    }).catch(err => {
+      reject({ status: 401 });
     });
   });
 };

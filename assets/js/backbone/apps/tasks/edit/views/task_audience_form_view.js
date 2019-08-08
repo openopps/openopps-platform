@@ -2,6 +2,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var TaskAudienceFormTemplate = require('../templates/task_audience_form_template.html');
+var NavView = require('../../../nav/views/nav_view');
 
 
 var TaskAudienceFormView = Backbone.View.extend({
@@ -68,6 +69,9 @@ var TaskAudienceFormView = Backbone.View.extend({
     switch ($(e.currentTarget).data('state')) {
       case 'cancel':
         window.history.back();
+        this.navView = new NavView({
+          el: '.navigation',
+        }).render();    
         break;
       default:
        

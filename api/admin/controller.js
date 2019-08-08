@@ -37,10 +37,13 @@ router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getTaskStateMetrics();
 });
 
-router.get('/api/admin/agencies', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/agencies',auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getAgencies();
 });
 
+router.get('/api/admin/community/agencies', async (ctx, next) => {
+  ctx.body = await service.getAgencies();
+});
 router.get('/api/admin/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   ctx.body = await service.getAgency(ctx.params.id);
 });

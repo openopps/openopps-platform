@@ -168,8 +168,10 @@ async function getProfileData (params, done) {
           username: profile.URI,
           name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
           title: profile.Profile.JobTitle,
+          givenName:profile.GivenName,
+          lastName:profile.LastName,
           governmentUri: profile.Profile.GovernmentURI,
-          linkedId: account.linkedId,
+          linkedId: account.linkedId,      
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -214,7 +216,7 @@ async function sendFindProfileConfirmation (ctx, data, done) {
       if(user.linkedId) {
         notification.createNotification({
           action: 'find.profile.confirmation',
-          model: { user: { name: user.name, username: user.username, linkedId: user.linkedId } },
+          model: { user: { name: user.name, username: user.username, governmentUri: user.governmentUri, linkedId: user.linkedId } },
         });
         done();
       } else {
@@ -222,13 +224,13 @@ async function sendFindProfileConfirmation (ctx, data, done) {
           notification.createNotification({
             action: 'find.profile.confirmation',
             model: {
-              user: { name: user.name, username: user.username },
+              user: { name: user.name, username: user.username, governmentUri: user.governmentUri },
               hash: bcrypt.hashSync([account.linkedId, account.uuid, account.username].join('|'), 10),
             },
           });
           done();
         }).catch(err => {
-          dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+          logError(userId, err);
           log.info('Error occured updating account staging record when sending find profile confirmation email.', err);
           done({ message: 'Unkown error occurred' });
         });
@@ -252,6 +254,13 @@ async function logAuthenticationError (ctx, type, auditData) {
   await createAudit(type, ctx, auditData);
 }
 
+async function logError (userId, err) {
+  dao.ErrorLog.insert({
+    userId: userId,
+    errorData: JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))),
+  }).catch();
+}
+
 module.exports = {
   checkToken: checkToken,
   createStagingRecord: createStagingRecord,
@@ -259,6 +268,7 @@ module.exports = {
   getProfileData: getProfileData,
   linkAccount: linkAccount,
   logAuthenticationError: logAuthenticationError,
+  logError: logError,
   register: register,
   resetPassword: resetPassword,
   sendFindProfileConfirmation: sendFindProfileConfirmation,
