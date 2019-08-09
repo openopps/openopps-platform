@@ -358,9 +358,11 @@ async function completedInternship (attributes, done) {
   attributes.state = 'completed';
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
-    sendHiringManagerSurveyNotification(task.owner, task);
-    _.forEach(_.filter(task.volunteers, { assigned: true, taskComplete: true }), (volunteer) => {
-      sendInternSurveydNotification(volunteer, task, 'internship.completed.survey');
+    var owner= await dao.User.findOne('id = ?', task.owner.id);
+    sendHiringManagerSurveyNotification(owner);
+    var completedInterns= (await dao.TaskListApplication.db.query(dao.query.completedInternsQuery,task.id)).rows;
+    _.forEach(completedInterns, (intern) => {
+      sendInternSurveydNotification(intern, 'internship.completed.survey');
     });
     await elasticService.indexOpportunity(task.id);
     return done(true);
@@ -426,6 +428,17 @@ function sendTaskStateUpdateNotification (user, task) {
   }
 }
 
+async function getInternNotificationTemplateData (intern, action) {
+  var data = {
+    action: action,
+    layout: 'state.department/layout.html',
+    model: {     
+      user: intern,
+    },
+  };
+  return data;
+
+}
 async function getNotificationTemplateData (user, task, action) {
   var data = {
     action: action,
@@ -493,16 +506,16 @@ async function sendTaskCompletedNotificationParticipant (user, task) {
   }
 }
 
-async function sendHiringManagerSurveyNotification (user, task) {
-  var data = await getNotificationTemplateData(user, task, 'internship.hiringmanager.survey');
-  if(!data.model.user.bounced) {
+async function sendHiringManagerSurveyNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.hiringmanager.survey');
+  if(!data.model.bounced) {
     notification.createNotification(data);
   }
 }
 
-async function sendInternSurveydNotification (user, task) {
-  var data = await getNotificationTemplateData(user, task, 'internship.completed.survey');
-  if(!data.model.user.bounced) {
+async function sendInternSurveydNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.completed.survey');
+  if(!data.model.bounced) {
     notification.createNotification(data);
   }
 }
@@ -743,18 +756,10 @@ module.exports.getApplicantsForTask = async (user, taskId) => {
 
 module.exports.getSelectionsForTask = async (user, taskId) => {
   return new Promise((resolve, reject) => {
-    dao.Task.findOne('id = ?', taskId).then(async task => {
-      if(await communityService.isCommunityManager(user, task.communityId)) {
-        db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), task.id).then(results => {
-          resolve(results.rows);
-        }).catch(err => {
-          reject({ status: 401 });
-        });
-      } else {
-        reject({ status: 404 });
-      }
+    db.query(fs.readFileSync(__dirname + '/sql/getInternshipSelections.sql', 'utf8'), taskId).then(results => {
+      resolve(results.rows);
     }).catch(err => {
-      reject({ status: 404 });
+      reject({ status: 401 });
     });
   });
 };

@@ -10,7 +10,8 @@ const taskStateQuery = 'select ' +
   'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
   'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
   'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
-  'from task';
+  'from task left join community on task.community_id = community.community_id ' +
+  'where community.target_audience <> 2 or community.target_audience is null';
 
 const agencyTaskStateQuery = 'select ' +
   'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
@@ -172,7 +173,8 @@ const taskStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
   'left join volunteer on volunteer."taskId" = task.id ' +
   'left join @midas_user volunteers on volunteers.id = volunteer."userId" ' +
-  'where ';
+  'left join community on task.community_id = community.community_id ' +
+  'where (community.target_audience <> 2 or community.target_audience is null) and ';
 
 const taskAgencyStateUserQuery = 'select @task.*, @owner.*, @volunteers.* ' +
   'from @task task inner join @midas_user owner on task."userId" = owner.id ' +
@@ -330,6 +332,7 @@ module.exports = function (db) {
     Task: dao({ db: db, table: 'task' }),
     Volunteer: dao({ db: db, table: 'volunteer' }),
     TagEntity: dao({ db: db, table: 'tagentity' }),
+    TaskShare:dao({ db: db, table: 'task_share'}),
     AuditLog: dao({ db: db, table: 'audit_log' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
