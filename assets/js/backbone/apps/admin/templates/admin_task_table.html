@@ -1,3 +1,6 @@
+<% if(countOf) { %>
+  <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
+<% } %>
 <table class="usa-table-borderless task-table" role="presentation">
   <thead>
     <tr>
@@ -11,10 +14,14 @@
           <th id="publishId" class="center" data-target="publish-delete">Approve</th>
         <% } %>
       <% } %>
-      <th class="center" data-target="publish-delete">Delete</th> 
-      <th class="center hide" data-target="change-add">Change<br/> owner</th>
-      <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
-        <th class="center hide" data-target="change-add">Add<br/> participant</th>
+      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+        <th class="center" data-target="publish-delete">Delete</th>
+      <% } %>
+      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase())) { %>
+        <th class="center" data-target="change-add">Change<br/> owner</th>
+      <% } %>
+      <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
+        <th class="center" data-target="change-add">Add<br/> participant</th>
       <% } %>
     </tr>
   </thead>
@@ -73,7 +80,7 @@
                 <% } %>
               </a>
             </td>
-          <% } else if (_.contains(['open','notopen', 'inprogress'], status.toLowerCase())) { %>
+          <% } else if (_.contains(['open','not open', 'in progress'], status.toLowerCase())) { %>
             <td class="metrics-table__button">
               <a href="#change-owner/<%- task.id %>"
                 data-task-id="<%- task.id %>"
@@ -102,7 +109,7 @@
                 <span class="usa-sr-only">Delete Opportunity</span>
               </a>
             </td>
-          <% } else if (_.contains(['open', 'notopen', 'inprogress'], status.toLowerCase())) { %>
+          <% } else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
             <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
               <td class="metrics-table__button">
                 <a href="#add-participant/<%- task.id %>"

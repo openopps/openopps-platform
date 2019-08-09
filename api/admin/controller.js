@@ -34,7 +34,15 @@ router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
-  ctx.body = await service.getTaskStateMetrics();
+  //ctx.body = await service.getTaskStateMetrics();
+  await service.getTaskStateMetrics(ctx.query.status, ctx.query.page).then(results => {
+    ctx.body = {
+      totals: results[0].rows,
+      tasks: results[1].rows,
+    };
+  }).catch(err => {
+    ctx.status = 400;
+  })
 });
 
 router.get('/api/admin/agencies',auth.isAdmin, async (ctx, next) => {

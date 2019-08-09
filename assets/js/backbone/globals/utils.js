@@ -128,3 +128,31 @@ global.organizeTags = function (tags) {
   // put the tags into their types
   return _(tags).groupBy('type');
 };
+
+/**
+ * Creates the necessary object to render pagination
+ * @param  {number} totalResults    total number of results
+ * @param  {number} resultsPerPage  number of results displayed on a page
+ * @param  {number} currentPage     current page to be displayed
+ * @return {object}                 returns pagination object
+ */
+global.getPaginationData = function (totalResults, resultsPerPage, currentPage) {
+  var data = {
+    numberOfPages: Math.ceil(totalResults / resultsPerPage),
+    pages: [],
+    page: currentPage,
+  };
+  if(data.numberOfPages < 8) {
+    for (var j = 1; j <= data.numberOfPages; j++)
+      data.pages.push(j);
+  } else if (data.page < 5) {
+    data.pages = [1, 2, 3, 4, 5, 0, data.numberOfPages];
+  } else if (data.page >= data.numberOfPages - 3) {
+    data.pages = [1, 0];
+    for (var i = data.numberOfPages - 4; i <= data.numberOfPages; i++)
+      data.pages.push(i);
+  } else {
+    data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
+  }
+  return data;
+}

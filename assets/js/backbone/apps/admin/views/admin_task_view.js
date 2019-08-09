@@ -6,20 +6,29 @@ var Modal = require('../../../components/modal');
 // templates
 var AdminTaskTemplate = require('../templates/admin_task_template.html');
 var AdminTaskTable = require('../templates/admin_task_table.html');
+var Paginate = require('../templates/admin_paginate.html');
 
 var AdminTaskView = Backbone.View.extend({
   events: {
-    'click .delete-task'            : 'deleteTask',
-    'click .task-open'              : 'openTask',
-    'click input[type="radio"]'     : 'filterChanged',
-    'click #reindex'                : 'reindex',
+    'click .delete-task'        : 'deleteTask',
+    'click .task-open'          : 'openTask',
+    'click input[type="radio"]' : 'filterChanged',
+    'click #reindex'            : 'reindex',
+    'click a.page'              : 'clickPage',
+    'click #task-back'          : linkBackbone,
   },
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
     this.data = {
-      page: 1,
+      page: this.params.get('p') || 1,
+      status: this.params.get('q') || 'submitted',
+      returnUrl: '/admin',
     };
+    if (this.options.target !== 'sitewide') {
+      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    }
     this.agency = {};
     this.community = {};
     this.baseModal = {
@@ -66,14 +75,14 @@ var AdminTaskView = Backbone.View.extend({
       data: this.data,
       dataType: 'json',
       success: function (data) {
-        this.tasks = data;
+        _.extend(data, this.data);
         data.agency = this.agency;
-        data.community= this.community;
+        data.community = this.community;
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
         this.$el.show();
-        this.renderTasks(this.tasks);
+        this.renderTasks(data.tasks, data.totals);
       }.bind(this),
       error: function () {
         $('#search-results-loading').hide();
@@ -82,30 +91,45 @@ var AdminTaskView = Backbone.View.extend({
     return this;
   },
 
-  renderTasks: function (tasks) {
+  renderTasks: function (tasks, totals) {
+    var totalResults = _.findWhere(totals, { task_state: this.data.status }).count || 0;
     var data = {
-      tasks: tasks[$('.filter-radio:checked').attr('id')],
-      status:$('.filter-radio:checked').attr('id'),
-      targetAudience: tasks.community.targetAudience,
+      tasks: tasks,
+      status: this.data.status,
+      targetAudience: this.community.targetAudience,
+      countOf: totalResults,
+      firstOf: this.data.page * 25 - 24,
+      lastOf: this.data.page * 25 - 25 + tasks.length,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
+    if (totalResults) {
+      var pageData = getPaginationData(totalResults, 25, this.data.page);
+      _.extend(pageData, { urlbase: window.location.pathname, q: this.data.status });
+      this.$('#task-page').html(_.template(Paginate)(pageData));
+    }
+  },
+
+  clickPage: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.data.page = $(e.currentTarget).data('page');
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?q=' + this.data.status + '&p=' + this.data.page;
+    return url;
   },
 
   filterChanged: function () {
-    this.renderTasks(this.tasks);
-    var t = $('input[name=opp-status]:checked').val();
-    
-    if (t == 'submitted' || t=='approved') {
-      $('[data-target=change-add]').addClass('hide');
-      $('[data-target=publish-delete]').removeClass('hide');
-    } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {
-      $('[data-target=change-add]').removeClass('hide');
-      $('[data-target=publish-delete]').addClass('hide');
-    } else if (t == 'completed' || t == 'canceled') {
-      $('[data-target=change-add]').addClass('hide');
-      $('[data-target=publish-delete]').addClass('hide');
-    }
+    var status = $('input[name=opp-status]:checked').val();
+    this.data.status = status;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
   },
 
   collectEventData: function (event) {

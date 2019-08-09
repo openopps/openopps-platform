@@ -1,6 +1,6 @@
 <div class="usajobs-grid-full">
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/users" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/users" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total users: <%- numeral(users.total).format('0,0') %></li>
       <li>Active users: <%- numeral(users.active).format('0,0') %></li>
@@ -8,7 +8,7 @@
     </ul>
   </div>
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- numeral(tasks.totalCreated).format('0,0') %></li>
       <li>Submitted: <%- numeral(tasks.submitted).format('0,0') %></li>
