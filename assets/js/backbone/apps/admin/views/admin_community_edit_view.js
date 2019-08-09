@@ -42,7 +42,7 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   loadDepartments: function (){ 
     $.ajax({
-      url: '/api/admin/agencies',  
+      url: '/api/admin/community/agencies',  
       type: 'GET',
       async: false,
       success: function (data){         
@@ -110,7 +110,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $.ajax({
       url: '/api/admin/community/' + this.options.communityId,
       dataType: 'json',
-      success: function (community) {
+      success: function (community) { 
         this.community = new CommunityModel(community);
         community.departments=this.departments;      
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));
