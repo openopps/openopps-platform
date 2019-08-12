@@ -12,6 +12,7 @@ var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.htm
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
 
 var AdminAnnouncementView = require('./admin_announcement_view');
+var AdminTopContributorsView = require('./admin_top_contributors_view');
 var AdminDashboardView = Backbone.View.extend({
 
   events: {
@@ -49,6 +50,16 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.metric-block').html(template);
     this.$el.localize();
     self.$('.metric-block').show();
+  },
+
+  renderTopContributors: function () {
+    if (this.adminTopContributorsView) {
+      this.adminTopContributorsView.cleanup();
+    }
+    this.adminTopContributorsView = new AdminTopContributorsView({
+      el: '.admin-top-contributors',
+    });
+    this.adminTopContributorsView.render();
   },
 
   renderTasks: function () {
@@ -118,6 +129,7 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.activity-block').show();
     self.renderTasks(self, this.data);
     self.renderAdminAnnouncement();
+    self.renderTopContributors();
   },
 
   
