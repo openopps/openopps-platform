@@ -11,6 +11,26 @@ const opportunityService = require('../opportunity/service');
 const elasticService = require('../../elastic/service');
 const communityService = require('../community/service');
 
+function getWhereClauseForTaskState (state) {
+  if (state == 'open') {
+    return "state in ('open', 'in progress') and \"accepting_applicants\" = true";
+  } else if (state == 'in progress') {
+    return "state = 'in progress' and \"accepting_applicants\" = false";
+  } else {
+    return "state = '" + state + "'";
+  }
+}
+
+function getWhereClauseForCyclicalTaskState (state) {
+  if (state == 'approved') {
+    return "state = 'open' and cycle.apply_start_date > now()";
+  } else if (state == 'open') {
+    return "state = 'open' and cycle.apply_start_date <= now()";
+  } else {
+    return "state = '" + state + "'";
+  }
+}
+
 module.exports = {};
 
 module.exports.getMetrics = async function () {
@@ -19,66 +39,45 @@ module.exports.getMetrics = async function () {
   return { 'tasks': tasks, 'users': users };
 };
 
-module.exports.getCommunityTaskStateMetrics = async function (communityId){
-  var states = {};
+module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page){
   var community = await communityService.findById(communityId);
-
   if (community.duration == 'Cyclical') {
-    states.approved = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" > now()", communityId, dao.options.internship));
-    states.open = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" <= now()", communityId, dao.options.internship));
-    states.completed = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'completed'", communityId, dao.options.internship));
-    states.draft = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'draft'",communityId, dao.options.internship));
-    states.submitted = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'submitted'", communityId, dao.options.internship));
-    states.canceled = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'canceled'", communityId, dao.options.internship));
-    return states;
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
+    var whereClause = 'task.community_id = ? and ';
+    tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + getWhereClauseForCyclicalTaskState(state));
   } else {
-    states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId, dao.options.task));
-    states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
-    states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
-    states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
-    states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId, dao.options.task));
-    states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
-    states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
-    return states;
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
+    var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
+    var whereClause = 'task.community_id = ? and ';
+    tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + getWhereClauseForTaskState(state));
   }
+  return Promise.all([
+    db.query(taskStateTotalsQuery, communityId),
+    db.query(tasksByStateQuery, [communityId, page]),
+  ]);
 };
 
 module.exports.getTaskStateMetrics = async function (state, page) {
-  var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAdminTaskStateTotals.sql', 'utf8');
-  var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getAdminTasksByState.sql', 'utf8').toString();
+  var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
+  var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
   var whereClause = '(community.target_audience <> 2 or community.target_audience is null) and ';
-  if (state == 'open') {
-    tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + "state in ('open', 'in progress') and \"accepting_applicants\" = true");
-  } else if (state == 'in progress') {
-    tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + "state = 'in progress' and \"accepting_applicants\" = false");
-  } else {
-    tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + "state = '" + state + "'");
-  }
+  tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + getWhereClauseForTaskState(state));
   return Promise.all([
     db.query(taskStateTotalsQuery),
     db.query(tasksByStateQuery, page),
   ]);
-  // var states = {};
-  // states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", dao.options.task));
-  // states.completed = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'completed'", dao.options.task));
-  // states.draft = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'draft'", dao.options.task));
-  // states.open = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", dao.options.task));
-  // states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'not open'", dao.options.task));
-  // states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'submitted'", dao.options.task));
-  // states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'canceled'", dao.options.task));
-  // return states;
 };
 
-module.exports.getAgencyTaskStateMetrics = async function  (agencyId) {
-  var states = {};
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", agencyId, dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'completed'", agencyId, dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'draft'", agencyId, dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", agencyId, dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'not open'", agencyId, dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'submitted'", agencyId, dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'canceled'", agencyId, dao.options.task));
-  return states;
+module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, page) {
+  var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAgencyTaskStateTotals.sql', 'utf8');
+  var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
+  var whereClause = 'task.agency_id = ? and task.community_id is null and ';
+  tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause + getWhereClauseForTaskState(state));
+  return Promise.all([
+    db.query(taskStateTotalsQuery, agencyId),
+    db.query(tasksByStateQuery, [agencyId, page]),
+  ]);
 };
 
 module.exports.getActivities = async function () {
@@ -345,12 +344,17 @@ module.exports.getAgency = async function (id) {
 
 module.exports.getCommunity = async function (id) {
   var community = await communityService.findById(id); //await dao.Community.findOne('community_id = ?', id);
-  community.tasks = (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
-  community.tasks.totalCreated = Object.values(community.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
   community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
   if (community.duration == 'Cyclical') {
     community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var filterState = false;
+  } else {
+    var filterState = { task_state: 'draft' };
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
   }
+  community.tasks = (await db.query(taskStateTotalsQuery, id)).rows;
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
   return community;
 };
 

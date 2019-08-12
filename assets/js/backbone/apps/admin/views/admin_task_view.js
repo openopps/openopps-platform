@@ -92,7 +92,7 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   renderTasks: function (tasks, totals) {
-    var totalResults = _.findWhere(totals, { task_state: this.data.status }).count || 0;
+    var totalResults = (_.findWhere(totals, { task_state: this.data.status }) || {}).count || 0;
     var data = {
       tasks: tasks,
       status: this.data.status,

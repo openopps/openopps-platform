@@ -259,11 +259,13 @@ var AdminMainView = Backbone.View.extend({
   },
 
   cleanup: function () {
-    if (this.adminUserView) this.adminUserView.cleanup();
-    if (this.adminTagView) this.adminTagView.cleanup();
-    if (this.adminTaskView) this.adminTaskView.cleanup();
-    if (this.adminDashboardView) this.adminDashboardView.cleanup();
-    if (this.navSecondaryView) this.navSecondaryView.cleanup();
+    this.adminUserView && this.adminUserView.cleanup();
+    this.adminTagView && this.adminTagView.cleanup();
+    this.adminTaskView && this.adminTaskView.cleanup();
+    this.adminDashboardView && this.adminDashboardView.cleanup();
+    this.navSecondaryView && this.navSecondaryView.cleanup();
+    this.adminAgenciesView && this.adminAgenciesView.cleanup();
+    this.adminCommunityView && this.adminCommunityView.cleanup();
     removeView(this);
   },
 });
