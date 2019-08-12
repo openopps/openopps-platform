@@ -37,14 +37,14 @@
           <a href="/tasks/<%- task.id %>"><%- task.title %></a>
           <% if ( task.volunteers && task.volunteers.length ) { %>
           <div class="sign-ups">Sign-ups:
-             <% _( task.volunteers ).forEach( function( vol ) { %>
-               <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
-             <% } ); %>
+              <% _( task.volunteers ).forEach( function( vol ) { %>
+                <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
+              <% } ); %>
           </div>
           <% } else if (task.applicants) { %>
             <div class="sign-ups">
-                <strong><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %>:</strong>
-                <% if (task.applicants.length > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
+              <strong><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %>:</strong>
+              <% if (task.applicants.length > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
             </div>
           <% } %>
         </td>
@@ -58,9 +58,9 @@
         <td class="metrics-table__date">
             <%- moment(task.createdAt).format('MM/DD/YY') %>
         </td>
-        
-          <% if (_.contains(['submitted'], status.toLowerCase())) { %>
-            <td class="metrics-table__button">
+        <% if (_.contains(['submitted'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <% if (targetAudience !== 'Students' || (task.cycleId && (_.find(cycles, function (cycle) { return cycle.cycleId == task.cycleId; }) || {}).postingEndDate > new Date())) { %>
               <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
@@ -79,8 +79,20 @@
                   <span class="usa-sr-only">Approve Opportunity</span>
                 <% } %>
               </a>
-            </td>
-          <% } else if (_.contains(['open','not open', 'in progress'], status.toLowerCase())) { %>
+            <% } else { %>
+              <a href="#approve/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="approve-error"
+                alt="Cycle posting has ended"
+                title="Cycle posting has ended">
+                <i class="fas fa-ban"></i>
+                <span class="usa-sr-only">Cycle posting has ended</span>
+              </a>
+            <% } %>
+          </td>
+        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+          <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
             <td class="metrics-table__button">
               <a href="#change-owner/<%- task.id %>"
                 data-task-id="<%- task.id %>"
@@ -95,38 +107,37 @@
           <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
             <td>&nbsp;</td>
           <% } %>
-        
-        
-          <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+        <% } %>
+        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <a href="#delete/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="delete-task"
+              alt="Delete Opportunity"
+              title="Delete Opportunity">
+              <span class='fa fa-times'></span>
+              <span class="usa-sr-only">Delete Opportunity</span>
+            </a>
+          </td>
+        <% } else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+          <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
             <td class="metrics-table__button">
-              <a href="#delete/<%- task.id %>"
+              <a href="#add-participant/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
-                class="delete-task"
-                alt="Delete Opportunity"
-                title="Delete Opportunity">
-                <span class='fa fa-times'></span>
-                <span class="usa-sr-only">Delete Opportunity</span>
+                class="task-add-participant"
+                alt="Add participant"
+                title="Add participant">
+                <i class="fas fa-user-plus"></i>
+                <span class="usa-sr-only">Add participant</span>
               </a>
             </td>
-          <% } else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
-            <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
-              <td class="metrics-table__button">
-                <a href="#add-participant/<%- task.id %>"
-                  data-task-id="<%- task.id %>"
-                  data-task-title="<%- task.title %>"
-                  class="task-add-participant"
-                  alt="Add participant"
-                  title="Add participant">
-                  <i class="fas fa-user-plus"></i>
-                  <span class="usa-sr-only">Add participant</span>
-                </a>
-              </td>
-            <% } %>
-          <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
-            <td>&nbsp;</td>
           <% } %>
+        <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
+          <td>&nbsp;</td>
+        <% } %>
       </tr>
     <% }); %>
   </tbody>
-</table>
+</table>  

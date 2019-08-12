@@ -15,6 +15,7 @@ var AdminTaskView = Backbone.View.extend({
     'click input[type="radio"]' : 'filterChanged',
     'click #reindex'            : 'reindex',
     'click a.page'              : 'clickPage',
+    'click .approve-error'      : 'approveError',
     'click #task-back'          : linkBackbone,
   },
 
@@ -75,6 +76,7 @@ var AdminTaskView = Backbone.View.extend({
       data: this.data,
       dataType: 'json',
       success: function (data) {
+        this.tasks = data.tasks;
         _.extend(data, this.data);
         data.agency = this.agency;
         data.community = this.community;
@@ -97,6 +99,7 @@ var AdminTaskView = Backbone.View.extend({
       tasks: tasks,
       status: this.data.status,
       targetAudience: this.community.targetAudience,
+      cycles: (this.community.cycles || {}),
       countOf: totalResults,
       firstOf: this.data.page * 25 - 24,
       lastOf: this.data.page * 25 - 25 + tasks.length,
@@ -132,11 +135,29 @@ var AdminTaskView = Backbone.View.extend({
     this.loadData();
   },
 
+  getCycleName: function (submittedTaskCycleId) {  
+    var cycleName = _.find(this.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
+    if (cycleName) {
+      return cycleName.name;
+    }
+  },
+
+  getSubmittedTaskCycleId: function (taskId) {
+    var submittedTask = _.find(this.tasks, function (task) { return task.id == taskId; });
+    if (submittedTask.cycle_id) {
+      return submittedTask.cycle_id;
+    }
+  },
+
   collectEventData: function (event) {
     event.preventDefault();
+    var taskId = $(event.currentTarget).data('task-id');
+    var submittedTaskCycleId = this.getSubmittedTaskCycleId(taskId);
+    var cycleName = this.getCycleName(submittedTaskCycleId);
     return { 
       id: $(event.currentTarget).data('task-id'),
       title: $( event.currentTarget ).data('task-title'),
+      cycleName: cycleName,
     };
   },
 
@@ -144,6 +165,7 @@ var AdminTaskView = Backbone.View.extend({
    * Open a "submitted" task from the admin task view.
    * @param { jQuery Event } event
    */
+
   openTask: function (event) {
     var data = this.collectEventData(event);
     var titleAction = (this.community.targetAudience !== 'Students') ? 'publish' : 'approval';
@@ -243,6 +265,23 @@ var AdminTaskView = Backbone.View.extend({
       },
     });
     reindexModal.render();  
+  },
+
+  approveError: function (event) {
+    var data = this.collectEventData(event);
+    this.modal = new Modal({
+      id: 'approveError',
+      alert: 'error',
+      modalTitle: 'Cycle posting has ended',
+      modalBody: 'You cannot approve this internship opportunity because the posting dates have ended for cycle "' + data.cycleName + '".',
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: { },
+    }).render();
   },
 });
 
