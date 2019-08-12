@@ -13,13 +13,14 @@ var AdminTaskView = Backbone.View.extend({
     'click .task-open'              : 'openTask',
     'click input[type="radio"]'     : 'filterChanged',
     'click #reindex'                : 'reindex',
+    'click .approve-error'          : 'approveError',
   },
 
   initialize: function (options) {
     this.options = options;
     this.data = {
       page: 1,
-    };
+    };  
     this.agency = {};
     this.community = {};
     this.baseModal = {
@@ -66,9 +67,9 @@ var AdminTaskView = Backbone.View.extend({
       data: this.data,
       dataType: 'json',
       success: function (data) {
-        this.tasks = data;
+        this.tasks = data;    
         data.agency = this.agency;
-        data.community= this.community;
+        data.community= this.community;   
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -83,10 +84,12 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   renderTasks: function (tasks) {
+    var availableCycles = tasks.community.cycles || {};
     var data = {
       tasks: tasks[$('.filter-radio:checked').attr('id')],
       status:$('.filter-radio:checked').attr('id'),
       targetAudience: tasks.community.targetAudience,
+      cycles: availableCycles,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
@@ -108,11 +111,29 @@ var AdminTaskView = Backbone.View.extend({
     }
   },
 
+  getCycleName: function (submittedTaskCycleId) {  
+    var cycleName = _.find(this.tasks.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
+    if (cycleName) {
+      return cycleName.name;
+    }
+  },
+
+  getSubmittedTaskCycleId: function (taskId) {
+    var submittedTask = _.find(this.tasks.submitted, function (task) { return task.id == taskId; });
+    if (submittedTask.cycleId) {
+      return submittedTask.cycleId;
+    }
+  },
+
   collectEventData: function (event) {
     event.preventDefault();
+    var taskId = $(event.currentTarget).data('task-id');
+    var submittedTaskCycleId = this.getSubmittedTaskCycleId(taskId);
+    var cycleName = this.getCycleName(submittedTaskCycleId);
     return { 
       id: $(event.currentTarget).data('task-id'),
       title: $( event.currentTarget ).data('task-title'),
+      cycleName: cycleName,
     };
   },
 
@@ -120,6 +141,7 @@ var AdminTaskView = Backbone.View.extend({
    * Open a "submitted" task from the admin task view.
    * @param { jQuery Event } event
    */
+
   openTask: function (event) {
     var data = this.collectEventData(event);
     var titleAction = (this.community.targetAudience !== 'Students') ? 'publish' : 'approval';
@@ -219,6 +241,23 @@ var AdminTaskView = Backbone.View.extend({
       },
     });
     reindexModal.render();  
+  },
+
+  approveError: function (event) {
+    var data = this.collectEventData(event);
+    this.modal = new Modal({
+      id: 'approveError',
+      alert: 'error',
+      modalTitle: 'Cycle posting has ended',
+      modalBody: 'You cannot approve this internship opportunity because the posting dates have ended for cycle "' + data.cycleName + '".',
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: { },
+    }).render();
   },
 });
 
