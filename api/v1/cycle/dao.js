@@ -19,6 +19,13 @@ dao.query.getApplicationCount = `
     select count(*) applicant_count from application where submitted_at is not null and cycle_id = ?
 `;
 
+dao.query.isCommunityManager = `
+    select is_manager
+    from community_user
+      inner join cycle on community_user.community_id = cycle.community_id
+    where community_user.user_id = ? and cycle_id = ?
+`;
+
 dao.query.getApplicationExistingCount = `
     select count(task_list_application.*) applicant_count
     from task_list_application
@@ -132,7 +139,8 @@ dao.query.GetPhaseData = `
     case when c.is_processing and coalesce(p."sequence", 0) < 1 then true
       when coalesce(p."sequence", 0) < 1 then false
       else true end as phases_started,
-    (select count(*) from phase) as total_phases
+    (select count(*) from phase) as total_phases,
+    (select is_manager from community_user where user_id = ? and community_id = c.community_id) as is_manager
   from
     "cycle" c
     left join phase p on p.phase_id = c.phase_id

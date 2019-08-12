@@ -8,11 +8,17 @@ var router = new Router();
 var Handler = {};
 
 router.get('/api/v1/cycle/getPhaseData', auth.bearer, async (ctx, next) => {
-  var data = await service.getPhaseData(ctx.query.cycleID);
+  var data = await service.getPhaseData(ctx.state.user.id, ctx.query.cycleID);
   ctx.body = data;
 });
 
 router.post('/api/v1/cycle/beginPhase', auth.bearer, async (ctx, next) => {
+  var isManager = await service.checkIsManager(ctx.state.user.id, ctx.request.fields.cycleId);
+  if (!isManager) {
+    ctx.status = 403;
+    ctx.body = { message: 'Forbidden' };
+    return false;
+  }
   Handler[ctx.request.fields.action](ctx).then(async results => {
     service.createAuditLog('PHASE_STARTED', ctx, {
       cycleId: ctx.request.fields.cycleId,
