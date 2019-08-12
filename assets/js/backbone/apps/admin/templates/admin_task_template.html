@@ -7,7 +7,7 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
-<p class="back-link"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<p class="back-link"><a id="task-back" href="<%- returnUrl %>"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
 <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/opportunity-status/"  target="_blank" rel="noopener noreferrer" title="Help">
   <span class="usajobs-nav--openopps__section">
     <span class="fas fa-question-circle" title="Help"></span>Help
@@ -21,49 +21,49 @@
     <ul class="usa-unstyled-list__radio--horizontal" id="opp-status">
       <% if (community.duration == 'Cyclical') { %>
         <li>
-          <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft">
-          <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- draft.length %></label>
+          <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft" <% if (status == 'draft') { %>checked<% } %>>
+          <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- (_.findWhere(totals, { task_state: 'draft' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
-          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" <% if (status == 'submitted') { %>checked<% } %>>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- (_.findWhere(totals, { task_state: 'submitted' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="approved" name="opp-status" type="radio" class="filter-radio" value="approved" >
-          <label for="approved"><span class="usajobs-pill--opportunity-status status-approved">Approved</span> <%- approved.length %></label>
+          <input id="approved" name="opp-status" type="radio" class="filter-radio" value="approved" <% if (status == 'approved') { %>checked<% } %>>
+          <label for="approved"><span class="usajobs-pill--opportunity-status status-approved">Approved</span> <%- (_.findWhere(totals, { task_state: 'approved' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
-          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open" <% if (status == 'open') { %>checked<% } %>>
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- (_.findWhere(totals, { task_state: 'open' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
-          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed" <% if (status == 'completed') { %>checked<% } %>>
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- (_.findWhere(totals, { task_state: 'completed' }) || {}).count || 0 %></label>
         </li>
       <% } else { %>
         <li>
-          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" checked>
-          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- submitted.length %></label>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" <% if (status == 'submitted') { %>checked<% } %>>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- (_.findWhere(totals, { task_state: 'submitted' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open">
-          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- open.length %></label>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open" <% if (status == 'open') { %>checked<% } %>>
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- (_.findWhere(totals, { task_state: 'open' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="notOpen">
-          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- notOpen.length %></label>
+          <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="not open" <% if (status == 'not open') { %>checked<% } %>>
+          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- (_.findWhere(totals, { task_state: 'not open' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="inProgress">
-          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- inProgress.length %></label>
+          <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="in progress"  <% if (status == 'in progress') { %>checked<% } %>>
+          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- (_.findWhere(totals, { task_state: 'in progress' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed">
-          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- completed.length %></label>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed" <% if (status == 'completed') { %>checked<% } %>>
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- (_.findWhere(totals, { task_state: 'completed' }) || {}).count || 0 %></label>
         </li>
         <li>
-          <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled">
-          <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- canceled.length %></label>
+          <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled" <% if (status == 'canceled') { %>checked<% } %>>
+          <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- (_.findWhere(totals, { task_state: 'canceled' }) || {}).count || 0 %></label>
         </li>
       <% } %>
     </ul>
@@ -71,6 +71,8 @@
 </div>
 
 <div id="task-table" class="table-responsive"></div>
+
+<div id="task-page"></div>
 
 <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
     title="Download list of tasks as a comma-separated file ready for import into Excel">
