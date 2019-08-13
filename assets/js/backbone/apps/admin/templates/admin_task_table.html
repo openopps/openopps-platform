@@ -1,6 +1,24 @@
-<% if(countOf) { %>
-  <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
-<% } %>
+
+<div id="usajobs-search-controls-participated">
+  <div class="usajobs-grid usajobs-search-controls">
+    <div class="usajobs-search-controls__results-count-container no-params">
+      <% if(countOf) { %>
+        <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
+      <% } %>
+    </div> 
+      <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+        <label class="usajobs-search-controls__sort-label" for="sort-results">
+          Sort by
+        </label>
+        <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+            <option value="" disabled>- Sort By -</option>  
+          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>
+          <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
+          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>     
+        </select>
+      </div>    
+  </div>
+</div>
 <table class="usa-table-borderless task-table" role="presentation">
   <thead>
     <tr>
@@ -31,7 +49,7 @@
         <td colspan="5">No tasks</td>
       </tr>
     <% } %>
-    <% _.each(_.sortBy(tasks, 'createdAt').reverse(), function (task) { %>
+    <% _.each(tasks, function (task) { %>
       <tr>
         <td class="metrics-table__title">
           <a href="/tasks/<%- task.id %>"><%- task.title %></a>
