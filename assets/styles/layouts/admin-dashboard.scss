@@ -430,6 +430,40 @@
       margin-left: $size-base;
     }
   }
+ 
+  .usajobs-search-controls__sort-containerr  {
+    @include media($ML) {
+      float: left;
+      display: block;
+      margin-right: 2.35765%;
+      width: 48.82117%;
+      margin-right: 0;
+      text-align: right;
+
+      .usajobs-search-controls__sort-container r:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  
+  .usajobs-search-controls__sort-label {
+    display: inline-block;
+    margin-top: $size-default;
+    padding-right: 0.5rem;
+    font-weight: bold;
+
+    @include media($M-down) {
+      display: block;
+    }
+  }
+  .usajobs-search-controls {
+    padding-top: 0;
+
+    @include media($L-down) {
+      padding: 0 $size-default $size-default $size-default;
+    }
+  }
+  
 
   @include media($SM-down) {
     .usa-button-secondary {
