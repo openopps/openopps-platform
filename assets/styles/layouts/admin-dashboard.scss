@@ -67,7 +67,15 @@
   }
 
   .activity-feed {
+    height: 45rem;
+    overflow-y: auto;
+    border: 1px solid $color-gray-lighter;
+    padding: $size-default $size-SM;
+    margin-top: $size-M;
+    margin-bottom: $size-M;
+
     li {
+      list-style: none;
       margin-bottom: 1.5em;
     }
   }
@@ -103,10 +111,72 @@
         padding-bottom: 0;
       }
     }
+
+    .usajobs-section-header {
+      margin-top: $size-M;
+      color: $color-primary-darker;
+      border-bottom-color: $color-primary-darker;
+    }
   }
+
+  .top-contributors {
+    .graph-header {
+      font-style: italic;
+      margin-top: $size-S;
+    }
+
+    ol {
+      padding-left: 0.94em;
+
+      li {
+        margin-bottom: 2rem;
+      }
+    }
+
+    .fa-download, .box-icon-text {
+      color: $color-primary;
+    }
+  }
+
+  .graph {
+    margin-bottom: 2rem;
+    width: calc(100% - 5rem);
+
+    &.horizontal {
+      height: 2.5rem;
+      margin-right: $size-SM;
+
+      .bar {
+        height: 100%;
+
+        .value {
+          left: calc(100% + 1rem);
+        }
+      }
+    }
+
+    .bar {
+      // background-color: $color-primary-alt-light;
+      position: relative;
+
+      .value {
+        position: relative;
+      }
+    }
+  }
+
+  .opportunities-created .graph .bar {
+    background-color: $color-primary-alt-light;
+  }
+
+  .opportunities-participating .graph .bar {
+    background-color: $color-secondary-lightest;
+  }
+
   .add-community {
     margin-bottom: $size-default;
   }
+
   .back-link {
     color: $color-primary;
 
@@ -280,11 +350,12 @@
       color: #487E40;
     }
 
-    .delete-task {
+    .delete-task, .approve-error {
       color: #CD2026;
+      cursor: pointer;
     }
 
-    .task-open, .delete-task, .task-change-owner, .task-add-participant {
+    .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error {
       padding: 7px 10px;
     }
 
@@ -359,6 +430,40 @@
       margin-left: $size-base;
     }
   }
+ 
+  .usajobs-search-controls__sort-containerr  {
+    @include media($ML) {
+      float: left;
+      display: block;
+      margin-right: 2.35765%;
+      width: 48.82117%;
+      margin-right: 0;
+      text-align: right;
+
+      .usajobs-search-controls__sort-container r:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  
+  .usajobs-search-controls__sort-label {
+    display: inline-block;
+    margin-top: $size-default;
+    padding-right: 0.5rem;
+    font-weight: bold;
+
+    @include media($M-down) {
+      display: block;
+    }
+  }
+  .usajobs-search-controls {
+    padding-top: 0;
+
+    @include media($L-down) {
+      padding: 0 $size-default $size-default $size-default;
+    }
+  }
+  
 
   @include media($SM-down) {
     .usa-button-secondary {
