@@ -33,6 +33,14 @@ router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
   }
 });
 
+router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
+  await service.getTopContributors().then(results => {
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = 400;
+  })
+});
+
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
   //ctx.body = await service.getTaskStateMetrics();
   await service.getTaskStateMetrics(ctx.query.status, ctx.query.page).then(results => {
