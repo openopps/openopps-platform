@@ -6,6 +6,7 @@
         <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
       <% } %>
     </div> 
+    <% if (tasks.length > 0) { %>
       <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
         <label class="usajobs-search-controls__sort-label" for="sort-results">
           Sort by
@@ -16,7 +17,8 @@
           <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>       
           <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>     
         </select>
-      </div>    
+      </div>   
+      <% } %> 
   </div>
 </div>
 <table class="usa-table-borderless task-table" role="presentation">
