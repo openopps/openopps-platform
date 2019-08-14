@@ -16,15 +16,18 @@ var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
 var AdminUserView = Backbone.View.extend({
   events: {
-    'click a.page'              : 'clickPage',
-    'click .link-backbone'      : linkBackbone,
-    'click .user-enable'        : 'toggleCheckbox',
-    'click .assign-admin'       : 'toggleCheckbox',
-    'click .member-enable'      : 'toggleCheckbox',
-    'click .user-reset'         : 'resetPassword',
-    'click #invite-members'     : 'inviteMembers',
-    'keyup #user-filter'        : 'filter',
-    'click .remove-member'      : 'removeMember',
+    'click a.page'                : 'clickPage',
+    'click .link-backbone'        : linkBackbone,
+    'click .user-enable'          : 'toggleCheckbox',
+    'click .assign-admin'         : 'toggleCheckbox',
+    'click .member-enable'        : 'toggleCheckbox',
+    'click .user-reset'           : 'resetPassword',
+    'click #invite-members'       : 'inviteMembers',
+    'keyup #user-filter'          : 'filter',
+    'click .remove-member'        : 'removeMember',
+    'change #sort-user-sitewide'  : 'sortUsers',
+    'change #sort-user-agency'    : 'sortUsers',
+    'change #sort-user-community' : 'sortUsers',
   },
 
   initialize: function (options) {
@@ -187,6 +190,7 @@ var AdminUserView = Backbone.View.extend({
     data.lastOf = data.page * data.limit - data.limit + data.users.length;
     data.countOf = data.count;
     data.target = this.options.target;
+    data.sort = this.options.sort || 'createdAt',
     data.isAdministrator = this.isAdministrator;
 
     // render the table
@@ -397,6 +401,30 @@ var AdminUserView = Backbone.View.extend({
         }.bind(this),
       },
     }).render();
+  },
+
+  sortUsers: function (e) {
+    var target = $(e.currentTarget)[0];
+    var data = this.data.users;
+    var sortedData = [];
+    // if(target.id == 'sort-user-sitewide' && target.value == 'state') {
+    //   sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
+    //     return this.getStatus(item);
+    //   }.bind(this));
+    // } else {
+    //   sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
+    // }
+    if(target.value == 'createdAt') {
+      sortedData = sortedData.reverse();
+    }
+    if(target.value == 'name'){
+      sortedData = _.sortBy(data, function (item){
+        return item;
+      });     
+    } 
+    this.data.sort = target.value;
+    this.data.users = sortedData;
+    this.render(sortedData);
   },
 
   submitReset: function (email) {
