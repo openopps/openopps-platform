@@ -133,9 +133,9 @@ module.exports.getTopContributors = function () {
       resolve({
         fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
         creators: results[0].rows,
-        creatorMax: _.max(results[0].rows.map(row => { return row.count; })),
+        creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         participants: results[1].rows,
-        participantMax: _.max(results[1].rows.map(row => { return row.count; })),
+        participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
       });
     }).catch(reject);
   });
