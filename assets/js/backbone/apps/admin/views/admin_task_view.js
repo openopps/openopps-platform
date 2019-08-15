@@ -26,6 +26,7 @@ var AdminTaskView = Backbone.View.extend({
     this.data = {
       page: this.params.get('p') || 1,
       status: this.params.get('q') || 'submitted',
+      sort: this.params.get('s') || 'date',
       returnUrl: '/admin',
     };
     if (this.options.target !== 'sitewide') {
@@ -47,7 +48,6 @@ var AdminTaskView = Backbone.View.extend({
 
   render: function () {
     $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
-
     if (this.options.target !== 'sitewide') {
       this.loadTargetData();
     } else {
@@ -97,7 +97,7 @@ var AdminTaskView = Backbone.View.extend({
 
   renderTasks: function (tasks, totals) {
     var totalResults = (_.findWhere(totals, { task_state: this.data.status }) || {}).count || 0;
-    this.selectedTasks = {
+    var data = {
       tasks: tasks,
       status: this.data.status,
       targetAudience: this.community.targetAudience,
@@ -105,10 +105,9 @@ var AdminTaskView = Backbone.View.extend({
       countOf: totalResults,
       firstOf: this.data.page * 25 - 24,
       lastOf: this.data.page * 25 - 25 + tasks.length,
-      sort:'date',
+      sort: this.data.sort,
     };
-    this.selectedTasks.tasks=_.sortBy(this.selectedTasks.tasks, 'createdAt').reverse();
-    var template = _.template(AdminTaskTable)(this.selectedTasks);
+    var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
     if (totalResults) {
       var pageData = getPaginationData(totalResults, 25, this.data.page);
@@ -116,37 +115,16 @@ var AdminTaskView = Backbone.View.extend({
       this.$('#task-page').html(_.template(Paginate)(pageData));
     }
   },
+
   sortStatus: function (e) {
     var target = $(e.currentTarget)[0];
-    var sortedData = [];     
-    if(target.value == 'title'){
-  
-      sortedData = _.sortBy(this.selectedTasks.tasks, function (item){
-        item.title = item.title.replace(/[^A-Za-z0-9]/g, ' ');     
-        item.title= item.title.trim();
-        return item.title;
-      });     
-    }
-    if(target.value == 'creator'){
-      sortedData = _.sortBy(this.selectedTasks.tasks, function (item){
-        item.owner.name= item.owner.name.trim();
-        return item.owner.name.substring(item.owner.name.lastIndexOf(' '));
-      });     
-    }
-    if(target.value == 'date'){
-      sortedData = _.sortBy(this.selectedTasks.tasks, 'createdAt').reverse();
-    }
-  
-    this.selectedTasks.tasks= sortedData;
-    this.selectedTasks.sort= target.value;
-    this.renderSelectedTasks();
-     
+    this.data.sort = target.value;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
   },
-  renderSelectedTasks: function (){
-    var template = _.template(AdminTaskTable)(this.selectedTasks);
-    this.$('#task-table').html(template);
 
-  },
   clickPage: function (e) {
     if (e.preventDefault) e.preventDefault();
     this.data.page = $(e.currentTarget).data('page');
@@ -157,7 +135,7 @@ var AdminTaskView = Backbone.View.extend({
 
   generateURL: function () {
     var url = window.location.pathname;
-    url += '?q=' + this.data.status + '&p=' + this.data.page;
+    url += '?q=' + this.data.status + '&p=' + this.data.page + '&s=' + this.data.sort;
     return url;
   },
 
