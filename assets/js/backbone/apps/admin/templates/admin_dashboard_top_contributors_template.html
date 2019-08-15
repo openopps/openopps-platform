@@ -7,7 +7,7 @@
         <h5 class="graph-header">Agency</h5>
         <ol>
           <% _.each(creators, function (creator) { %>
-            <li><%- creator.name %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)</li>
+            <li><%- creator.name %><% if (_.filter([creator.abbr, creator.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)<% } %></li>
           <% }); %>
         </ol>
       </div>
@@ -32,7 +32,7 @@
         <h5 class="graph-header">Agency</h5>
         <ol>
           <% _.each(participants, function (participant) { %>
-            <li><%- participant.name %> (<%- _.unique(_.filter([participant.abbr, participant.parent_abbr], _.identity)).join('/') %>)</li>
+            <li><%- participant.name %><% if (_.filter([participant.abbr, participant.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([participant.abbr, participant.parent_abbr], _.identity)).join('/') %>)<% } %></li>
           <% }); %>
         </ol>
       </div>
