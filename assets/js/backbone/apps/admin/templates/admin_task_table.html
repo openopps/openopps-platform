@@ -80,7 +80,7 @@
         </td>
         <% if (_.contains(['submitted'], status.toLowerCase())) { %>
           <td class="metrics-table__button">
-            <% if (targetAudience !== 'Students' || (task.cycleId && (_.find(cycles, function (cycle) { return cycle.cycleId == task.cycleId; }) || {}).postingEndDate > new Date())) { %>
+            <% if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
               <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
@@ -112,21 +112,17 @@
             <% } %>
           </td>
         <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
-          <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
-            <td class="metrics-table__button">
-              <a href="#change-owner/<%- task.id %>"
-                data-task-id="<%- task.id %>"
-                data-task-title="<%- task.title %>"
-                class="task-change-owner"
-                alt="Change Owner"
-                title="Change Owner">
-                <i class="fas fa-user-cog"></i>
-                <span class="usa-sr-only">Change Owner</span>
-              </a>
-            </td>
-          <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
-            <td>&nbsp;</td>
-          <% } %>
+          <td class="metrics-table__button">
+            <a href="#change-owner/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="task-change-owner"
+              alt="Change Owner"
+              title="Change Owner">
+              <i class="fas fa-user-cog"></i>
+              <span class="usa-sr-only">Change Owner</span>
+            </a>
+          </td>
         <% } %>
         <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
           <td class="metrics-table__button">
