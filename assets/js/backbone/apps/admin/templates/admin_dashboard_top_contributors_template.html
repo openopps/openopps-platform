@@ -1,4 +1,4 @@
-<h3 class="usajobs-section-header">Top contributors FY18</h3>
+<h3 class="usajobs-section-header">Top contributors <%- fiscalYear %></h3>
 <div class="top-contributors usajobs-grid-full">
   <div class="usa-width-one-half">
     <h3>Opportunities created</h3>
@@ -6,40 +6,20 @@
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
         <ol>
-          <li>Office of Personnel Management</li>
-          <li>General Services Administration</li>
-          <li>Department of Labor</li>
-          <li>Department of Veterans Affairs</li>
-          <li>Department of Energy</li>
+          <% _.each(creators, function (creator) { %>
+            <li><%- creator.name %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)</li>
+          <% }); %>
         </ol>
       </div>
       <div class="usa-width-one-half">
         <h5 class="graph-header"># of opportunities</h5>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(60 / 103 * 100) %>%">
-            <span class="value">60</span>
+        <% _.each(creators, function (creator) { %>
+          <div class="graph horizontal">
+            <div class="bar" style="width: <%= Math.ceil(creator.count / creatorMax * 100) %>%">
+              <span class="value"><%- creator.count %></span>
+            </div>
           </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(50 / 103 * 100) %>%">
-            <span class="value">50</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(30 / 103 * 100) %>%">
-            <span class="value">30</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(27 / 103 * 100) %>%">
-            <span class="value">27</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(2 / 103 * 100) %>%">
-            <span class="value">2</span>
-          </div>
-        </div>
+        <% }); %>
       </div>
     </div>
     <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
@@ -51,40 +31,20 @@
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
         <ol>
-          <li>Office of Personnel Management</li>
-          <li>General Services Administration</li>
-          <li>Department of Labor</li>
-          <li>Department of Veterans Affairs</li>
-          <li>Department of Energy</li>
+          <% _.each(participants, function (participant) { %>
+            <li><%- participant.name %> (<%- _.unique(_.filter([participant.abbr, participant.parent_abbr], _.identity)).join('/') %>)</li>
+          <% }); %>
         </ol>
       </div>
       <div class="usa-width-one-half">
         <h5 class="graph-header"># of opportunities</h5>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(103 / 103 * 100) %>%">
-            <span class="value">103</span>
+        <% _.each(participants, function (participant) { %>
+          <div class="graph horizontal">
+            <div class="bar" style="width: <%= Math.ceil(participant.count / participantMax * 100) %>%">
+              <span class="value"><%- participant.count %></span>
+            </div>
           </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(80 / 103 * 100) %>%">
-            <span class="value">80</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(78 / 103 * 100) %>%">
-            <span class="value">78</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(28 / 103 * 100) %>%">
-            <span class="value">28</span>
-          </div>
-        </div>
-        <div class="graph horizontal">
-          <div class="bar" style="width: <%= Math.ceil(2 / 103 * 100) %>%">
-            <span class="value">2</span>
-          </div>
-        </div>
+        <% }); %>
       </div>
     </div>
     <i class="fa fa-download"></i><span class="opportunities-participating--download box-icon-text">Download full list (.csv)</span>
