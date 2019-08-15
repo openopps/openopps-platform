@@ -128,7 +128,7 @@ module.exports.getTopContributors = function () {
   return new Promise((resolve, reject) => {
     Promise.all([
       db.query(topAgencyCreatorsQuery, [FY.start, FY.end]),
-      db.query(topAgencyCreatorsQuery, [FY.start, FY.end]),
+      db.query(topAgencyParticipants, [FY.start, FY.end]),
     ]).then(results => {
       resolve({
         fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
