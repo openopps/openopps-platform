@@ -192,18 +192,23 @@ var AdminUserView = Backbone.View.extend({
     data.target = this.options.target;
     data.sort = this.options.sort || 'createdAt',
     data.isAdministrator = this.isAdministrator;
+    data.users = _.sortBy(data.users, 'createdAt').reverse();
 
+    this.renderSelectedUsers();
+  },
+
+  renderSelectedUsers: function () {
     // render the table
     var template;
     if (this.options.target === 'community') {
-      template = _.template(AdminCommunityUserTable)(data);
+      template = _.template(AdminCommunityUserTable)(this.data);
     }  else {
-      template = _.template(AdminUserTable)(data);
+      template = _.template(AdminUserTable)(this.data);
     } 
 
     // render the pagination
-    this.renderPagination(data);
-    this.$('#filter-count').html(data.users.length);
+    this.renderPagination(this.data);
+    this.$('#filter-count').html(this.data.users.length);
     this.$('#user-table').html(template);
     this.$('.btn').tooltip();
     this.$('#user-table').show();
@@ -405,26 +410,53 @@ var AdminUserView = Backbone.View.extend({
 
   sortUsers: function (e) {
     var target = $(e.currentTarget)[0];
-    var data = this.data.users;
     var sortedData = [];
-    // if(target.id == 'sort-user-sitewide' && target.value == 'state') {
-    //   sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
-    //     return this.getStatus(item);
-    //   }.bind(this));
-    // } else {
-    //   sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
-    // }
-    if(target.value == 'createdAt') {
-      sortedData = sortedData.reverse();
+    if(target.value === 'createdAt') {
+      sortedData = _.sortBy(this.data.users, 'createdAt').reverse();
     }
-    if(target.value == 'name'){
-      sortedData = _.sortBy(data, function (item){
-        return item;
-      });     
+    if(target.value === 'lastLogin') {
+      sortedData = _.sortBy(this.data.users, 'last_login').reverse();
+    }
+    if(target.value === 'enabled') {
+      sortedData = _.sortBy(this.data.users, 'disabled');
+    }
+    if(target.value === 'sitewideAdmin') {
+      sortedData = _.sortBy(this.data.users, 'isAdmin').reverse();
+    }
+    if(target.value === 'agencyAdmin') {
+      sortedData = _.sortBy(this.data.users, 'isAgencyAdmin').reverse();
+    }
+    if(target.value === 'communityAdmin') {
+      sortedData = _.sortBy(this.data.users, 'isCommunityAdmin').reverse();
+    }
+    if(target.value === 'name'){
+      sortedData = _.sortBy(this.data.users, function (item){
+        item.last_name = item.last_name.replace(/[^A-Za-z0-9]/g, ' ');     
+        item.last_name = item.last_name.trim() || '';
+        return item.last_name;
+      });          
+    }
+    if(target.value === 'agency') {
+      sortedData = _.sortBy(this.data.users, function (item){
+        // item.agency= item.agency.trim() || '';
+        return item.agency;
+      });  
+    } 
+    if(target.value === 'governmentUri'){
+      sortedData = _.sortBy(this.data.users, function (item){
+        item.government_uri= item.government_uri.trim();
+        return item.government_uri;
+      });          
+    } 
+    if(target.value === 'loginEmail'){
+      sortedData = _.sortBy(this.data.users, function (item){
+        item.username= item.username.trim();
+        return item.username;
+      });          
     } 
     this.data.sort = target.value;
     this.data.users = sortedData;
-    this.render(sortedData);
+    this.renderSelectedUsers();
   },
 
   submitReset: function (email) {

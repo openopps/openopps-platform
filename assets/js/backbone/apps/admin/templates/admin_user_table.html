@@ -15,7 +15,7 @@
         <option value="" disabled>- Sort By -</option>
         <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
         <option value="governmentUri" <% if (sort == 'governmentUri') { %>selected<% } %>>Federal email</option>
-        <option value="loginEmail" <% if (sort == 'loginEmail') { %>selected<% } %>>login.gov email</option>
+        <option value="loginEmail" <% if (sort == 'loginEmail') { %>selected<% } %>>Login.gov email</option>
         <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
         <option value="lastLogin" <% if (sort == 'lastLogin') { %>selected<% } %>>Last login</option>
         <option value="enabled" <% if (sort == 'enabled') { %>selected<% } %>>Enabled</option>
@@ -78,14 +78,14 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
-        <% if (target == 'sitewide') { %>
         <td class="admin-table-federalEmail">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
-        <% } %>
+        <% if (target == 'sitewide') { %>
         <td class="admin-table-username">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
         </td>
+        <% } %>
         <td class="admin-table-createdat">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>

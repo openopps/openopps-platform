@@ -104,7 +104,10 @@ const communityTaskVolunteerPerUserQuery = 'select count(*) as participated from
   'inner join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ? and volunteer."userId" = ? ';
 
-const userListQuery = 'select midas_user.*, count(*) over() as full_count ' +
+const userListQuery = 'select government_uri, username, "createdAt", "isAdmin", disabled, agency_id, hiring_path, last_login, id, name, ' +
+  'coalesce(given_name, (string_to_array(trim(name), \' \'))[array_lower(string_to_array(trim(name), \' \'), 1)]) as given_name, ' +
+  'coalesce(last_name, (string_to_array(trim(name), \' \'))[array_upper(string_to_array(trim(name), \' \'), 1)]) as last_name, ' +
+  'count(*) over() as full_count ' +
   'from midas_user ' +
   'order by "createdAt" desc ' +
   'limit 25 ' +
