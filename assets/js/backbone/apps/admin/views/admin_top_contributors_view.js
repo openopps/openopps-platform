@@ -8,54 +8,29 @@ var AdminTopContributorsTemplate = require('../templates/admin_dashboard_top_con
 
 var AdminTopContributorsView = Backbone.View.extend({
   events: {
-    // 'click .class'            : '',
+    // 'click .class' : '',
   },
 
   initialize: function (options) {
     this.options = options;
-    // this.data = {
-    //   page: 1,
-    // };  
-    // this.agency = {};
-    // this.community = {};
-    // this.baseModal = {
-    //   el: '#site-modal',
-    //   secondary: {
-    //     text: 'Cancel',
-    //     action: function () {
-    //       this.modalComponent.cleanup();
-    //     }.bind(this),
-    //   },
-    // };
   },
 
   render: function () {
-    var template = _.template(AdminTopContributorsTemplate)({});
-    this.$el.html(template);
-    // $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
-    // this.loadData();
-    // return this;
+    this.loadData();
+    // var template = _.template(AdminTopContributorsTemplate)({});
+    // this.$el.html(template);
   },
 
   loadData: function () {
-    var url = '/api/admin';
-    if (this.options.target !== 'sitewide') {
-      url += '/' + this.options.target + '/' + this.options.targetId;
-    }
-    url += '/tasks';
     $.ajax({
-      url: url,
-      data: this.data,
+      url: '/api/admin/contributors',
       dataType: 'json',
       success: function (data) {
-        this.tasks = data;    
-        data.agency = this.agency;
-        data.community= this.community;   
+        this.contributors = data;   
         var template = _.template(AdminTopContributorsTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
         this.$el.show();
-        this.renderTasks(this.tasks);
       }.bind(this),
       error: function () {
         $('#search-results-loading').hide();
