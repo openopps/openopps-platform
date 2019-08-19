@@ -272,7 +272,7 @@ dao.query.GetCycleApplicantData = `
       last_name,
       case when pri.task_id is not null then task.title end as "primary",
       case when alt.task_id is not null then task.title end as "alternate",
-      board.task_id,
+      board.task_id as "board_id",
       case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
   from midas_user
     inner join application on midas_user.id = application.user_id
