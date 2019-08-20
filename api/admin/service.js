@@ -428,9 +428,8 @@ module.exports.checkCommunity = async function (user, ownerId) {
 
 module.exports.getDashboardTaskMetrics = async function (group, filter) {
   var tasks = dao.clean.task(await dao.Task.query(dao.query.taskMetricsQuery, {}, dao.options.taskMetrics));
-  var volunteers = await dao.Volunteer.find({ taskId: _.map(tasks, 'id') });
-  var agencyPeople = dao.clean.users(await dao.User.query(dao.query.volunteerDetailsQuery, {}, dao.options.user));
-  var generator = new TaskMetrics(tasks, volunteers, agencyPeople, group, filter);
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
   generator.generateMetrics(function (err) {
     if (err) res.serverError(err + ' metrics are unavailable.');
     return null;

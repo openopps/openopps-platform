@@ -38,7 +38,7 @@ router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
     ctx.body = results;
   }).catch(err => {
     ctx.status = 400;
-  })
+  });
 });
 
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
@@ -50,7 +50,7 @@ router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
     };
   }).catch(err => {
     ctx.status = 400;
-  })
+  });
 });
 
 router.get('/api/admin/agencies',auth.isAdmin, async (ctx, next) => {
@@ -81,7 +81,7 @@ router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx,
     };
   }).catch(err => {
     ctx.status = 400;
-  })
+  });
 });
 
 router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
@@ -94,7 +94,7 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
       };
     }).catch(err => {
       ctx.status = 400;
-    })
+    });
   } else {
     ctx.status = 403;
   }

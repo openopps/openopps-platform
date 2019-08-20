@@ -220,9 +220,10 @@ const activityTaskQuery = 'select midas_user.name, midas_user.username, task.tit
 
 const taskMetricsQuery = 'select @task.*, @tags.* ' +
   'from @task task ' +
+  'left join community on task.community_id = community.community_id '+
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
-  'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ';
-
+  'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+   'where  (community.target_audience <> 2 or community.target_audience is null) ';
 const volunteerDetailsQuery = 'select @m_user.*, @tags.* ' +
   'from @midas_user m_user ' +
   'inner join volunteer on m_user.id = volunteer."userId" ' +
@@ -237,6 +238,11 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   "and tagentity.type = 'agency' ";
 
 const userCommunityQuery = '';
+
+const volunteerTaskQuery='select volunteer.* ' +
+'from volunteer ' +
+'join task on task.id = volunteer."taskId" ' +
+ "where task.state ='completed' ";
 
 var exportFormat = {
   'user_id': 'id',
@@ -377,6 +383,7 @@ module.exports = function (db) {
       internshipCommunityStateQuery: internshipCommunityStateQuery,
       ownerCommunityListQuery: ownerCommunityListQuery,
       communityListQuery: communityListQuery,
+      volunteerTaskQuery: volunteerTaskQuery,
     },
     clean: clean,
     options: options,
