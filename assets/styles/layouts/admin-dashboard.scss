@@ -165,8 +165,14 @@
     }
   }
 
-  .opportunities-created .graph .bar {
-    background-color: $color-primary-alt-light;
+  .opportunities-created {
+    ol {
+      margin-top: 0;
+    }
+
+    .graph .bar {
+      background-color: $color-primary-alt-light;
+    }
   }
 
   .opportunities-participating .graph .bar {
