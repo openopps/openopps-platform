@@ -19,6 +19,13 @@ _.extend(StateMetrics.prototype, {
       .value();
   },
 
+  canceledCount: function () {
+    return _.chain(this.tasks)
+      .filter(function (task) { return task.isCanceled; })
+      .countBy(function (task) { return task.canceledAtCode; }.bind(this))
+      .value();
+  },
+
   completedByCreatorCount: function () {
     return _.chain(this.tasks)
       .filter(function (task) { return task.isCompleted && (task.updatedBy === task.userId); })
@@ -47,11 +54,10 @@ _.extend(StateMetrics.prototype, {
     });
 
     _.each(this.tasks, function (task) {
-      _.each(range, function (dateCode) {
-        var wasOpen =   task.publishedAtCode < dateCode;
-        var openAfter = task.isNotArchived && (!task.completedAt || task.completedAtCode > dateCode);
-
-        if (wasOpen && openAfter) {
+      _.each(range, function (dateCode) { 
+        var wasOpen =   task.publishedAtCode < dateCode;  
+        var notCompleted = task.isNotArchived && (!task.completedAt || task.completedAtCode > dateCode);
+        if (wasOpen && notCompleted) {
           carryOver[dateCode] += 1;
         }
       });
@@ -66,6 +72,7 @@ _.extend(StateMetrics.prototype, {
     metrics.tasks.completed = this.completedCount();
     metrics.tasks.completedByCreator = this.completedByCreatorCount();
     metrics.tasks.completedByAdmin = this.completedByAdminCount();
+    metrics.tasks.canceled= this.canceledCount();
     metrics.range = this.range();
     metrics.tasks.carryOver = this.calculateCarryover();
     return metrics;
