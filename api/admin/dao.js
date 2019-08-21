@@ -218,6 +218,29 @@ const activityTaskQuery = 'select midas_user.name, midas_user.username, task.tit
   'inner join task on midas_user.id = task."userId" ' +
   'where task.id = ? ';
 
+const communityActivityQuery = 'select community_user.created_at as "createdAt", id, \'user\' as type ' +
+  'from midas_user ' +
+  'inner join community_user on midas_user.id = community_user.user_id ' +
+  'where community_user.community_id = $communityId ' +
+  'union all ' +
+  'select task."createdAt", task.id, \'task\' as type ' +
+  'from task ' +
+  'inner join midas_user on midas_user.id = task."userId" ' +
+  'where task.community_id = $communityId ' +
+  'order by "createdAt" desc ' +
+  'limit 10';
+
+const communityActivityVolunteerQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task.community_id, volunteer."createdAt" ' +
+  'from volunteer ' +
+  'left join midas_user on midas_user.id = volunteer."userId" ' +
+  'left join task on volunteer."taskId" = task.id ' +
+  'where volunteer.id = ? and task.community_id = ? ';
+
+const communityActivityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task.community_id, task."createdAt" ' +
+  'from midas_user ' +
+  'inner join task on midas_user.id = task."userId" ' +
+  'where task.id = ? and task.community_id = ? ';
+
 const taskMetricsQuery = 'select @task.*, @tags.* ' +
   'from @task task ' +
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
@@ -369,6 +392,9 @@ module.exports = function (db) {
       activityCommentQuery: activityCommentQuery,
       activityVolunteerQuery: activityVolunteerQuery,
       activityTaskQuery: activityTaskQuery,
+      communityActivityQuery: communityActivityQuery,
+      communityActivityVolunteerQuery: communityActivityVolunteerQuery,
+      communityActivityTaskQuery: communityActivityTaskQuery,
       taskMetricsQuery: taskMetricsQuery,
       volunteerDetailsQuery: volunteerDetailsQuery,
       userAgencyQuery: userAgencyQuery,
