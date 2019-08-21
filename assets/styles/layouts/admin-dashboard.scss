@@ -175,8 +175,14 @@
     }
   }
 
-  .opportunities-participating .graph .bar {
-    background-color: $color-secondary-lightest;
+  .opportunities-participating {
+    ol {
+      margin-top: 0;
+    }
+
+    .graph .bar {
+      background-color: $color-secondary-lightest;
+    }
   }
 
   .add-community {
