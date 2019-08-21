@@ -123,6 +123,7 @@
     .graph-header {
       font-style: italic;
       margin-top: $size-S;
+      margin-bottom: $size-base;
     }
 
     ol {
@@ -135,6 +136,10 @@
 
     .fa-download, .box-icon-text {
       color: $color-primary;
+
+      @include media($M-down) {
+        margin-top: 2rem;
+      }
     }
   }
 
@@ -166,8 +171,16 @@
   }
 
   .opportunities-created {
-    ol {
-      margin-top: 0;
+    .usa-width-one-half:first-child > p {
+      margin-left: 0.94em; 
+      text-indent: -0.94em;
+      margin-top: 1rem;
+      margin-bottom: 0;
+
+      @include media($M) {
+        margin-top: 0;
+        margin-bottom: 2rem;
+      }
     }
 
     .graph .bar {
@@ -176,8 +189,16 @@
   }
 
   .opportunities-participating {
-    ol {
-      margin-top: 0;
+    .usa-width-one-half:first-child > p {
+      margin-left: 0.94em; 
+      text-indent: -0.94em;
+      margin-top: 1rem;
+      margin-bottom: 0;
+
+      @include media($M) {
+        margin-top: 0;
+        margin-bottom: 2rem;
+      }
     }
 
     .graph .bar {
