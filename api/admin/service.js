@@ -113,6 +113,23 @@ module.exports.getActivities = async function () {
   return activities;
 };
 
+module.exports.getCommunityActivities = async function (communityId) {
+  var community = await communityService.findById(communityId);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.communityActivityQuery, { communityId: communityId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else if (activity[i].type == 'task') {
+      result = (await dao.Task.db.query(dao.query.communityActivityTaskQuery, [activity[i].id, communityId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
 module.exports.getTopContributors = function () {
   var topAgencyCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopAgencyCreators.sql', 'utf8');
   var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
