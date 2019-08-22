@@ -5,48 +5,52 @@
     <div class="opportunities-created usajobs-grid-full">
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
-        <ol>
-          <% _.each(creators, function (creator) { %>
-            <li><%- creator.name %><% if (_.filter([creator.abbr, creator.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)<% } %></li>
-          <% }); %>
-        </ol>
       </div>
       <div class="usa-width-one-half">
         <h5 class="graph-header"># of opportunities</h5>
-        <% _.each(creators, function (creator) { %>
+      </div>
+    </div>
+    <% _.each(creators, function (creator, index) { %>
+      <div class="opportunities-created usajobs-grid-full">
+        <div class="usa-width-one-half">
+          <p><%- index + 1 %>.  <%- creator.name %><% if (_.filter([creator.abbr, creator.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)<% } %></p>
+        </div>
+        <div class="usa-width-one-half">
           <div class="graph horizontal">
             <div class="bar" style="width: <%= Math.ceil(creator.count / creatorMax * 100) %>%">
               <span class="value"><%- creator.count %></span>
             </div>
           </div>
-        <% }); %>
+        </div>
       </div>
-    </div>
+    <% }); %>
     <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
   </div>
 
   <div class="usa-width-one-half">
     <h3>Participating in opportunities</h3>
-    <div class="opportunities-participating usajobs-grid-full">
+    <div class="opportunities-created usajobs-grid-full">
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
-        <ol>
-          <% _.each(participants, function (participant) { %>
-            <li><%- participant.name %><% if (_.filter([participant.abbr, participant.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([participant.abbr, participant.parent_abbr], _.identity)).join('/') %>)<% } %></li>
-          <% }); %>
-        </ol>
       </div>
       <div class="usa-width-one-half">
         <h5 class="graph-header"># of opportunities</h5>
-        <% _.each(participants, function (participant) { %>
-          <div class="graph horizontal">
-            <div class="bar" style="width: <%= Math.ceil(participant.count / participantMax * 100) %>%">
-              <span class="value"><%- participant.count %></span>
-            </div>
-          </div>
-        <% }); %>
       </div>
     </div>
+    <% _.each(participants, function (participant, index) { %>
+    <div class="opportunities-participating usajobs-grid-full">
+      <div class="usa-width-one-half">
+        <p><%- index + 1 %>.  <%- participant.name %><% if (_.filter([participant.abbr, participant.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([participant.abbr, participant.parent_abbr], _.identity)).join('/') %>)<% } %></p>
+      </div>
+      <div class="usa-width-one-half">
+        <div class="graph horizontal">
+          <div class="bar" style="width: <%= Math.ceil(participant.count / participantMax * 100) %>%">
+            <span class="value"><%- participant.count %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }); %>
     <i class="fa fa-download"></i><span class="opportunities-participating--download box-icon-text">Download full list (.csv)</span>
   </div>
 </div>

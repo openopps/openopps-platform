@@ -17,6 +17,9 @@ _.extend(TaskDecorator.prototype, {
   isCompleted: function () {
     return _.includes(['completed'], this.object.state);
   },
+  isCanceled: function () {
+    return _.includes(['canceled'], this.object.state);
+  },
 
   isNotArchived: function () {
     return this.object.state != 'archived';
@@ -24,7 +27,7 @@ _.extend(TaskDecorator.prototype, {
 
   decorate: function (group) {
     this.normalizeDates();
-    _.each(['isPublished', 'isAssigned', 'isCompleted', 'isNotArchived'], function (attr) {
+    _.each(['isPublished', 'isAssigned', 'isCompleted', 'isNotArchived','isCanceled'], function (attr) {
       this.object[attr] = this[attr]();
     }.bind(this));
     this.addDateCodes(group);
@@ -44,6 +47,9 @@ _.extend(TaskDecorator.prototype, {
     if (!this.object.completedAt && this.isCompleted()) {
       this.object.completedAt = createdAt;
     }
+    if (!this.object.canceledAt && this.isCanceled()) {
+      this.object.canceledAt = createdAt;
+    }
   },
 
   addDateCodes: function (group) {
@@ -52,6 +58,7 @@ _.extend(TaskDecorator.prototype, {
     this.object.assignedAtCode = generator.create(this.object.assignedAt);
     this.object.publishedAtCode = generator.create(this.object.publishedAt);
     this.object.completedAtCode = generator.create(this.object.completedAt);
+    this.object.canceledAtCode = generator.create(this.object.canceledAt);
   },
 });
 

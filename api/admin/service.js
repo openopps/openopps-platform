@@ -134,6 +134,23 @@ module.exports.getActivities = async function () {
   return activities;
 };
 
+module.exports.getCommunityActivities = async function (communityId) {
+  var community = await communityService.findById(communityId);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.communityActivityQuery, { communityId: communityId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else if (activity[i].type == 'task') {
+      result = (await dao.Task.db.query(dao.query.communityActivityTaskQuery, [activity[i].id, communityId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
 module.exports.getTopContributors = function () {
   var topAgencyCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopAgencyCreators.sql', 'utf8');
   var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
@@ -438,9 +455,8 @@ module.exports.checkCommunity = async function (user, ownerId) {
 
 module.exports.getDashboardTaskMetrics = async function (group, filter) {
   var tasks = dao.clean.task(await dao.Task.query(dao.query.taskMetricsQuery, {}, dao.options.taskMetrics));
-  var volunteers = await dao.Volunteer.find({ taskId: _.map(tasks, 'id') });
-  var agencyPeople = dao.clean.users(await dao.User.query(dao.query.volunteerDetailsQuery, {}, dao.options.user));
-  var generator = new TaskMetrics(tasks, volunteers, agencyPeople, group, filter);
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
   generator.generateMetrics(function (err) {
     if (err) res.serverError(err + ' metrics are unavailable.');
     return null;
