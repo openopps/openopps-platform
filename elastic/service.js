@@ -77,6 +77,15 @@ service.indexOpportunity =  async function (taskId) {
   return records;
 };
 
+service.deleteOpportunity = async function (taskId) {
+  if (!(await elasticClient.IsAlive())) {
+    return null;
+  }
+
+  await elasticClient.bulk({ body: [{ delete: { _index: 'task', _type: 'task', _id: taskId } }] });
+  return true;
+}
+
 service.indexUser =  async function (userId) {
   if (!(await elasticClient.IsAlive()))
   {
@@ -94,6 +103,15 @@ service.indexUser =  async function (userId) {
   await elasticClient.bulk({ body: bulk_request });
   return records;
 };
+
+service.deleteUser = async function (userId) {
+  if (!(await elasticClient.IsAlive())) {
+    return null;
+  }
+
+  await elasticClient.bulk({ body: [{ delete: { _index: 'user', _type: 'user', _id: userId } }] });
+  return true;
+}
 
 service.searchOpportunities = async function (request) {
   var searchResults = null;
