@@ -32,8 +32,11 @@ var AdminUserView = Backbone.View.extend({
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
     this.data = {
-      page: 1,
+      page: this.params.get('p') || 1,
+      filter: this.params.get('f') || '',
+      sort: this.params.get('s') || 'createdAt',
     };
     this.agency = {};
     this.community = {};
@@ -57,6 +60,7 @@ var AdminUserView = Backbone.View.extend({
       dataType: 'json',
       success: function (targetInfo) {
         this[this.options.target] = targetInfo;
+        this.data[this.options.target] = targetInfo;
         this.loadData();
       }.bind(this),
     });
@@ -178,21 +182,19 @@ var AdminUserView = Backbone.View.extend({
     });
   },
 
-  renderUsers: function (data) {
-    data.urlbase = '/admin/users';
-    data.q = data.q || '';
-    this.limit = this.limit || data.limit;
-    data.trueLimit = this.limit;
-    data.login = LoginConfig;
-    data.user = window.cache.currentUser;
+  renderUsers: function () {
+    this.data.urlbase = '/admin/users';
+    this.data.q = this.data.filter || '';
+    this.limit = this.limit || this.data.limit;
+    this.data.trueLimit = this.limit;
+    this.data.login = LoginConfig;
+    this.data.user = window.cache.currentUser;
 
-    data.firstOf = data.page * data.limit - data.limit + 1;
-    data.lastOf = data.page * data.limit - data.limit + data.users.length;
-    data.countOf = data.count;
-    data.target = this.options.target;
-    data.sort = this.options.sort || 'createdAt',
-    data.isAdministrator = this.isAdministrator;
-    data.users = _.sortBy(data.users, 'createdAt').reverse();
+    this.data.firstOf = this.data.page * this.data.limit - this.data.limit + 1;
+    this.data.lastOf = this.data.page * this.data.limit - this.data.limit + this.data.users.length;
+    this.data.countOf = this.data.count;
+    this.data.target = this.options.target;
+    this.data.isAdministrator = this.isAdministrator;
 
     this.renderSelectedUsers();
   },
@@ -209,6 +211,7 @@ var AdminUserView = Backbone.View.extend({
     // render the pagination
     this.renderPagination(this.data);
     this.$('#filter-count').html(this.data.users.length);
+    //this.$('.usajobs-search-controls__sort-control option[value='+ this.data.sort +']').attr('selected', true);
     this.$('#user-table').html(template);
     this.$('.btn').tooltip();
     this.$('#user-table').show();
@@ -258,6 +261,7 @@ var AdminUserView = Backbone.View.extend({
       return;
     }
     this.q = val;
+    this.data.filter = val;
     // hide the table and show the spinner
     this.$('#user-table').hide();
     this.$('.spinner').show();
@@ -276,12 +280,14 @@ var AdminUserView = Backbone.View.extend({
     $.ajax({
       url: url,
       dataType: 'json',
-      data: data,
+      data: {
+        page: this.data.page,
+        filter: this.data.filter,
+        sort: this.data.sort
+      },
       success: function (data) {
-        this.data = data;
-        this.data.community = this.community;
-        this.data.agency = this.agency,
-        this.renderUsers(data);
+        _.extend(this.data, data);
+        this.renderUsers();
         $('.tip').tooltip();
       }.bind(this),
     });
@@ -300,6 +306,17 @@ var AdminUserView = Backbone.View.extend({
       case 'member':
         return '/api/admin/community/' + this.community.communityId + '/member/' + id + '?action=' + elem.prop('checked');
     }
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    if (this.options.target === 'agency') {
+      url +='&id=' + this.agency.agencyId;
+    } else if(this.options.target === 'community') {
+      url +='&id=' + this.community.communityId ;
+    }
+    return url;
   },
 
   toggleCheckbox: function (e) {
@@ -410,53 +427,11 @@ var AdminUserView = Backbone.View.extend({
 
   sortUsers: function (e) {
     var target = $(e.currentTarget)[0];
-    var sortedData = [];
-    if(target.value === 'createdAt') {
-      sortedData = _.sortBy(this.data.users, 'createdAt').reverse();
-    }
-    if(target.value === 'lastLogin') {
-      sortedData = _.sortBy(this.data.users, 'last_login').reverse();
-    }
-    if(target.value === 'enabled') {
-      sortedData = _.sortBy(this.data.users, 'disabled');
-    }
-    if(target.value === 'sitewideAdmin') {
-      sortedData = _.sortBy(this.data.users, 'isAdmin').reverse();
-    }
-    if(target.value === 'agencyAdmin') {
-      sortedData = _.sortBy(this.data.users, 'isAgencyAdmin').reverse();
-    }
-    if(target.value === 'communityAdmin') {
-      sortedData = _.sortBy(this.data.users, 'isCommunityAdmin').reverse();
-    }
-    if(target.value === 'name'){
-      sortedData = _.sortBy(this.data.users, function (item){
-        item.last_name = item.last_name.replace(/[^A-Za-z0-9]/g, ' ');     
-        item.last_name = item.last_name.trim() || '';
-        return item.last_name;
-      });          
-    }
-    if(target.value === 'agency') {
-      sortedData = _.sortBy(this.data.users, function (item){
-        // item.agency= item.agency.trim() || '';
-        return item.agency;
-      });  
-    } 
-    if(target.value === 'governmentUri'){
-      sortedData = _.sortBy(this.data.users, function (item){
-        item.government_uri= item.government_uri.trim();
-        return item.government_uri;
-      });          
-    } 
-    if(target.value === 'loginEmail'){
-      sortedData = _.sortBy(this.data.users, function (item){
-        item.username= item.username.trim();
-        return item.username;
-      });          
-    } 
     this.data.sort = target.value;
-    this.data.users = sortedData;
-    this.renderSelectedUsers();
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
   },
 
   submitReset: function (email) {

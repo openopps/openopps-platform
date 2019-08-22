@@ -32,6 +32,27 @@ function getOrderByClause (sortValue) {
   }
 }
 
+function getUserListOrderByClause (sortValue) {
+  switch (sortValue) {
+    case 'name':
+      return 'lower(users.last_name), lower(users.given_name)';
+    case 'createdAt':
+      return 'users."createdAt" desc';
+    case 'last_login':
+      return 'users.last_login desc';
+    case 'isAdmin':
+      return 'users."isAdmin" desc';
+    case 'isAgencyAdmin':
+        return 'users."isAgencyAdmin" desc';
+    case 'is_manager':
+      return 'users.is_manager desc';
+    case 'agency':
+      return 'users.agency->>\'name\'';
+    default:
+      return sortValue;
+  }
+}
+
 function getWhereClauseForCyclicalTaskState (state) {
   if (state == 'approved') {
     return "state = 'open' and cycle.apply_start_date > now()";
@@ -221,71 +242,60 @@ module.exports.getInteractionsForCommunity = async function (communityId) {
   return interactions;
 };
 
-module.exports.getUsers = async function (page, limit) {
+module.exports.getUsers = async function (page, filter, sort) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserListBySort.sql', 'utf8').toString();
+  
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userListQuery, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
   return result;
 };
 
-module.exports.getUsersForAgency = async function (page, limit, agencyId) {
+module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
+
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [agencyId, page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
   return result;
 };
 
-module.exports.getUsersForCommunity = async function (page, limit, communityId) {
+module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
+
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [communityId, page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
-  result = await this.getUserTaskCommunityMetrics (result, communityId);
-  return result;
-};
-
-module.exports.getUsersFiltered = async function (page, query) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  return result;
-};
-
-module.exports.getUsersForAgencyFiltered = async function (page, query, agencyId) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userAgencyListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    agencyId,
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  return result;
-};
-
-module.exports.getUsersForCommunityFiltered = async function (page, query, communityId) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userCommunityListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    communityId,
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result = await this.getUserTaskCommunityMetrics(result, communityId);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 };
 

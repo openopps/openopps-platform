@@ -104,35 +104,11 @@ const communityTaskVolunteerPerUserQuery = 'select count(*) as participated from
   'inner join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ? and volunteer."userId" = ? ';
 
-const userListQuery = 'select government_uri, username, "createdAt", "isAdmin", disabled, agency_id, hiring_path, last_login, id, name, ' +
-  'coalesce(given_name, (string_to_array(trim(name), \' \'))[array_lower(string_to_array(trim(name), \' \'), 1)]) as given_name, ' +
-  'coalesce(last_name, (string_to_array(trim(name), \' \'))[array_upper(string_to_array(trim(name), \' \'), 1)]) as last_name, ' +
-  'count(*) over() as full_count ' +
-  'from midas_user ' +
-  'order by "createdAt" desc ' +
-  'limit 25 ' +
-  'offset ((? - 1) * 25) ';
-
 const ownerListQuery = 'select midas_user.id, midas_user.name ' +
 'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
 'inner join agency on agency.agency_id = midas_user.agency_id ' +
 'where midas_user.disabled = false and agency.agency_id = ? ';
 
-const userAgencyListQuery = 'select midas_user.*, count(*) over() as full_count ' +
-  'from midas_user where agency_id = ?' +
-  'order by "createdAt" desc ' +
-  'limit 25 ' +
-  'offset ((? - 1) * 25) ';
-
-const userCommunityListQuery = 'select midas_user.id, midas_user.name, midas_user.username, midas_user.government_uri, ' +
-  'count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, ' +
-  'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
-  'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
-  'left join agency on agency.agency_id = midas_user.agency_id ' +
-  'where midas_user.disabled = \'f\' and community_user.community_id = ? ' +
-  'order by community_user.created_at desc ' +
-  'limit 25 ' +
-  'offset ((? - 1) * 25) ';
 
 const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
 'from midas_user inner join community_user on midas_user.id = community_user.user_Id ' +
@@ -357,10 +333,7 @@ module.exports = function (db) {
       communityPostQuery: communityPostQuery,
       volunteerCountQuery: volunteerCountQuery,
       communityVolunteerCountQuery: communityVolunteerCountQuery,
-      userListQuery: userListQuery,
       ownerListQuery: ownerListQuery,
-      userAgencyListQuery: userAgencyListQuery,
-      userCommunityListQuery: userCommunityListQuery,
       userListFilteredQuery: userListFilteredQuery,
       userAgencyListFilteredQuery: userAgencyListFilteredQuery,
       userCommunityListFilteredQuery: userCommunityListFilteredQuery,

@@ -14,12 +14,12 @@
       <select name="sort-user-sitewide" id="sort-user-sitewide" class="usajobs-search-controls__sort-control">
         <option value="" disabled>- Sort By -</option>
         <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
-        <option value="governmentUri" <% if (sort == 'governmentUri') { %>selected<% } %>>Federal email</option>
-        <option value="loginEmail" <% if (sort == 'loginEmail') { %>selected<% } %>>Login.gov email</option>
+        <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+        <option value="username" <% if (sort == 'username') { %>selected<% } %>>Login.gov email</option>
         <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
-        <option value="lastLogin" <% if (sort == 'lastLogin') { %>selected<% } %>>Last login</option>
-        <option value="enabled" <% if (sort == 'enabled') { %>selected<% } %>>Enabled</option>
-        <option value="sitewideAdmin" <% if (sort == 'sitewideAdmin') { %>selected<% } %>>Sitewide Admin</option>
+        <option value="last_login" <% if (sort == 'last_login') { %>selected<% } %>>Last login</option>
+        <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
+        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>
       </select>
       <% } %>
     <% if (target === 'agency') { %>
@@ -29,10 +29,10 @@
         <select name="sort-user-agency" id="sort-user-agency" class="usajobs-search-controls__sort-control">
           <option value="" disabled>- Sort By -</option>
           <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
-          <option value="governmentUri" <% if (sort == 'governmentUri') { %>selected<% } %>>Federal email</option>
+          <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
           <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
-          <option value="enabled" <% if (sort == 'updatedAt') { %>selected<% } %>>Enabled</option>
-          <option value="agencyAdmin" <% if (sort == 'agencyAdmin') { %>selected<% } %>>Agency Admin</option>
+          <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
+          <option value="isAgencyAdmin" <% if (sort == 'isAgencyAdmin') { %>selected<% } %>>Agency Admin</option>
         </select>
     <% } %>
   </div>
@@ -42,7 +42,6 @@
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>
-      <th class="admin-user-id">User #</th>
       <th class="admin-table-name">Name</th>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
@@ -72,9 +71,6 @@
           data-user-name="<%- u.name %>"
           data-admin="<%- u.isAdmin %>"
           data-agency-admin="<%- u.isAgencyAdmin %>">
-        <td>
-          <%- u.id %>
-        </td>
         <td class="admin-table-name">
           <%- u.name %>
         </td>
