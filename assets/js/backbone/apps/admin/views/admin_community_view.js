@@ -9,6 +9,7 @@ var AdminCommunityView = Backbone.View.extend({
     'change #communities'         : 'changeCommunity',
     'click #community-edit'       : linkBackbone,
     'click .usajobs-alert__close' : 'closeAlert',
+    'change #sort-user-community' : 'sortUsers',
   },
 
   initialize: function (options) {

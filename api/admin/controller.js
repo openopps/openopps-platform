@@ -30,11 +30,7 @@ router.get('/api/admin/taskmetrics', auth.isAdmin, async (ctx, next) => {
 });
 
 router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
-  if (!ctx.query.q) {
-    ctx.body = await service.getUsers(ctx.query.page, ctx.query.limit);
-  } else {
-    ctx.body = await service.getUsersFiltered(ctx.query.page || 1, ctx.query.q);
-  }
+  ctx.body = await service.getUsers(ctx.query.page, ctx.query.filter, ctx.query.sort);
 });
 
 router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
@@ -69,11 +65,7 @@ router.get('/api/admin/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next)
 });
 
 router.get('/api/admin/agency/:id/users', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  if (!ctx.query.q) {
-    ctx.body = await service.getUsersForAgency(ctx.query.page, ctx.query.limit, ctx.params.id);
-  } else {
-    ctx.body = await service.getUsersForAgencyFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
-  }
+  ctx.body = await service.getUsersForAgency(ctx.query.page, ctx.query.filter, ctx.query.sort, ctx.params.id);
 });
 
 router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
@@ -126,11 +118,7 @@ router.get('/api/admin/community/interactions/:id', auth, async (ctx, next) => {
 
 router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    if (!ctx.query.q) {
-      ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.limit, ctx.params.id);
-    } else {
-      ctx.body = await service.getUsersForCommunityFiltered(ctx.query.page || 1, ctx.query.q, ctx.params.id);
-    }
+    ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.filter, ctx.query.sort, ctx.params.id);
   } else {
     ctx.status = 403;
   }
