@@ -70,13 +70,13 @@
       <tr>
         <th scope="row">Percentage Completed</th>
         <% _.each(range, function(key) { %>
-        <td><%- Math.round(tasks.completed[key] / tasks.published[key] * 100, 4) || 0 %>%</td>
+        <td><%- Math.round((tasks.completed[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Percentage Canceled</th>
         <% _.each(range, function(key) { %>
-        <td><%- Math.round(tasks.canceled[key] / tasks.published[key] * 100, 4) || 0 %>%</td>
+          <td><%- Math.round((tasks.canceled[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
         <% }); %>
       </tr>
       <tr>
