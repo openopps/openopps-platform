@@ -13,6 +13,9 @@ async function userFound (user, tokenset, done) {
       hiringPath: tokenset.claims['usaj:hiringPath'],
       governmentUri: tokenset.claims['usaj:governmentURI'],
     };
+    if (tokenset.claims['usaj:governmentURI'] && tokenset.claims['usaj:hiringPath'] != 'fed') {
+      data.hiringPath = 'contractor';
+    }
     if (tokenset.claims['usaj:hiringPath'] == 'student') {
       data.isAdmin = false;
       data.isAgencyAdmin = false;
@@ -33,7 +36,7 @@ module.exports.removeDuplicateFederalURI = (tokenset) => {
   dao.User.query(dao.query.updateUser, tokenset.claims.sub, tokenset.claims['usaj:governmentURI']);
 };
 
-module.exports.processFederalEmployeeLogin = (tokenset, done) => {
+module.exports.processFederalLogin = (tokenset, done) => {
   dao.User.findOne('linked_id = ?', tokenset.claims.sub).then(user => {
     userFound(user, tokenset, done);
   }).catch(async () => {
