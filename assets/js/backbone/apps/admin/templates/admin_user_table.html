@@ -43,6 +43,7 @@
   <thead>
     <tr>
       <th class="admin-table-name">Name</th>
+      <% if (target == 'sitewide') { %><th class="admin-table-usertype">User type</th><% } %>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Created</th>
@@ -74,6 +75,17 @@
         <td class="admin-table-name">
           <%- u.name %>
         </td>
+        <% if (target == 'sitewide') { %>
+          <td class="admin-table-usertype">
+            <% if (u.hiring_path == 'fed') { %>
+              <span><img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal employee" title="Federal employee"></span>
+            <% } else if (u.hiring_path == 'student') { %>
+              <span><img src="/img/icons/hiring-paths/svg/students.svg" alt="Student" title="Student"></span>
+            <% } else if (u.hiring_path == 'contractor') { %>
+              <span><img src="/img/icons/hiring-paths/svg/contractors.svg" alt="Contractor" title="Contractor"></span>
+            <% } %>
+          </td>
+        <% } %>
         <td class="admin-table-federalEmail">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
