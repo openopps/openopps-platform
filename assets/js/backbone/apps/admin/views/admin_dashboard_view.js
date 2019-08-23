@@ -12,18 +12,19 @@ var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.htm
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
 
 var AdminAnnouncementView = require('./admin_announcement_view');
+var AdminTopContributorsView = require('./admin_top_contributors_view');
 var AdminDashboardView = Backbone.View.extend({
 
   events: {
-    'change .group': 'renderTasks',
-    'change .filter': 'renderTasks',
+    'change .group': 'renderTasks', 
+    'change input[name=type]':'renderTasks',
   },
 
   initialize: function (options) {
     this.options = options;
     this.data = {
       page: 1,
-    };
+    }; 
   },
 
   render: function (replace) {
@@ -51,36 +52,77 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.metric-block').show();
   },
 
+  renderTopContributors: function () {
+    if (this.adminTopContributorsView) {
+      this.adminTopContributorsView.cleanup();
+    }
+    this.adminTopContributorsView = new AdminTopContributorsView({
+      el: '.admin-top-contributors',
+    });
+    this.adminTopContributorsView.render();
+  },
+
   renderTasks: function () {
     var self = this,
         data = this.data,
         group = this.$('.group').val() || 'fy',
-        filter = this.$('.filter').val() || '',
+        filter = this.$('input[name=type]:checked').val() || '',
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+  
     function label (key) {
-      if (key === 'undefined') return 'No date';
+      if (key === 'undefined') return 'No date';   
       return group === 'week' ? 'W' + (+key.slice(4)) + '\n' + key.slice(0,4):
         group === 'month' ? months[key.slice(4) - 1]  + '\n' + key.slice(0,4) :
           group === 'quarter' ? 'Q' + (+key.slice(4)) + '\n' + key.slice(0,4) :
             group === 'fyquarter' ? 'Q' + (+key.slice(4)) + '\nFY' + key.slice(0,4) :
               group === 'fy' ? 'FY' + key : key;
+             
     }
-
     $.ajax({
       url: '/api/admin/taskmetrics?group=' + group + '&filter=' + filter,
       dataType: 'json',
-      success: function (data) {
+      success: function (data) {   
         data.label = label;
+                  
+        if(group=='fy'){
+          var currentYear =_.chain(data.tasks.published).keys().sort().last().value();
+          var previousYear = parseInt(currentYear)-1;
+          previousYear= previousYear.toString();
+          var year= [currentYear, previousYear];
+          data.range = _.filter(data.range, function (i) {
+            return _.contains(year, i);
+          });
+        }
+        if(group=='month'){
+          var currentMYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+          var previousMYear= parseInt(currentMYear)-1;
+          previousMYear= previousMYear.toString();
+          var Myear= [currentMYear, previousMYear];       
+          data.range = _.filter(data.range, function (i) {
+            return _.contains(Myear, i.slice(0,4));
+          });
+         
+        }
+        if(group=='quarter'){
+          var currentQYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+          var previousQYear= parseInt(currentQYear)-1;
+          previousQYear= previousQYear.toString();
+          var Qyear= [currentQYear, previousQYear];       
+          data.range = _.filter(data.range, function (i) {
+            return _.contains(Qyear, i.slice(0,4));
+          });
+         
+        }
+               
         var template = _.template(AdminDashboardTasks)(data);
         $('#search-results-loading').hide();
         data.tasks.active = self.data.tasks;
         self.$('.task-metrics').html(template);
         self.$el.localize();
         self.$('.task-metrics').show();
-        self.$('.group').val(group);
-        self.$('.filter').val(filter);
+        self.$('.group').val(group);  
+        self.$('input[name=type][value="' + filter +'"]').prop('checked', true);
       },
     });
   },
@@ -106,7 +148,7 @@ var AdminDashboardView = Backbone.View.extend({
 
         activity.comment.value = value;
       }
-
+     
       activity.createdAtFormatted = $.timeago(activity.createdAt);
       var template = self.$('#' + activity.type).text(),
           content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
@@ -118,6 +160,7 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.activity-block').show();
     self.renderTasks(self, this.data);
     self.renderAdminAnnouncement();
+    self.renderTopContributors();
   },
 
   

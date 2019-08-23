@@ -13,9 +13,14 @@ var numOfInternships = 0;
 var remainingApplicants = 0;
 var internsAssigned = 0;
 
-service.getPhaseData = async function (cycleId) {
+service.checkIsManager = async function (userId, cycleId) {
+  var user = await dao.Community_User.db.query(dao.query.isCommunityManager, userId, cycleId);
+  return user.rows[0].is_manager;
+};
+
+service.getPhaseData = async function (userId, cycleId) {
   var results = {};
-  var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, cycleId);
+  var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, userId, cycleId);
   results = phaseData.rows[0];
   var sequence = results.current_sequence === 0 ? 1 : results.current_sequence;
   var phases = await dao.Task.db.query(dao.query.GetPhases, sequence, sequence + 1);

@@ -1,3 +1,26 @@
+
+<div id="usajobs-search-controls-participated">
+  <div class="usajobs-grid usajobs-search-controls">
+    <div class="usajobs-search-controls__results-count-container no-params">
+      <% if(countOf) { %>
+        <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
+      <% } %>
+    </div> 
+    <% if (tasks.length > 0) { %>
+      <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+        <label class="usajobs-search-controls__sort-label" for="sort-results">
+          Sort by
+        </label>
+        <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+           <option value="" disabled>- Sort By -</option>
+           <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>  
+          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>       
+          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>     
+        </select>
+      </div>   
+      <% } %> 
+  </div>
+</div>
 <table class="usa-table-borderless task-table" role="presentation">
   <thead>
     <tr>
@@ -11,10 +34,14 @@
           <th id="publishId" class="center" data-target="publish-delete">Approve</th>
         <% } %>
       <% } %>
-      <th class="center" data-target="publish-delete">Delete</th> 
-      <th class="center hide" data-target="change-add">Change<br/> owner</th>
-      <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
-        <th class="center hide" data-target="change-add">Add<br/> participant</th>
+      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+        <th class="center" data-target="publish-delete">Delete</th>
+      <% } %>
+      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase())) { %>
+        <th class="center" data-target="change-add">Change<br/> owner</th>
+      <% } %>
+      <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
+        <th class="center" data-target="change-add">Add<br/> participant</th>
       <% } %>
     </tr>
   </thead>
@@ -24,20 +51,20 @@
         <td colspan="5">No tasks</td>
       </tr>
     <% } %>
-    <% _.each(_.sortBy(tasks, 'createdAt').reverse(), function (task) { %>
+    <% _.each(tasks, function (task) { %>
       <tr>
         <td class="metrics-table__title">
           <a href="/tasks/<%- task.id %>"><%- task.title %></a>
           <% if ( task.volunteers && task.volunteers.length ) { %>
           <div class="sign-ups">Sign-ups:
-             <% _( task.volunteers ).forEach( function( vol ) { %>
-               <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
-             <% } ); %>
+              <% _( task.volunteers ).forEach( function( vol ) { %>
+                <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
+              <% } ); %>
           </div>
           <% } else if (task.applicants) { %>
             <div class="sign-ups">
-                <strong><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %>:</strong>
-                <% if (task.applicants.length > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
+              <strong><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %>:</strong>
+              <% if (task.applicants.length > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
             </div>
           <% } %>
         </td>
@@ -51,9 +78,9 @@
         <td class="metrics-table__date">
             <%- moment(task.createdAt).format('MM/DD/YY') %>
         </td>
-        
-          <% if (_.contains(['submitted'], status.toLowerCase())) { %>
-            <td class="metrics-table__button">
+        <% if (_.contains(['submitted'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <% if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
               <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
@@ -72,54 +99,61 @@
                   <span class="usa-sr-only">Approve Opportunity</span>
                 <% } %>
               </a>
-            </td>
-          <% } else if (_.contains(['open','notopen', 'inprogress'], status.toLowerCase())) { %>
-            <td class="metrics-table__button">
-              <a href="#change-owner/<%- task.id %>"
+            <% } else { %>
+              <a href="#approve/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
-                class="task-change-owner"
-                alt="Change Owner"
-                title="Change Owner">
-                <i class="fas fa-user-cog"></i>
-                <span class="usa-sr-only">Change Owner</span>
+                class="approve-error"
+                alt="Cycle posting has ended"
+                title="Cycle posting has ended">
+                <i class="fas fa-ban"></i>
+                <span class="usa-sr-only">Cycle posting has ended</span>
               </a>
-            </td>
-          <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
-            <td>&nbsp;</td>
-          <% } %>
-        
-        
-          <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
-            <td class="metrics-table__button">
-              <a href="#delete/<%- task.id %>"
-                data-task-id="<%- task.id %>"
-                data-task-title="<%- task.title %>"
-                class="delete-task"
-                alt="Delete Opportunity"
-                title="Delete Opportunity">
-                <span class='fa fa-times'></span>
-                <span class="usa-sr-only">Delete Opportunity</span>
-              </a>
-            </td>
-          <% } else if (_.contains(['open', 'notopen', 'inprogress'], status.toLowerCase())) { %>
-            <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
-              <td class="metrics-table__button">
-                <a href="#add-participant/<%- task.id %>"
-                  data-task-id="<%- task.id %>"
-                  data-task-title="<%- task.title %>"
-                  class="task-add-participant"
-                  alt="Add participant"
-                  title="Add participant">
-                  <i class="fas fa-user-plus"></i>
-                  <span class="usa-sr-only">Add participant</span>
-                </a>
-              </td>
             <% } %>
-          <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
-            <td>&nbsp;</td>
+          </td>
+        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <a href="#change-owner/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="task-change-owner"
+              alt="Change Owner"
+              title="Change Owner">
+              <i class="fas fa-user-cog"></i>
+              <span class="usa-sr-only">Change Owner</span>
+            </a>
+          </td>
+        <% } %>
+        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <a href="#delete/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="delete-task"
+              alt="Delete Opportunity"
+              title="Delete Opportunity">
+              <span class='fa fa-times'></span>
+              <span class="usa-sr-only">Delete Opportunity</span>
+            </a>
+          </td>
+        <% } else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+          <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
+            <td class="metrics-table__button">
+              <a href="#add-participant/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="task-add-participant"
+                alt="Add participant"
+                title="Add participant">
+                <i class="fas fa-user-plus"></i>
+                <span class="usa-sr-only">Add participant</span>
+              </a>
+            </td>
           <% } %>
+        <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
+          <td>&nbsp;</td>
+        <% } %>
       </tr>
     <% }); %>
   </tbody>
-</table>
+</table>  
