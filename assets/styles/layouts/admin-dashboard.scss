@@ -222,6 +222,23 @@
     padding-left: 0;
   }
 
+  .admin-table-usertype {
+    span {
+      display: block;
+
+      @include media($XL) {
+        padding-left: 2rem;
+      }
+    }
+
+    img {
+      display: flex;
+      min-height: 30px;
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
   .user-enable[type=checkbox]:checked,
   .assign-admin[type=checkbox]:checked,
   .member-enable[type=checkbox]:checked {
