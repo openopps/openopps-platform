@@ -36,7 +36,7 @@ async function fetchUser (id) {
       user.countrySubdivision = await dao.CountrySubdivision.findOne('country_subdivision_id = ?', user.countrySubdivisionId).catch(() => { return {}; });
       user.country = await dao.Country.findOne('country_id = ?', user.countryId).catch(() => { return {}; });
       user.editURL = openopps.usajobsURL + '/Applicant/Profile/ClientRouter?clientID=' + openopps.auth.loginGov.clientID;
-      if (user.hiringPath === 'fed') {
+      if (user.hiringPath == 'fed' || user.hiringPath == 'contractor') {
         user.editURL += '&rp=government_uri';
       }
     }
@@ -121,8 +121,8 @@ if (openopps.auth.oidc) {
     if (tokenset.claims['usaj:governmentURI']) {
       Login.removeDuplicateFederalURI(tokenset);
     }
-    if (tokenset.claims['usaj:hiringPath'] == 'fed' && tokenset.claims['usaj:governmentURI']) {
-      Login.processFederalEmployeeLogin(tokenset, done);
+    if (tokenset.claims['usaj:governmentURI']) {
+      Login.processFederalLogin(tokenset, done);
     } else if (tokenset.claims['usaj:hiringPath'] == 'student') {
       Login.processStudentLogin(tokenset, done);
     } else {
