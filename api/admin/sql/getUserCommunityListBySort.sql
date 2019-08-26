@@ -1,7 +1,6 @@
 with users as (
     select 
-        id, government_uri, username, "createdAt", community_user.disabled, is_manager, agency_id, last_login, name, 
-        count(*) over() as full_count,
+        id, government_uri, username, "createdAt", community_user.disabled, is_manager, agency_id, last_login, name,
         coalesce(given_name, (string_to_array(trim(name), ' '))[array_lower(string_to_array(trim(name), ' '), 1)]) as given_name,
 		coalesce(last_name, (string_to_array(trim(name), ' '))[array_upper(string_to_array(trim(name), ' '), 1)]) as last_name, 
         (
@@ -14,7 +13,7 @@ with users as (
     where midas_user.disabled = 'f' and community_user.community_id = ? 
 )
 
-select *, agency->>'name' as agency from users
+select count(*) over() as full_count, * from users
 [where clause]
 order by [order by]
 limit 25 offset ((? - 1) * 25);

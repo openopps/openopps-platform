@@ -1,8 +1,7 @@
 with users as (
     select 
         id, government_uri, username, "createdAt", disabled, 
-        agency_id, "isAgencyAdmin", hiring_path, last_login, id, name, 
-        count(*) over() as full_count,
+        agency_id, "isAgencyAdmin", hiring_path, last_login, id, name,
         coalesce(given_name, (string_to_array(trim(name), ' '))[array_lower(string_to_array(trim(name), ' '), 1)]) as given_name,
 		coalesce(last_name, (string_to_array(trim(name), ' '))[array_upper(string_to_array(trim(name), ' '), 1)]) as last_name, 
         (
@@ -15,7 +14,7 @@ with users as (
     where agency_id = ?
 )
 
-select * from users
+select count(*) over() as full_count, * from users
 [where clause]
 order by [order by]
 limit 25 offset ((? - 1) * 25);
