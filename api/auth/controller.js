@@ -64,7 +64,7 @@ function loginError (ctx, err) {
   } else {
     log.info('Authentication Error: ', err);
     service.logError(null, err);
-    ctx.status = 503;
+    ctx.redirect('/whoops');
   }
 }
 

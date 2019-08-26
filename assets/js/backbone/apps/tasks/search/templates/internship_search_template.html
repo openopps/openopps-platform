@@ -4,7 +4,7 @@
       <div class="usajobs-grid-full">
         <div class="usa-width-two-thirds">
           <h1>Student internships
-            <% if (user && user.hiringPath=='fed'&& user.communities.student.length > 0) { %>
+            <% if (user && (user.hiringPath == 'fed' || user.hiringPath == 'contractor') && user.communities.student.length > 0) { %>
             <a href="/tasks/create?target=students" id="create-internship" class="usa-button usa-button-secondary add-internship"><i class="fa fa-plus"></i> <span>Create internship</span></a>
             <% }%>
           </h1>
