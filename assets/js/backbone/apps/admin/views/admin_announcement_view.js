@@ -29,13 +29,12 @@ var AdminAnnouncementView = Backbone.View.extend({
       dataType: 'json',
       success: function (announcementInfo) {
         this.announcement = announcementInfo;
-        var template = _.template(AdminAnnouncementTemplate)({ announcement: announcementInfo });
+        var template = _.template(AdminAnnouncementTemplate)({ announcement: announcementInfo }); 
         this.$el.html(template);
+        this.displayPreviewLoad();
       }.bind(this),
     });
     
-    // Backbone.history.navigate('/admin/announcement', { replace: replace });
-
     return this;
   },
 
@@ -55,13 +54,17 @@ var AdminAnnouncementView = Backbone.View.extend({
 
   preview: function (e) {
     e.preventDefault();
+    this.displayPreviewLoad();
+  },
+
+  displayPreviewLoad: function (){
     $('.usajobs-opop-announcement__title').html($('#announcement-title').val());
     $('.usajobs-opop-announcement__section').html($('#announcement-description').val());
     $('.preview').show();
     $('.edit').hide();
     $('#preview-btn').hide();
     $('#edit-btn').show();
-    $('#save-btn').show();
+    $('#save-btn').hide();
   },
 
   edit: function (e) {
@@ -70,7 +73,7 @@ var AdminAnnouncementView = Backbone.View.extend({
     $('.edit').show();
     $('#preview-btn').show();
     $('#edit-btn').hide();
-    $('#save-btn').hide();
+    $('#save-btn').show();
   },
 
   save: function (e) {
