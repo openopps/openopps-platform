@@ -19,6 +19,7 @@ var AdminMainView = Backbone.View.extend({
     'click #more-menu'                    : 'moreMenuToggle',
     'click .usajobs-nav-secondary__more-container .usajobs-nav-secondary__item' : 'moreMenuToggle',
     'click .admin-manage-link'            : linkBackbone,
+    'click #user-back'                    : linkBackbone,
   },
 
   initialize: function (options) {
