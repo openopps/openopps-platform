@@ -59,6 +59,8 @@ var BrowseRouter = Backbone.Router.extend({
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
     'loggedOut'                                     : 'showLogout',
+    'whoops'                                        : 'showWhoops',
+    '*notFound'                                     : 'notFound',
   },
 
   data: { saved: false },
@@ -116,6 +118,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
     this.welcomeView && this.welcomeView.cleanup();
+    this.adminMainController && this.adminMainController.cleanup();
     this.data = { saved: false };
   },
 
@@ -208,6 +211,15 @@ var BrowseRouter = Backbone.Router.extend({
     });
   },
 
+  showWhoops: function () {
+    Backbone.history.navigate('/', { replace: true });
+    showWhoopsPage();
+  },
+
+  notFound: function () {
+    showNotFoundPage();
+  },
+
   showExpired: function () {
     Backbone.history.navigate('/', { replace: true });
     this.navView = new NavView({
@@ -257,7 +269,7 @@ var BrowseRouter = Backbone.Router.extend({
   listProfiles: function (queryStr) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?profiles', { trigger: true });
-    } else if (window.cache.currentUser.hiringPath != 'fed') {
+    } else if (window.cache.currentUser.hiringPath != 'fed' && window.cache.currentUser.hiringPath != 'contractor') {
       Backbone.history.navigate('/home', { trigger: true, replace: true });
     } else {
       this.cleanupChildren();

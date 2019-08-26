@@ -42,15 +42,13 @@ async function updateProfileData (user, profile, tokenset) {
   user.agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
   user.agencyId = user.agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
-  var country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
-  var countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, country.code).catch(() => { return {}; });
-  user.countryId = country.countryId;
-  user.countrySubdivisionId = countrySubdivision.countrySubdivisionId;
+  user.country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
+  user.countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, user.country.code).catch(() => { return {}; });
+  user.countryId = user.country.countryId;
+  user.countrySubdivisionId = user.countrySubdivision.countrySubdivisionId;
   user.cityName = profile.AddressCity;
   await dao.User.update(user);
-  user.country = country.value;
-  user.countrySubdivision = countrySubdivision.value;
-  if (user.hiringPath == 'fed') {
+  if (user.hiringPath == 'fed' || user.hiringPath == 'contractor') {
     try {
       elasticService.indexUser(user.id);
     } catch (err) {}

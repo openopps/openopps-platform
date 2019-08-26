@@ -11,6 +11,13 @@ function fixUpperCaseAttributeNames (object) {
   return newObject;
 }
 
+function recordError (userId, err) {
+  dao.ErrorLog.insert({
+    userId: userId,
+    errorData: JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))),
+  }).catch();
+}
+
 module.exports = {};
 
 module.exports.profileEducation = (userId, applicationId, educationRecords) => {
@@ -30,7 +37,7 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
       });
       return dao.Education.insert(education);
     } catch (err) {
-      dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+      recordError(userId, err);
       return { err: 'An error occurred trying to import profile data.' };
     }
   }));
@@ -50,7 +57,7 @@ module.exports.profileExperience = (userId, applicationId, experienceRecords) =>
       });
       return dao.Experience.insert(experience);
     } catch (err) {
-      dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+      recordError(userId, err);
       return { err: 'An error occurred trying to import profile data.' };
     }
   }));
@@ -71,7 +78,7 @@ module.exports.profileLanguages = (userId, applicationId, languageRecords) => {
       };
       return dao.ApplicationLanguageSkill.insert(language);
     } catch (err) {
-      dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+      recordError(userId, err);
       return { err: 'An error occurred trying to import profile data.' };
     }
   }));
@@ -94,7 +101,7 @@ module.exports.profileReferences = (userId, applicationId, referenceRecords) => 
       };
       return dao.Reference.insert(reference);
     } catch (err) {
-      dao.ErrorLog.insert({ userId: userId, errorData: err }).catch();
+      recordError(userId, err);
       return { err: 'An error occurred trying to import profile data.' };
     }
   }));
@@ -112,7 +119,7 @@ module.exports.profileSkills = (userId, applicationId, skillRecords) => {
       var data = dao.ApplicationSkill.insert(skill);
       return data;
     } catch (err) {
-      dao.ErrorLog.insert({ userId: userId, errorData: err}).catch();
+      recordError(userId, err);
       return {err: 'An error occurred trying to import profile data.'};
     }
   }));

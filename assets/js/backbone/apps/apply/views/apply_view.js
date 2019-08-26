@@ -27,6 +27,7 @@ var ApplyView = Backbone.View.extend({
     'click .apply-continue'                                       : 'applyContinue',
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
+    'click .view-internship'                                      : linkBackbone,
 
     //process flow events
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',

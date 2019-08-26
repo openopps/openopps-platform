@@ -17,7 +17,7 @@ const countrySubdivisionQuery = 'select country_subdivision.country_subdivision_
 
 const communityUserQuery = 'select * from community_user '+
   'inner join community on community_user.community_id = community.community_id ' + 
-  'where community_user.user_id = ?';
+  'where community_user.user_id = ? and community_user.community_id= ?';
 
 const communityAdminsQuery = 'select midas_user.* from midas_user ' +
   'inner join community_user on community_user.user_id = midas_user.id '+
@@ -53,6 +53,15 @@ const commentsQuery = 'select @comment.*, @user.* ' +
   'from @comment comment ' +
   'join @midas_user "user" on "user".id = comment."userId" ' +
   'where comment."taskId" = ?';
+
+const completedInternsQuery= 'select midas_user.username, midas_user.bounced, ' +
+'trim(midas_user.given_name || \' \' || midas_user.last_name) as name ' +
+'from task_list_application ' +
+'inner join task_list on task_list_application.task_list_id = task_list.task_list_id ' +
+'inner join application on task_list_application.application_id = application.application_id ' +
+'inner join midas_user  on application.user_id = midas_user.id ' +
+'where  task_list.task_id = ? and application.internship_completed_at is not null ' ;
+
 
 const deleteTaskTags = 'delete from tagentity_tasks__task_tags where task_tags = ?';
 
@@ -100,20 +109,20 @@ const userQuery = 'select @midas_user.*, @agency.* ' +
   'where midas_user.id = ? ';
    
 const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
-  'midas_user.username, midas_user.name, midas_user.bounced ' +
+  'midas_user.username, midas_user.government_uri as "governmentUri", midas_user.name, midas_user.bounced ' +
   'from midas_user ' +
   'join volunteer v on v."userId" = midas_user.id ' +
   'join task t on t.id = v."taskId" and t."completedAt" is not null ' +
-  'where midas_user.id in ? ' +
+  'where v.assigned = true and v."taskComplete" = true and midas_user.id in ? ' +
   'group by midas_user.id, midas_user.username, midas_user.name';
 
 const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned, ' +
-  'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.bounced, midas_user."photoId" ' +
+  'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.government_uri as "governmentUri", midas_user.bounced, midas_user."photoId" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ?';
 
-const volunteerListQuery = 'select midas_user.username, midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
+const volunteerListQuery = 'select midas_user.username, midas_user.government_uri as "governmentUri", midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';
@@ -211,6 +220,7 @@ module.exports = function (db) {
     SavedTask: dao({ db: db, table: 'saved_task' }),
     Application: dao({db:db,table:'application'}),
     Phase: dao({ db: db, table: 'phase' }),
+    TaskListApplication:dao({ db: db, table:'task_list_application' }),
     query: {
       applicationTasks:applicationTaskQuery,
       comments: commentsQuery,
@@ -218,6 +228,7 @@ module.exports = function (db) {
       communityAdminsQuery: communityAdminsQuery,
       communitiesQuery: communitiesQuery,
       communityTaskQuery:communityTaskQuery,
+      completedInternsQuery:completedInternsQuery,
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,

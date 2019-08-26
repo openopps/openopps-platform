@@ -16,7 +16,14 @@ dao.query.getTopApplicantScoreByTask = `
 `;
 
 dao.query.getApplicationCount = `
-    select count(*) applicant_count from application where cycle_id = ?
+    select count(*) applicant_count from application where submitted_at is not null and cycle_id = ?
+`;
+
+dao.query.isCommunityManager = `
+    select is_manager
+    from community_user
+      inner join cycle on community_user.community_id = cycle.community_id
+    where community_user.user_id = ? and cycle_id = ?
 `;
 
 dao.query.getApplicationExistingCount = `
@@ -132,7 +139,8 @@ dao.query.GetPhaseData = `
     case when c.is_processing and coalesce(p."sequence", 0) < 1 then true
       when coalesce(p."sequence", 0) < 1 then false
       else true end as phases_started,
-    (select count(*) from phase) as total_phases
+    (select count(*) from phase) as total_phases,
+    (select is_manager from community_user where user_id = ? and community_id = c.community_id) as is_manager
   from
     "cycle" c
     left join phase p on p.phase_id = c.phase_id
@@ -264,7 +272,7 @@ dao.query.GetCycleApplicantData = `
       last_name,
       case when pri.task_id is not null then task.title end as "primary",
       case when alt.task_id is not null then task.title end as "alternate",
-      board.task_id,
+      board.task_id as "board_id",
       case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
   from midas_user
     inner join application on midas_user.id = application.user_id
@@ -290,7 +298,7 @@ dao.query.GetCycleApplicantData = `
                 and task_list.title in ('Alternate', 'Primary')
     ) as board on true
   where task.cycle_id = ?
-
+    and application.submitted_at is not null
 `;
 
 module.exports = function (db) {

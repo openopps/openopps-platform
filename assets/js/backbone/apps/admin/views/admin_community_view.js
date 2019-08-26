@@ -2,12 +2,14 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 var AdminCommunityTemplate = require('../templates/admin_community_template.html');
+var AdminCommunityDashboardActivitiesTemplate = require('../templates/admin_community_dashboard_activities_template.html');
 var AdminCommunityView = Backbone.View.extend({
 
   events: {
     'change #communities'         : 'changeCommunity',
     'click #community-edit'       : linkBackbone,
     'click .usajobs-alert__close' : 'closeAlert',
+    'change #sort-user-community' : 'sortUsers',
   },
 
   initialize: function (options) {
@@ -18,6 +20,7 @@ var AdminCommunityView = Backbone.View.extend({
   },
 
   render: function (replace) {
+    var self = this;
     this.$el.show();
     this.loadCommunityData();
     //this.loadInteractionsData();
@@ -45,6 +48,9 @@ var AdminCommunityView = Backbone.View.extend({
             saveSuccess:this.params.has('saveSuccess'),
           });
           this.$el.html(template);
+          setTimeout(function () {
+            this.fetchData(this);
+          }.bind(this), 50);
           if(this.options.communities) {
             this.initializeCommunitySelect();
           }
@@ -82,6 +88,48 @@ var AdminCommunityView = Backbone.View.extend({
     if($('#communities').val()) {
       Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
     }
+  },
+
+  renderActivities: function (self, data) {
+    var template = _.template(AdminCommunityDashboardActivitiesTemplate)(data);
+    self.$('.activity-block').html(template);
+    _(data).forEach(function (activity) {
+
+      if (!activity || !activity.user ||
+        (activity.type === 'newVolunteer' && !activity.task) ||
+        (activity.comment && typeof activity.comment.value === 'undefined')
+      ) return;
+
+      if (activity.comment) {
+        var value = activity.comment.value;
+
+        value = marked(value, { sanitize: false });
+        //render comment in single line by stripping the markdown-generated paragraphs
+        value = value.replace(/<\/?p>/gm, '');
+        value = value.replace(/<br>/gm, '');
+        value = value.trim();
+
+        activity.comment.value = value;
+      }
+
+      activity.createdAtFormatted = $.timeago(activity.createdAt);
+      var template = self.$('#' + activity.type).text(),
+          content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
+      self.$('.activity-block .activity-feed').append(content);
+    });
+
+    this.$el.localize();
+    self.$('.spinner').hide();
+  },
+
+  fetchData: function (self) {
+    $.ajax({
+      url: '/api/admin/community/'+ this.communityId + '/activities',
+      dataType: 'json',
+      success: function (activityData) {
+        self.renderActivities(self, activityData);
+      }.bind(this),
+    });
   },
 
   cleanup: function () {

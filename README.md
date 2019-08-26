@@ -4,7 +4,7 @@ Badge | Status
 --- | ---
 **Circle CI Build** | [![Build Status](https://circleci.com/gh/openopps/openopps-platform.svg?style=shield&circle-token=fc05032b464335e120cd4133f124a3b694bc5d2b)](https://circleci.com/gh/openopps/openopps-platform)
 **Code Climate** | [![Code Climate](https://codeclimate.com/github/openopps/openopps-platform/badges/gpa.svg)](https://codeclimate.com/github/openopps/openopps-platform)
-**Current Version** | [![Current Version](https://img.shields.io/badge/release-v7.7.4-0e5487.svg)](https://github.com/openopps/openopps-platform/releases)
+**Current Version** | [![Current Version](https://img.shields.io/badge/release-v8.0.1-0e5487.svg)](https://github.com/openopps/openopps-platform/releases)
 
 ---
 

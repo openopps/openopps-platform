@@ -67,7 +67,7 @@
   </div>
   <% if (community.duration == 'Cyclical') { %>
     <div class="usa-width-one-third">
-      <h3><i class="fas fa-sync-alt"></i><span class="box-icon-text">Cycles <a href="/admin/community/<%=community.communityId %>/cycles" class="">Manage</a></span></h3>
+      <h3><i class="fas fa-sync-alt"></i><span class="box-icon-text">Cycles <a href="/admin/community/<%=community.communityId %>/cycles" class="admin-manage-link">Manage</a></span></h3>
       <ul class="usajobs-unstyled-list">
         <li>Total created: <%- numeral(community.cycles.length).format('0,0') %></li>
         <li>Completed: <%- numeral(_.filter(community.cycles, function (cycle) { return cycle.cycleEndDate <= new Date(); }).length).format('0,0') %></li>
@@ -75,15 +75,23 @@
     </div>
   <% } %>
   <div class="usa-width-one-third">
-    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="">Manage</a></span></h3>
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
-      <li>Total created: <%- numeral(community.tasks.totalCreated).format('0,0') %></li>
-      <li>Submitted: <%- numeral(community.tasks.submitted).format('0,0') %></li>
-      <li>Open: <%- numeral(community.tasks.open).format('0,0') %></li>
-      <li>Not open: <%- numeral(community.tasks.notOpen).format('0,0') %></li>
-      <li>In progress: <%- numeral(community.tasks.inProgress).format('0,0') %></li>
-      <li>Completed: <%- numeral(community.tasks.completed).format('0,0') %></li>
-      <li>Canceled: <%- numeral(community.tasks.canceled).format('0,0') %></li>
+      <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
+      <% if (community.duration == 'Cyclical') { %>
+        <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>
+        <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+        <li>Approved: <%- numeral((_.findWhere(community.tasks, { task_state: 'approved' }) || {}).count).format('0,0') %></li>
+        <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+        <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
+      <% } else { %>
+        <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+        <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+        <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'not open' }) || {}).count).format('0,0') %></li>
+        <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'in progress' }) || {}).count).format('0,0') %></li>
+        <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
+        <li>Canceled: <%- numeral((_.findWhere(community.tasks, { task_state: 'canceled' }) || {}).count).format('0,0') %></li>
+      <% } %>
     </ul>
   </div>
   <% if (community.duration == 'Cyclical') { %>
@@ -98,5 +106,14 @@
         <li>Total completed: <%- numeral(community.interactions.completions).format('0,0') %></li>
         <li>Discussion posts: <%- numeral(community.interactions.posts).format('0,0') %></li>
     </ul>
+  </div>
+</div>
+
+<div class="activity-block">
+  <h3 class="usajobs-section-header">Recent activity</h3>
+  <div class="usajobs-grid-full">
+    <div class="activity-feed usa-width-one-half">
+      <ul class="usajobs-unstyled-list"></ul>
+    </div>
   </div>
 </div>

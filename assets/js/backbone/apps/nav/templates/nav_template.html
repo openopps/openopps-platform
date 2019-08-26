@@ -29,7 +29,7 @@
               </li>
             <% } else if (name) { %>
               <li class="usajobs-nav__menu-container usajobs-nav__account usajobs-nav--openopps__menu-container" data-state="is-closed">
-                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="<%- usajobsURL %>/applicant/profile/openopportunities" title="Account" aria-haspopup="true" aria-controls="section-one">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="<%- user.editURL %>" title="Account" aria-haspopup="true" aria-controls="section-one">
                   <span class="usajobs-nav--openopps__section">
                     <span class="fas fa-user fa-fw" focusable="false"></span>
                     <span class="usajobs-nav__first_name usajobs-nav--openopps__first-name"><%- name %></span>
@@ -109,13 +109,13 @@
     </ul>
     <% } %>
     <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
-      <% if (!user || user.hiringPath == 'fed') { %>
+      <% if (!user || user.hiringPath == 'fed' || user.hiringPath == 'contractor') { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
       <% } %>
-      <% if (!user || user.isAdmin || user.communities.student.length > 0 || user.hiringPath == 'student') { %>
+      <% if (!user || user.isAdmin || (user.communities && user.communities.student.length > 0) || user.hiringPath == 'student') { %>
         <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search/internships" class="usajobs-openopps-secondary-nav__link subnav-link" title="Internships">Internships</a></li>
         <% } %>
-      <% if (user && user.hiringPath == 'fed') { %>
+      <% if (user && (user.hiringPath == 'fed' || user.hiringPath == 'contractor')) { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
       <% } %>
       <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>

@@ -534,12 +534,11 @@ var InternshipEditFormView = Backbone.View.extend({
   initializeSuggestedClearance: function () {
     this.suggestedClearances =  [
       {id: 0, name: 'None'},
-      {id: 1, name: 'Classified'},
-      {id: 2, name: 'Interim Secret'},
-      {id: 3, name: 'Interim Top Secret'},
-      {id: 4, name: 'Secret'},
-      {id: 5, name: 'Top Secret'},
-      {id: 6, name: 'Top Secret/SCI'},
+      {id: 1, name: 'Interim Secret'},
+      {id: 2, name: 'Interim Top Secret'},
+      {id: 3, name: 'Secret'},
+      {id: 4, name: 'Top Secret'},
+      {id: 5, name: 'Top Secret/SCI'},
     ];
   },
 

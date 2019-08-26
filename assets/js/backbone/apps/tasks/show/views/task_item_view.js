@@ -20,6 +20,7 @@ var RemoveParticipantTemplate = require('../templates/remove_participant_templat
 var ConfirmParticipantTemplate = require('../templates/confirm_participant_template.html');
 var NotCompleteTemplate = require('../templates/participants_not_complete_template.html');
 var ParticipateCheckList = require('../templates/participate_check_list.html').toString();
+var ContractorCheckList = require('../templates/contractor_check_list.html').toString();
 var ProfileCheckList = require('../templates/profile_check_list.html');
 var ShareTemplate = require('../templates/task_share_template.txt');
 
@@ -492,11 +493,19 @@ var TaskItemView = BaseView.extend({
       Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '?action=apply', { trigger: true });
       //window.cache.userEvents.trigger('user:request:login');
     } else {
-      var locationTag = window.cache.currentUser.tags.filter(function (t) {
-        return t.type === 'location';
-      });
-      if(locationTag.length == 0 || !window.cache.currentUser.agency) {
-        this.completeProfile(locationTag, window.cache.currentUser.agency);
+      var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
+      if (window.cache.currentUser.hiringPath == 'contractor') {
+        var options = _.extend(_.clone(this.modalOptions), {
+          modalTitle: 'Sorry you are not eligble to apply.',
+          modalBody: ContractorCheckList,
+          primary: {
+            text: 'Close',
+            action: function () { this.modalComponent.cleanup(); }.bind(this),
+          },
+        });
+        this.modalComponent = new ModalComponent(options).render();
+      } else if(location.length == 0 || !window.cache.currentUser.agency) {
+        this.completeProfile(location, window.cache.currentUser.agency);
       } else {
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',

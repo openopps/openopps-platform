@@ -63,7 +63,8 @@ function loginError (ctx, err) {
     ctx.redirect('/welcome?u=' + new Buffer(JSON.stringify(err.data)).toString('base64'));
   } else {
     log.info('Authentication Error: ', err);
-    ctx.status = 503;
+    service.logError(null, err);
+    ctx.redirect('/whoops');
   }
 }
 
@@ -246,7 +247,7 @@ router.get('/api/auth/logout', async (ctx, next) => {
   if(openopps.auth.oidc) {
     response.redirectURL = openopps.auth.oidc.endSessionUrl({
       post_logout_redirect_uri: openopps.httpProtocol + '://' + openopps.hostName + '/loggedOut',
-      id_token_hint: ctx.session.passport.user.tokenset.id_token,
+      id_token_hint: ctx.state.user.tokenset.id_token,
     });
   }
   ctx.logout();

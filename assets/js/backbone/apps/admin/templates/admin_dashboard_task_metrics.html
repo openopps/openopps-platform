@@ -1,41 +1,49 @@
-<form class="usajobs-form">
-  <div class="usajobs-grid-full">
-    <div class="usa-width-three-fourths type">
-      <label for="filter">Type:</label>
-      <select id="filter" name="filter" class="filter">
-        <option value="">All</option>
-        <option value="One time">One time</option>
-        <option value="Ongoing">Ongoing</option>
-      </select>
-    </div>
-    <div class="usa-width-one-fourth period">
-      <label for="group">Period:</label>
-      <select id="group" name="group" class="group">
-        <option value="week">Week</option>
-        <option value="month">Month</option>
-        <option value="quarter">Quarter</option>
-        <option value="year">Year</option>
-        <option value="fyquarter">Fiscal Quarter</option>
+<h3 class="usajobs-section-header">Opportunities</h3>
+<form class="usajobs-form usajobs-search-controls-participated">
+  <div class="usajobs-grid usajobs-search-controls">
+    <div class="usa-fieldset-inputs usajobs-search-controls__results-count-container no-params">
+      <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Type</legend>          
+          <ul class="usa-unstyled-list__radio--horizontal" >
+            <li>
+              <input id="all" name="type" type="radio" value="" >
+              <label for="all">All</label>
+            </li>
+            <li>
+              <input id="one-time" name="type" type="radio" value="One time" >
+              <label for="one-time">One time</label>
+            </li>
+            <li>
+              <input id="on-going" name="type" type="radio" value="Ongoing" >
+              <label for="on-going">Ongoing</label>
+            </li>
+          </ul>
+      </fieldset>
+    </div>     
+    <div class="usajobs-search-controls__sort-container no-params show-on-desktop period ">
+      <label for="group" >Period:</label>
+      <select id="group" name="group" class="group usajobs-search-controls__sort-control">          
         <option value="fy">Fiscal Year</option>
+        <option value="quarter">Quarter</option>   
+        <option value="month">Month</option>
       </select>
     </div>
   </div>
 </form>
 
 <div class="overflow-x">
-  <h3>Completed Opportunities</h3>
   <table class="usa-table-borderless task-metrics-table" role="presentation">
     <thead>
       <tr>
         <th scope="col"><span class="sr-only">Type</span></th>
-        <% _.each(range, function(key) { %>
+         <% _.each(range, function(key) { %>
         <th scope="col"><%- label(key) %></th>
-        <% }); %>
+        <% }); %> 
       </tr>
     </thead>
     <tbody>
       <tr>
-        <th scope="row">Carryover <small>(still published or assigned)</small></th>
+        <th scope="row">Carryover <small>(Not completed)</small></th>
         <% _.each(range, function(key) { %>
         <td><%- tasks.carryOver[key] || 0 %></td>
         <% }); %>
@@ -58,34 +66,21 @@
           <td><%- tasks.completedByAdmin[key] || 0 %></td>
         <% }); %>
       </tr>
-      <tr>
-        <th scope="row">Completed by Opportunity Creator</th>
-        <% _.each(range, function(key) { %>
-          <td><%- tasks.completedByCreator[key] || 0 %></td>
-        <% }); %>
-      </tr>
+     
       <tr>
         <th scope="row">Percentage Completed</th>
         <% _.each(range, function(key) { %>
-        <td><%- Math.round(tasks.completed[key] / tasks.published[key] * 100, 4) || 0 %>%</td>
+        <td><%- Math.round((tasks.completed[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
         <% }); %>
       </tr>
-    </tbody>
-  </table>
-</div>
-<div class="overflow-x">
-  <table class="usa-table-borderless task-metrics-table" role="presentation">
-    <thead>
       <tr>
-        <th scope="col">Participants</th>
+        <th scope="row">Percentage Canceled</th>
         <% _.each(range, function(key) { %>
-        <th scope="col"><%- label(key) %></th>
+          <td><%- Math.round((tasks.canceled[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
         <% }); %>
       </tr>
-    </thead>
-    <tbody>
       <tr>
-        <th scope="row">Participants <small>(people who have signed up for tasks)</small></th>
+        <th scope="row">Applicants </th>
         <% _.each(range, function(key) { %>
         <td><%- volunteers[key] || 0 %></td>
         <% }); %>
@@ -94,23 +89,5 @@
   </table>
 </div>
 
-<div class="overflow-x">
-  <table class="usa-table-borderless task-metrics-table" role="presentation">
-    <thead>
-      <tr>
-        <th scope="col" data-i18n="tag.AgencyPlural" ></th>
-        <% _.each(range, function(key) { %>
-        <th scope="col"><%- label(key) %></th>
-        <% }); %>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row"><span data-i18n="tag.AgencyPlural"></span> <small>(with people who have signed up for tasks)</small></th>
-        <% _.each(range, function(key) { %>
-        <td><%- agencies[key] || 0 %></td>
-        <% }); %>
-      </tr>
-    </tbody>
-  </table>
-</div>
+
+

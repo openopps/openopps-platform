@@ -1,18 +1,20 @@
 
 <div id="confirm-close">
+ <% if (interns.length>0) { %>
  <p>You haven't marked these interns as completed. If you close the internship, they will not get credit.</p> 
 <% _.each(interns, function (intern) { %>
-<div class="internship-applicant"> 
+<div class="internship-participant"> 
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">          
-        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(intern.userId) %>">
-          <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(intern.name) %></div>
+        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(intern.applicationId) %>">
+          <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials([intern.givenName, intern.lastName].join(' ')) %></div>
         </div>
         <div class="usajobs-open-opps-opportunity-requestor__body">
-          <div class="usajobs-open-opps-opportunity-requestor__name"><%- intern.name %></div>
+          <div class="usajobs-open-opps-opportunity-requestor__name"><%- [intern.givenName, intern.lastName].join(' ') %></div>
         </div>     
     </div>   
 </div>
 <% }); %>  
  <p>Do you still want to close this internship opportunity? Once you close it, you can't reopen it.</p>
+ <% } %>
   </div>
- 
+  

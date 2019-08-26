@@ -65,7 +65,7 @@ var InternshipsView = Backbone.View.extend({
   initializeAppliedSaved: function () {
     if (this.appliedView) { this.appliedView.cleanup(); }
     if (this.savedView) { this.savedView.cleanup(); }
-    $.ajax('/api/user/internship/activities').done(function (data) {
+    $.ajax('/api/user/internship/activities').done(function (data) { 
       this.data = data;
       this.appliedView = new InternshipsActivityView({
         model: this.model,
@@ -107,12 +107,24 @@ var InternshipsView = Backbone.View.extend({
     if (application.submittedAt == null) {
       return 'In progress';
     } else if (application.sequence == 3) {
-      if (application.reviewProgress == 'Primary') {
-        return 'Selected';
-      } else if (application.reviewProgress == 'Alternate') {
-        return 'Alternate';
+      if (application.taskState == 'completed') {
+        if (application.internshipComplete) {
+          return 'Completed';
+        } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
+          return 'Not complete';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate';
+        } else {
+          return 'Not selected';
+        }
       } else {
-        return 'Not selected';
+        if (application.reviewProgress == 'Primary') {
+          return 'Selected';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate';
+        } else {
+          return 'Not selected';
+        }
       }
     } else {
       return 'Applied';
