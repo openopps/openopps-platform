@@ -9,7 +9,7 @@
   </div>
 </div>
 <form action="" class="usa-form-xl" role="form" id="announcement-form">
-  <fieldset class="usajobs-fieldset edit">
+  <fieldset class="usajobs-fieldset edit" style="display:none;">
     <legend class="usa-sr-only">Edit announcement</legend>
     <div class="required-input" id="announcement-form-title">
       <label for="announcement-title">
@@ -34,10 +34,9 @@
       <textarea id="announcement-description" class="announcement-description"><%- announcement.description %></textarea>
     </div>
   </fieldset>
-  <fieldset class="usajobs-fieldset preview" style="display:none;">
+  <fieldset class="usajobs-fieldset preview" >
       <legend class="usa-sr-only">Announcement preview</legend>
-    <div class="usajobs-opop-announcement__body">
-      <h2>Announcement</h2>
+    <div class="usajobs-opop-announcement__body">   
       <div>
         <div class="usajobs-opop-announcement__title"></div>
         <div class="usajobs-opop-announcement__section"></div>
@@ -47,7 +46,7 @@
   <div class="usajobs-button_bar--slim">
     <div class="usajobs-button_bar__body">
       <button id="preview-btn" class="usa-button">Preview Changes</button>
-      <button id="edit-btn" class="usa-button-secondary usa-button-left" style="display:none;">Make Changes</button>
+      <button id="edit-btn" class="usa-button" style="display:none;">Make Changes</button>
       <button id="save-btn" class="usa-button" style="display:none;">Save Changes</button>
     </div>
   </div>
