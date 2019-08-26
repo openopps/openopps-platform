@@ -15,7 +15,9 @@ dao.query.internshipListQuery = `
     (select count(*) from task_list_application 
       inner join task_list on task_list_application.task_list_id = task_list.task_list_id
       where task_list."task_id" = task.id) as "TaskListApplicantCount",
-    (select count(*) from task_list where task_list.task_id = task.id) as "ListCount",
+    (select count(distinct task_list.task_list_id) from task_list_application
+      inner join task_list on task_list_application.task_list_id = task_list.task_list_id    
+      where task_id = task.id) as "ListCount",
     (
       select json_agg(item)
       from (
