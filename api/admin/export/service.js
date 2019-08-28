@@ -51,8 +51,8 @@ module.exports.getExportData = async function (type, target, id) {
     if (target === 'participant') {
       var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipantsExport.sql', 'utf8');  
       records= (await db.query(topAgencyParticipants, [FY.start, FY.end])).rows;
-      fieldNames = _.keys(dao.exportTopContributorFormat);
-      fields = _.values(dao.exportTopContributorFormat);
+      fieldNames = _.keys(dao.exportTopContributorParticipantFormat);
+      fields = _.values(dao.exportTopContributorParticipantFormat);
     } 
   }
   fields.forEach(function (field, fIndex, fields) {

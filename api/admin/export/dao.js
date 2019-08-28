@@ -80,7 +80,7 @@ var exportUserFormat = {
   'disabled': 'disabled',
   'announcement': {field: 'content', filter: nullToEmptyString},
 };
-var exportTopContributorFormat = {
+var exportTopContributorParticipantFormat = {
   'rank no': {field: 'rank', filter: nullToEmptyString},
   'agency': {field: 'name', filter: nullToEmptyString},
   'total number participated': {field: 'count', filter: nullToEmptyString},
@@ -176,6 +176,6 @@ module.exports = function (db) {
     options: options,
     exportUserFormat: exportUserFormat,
     exportTaskFormat: exportTaskFormat,
-    exportTopContributorFormat:exportTopContributorFormat,
+    exportTopContributorParticipantFormat:exportTopContributorParticipantFormat,
   };
 };
