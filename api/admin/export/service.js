@@ -17,7 +17,6 @@ module.exports.getExportData = async function (type, target, id) {
   var records;
   var fieldNames;
   var fields;
-
   if (type === 'task') {
     if (target === 'agency') {
       records = (await dao.Task.db.query(dao.query.exportTaskAgencyData, id)).rows;
@@ -26,7 +25,6 @@ module.exports.getExportData = async function (type, target, id) {
     } else {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
-
     fieldNames = _.keys(dao.exportTaskFormat);
     fields = _.values(dao.exportTaskFormat);
   } else if (type === 'user') {
@@ -37,11 +35,9 @@ module.exports.getExportData = async function (type, target, id) {
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
     }
-
     fieldNames = _.keys(dao.exportUserFormat);
     fields = _.values(dao.exportUserFormat);
   }
-  
   else if (type === 'TopContributor') {
     var today = new Date();
     var FY = {};
@@ -59,7 +55,6 @@ module.exports.getExportData = async function (type, target, id) {
       fields = _.values(dao.exportTopContributorFormat);
     } 
   }
-
   fields.forEach(function (field, fIndex, fields) {
     if (typeof(field) === 'object') {      
       records.forEach(function (rec, rIndex, records) {
@@ -68,7 +63,6 @@ module.exports.getExportData = async function (type, target, id) {
       fields[fIndex] = field.field;   
     }  
   });
-
   return json2csv({
     data: records,
     fields: fields,
