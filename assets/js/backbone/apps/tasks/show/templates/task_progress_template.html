@@ -72,7 +72,7 @@
             <a href="javascript:void(0);" id="apply-cancel">Cancel your application</a>
           </div>
         <% } %>
-      <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
+      <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants && user.hiringPath == 'fed') { %>
         <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
       <% } %>
     <% } %>
