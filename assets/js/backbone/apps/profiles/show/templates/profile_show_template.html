@@ -89,14 +89,14 @@
               </span>
             </div>
             <div class="profile-email">
-              <% if (data.hiringPath == 'fed' && loginGovEmail && fedEmail) { %>
+              <% if ((data.hiringPath == 'fed' || data.hiringPath == 'contractor') && loginGovEmail && fedEmail) { %>
                 <div class="usajobs-profile-home-section__field-label">Official government email address</div>
                 <% if (user.id !== data.id) { %>
                   <a href="mailto:<%= fedEmail %>"><%= fedEmail %></a>
                 <% } else { %>
                   <span><%= fedEmail %></span>
                 <% } %>
-              <% } else if (data.hiringPath == 'fed' && loginGovEmail) { %>
+              <% } else if ((data.hiringPath == 'fed' || data.hiringPath == 'contractor') && loginGovEmail) { %>
                 <div class="usajobs-profile-home-section__field-label">Contact email address</div>
                 <% if (user.id !== data.id) { %>
                   <a href="mailto:<%= loginGovEmail %>"><%= loginGovEmail %></a>
@@ -114,7 +114,7 @@
               <%= data.bioHtml %>
               <% } %>
             </div>
-            <% if (data.hiringPath == 'fed') { %>
+            <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
               <div class="profile-share <% if (data.isOwner || user.isAdmin) { %>border-bottom<% } %>">
                   <a href="#" id="email"><i class="fas fa-share-alt"></i> <span>Share Profile</span></a>
               </div>
@@ -160,7 +160,7 @@
         </div>
       </div>
     </main>
-    <% if (data.hiringPath == 'fed') { %>
+    <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
       <aside class="usajobs-rightrail" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
           <h2>Badges</h2>

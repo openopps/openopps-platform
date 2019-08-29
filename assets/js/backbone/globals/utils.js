@@ -3,12 +3,19 @@ var $ = require('jquery');
 var _ = require('underscore');
 
 const whoopsPage = require('../apps/error/templates/whoops.html');
+const NotFoundPage = require('../apps/error/templates/not-found.html');
 
 // import URLSearchParams polyfill
 require('url-search-params-polyfill');
 
 global.showWhoopsPage = function () {
   $('#container').html(_.template(whoopsPage));
+  $('#search-results-loading').hide();
+  window.scrollTo(0, 0);
+};
+
+global.showNotFoundPage = function () {
+  $('#container').html(_.template(NotFoundPage));
   $('#search-results-loading').hide();
   window.scrollTo(0, 0);
 };

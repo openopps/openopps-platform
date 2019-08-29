@@ -162,6 +162,6 @@
   "bugs": "https://github.com/openopps/openopps-platform/issues",
   "license": "CC0-1.0",
   "engines": {
-    "node": "8.15.x"
+    "node": "10.16.x"
   }
 }

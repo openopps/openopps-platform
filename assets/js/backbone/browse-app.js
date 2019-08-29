@@ -9,7 +9,6 @@ var ProfileShowController = require('./apps/profiles/show/controllers/profile_sh
 var ProfileEditController = require('./apps/profiles/edit/controllers/profile_edit_controller');
 var ProfileResetController = require('./apps/profiles/reset/controllers/profile_reset_controller');
 var ProfileListController = require('./apps/profiles/list/controllers/profile_list_controller');
-var ProfileFindController = require('./apps/profiles/find/controllers/profile_find_controller');
 var StudentHomeController = require('./apps/profiles/home/internships/controllers/internships_controller');
 var TaskModel = require('./entities/tasks/task_model');
 var TaskSearchController = require('./apps/tasks/search/controllers/task_search_controller');
@@ -42,8 +41,6 @@ var BrowseRouter = Backbone.Router.extend({
     'internships/new'                                :'newInternship',
     'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
-    'profile/find(/)'                               : 'findProfile',
-    'profile/link(/)'                               : 'linkProfile',
     'profile/:id(/)'                                : 'showProfile',
     'profile/edit/skills/:id(/)'                    : 'editSkills',
     'profile/edit/:id(/)'                           : 'editProfile',
@@ -59,6 +56,8 @@ var BrowseRouter = Backbone.Router.extend({
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
     'loggedOut'                                     : 'showLogout',
+    'whoops'                                        : 'showWhoops',
+    '*notFound'                                     : 'notFound',
   },
 
   data: { saved: false },
@@ -99,7 +98,6 @@ var BrowseRouter = Backbone.Router.extend({
   cleanupChildren: function () {
     if (this.browseListController) { this.browseListController.cleanup(); }
     if (this.profileShowController) { this.profileShowController.cleanup(); }
-    if (this.profileFindController) { this.profileFindController.cleanup(); }
     if (this.profileEditController) { this.profileEditController.cleanup(); }
     this.profileListController && this.profileListController.cleanup();
     if (this.taskShowController) { this.taskShowController.cleanup(); }
@@ -209,6 +207,15 @@ var BrowseRouter = Backbone.Router.extend({
     });
   },
 
+  showWhoops: function () {
+    Backbone.history.navigate('/', { replace: true });
+    showWhoopsPage();
+  },
+
+  notFound: function () {
+    showNotFoundPage();
+  },
+
   showExpired: function () {
     Backbone.history.navigate('/', { replace: true });
     this.navView = new NavView({
@@ -258,7 +265,7 @@ var BrowseRouter = Backbone.Router.extend({
   listProfiles: function (queryStr) {
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?profiles', { trigger: true });
-    } else if (window.cache.currentUser.hiringPath != 'fed') {
+    } else if (window.cache.currentUser.hiringPath != 'fed' && window.cache.currentUser.hiringPath != 'contractor') {
       Backbone.history.navigate('/home', { trigger: true, replace: true });
     } else {
       this.cleanupChildren();
@@ -534,15 +541,6 @@ var BrowseRouter = Backbone.Router.extend({
       el: '#container',
       router: this,
       data: { applicationId: id },
-    });
-  },
-  
-  findProfile: function () {
-    this.cleanupChildren();
-    this.profileFindController = new ProfileFindController({
-      target: 'profile/find',
-      el: '#container',
-      router: this,
     });
   },
 
