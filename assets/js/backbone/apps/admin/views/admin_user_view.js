@@ -23,7 +23,7 @@ var AdminUserView = Backbone.View.extend({
     'click .member-enable'        : 'toggleCheckbox',
     'click .user-reset'           : 'resetPassword',
     'click #invite-members'       : 'inviteMembers',
-    'keyup #user-filter'          : 'filter',
+    'click #user-filter-search'   : 'filter',
     'click .remove-member'        : 'removeMember',
     'change #sort-user-sitewide'  : 'sortUsers',
     'change #sort-user-agency'    : 'sortUsers',
@@ -37,7 +37,11 @@ var AdminUserView = Backbone.View.extend({
       page: this.params.get('p') || 1,
       filter: this.params.get('f') || '',
       sort: this.params.get('s') || 'createdAt',
+      returnUrl: '/admin',
     };
+    if (this.options.target !== 'sitewide') {
+      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    }
     this.agency = {};
     this.community = {};
   },
@@ -73,6 +77,8 @@ var AdminUserView = Backbone.View.extend({
       agency: this.agency,
       community: this.community,
       target: this.options.target,
+      filter: this.data.filter,
+      returnUrl: this.data.returnUrl,
     };
 
     var template = _.template(AdminUserTemplate)(data);
@@ -245,28 +251,20 @@ var AdminUserView = Backbone.View.extend({
 
   clickPage: function (e) {
     if (e.preventDefault) e.preventDefault();
-    // load this page of data
-    this.fetchData({
-      page: $(e.currentTarget).data('page'),
-      q: this.q,
-      limit: this.limit,
-    });
+    this.data.page = $(e.currentTarget).data('page');
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
   },
 
   filter: function (e) {
-    // get the input box value
-    var val = $(e.currentTarget).val().trim();
-    // if the filter is the same, don't do anything
-    if (val == this.q) {
+    var val = $('#user-filter').val().trim();
+    if (val == this.data.filter) {
       return;
     }
-    this.q = val;
     this.data.filter = val;
-    // hide the table and show the spinner
-    this.$('#user-table').hide();
-    this.$('.spinner').show();
-    // fetch this query, starting from the beginning page
-    this.fetchData({ q: val });
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
   },
 
   fetchData: function (data) {

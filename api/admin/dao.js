@@ -179,10 +179,10 @@ const activityQuery = 'select comment."createdAt", comment.id, \'comment\' as ty
   'inner join community on community_user.community_id = community.community_id ' +
   'where community.target_audience <> 2 ' +
   'union all ' +
-  'select task."createdAt", task.id, \'task\' as type ' +
+  'select task."submittedAt" as "createdAt", task.id, \'task\' as type ' +
   'from task ' +
   'inner join midas_user on midas_user.id = task."userId" ' +
-  'where task.cycle_id is null ' +
+  'where task.cycle_id is null and task."submittedAt" is not null ' +
   'order by "createdAt" desc ' +
   'limit 20';
 
@@ -198,10 +198,10 @@ const activityVolunteerQuery = 'select midas_user.name, midas_user.username, tas
   'left join task on volunteer."taskId" = task.id ' +
   'where volunteer.id = ? ';
 
-const activityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task."createdAt" ' +
+const activityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task."submittedAt" as "createdAt" ' +
   'from midas_user ' +
   'inner join task on midas_user.id = task."userId" ' +
-  'where task.id = ? ';
+  'where task."submittedAt" is not null and task.id = ? ';
 
 const communityActivityQuery = 'select community_user.created_at as "createdAt", id, \'user\' as type ' +
   'from midas_user ' +

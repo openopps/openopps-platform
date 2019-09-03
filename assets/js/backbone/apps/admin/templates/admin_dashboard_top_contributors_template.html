@@ -23,7 +23,7 @@
           </div>
         </div>
       </div>
-    <% }); %>
+    <% }); %> 
     <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
   </div>
 
@@ -51,6 +51,13 @@
       </div>
     </div>
     <% }); %>
-    <i class="fa fa-download"></i><span class="opportunities-participating--download box-icon-text">Download full list (.csv)</span>
+    <div class="usa-width-one-whole">
+      <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+          title="Download list of all top contributors participated list as a comma-separated file ready for import into Excel">        
+            <a href="/api/admin/export/contributor/participant/">    
+          <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+        </a>
+      </div>
+    </div>
   </div>
 </div>

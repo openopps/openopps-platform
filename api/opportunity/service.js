@@ -486,7 +486,7 @@ async function sendTaskSubmittedNotification (user, task) {
     }
   };
   if (task.communityId) {
-    _.forEach((await dao.User.db.query(dao.query.communityAdminsQuery, task.communityId)).rows, updateBaseData);
+    _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
     _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
   }
@@ -650,7 +650,7 @@ async function removeTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
-        await elasticService.indexOpportunity(id);
+        await elasticService.deleteOpportunity(id);
         return id;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);

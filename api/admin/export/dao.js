@@ -31,7 +31,7 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
-  const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -79,6 +79,11 @@ var exportUserFormat = {
   'manager': 'is_manager',
   'disabled': 'disabled',
   'announcement': {field: 'content', filter: nullToEmptyString},
+};
+var exportTopContributorParticipantFormat = {
+  'rank no': {field: 'rank', filter: nullToEmptyString},
+  'agency': {field: 'name', filter: nullToEmptyString},
+  'total number participated': {field: 'count', filter: nullToEmptyString},
 };
 
 var exportTaskFormat = {
@@ -165,11 +170,12 @@ module.exports = function (db) {
       exportUserCommunityData: exportUserCommunityData,
       exportTaskAgencyData: exportTaskAgencyData,
       exportTaskCommunityData: exportTaskCommunityData,
-      exportTaskData: exportTaskData,
+      exportTaskData: exportTaskData,    
     },
     clean: clean,
     options: options,
     exportUserFormat: exportUserFormat,
     exportTaskFormat: exportTaskFormat,
+    exportTopContributorParticipantFormat:exportTopContributorParticipantFormat,
   };
 };

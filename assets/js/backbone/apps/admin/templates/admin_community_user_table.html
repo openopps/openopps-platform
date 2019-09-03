@@ -59,7 +59,7 @@
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
         <td>
-          <%- u.agency %>
+          <%- (u.agency || {}).name %>
         </td>
         <td class="admin-table-joineddate">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>

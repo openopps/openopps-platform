@@ -64,28 +64,7 @@ function loginError (ctx, err) {
   } else {
     log.info('Authentication Error: ', err);
     service.logError(null, err);
-    ctx.status = 503;
-  }
-}
-
-async function processState (state, user, ctx) {
-  if(state.action == 'link') {
-    await service.linkAccount(user, state.data, (err, user) => {
-      if(err) {
-        ctx.status = 400;
-        ctx.redirect('/expired');
-      } else {
-        loginUser(state, user, ctx);
-      }
-    });
-  } else {
-    await service.createStagingRecord(user, (err, account) => {
-      if(err) {
-        ctx.status = 400;
-      } else {
-        ctx.redirect(state.redirect ? ('/' + state.redirect) : ('/profile/find?id=' + account.linkedId + '&h=' + account.hash));
-      }
-    });
+    ctx.redirect('/whoops');
   }
 }
 
@@ -116,33 +95,10 @@ router.get('/api/auth/oidc/callback', async (ctx, next) => {
   await passport.authenticate('oidc', async (err, user, info, status) => {
     if (err || !user) {
       loginError(ctx, err);
-    } else if(user.type == 'staging') {
-      await processState(JSON.parse(ctx.query.state), user, ctx);
     } else {
       loginUser(JSON.parse(ctx.query.state), user, ctx);
     }
   })(ctx, next);
-});
-
-router.post('/api/auth/find', async (ctx, next) => {
-  await service.sendFindProfileConfirmation(ctx, ctx.request.body, (err) => {
-    if(err) {
-      ctx.status = 400;
-      return ctx.body = { message: err };
-    } else {
-      ctx.body = { message: 'success' };
-    }
-  });
-});
-
-router.get('/api/auth/link', async (ctx, next) => {
-  var state = { 
-    action:'link',
-    data: {
-      h: ctx.query.h,
-    },
-  };
-  await passport.authenticate('oidc', { state: JSON.stringify(state) })(ctx, next);
 });
 
 router.post('/api/auth/register', async (ctx, next) => {
