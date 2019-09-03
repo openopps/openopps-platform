@@ -167,7 +167,7 @@ dao.query.GetPhases = `
 dao.query.getAllCommunityUsers = `
   select 
     mu.given_name, 
-    mu.username as email, 
+    mu.government_uri as email, 
     task.title, 
     task.id as task_id
   from "cycle"
@@ -182,8 +182,7 @@ dao.query.getAllCommunityUsers = `
 dao.query.getCommunityUsers = `
   select 
     mu.given_name,
-    mu.username as email,
-    mu.government_uri as governmentUri,
+    mu.government_uri as email,
     task.title,
     task.id as task_id
   from "cycle"
@@ -198,7 +197,7 @@ dao.query.getCommunityUsers = `
 dao.query.getCommunityManagers = `
   select 
     mu.given_name,
-    mu.username as email,
+    mu.government_uri as email,
     task.title,
     task.id as task_id
   from "cycle"
@@ -213,7 +212,7 @@ dao.query.getCommunityManagers = `
 dao.query.getCommunityCreators = `
   select 
     mu.given_name,
-    mu.username as email,
+    mu.government_uri as email,
     task.title,
     task.id as task_id
   from "cycle"
