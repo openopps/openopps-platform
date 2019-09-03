@@ -50,7 +50,7 @@ service.startAlternateProcessing = async function (cycleId) {
 
 service.archivePhase = async function (cycleId) {
   var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId).catch(() => { return null; });
-  var closedPhase = await dao.Phase.findOne('name = ?', "Close phase");
+  var closedPhase = await dao.Phase.findOne('name = ?', 'Close phase');
   if (closedPhase != null) {
     cycle.phaseId = closedPhase.phaseId;
   }
@@ -59,7 +59,7 @@ service.archivePhase = async function (cycleId) {
   await service.sendCloseCyclePhaseSelectedNotification(cycleId);
   await service.sendCloseCyclePhaseAlternateNotification(cycleId);
   await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseCreaterNotification(cycleId);
+  await service.sendCloseCyclePhaseCreatorNotification(cycleId);
   await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
   return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
@@ -186,7 +186,6 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
-          governmentUri: results[i].governmentUri,
           title: results[i].title,
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
           systemname: 'USAJOBS Agency Talent Portal',
@@ -278,8 +277,7 @@ service.downloadReport = async function (cycleId) {
   return results;
 };
 
-service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
-  
+service.sendCloseCyclePhaseCreatorNotification = async function (cycleId) {
   var results = (await dao.Cycle.db.query(dao.query.getCommunityCreators, cycleId)).rows;
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
@@ -302,7 +300,6 @@ service.sendCloseCyclePhaseCreaterNotification = async function (cycleId) {
 };
 
 service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) {
-  
   var results = (await dao.Cycle.db.query(dao.query.getCommunityUsers, cycleId)).rows;
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
@@ -325,7 +322,6 @@ service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) 
 };
 
 service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleId) {
-  
   var results = (await dao.Cycle.db.query(dao.query.getCommunityManagers, cycleId)).rows;
   if (results != null && results.length > 0) {
     for (let i = 0; i < results.length; i++) {
@@ -483,8 +479,8 @@ async function createTaskListApplication (item, internship, userId) {
         sort_order: -1,
         created_at: new Date,
         updated_at: new Date,
-        is_removed: false
-      }
+        is_removed: false,
+      };
       yield dao.ApplicationTask.insert(newApplicationTask);
     }
     var record = yield dao.TaskListApplication.insert(list);
@@ -498,7 +494,7 @@ async function createTaskListApplication (item, internship, userId) {
         'sort_order': internship.max_sort,
       },
       taskId: item.task_id,
-      applicationId: item.application_id
+      applicationId: item.application_id,
     };
     internship.max_sort = internship.max_sort + 1;
     return yield dao.TaskListApplicationHistory.insert(historyRecord);      
