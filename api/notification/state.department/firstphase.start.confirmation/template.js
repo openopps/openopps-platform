@@ -1,6 +1,6 @@
 module.exports = {
   subject: 'U.S. Department of State Student Internship Program (Unpaid) – The primary phase has started',
-  to: '<%= user.username %>',
+  to: '<%= user.governmentUri %>',
   data: function (model, done) {
     var data = {
       user: model.user,
