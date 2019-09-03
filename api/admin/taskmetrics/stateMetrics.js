@@ -55,7 +55,7 @@ _.extend(StateMetrics.prototype, {
     _.each(this.tasks, function (task) {
       _.each(range, function (dateCode) { 
         var wasOpen =   task.publishedAtCode < dateCode;  
-        var notCompleted = task.isNotArchived && (!task.completedAt || task.completedAtCode > dateCode);
+        var notCompleted =  (!task.completedAt || task.completedAtCode >= dateCode);
         if (wasOpen && notCompleted) {
           carryOver[dateCode] += 1;
         }
