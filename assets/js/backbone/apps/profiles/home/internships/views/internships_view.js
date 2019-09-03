@@ -105,13 +105,17 @@ var InternshipsView = Backbone.View.extend({
 
   getStatus: function (application) {
     if (application.submittedAt == null) {
-      return 'In progress';
+      if(new Date(application.applyEndDate) > new Date()) {
+        return 'In progress';
+      } else {
+        return 'Not completed';
+      }
     } else if (application.sequence == 3) {
       if (application.taskState == 'completed') {
         if (application.internshipComplete) {
           return 'Completed';
         } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
-          return 'Not complete';
+          return 'Not completed';
         } else if (application.reviewProgress == 'Alternate') {
           return 'Alternate';
         } else {
