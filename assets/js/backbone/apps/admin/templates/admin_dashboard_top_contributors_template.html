@@ -24,7 +24,11 @@
         </div>
       </div>
     <% }); %> 
-    <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+    <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" title="Download list of all top contributors opportunities created list as a comma-separated file ready for import into Excel">        
+      <a href="/api/admin/export/contributor/created/">    
+        <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+      </a>
+    </div>
   </div>
 
   <div class="usa-width-one-half">

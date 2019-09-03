@@ -53,7 +53,12 @@ module.exports.getExportData = async function (type, target, id) {
       records= (await db.query(topAgencyParticipants, [FY.start, FY.end])).rows;
       fieldNames = _.keys(dao.exportTopContributorParticipantFormat);
       fields = _.values(dao.exportTopContributorParticipantFormat);
-    } 
+    } else if (target === 'created') {
+      var topAgencyCreated = fs.readFileSync(__dirname + '/sql/getTopAgencyCreatedExport.sql', 'utf8');  
+      records= (await db.query(topAgencyCreated, [FY.start, FY.end])).rows;
+      fieldNames = _.keys(dao.exportTopContributorCreatedFormat);
+      fields = _.values(dao.exportTopContributorCreatedFormat);
+    }
   }
   fields.forEach(function (field, fIndex, fields) {
     if (typeof(field) === 'object') {      
