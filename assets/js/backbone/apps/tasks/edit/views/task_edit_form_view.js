@@ -34,11 +34,11 @@ var TaskEditFormView = Backbone.View.extend({
     this.options                = options;
     this.tagFactory             = new TagFactory();
     this.owner                  = this.model.get( 'owner' );
-    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;
+    this.agency                 = this.model.get('userAgency') ? this.model.get('userAgency') : window.cache.currentUser.agency;  
     this.data                   = {};
     this.data.newTag            = {};
     this.communities            =  {};
-
+   
     TaskFormViewHelper.annotateTimeRequired(options.tagTypes['task-time-required'], this.agency);
     this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
 
@@ -125,7 +125,7 @@ var TaskEditFormView = Backbone.View.extend({
         open: false,
       },
     };
-   
+
     compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();

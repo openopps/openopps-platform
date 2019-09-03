@@ -102,6 +102,11 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
   'left join @bureau bureau on bureau.bureau_id = task.bureau_id ' +
   'left join @office office on office.office_id = task.office_id';
+
+const taskUserAgencyQuery = 'select agency.*, task.* '+
+  'from agency agency ' +
+  'join task on task.agency_id = agency.agency_id ' +
+  'where task.agency_id= ? and task.id = ? ';
    
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
@@ -134,7 +139,7 @@ const options = {
       agency: '',
       tags: [],
       bureau: '',
-      office: ''
+      office: '',
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -239,9 +244,10 @@ module.exports = function (db) {
       tasksDueQuery: tasksDueQuery,
       tasksDueDetailQuery: tasksDueDetailQuery,
       taskCommunitiesQuery:taskCommunitiesQuery,
+      taskUserAgencyQuery:taskUserAgencyQuery, 
       user: userQuery,
       volunteer: volunteerQuery,
-      volunteerListQuery: volunteerListQuery,   
+      volunteerListQuery: volunteerListQuery,      
     },
     options: options,
     clean: clean,
