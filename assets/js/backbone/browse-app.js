@@ -347,11 +347,35 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   createTask: function () {
-    this.navView && this.navView.render();
-    this.cleanupChildren();
-    this.taskAudienceFormView = new TaskAudienceFormView({
-      el: '#container',
-    }).render();
+    if (_.isEmpty(window.cache.currentUser.Agency)) {
+      $('body').addClass('modal-is-open');
+      this.modal = new Modal({
+        el: '#site-modal',
+        id: 'create-opp',
+        modalTitle: 'Please complete your profile.',
+        modalBody: 'You have not selected your agency on the federal service page of your USAJOBS profile.',
+        primary: {
+          text: loginGov ? 'Update profile at USAJOBS.gov' : 'Go to profile',
+          action: function () {
+            this.modal.cleanup();
+            window.location = usajobsURL + '/Applicant/Profile/';
+          }.bind(this),
+        },           
+        secondary: {
+          text: 'Cancel',
+          action: function () {
+            Backbone.history.navigate('/search');
+            this.modal.cleanup();
+          }.bind(this),
+        },
+      }).render();
+    } else {
+      this.navView && this.navView.render();
+      this.cleanupChildren();
+      this.taskAudienceFormView = new TaskAudienceFormView({
+        el: '#container',
+      }).render();
+    }
   },
 
   createCommunity: function () {
