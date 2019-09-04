@@ -347,7 +347,7 @@ var BrowseRouter = Backbone.Router.extend({
   },
 
   createTask: function () {
-    if (_.isEmpty(window.cache.currentUser.Agency)) {
+    if (window.cache.currentUser && _.isEmpty(window.cache.currentUser.agency)) {
       $('body').addClass('modal-is-open');
       this.modal = new Modal({
         el: '#site-modal',
