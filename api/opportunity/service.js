@@ -23,7 +23,6 @@ async function findById (id, user) {
   }
   var task = dao.clean.task(results[0]);
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
-  task.userAgency= (await dao.Agency.db.query(dao.query.taskUserAgencyQuery,task.agencyId,task.id)).rows[0];
   if (user) {
     task.saved = await dao.SavedTask.findOne('deleted_at is null and task_id = ? and user_id = ?', id, user.id).then(() => {
       return true;
@@ -539,7 +538,7 @@ async function copyOpportunity (attributes, user, done) {
     details: results.details,
     outcome: results.outcome,
     about: results.about,
-    agencyId: results.agencyId,
+    agencyId: user.agencyId,
     communityId: results.communityId,
   };
   var intern = {
