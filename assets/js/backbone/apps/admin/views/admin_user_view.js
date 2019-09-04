@@ -343,7 +343,7 @@ var AdminUserView = Backbone.View.extend({
   isAdministrator: function (user, target) {
     return (target == 'sitewide' && user.isAdmin) ||
       (target == 'agency' && user.isAgencyAdmin) ||
-      (target == 'community' && user.isCommunityAdmin);
+      (target == 'community' && user.is_manager);
   },
 
   updateUser: function (t, data) {
