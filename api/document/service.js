@@ -102,6 +102,7 @@ function cropImage (data) {
       var newCrop = Math.min(size.width, size.height);
       var newSize = Math.min(newCrop, 712);
       gm(data, 'photo.jpg')
+        .autoOrient()
         .crop(newCrop, newCrop, ((size.width - newCrop) / 2), ((size.height - newCrop) / 2))
         .resize(newSize, newSize)
         .noProfile()
@@ -129,6 +130,7 @@ function resizeImage (data) {
         width = size.width;
       }
       gm(data, 'photo.jpg')
+        .autoOrient()
         .resize(width, height)
         .noProfile()
         .toBuffer(function (err, buffer) {
