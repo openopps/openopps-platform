@@ -130,6 +130,9 @@ var ApplyView = Backbone.View.extend({
       this.$el.html(templates.submittedApplication(this.data));
       this.$el.localize();
       window.scrollTo(0, 0);
+    } else if (new Date(this.data.cycle.apply_end_date) < new Date()) {
+      Backbone.history.navigate('/home', { trigger: true, replace: true });
+      return;
     } else {
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
     }

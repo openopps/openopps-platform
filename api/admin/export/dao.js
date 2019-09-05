@@ -80,10 +80,17 @@ var exportUserFormat = {
   'disabled': 'disabled',
   'announcement': {field: 'content', filter: nullToEmptyString},
 };
+
+var exportTopContributorCreatedFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Agency': {field: 'name', filter: nullToEmptyString},
+  'Total Number Created': {field: 'count', filter: nullToEmptyString},
+};
+
 var exportTopContributorParticipantFormat = {
-  'rank no': {field: 'rank', filter: nullToEmptyString},
-  'agency': {field: 'name', filter: nullToEmptyString},
-  'total number participated': {field: 'count', filter: nullToEmptyString},
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Agency': {field: 'name', filter: nullToEmptyString},
+  'Total Number Participated': {field: 'count', filter: nullToEmptyString},
 };
 
 var exportTaskFormat = {
@@ -176,6 +183,7 @@ module.exports = function (db) {
     options: options,
     exportUserFormat: exportUserFormat,
     exportTaskFormat: exportTaskFormat,
-    exportTopContributorParticipantFormat:exportTopContributorParticipantFormat,
+    exportTopContributorCreatedFormat: exportTopContributorCreatedFormat,
+    exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
   };
 };

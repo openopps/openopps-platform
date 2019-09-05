@@ -32,6 +32,33 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
   }
 });
 
+router.get('/api/admin/export/contributor/created', auth.isAdmin, async (ctx, next) => {
+  var today= new Date();
+  var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
+  if(ctx.state.user.isAdmin) {   
+    await service.getExportData('TopContributor','created').then(results => {  
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=TopContributors_' + fiscalYear +'_Created.csv');
+      ctx.body = results;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Top contributors opportunities created agency data exported.',
+      });
+    }).catch(err => {
+      log.info(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/admin/export/contributor/participant', auth.isAdmin, async (ctx, next) => {
   var today= new Date();
   var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
