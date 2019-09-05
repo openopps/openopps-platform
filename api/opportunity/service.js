@@ -538,7 +538,7 @@ async function copyOpportunity (attributes, user, done) {
     details: results.details,
     outcome: results.outcome,
     about: results.about,
-    agencyId: results.agencyId,
+    agencyId: user.agencyId,
     communityId: results.communityId,
   };
   var intern = {

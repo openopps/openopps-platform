@@ -30,5 +30,5 @@
 <% }); %>
 </div>
 <% if (data.state !=='completed') { %>
-<button id="close-internship" class="usa-button usa-button-primary" >Close internship</button>
+<button id="close-internship" class="usa-button usa-button-primary"<% if (_.where(interns, { internshipComplete: true }).length == 0 && interns.length>0) { %>disabled<% } %>>Close internship</button>
 <% } %>
