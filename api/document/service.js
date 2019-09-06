@@ -8,6 +8,7 @@ const path = require('path');
 const uuid = require('uuid');
 const config = openopps.fileStore || {};
 const gm = require('gm').subClass({ imageMagick: true });
+const exifParser = require('exif-parser');
 
 function store (name, data, cb) {
   var service = config.service || 'local';
@@ -92,6 +93,26 @@ function getImageSize (data) {
   });
 }
 
+function rotateIfNeeded (data) {
+  return new Promise(async (resolve) => {
+    // Read first 64K of image file (EXIF data located here)
+    var exifData = data.subarray(0, 65536)
+    var parser = exifParser.create(exifData);
+    var exifResult = parser.parse();
+    if (exifResult.tags && exifResult.tags.Orientation >= 2 && exifResult.tags.Orientation <= 8) {
+      gm(data, 'photo.jpg').autoOrient().toBuffer(function (err, buffer) {
+        if(err) {
+          resolve({ message:'Error creating buffer.', error: err });
+        } else {
+          resolve(buffer);
+        }
+      });
+    } else {
+      resolve(data);
+    }
+  });
+}
+
 function cropImage (data) {
   return new Promise(async (resolve) => {
     log.info('Making square image...');
@@ -102,7 +123,6 @@ function cropImage (data) {
       var newCrop = Math.min(size.width, size.height);
       var newSize = Math.min(newCrop, 712);
       gm(data, 'photo.jpg')
-        .autoOrient()
         .crop(newCrop, newCrop, ((size.width - newCrop) / 2), ((size.height - newCrop) / 2))
         .resize(newSize, newSize)
         .noProfile()
@@ -130,7 +150,6 @@ function resizeImage (data) {
         width = size.width;
       }
       gm(data, 'photo.jpg')
-        .autoOrient()
         .resize(width, height)
         .noProfile()
         .toBuffer(function (err, buffer) {
@@ -166,28 +185,34 @@ function processFile (type, file) {
         log.info('Error reading file ', file.name, err);
         resolve(false);
       } else {
-        var imageData = type === 'image_square' ?
-          await cropImage(data) : type === 'image' ?
-            await resizeImage(data) : data;
-        if(data.error) {
-          log.info(data.message, data.error);
+        var rotatedImage = await rotateIfNeeded(data);
+        if(rotatedImage.error) {
+          log.info(imageData.message, imageData.error);
           resolve(false);
         } else {
-          var f = {
-            name: file.name,
-            mimeType: file.type,
-            fd: uuid.v1() + '.' + file.name.split('.').pop(),
-            size: imageData.length,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-          store(f.fd, imageData, (err, data) => {
-            if(err) {
-              log.info('Error storing file ', file.name, err);
-              resolve(false);
-            }
-            resolve(f);
-          });
+          var imageData = type === 'image_square' ?
+            await cropImage(rotatedImage) : type === 'image' ?
+              await resizeImage(rotatedImage) : rotatedImage;
+          if(imageData.error) {
+            log.info(imageData.message, imageData.error);
+            resolve(false);
+          } else {
+            var f = {
+              name: file.name,
+              mimeType: file.type,
+              fd: uuid.v1() + '.' + file.name.split('.').pop(),
+              size: imageData.length,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+            store(f.fd, imageData, (err, data) => {
+              if(err) {
+                log.info('Error storing file ', file.name, err);
+                resolve(false);
+              }
+              resolve(f);
+            });
+          }
         }
       }
     });
