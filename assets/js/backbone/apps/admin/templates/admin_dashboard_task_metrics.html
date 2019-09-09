@@ -45,44 +45,45 @@
       <tr>
         <th scope="row">Carryover <small>(Not completed)</small></th>
         <% _.each(range, function(key) { %>
-        <td><%- tasks.carryOver[key] || 0 %></td>
+        <td><%- tasks.carryOver[key] || 'n/a' %></td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Published</th>
         <% _.each(range, function(key) { %>
-        <td><%- tasks.published[key] || 0 %></td>
+        <td><%- tasks.published[key] || 'n/a' %></td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Completed</th>
         <% _.each(range, function(key) { %>
-          <td><%- tasks.completed[key] || 0 %></td>
+          <td><%- tasks.completed[key] || 'n/a' %></td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Completed by Admin</th>
         <% _.each(range, function(key) { %>
-          <td><%- tasks.completedByAdmin[key] || 0 %></td>
+          <td><%- tasks.completedByAdmin[key] || 'n/a' %></td>
         <% }); %>
       </tr>
      
       <tr>
         <th scope="row">Percentage Completed</th>
         <% _.each(range, function(key) { %>
-        <td><%- Math.round((tasks.completed[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
+       
+        <td><%- Math.round((tasks.completed[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 'n/a' %><% if (tasks.completed[key]/(tasks.carryOver[key] + tasks.published[key])) { %>%<% } %></td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Percentage Canceled</th>
         <% _.each(range, function(key) { %>
-          <td><%- Math.round((tasks.canceled[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 0 %>%</td>
+          <td><%- Math.round((tasks.canceled[key] /(tasks.carryOver[key] + tasks.published[key])) * 100 , 4) || 'n/a' %><% if (tasks.canceled[key]/(tasks.carryOver[key] + tasks.published[key])) { %>%<% } %></td>
         <% }); %>
       </tr>
       <tr>
         <th scope="row">Applicants </th>
         <% _.each(range, function(key) { %>
-        <td><%- volunteers[key] || 0 %></td>
+        <td><%- volunteers[key] || 'n/a' %></td>
         <% }); %>
       </tr>
     </tbody>

@@ -11,7 +11,7 @@
             <p class="usa-alert-text">
               You are an <% if (user.isAgencyAdmin && !user.isAdmin) { %> agency <% } %> administrator.
               <% if (user.id !== data.id) { %>
-                You are viewing <% if (data.hiringPath == 'student') { %>a student's<% } else { %>another user's<% } %> profile.
+                You are viewing <% if (data.hiringPath == 'student') { %>a student's<% } else if (data.hiringPath == 'contractor') { %>a contractor's<% } else { %>another user's<% } %> profile.
               <% } %>
             </p>
           </div>
