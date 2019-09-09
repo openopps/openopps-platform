@@ -5,12 +5,12 @@ with tasks as (
 			select row_to_json (muser)
 			from (
 				select
-					id, name, username, government_uri,
+					id, name, username, government_uri, 
 					coalesce(given_name, (string_to_array(trim(name), ' '))[array_lower(string_to_array(trim(name), ' '), 1)]) as given_name,
-					coalesce(last_name, (string_to_array(trim(name), ' '))[array_upper(string_to_array(trim(name), ' '), 1)]) as last_name
-				from midas_user where task."userId" = midas_user.id
+					coalesce(last_name, (string_to_array(trim(name), ' '))[array_upper(string_to_array(trim(name), ' '), 1)]) as last_name		
+	     from midas_user where task."userId" = midas_user.id 
 			) muser
-		) as owner,
+		) as owner,		
 		(
 			select json_agg (users)
 			from (
@@ -19,7 +19,13 @@ with tasks as (
 				join midas_user on volunteer."userId" = midas_user.id
 				where volunteer."taskId" = task.id
 			) users
-		) as volunteers
+		) as volunteers,
+		(
+		select row_to_json (agency)
+			from (
+				select * from agency where task.agency_id = agency.agency_id
+			) agency
+		) as agency		
 	from task
 	left join community on task.community_id = community.community_id 
 	where [where clause]
