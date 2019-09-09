@@ -47,7 +47,7 @@ _.extend(TaskMetrics.prototype, {
   createMetrics: function () {
     async.parallel([
       this.generateStateMetrics.bind(this),
-      this.generateVolunteerAgencyMetrics.bind(this),
+      this.generateVolunteerMetrics.bind(this),
     ], this.done);
   },
 
@@ -57,7 +57,7 @@ _.extend(TaskMetrics.prototype, {
     next();
   },
 
-  generateVolunteerAgencyMetrics: function (next) {
+  generateVolunteerMetrics: function (next) {
     var generator = new VolunteerMetrics(this.volunteers,this.tasks,this.group); 
     generator.calculate(function () {
       _.extend(this.metrics, generator.metrics);
