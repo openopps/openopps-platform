@@ -247,6 +247,18 @@ module.exports.getInteractions = async function () {
   return interactions;
 };
 
+module.exports.getInteractionsForAgency = async function (agencyId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.agencyPostQuery, agencyId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.agencyVolunteerCountQuery, agencyId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+};
+
 module.exports.getInteractionsForCommunity = async function (communityId) {
   var interactions = {};
   var temp = await dao.Task.db.query(dao.query.communityPostQuery, communityId);

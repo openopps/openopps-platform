@@ -80,6 +80,10 @@ router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx,
   });
 });
 
+router.get('/api/admin/agency/:id/interactions', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  ctx.body = await service.getInteractionsForAgency(ctx.params.id);
+});
+
 router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     //ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
