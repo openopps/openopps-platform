@@ -26,6 +26,9 @@
     <tr>
       <th>Title</th>
       <th>Creator</th>
+      <% if (target == 'sitewide') { %>    
+      <th >Agency</th>
+      <% } %> 
       <th class="center">Date</th>
       <% if (status == 'submitted') { %>
         <% if (targetAudience !== 'Students') { %>
@@ -75,9 +78,14 @@
           </a>
           <% } %>
         </td>
-        <td class="metrics-table__date">
-            <%- moment(task.createdAt).format('MM/DD/YY') %>
+        <td class="metrics-table__agency center">
+            <% if (task.agency) { %>
+            <%- task.agency.name %>
+            <% } %> 
         </td>
+        <td class="metrics-table__date">
+          <%- moment(task.createdAt).format('MM/DD/YY') %>
+      </td>
         <% if (_.contains(['submitted'], status.toLowerCase())) { %>
           <td class="metrics-table__button">
             <% if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
