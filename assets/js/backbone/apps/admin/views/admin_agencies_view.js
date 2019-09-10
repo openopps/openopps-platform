@@ -31,16 +31,32 @@ var AdminAgenciesView = Backbone.View.extend({
       url: '/api/admin/agency/' + this.agencyId,
       dataType: 'json',
       success: function (agencyInfo) {
-        agencyInfo.slug = (agencyInfo.abbr || '').toLowerCase();
-        var template = _.template(AdminAgenciesTemplate)({
-          agency: agencyInfo,
-          departments: this.options.departments,
-        });
-        this.$el.html(template);
-        if(this.options.departments) {
-          this.initializeAgencySelect();
-        }
+        this.loadInteractionsData(function (interactions) {
+          agencyInfo.interactions = interactions;
+          agencyInfo.slug = (agencyInfo.abbr || '').toLowerCase();
+          var template = _.template(AdminAgenciesTemplate)({
+            agency: agencyInfo,
+            departments: this.options.departments,
+          });
+          this.$el.html(template);
+          if(this.options.departments) {
+            this.initializeAgencySelect();
+          }
+        }.bind(this));
       }.bind(this),
+    });
+  },
+
+  loadInteractionsData: function (callback) {
+    $.ajax({
+      url: '/api/admin/agency/' + this.agencyId + '/interactions/',
+      dataType: 'json',
+      success: function (interactions) {
+        interactions.count = _(interactions).reduce(function (sum, value, key) {
+          return sum + value;
+        }, 0);
+        callback(interactions);
+      },
     });
   },
 
