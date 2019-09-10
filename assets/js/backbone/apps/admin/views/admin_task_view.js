@@ -81,7 +81,7 @@ var AdminTaskView = Backbone.View.extend({
         this.tasks = data.tasks;
         _.extend(data, this.data);
         data.agency = this.agency;
-        data.community = this.community;
+        data.community = this.community;      
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -106,6 +106,7 @@ var AdminTaskView = Backbone.View.extend({
       firstOf: this.data.page * 25 - 24,
       lastOf: this.data.page * 25 - 25 + tasks.length,
       sort: this.data.sort,
+      target:this.options.target,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
