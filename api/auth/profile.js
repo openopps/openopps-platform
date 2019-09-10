@@ -48,10 +48,14 @@ async function updateProfileData (user, profile, tokenset) {
   user.countrySubdivisionId = user.countrySubdivision.countrySubdivisionId;
   user.cityName = profile.AddressCity;
   await dao.User.update(user);
-  if (user.hiringPath == 'fed' || user.hiringPath == 'contractor') {
+  if (user.hiringPath == 'fed' ) {
     try {
       elasticService.indexUser(user.id);
     } catch (err) {}
+  } else {
+    try {
+      elasticService.deleteUser(user.id);
+    }catch (err) {}
   }
   return user;
 }
