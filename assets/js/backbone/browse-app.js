@@ -285,14 +285,18 @@ var BrowseRouter = Backbone.Router.extend({
             this.renderInternshipView(model, community, queryStr);
           }
         } else {
-          this.taskShowController = new TaskShowController({
-            model: model,
-            community: community,
-            router: this,
-            id: id,
-            action: action,
-            data: this.data,
-          });
+          if (window.cache.currentUser && window.cache.currentUser.hiringPath != 'fed') {
+            Backbone.history.navigate('/home', { trigger: true, replace: true });
+          } else {
+            this.taskShowController = new TaskShowController({
+              model: model,
+              community: community,
+              router: this,
+              id: id,
+              action: action,
+              data: this.data,
+            });
+          }
         }
       }.bind(this));
     }.bind(this));
@@ -496,11 +500,9 @@ var BrowseRouter = Backbone.Router.extend({
     });  
   },
 
-  showHome: function (id) {
+  showHome: function () {
+    this.navView && this.navView.render();
     this.cleanupChildren();
-    if (id) {
-      id = id.toLowerCase();
-    }
 
     if (window.cache.currentUser && window.cache.currentUser.hiringPath == 'student') {
       this.studentHomeController = new StudentHomeController({
