@@ -163,7 +163,7 @@ var AdminDashboardView = Backbone.View.extend({
     monthsCurrent= _.filter(monthsCurrent,function (e){
       return  e <= currentYearMonth;
     });
-    var updateCurrentArray= _.difference(monthsCurrent,previousYearRange); 
+    var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
     var currentYearData=_.chain(updateCurrentArray).sort().value(); 
     var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
     data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
@@ -198,7 +198,7 @@ var AdminDashboardView = Backbone.View.extend({
     monthsCurrent= _.filter(monthsCurrent,function (m){
       return  m <= currentQuarter;
     });
-    var updateCurrentArray= _.difference(monthsCurrent,previousYearRange); 
+    var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
     var currentYearData=_.chain(updateCurrentArray).sort().value(); 
     var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
     data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
