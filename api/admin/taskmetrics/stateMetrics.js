@@ -34,7 +34,7 @@ _.extend(StateMetrics.prototype, {
 
   completedByAdminCount: function () {
     return _.chain(this.completedTasks)
-      .filter(function (task) { return task.updatedBy !== task.userId; })
+      .filter(function (task) { return  task.updatedBy !== task.userId; })
       .countBy(function (task) { return task.completedAtCode; }.bind(this))
       .value();
   },

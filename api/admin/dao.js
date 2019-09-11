@@ -243,6 +243,7 @@ const taskMetricsQuery = 'select @task.*, @tags.* ' +
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
    'where  (community.target_audience <> 2 or community.target_audience is null) ';
+
 const volunteerDetailsQuery = 'select @m_user.*, @tags.* ' +
   'from @midas_user m_user ' +
   'inner join volunteer on m_user.id = volunteer."userId" ' +
@@ -313,7 +314,7 @@ const options = {
   },
   taskMetrics: {
     fetch: {
-      tags: [],
+      tags: [],   
     },
     exclude: {
       task: [ 'deletedAt' ],
