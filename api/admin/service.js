@@ -467,7 +467,7 @@ module.exports.checkCommunity = async function (user, ownerId) {
 
 module.exports.getDashboardTaskMetrics = async function (group, filter) {
   var tasks = dao.clean.task(await dao.Task.query(dao.query.taskMetricsQuery, {}, dao.options.taskMetrics));
-  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows;
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows; 
   var generator = new TaskMetrics(tasks, volunteers, group, filter);
   generator.generateMetrics(function (err) {
     if (err) res.serverError(err + ' metrics are unavailable.');
@@ -475,6 +475,18 @@ module.exports.getDashboardTaskMetrics = async function (group, filter) {
   });
   return generator.metrics;
 };
+
+module.exports.getDashboardAgencyTaskMetrics = async function (group, filter,agencyId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.agencyTaskMetricsQuery, agencyId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerAgencyTaskQuery,agencyId)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
+
 
 module.exports.canChangeOwner = async function (user, taskId) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
