@@ -214,6 +214,37 @@ const activityTaskQuery = 'select midas_user.name, midas_user.username, task.tit
   'inner join task on midas_user.id = task."userId" ' +
   'where task."submittedAt" is not null and task.id = ? ';
 
+const agencyActivityQuery = 'select comment."createdAt", comment.id, \'comment\' as type ' +
+  'from midas_user ' +
+  'inner join comment on midas_user.id = comment."userId" ' +
+  'inner join task on comment."taskId" = task.id ' +
+  'where task.cycle_id is null ' +
+  'and task.agency_id = $agencyId ' +
+  'union all ' +
+  'select volunteer."createdAt", volunteer.id, \'volunteer\' as type ' +
+  'from volunteer ' +
+  'inner join midas_user on midas_user.id = volunteer."userId" ' +
+  'inner join task on volunteer."taskId" = task.id ' +
+  'where task.cycle_id is null ' +
+  'and task.agency_id = $agencyId ' +
+  'union all ' +
+  'select midas_user."createdAt" as "createdAt", id, \'user\' as type ' +
+  'from midas_user ' +
+  'inner join agency on midas_user.agency_id = agency.agency_id ' +
+  'where agency.agency_id = $agencyId ' +
+  'union all ' +
+  'select task."createdAt", task.id, \'task\' as type ' +
+  'from task ' +
+  'inner join midas_user on midas_user.id = task."userId" ' +
+  'where task.agency_id = $agencyId ' +
+  'order by "createdAt" desc ' +
+  'limit 20';
+
+const agencyActivityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task.agency_id, task."createdAt" ' +
+  'from midas_user ' +
+  'inner join task on midas_user.id = task."userId" ' +
+  'where task.id = ? and task.agency_id = ? ';
+
 const communityActivityQuery = 'select community_user.created_at as "createdAt", id, \'user\' as type ' +
   'from midas_user ' +
   'inner join community_user on midas_user.id = community_user.user_id ' +
@@ -394,6 +425,8 @@ module.exports = function (db) {
       activityCommentQuery: activityCommentQuery,
       activityVolunteerQuery: activityVolunteerQuery,
       activityTaskQuery: activityTaskQuery,
+      agencyActivityQuery: agencyActivityQuery,
+      agencyActivityTaskQuery: agencyActivityTaskQuery,
       communityActivityQuery: communityActivityQuery,
       communityActivityVolunteerQuery: communityActivityVolunteerQuery,
       communityActivityTaskQuery: communityActivityTaskQuery,
