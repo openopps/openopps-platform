@@ -237,9 +237,8 @@ const communityActivityTaskQuery = 'select midas_user.name, midas_user.username,
   'inner join task on midas_user.id = task."userId" ' +
   'where task.id = ? and task.community_id = ? ';
 
-const taskMetricsQuery = 'select @task.*, @tags.* ,@midas_user.* ' +
+const taskMetricsQuery = 'select @task.*, @tags.* ' +
   'from @task task ' +
-  'left join @midas_user midas_user on midas_user.id = task."userId" '+
   'left join community on task.community_id = community.community_id '+
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
@@ -315,8 +314,7 @@ const options = {
   },
   taskMetrics: {
     fetch: {
-      tags: [],
-      midas_user:'',
+      tags: [],   
     },
     exclude: {
       task: [ 'deletedAt' ],
