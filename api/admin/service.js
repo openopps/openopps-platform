@@ -510,6 +510,16 @@ module.exports.getDashboardAgencyTaskMetrics = async function (group, filter,age
   return generator.metrics;
 };
 
+module.exports.getDashboardCommunityTaskMetrics = async function (group, filter,communityId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.communityTaskMetricsQuery, communityId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.communityVolunteerTaskQuery,communityId)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
 
 module.exports.canChangeOwner = async function (user, taskId) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 

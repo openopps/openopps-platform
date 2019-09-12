@@ -137,6 +137,12 @@ router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
     ctx.status = 403;
   }
 });
+router.get('/api/admin/community/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  var group = ctx.query.group;
+  var filter = ctx.query.filter;
+  var communityId= ctx.params.id;
+  ctx.body = await service.getDashboardCommunityTaskMetrics(group, filter,communityId);
+});
 
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   var user = await service.getProfile(ctx.params.id);
