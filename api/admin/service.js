@@ -202,6 +202,34 @@ module.exports.getTopContributors = function () {
   });
 };
 
+module.exports.getTopAgencyContributors = function (agencyId) {
+  var topCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopCreators.sql', 'utf8');
+  // var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
+  var today = new Date();
+  var FY = {};
+  if (today.getMonth() < 9) {
+    FY.start = [today.getFullYear() - 1, 10, 1].join('-');
+    FY.end = [today.getFullYear(), 09, 30].join('-');
+  } else {
+    FY.start = [today.getFullYear(), 10, 1].join('-');
+    FY.end = [today.getFullYear() + 1, 09, 30].join('-');
+  }
+  return new Promise((resolve, reject) => {
+    Promise.all([
+      db.query(topCreatorsQuery, [agencyId, FY.start, FY.end]),
+      // db.query(topAgencyParticipants, [FY.start, FY.end]),
+    ]).then(results => {
+      resolve({
+        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        creators: results[0].rows,
+        creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
+        // participants: results[1].rows,
+        // participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
+      });
+    }).catch(reject);
+  });
+};
+
 function buildCommentObj (result) {
   var activity = {};
   activity.itemType = 'task';
