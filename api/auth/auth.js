@@ -3,6 +3,7 @@ const Audit = require('../model/Audit');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const passport = require('koa-passport');
+const isCommunityManager = require('../community/service').isCommunityManager;
 
 function initializeAuditData (ctx) { 
   return {
@@ -54,13 +55,8 @@ module.exports.isAdminOrAgencyAdmin = async (ctx, next) => {
 
 module.exports.isCommunityAdmin = async (ctx, next) => {
   await baseAuth(ctx, async () => {
-    ctx.state.user.isCommunityAdmin ? await next() : await forbidden(ctx);
-  });
-};
-
-module.exports.isAdminOrCommunityAdmin = async (ctx, next) => {
-  await baseAuth(ctx, async () => {
-    ctx.state.user.isAdmin || ctx.state.user.isCommunityAdmin ? await next() : ctx.status = 403;
+    // ctx.params.id
+    (await isCommunityManager(ctx.state.user, ctx.params.id)) ? await next() : ctx.status = 403;
   });
 };
 
