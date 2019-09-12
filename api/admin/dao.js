@@ -282,6 +282,18 @@ const volunteerDetailsQuery = 'select @m_user.*, @tags.* ' +
   'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
   "where tags.type = 'agency' ";
 
+const volunteerAgencyTaskQuery='select volunteer.*, task.* ' +
+  'from volunteer ' +
+  'join task on task.id = volunteer."taskId" ' +
+  'where task.agency_id= ? and task."completedAt" is not null ';
+
+const agencyTaskMetricsQuery = 'select @task.*, @tags.* ' +
+  'from @task task ' +
+   'left join community on task.community_id = community.community_id '+
+   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
+   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+   'where task.agency_id= ? and (community.target_audience <> 2 or community.target_audience is null) ';
+
 const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   'from midas_user inner join tagentity_users__user_tags on midas_user.id = tagentity_users__user_tags.user_tags ' +
   'inner join tagentity tagentity on tagentity.id = tagentity_users__user_tags.tagentity_users ' +
@@ -290,11 +302,11 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
 
 const userCommunityQuery = '';
 
-const volunteerTaskQuery='select volunteer.* ' +
+const volunteerTaskQuery='select volunteer.*, task.* ' +
 'from volunteer ' +
 'join task on task.id = volunteer."taskId" ' +
- "where task.state ='completed' ";
-
+'where task."completedAt" is not null' ;
+ 
 var exportFormat = {
   'user_id': 'id',
   'name': {field: 'name', filter: nullToEmptyString},
@@ -397,6 +409,7 @@ module.exports = function (db) {
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
+      agencyTaskMetricsQuery: agencyTaskMetricsQuery,
       agencyTaskStateQuery: agencyTaskStateQuery,
       communityTaskStateQuery: communityTaskStateQuery,
       communityTaskCreatedPerUserQuery: communityTaskCreatedPerUserQuery,
@@ -439,6 +452,7 @@ module.exports = function (db) {
       ownerCommunityListQuery: ownerCommunityListQuery,
       communityListQuery: communityListQuery,
       volunteerTaskQuery: volunteerTaskQuery,
+      volunteerAgencyTaskQuery:volunteerAgencyTaskQuery,
     },
     clean: clean,
     options: options,
