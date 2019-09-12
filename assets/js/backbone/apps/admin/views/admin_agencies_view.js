@@ -3,6 +3,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html');
 var AdminAgencyTasks = require('../templates/admin_agency_task_metrics.html');
+var AdminAgenciesDashboardActivitiesTemplate = require('../templates/admin_agencies_dashboard_activities_template.html');
 
 var AdminAgenciesView = Backbone.View.extend({
 
@@ -187,6 +188,9 @@ var AdminAgenciesView = Backbone.View.extend({
             departments: this.options.departments,
           });
           this.$el.html(template);
+          setTimeout(function () {
+            this.fetchData(this);
+          }.bind(this), 50);
           if(this.options.departments) {
             this.initializeAgencySelect();
           }
@@ -262,6 +266,49 @@ var AdminAgenciesView = Backbone.View.extend({
       Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
       this.renderTasks();
     }
+  },
+
+  renderActivities: function (self, data) {
+    var template = _.template(AdminAgenciesDashboardActivitiesTemplate)(data);
+    self.$('.activity-block').html(template);
+    _(data).forEach(function (activity) {
+
+      if (!activity || !activity.user ||
+        (activity.type === 'newVolunteer' && !activity.task) ||
+        (activity.comment && typeof activity.comment.value === 'undefined')
+      ) return;
+
+      if (activity.comment) {
+        var value = activity.comment.value;
+
+        value = marked(value, { sanitize: false });
+        //render comment in single line by stripping the markdown-generated paragraphs
+        value = value.replace(/<\/?p>/gm, '');
+        value = value.replace(/<br>/gm, '');
+        value = value.trim();
+
+        activity.comment.value = value;
+      }
+
+      activity.createdAtFormatted = $.timeago(activity.createdAt);
+      var template = self.$('#' + activity.type).text(),
+          content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
+      self.$('.activity-block .activity-feed').append(content);
+    });
+
+    this.$el.localize();
+    self.$('.spinner').hide();
+    self.$('.activity-block').show();
+  },
+
+  fetchData: function (self) {
+    $.ajax({
+      url: '/api/admin/agency/'+ this.agencyId + '/activities',
+      dataType: 'json',
+      success: function (activityData) {
+        self.renderActivities(self, activityData);
+      }.bind(this),
+    });
   },
 
   cleanup: function () {

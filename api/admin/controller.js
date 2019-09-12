@@ -15,6 +15,10 @@ router.get('/api/admin/activities', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getActivities();
 });
 
+router.get('/api/admin/agency/:id/activities', auth, async (ctx, next) => {
+  ctx.body = await service.getAgencyActivities(ctx.params.id);
+});
+
 router.get('/api/admin/community/:id/activities', auth, async (ctx, next) => {
   ctx.body = await service.getCommunityActivities(ctx.params.id);
 });
