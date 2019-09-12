@@ -5,6 +5,8 @@ var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html')
 var AdminAgencyTasks = require('../templates/admin_agency_task_metrics.html');
 var AdminAgenciesDashboardActivitiesTemplate = require('../templates/admin_agencies_dashboard_activities_template.html');
 
+var AdminTopContributorsView = require('./admin_top_contributors_view');
+
 var AdminAgenciesView = Backbone.View.extend({
 
   events: {
@@ -76,6 +78,7 @@ var AdminAgenciesView = Backbone.View.extend({
       }.bind(this),
     });
   },
+
   quarter: function () {
     var today = new Date();
     var year = today.getFullYear();
@@ -89,7 +92,6 @@ var AdminAgenciesView = Backbone.View.extend({
   }.bind(this),
 
   generateMonthsDisplay: function (data,currentYear,previousYear){
-   
     var Myear= [previousYear];  
     var previousYearRange= [];
     previousYearRange  = _.filter(data.range, function (di) {
@@ -172,6 +174,18 @@ var AdminAgenciesView = Backbone.View.extend({
     else{
       data.range=[];
     }
+  },
+
+  renderTopContributors: function () {
+    if (this.adminTopContributorsView) {
+      this.adminTopContributorsView.cleanup();
+    }
+    this.adminTopContributorsView = new AdminTopContributorsView({
+      el: '.admin-top-contributors',
+      target: 'agency',
+      targetId: this.agencyId,
+    });
+    this.adminTopContributorsView.render();
   },
 
   loadAgencyData: function () {
@@ -299,6 +313,7 @@ var AdminAgenciesView = Backbone.View.extend({
     this.$el.localize();
     self.$('.spinner').hide();
     self.$('.activity-block').show();
+    self.renderTopContributors();
   },
 
   fetchData: function (self) {

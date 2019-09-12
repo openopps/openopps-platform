@@ -45,6 +45,14 @@ router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
   });
 });
 
+router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  await service.getTopAgencyContributors(ctx.params.id).then(results => {
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = 400;
+  });
+});
+
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
   //ctx.body = await service.getTaskStateMetrics();
   await service.getTaskStateMetrics(ctx.query.status, ctx.query.page, ctx.query.sort).then(results => {
