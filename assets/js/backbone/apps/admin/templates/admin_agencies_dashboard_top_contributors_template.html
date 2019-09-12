@@ -13,7 +13,7 @@
     <% _.each(creators, function (creator, index) { %>
       <div class="opportunities-created usajobs-grid-full">
         <div class="usa-width-one-half">
-          <p><%- index + 1 %>.  <%- creator.name %><% if (_.filter([creator.abbr, creator.parent_abbr], _.identity).length) { %> (<%- _.unique(_.filter([creator.abbr, creator.parent_abbr], _.identity)).join('/') %>)<% } %></p>
+          <p><%- index + 1 %>.  <%- creator.name %></p>
         </div>
         <div class="usa-width-one-half">
           <div class="graph horizontal">
