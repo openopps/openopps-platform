@@ -209,7 +209,9 @@ var AdminAgenciesView = Backbone.View.extend({
             this.initializeAgencySelect();
           }
         }.bind(this));
-        this.renderTasks.bind(this)();
+        setTimeout(function () {
+          this.renderTasks.bind(this)();
+        }.bind(this), 50);
       }.bind(this),
     });
   },
