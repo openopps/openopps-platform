@@ -18,6 +18,14 @@ var AdminTopContributorsView = Backbone.View.extend({
     if (this.options.target !== 'sitewide') {
       this.dataUrl = '/api/admin/' + this.options.target + '/' + this.options.targetId + '/contributors';
     }
+    this.dataExportCreatedUrl = '/api/admin/export/contributor/created/';
+    if (this.options.target !== 'sitewide') {
+      this.dataExportCreatedUrl = '/api/admin/export/' + this.options.target + '/' + this.options.targetId + '/contributor/created';
+    }
+    this.dataExportParticipantUrl = '/api/admin/export/contributor/participant/';
+    if (this.options.target !== 'sitewide') {
+      this.dataExportParticipantUrl = '/api/admin/export/' + this.options.target + '/' + this.options.targetId + '/contributor/participant';
+    }
   },
 
   render: function () {
@@ -29,6 +37,8 @@ var AdminTopContributorsView = Backbone.View.extend({
       url: this.dataUrl,
       dataType: 'json',
       success: function (data) {
+        data.dataExportCreatedUrl = this.dataExportCreatedUrl;
+        data.dataExportParticipantUrl = this.dataExportParticipantUrl;
         this.contributors = data;
         var template = _.template(AdminTopContributorsTemplate);
         if (this.options.target != 'sitewide') {
