@@ -268,6 +268,18 @@ const communityActivityTaskQuery = 'select midas_user.name, midas_user.username,
   'inner join task on midas_user.id = task."userId" ' +
   'where task.id = ? and task.community_id = ? ';
 
+const communityTaskMetricsQuery = 'select @task.*, @tags.* ' +
+  'from @task task ' + 
+  'left join community on task.community_id = community.community_id '+
+  'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
+  'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+   'where community.target_audience <> 2 and task.community_id= ? ';
+
+const communityVolunteerTaskQuery='select volunteer.*, task.* ' +
+   'from volunteer ' +
+   'join task on task.id = volunteer."taskId" ' +
+   'where task."completedAt" is not null and task.community_id = ?' ;
+
 const taskMetricsQuery = 'select @task.*, @tags.* ' +
   'from @task task ' +
   'left join community on task.community_id = community.community_id '+
@@ -413,7 +425,9 @@ module.exports = function (db) {
       agencyTaskStateQuery: agencyTaskStateQuery,
       communityTaskStateQuery: communityTaskStateQuery,
       communityTaskCreatedPerUserQuery: communityTaskCreatedPerUserQuery,
-      communityTaskVolunteerPerUserQuery: communityTaskVolunteerPerUserQuery,
+      communityTaskVolunteerPerUserQuery: communityTaskVolunteerPerUserQuery,     
+      communityTaskMetricsQuery:communityTaskMetricsQuery,
+      communityVolunteerTaskQuery:communityVolunteerTaskQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
       agencyUsersQuery: agencyUsersQuery,
