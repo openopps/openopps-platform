@@ -280,7 +280,9 @@ var AdminAgenciesView = Backbone.View.extend({
   changeAgency: function (event) {
     if($('#agencies').val()) {
       Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
-      this.renderTasks();
+      setTimeout(function () {
+        this.renderTasks.bind(this)();
+      }.bind(this), 50);
     }
   },
 
