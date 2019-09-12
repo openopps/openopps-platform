@@ -58,6 +58,7 @@ var AdminDashboardView = Backbone.View.extend({
     }
     this.adminTopContributorsView = new AdminTopContributorsView({
       el: '.admin-top-contributors',
+      target: 'sitewide',
     });
     this.adminTopContributorsView.render();
   },
