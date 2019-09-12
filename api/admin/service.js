@@ -134,6 +134,29 @@ module.exports.getActivities = async function () {
   return activities;
 };
 
+module.exports.getAgencyActivities = async function (agencyId) {
+  // var agency = await dao.Agency.findOne('agency_id = ?', id);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.agencyActivityQuery, { agencyId: agencyId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'comment') {
+      result = (await dao.Task.db.query(dao.query.activityCommentQuery, activity[i].id)).rows;
+      activities.push(buildCommentObj(result));
+    } else if (activity[i].type == 'volunteer') {
+      result = (await dao.Task.db.query(dao.query.activityVolunteerQuery, activity[i].id)).rows;
+      activities.push(buildVolunteerObj(result));
+    } else if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else {
+      result = (await dao.Task.db.query(dao.query.agencyActivityTaskQuery, [activity[i].id, agencyId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
 module.exports.getCommunityActivities = async function (communityId) {
   var community = await communityService.findById(communityId);
   var activities = [];
