@@ -110,7 +110,7 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/communities', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+router.get('/api/admin/communities', auth.isCommunityAdmin, async (ctx, next) => {
   ctx.body = await service.getCommunities(ctx.state.user);
 });
 
