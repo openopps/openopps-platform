@@ -93,6 +93,7 @@
     "uuid": "^3.2.1",
     "validator": "^9.4.0",
     "winston": "^3.2.1",
+    "winston-azure-application-insights": "^2.0.0",
     "winston-daily-rotate-file": "^4.1.0"
   },
   "devDependencies": {
