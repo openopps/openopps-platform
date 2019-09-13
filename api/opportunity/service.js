@@ -276,7 +276,7 @@ async function updateOpportunity (attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
-  if (origTask.communityId != attributes.communityId) {
+  if ((origTask.communityId != attributes.communityId) && attributes.state !=='draft') {  
     attributes.state = 'submitted';
     attributes.submittedAt = null;
     attributes.publishedAt = null;
