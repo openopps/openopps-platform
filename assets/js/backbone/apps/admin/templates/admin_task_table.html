@@ -78,11 +78,13 @@
           </a>
           <% } %>
         </td>
+        <% if (target == 'sitewide') { %>  
         <td class="metrics-table__agency center">
             <% if (task.agency) { %>
             <%- task.agency.name %>
             <% } %> 
         </td>
+        <% } %> 
         <td class="metrics-table__date">
           <%- moment(task.createdAt).format('MM/DD/YY') %>
       </td>
