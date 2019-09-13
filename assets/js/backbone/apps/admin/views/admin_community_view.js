@@ -61,7 +61,9 @@ var AdminCommunityView = Backbone.View.extend({
             this.initializeCommunitySelect();
           }
         }.bind(this));
-        this.renderTasks.bind(this)();
+        setTimeout(function () {
+          this.renderTasks.bind(this)();
+        }.bind(this), 50);
       }.bind(this),
     });
   },
@@ -243,6 +245,9 @@ var AdminCommunityView = Backbone.View.extend({
   changeCommunity: function (event) {
     if($('#communities').val()) {
       Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
+      setTimeout(function () {
+        this.renderTasks.bind(this)();
+      }.bind(this), 50);
     }
   },
 

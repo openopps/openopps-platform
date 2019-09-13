@@ -209,7 +209,9 @@ var AdminAgenciesView = Backbone.View.extend({
             this.initializeAgencySelect();
           }
         }.bind(this));
-        this.renderTasks.bind(this)();
+        setTimeout(function () {
+          this.renderTasks.bind(this)();
+        }.bind(this), 50);
       }.bind(this),
     });
   },
@@ -278,7 +280,9 @@ var AdminAgenciesView = Backbone.View.extend({
   changeAgency: function (event) {
     if($('#agencies').val()) {
       Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
-      this.renderTasks();
+      setTimeout(function () {
+        this.renderTasks.bind(this)();
+      }.bind(this), 50);
     }
   },
 
