@@ -206,14 +206,12 @@ var AdminAgenciesView = Backbone.View.extend({
           this.$el.html(template);
           setTimeout(function () {
             this.fetchData(this);
+            this.renderTasks();
           }.bind(this), 50);
           if(this.options.departments) {
             this.initializeAgencySelect();
           }
-        }.bind(this));
-        setTimeout(function () {
-          this.renderTasks.bind(this)();
-        }.bind(this), 50);
+        }.bind(this));     
       }.bind(this),
     });
   },
@@ -282,9 +280,7 @@ var AdminAgenciesView = Backbone.View.extend({
   changeAgency: function (event) {
     if($('#agencies').val()) {
       Backbone.history.navigate('/admin/agency/' + $('#agencies').val(), { trigger: true });
-      setTimeout(function () {
-        this.renderTasks.bind(this)();
-      }.bind(this), 50);
+    
     }
   },
 
