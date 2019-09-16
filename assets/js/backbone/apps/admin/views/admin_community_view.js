@@ -61,10 +61,7 @@ var AdminCommunityView = Backbone.View.extend({
           if(this.options.communities) {
             this.initializeCommunitySelect();
           }
-        }.bind(this));
-        setTimeout(function () {
-        
-        }.bind(this), 50);
+        }.bind(this));      
       }.bind(this),
     });
   },
