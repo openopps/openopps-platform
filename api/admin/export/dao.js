@@ -42,7 +42,7 @@ const exportTaskData = 'select task.id, task.title, description, task."createdAt
   'from task inner join midas_user on task."userId" = midas_user.id ' +
   'left join agency on task.agency_id = agency.agency_id ';
 
-  const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -54,7 +54,7 @@ const exportTaskData = 'select task.id, task.title, description, task."createdAt
   'left join agency on task.agency_id = agency.agency_id ' + 
   'where task.agency_id = ?';
 
-  const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -90,6 +90,18 @@ var exportTopContributorCreatedFormat = {
 var exportTopContributorParticipantFormat = {
   'Rank': {field: 'rank', filter: nullToEmptyString},
   'Agency': {field: 'name', filter: nullToEmptyString},
+  'Total Number Participated': {field: 'count', filter: nullToEmptyString},
+};
+
+var exportTopContributorAgencyCreatedFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Creator': {field: 'name', filter: nullToEmptyString},
+  'Total Number Created': {field: 'count', filter: nullToEmptyString},
+};
+
+var exportTopContributorAgencyParticipantFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Participant': {field: 'name', filter: nullToEmptyString},
   'Total Number Participated': {field: 'count', filter: nullToEmptyString},
 };
 
@@ -185,5 +197,7 @@ module.exports = function (db) {
     exportTaskFormat: exportTaskFormat,
     exportTopContributorCreatedFormat: exportTopContributorCreatedFormat,
     exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
+    exportTopContributorAgencyCreatedFormat: exportTopContributorAgencyCreatedFormat,
+    exportTopContributorAgencyParticipantFormat: exportTopContributorAgencyParticipantFormat,
   };
 };

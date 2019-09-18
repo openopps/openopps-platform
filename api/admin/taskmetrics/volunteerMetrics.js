@@ -24,7 +24,7 @@ _.extend(VolunteerMetrics.prototype, {
   groupVolunteers: function () {
     var codeGenerator = this.codeGenerator;
     this.groupedVolunteer = _.groupBy(this.volunteers, function (volunteer) {
-      return codeGenerator.create(volunteer.createdAt);
+      return codeGenerator.create(volunteer.completedAt);
     });
 
     var volunteerMetrics = _.reduce(this.groupedVolunteer, function (o, vols, fy) {

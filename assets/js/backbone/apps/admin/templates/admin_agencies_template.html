@@ -49,5 +49,18 @@
       <li>Canceled: <%- numeral(agency.tasks.canceled).format('0,0') %></li>
     </ul>
   </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Total applications: <%- numeral(agency.interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(agency.interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(agency.interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(agency.interactions.posts).format('0,0') %></li>
+    </ul>
+  </div>
 </div>
+<div class="admin-top-contributors"></div>
+<div class="task-metrics"></div>
+<div class="activity-block"></div>
 </div>
+

@@ -15,6 +15,10 @@ router.get('/api/admin/activities', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getActivities();
 });
 
+router.get('/api/admin/agency/:id/activities', auth, async (ctx, next) => {
+  ctx.body = await service.getAgencyActivities(ctx.params.id);
+});
+
 router.get('/api/admin/community/:id/activities', auth, async (ctx, next) => {
   ctx.body = await service.getCommunityActivities(ctx.params.id);
 });
@@ -35,6 +39,14 @@ router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
 
 router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
   await service.getTopContributors().then(results => {
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = 400;
+  });
+});
+
+router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  await service.getTopAgencyContributors(ctx.params.id).then(results => {
     ctx.body = results;
   }).catch(err => {
     ctx.status = 400;
@@ -80,6 +92,16 @@ router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx,
   });
 });
 
+router.get('/api/admin/agency/:id/interactions', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  ctx.body = await service.getInteractionsForAgency(ctx.params.id);
+});
+
+router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  var group = ctx.query.group;
+  var filter = ctx.query.filter;
+  var agencyId= ctx.params.id;
+  ctx.body = await service.getDashboardAgencyTaskMetrics(group, filter,agencyId);
+});
 router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     //ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
@@ -96,7 +118,7 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/communities', auth.isAdminOrCommunityAdmin, async (ctx, next) => {
+router.get('/api/admin/communities', auth.isCommunityAdmin, async (ctx, next) => {
   ctx.body = await service.getCommunities(ctx.state.user);
 });
 
@@ -122,6 +144,12 @@ router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   } else {
     ctx.status = 403;
   }
+});
+router.get('/api/admin/community/taskmetrics/:id', auth, async (ctx, next) => {
+  var group = ctx.query.group;
+  var filter = ctx.query.filter;
+  var communityId= ctx.params.id;
+  ctx.body = await service.getDashboardCommunityTaskMetrics(group, filter,communityId);
 });
 
 router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {

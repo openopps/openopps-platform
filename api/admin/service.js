@@ -147,6 +147,29 @@ module.exports.getActivities = async function () {
   return activities;
 };
 
+module.exports.getAgencyActivities = async function (agencyId) {
+  // var agency = await dao.Agency.findOne('agency_id = ?', id);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.agencyActivityQuery, { agencyId: agencyId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'comment') {
+      result = (await dao.Task.db.query(dao.query.activityCommentQuery, activity[i].id)).rows;
+      activities.push(buildCommentObj(result));
+    } else if (activity[i].type == 'volunteer') {
+      result = (await dao.Task.db.query(dao.query.activityVolunteerQuery, activity[i].id)).rows;
+      activities.push(buildVolunteerObj(result));
+    } else if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else {
+      result = (await dao.Task.db.query(dao.query.agencyActivityTaskQuery, [activity[i].id, agencyId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
 module.exports.getCommunityActivities = async function (communityId) {
   var community = await communityService.findById(communityId);
   var activities = [];
@@ -187,6 +210,34 @@ module.exports.getTopContributors = function () {
         creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         participants: results[1].rows,
         participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
+      });
+    }).catch(reject);
+  });
+};
+
+module.exports.getTopAgencyContributors = function (agencyId) {
+  var topCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopCreators.sql', 'utf8');
+  // var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
+  var today = new Date();
+  var FY = {};
+  if (today.getMonth() < 9) {
+    FY.start = [today.getFullYear() - 1, 10, 1].join('-');
+    FY.end = [today.getFullYear(), 09, 30].join('-');
+  } else {
+    FY.start = [today.getFullYear(), 10, 1].join('-');
+    FY.end = [today.getFullYear() + 1, 09, 30].join('-');
+  }
+  return new Promise((resolve, reject) => {
+    Promise.all([
+      db.query(topCreatorsQuery, [agencyId, FY.start, FY.end]),
+      // db.query(topAgencyParticipants, [FY.start, FY.end]),
+    ]).then(results => {
+      resolve({
+        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        creators: results[0].rows,
+        creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
+        // participants: results[1].rows,
+        // participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
       });
     }).catch(reject);
   });
@@ -253,6 +304,18 @@ module.exports.getInteractions = async function () {
   var temp = await dao.Task.db.query(dao.query.postQuery);
   interactions.posts = +temp.rows[0].count;
   temp = await dao.Task.db.query(dao.query.volunteerCountQuery);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+};
+
+module.exports.getInteractionsForAgency = async function (agencyId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.agencyPostQuery, agencyId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.agencyVolunteerCountQuery, agencyId);
   interactions.signups = +temp.rows[0].signups;
   interactions.assignments = +temp.rows[0].assignments;
   interactions.completions = +temp.rows[0].completions;
@@ -468,7 +531,29 @@ module.exports.checkCommunity = async function (user, ownerId) {
 
 module.exports.getDashboardTaskMetrics = async function (group, filter) {
   var tasks = dao.clean.task(await dao.Task.query(dao.query.taskMetricsQuery, {}, dao.options.taskMetrics));
-  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows;
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows; 
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
+
+module.exports.getDashboardAgencyTaskMetrics = async function (group, filter,agencyId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.agencyTaskMetricsQuery, agencyId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerAgencyTaskQuery,agencyId)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
+
+module.exports.getDashboardCommunityTaskMetrics = async function (group, filter,communityId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.communityTaskMetricsQuery, communityId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.communityVolunteerTaskQuery,communityId)).rows;
   var generator = new TaskMetrics(tasks, volunteers, group, filter);
   generator.generateMetrics(function (err) {
     if (err) res.serverError(err + ' metrics are unavailable.');

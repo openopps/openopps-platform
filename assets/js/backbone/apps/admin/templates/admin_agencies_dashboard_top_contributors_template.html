@@ -1,0 +1,35 @@
+<h3 class="usajobs-section-header">Top contributors <%- fiscalYear %></h3>
+<div class="top-contributors usajobs-grid-full">
+  <div class="usa-width-one-half">
+    <h3>Opportunities created</h3>
+    <div class="opportunities-created usajobs-grid-full">
+      <div class="usa-width-one-half">
+        <h5 class="graph-header">Creator</h5>
+      </div>
+      <div class="usa-width-one-half">
+        <h5 class="graph-header"># of opportunities</h5>
+      </div>
+    </div>
+    <% _.each(creators, function (creator, index) { %>
+      <div class="opportunities-created usajobs-grid-full">
+        <div class="usa-width-one-half">
+          <p><%- index + 1 %>.  <%- creator.name %></p>
+        </div>
+        <div class="usa-width-one-half">
+          <div class="graph horizontal">
+            <div class="bar" style="width: <%= Math.ceil(creator.count / creatorMax * 100) %>%">
+              <span class="value"><%- creator.count %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %> 
+    <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" title="Download list of all top contributors opportunities created list as a comma-separated file ready for import into Excel">        
+      <a href="<%- dataExportCreatedUrl %>">
+        <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+      </a>
+    </div>
+  </div>
+
+
+</div>
