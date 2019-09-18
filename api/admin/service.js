@@ -55,9 +55,9 @@ function getUserListOrderByClause (sortValue) {
 
 function getWhereClauseForCyclicalTaskState (state) {
   if (state == 'approved') {
-    return "state = 'open' and cycle.apply_start_date > now()";
+    return "state = 'open' and apply_start_date > now()";
   } else if (state == 'open') {
-    return "state = 'open' and cycle.apply_start_date <= now()";
+    return "state = 'open' and apply_start_date <= now()";
   } else {
     return "state = '" + state + "'";
   }
@@ -71,19 +71,32 @@ module.exports.getMetrics = async function () {
   return { 'tasks': tasks, 'users': users };
 };
 
-module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page, sort){
+module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page, sort, filter){
   var community = await communityService.findById(communityId);
+
   if (community.duration == 'Cyclical') {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
-    var whereClause = 'task.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
+    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
    
   } else {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
-    var whereClause = 'task.community_id = ? and ' + getWhereClauseForTaskState(state);
+    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
+
+  //This will get replaced with DoS own filter query for new ticket that is still in backlog.  Jodi
+  var agency = "";
+  if (community.targetAudience != "Students") {
+    agency = 'or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } 
+
+  if (filter) {
+    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() + '%\'' + agency + ')';
+  } 
+
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
+  
   return Promise.all([
     db.query(taskStateTotalsQuery, communityId),
     db.query(tasksByStateQuery, [communityId, page]),
@@ -93,7 +106,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
 module.exports.getTaskStateMetrics = async function (state, page, sort) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
-  var whereClause = '(community.target_audience <> 2 or community.target_audience is null) and ' + getWhereClauseForTaskState(state);
+  var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery),
@@ -101,10 +114,10 @@ module.exports.getTaskStateMetrics = async function (state, page, sort) {
   ]);
 };
 
-module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, page, sort) {
+module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAgencyTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
-  var whereClause = 'task.agency_id = ? and task.community_id is null and ' + getWhereClauseForTaskState(state);
+  var whereClause = 'tasks.agency_id = ? and tasks.community_id is null and ' + getWhereClauseForTaskState(state);
   tasksByStateQuery =  tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery, agencyId),

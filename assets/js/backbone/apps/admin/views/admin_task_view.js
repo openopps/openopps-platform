@@ -17,7 +17,8 @@ var AdminTaskView = Backbone.View.extend({
     'click a.page'              : 'clickPage',
     'click .approve-error'      : 'approveError',
     'click #task-back'          : linkBackbone,
-    'change #sort-results'       : 'sortStatus',
+    'click #task-filter-search' : 'filter',
+    'change #sort-results'      : 'sortStatus',
   },
 
   initialize: function (options) {
@@ -26,6 +27,7 @@ var AdminTaskView = Backbone.View.extend({
     this.data = {
       page: this.params.get('p') || 1,
       status: this.params.get('q') || 'submitted',
+      filter: this.params.get('f') || '',
       sort: this.params.get('s') || 'date',
       returnUrl: '/admin',
     };
@@ -81,7 +83,8 @@ var AdminTaskView = Backbone.View.extend({
         this.tasks = data.tasks;
         _.extend(data, this.data);
         data.agency = this.agency;
-        data.community = this.community;      
+        data.community = this.community;
+        data.filter = this.data.filter;      
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -100,6 +103,7 @@ var AdminTaskView = Backbone.View.extend({
     var data = {
       tasks: tasks,
       status: this.data.status,
+      filter: this.data.filter,
       targetAudience: this.community.targetAudience,
       cycles: (this.community.cycles || {}),
       countOf: totalResults,
@@ -134,10 +138,13 @@ var AdminTaskView = Backbone.View.extend({
     window.scrollTo(0, 0);
   },
 
-  generateURL: function () {
-    var url = window.location.pathname;
-    url += '?q=' + this.data.status + '&p=' + this.data.page + '&s=' + this.data.sort;
-    return url;
+  filter: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var val = $('#task-filter').val().trim();
+    this.data.filter = val;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
   },
 
   filterChanged: function () {
@@ -147,6 +154,13 @@ var AdminTaskView = Backbone.View.extend({
     Backbone.history.navigate(this.generateURL(), { trigger: false });
     this.loadData();
   },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    return url;
+  },
+
 
   getCycleName: function (submittedTaskCycleId) {  
     var cycleName = _.find(this.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
