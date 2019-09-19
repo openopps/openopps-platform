@@ -55,7 +55,7 @@ router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, asyn
 
 router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
   //ctx.body = await service.getTaskStateMetrics();
-  await service.getTaskStateMetrics(ctx.query.status, ctx.query.page, ctx.query.sort).then(results => {
+  await service.getTaskStateMetrics(ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
     ctx.body = {
       totals: results[0].rows,
       tasks: results[1].rows,
@@ -82,7 +82,7 @@ router.get('/api/admin/agency/:id/users', auth.isAdminOrAgencyAdmin, async (ctx,
 
 router.get('/api/admin/agency/:id/tasks', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   //ctx.body = await service.getAgencyTaskStateMetrics(ctx.params.id);
-  await service.getAgencyTaskStateMetrics(ctx.params.id, ctx.query.status, ctx.query.page, ctx.query.sort).then(results => {
+  await service.getAgencyTaskStateMetrics(ctx.params.id, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
     ctx.body = {
       totals: results[0].rows,
       tasks: results[1].rows,
@@ -105,7 +105,7 @@ router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async
 router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     //ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
-    await service.getCommunityTaskStateMetrics(ctx.params.id, ctx.query.status, ctx.query.page, ctx.query.sort).then(results => {
+    await service.getCommunityTaskStateMetrics(ctx.params.id, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
       ctx.body = {
         totals: results[0].rows,
         tasks: results[1].rows,
