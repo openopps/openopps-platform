@@ -216,7 +216,7 @@ var AdminUserView = Backbone.View.extend({
 
     // render the pagination
     this.renderPagination(this.data);
-    this.$('#filter-count').html(this.data.users.length);
+    // this.$('#filter-count').html(this.data.users.length);
     //this.$('.usajobs-search-controls__sort-control option[value='+ this.data.sort +']').attr('selected', true);
     this.$('#user-table').html(template);
     this.$('.btn').tooltip();

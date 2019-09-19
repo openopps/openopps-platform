@@ -271,7 +271,7 @@
     }
   }
 
-  .user-filter {
+  .user-filter, .task-filter {
 
     @include media($SM) {
       input {
@@ -281,7 +281,7 @@
         border-right: 0;
       }
 
-      .user-filter-search-button {
+      .user-filter-search-button, .task-filter-search-button {
         font-size: 2rem;
         height: 4.4rem;
         width: 11.6rem;
@@ -291,7 +291,7 @@
     }
   }
 
-  .user-filter {
+  .user-filter, .task-filter {
     input {
       max-width: initial;
     }
