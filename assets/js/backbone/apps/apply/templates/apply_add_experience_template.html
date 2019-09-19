@@ -114,10 +114,12 @@ var getValue = function (field) {
         <fieldset class="usajobs-fieldset">
           <div class="required-input">
             <label for="duties">Duties, accomplishments, and related skills</label>
-            <span class="field-validation-error error-empty" style="display:none;">You must enter duties, accomplishments, and related skills.</span>
-            <span class="field-validation-error error-count100" style="display:none;">The duties, accomplishments, and related skills must be no more than 100 characters.</span>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter duties, accomplishments, and related skills.</span>          
             <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-            <textarea cols="20" id="duties" maxlength="5000" name="duties" rows="2" class="validate" data-validate="empty,count100,html"><%= getValue('duties') %></textarea>
+            <textarea cols="20" id="duties" maxlength="5000" name="duties" rows="2" class="validate" data-validate="empty,html"><%= getValue('duties') %></textarea>
+            <p class="usajobs-form__help-brief" id="duties-accomplish">
+              (5000 characters remaining)
+            </p>
           </div>
           <a href="https://www.usajobs.gov/Help/how-to/account/documents/resume/build/formatting/" target="_blank" rel="noopen nofollow">Problems with formatting when pasting from Microsoft Word?</a>      
         </fieldset>

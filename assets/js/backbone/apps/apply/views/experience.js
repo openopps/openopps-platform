@@ -11,6 +11,9 @@ var experience = {
     $('#overseas-total-length').charCounter(250, {
       container: '#overseas-count',
     });
+    $('#duties').charCounter(5000, {
+      container: '#duties-accomplish',
+    });
   },
   
   toggleOverseasExperienceDetails: function () {
@@ -258,7 +261,7 @@ var experience = {
     } 
   },
 
-  toggleAddExperience: function (e) {
+  toggleAddExperience: function (e) { 
     experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
