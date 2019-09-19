@@ -139,8 +139,10 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   filter: function (e) {
-    if (e.preventDefault) e.preventDefault();
     var val = $('#task-filter').val().trim();
+    if (val == this.data.filter) {
+      return;
+    }
     this.data.filter = val;
     this.data.page = 1;
     Backbone.history.navigate(this.generateURL(), { trigger: false });
