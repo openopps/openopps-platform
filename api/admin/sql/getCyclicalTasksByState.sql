@@ -1,6 +1,6 @@
 with tasks as (
 	select
-		task.*,
+		task.*, cycle.apply_start_date,
 		(
 			select row_to_json (muser)
 			from (
@@ -23,8 +23,8 @@ with tasks as (
 		) as applicants
 	from task
 	left join cycle on task.cycle_id = cycle.cycle_id
-	where [where clause]
 )
 select * from tasks
+where [where clause]
 order by [order by]
 limit 25 offset ((? - 1) * 25);
