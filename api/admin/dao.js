@@ -237,6 +237,7 @@ const agencyActivityQuery = 'select comment."createdAt", comment.id, \'comment\'
   'from task ' +
   'inner join midas_user on midas_user.id = task."userId" ' +
   'where task.agency_id = $agencyId ' +
+  'and task."submittedAt" is not null ' +
   'order by "createdAt" desc ' +
   'limit 20';
 
