@@ -84,8 +84,8 @@
               <dl class="usajobs-drawer-face">
                 <dt><%= e.employerName %></dt>
                 <dd>
-                  <% var startDate = new Date(e.startDate), 
-                          endDate = new Date(e.endDate),
+                  <% var startDate = new Date(moment((e.startDate || '').split('T')[0]).format('YYYY/MM/DD')), 
+                         endDate = new Date(moment((e.endDate || '').split('T')[0]).format('YYYY/MM/DD')),
                           monthNames = [
                           'January', 'February', 'March',
                           'April', 'May', 'June', 'July',
