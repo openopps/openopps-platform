@@ -150,6 +150,8 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   filterChanged: function () {
+    var val = $('#task-filter').val().trim();
+    this.data.filter = val;
     var status = $('input[name=opp-status]:checked').val();
     this.data.status = status;
     this.data.page = 1;
