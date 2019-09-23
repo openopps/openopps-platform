@@ -224,6 +224,7 @@ gulp.task('patch-release', function (done) {
 });
 
 gulp.task('patch', gulp.series('build', 'patch-release', function (done) {
+  const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
   const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
   octopusApi.init({

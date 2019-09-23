@@ -95,7 +95,11 @@
                           formattedStartDate = monthNames[startDate.getMonth()] + ' ' + startDate.getFullYear(),
                           formattedEndDate = monthNames[endDate.getMonth()] + ' ' + endDate.getFullYear()
                   %>
-                  <%= formattedStartDate %> - <%= formattedEndDate %>
+                  <% if (e.isPresent) { %>
+                    <%= formattedStartDate %> - Present
+                  <% } else { %>
+                    <%= formattedStartDate %> - <%= formattedEndDate %>
+                  <% } %>
                 </dd>
               </dl>
               <div id="exp-<%= e.experienceId %>" class="usa-accordion-content usajobs-drawer-content">
