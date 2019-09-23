@@ -769,6 +769,38 @@
       padding-right: 0;
     }
 
+    .program-select {
+      font-size: $small-font-size;
+      font-weight: normal;
+      float: right;
+      color: $color-primary;
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: $size-S $size-default $size-S $size-default;
+
+      span {
+        margin-left: $size-base;
+        text-decoration: underline;
+        color: $color-primary;
+      }
+    }
+
+    .selected {
+      font-size: $small-font-size;
+      font-weight: normal;
+      float: right;
+      color: $color-green;
+      position: absolute;
+      top: $size-S;
+      right: $size-default;
+
+      span {
+        margin-left: 0.5rem;
+        text-decoration: none;
+      }
+    }
+
     .usajobs-card--large {
 
       @include media($M-down) {
@@ -788,6 +820,10 @@
         margin-bottom: $size-base;
       }
 
+      a, a:visited {
+        color: $color-base;
+      }
+
       .usajobs-card__title {
         font-size: 1.9rem;
         width: 68%;
@@ -795,25 +831,6 @@
 
         @include media($XXL) {
           width: 80%;
-        }
-      }
-
-      .program-select {
-        font-size: $small-font-size;
-        font-weight: normal;
-        float: right;
-        color: $color-primary;
-
-        &.selected {
-          color: $color-green;
-          span {
-            text-decoration: none;
-          }
-        }
-  
-        span {
-          margin-left: $size-base;
-          text-decoration: underline;
         }
       }
 

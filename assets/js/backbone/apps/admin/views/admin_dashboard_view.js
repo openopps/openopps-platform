@@ -12,18 +12,19 @@ var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.htm
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
 
 var AdminAnnouncementView = require('./admin_announcement_view');
+var AdminTopContributorsView = require('./admin_top_contributors_view');
 var AdminDashboardView = Backbone.View.extend({
 
   events: {
-    'change .group': 'renderTasks',
-    'change .filter': 'renderTasks',
+    'change .group': 'renderTasks', 
+    'change input[name=type]':'renderTasks',
   },
 
   initialize: function (options) {
-    this.options = options;
+    this.options = options; 
     this.data = {
       page: 1,
-    };
+    }; 
   },
 
   render: function (replace) {
@@ -51,39 +52,160 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.metric-block').show();
   },
 
+  renderTopContributors: function () {
+    if (this.adminTopContributorsView) {
+      this.adminTopContributorsView.cleanup();
+    }
+    this.adminTopContributorsView = new AdminTopContributorsView({
+      el: '.admin-top-contributors',
+      target: 'sitewide',
+    });
+    this.adminTopContributorsView.render();
+  },
+
   renderTasks: function () {
     var self = this,
         data = this.data,
         group = this.$('.group').val() || 'fy',
-        filter = this.$('.filter').val() || '',
+        filter = this.$('input[name=type]:checked').val() || '',
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+  
     function label (key) {
-      if (key === 'undefined') return 'No date';
+      if (key === 'undefined') return 'No date';   
       return group === 'week' ? 'W' + (+key.slice(4)) + '\n' + key.slice(0,4):
         group === 'month' ? months[key.slice(4) - 1]  + '\n' + key.slice(0,4) :
           group === 'quarter' ? 'Q' + (+key.slice(4)) + '\n' + key.slice(0,4) :
             group === 'fyquarter' ? 'Q' + (+key.slice(4)) + '\nFY' + key.slice(0,4) :
               group === 'fy' ? 'FY' + key : key;
+             
     }
-
     $.ajax({
       url: '/api/admin/taskmetrics?group=' + group + '&filter=' + filter,
       dataType: 'json',
-      success: function (data) {
-        data.label = label;
+      success: function (data) {   
+        data.label = label;     
+        if(group=='fy'){
+          var currentYear =_.chain(data.tasks.published).keys().sort().last().value();
+          var previousYear = parseInt(currentYear)-1;
+          previousYear= previousYear.toString();
+          var year= [currentYear, previousYear];
+          data.range = _.filter(data.range, function (i) {
+            return _.contains(year, i);
+          });
+        }      
+        if(group=='month'){            
+          self.generateMonthsDisplay(data);
+        }
+        if(group=='quarter'){
+          self.generateQuartersDisplay(data);       
+        }           
         var template = _.template(AdminDashboardTasks)(data);
         $('#search-results-loading').hide();
         data.tasks.active = self.data.tasks;
         self.$('.task-metrics').html(template);
         self.$el.localize();
         self.$('.task-metrics').show();
-        self.$('.group').val(group);
-        self.$('.filter').val(filter);
+        self.$('.group').val(group);  
+        self.$('input[name=type][value="' + filter +'"]').prop('checked', true);
       },
     });
   },
+  quarter: function () {
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = (today.getMonth()+ 1).toString(); 
+    var quarter;
+    if      (month <= 3) { quarter = '1'; }
+    else if (month <= 6) { quarter = '2'; }
+    else if (month <= 9) { quarter = '3'; }
+    else                 { quarter = '4'; }
+    return year+''+quarter;
+  }.bind(this),
+
+  generateMonthsDisplay: function (data){
+    var currentTYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+    var previousMYear= parseInt(currentTYear)-1;
+    previousMYear=previousMYear.toString();
+    var Myear= [previousMYear];  
+    var previousYearRange= [];
+    previousYearRange  = _.filter(data.range, function (di) {
+      return _.contains(Myear, di.slice(0,4));
+    });
+    var months=[previousMYear+'01',+previousMYear+'02',previousMYear+'03',
+      +previousMYear+'04',+previousMYear+'05',+previousMYear+'06',+previousMYear+'07',
+      +previousMYear+'08',+previousMYear+'09',+previousMYear+'10',+previousMYear+'11',
+      +previousMYear+'12'];
+  
+    var updateArray= _.difference(months,previousYearRange); 
+    var previousYearData=_.chain(updateArray).sort().value(); 
+    var previousYearDataUnion= _.union(previousYearData,previousYearRange).sort();
+ 
+    var currentMYear= [currentTYear]; 
+    var currentYearRange  = _.filter(data.range, function (di) {
+      return _.contains(currentMYear, di.slice(0,4));
+    });
+    var today = new Date();
+    // eslint-disable-next-line no-redeclare
+    var year = today.getFullYear();
+    var month = (today.getMonth()+ 1).toString();        
+    var currentYearMonth;      
+    if(month.length<2){
+      currentYearMonth = year +'0'+ month;
+    }
+    else{
+      currentYearMonth= year +''+ month;
+    }      
+    var monthsCurrent=[currentTYear+'01',+currentTYear+'02',currentTYear+'03',
+      +currentTYear+'04',+currentTYear+'05',+currentTYear+'06',+currentTYear+'07',
+      +currentTYear+'08',+currentTYear+'09',+currentTYear+'10',+currentTYear+'11',
+      +currentTYear+'12'];
+
+    monthsCurrent= _.filter(monthsCurrent,function (e){
+      return  e <= currentYearMonth;
+    });
+    var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
+    var currentYearData=_.chain(updateCurrentArray).sort().value(); 
+    var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
+    data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
+  },
+
+  generateQuartersDisplay: function (data){
+    var currentQYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+    var previousQYear= parseInt(currentQYear)-1;
+    previousQYear= previousQYear.toString();
+   
+    var Myear= [previousQYear];  
+    var previousYearRange= [];
+    previousYearRange  = _.filter(data.range, function (di) {
+      return _.contains(Myear, di.slice(0,4));
+    });
+    var months=[previousQYear+'1',previousQYear+'2',previousQYear+'3',
+      previousQYear+'4'];
+  
+    var updateArray= _.difference(months,previousYearRange); 
+    var previousYearData=_.chain(updateArray).sort().value(); 
+    var previousYearDataUnion= _.union(previousYearData,previousYearRange).sort();
+ 
+    var currentMYear= [currentQYear];
+    var currentYearRange=[];
+    currentYearRange  = _.filter(data.range, function (di) {
+      return _.contains(currentMYear, di.slice(0,4));
+    });
+    
+    var monthsCurrent=[currentMYear+'1',currentMYear+'2',currentMYear+'3',
+      currentMYear+'4'];
+    var currentQuarter=this.quarter();
+    monthsCurrent= _.filter(monthsCurrent,function (m){
+      return  m <= currentQuarter;
+    });
+    var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
+    var currentYearData=_.chain(updateCurrentArray).sort().value(); 
+    var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
+    data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
+  },
+
+
 
   renderActivities: function (self, data) {
     var template = _.template(AdminDashboardActivities);
@@ -106,7 +228,7 @@ var AdminDashboardView = Backbone.View.extend({
 
         activity.comment.value = value;
       }
-
+     
       activity.createdAtFormatted = $.timeago(activity.createdAt);
       var template = self.$('#' + activity.type).text(),
           content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
@@ -118,6 +240,7 @@ var AdminDashboardView = Backbone.View.extend({
     self.$('.activity-block').show();
     self.renderTasks(self, this.data);
     self.renderAdminAnnouncement();
+    self.renderTopContributors();
   },
 
   

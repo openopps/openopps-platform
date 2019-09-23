@@ -6,22 +6,37 @@ var Modal = require('../../../components/modal');
 // templates
 var AdminTaskTemplate = require('../templates/admin_task_template.html');
 var AdminTaskTable = require('../templates/admin_task_table.html');
+var Paginate = require('../templates/admin_paginate.html');
 
 var AdminTaskView = Backbone.View.extend({
   events: {
-    'click .delete-task'            : 'deleteTask',
-    'click .task-open'              : 'openTask',
-    'click input[type="radio"]'     : 'filterChanged',
-    'click #reindex'                : 'reindex',
+    'click .delete-task'        : 'deleteTask',
+    'click .task-open'          : 'openTask',
+    'click input[type="radio"]' : 'filterChanged',
+    'click #reindex'            : 'reindex',
+    'click a.page'              : 'clickPage',
+    'click .approve-error'      : 'approveError',
+    'click #task-back'          : linkBackbone,
+    'click #task-filter-search' : 'filter',
+    'change #sort-results'      : 'sortStatus',
   },
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
     this.data = {
-      page: 1,
+      page: this.params.get('p') || 1,
+      status: this.params.get('q') || 'submitted',
+      filter: this.params.get('f') || '',
+      sort: this.params.get('s') || 'date',
+      returnUrl: '/admin',
     };
+    if (this.options.target !== 'sitewide') {
+      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    }
     this.agency = {};
     this.community = {};
+    this.selectedTasks={};
     this.baseModal = {
       el: '#site-modal',
       secondary: {
@@ -35,7 +50,6 @@ var AdminTaskView = Backbone.View.extend({
 
   render: function () {
     $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
-
     if (this.options.target !== 'sitewide') {
       this.loadTargetData();
     } else {
@@ -66,14 +80,16 @@ var AdminTaskView = Backbone.View.extend({
       data: this.data,
       dataType: 'json',
       success: function (data) {
-        this.tasks = data;
+        this.tasks = data.tasks;
+        _.extend(data, this.data);
         data.agency = this.agency;
-        data.community= this.community;
+        data.community = this.community;
+        data.filter = this.data.filter;      
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
         this.$el.show();
-        this.renderTasks(this.tasks);
+        this.renderTasks(data.tasks, data.totals);
       }.bind(this),
       error: function () {
         $('#search-results-loading').hide();
@@ -82,37 +98,97 @@ var AdminTaskView = Backbone.View.extend({
     return this;
   },
 
-  renderTasks: function (tasks) {
+  renderTasks: function (tasks, totals) {
+    var totalResults = (_.findWhere(totals, { task_state: this.data.status }) || {}).count || 0;
     var data = {
-      tasks: tasks[$('.filter-radio:checked').attr('id')],
-      status:$('.filter-radio:checked').attr('id'),
-      targetAudience: tasks.community.targetAudience,
+      tasks: tasks,
+      status: this.data.status,
+      filter: this.data.filter,
+      targetAudience: this.community.targetAudience,
+      cycles: (this.community.cycles || {}),
+      countOf: totalResults,
+      firstOf: this.data.page * 25 - 24,
+      lastOf: this.data.page * 25 - 25 + tasks.length,
+      sort: this.data.sort,
+      target:this.options.target,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
+    if (totalResults) {
+      var pageData = getPaginationData(totalResults, 25, this.data.page);
+      _.extend(pageData, { urlbase: window.location.pathname, q: this.data.status });
+      this.$('#task-page').html(_.template(Paginate)(pageData));
+    }
+  },
+
+  sortStatus: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.sort = target.value;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
+  },
+
+  clickPage: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.data.page = $(e.currentTarget).data('page');
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
+  },
+
+  filter: function (e) {
+    var val = $('#task-filter').val().trim();
+    if (val == this.data.filter) {
+      return;
+    }
+    this.data.filter = val;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
   },
 
   filterChanged: function () {
-    this.renderTasks(this.tasks);
-    var t = $('input[name=opp-status]:checked').val();
-    
-    if (t == 'submitted' || t=='approved') {
-      $('[data-target=change-add]').addClass('hide');
-      $('[data-target=publish-delete]').removeClass('hide');
-    } else if (t == 'open' || t == 'notOpen' || t == 'inProgress') {
-      $('[data-target=change-add]').removeClass('hide');
-      $('[data-target=publish-delete]').addClass('hide');
-    } else if (t == 'completed' || t == 'canceled') {
-      $('[data-target=change-add]').addClass('hide');
-      $('[data-target=publish-delete]').addClass('hide');
+    var val = $('#task-filter').val().trim();
+    this.data.filter = val;
+    var status = $('input[name=opp-status]:checked').val();
+    this.data.status = status;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    return url;
+  },
+
+
+  getCycleName: function (submittedTaskCycleId) {  
+    var cycleName = _.find(this.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
+    if (cycleName) {
+      return cycleName.name;
+    }
+  },
+
+  getSubmittedTaskCycleId: function (taskId) {
+    var submittedTask = _.find(this.tasks, function (task) { return task.id == taskId; });
+    if (submittedTask.cycle_id) {
+      return submittedTask.cycle_id;
     }
   },
 
   collectEventData: function (event) {
     event.preventDefault();
+    var taskId = $(event.currentTarget).data('task-id');
+    var submittedTaskCycleId = this.getSubmittedTaskCycleId(taskId);
+    var cycleName = this.getCycleName(submittedTaskCycleId);
     return { 
       id: $(event.currentTarget).data('task-id'),
       title: $( event.currentTarget ).data('task-title'),
+      cycleName: cycleName,
     };
   },
 
@@ -120,6 +196,7 @@ var AdminTaskView = Backbone.View.extend({
    * Open a "submitted" task from the admin task view.
    * @param { jQuery Event } event
    */
+
   openTask: function (event) {
     var data = this.collectEventData(event);
     var titleAction = (this.community.targetAudience !== 'Students') ? 'publish' : 'approval';
@@ -219,6 +296,23 @@ var AdminTaskView = Backbone.View.extend({
       },
     });
     reindexModal.render();  
+  },
+
+  approveError: function (event) {
+    var data = this.collectEventData(event);
+    this.modal = new Modal({
+      id: 'approveError',
+      alert: 'error',
+      modalTitle: 'Cycle posting has ended',
+      modalBody: 'You cannot approve this internship opportunity because the posting dates have ended for cycle "' + data.cycleName + '".',
+      primary: {
+        text: 'Close',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: { },
+    }).render();
   },
 });
 

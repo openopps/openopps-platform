@@ -46,7 +46,7 @@ var submittedApplication = {
         modalTitle: 'Withdraw application',
         modalSubtitle: 'Confirm withdrawal of this application.',
         modalBody: '<p>Are you sure you want to withdraw from the ' + this.data.communityName.community_name + ' for ' + 
-        this.data.cycleName.name + '? This action cannot be undone.</p>' +
+        this.data.cycle.name + '? This action cannot be undone.</p>' +
         '<p><strong>Want to keep your application, but choose another internship opportunity?</strong></p>' +
         '<ol><li>Close this window or choose <strong>Cancel</strong>.</li><li>Choose <strong>Update</strong>.</li>' +
         '<li>Search for a new internship opportunity &mdash; you\'ll need to delete one of your selected internships to replace it with a new one.</li>' +

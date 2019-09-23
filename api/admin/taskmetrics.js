@@ -4,12 +4,11 @@ const log = require('log')('app:admin:taskmetrics');
 
 var TaskDecorator =           require(__dirname + '/taskmetrics/taskDecorator');
 var StateMetrics =            require(__dirname + '/taskmetrics/stateMetrics');
-var VolunteerAgencyMetrics =  require(__dirname + '/taskmetrics/volunteerAgencyMetrics');
+var VolunteerMetrics =  require(__dirname + '/taskmetrics/volunteerMetrics');
 
-function TaskMetrics (tasks, volunteers, agencyPeople, group, filter) {
+function TaskMetrics (tasks,volunteers,group, filter) {
   this.tasks = tasks;
-  this.volunteers = volunteers;
-  this.agencyPeople = agencyPeople;
+  this.volunteers = volunteers; 
   this.filter = filter;
   this.group = group;
   this.metrics = {};
@@ -48,7 +47,7 @@ _.extend(TaskMetrics.prototype, {
   createMetrics: function () {
     async.parallel([
       this.generateStateMetrics.bind(this),
-      this.generateVolunteerAgencyMetrics.bind(this),
+      this.generateVolunteerMetrics.bind(this),
     ], this.done);
   },
 
@@ -58,8 +57,8 @@ _.extend(TaskMetrics.prototype, {
     next();
   },
 
-  generateVolunteerAgencyMetrics: function (next) {
-    var generator = new VolunteerAgencyMetrics(this.volunteers, this.agencyPeople, this.tasks, this.group);
+  generateVolunteerMetrics: function (next) {
+    var generator = new VolunteerMetrics(this.volunteers,this.tasks,this.group); 
     generator.calculate(function () {
       _.extend(this.metrics, generator.metrics);
       next();

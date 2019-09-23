@@ -276,7 +276,7 @@ async function updateOpportunity (attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
-  if (origTask.communityId != attributes.communityId) {
+  if ((origTask.communityId != attributes.communityId) && attributes.state !=='draft') {  
     attributes.state = 'submitted';
     attributes.submittedAt = null;
     attributes.publishedAt = null;
@@ -538,7 +538,7 @@ async function copyOpportunity (attributes, user, done) {
     details: results.details,
     outcome: results.outcome,
     about: results.about,
-    agencyId: results.agencyId,
+    agencyId: user.agencyId,
     communityId: results.communityId,
   };
   var intern = {
@@ -650,7 +650,7 @@ async function removeTask (id) {
   await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
     dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
       dao.Task.delete('id = ?', id).then(async (task) => {
-        await elasticService.indexOpportunity(id);
+        await elasticService.deleteOpportunity(id);
         return id;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);

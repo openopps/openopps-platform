@@ -32,9 +32,91 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
   }
 });
 
+router.get('/api/admin/export/contributor/created', auth.isAdmin, async (ctx, next) => {
+  var today= new Date();
+  var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
+  if(ctx.state.user.isAdmin) {   
+    await service.getExportData('TopContributor','created').then(results => {  
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=TopContributors_' + fiscalYear +'_Created.csv');
+      ctx.body = results;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Top contributors opportunities created agency data exported.',
+      });
+    }).catch(err => {
+      log.info(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/export/contributor/participant', auth.isAdmin, async (ctx, next) => {
+  var today= new Date();
+  var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
+  if(ctx.state.user.isAdmin) {   
+    await service.getExportData('TopContributor','participant').then(results => {  
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=TopContributors_' + fiscalYear +'_Participated.csv');
+      ctx.body = results;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Top contributors participating in opportunities agency data exported.',
+      });
+    }).catch(err => {
+      log.info(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/export/agency/:id/contributor/created', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  var today = new Date();
+  var fiscalYear = 'FY' + today.getFullYear().toString().substr(2);
+  var agency = await service.lookupAgency(ctx.params.id);
+  if(ctx.state.user.isAdmin || ctx.state.user.agencyId == ctx.params.id) {
+    await service.getExportData('TopContributor','agency-created',ctx.params.id).then(results => {
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=TopContributors_' + agency.name + '_' + fiscalYear +'_Created.csv');
+      ctx.body = results;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Top agency contributors opportunities created data exported.',
+      });
+    }).catch(err => {
+      log.error(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/admin/export/agency/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   if(ctx.state.user.isAdmin || ctx.state.user.agencyId == ctx.params.id) {
-      await service.getExportData('user', 'agency', ctx.params.id).then(rendered => {
+    await service.getExportData('user', 'agency', ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
       ctx.response.set('Content-disposition', 'attachment; filename=agency_users.csv');
       ctx.body = rendered;

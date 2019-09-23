@@ -61,7 +61,7 @@ const securityClearanceQuery = 'SELECT application.security_clearance_id, lookup
   'FROM application join lookup_code on application.security_clearance_id = lookup_code.lookup_code_id ' +
   'WHERE application.application_id = ?';
 
-const submittedApplicationCycleQuery = 'SELECT cycle.name ' +
+const submittedApplicationCycleQuery = 'SELECT cycle.* ' +
 'FROM cycle ' +
 'JOIN application on cycle.cycle_id = application.cycle_id ' +
 'WHERE application.application_id = ?';

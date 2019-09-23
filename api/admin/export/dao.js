@@ -31,7 +31,7 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
-  const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -42,7 +42,7 @@ const exportUserCommunityData = 'SELECT ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
   'left join agency on task.agency_id = agency.agency_id ';
 
-  const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -54,7 +54,7 @@ const exportUserCommunityData = 'SELECT ' +
   'left join agency on task.agency_id = agency.agency_id ' + 
   'where task.agency_id = ?';
 
-  const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -79,6 +79,30 @@ var exportUserFormat = {
   'manager': 'is_manager',
   'disabled': 'disabled',
   'announcement': {field: 'content', filter: nullToEmptyString},
+};
+
+var exportTopContributorCreatedFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Agency': {field: 'name', filter: nullToEmptyString},
+  'Total Number Created': {field: 'count', filter: nullToEmptyString},
+};
+
+var exportTopContributorParticipantFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Agency': {field: 'name', filter: nullToEmptyString},
+  'Total Number Participated': {field: 'count', filter: nullToEmptyString},
+};
+
+var exportTopContributorAgencyCreatedFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Creator': {field: 'name', filter: nullToEmptyString},
+  'Total Number Created': {field: 'count', filter: nullToEmptyString},
+};
+
+var exportTopContributorAgencyParticipantFormat = {
+  'Rank': {field: 'rank', filter: nullToEmptyString},
+  'Participant': {field: 'name', filter: nullToEmptyString},
+  'Total Number Participated': {field: 'count', filter: nullToEmptyString},
 };
 
 var exportTaskFormat = {
@@ -165,11 +189,15 @@ module.exports = function (db) {
       exportUserCommunityData: exportUserCommunityData,
       exportTaskAgencyData: exportTaskAgencyData,
       exportTaskCommunityData: exportTaskCommunityData,
-      exportTaskData: exportTaskData,
+      exportTaskData: exportTaskData,    
     },
     clean: clean,
     options: options,
     exportUserFormat: exportUserFormat,
     exportTaskFormat: exportTaskFormat,
+    exportTopContributorCreatedFormat: exportTopContributorCreatedFormat,
+    exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
+    exportTopContributorAgencyCreatedFormat: exportTopContributorAgencyCreatedFormat,
+    exportTopContributorAgencyParticipantFormat: exportTopContributorAgencyParticipantFormat,
   };
 };

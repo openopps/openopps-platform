@@ -1,11 +1,49 @@
-<% if(countOf) { %>
-  <h4>Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+<div class="usajobs-grid usajobs-search-controls">
+  <div class="usajobs-search-controls__results-count-container no-params">
+    <% if(countOf) { %>
+    <h4 class="usajobs-search-controls__results-count">Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
+    <% } %>
+  </div>
+  <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+<% if (users.length > 0) { %>
+  <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+    <% if (target === 'sitewide') { %>
+      <label class="usajobs-search-controls__sort-label" for="sort-user-sitewide">
+        Sort by
+      </label>
+      <select name="sort-user-sitewide" id="sort-user-sitewide" class="usajobs-search-controls__sort-control">
+        <option value="" disabled>- Sort By -</option>
+        <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+        <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+        <option value="username" <% if (sort == 'username') { %>selected<% } %>>Login.gov email</option>
+        <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
+        <option value="last_login" <% if (sort == 'last_login') { %>selected<% } %>>Last login</option>
+        <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
+        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>
+      </select>
+      <% } %>
+    <% if (target === 'agency') { %>
+      <label class="usajobs-search-controls__sort-label" for="sort-user-agency">
+        Sort by
+      </label>
+        <select name="sort-user-agency" id="sort-user-agency" class="usajobs-search-controls__sort-control">
+          <option value="" disabled>- Sort By -</option>
+          <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+          <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+          <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
+          <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
+          <option value="isAgencyAdmin" <% if (sort == 'isAgencyAdmin') { %>selected<% } %>>Agency Admin</option>
+        </select>
+    <% } %>
+  </div>
+</div>
 <% } %>
+</div>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
     <tr>
-      <th class="admin-user-id">User #</th>
       <th class="admin-table-name">Name</th>
+      <% if (target == 'sitewide') { %><th class="admin-table-usertype">User type</th><% } %>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Created</th>
@@ -34,20 +72,28 @@
           data-user-name="<%- u.name %>"
           data-admin="<%- u.isAdmin %>"
           data-agency-admin="<%- u.isAgencyAdmin %>">
-        <td>
-          <%- u.id %>
-        </td>
         <td class="admin-table-name">
           <%- u.name %>
         </td>
         <% if (target == 'sitewide') { %>
+          <td class="admin-table-usertype">
+            <% if (u.hiring_path == 'fed') { %>
+              <span><img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal employee" title="Federal employee"></span>
+            <% } else if (u.hiring_path == 'student') { %>
+              <span><img src="/img/icons/hiring-paths/svg/students.svg" alt="Student" title="Student"></span>
+            <% } else if (u.hiring_path == 'contractor') { %>
+              <span><img src="/img/icons/hiring-paths/svg/contractors.svg" alt="Contractor" title="Contractor"></span>
+            <% } %>
+          </td>
+        <% } %>
         <td class="admin-table-federalEmail">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
-        <% } %>
+        <% if (target == 'sitewide') { %>
         <td class="admin-table-username">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
         </td>
+        <% } %>
         <td class="admin-table-createdat">
           <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
         </td>
