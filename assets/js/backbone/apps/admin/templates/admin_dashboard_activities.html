@@ -1,41 +1,41 @@
-<div class="row">
-  <div class="col-md-12">
-    <h2><i class="fa fa-newspaper-o"></i><span class="box-icon-text">Recent Activity</span></h2>
-    <ul class="activity-feed list-unstyled"></ul>
+<h3 class="usajobs-section-header">Recent activity</h3>
+<div class="usajobs-grid-full">
+  <div class="activity-feed usa-width-one-half">
+    <ul class="usajobs-unstyled-list"></ul>
   </div>
 </div>
 
 <script type="text/template" id="newComment">
-  <li class="box-pad-t box-pad-b">
+  <li>
     &ldquo;{{comment.value}}&rdquo; said <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> on <a href="/{{itemType}}s/{{item.id}}">{{item.title}}</a>
-    <div class="comment-metadata"><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
+    <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newVolunteer">
-  <li class="box-pad-t box-pad-b">
+  <li>
     <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> signed up for <a href="/tasks/{{task.id}}">{{task.title}}</a>
-    <div class="comment-metadata"><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
+    <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newUser">
-  <li class="box-pad-t box-pad-b">
+  <li>
     <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> joined!
-    <div class="comment-metadata"><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
+    <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="updatedUser">
-  <li class="box-pad-t box-pad-b">
+  <li>
     <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> updated their profile
-    <div class="comment-metadata"><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
+    <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>
 
 <script type="text/template" id="newTask">
-  <li class="box-pad-t box-pad-b">
+  <li>
     <a href="/profile/{{user.id}}">{{user.name || user.username}}</a> posted a new opportunity: <a href="/tasks/{{task.id}}">{{task.title}}</a>
-    <div class="comment-metadata"><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
+    <div><time title="{{createdAt}}">{{createdAtFormatted}}</time></div>
   </li>
 </script>

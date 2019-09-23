@@ -1,37 +1,189 @@
-@import 'variables';
-
-
-// third-party libraries
-
-@import 'lib/font-awesome/font-awesome';
-@import 'lib/font-custom';
-
-@import 'lib/bootstrap/bootstrap';
-
 @import 'lib/bootstrap-datetimepicker';
 @import 'lib/jquery-timepicker';
 @import 'lib/jquery-fileupload';
 @import 'lib/select2';
 @import 'lib/leaflet';
 
-@import 'lib/basscss/basscss';
-
-
-// app styles
-
-@import 'app/elements/fonts';
-@import 'app/elements/base';
-@import 'app/elements/misc';
-
-@import 'app/misc/overrides';
-@import 'app/components/components';
 @import 'app/pages/pages';
-@import 'app/theme/theme';
+// @import 'app/theme/theme';
 
-@import 'app/utils';
 
-@import 'custom';
+@import 'uswds';
 
-html {
-    font-size: 15px;
+// Base ------------------- //
+@import 'base/variables';
+@import 'base/utilities';
+@import 'base/fonts';
+@import 'base/breakpoints';
+@import 'base/accessibility';
+@import 'base/shell';
+@import 'base/grid';
+@import 'base/images';
+@import 'base/list';
+@import 'base/forms';
+
+
+// Elements --------------- //
+@import 'element/typography';
+@import 'element/link';
+@import 'element/button';
+@import 'element/select';
+@import 'element/icon';
+
+
+// Components ------------- //
+@import 'component/card/component-card';
+@import 'component/card/opportunity';
+@import 'component/button_bar';
+@import 'component/footer';
+@import 'component/header';
+@import 'component/modal';
+@import 'component/nav';
+@import 'component/nav-secondary';
+@import 'component/pill';
+@import 'component/search/pagination';
+@import 'component/search/search-tab';
+@import 'component/alert';
+@import 'component/media-object';
+@import 'component/initials';
+@import 'component/markdown';
+
+// Layouts ------------- //
+@import 'layouts/profile';
+@import 'layouts/admin-dashboard';
+@import 'layouts/internship';
+
+body {
+  background-color: $color-gray-lightest;
+
+  &.modal-is-open {
+    overflow-y: hidden;
+  }
+}
+
+@media screen and (min-width: 120em) {
+  .usajobs-nav--full_bleed__banner-inner, .usajobs-nav--core-v2__banner-inner, .usajobs-nav--open-opps__banner-inner {
+    padding-left: 3rem;
+  }
+}
+
+h1, h2 {
+  color: $color-primary-darker;
+}
+
+h3 {
+  color: $color-base;
+}
+
+.usa-input-optional:after {
+  font-size: $base-font-size;
+  font-weight: normal;
+}
+
+@media screen and (min-width: 62em) {
+  .usajobs-content-well {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 65.8807826589%;
+  }
+  .usajobs-content-well:last-child {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 75em) {
+  .usajobs-content-well {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 65.8807826589%;
+  }
+  .usajobs-content-well:last-child {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 48em) {
+  .usajobs-content-gutter {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .usajobs-rightrail {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 31.7615653177%;
+  }
+  .usajobs-rightrail:last-child {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 75em) {
+  .usajobs-rightrail {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 31.7615653177%;
+  }
+  .usajobs-rightrail:last-child {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .usajobs-rightrail .usajobs-content-gutter {
+    padding-left: 0;
+  }
+}
+
+[type=checkbox] + label,
+[type=radio] + label {
+  margin-bottom: .49em;
+}
+
+[type=checkbox] + label::before,
+[type=radio] + label::before {
+  background: #fff;
+  border-radius: .2rem;
+  box-shadow: 0 0 0 1px #757575;
+  content: ' ';
+  display: inline-block;
+  height: 1.8rem;
+  line-height: .8;
+  margin-right: 0.6em;
+  text-indent: 0.15em;
+  vertical-align: middle;
+  width: 1.8rem;
+}
+
+[type=radio] + label::before {
+  // border-radius: 50%;
+  border-radius: 100%;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #757575;
+  height: 1.4rem;
+  line-height: 1.4rem;
+  margin-right: 0.75em;
+  width: 1.4rem
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+.usajobs-form--narrow,
+.usajobs-content-well .usajobs-form--narrow {
+
+  .usajobs-form__legend {
+    margin-bottom: 0;
+  }
+}
+
+.fullwidth.text-center {
+  padding-top: 3rem;
+  text-align: center;
 }

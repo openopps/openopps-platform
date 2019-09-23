@@ -1,0 +1,244 @@
+// Navigation
+
+@import '../base-shared';
+
+.usajobs-nav-secondary {
+  position: relative;
+  margin-bottom: $size-M;
+  background-color: $color-white;
+
+  &.is-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: $layer-panel;
+    @include boxShadow(2);
+  }
+
+  // http://caniuse.com/#feat=css-sticky
+  // Long story short, once IE11 supports sticky we can get rid of the is-fixed class
+  &[data-behavior=is-fixed-nav] {
+    position: sticky;
+    z-index: $layer-panel;
+  }
+
+  &__body {
+    @include outer-container();
+    max-width: $site-max-width;
+    border-bottom: 1px solid $color-gray-light;
+
+    a {
+      // Another override of the base styles just to be certain we don't have
+      // underlined links in the nav
+      text-decoration: none;
+    }
+  }
+
+  &__menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    text-align: left;
+  }
+
+  &__container {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+
+    &::before,
+    &::after {
+      content: none;
+    }
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__item,
+  &__more-toggle {
+    display: block;
+    padding: $size-S $size-default;
+    font-size: $base-font-size;
+    line-height: 1;
+    color: $color-primary;
+    text-align: center;
+    text-decoration: none;
+
+    @include media($ML) {
+      padding: $size-default $size-M;
+    }
+
+    &:visited {
+      color: $color-primary;
+    }
+
+    &:hover {
+      color: $color-primary-darker;
+      text-decoration: underline;
+    }
+
+    &.is-active,
+    &[data-state="is-active"] {
+      font-weight: bold;
+      color: $color-primary-darkest;
+      border-bottom: 3px solid $color-primary-alt-darkest;
+    }
+
+    .fa-check {
+      color: $color-green;
+    }
+
+    .usajobs-icon {
+      width: 1.7rem;
+      height: 1.7rem;
+      color: $color-primary;
+    }
+  }
+
+  &__more-toggle {
+    border-left: 1px solid $color-gray-lighter;
+  }
+
+  &__more-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin: 0;
+    background-color: $color-gray-warm-light;
+    @include boxShadow(1);
+    z-index: 1;
+
+    &[data-state="is-open"] {
+      display: block;
+    }
+
+    li {
+      width: 100%;
+
+      a {
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      a:hover {
+        background-color: $color-gray-lighter;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.usajobs-openopps-secondary-nav {
+  position: relative;
+  // margin-bottom: $size-M;
+  background-color: $color-primary-darker;
+
+  @include media($L) {
+    // margin-bottom: $size-L;
+  }
+
+  &.is-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: $layer-panel;
+    @include boxShadow(2);
+  }
+
+
+  &__body {
+    @include outer-container();
+    max-width: $site-max-width;
+
+    @include media($L) {
+      padding-left: $size-M;
+      padding-right: $size-M;
+    }
+
+    a {
+      // Another override of the base styles just to be certain we don't have
+      // underlined links in the nav
+      text-decoration: none;
+    }
+  }
+
+  &__menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    text-align: center;
+
+    @include media($L) {
+      text-align: left;
+    }
+
+    &[aria-expanded="false"] {
+      display: none;
+    }
+
+    :first-child {
+      padding-left: 0;
+    }
+  }
+
+  &__item {
+    display: inline-table;
+    text-align: center;
+    border-color: $color-white;
+    padding: 0 $size-default;
+
+    &.mobile {
+      @include media($M) {
+        display: none;
+      }
+    }
+  }
+
+  &__link {
+    display: block;
+    padding: $size-default 0 .8975rem;
+    line-height: 1.25;
+    font-size: $base-font-size;
+    border-bottom: .3525rem solid transparent;
+    color: $color-white;
+    @include transition(all .25s ease-in-out);
+    text-decoration: none;
+
+    &:visited {
+      color: $color-white;
+    }
+
+    &:hover {
+      color: $color-white;
+      text-decoration: none;
+      border-bottom-color: inherit;
+    }
+
+    &.is-active,
+    &[data-state="is-active"] {
+      font-weight: bold;
+      border-bottom-color: inherit;
+    }
+  }
+
+  &__short-name {
+    @include media($SM) {
+      display: none;
+    }
+  }
+  &__long-name {
+    display: none;
+
+    @include media($SM) {
+      display: inherit;
+    }
+  }
+}

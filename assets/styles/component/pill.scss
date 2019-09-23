@@ -1,0 +1,264 @@
+// Pills
+
+@import 'base-shared';
+
+$color-advancing: $color-green-dark;
+$color-paused: $color-gold;
+$color-stopped: $color-secondary;
+$color-completed: $color-primary-alt;
+
+.usajobs-search-pills {
+  position: relative;
+  overflow: hidden;
+  margin-top: $size-M * -1;
+  margin-bottom: $size-M;
+
+  @include media($M) {
+    overflow: inherit;
+    height: inherit;
+    padding-left: $site-margins-mobile;
+    padding-right: $site-margins-mobile;
+  }
+
+  @include media($L) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  &__fade-out-layer {
+    position: absolute;
+    top: 0;
+    width: $size-default;
+    height: 100%;
+    z-index: 1;
+
+    @include media($M) {
+      display: none;
+    }
+
+    &.is-left {
+      left: 0;
+      background-image: linear-gradient(270deg, rgba(241,241,241,0), $color-gray-lightest);
+    }
+
+    &.is-right {
+      right: 0;
+      background-image: linear-gradient(90deg, rgba(241,241,241,0), $color-gray-lightest);
+    }
+  }
+
+  &__list {
+    @include unstyledList();
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-left: $size-default;
+
+    @include media($M) {
+      overflow-x: inherit;
+      overflow-y: auto;
+      white-space: inherit;
+      max-height: rem(215px);
+      padding-left: 0;
+    }
+
+    // The max-height decreases as we can show more pills in a row
+    @include media($XL) {
+      max-height: rem(175px);
+    }
+
+    &.is-active {
+      @include media($M) {
+        box-shadow: 0 3px 3px -3px rgba(0,0,0,0.12) inset, 0 -3px 3px -3px rgba(0,0,0,0.24) inset;
+      }
+    }
+  }
+
+  &__list > &__item {
+    display: inline-block;
+    margin: $size-S $size-S $size-S 0;
+    background-color: $color-gray;
+    border-radius: $size-base;
+
+    &:nth-child(2) {
+
+      @include media($M) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &__list > &__item[aria-hidden=true],
+  &__remove-all[aria-hidden=true] {
+    display: none;
+  }
+
+  &__list &__pill,
+  &__list &__pill:visited {
+    display: block;
+    padding: $size-base $size-S;
+    font-size: $small-font-size;
+    font-weight: bold;
+    color: $color-white;
+    text-decoration: none;
+  }
+
+  &__list > &__item--profile {
+    background-color: $color-green-lighter;
+
+    .usajobs-search-pills__pill {
+      color: $color-base;
+    }
+  }
+
+  &__list &__pill:hover,
+  &__remove-all:hover {
+    cursor: pointer;
+  }
+
+  &__remove-all,
+  &__remove-all:visited {
+    display: block;
+    margin-left: $size-default;
+    padding: $size-base $size-S $size-base 0;
+    font-size: $small-font-size;
+
+    @include media($M) {
+      margin: 0;
+    }
+  }
+
+  &__remove-icon {
+    padding-left: $size-base;
+
+    .usajobs-icon,
+    .usajobs-icon--white {
+      width: 1rem;
+      height: 1rem;
+      vertical-align: middle;
+      margin-bottom: .2rem;
+    }
+  }
+
+  &__remove-all-icon {
+    color: $color-secondary-darkest;
+  }
+}
+
+.usajobs-pill--application-status {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  &__item {
+    display: inline-block;
+    width: 100%;
+    max-width: 17.5rem;
+    margin-bottom: $size-S;
+    padding: 0 $size-S;
+    // the default color scheme is unavailable
+    background-color: $color-gray-dark;
+    color: $color-white;
+    border: 1px solid $color-gray-dark;
+    border-radius: $size-M;
+    text-align: center;
+    font-weight: bold;
+
+    // Advancing
+    &.status-hired,
+    &.status-received,
+    &.status-referred,
+    &.status-reviewed,
+    &.status-selected {
+      background-color: $color-advancing;
+      border-color: $color-advancing;
+      color: $color-white;
+    }
+
+    // Paused
+    &.status-incomplete,
+    &.status-in-progress {
+      background-color: $color-paused;
+      border-color: $color-paused;
+      color: $color-base;
+    }
+
+    // Stopped
+    &.status-canceled,
+    &.status-not-hired,
+    &.status-not-referred,
+    &.status-not-selected {
+      background-color: $color-stopped;
+      border-color: $color-stopped;
+      color: $color-white;
+    }
+
+    .grade {
+      font-weight: normal;
+    }
+
+    .grade-all {
+      display: none;
+    }
+  }
+}
+
+.usajobs-pill--opportunity-status {
+  margin-bottom: $size-S;
+  padding: 0 $size-S;
+  max-width: 12rem;
+  background-color: $color-gray-light;
+  border: 1px solid $color-gray-light;
+  border-radius: 1.15rem;
+  color: $color-base;
+  text-align: center;
+  font-weight: bold;
+  display: block;
+
+  &.status-draft {
+    background-color: $color-gray-dark;
+    border-color: $color-gray-dark;
+    color: $color-white;
+  }
+
+  &.status-open {
+    background-color: $color-advancing;
+    border-color: $color-advancing;
+    color: $color-white;
+  }
+
+  &.status-not-open {
+    background-color: $color-gray-light;
+    border-color: $color-gray-light;
+    color: $color-base;
+  }
+
+  &.status-submitted {
+    background-color: $color-primary-alt-darkest;
+    border-color:  $color-primary-alt-darkest;
+    color: $color-white;
+  }
+
+  &.status-approved {
+    background-color: #4c2c92;
+    border-color:  #4c2c92;
+    color: $color-white;
+  }
+
+  &.status-in-progress {
+    background-color: $color-paused;
+    border-color: $color-paused;
+  }
+
+  &.status-completed {
+    background-color: $color-completed;
+    border-color: $color-completed;
+  }
+
+  &.status-canceled {
+    color: $color-white;
+    background-color: $color-secondary;
+    border-color: $color-secondary;
+  }
+}

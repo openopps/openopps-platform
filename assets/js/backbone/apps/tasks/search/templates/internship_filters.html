@@ -1,0 +1,70 @@
+<div class="usajobs-open-opps-opportunity ">
+    <div class="usajobs-search-filter-nav" aria-hidden="true">
+        <div class="usajobs-search-filter-nav__body">
+            <span class="fas fa-sliders-h"></span> Filters
+            <span class="usajobs-search-filter-nav__results">
+                <%= taskFilteredCount %> opportunities found</span>
+            <a href="javascript:void(0);" class="usajobs-search-filter-nav__back" title="Filters">
+                <span class="sr-only">Close</span><span class="fas fa-times" title="Close"></span>
+            </a>
+        </div>
+    </div>
+    <div class="usajobs-search-filters__container" id="filters-container">
+        <a href="https://usajobs.github.io/openopps-help/opportunity/search/" class="usajobs-opop-section__help" target="_blank">
+            <span class="fas fa-question-circle" title="Help"></span> Help
+            <span class="sr-only">Opens in a new window</span>
+        </a>
+        <h3>Filters</h3>
+         <!-- <% if (programs.length) { %> 
+        <h4 class="usajobs-search-filters__title">Program</h4>
+        <ul id="intern-program-list" class="usa-unstyled-list">         
+                <% _(programs).forEach(function (program, index) { %>
+                 <li>
+                  <input id="<%-program.communityId %>" type="radio" name="internship-program" <% if(filters.program && filters.program.name === program.communityName) { %>checked<% } %> value="<%-program.communityName %>" >
+                    <label for="<%-program.communityId %>"><%-program.communityName %></label>
+                </li>
+                    <% }); %>
+                <% } %>      
+        </ul> -->
+        <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
+        </ul>
+        <ul id="search-tags" class="nav nav-pills nav-stacked nav-search">
+        </ul>
+        <div class="search-clear" style="display: none;">
+            <div class="align-right">
+                <a href="#" id="search-clear" class="btn btn-sm btn-c0"><i class="fa fa-remove"></i> Clear Search Criteria</a>
+            </div>
+        </div>
+        <h4 class="usajobs-search-filters__title skill">Skill</h4>
+        <label class="sr-only" for="skill">Skill</label>
+        <input type="text" id="skill" title="Skill" />
+
+        <h4 class="usajobs-search-filters__title career">Language</h4>
+        <label class="sr-only" for="language">Language</label>
+        <input type="text" id="language" title="Language" />
+
+        <div class="agencyselect">
+            <h4 class="usajobs-search-filters__title career">Agency</h4>
+            <label class="sr-only" for="agency">Agency</label>
+            <input type="text" id="agency" title="Agency" />
+        </div>
+        <div id="dossection" class="dossection">
+            <h4 class="usajobs-search-filters__title career">Bureau</h4>
+            <label class="sr-only" for="bureau">Bureau</label>
+            <select id="bureau" class="dropdown">
+                <option></option>
+            <% if (bureaus.length) { %>
+                <% _(bureaus).forEach(function (bureau, i) { %>
+                    <% var selected = filters.bureau && bureau.bureauId == filters.bureau.id %>
+                    <option value="<%= bureau.bureauId %>" <% if (selected) { %>selected<% } %>><%= bureau.name %></option>
+                <% }); %>
+            <% } %>
+            </select>
+            <div class="office_section" style="display: none;">
+                <h4 class="usajobs-search-filters__title career">Office/post</h4>
+                <label class="sr-only" for="office">Office/post</label>
+                <input type="hidden" id="office" name="office_id" value="<% if (filters.office) { %><%= filters.office.id %><% } %>" class="dropdown">
+            </div>
+        </div>
+    </div>
+</div>

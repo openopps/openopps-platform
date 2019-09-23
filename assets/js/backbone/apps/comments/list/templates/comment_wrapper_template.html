@@ -1,17 +1,22 @@
-<h2>Discussion</h2>
+<h3>Discussion</h3>
 <div class="comment-spinner center">
   Loading discussion... <i class="fa fa-spinner fa-spin"></i>
 </div>
-<div id="comment-form-target"></div>
-<ul id="comment-list">
-  <% if ( user ) { %>
-  <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
-    No discussion yet.  Start one!
-  </li>
-  <% } else { %>
-  <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
-    Sign in to start the discussion!
-  </li>
-  <% } %>
-</ul>
-<div class="topic-form-wrapper"></div>
+<div id="comment-form-target" class="usajobs-grid-full"></div>
+<div class="usajobs-grid-full">
+  <ul id="comment-list" class="usajobs-width-one-whole">
+    <% if (_.contains(['draft', 'submitted'], state)) { %>
+      <li class="comment-item" id="comment-empty" style="display:none;">
+        You can start a discussion once the opportunity has been approved.
+      </li>
+    <% } else if ( user ) { %>
+      <li class="comment-item" id="comment-empty" style="display:none;">
+        No discussion yet.  Start one!
+      </li>
+    <% } else { %>
+      <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
+        Sign in to start the discussion!
+      </li>
+    <% } %>
+  </ul>
+</div>

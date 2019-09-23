@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="flexbox">
+  <head>
+    <title><%=typeof title == 'undefined' ? 'Open Opportunities' : title%></title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94043649-2"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-94043649-2'); </script>
+
+    <script type="text/javascript">
+    systemName = <%- JSON.stringify(systemName) %>;
+    loginGov = <%- JSON.parse(loginGov) %>;
+    draftAdminOnly = <%- JSON.parse(draftAdminOnly) %>;
+    version = <%- JSON.stringify(version) %>;
+    usajobsURL = <%- JSON.stringify(usajobsURL) %>;
+    usajobsDataURL = <%- JSON.stringify(usajobsDataURL) %>;
+    </script>
+    <script defer src="/js/fontawesome-all.js"></script>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF token -->
+    <meta name="csrf-token" content="">
+    <link rel="stylesheet" href="/styles/main.css?v=<%- cssHash %>">
+  </head>
+
+  <body>
+    <div class="usajobs-open-opps-search-results__loading" id="search-results-loading" style="-webkit-box-align: start; -moz-box-align: start; box-align: start; -webkit-align-items: flex-start; -moz-align-items: flex-start; -ms-align-items: flex-start; -o-align-items: flex-start; align-items: flex-start; -ms-flex-align: start; -webkit-box-pack: center; -moz-box-pack: center; box-pack: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center; justify-content: center; -ms-flex-pack: center; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(255,255,255,0.8); text-align: center; vertical-align: middle; z-index: 800; display: block;">
+      <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
+      <span class="sr-only" style="border: 0; clip: rect(0,0,0,0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;">Loading</span>
+    </div>
+    <script type="text/javascript">
+      // this will only return true for IE <= 8.
+      if (window.attachEvent && !window.addEventListener) {
+        document.write('<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert"><div class="usajobs-alert__figure"><div class="usajobs-alert__icon"></div></div><div class="usajobs-alert__body"><p class="usa-alert-text">You are using an old, unsupported version of Internet Explorer. This website may not work correctly in your browser. For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</p></div></div>');
+      }
+    </script>
+    <header class="usajobs-site-header" aria-label="header" id="title">
+      <div class="usa-banner">
+        <div class="usa-accordion">
+          <div class="usa-banner-header">
+            <div class="usa-grid usa-banner-inner usajobs-nav--full_bleed__banner-inner">
+            <img src="/img/favicons/favicon-57.png" alt="U.S. flag">
+            <p>An official website of the United States government</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div id="site-modal"></div>
+    <div id="login-wrapper"></div>
+    <div class="navigation"></div>
+    <section class="usajobs-shell">
+      <% if (alert) { %>
+      <div class="container">
+        <div class="usa-alert usajobs-alert usajobs-alert--error server-alert" role="alert" data-object="alert">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <p class="usa-alert-text">
+              <%- alert.message %>
+            </p>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <%- body %>
+    </section>
+    <footer id="footer" class="usa-footer usa-footer-big usajobs-footer--openopps" role="contentinfo" aria-label="footer"></footer>
+    <script src="/js/bundle.min.js?v=<%- jsHash %>"></script>
+  </body>
+</html>

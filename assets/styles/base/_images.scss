@@ -1,0 +1,17 @@
+// Images
+
+p img {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  width: auto;
+}
+
+.img {
+  &--2x {
+    background-size: 50%;
+  }
+}

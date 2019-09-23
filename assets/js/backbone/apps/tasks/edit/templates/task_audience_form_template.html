@@ -1,0 +1,63 @@
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter opportunity-gutter">
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <h1 class="usajobs-form__title">Create an opportunity</h1>
+        <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
+          <fieldset class="usajobs-fieldset usa-fieldset-inputs">
+            <div class="form-group required-input">
+              <label for="CareerField" class="usajobs-profile-question__title">
+                <h3>Who's your target audience?</h3>
+              </label>
+              <ul class="usa-unstyled-list" id="target-audience">
+                <li class="opportunity-target-audience__item">
+                  <button type="button" class="opportunity-target-audience__button " id="federal-employees" value="Federal employees">
+                    <div class="opportunity-target-audience__figure">
+                      <div class="opportunity-target-audience__icon">
+                        <i class="federal-employees"></i>
+                      </div>
+                    </div>
+                    <div class="opportunity-target-audience__body">
+                      <h4 class="opportunity-target-audience__item-title">
+                        Federal employees
+                        <span class="opportunity-target-audience__subtext">
+                          For developmental opportunities
+                        </span>
+                      </h4>
+                    </div>
+                  </button>                
+                </li>
+                <% if (communities.student && communities.student.length) { %>
+                <li class="opportunity-target-audience__item">
+                  <button type="button" class="opportunity-target-audience__button " id="students" value="Students">
+                    <div class="opportunity-target-audience__figure">
+                      <div class="opportunity-target-audience__icon">
+                        <i class="students"></i>
+                      </div>
+                    </div>
+                    <div class="opportunity-target-audience__body">
+                      <h4 class="opportunity-target-audience__item-title">
+                        Students
+                        <span class="opportunity-target-audience__subtext">
+                          For internship opportunities
+                        </span>
+                      </h4>
+                    </div>
+                  </button>              
+                </li>
+                <% } %>
+              </ul>
+            </div>
+          </fieldset>
+
+          <div class="usajobs-button_bar--slim">
+              <div class="usajobs-button_bar__body">
+                <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
+                <button class="usa-button usa-button-primary" id="continue" disabled>Continue</a>
+              </div>
+            </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</section>

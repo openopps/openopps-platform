@@ -1,0 +1,13 @@
+<p>Hi <% if (owner.name) { %><%- owner.name %><% } %>,</p>
+
+<p>Good news! <% if (user.name) { %><%- user.name %><% } %> has applied to your opportunity, 
+    <a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a>.</p>
+
+<p>Take a moment to review their profile and call or email them to make sure they’re the right person for the work.</p>
+
+<p>Review <a href="<%- globals.urlPrefix %>/profile/<%- user.id %>"><% if (user.name) { %><%- user.name %><% } %>'s</a> profile.</p>
+
+<p style="font-size: 1.9rem; font-weight: 700; color: #0071bc;">Are they a fit?</p>
+
+<p>Go to your opportunity and click + to assign the person to the opportunity—once done, click <strong>Next Step</strong>. We’ll send an automatic 
+    email to the participant telling them they’re assigned.</p>

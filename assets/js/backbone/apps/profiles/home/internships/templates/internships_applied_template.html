@@ -1,0 +1,85 @@
+<div class="usajobs-open-opps-participated__section">
+  <div id="usajobs-search-controls-applied">
+    <div class="usajobs-grid usajobs-search-controls">
+      <div class="usajobs-search-controls__results-count-container no-params">
+        <% if (data.length > 0) { %>
+          <h4 id="participated-count" class="usajobs-search-controls__results-count">
+            Viewing 1 – <% if (showAll) { %><%= data.length %><% } else { %><%= Math.min(data.length, 5) %><% } %> of <%= data.length %> <% if (data.length > 1) { %>internships<% } else { %>internship<% } %>
+          </h4>
+        <% } %>
+      </div>
+      <% if (data.length > 0) { %>
+        <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+          <label class="usajobs-search-controls__sort-label" for="sort-applied">
+            Sort by
+          </label>
+          <select name="sort-applied" id="sort-applied" class="usajobs-search-controls__sort-control">
+            <option value="" disabled>- Sort By -</option>
+            <option value="submittedAt" <% if (sort == 'submittedAt') { %>selected<% } %>>Application status</option>
+            <option value="communityName" <% if (sort == 'communityName') { %>selected<% } %>>Program</option>
+            <option value="cycleName" <% if (sort == 'cycleName') { %>selected<% } %>>Cycle</option>
+          </select>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  <div id="<%- handle %>-tab-open">
+    <div style="overflow-x:auto;">
+      <% if (data.length > 0) { %>
+        <div class="usajobs-show-next" data-object="reveal">
+          <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="applied-table">
+            <thead>
+              <tr class="usajobs-grid open-opps-row header">
+                <th scope="col" class="your-status">Application status</th>
+                <th scope="col" class="application-action">Program</th>
+                <th scope="col">Cycle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% _.each(data, function (d, index) { %>
+                <tr class="usajobs-grid open-opps-row" data-id="<%- d.id %>">
+                  <td class="your-status">
+                    <%= getStatus(d) %>
+                  </td>
+                  <td class="application-program-title">
+                    <% var today = new Date(moment().tz("America/New_York").format('MM/DD/YYYY')); if (new Date(d.applyEndDate) >= today) { %>
+                      <a href="/apply/<%- d.id %>" class="activity-link" data-id="<%- d.id %>"><%- d.communityName %></a>
+                    <% } else { %>
+                      <%- d.communityName %>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% var updated = new Date(d.updatedAt); %>
+                    <%- d.cycleName %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% if (!showAll && data.length > 5) { %>
+            <a href="#next" class="usa-button usa-button-outline applied-show-all">
+              Show more
+            </a>
+          <% } %>
+        </div>
+
+      <% } else { %>
+
+        <table class="usa-table-borderless" role="presentation">
+        	<thead>
+            <tr class="usajobs-grid open-opps-row header">
+              <th scope="col" class="your-status">Application status</th>
+              <th scope="col" class="application-program-title">Program</th>
+              <th scope="col">Cycle</th>
+            </tr>
+        	</thead>
+          <tbody>
+            <tr>
+              <td colspan="3">You have no applications.</td>
+            </tr>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</div>

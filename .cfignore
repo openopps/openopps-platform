@@ -15,16 +15,21 @@ cf-ssh.yml
 
 npm-debug.log
 
+# Ignore modules, should be built using `node install`
+node_modules
+
 # Ignore sails.js filesystem database
 .tmp/
 
 # Ignore the local configuration file
 config/local.js
 
+# Ignore database migration configuration file
+database.json
+
 # Ignore production files
 assets/build
 assets/uploads
-#assets/js/bundle.js
 
 # Ignore uswds files, these are set up during npm install
 assets/styles/uswds.css

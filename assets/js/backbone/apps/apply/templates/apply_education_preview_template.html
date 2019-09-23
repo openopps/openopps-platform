@@ -1,0 +1,109 @@
+<div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
+  <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
+    <% _.each(data.education, function (d,index) { %>
+    <li class="usajobs-drawer" data-section="education" data-id="edu-1">
+      <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
+      <dl class="usajobs-drawer-face">
+        <dt><%- d.schoolName %></dt>
+        <dd>
+        <% if (d.completionMonth) { %>
+          <%= completedMonthFunction(d.completionMonth)  + '  ' + d.completionYear %>
+        <% } %>
+        </dd>
+      </dl>
+      <div id="edu-1" class="usa-accordion-content usajobs-drawer-content">
+        <div class="usajobs-grid">
+          <div class="usajobs-width-one-half">
+            <ul class="usajobs-drawer-content__list">
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">City or Town</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.cityName %></p>
+              </li>
+              <% if (d.postalCode) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">Postal code</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.postalCode %></p>
+              </li>
+              <% } %>
+              <% if (d.major) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">Major</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.major %></p>
+              </li>
+              <% } %>
+              <% if (d.gpa) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">GPA</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.gpa %></p>
+              </li>
+              <% } %>
+              <% if (d.totalCreditsEarned) { %>
+              <li class="usajobs-drawer-content__item">              
+                <h5 class="usajobs-drawer-content__item-label">Total credits earned</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.totalCreditsEarned %></p>
+              </li>
+              <% } %>
+              <% if (d.honor && d.honor.value!=" ") { %>
+              <li class="usajobs-drawer-content__item">            
+                <h5 class="usajobs-drawer-content__item-label">Honors</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.honor.value %></p>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <div class="usajobs-width-one-half">
+            <ul class="usajobs-drawer-content__list">
+              <% if (d.countrySubdivision) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">State, Territory, or Province</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.countrySubdivision.value %></p>
+              </li>
+              <% } %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">Country</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.country.value %></p>
+              </li>
+              <% if (d.minor) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">Minor</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.minor %></p>
+              </li>
+              <% } %>
+              <% if (d.gpaMax) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">GPA Max</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.gpaMax %></p>
+              </li>
+              <% } %>
+              <% if (d.creditSystem) { %>
+              <li class="usajobs-drawer-content__item">
+                <h5 class="usajobs-drawer-content__item-label">System for credits</h5>
+                <p class="usajobs-drawer-content__item-content"><%- d.creditSystem %></p>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+        <div class="usajobs-grid">
+          
+          <div class="usajobs-width-one-whole">
+        <% if (d.courseWork) { %>
+            <h5 class="usajobs-drawer-content__item-label">Relevant coursework, licensures, and certifications</h5>
+            <p class="usajobs-drawer-content__item-content"><%- d.courseWork %></p>
+          </div>
+          <% } %>
+        </div>
+        <% if (data.selectedStep==3) { %>
+        <div class="usajobs-button-bar--split">
+          <div class="usajobs-button-bar__body">
+            <a class="usajobs-button-bar__delete delete-record" id="delete-education" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
+              data-id="<%-d.educationId%>" data-section="education" data-name="<%= d.degreeLevel.value %>" data-record="school">Delete</a>
+            <a href="javascript:void(0)" id="education-edit" class="usa-button usajobs-button-bar__edit" data-id="<%-d.educationId%>" href="/">Edit</a>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </li>
+    <% }); %> 
+  </ul>
+</div>

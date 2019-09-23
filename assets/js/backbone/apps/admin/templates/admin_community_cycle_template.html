@@ -1,0 +1,77 @@
+<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text"></p>
+  </div>
+</div>
+<p class="back-link" role="navigation" aria-label="Back"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<h2><%- communityName %>
+</h2>
+<h3>Cycles<a href="/admin/community/<%- communityId %>/cycles?edit=new" id="create-cycle" class="usa-button usa-button-secondary new-cycle"><i class="fa fa-plus"></i> <span>Create cycle</span></a>
+</h3>
+
+<div id="cycle-table" class="table-responsive">
+  <table class="usa-table-borderless cycle-table" role="presentation">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Posting Dates</th>
+        <th>Application Dates</th>
+        <th>Review Dates</th>
+        <th>Internship Dates</th>
+        <th class="center" data-target="publish-delete">Edit</th>
+        <th class="center" data-target="publish-delete">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% _.each(_.sortBy(cycles, 'postingStartDate').reverse(), function (cycle) { %>
+        <tr>
+          <td class="metrics-table__title">
+            <%- cycle.name %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.postingStartDate).format('MM/DD/YY') %> - <%- moment(cycle.postingEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.applyStartDate).format('MM/DD/YY') %> - <%- moment(cycle.applyEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+            <%- moment(cycle.reviewStartDate).format('MM/DD/YY') %> - <%- moment(cycle.reviewEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__date">
+              <%- moment(cycle.cycleStartDate).format('MM/DD/YY') %> - <%- moment(cycle.cycleEndDate).format('MM/DD/YY') %>
+          </td>
+          <td class="metrics-table__button">
+            <a href="/admin/community/<%- communityId %>/cycles?edit=<%- cycle.cycleId %>"
+              data-cycle-id="<%- cycle.cycleId %>"
+              data-cycle-title="<%- cycle.name %>"
+              class="edit-cycle"
+              alt="Edit cycle"
+              title="Edit cycle">
+              <span class='fas fa-edit'></span>
+              <span class="usa-sr-only">Edit cycle</span>
+            </a>
+          </td>
+          <% if (new Date(cycle.applyStartDate) > new Date()) { %>
+            <td class="metrics-table__button">
+              <a href="#delete"
+                data-cycle-id="<%- cycle.cycleId %>"
+                data-cycle-title="<%- cycle.name %>"
+                class="delete-cycle"
+                alt="Delete cycle"
+                title="Delete cycle">
+                <span class='fa fa-times'></span>
+                <span class="usa-sr-only">Delete cycle</span>
+              </a>
+            </td>
+          <% } else { %>
+            <td>&nbsp;</td>
+          <% } %>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,218 @@
+<% if (model.community && model.community.community_name == 'DHS Joint Duty Program') { %>
+  <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+    <h3>Questions?</h3>
+    <p>Contact us at <a href="mailto:jointdutyprogramoffice@hq.dhs.gov">jointdutyprogramoffice@hq.dhs.gov</a>.</p>
+  </div>
+<% } %>
+
+<div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+  <h3>Progress</h3>
+  <div class="usajobs-open-opps-opportunity-progress__container">
+    <div class="usajobs-open-opps-opportunity-progress__step">
+      <div class="usajobs-open-opps-opportunity-progress__assigned <% if (hasStep('assigning')) { %>has-step<% } %>">
+        <span class="progress-icon"><i class="fas fa-user-plus"></i></span>
+        <span class="usajobs-assistive-text">Assigning</span>
+      </div>
+      <label class="progress-label">Assigning</label>
+    </div>
+
+    <span class="progress-spacer"></span>
+
+    <div class="usajobs-open-opps-opportunity-progress__step">
+      <div class="usajobs-open-opps-opportunity-progress__in-progress <% if (hasStep('inProgress')) { %>has-step<% } %>">
+        <span class="progress-icon"><i class="fas fa-sync"></i></span>
+        <span class="usajobs-assistive-text">In progress</span>
+      </div>
+      <label class="progress-label">In progress</label>
+    </div>
+
+    <span class="progress-spacer"></span>
+
+    <div class="usajobs-open-opps-opportunity-progress__step">
+      <div class="usajobs-open-opps-opportunity-progress__completed <% if (hasStep('complete')) { %>has-step<% } %>">
+        <span class="progress-icon"><i class="fas fa-check"></i></span>
+        <span class="usajobs-assistive-text">Complete</span>
+      </div>
+      <label class="progress-label">Complete</label>
+    </div>
+  </div>
+
+  <% if (model.canEditTask && _.contains(['open', 'not open', 'in progress'], state.value)) { %>
+  <div class="continue-accepting-applicants">
+      <a href="https://usajobs.github.io/openopps-help/opportunity/accept-applications/" class="usajobs-opop-section__help" target="_blank">
+        <span class="fas fa-question-circle" title="Help"></span> Help
+        <span class="sr-only">Opens in a new window</span>
+      </a>
+    <div class="continue-accepting-applicants__toggle">
+      <span class="continue-accepting-applicants__label">Continue accepting applicants</span>
+      <div id="accept-toggle" class="continue-accepting-applicants__toggle-container <% if (!model.acceptingApplicants) { %>toggle-off<% } %>">
+        <span class="continue-accepting-applicants__toggle-labeloff">Off</span>
+        <span class="continue-accepting-applicants__toggle-labelon">On</span>
+      </div>
+    </div>
+  </div>
+  <% } else if (state.value == 'completed') { %>
+    <div class="opportunity-completed">Completed on <%- moment(model.completedAt).format('MM/DD/YY') %></div>
+  <% } else if (state.value == 'canceled') { %>
+    <div class="opportunity-canceled">Canceled on <%- moment(model.canceledAt).format('MM/DD/YY') %></div>
+  <% } %>
+
+  <div id="participants">
+    <% if (!_.contains(['completed', 'canceled'], state.value) && (!user || (model.owner.id !== user.id))) { %>
+      <% if (user && _.findWhere(model.volunteers, { userId: user.id })) { %>
+        <% if (_.findWhere(model.volunteers, { userId: user.id }).assigned) { %>
+          <div id="assigned">
+            <h3>Congratulations, you're assigned!</h3>
+            <div>Let the opportunity creator know when you've completed your task.</div>
+          </div>
+        <% } else { %>
+          <div id="apply-thanks">
+            <h3>Thanks for applying</h3>
+            <div>We’ll email you with next steps. You can also check your profile for status updates.</div>
+            <a href="javascript:void(0);" id="apply-cancel">Cancel your application</a>
+          </div>
+        <% } %>
+      <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
+        <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+      <% } %>
+    <% } %>
+
+    <% if (model.volunteers) { %>
+      <h3>Assigned participants</h3>
+      <div class="assigned-participants-wrapper project-people__wrapper<% if (_.contains(['in progress', 'completed'], state.value)) { %> in-progress<% } %>">
+        <% if (_.contains(['draft', 'submitted'], state.value)) { %>
+          <p class="project-people__not-available">Not available</p>
+        <% } else { %>
+          <% if (_.where(model.volunteers, { assigned: true }).length > 0) { %>
+            <% _.each(_.where(model.volunteers, { assigned: true }), function (v) { %>
+              <a href="/profile/<%- v.userId %>">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+                    <% if (v.photoId) { %>
+                      <img src="/api/user/photo/<%- v.userId %>" alt="Profile picture of <%- v.name %>">
+                    <% } else { %>
+                      <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
+                    <% } %>
+                    <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                      <button class="project-people__remove" data-volunteerid="<%- v.id %>" data-behavior="remove">
+                        <span class="usajobs-assistive-text">Remove participant</span>
+                      </button>
+                    <% } %>
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                    <% if (model.canEditTask) { %>
+                      <% if (state.value == 'in progress') { %>
+                        <% if (v.taskComplete) { %>
+                          <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                          <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="undo">Undo</a>
+                        <% } else { %>
+                          <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="complete">Task complete</a>
+                        <% } %>
+                      <% } else if (v.taskComplete) { %>
+                        <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                      <% } %>
+                    <% } else if (v.taskComplete) { %>
+                      <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                    <% } %>
+                  </div>
+                </div>
+              </a>
+              <!-- <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+                <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>" class="project-people" />
+                <label class="project-people-show-label"><%- v.name %></label>
+                <% if (model.canEditTask) { %>
+                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                    <button class="project-people__remove" data-volunteerid="<%- v.id %>" data-behavior="remove">
+                      <span class="usajobs-assistive-text">Remove participant</span>
+                    </button>
+                  <% } %>
+                  <% if (state.value == 'in progress') { %>
+                    <% if (v.taskComplete) { %>
+                      <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                      <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="undo">Undo</a>
+                    <% } else { %>
+                      <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="complete">Task complete</a>
+                    <% } %>
+                  <% } else if (v.taskComplete) { %>
+                    <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                  <% } %>
+                <% } else if (v.taskComplete) { %>
+                  <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
+                <% } %>
+              </div> -->
+            <% }); %>
+          <% } else { %>
+            <p class="project-people__assign-instruction">
+              <% if (model.volunteers.length > 0) { %>
+                <% if (model.canEditTask) { %>
+                  Click
+                  <button class="project-people__assign-empty" data-behavior="">
+                    <span class="usajobs-assistive-text">Assign participant</span>
+                  </button>
+                  from the Applicants list below to assign participants
+                <% } else { %>
+                  None assigned
+                <% } %>
+              <% } else { %>
+                <p class="project-people__not-available">None applied</p>
+              <% } %>
+            </p>
+          <% } %>
+        <% } %>
+      </div>
+
+      <% if (model.canEditTask) { %>
+        <a href="javascript:void(0);" id="nextstep" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { assigned: true }).length < 1) { %>disabled<% } %>"><span class="box-icon-text">Next step</span></a>
+        <a href="javascript:void(0);" id="complete" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { taskComplete: true }).length < 1) { %>disabled<% } %>"><span class="box-icon-text">Complete opportunity</span></a>
+      <% } %>
+
+      <% if (accordion.show) { %>
+      <div class="usa-accordion">
+        <h3 class="usa-accordion-button" aria-expanded="<%- accordion.open %>">Applicants</h3>
+        <div class="usa-accordion-content project-people__wrapper" aria-hidden="<%- !accordion.open %>">
+      <% } else { %>
+        <div>
+          <h3>Applicants</h3>
+          <div class="project-people__wrapper">
+      <% } %>
+          <% if (_.contains(['draft', 'submitted'], state.value)) { %>
+            <p class="project-people__not-available">Not available</p>
+          <% } else { %>
+            <% if (model.volunteers.length > 0) { %>
+              <% _.each(_.where(model.volunteers, { assigned: false }), function (v) { %>
+                <a href="/profile/<%- v.userId %>">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                    <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+                      <% if (v.photoId) { %>
+                        <img src="/api/user/photo/<%- v.userId %>" alt="Profile picture of <%- v.name %>">
+                      <% } else { %>
+                        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
+                      <% } %>
+                      <% if (model.canEditTask && model.state != 'completed' && state.value != 'canceled') { %>
+                        <button class="project-people__<% if (state.value == 'in progress'){ %>confirm<%} else {%>assign<%}%>" data-volunteerid="<%- v.id %>" data-behavior="assign">
+                          <span class="usajobs-assistive-text">Assign participant</span>
+                        </button>
+                      <% } %>
+                    </div>
+                    <div class="usajobs-open-opps-opportunity-requestor__body">
+                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                    </div>
+                  </div>
+                </a>
+              <% }); %>
+            <% } else { %>
+              <p class="project-people__search">
+                <a href="/profiles" class="usa-button usa-button-secondary"><i class="fas fa-users"></i> Search people</a>
+              </p>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (model.canEditTask && model.state != 'completed' && model.state != 'canceled') { %>
+    <a class="usajobs-open-opps-opportunity__cancel" href="javascript:void();" id="task-cancel">Cancel this opportunity</a>
+  <% } %>
+</div>

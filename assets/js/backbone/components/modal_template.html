@@ -1,24 +1,50 @@
-<div class="modal fade"
-  id="<%- id %>"
-  role="dialog"
-  tabindex="-1"
-  <% if (disableClose === true) { %>
-  data-backdrop="static"
-  data-keyboard="false"
-  <% } %>
-  >
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <% if (disableClose !== true) { %>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+<div class="usajobs-modal <%= 'usajobs-modal--' + alert %>" id="<%- id %>" role="dialog" data-state="is-open" aria-hidden="false" aria-labelledby="usajobs-modal-heading" aria-describedby="usajobs-modal-description">
+  <div class="usajobs-modal__dialog">
+    <div class="usajobs-modal__content">
+      <div id="usajobs-modal-description" class="usajobs-assistive-text">
+        Beginning of a dialog window for the <%- id %> form. It begins with a heading 2
+        called "<%- modalTitle %>". Escape will cancel and close the window.
+      </div>
+      <% if (alert !== '') { %>
+      <div class="usajobs-modal__header" id="alert-modal__heading">
+        <div class="usa-alert usajobs-alert usajobs-alert--<%- alert %>">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <h2 class="usajobs-modal__title" id="alert-modal__title"><%- modalTitle %></h2>
+            <% if (modalSubtitle) { %>
+              <p class="usajobs-modal__subtitle" id="alert-modal__subtitle"><%- modalSubtitle %></p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <% } else { %>
+      <div class="usajobs-modal__header" id="usajobs-modal-heading">
+        <h2 class="usajobs-modal__title"><%- modalTitle %></h2>
+      </div>
+      <% } %>
+      <div class="usajobs-modal__body">
+        <%= modalBody %>
+      </div>    
+
+      <div class="usajobs-modal__footer">
+        <% if (secondary && (secondary.text !== null && typeof(secondary.text) !== 'undefined')) { %>
+          <button id="secondary-btn" class="usa-button usa-button-secondary" data-behavior="modal.close" <%= disableSecondary ? 'disabled' : '' %>><%- secondary.text %></button>
         <% } %>
-        <h4 class="modal-title"><%- modalTitle %></h4>
+        <% if (primary && (primary.text !== null && typeof(primary.text) !== 'undefined')) { %>
+          <button id="primary-btn" class="usa-button <% if (action != 'delete') { %>usa-button-primary<% } else { %>usajobs-button-destructive-action<% } %>" data-behavior="modal.close" <%= disablePrimary ? 'disabled' : '' %>><%- primary.text %></button>
+        <% } %>
       </div>
 
-      <div class="modal-template">
-
+      <% if (!disableClose) { %>
+      <div class="usajobs-modal__actions">
+        <button class="usajobs-modal__close" data-behavior="modal.close">
+          <span class="usajobs-assistive-text">Close</span>
+        </button>
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+      <% } %>
+    </div>
+  </div>
+</div>

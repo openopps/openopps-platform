@@ -1,0 +1,121 @@
+
+<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text"></p>
+  </div>
+</div>
+<% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+<a href="create" id="add-community" class="usa-button usa-button-secondary add-community "><i class="fa fa-plus"></i> <span>Add Community</span></a>
+<% } %>
+<% if (updateSuccess) { %>
+  <div class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <h3 class="usa-alert-heading">Community updated</h3>
+      <p class="usa-alert-text">You have successfully updated your community.</p>
+    </div>
+    <button class="usajobs-alert__close" data-behavior="alert.close">
+      <span class="usajobs-assistive-text">Close</span>
+    </button>
+  </div>
+<% } %>
+<% if (saveSuccess) { %>
+  <div class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <h3 class="usa-alert-heading">Community created</h3>
+      <p class="usa-alert-text">You have successfully created your community.</p>
+    </div>
+    <button class="usajobs-alert__close" data-behavior="alert.close">
+      <span class="usajobs-assistive-text">Close</span>
+    </button>
+  </div>
+<% } %>
+<div id="community-header" class="usajobs-grid-full">
+  <div class="usa-width-one-whole">
+    <fieldset class="usajobs-fieldset">
+      <legend class="usa-sr-only">Select community</legend>
+      <label for="communities" class="usa-sr-only">Community</label>
+      <select id="communities" class="dropdown">
+        <option value=""></option>
+        <% _.each(communities, function (c) { %>
+            <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
+        <% }); %>
+      </select>
+      
+      <a href="/admin/community/<%=community.communityId %>/edit" id="community-edit" class="community-header-link">Manage community</a>
+    </fieldset>
+  </div>
+</div>
+<div class="usajobs-grid-full">
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Members <a href="/admin/community/<%=community.communityId %>/users" class="admin-manage-link">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Active users: <%- numeral(community.users.active).format('0,0') %></li>
+      <li>Admins: <%- numeral(community.users.admins).format('0,0') %></li>
+    </ul>
+  </div>
+  <% if (community.duration == 'Cyclical') { %>
+    <div class="usa-width-one-third">
+      <h3><i class="fas fa-sync-alt"></i><span class="box-icon-text">Cycles <a href="/admin/community/<%=community.communityId %>/cycles" class="admin-manage-link">Manage</a></span></h3>
+      <ul class="usajobs-unstyled-list">
+        <li>Total created: <%- numeral(community.cycles.length).format('0,0') %></li>
+        <li>Completed: <%- numeral(_.filter(community.cycles, function (cycle) { return cycle.cycleEndDate <= new Date(); }).length).format('0,0') %></li>
+      </ul>
+    </div>
+  <% } %>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="admin-manage-link">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
+      <% if (community.duration == 'Cyclical') { %>
+        <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>
+        <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+        <li>Approved: <%- numeral((_.findWhere(community.tasks, { task_state: 'approved' }) || {}).count).format('0,0') %></li>
+        <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+        <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
+      <% } else { %>
+        <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+        <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+        <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'not open' }) || {}).count).format('0,0') %></li>
+        <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'in progress' }) || {}).count).format('0,0') %></li>
+        <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
+        <li>Canceled: <%- numeral((_.findWhere(community.tasks, { task_state: 'canceled' }) || {}).count).format('0,0') %></li>
+      <% } %>
+    </ul>
+  </div>
+  <% if (community.duration == 'Cyclical') { %>
+    </div>
+    <div class="usajobs-grid-full"></div>
+  <% } %>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Total applications: <%- numeral(community.interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(community.interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(community.interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(community.interactions.posts).format('0,0') %></li>
+    </ul>
+  </div>
+</div>
+
+<div class="task-metrics"></div>
+
+<div class="activity-block">
+  <h3 class="usajobs-section-header">Recent activity</h3>
+  <div class="usajobs-grid-full">
+    <div class="activity-feed usa-width-one-half">
+      <ul class="usajobs-unstyled-list"></ul>
+    </div>
+  </div>
+</div>

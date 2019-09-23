@@ -1,5 +1,5 @@
 Name: <%- profileName %><% if(profileTitle) { %>, <%- profileTitle  %><% } %>
-<%= i18n.t("tag.Agency")%>: <%- profileAgency  %>
+Agency: <%- profileAgency  %>
 Location: <%- profileLocation  %>
 
 I wanted to let you know about this interesting person. Click on the link to see their profile: <%- profileLink  %>

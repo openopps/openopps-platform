@@ -1,10 +1,10 @@
 <li>
-<% if (tag.type == 'skill') { %>
-  <a href='/tasks?search=<%- tag.name %>'><%- tag.name %></a>
-<% } else { %>
-  <%- tag.name %>
-<% } %>
-<% if ((data.isOwner || user.isAdmin) && edit) { %>
-<span class="tag-delete fa fa-times" data-id="<%- tag.id %>"></span>
-<% } %>
+  <% if (tag.type == 'skill') { %>
+    <a href='/tasks?search=<%- tag.name %>'><%- tag.name %></a>
+  <% } else { %>
+    <%- tag.name %>
+  <% } %>
+  <% if ((data.isOwner || data.canEditProfile) && edit) { %>
+    <span class="tag-delete fa fa-times" data-id="<%- tag.id %>"></span>
+  <% } %>
 </li>

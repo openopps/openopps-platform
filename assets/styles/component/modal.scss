@@ -1,0 +1,211 @@
+// Modal
+
+@import '../base-shared';
+
+$modal-width-medium: 600px;
+$modal-width-large: 930px;
+
+.usajobs-modal {
+  opacity: 0;
+  visibility: hidden;
+  transition: transform $duration-fast linear,
+                opacity $duration-fast linear;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $layer-modal;
+  width: auto;
+  min-height: 200px;
+  -webkit-overflow-scrolling: touch;
+
+  // Prevent Chrome on Windows from adding a focus outline. For details, see
+  // https://github.com/twbs/bootstrap/pull/10951.
+  outline: 0;
+
+  &[data-state="is-open"] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity $duration-slow linear;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__canvas-blackout[aria-hidden="true"] {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    z-index: $layer-modal-backdrop;
+    background-color: rgba(0, 0, 0, 0.38); // this acts as the backdrop
+    transition: opacity $duration-slow linear;
+  }
+
+  &__dialog {
+    position: relative;
+    width: auto;
+    margin: $size-M $size-default;
+
+    @include media($ML) {
+      width: rem($modal-width-medium);
+      margin: $size-M auto;
+    }
+
+    @include media($L) {
+      width: rem($modal-width-large);
+    }
+  }
+
+  &__content {
+    position: relative;
+    background-color: $color-white;
+    border: 1px solid rgba(70, 70, 70, .14);
+    border-radius: $size-base;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.29);
+    background-clip: padding-box;
+    outline: 0;
+  }
+
+  &__body {
+    padding: $size-default;
+
+    @include media($ML) {
+      padding: $size-M;
+    }
+
+    .check-list {
+      display: flex;
+
+      &:not(:last-child) {
+        margin-bottom: $size-M;
+      }
+
+      .check {
+        margin-right: $size-S;
+        color: $color-green;
+      }
+
+      .times {
+        margin-right: $size-S;
+        color: $color-secondary-dark;
+      }
+    }
+  }
+
+  &__header {
+    padding: $size-L $size-default $size-M;
+    background-color: $color-gray-lightest;
+    border-bottom: 1px solid $color-gray-light;
+    border-top-left-radius: $size-base;
+    border-top-right-radius: $size-base;
+
+    @include media($ML) {
+      padding: $size-L $size-M $size-M;
+    }
+  }
+
+  &__footer {
+    padding: $size-M $size-default;
+    border-top: 1px solid $color-gray-light;
+    text-align: right;
+
+    @include media($ML) {
+      padding: $size-M;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    color: $color-primary-darkest;
+  }
+
+  &__subtitle {
+    margin-top: 0;
+    color: $color-primary-darkest;
+  }
+
+  &__close {
+    @include makeCloseButton();
+  }
+}
+
+.is-open-modal {
+  overflow: hidden; // Keeps the background from being scrollable
+}
+
+// Variations
+// ----------------------------------------------------------------------------
+
+.usajobs-modal--error,
+.usajobs-modal--info,
+.usajobs-modal--success,
+.usajobs-modal--warning {
+  .usajobs-modal__header {
+    padding: 0;
+
+    .usajobs-alert {
+      margin-top: 0;
+      margin-bottom: 0;
+      border: 0;
+      border-bottom-left-radius: 0;
+
+      .usajobs-alert__icon {
+        background-position: center;
+      }
+    }
+
+    .usajobs-alert__body {
+      padding: $size-default $size-S;
+
+      @include media($ML) {
+        padding: $size-default $size-M;
+      }
+    }
+  }
+}
+
+.usajobs-modal--error {
+  .usajobs-modal__header {
+    border-bottom: 1px solid $color-secondary-dark;
+  }
+
+  .usajobs-alert--error {
+    border-left: 1rem solid !important;
+    border-color: #cd2026 !important;
+  }
+}
+
+.usajobs-modal--info {
+  .usajobs-modal__header {
+    border-bottom: 1px solid $color-primary-darker;
+  }
+}
+
+.usajobs-modal--success {
+  .usajobs-modal__header {
+    border-bottom: 1px solid $color-green-dark;
+  }
+}
+
+.usajobs-modal--warning {
+  .usajobs-modal__header {
+    border-bottom: 1px solid $color-gold;
+  }
+}
+
+.usajobs-modal {
+  .usajobs-modal__footer {
+    .usajobs-button-destructive-action {
+      background-color: #e31c3d;
+      border: 0;
+      color: #fff;
+    }
+  }
+}

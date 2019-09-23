@@ -1,13 +1,8 @@
-
 var _ = require('underscore');
 var Backbone = require('backbone');
-
 var Autolinker = require('autolinker');
 var marked = require('marked');
-
-var fs = require('fs');
-var CommentItemTemplate = fs.readFileSync(`${__dirname}/../templates/comment_item_template.html`).toString();
-
+var CommentItemTemplate = require('../templates/comment_item_template.html');
 
 var CommentItemView = Backbone.View.extend({
 
@@ -22,8 +17,7 @@ var CommentItemView = Backbone.View.extend({
 
   cleanup: function () {
     removeView(this);
-  }
-
+  },
 });
 
 module.exports = CommentItemView;

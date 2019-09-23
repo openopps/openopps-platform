@@ -1,22 +1,29 @@
+<div class="usa-alert usajobs-alert usajobs-alert--warning file-upload-alert" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text file-upload-alert-message"></p>
+  </div>
+  <button class="usajobs-alert__close" data-behavior="alert.close">
+    <span class="usajobs-assistive-text">Close</span>
+  </button>
+</div>
+
 <h4>
   Attachments
-  <div class="btn btn-c0 btn-sm file-add attachment-filebtn fileinput-button" style="<% if (!canAdd) { %>display:none;<% } %>">
+  <div class="file-add attachment-filebtn fileinput-button" style="<% if (!canAdd) { %>display:none;<% } %>">
     Add File
     <input id="attachment-fileupload" type="file" name="files[]" title="Attach Files">
   </div>
 </h4>
-<div class="py1 attachment-fileupload">
+<div class="attachment-fileupload">
   <div style="display: none;" class="progress progress-striped active">
     <div class="progress-bar" style="width: 0"></div>
   </div>
 </div>
-<div>
-  <div class="file-upload-alert alert alert-warning" style="display:none;">
-    <span></span>
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-  </div>
-</div>
-<div class="py1 file-list">
+<div class="file-list">
   <table class="table table-hover table-condensed">
     <tbody class="attachment-tbody">
       <tr class="attachment-none"><td>No Attachments</td></tr>

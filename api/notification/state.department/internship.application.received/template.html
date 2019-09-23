@@ -1,0 +1,31 @@
+<p>Hello <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>Thank you for submitting your application to the U.S. Department of State Student Internship Program (Unpaid) through Open 
+  Opportunities. You applied to the following internship opportunities:</p>
+
+<ul>
+  <li><a href="<%- globals.urlPrefix %>/internships/<%- application.tasks[0].taskId %>"><%- application.tasks[0].title %></a></li>
+  <li><a href="<%- globals.urlPrefix %>/internships/<%- application.tasks[1].taskId %>"><%- application.tasks[1].title %></a></li>
+  <li><a href="<%- globals.urlPrefix %>/internships/<%- application.tasks[2].taskId %>"><%- application.tasks[2].title %></a></li>
+</ul>
+
+<p>View your application in your <a href="<%- globals.urlPrefix %>/home/">dashboard</a>.</p>
+
+<p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">What happens next?</p>
+
+<p>The U.S. Department of State Student Internship Program will:</p>
+
+<ol>
+  <li><strong>Review all applications.</strong><br>
+    They will begin to review applications after the application period closes on <%- moment(cycle.applyEndDate).format('MMMM DD, YYYY') %>.</li>
+  <li><strong>Set up interviews.</strong><br>
+    They will contact you if you're selected for an interview. However, some offices don't conduct interviews.</li>
+  <li><strong>Send offer emails.</strong><br>
+    They will send you an email with a conditional offer, if you're selected for an internship.</li>
+</ol>
+
+<p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">What happens if I'm not selected?</p>
+
+<p>After all internships are filled, you will receive an email if you're not selected.</p>
+
+<p><a href="https://careers.state.gov/intern/student-internships/selection-process/">Learn more about the U.S. Department of State Student Internship Program (Unpaid) selection process</a>.</p>

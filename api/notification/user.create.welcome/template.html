@@ -1,0 +1,16 @@
+<p>Hi <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>Welcome to <%= globals.systemName %>! We're happy you want to get involved. As a member of this community, you'll collaborate with people across different agencies and work on projects that interest you.</p>
+
+<p>To complete your account registration click the link below or copy and paste it into your browser</p>
+<p>
+  <a href="<%- globals.urlPrefix %>/profile/register/<%- user.token %>"><%- globals.urlPrefix %>/profile/register/<%- user.token %></a>
+</p>
+
+<p class="no-margin">Before you start applying to opportunities, follow the steps below to complete your <a href="<%- globals.urlPrefix %>/profile">profile</a>:</p>
+
+<ul>
+  <li>Write your bio: share a bit of your background to help other members get to know you.</li>
+  <li>Add a photo: upload a profile picture to help other members put a face to your name.</li>
+  <li>List skills and interests: tell us about your skills and career interests. This will help opportunity creators match you with the right opportunities.</li>
+</ul>

@@ -1,0 +1,18 @@
+// Card
+
+@import 'base-shared';
+
+@import 'home-variables';
+@import 'card';
+
+.usajobs-card {
+  @include card-v3();
+}
+
+.usajobs-card--large {
+  @include card-v4();
+}
+
+.usajobs-card--inset {
+  @include cardInset();
+}

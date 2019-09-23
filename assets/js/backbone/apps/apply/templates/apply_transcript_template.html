@@ -1,0 +1,39 @@
+<div class="usajobs-profile-home-section__body">
+    <h3 class="usajobs-profile-home-section__sub-section">Transcript</h3>  
+    <p>Please select or upload your most recent academic transcript—this can be an unofficial transcript. If you're selected for an internship, you'll need to provide an official transcript before you start.</p>
+    <div id="apply-transcript">      
+      <span class="field-validation-error upload-error" style="display:none;" >You must select one transcript or upload a new one.</span> 
+      <span class="field-validation-error refresh-error" style="display:none;" >You must click the Refresh transcripts button to see your changes.</span>           
+      <fieldset id="transcripts" class="usajobs-fieldset">
+        <legend class="usa-sr-only">Transcript</legend>
+        <ul class="transcript-card-buttons">   
+          <% _.each(transcripts, function (transcript) { %>
+            <li class="transcript-card-button">
+              <input type="radio" value="<%- transcript.CandidateDocumentID + '|' + transcript.CandidateFileName + '.' + transcript.FileFormat %>" name="transcripts" id="<%- transcript.CandidateDocumentID %>" <% if (transcript.CandidateDocumentID == transcriptId) { %><%= "checked" %><% } %>>          
+              <label for="<%- transcript.CandidateDocumentID %>">
+                <div class="usajobs-grid-full">
+                  <div class="usa-width-one-twelfth radio-button"></div>
+                  <div class="transcript-info">
+                    <%- transcript.CandidateFileName %>
+                    <span class="transcript-card-button__sub-text">
+                      <a href="<%- decodeURIComponent(transcript.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(transcript.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                    </span>
+                  </div>
+                  <div class="usa-width-one-fourth">
+                    <span class="transcript-icon <%- transcript.FileFormat %>">
+                      <h6>Transcript</h6>
+                    </span>
+                  </div>
+                </div>                  
+              </label>            
+            </li>
+          <% }) %>
+        </ul>
+      </fieldset>
+      <a id="upload-transcript"  class="usa-button usa-button-secondary">Upload transcript</a>
+      <a id="refresh-transcripts" href="#refresh" class="usa-button usa-button-secondary" style="display:none">Refresh transcripts</a>
+      <div id="refreshing-transcripts" style="display:none"><i class="fas fa-circle-notch fa-spin"></i>Refreshing transcripts</div>
+    </div>
+  </div>
+
+  

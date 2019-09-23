@@ -1,128 +1,497 @@
-.dashboard {
-  font-size: 18px;
+@import '../../base-shared';
+
+.usajobs-opop-banner {
+  background-color: $color-gray-cool-light;
+  min-height: 17rem;
+
 }
 
-.dashboard h2 {
-  color: #297bb5;
+.usajobs-opop-banner__body {
+  max-width: 64.1rem;
+  text-align: center;
+  margin: auto;
 }
 
-.badges-feed h2 {
-  color: #df3403;
+@media screen and (min-width: 48em) {
+  .usa-button.usa-button-primary-alt {
+    width: 29.1rem;
+    margin-top: $size-SM;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+  }
+  .usajobs-opop-banner__section {
+    padding: 3rem 0 1.5rem;
+  }
 }
 
-.box-banner {
-  background-color: #0e5487;
+@media screen and (max-width: 47.9999em) {
+
+  .usajobs-opop-banner__section {
+    padding: 0 0 1.5rem 0;
+  }
+  .usajobs-opop-banner__body {
+    padding: 1.5rem;
+  }
 }
 
-.box-banner h1 {
-  color: #fff;
-  font-size: 24px;
-  line-height: 1.7em;
-  margin-bottom: 0;
-  text-align: right;
+.usajobs-opop-banner__section {
+  font-size: $lead-font-size;
 }
 
-.opportunity-count--number {
-  font-size: 48px;
-}
+.usajobs-grid.usajobs-opop-dashboard {
+  padding-left: 0;
+  padding-right: 0;
 
-.opportunity-count--number.loaded {
-  vertical-align: middle;
-}
+  @include media($L) {
+    padding-left: $size-M;
+    padding-right: $size-M;
+  }
 
-@media (max-width: 1000px) {
-  .box-banner h1,
-  .box-banner .col-md-4 {
+  h1 {
+    color: $color-primary-darkest;
     text-align: center;
+    font-size: $h2-font-size;
+
+    @include media($L) {
+      display: inline-block;
+      text-align: left;
+      font-size: $h1-font-size;
+    }
+  }
+
+  .logout {
+    color: $color-primary;
+    font-weight: bold;
+    font-size: $lead-font-size;
+    line-height: 2.6rem;
+    margin-left: $size-S;
+    text-align: center;
+    display: block;
+
+    @include media($L) {
+      text-align: left;
+      float: right;
+      padding-top: 1.9rem;
+    }
   }
 }
 
-.box-banner .btn {
-  padding: 1em 2em;
-}
+.usajobs-opop-dashboard__body {
+  margin-left: auto;
+  margin-right: auto;
+  // background: $color-white;
+  // padding: 0 $size-SM $size-default $size-SM;
 
-.activity-feed--item {
-  padding-bottom: .5em;
-  padding-top: .5em;
-}
+  // @include media($L) {
+  //   padding: 0 $size-M $size-default $size-M;
+  // }
 
-.activity-feed--item:after {
-  display: table;
-  content: '';
-  clear: both;
-}
+  &::after, &::before {
+    clear: both;
+    content: "";
+    display: table;
+  }
 
-.activity-feed--item ul {
-  margin-left: 2.2em;
-}
-
-.activity-feed--badge {
-  background-position: center;
-  background-size: contain;
-  margin-top: -5px;
-  min-height: 50px;
-  width: 50px;
-}
-
-.activity-feed--avatars {
-  margin-top: .3em;
-}
-
-.activity-feed--avatars::before,
-.activity-feed--avatars::after {
-  content: " ";
-  display: table;
-}
-
-.activity-feed--avatars::after {
-  clear: both;
-}
-
-.activity-feed--avatar {
-  background-position: center;
-  background-size: contain;
-  border-radius: 100%;
-  float: left;
-  margin-right: .3em;
-  min-height: 40px;
-  width: 40px;
-}
-
-@media (max-width: 768px) {
-  .activity-feed--text {
-    width: 80%;
+  .add-opportunity {
+    margin-left: 1.5rem;
   }
 }
 
-.network-stats--heading {
-  margin-top: 20px;
+.usajobs-opop-dashboard a {
+  color: #0071BC;
+  text-decoration: none;
+}
+
+.usajobs-grid .usa-width-one-half.profile-home {
+
+  @include media($M) {
+    margin-right: 0;
+    width: 100%;
+    // margin-right: 2.41458%;  
+    // width: 48.79271%;
+  }
+
+  @include media($L) {
+    margin-right: 1.178825%;
+    width: 49.4105825%;
+  }
+
+  &:nth-child(4) {
+    margin-right: 0;
+  }
+}
+
+.usajobs-opop-announcement { 
+  &__body {
+    margin-bottom: none;
+    background: $color-white;
+    padding: $size-default $size-SM $size-default $size-SM;
+
+    @include media($L) {
+      padding: $size-SM $size-M $size-M $size-M;
+      // margin-bottom: $size-default;
+      border-bottom: none;
+    }
+
+    &.read-less {
+      max-height: 35rem;
+      overflow: hidden;
+    }
+  }
+
+  &__title {
+    font-size: $lead-font-size;
+    font-weight: bold;
+    margin-bottom: $size-S;
+  }
+
+  &__section {
+    margin-top: $size-default;
+    margin-bottom: $size-default;
+  }
+}
+
+.usajobs-open-opps-participated__body {
+  margin-top: $size-default;
+  margin-bottom: none;
+  border-bottom: 1px solid $color-gray-light;
+  margin-left: auto;
+  margin-right: auto;
+  background: $color-white;
+  padding: $size-default $size-SM $size-L $size-SM;
+  position: relative;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  .usajobs-nav--openopps__section-link {
+    position: absolute;
+    top: $size-default;
+    right: 0;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 0;
+
+    th {
+      vertical-align: bottom;
+    }
+  }
+}
+
+.usajobs-opop-search__body {
+  margin-bottom: none;
+  border-bottom: 1px solid $color-gray-light;
+  margin-left: auto;
+  margin-right: auto;
+  background: $color-white;
+  padding: $size-default $size-SM $size-L $size-SM;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  .title-container {
+    margin-bottom: 3rem;
+  }
+
+  .search-title {
+    margin-bottom: $size-M;
+  }
+
+  h2 {
+    display: inline;
+  }
+
+  .side-link {
+    color: $color-primary;
+    font-weight: normal;
+    font-size: $small-font-size;
+    text-decoration: underline;
+    margin-left: $size-default;
+    display: inline-flex;
+    vertical-align: top;
+    margin-top: 1.1rem;
+  }
+
+  .usa-button.usa-button-secondary.align-right {
+    float: right;
+    margin: 0;
+  }
+}
+
+.usajobs-opop-people__body {
+  margin-bottom: none;
+  margin-left: auto;
+  margin-right: auto;
+  background: $color-white;
+  padding: $size-default $size-SM $size-default $size-SM;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    margin-bottom: $size-default;
+  }
+
+  .title-container {
+    margin-bottom: 3rem;
+  }
+
+  .search-title {
+    margin-bottom: $size-M;
+  }
+
+  h2 {
+    display: inline;
+  }
+
+  .side-link {
+    color: $color-primary;
+    font-weight: normal;
+    font-size: $small-font-size;
+    text-decoration: underline;
+    margin-left: $size-default;
+    display: inline-flex;
+    vertical-align: top;
+    margin-top: 1.1rem;
+  }
+
+  .usajobs-open-opps-opportunity-requestor__company {
+    margin-top: 0;
+  }
+}
+
+.usajobs-opop-achievements__body {
+  margin-bottom: none;
+  background: $color-white;
+  padding: $size-default $size-SM $size-default $size-SM;
+
+  @include media($L) {
+    padding: $size-SM $size-M $size-M $size-M;
+    // margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  &.read-less {
+    max-height: 35rem;
+    overflow: hidden;
+  }
+
+  ul.achievements {
+
+    .usajobs-open-opps-opportunity-achievements  {
+      padding: 1.5rem 0;
+    }
+  }
+  
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+.profile-home {
+  position: relative;
+  margin-bottom: none;
+  border-bottom: 1px solid $color-gray-light;
+
+  @include media($L) {
+    margin-bottom: $size-default;
+    border-bottom: none;
+  }
+
+  &::before {
+    content: '';
+    width: 100%;
+    height: 9rem;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 40%);
+    transition: height .5s;
+  }
+
+  &.show::before {
+    display: none;
+  }
+
+  &.read-less {
+    max-height: 35rem;
+    overflow: hidden;
+  }
+
+  .read-more {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: $size-M;
+    text-decoration: underline;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+  }
+}
+
+.users {
+  .list-unstyled {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: 0.2rem;
+  }
 }
 
 .tasks-completed {
-  text-align: center;
+  color: #29863D;
 }
 
-.tasks-completed input {
-  border: none;
-  color: #2e8540;
-  font-size: 40px;
-  text-align: center;
+.achievements--heading {
+  margin-top: 3.3rem;
+  margin-bottom: 3.3rem;
+}
+
+.dashboard__task-list__item .usajobs-open-opps-opportunity{
+  box-shadow: none;
+  padding: 1.5rem;
+  border-top: 2px solid #aeb0b5;
+  border-bottom: 2px solid #aeb0b5;
+  margin: 1.5rem 0;
+}
+
+.dashboard__task-list__item .usajobs-open-opps-opportunity .usajobs-open-opps-opportunity__desc {
+  position: relative;
+  max-height: #{$base-line-height * 4}em; // use this to control the number of lines
+  overflow: hidden;
+}
+
+.dashboard__task-list__item .usajobs-open-opps-opportunity .usajobs-open-opps-opportunity__desc::before {
+  content: "";
   width: 100%;
-}
-
-.tasks-completed label {
-  font-size: 14px;
-  font-weight: 300;
-}
-
-.see-more-tasks {
-  text-align: center !important;
-  font-size: 14px !important;
-  font-weight: 300 !important;
+  height: #{$base-line-height * 4}em;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
   display: block;
+  background: linear-gradient(rgba(255,255,255,.001),#fff);
+  transition: height .5s;
 }
 
-.dashboard__task-list .col {
-  float: none;
-  width: 100% !important;
+#volTask-tab-open .participated-show-all, #task-tab-open .created-show-all,
+#appliedInternships-tab-open .applied-show-all, #savedInternships-tab-open .saved-show-all {
+  display: block;
+  color: #212121;
+  background-color: #d6d7d9;
+  width: 100%;
+
+  &::after {
+    vertical-align: middle;
+    display: inline-block;
+    background-size: 1.7rem 1.094rem;
+    height: 1.7rem;
+    width: 1.094rem;
+    content: url(../../../../img/arrow-down.svg);
+  }
+}
+
+.opportunity-created .usajobs-pill--opportunity-status {
+  margin-bottom: 0;
+}
+
+.results-filter {
+  tbody tr:nth-child(n+6) {
+    display: none;
+  }
+}
+
+
+/* Search controls */
+.usajobs-grid.usajobs-search-controls {
+  margin-bottom: 0.5rem;
+  padding: 0;
+
+  @include media($M) {
+    margin-bottom: 1.5rem;
+
+    .usajobs-search-controls__viewing {
+      display: none;
+    }
+  }
+
+  @include media($L) {
+    padding: .9rem 0 0 0;
+  }
+
+  .usajobs-search-controls__results-count-container {
+    margin-bottom: 0;
+
+    @include media($ML) {
+      float: left;
+      display: block;
+      margin-right: 2.35765%;
+      width: 48.82117%;
+
+      .usajobs-search-controls__results-count-container:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .usajobs-search-controls__results-count {
+    margin-top: 0;
+
+    @include media($L) {
+      margin-top: 1rem;
+    }
+  }
+
+  .usajobs-search-controls__sort-container {
+
+    @include media($ML) {
+      float: right;
+      display: block;
+      margin-right: 2.35765%;
+      width: 48.82117%;
+      margin-right: 0;
+      text-align: right;
+
+      .usajobs-search-controls__sort-container:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .usajobs-search-controls__sort-label {
+    display: inline-block;
+    margin-top: $size-default;
+    padding-right: 0.5rem;
+    font-weight: bold;
+
+    @include media($M-down) {
+      display: block;
+    }
+  }
+
+  .usajobs-search-controls__sort-control {
+    display: inline-block;
+    width: auto;
+
+    @include media($M-down) {
+      height: auto;
+      margin: 0;
+      width: 100%;
+    }
+  }
 }

@@ -1,0 +1,463 @@
+// USAJOBS Utilities
+
+// Typography helpers
+@mixin header {
+  font-family: $font-sans;
+  font-weight: $font-bold;
+  line-height: $heading-line-height;
+  margin-bottom: $size-base;
+  margin-top: $size-default;
+}
+
+@mixin h1 {
+  @include header();
+  font-size: $h1-font-size;
+  color: $color-primary-darkest;
+}
+
+@mixin h2 {
+  @include header();
+  font-size: $h2-font-size;
+  color: $color-primary-darkest;
+}
+
+@mixin h3 {
+  @include header();
+  font-size: $h3-font-size;
+}
+
+@mixin h4 {
+  @include header();
+  font-size: $h4-font-size;
+}
+
+@mixin h5 {
+  @include header();
+  font-size: $h5-font-size;
+}
+
+@mixin h6 {
+  @include header();
+  font-size: $h6-font-size;
+  font-weight: $font-normal;
+  text-transform: uppercase;
+}
+
+@mixin default-text {
+  font-size: $base-font-size;
+  font-weight: $font-normal;
+  line-height: 1.5;
+  margin: $size-S 0;
+}
+
+
+@mixin hide() {
+  position: absolute !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+}
+
+@mixin makeCircle($size, $border: none, $bg-color: inherit, $color: $color-white) {
+  display: inline-block;
+  width: $size;
+  height: $size;
+  line-height: $size;
+  border-radius: 50%;
+  color: $color;
+  background-color: $bg-color;
+  box-shadow: 0 0 0 2px $border inset;
+}
+
+@mixin makeSemiCircle($size, $bg-color: inherit, $color: $color-white) {
+  display: inline-block;
+  width: $size;
+  height: $size /2;
+  line-height: $size;
+  -moz-border-radius: $size $size 0 0;
+  -webkit-border-radius: $size $size 0 0;
+  border-radius: $size $size 0 0;
+  color: $color;
+  background-color: $bg-color;
+}
+
+@mixin makeCloseButton($size: 35px) {
+  position: absolute;
+  top: -#{$size-default};
+  right: -#{$size-default};
+  margin: 0;
+  padding: 0;
+  @include makeCircle($size);
+  background-color: $color-gray-light;
+  text-decoration: none;
+
+  &:after {
+    position: relative;
+    display: inline-block;
+    width: rem(12px);
+    height: rem(12px);
+    background-size: 12px 12px;
+    margin-left: rem(1px);
+    content: url("../img/icons/close/times.svg");
+    color: $color-white;
+    // Safari puts the icon slightly too low, Chrome slightly too high
+    // line-height corrects the issue in Chrome but makes it way too low in Safari
+    // line-height: $size;
+  }
+
+  &:hover {
+    background-color: $color-gray-dark;
+  }
+}
+
+@mixin makeButton($bg-color, $hover-color, $active-color, $big: false, $color: $color-white) {
+  display: inline-block;
+  appearance: none;
+  background-color: $bg-color;
+  border: 0;
+  color: $color;
+  cursor: pointer;
+  font-family: $font-sans;
+  font-size: $base-font-size;
+  font-weight: $font-bold;
+  line-height: 1;
+  outline: none;
+  @include margin(0.5em 0.5em 0.5em null);
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+
+  .main-content & {
+    text-decoration: none;
+  }
+
+  @if ($big) {
+    padding: $size-default $size-M;
+    border-radius: 8px;
+    font-size: 2.4rem;
+  } @else {
+    padding: 1rem 2rem;
+    border-radius: $border-radius;
+  }
+
+  @include media($SM) {
+    width: auto;
+  }
+
+  &:visited {
+    color: $color;
+  }
+
+  &:hover,
+  &.usa-button-hover {
+    background-color: $hover-color;
+    color: $color;
+    border-bottom: 0;
+    text-decoration: none;
+  }
+
+  &:active,
+  &.usa-button-active {
+    background-color: $active-color;
+  }
+
+  &:focus {
+    box-shadow: $focus-shadow;
+  }
+}
+
+@mixin makePrimaryButton() {
+  @include makeButton($color-primary, $color-primary-darker, $color-primary-darkest, 'big');
+}
+
+@mixin bulletList() {
+  list-style: none;
+  padding-left: 0;
+  display: table;
+
+  > li {
+    display: table-row;
+
+    &:before {
+      content: "•";
+      display: table-cell;
+      padding-right: 0.4em;
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      margin-bottom: 0.5em;
+    }
+  }
+}
+
+@mixin unstyledList() {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  > li {
+    display: list-item;
+    margin: 0;
+
+    &:before {
+      display: none;
+    }
+
+    &:after {
+      display: none;
+    }
+  }
+}
+
+// BACKWARD COMPATIBLE SUPPORT FOR BOOTSTRAP
+// From https://gist.github.com/johnkoht/6405117
+// Converted from sass to scss
+// Create the grid for a given size
+// This will loop over the number of columns and create a css class
+// for each. If it's the last gride size, then let's not add a float
+@mixin grid-core($size) {
+  @for $i from 1 through $grid-columns {
+    .col-#{$size}-#{$i} {
+      // Ignore float for the largest grid size
+      @if $i < $grid-columns {
+        float: left;
+      }
+      @include span-columns($i);
+    }
+    // If it's not the screen-xs, then let's add push and pull helper classes
+    @if $size != "xs" {
+      .col-#{$size}-push-#{$i} {
+        left: flex-grid($i, $grid-columns) + flex-gutter($grid-columns);
+      }
+      .col-#{$size}-pull-#{$i} {
+        right: flex-grid($i, $grid-columns) + flex-gutter($grid-columns);
+      }
+    }
+  }
+}
+
+// OMEGA RESET
+// From http://www.ryanscherler.com/notes/entry/omega-reset-for-bourbon-neat/
+@mixin omega-reset($nth, $context: null) {
+  @if $context == null {
+    &:nth-child(#{$nth}) { margin-right: flex-gutter(); }
+  } @else {
+    &:nth-child(#{$nth}) { margin-right: flex-gutter($context); }
+  }
+  &:nth-child(#{$nth}+1) { clear: none; }
+}
+
+@mixin contentGutter() {
+  padding: 0 $size-default;
+
+  @include media($ML) {
+    padding-left: $size-M;
+    padding-right: $size-M;
+  }
+}
+
+// A variation on a mixin created to reproduce Google's Material Design Card shadows
+// https://gist.github.com/paulmelnikow/7fcfbe4f68e5df7fe326
+@mixin boxShadow ($level, $inset: false) {
+  @if $level == 1 {
+    @if ($inset) {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12) inset, 0 1px 2px rgba(0,0,0,0.24) inset;
+    } @else if {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
+  } @else if $level == 2 {
+    @if ($inset) {
+      box-shadow: 0 3px 6px rgba(0,0,0,0.16) inset, 0 3px 6px rgba(0,0,0,0.23) inset;
+    } @elseif {
+      box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    }
+  } @else if $level == 3 {
+    @if ($inset) {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.19) inset, 0 6px 6px rgba(0,0,0,0.23) inset;
+    } @elseif {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    }
+  } @else if $level == 4 {
+    @if ($inset) {
+      box-shadow: 0 14px 28px rgba(0,0,0,0.25) inset, 0 10px 10px rgba(0,0,0,0.22) inset;
+    } @elseif {
+      box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    }
+  } @else if $level == 5 {
+    @if ($inset) {
+      box-shadow: 0 19px 38px rgba(0,0,0,0.30) inset, 0 15px 12px rgba(0,0,0,0.22) inset;
+    } @elseif {
+      box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    }
+  }
+}
+
+@mixin permaLink() {
+  color: $color-primary;
+
+  &:visited {
+    color: $color-primary;
+  }
+}
+
+// Allows us to use an HTML button and not get the default styling
+@mixin removeButton() {
+  margin: 0;
+  background-color: inherit;
+  border-radius: inherit;
+  color: $color-base;
+  font-weight: normal;
+
+  &:hover {
+    color: $color-base;
+    background-color: inherit;
+  }
+}
+
+@mixin UHPIcons($size: 31px) {
+  @include makeCircle($size, none, $color-secondary);
+  display: inline-block;
+  padding-bottom: $size-default;
+  font-size: $base-font-size;
+  text-align: center;
+  margin-right: $size-base;
+
+  &.public,
+  &.interchange {
+    @include makeCircle($size, none, $color-primary-alt);
+  }
+
+  &.federal-employees,
+  &.internal,
+  &.ses {
+    @include makeCircle($size, none, $color-primary-darkest);
+  }
+
+  &.federal-employees .fa::before {
+    margin-top: rem(-3px);
+    margin-right: rem(-2px);
+  }
+
+  &.internal .fa {
+    padding-top: rem(5px);
+
+    &::before {
+      margin-left: rem(1px);
+    }
+  }
+
+  &.veterans,
+  &.military-spouses {
+    @include makeCircle($size, none, $color-green);
+  }
+
+  // New variation with stacked circle icons
+  &.military-spouses {
+    .fa.is-first {
+      text-indent: 0;
+      top: -2px;
+      left: -4px;
+      opacity: 0.8;
+    }
+    .fa.is-second {
+      text-indent: 0;
+      left: 3px;
+    }
+  }
+
+  &.students {
+    @include makeCircle($size, none, $color-gold);
+  }
+
+  &.disability,
+  &.individuals-with-disabilities {
+    @include makeCircle($size, none, $color-primary-darker);
+  }
+
+  &.peace-corps {
+    @include makeCircle($size, none, $color-visited);
+  }
+
+  &.former-overseas-employees,
+  &.family-of-overseas-employees {
+    @include makeCircle($size, none, $color-primary-alt-darkest);
+  }
+
+  &.native-americans {
+    @include makeCircle($size, none, $color-gray);
+  }
+
+  &.land-mgmt,
+  &.land-management {
+    @include makeCircle($size, none, $color-gray-warm-dark);
+  }
+}
+
+@mixin applicationStatusColors() {
+  background-color: $color-gray-dark;
+  color: $color-white;
+  border: 1px solid $color-gray-dark;
+
+  &.status-received,
+  &.status-referred,
+  &.status-selected {
+    background-color: $color-green-dark;
+    color: $color-white;
+    border-color: $color-green-dark;
+  }
+
+  // Paused
+  &.status-incomplete,
+  &.status-in-progress {
+    background-color: $color-gold;
+    color: $color-base;
+    border-color: $color-gold;
+  }
+
+  // Stopped
+  &.status-canceled,
+  &.status-not-referred,
+  &.status-not-selected {
+    background-color: $color-secondary;
+    color: $color-white;
+    border-color: $color-secondary;
+  }
+}
+
+// Mixin to replace the use of font awesome
+@mixin icon-content($file, $height, $width, $path: null) {
+  display: inline-block;
+  background-size: $height $width;
+  height: $height;
+  width: $width;
+  @if $path == null {
+    content: url("../img/icons/#{$file}.svg");
+  } @else {
+    content: url($path);
+  }
+}
+
+@mixin iconCenter($size: 1em) {
+  display: inline-flex;
+  align-self: center;
+  position: relative;
+  height: $size;
+  width: $size;
+
+  svg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    height: 1em;
+    width: 1em;
+  }
+}

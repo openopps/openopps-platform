@@ -1,0 +1,7 @@
+<p>Hi <% if (owner.name) { %><%- owner.name %><% } %>,</p>
+
+<p>There's a new comment in your opportunity. <% if (commenter.name) { %><a href="<%- globals.urlPrefix %>/profile/<%- commenter.id %>"><%- commenter.name %> </a><% } else { %>Someone<% } %> said:</p>
+
+<p>"<%= comment.value %>"</p>
+
+<p><a href="<%- globals.urlPrefix %>/tasks/<%- task.id%>#comment-<%- comment.id %>">Take a moment to reply.</a></p>

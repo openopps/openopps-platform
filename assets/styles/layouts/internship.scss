@@ -1,0 +1,1530 @@
+.usajobs-process_flow-banner {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: none;
+  background-color: $color-primary-darkest;
+
+  &-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 86rem;
+
+    @include media($ML) {
+      display: block;
+    }
+
+    &::after {
+      clear: both;
+      content: "";
+      display: table;
+    }
+  }
+
+  .usajobs-progress_indicator {
+    background-color: $color-primary-darkest;
+
+    @include media($L) {
+      display: block;
+      width: 100%;
+      padding: 0 $size-M;
+    }
+
+    &__body {
+      padding: 0 $size-base;
+      display: flex;
+
+      @include media(375px) {
+        padding: 0 $size-S;
+      }
+
+      @include media(550px) {
+        padding: 0 $size-default;
+      }
+
+      @include media($L) {
+        padding: 0;
+      }
+
+      &.no-steps {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+      }
+    }
+
+    &__step {
+      width: 20%;
+      height: 100%;
+      padding: $size-default 0 $size-base 0;
+      text-decoration: none;
+
+      @include media($ML) {
+        position: relative;
+      }
+
+      @include media($L) {
+        padding: $size-S $size-default;
+
+        &:not(:last-child)::after {
+          content: "";
+          position: absolute;
+          top: 3.9rem;
+          right: -2.5rem;
+          border-bottom: 1px solid $color-gray-light;
+          width: 5rem;
+        }
+      }
+
+      &.is-disabled {
+        pointer-events: none;
+        cursor: default;
+      }
+
+      &.has-visit .circle {
+        color: $color-white;
+        background-color: $color-green;
+        box-shadow: none;
+      }
+
+      &.is-current {
+        .circle {
+          color: $color-white;
+          box-shadow: inset 0 0 0 2px $color-green;
+        }
+
+        .usajobs-progress_indicator__step-desc h5 {
+          color: $color-white;
+          font-weight: 700;
+        }
+      }
+
+      &.hidden {
+        display: none;
+      }
+    }
+
+    &__step-desc {
+      display: block;
+
+      h5 {
+        margin-top: $size-base;
+        margin-bottom: $size-S;
+        text-align: center;
+        font-weight: 400;
+        color: $color-white;
+        display: block;
+      }
+
+      .long-desc {
+        display: block;
+        font-size: $base-font-size;
+
+        @include media($L-down) {
+          display: none;
+        }
+      }
+
+      .short-desc {
+        font-size: 1rem;
+
+        @include media(375px) {
+          font-size: $xsmall-font-size;
+        }
+
+        @include media(450px) {
+          font-size: $small-font-size;
+        }
+
+        @include media(550px) {
+          font-size: $base-font-size;
+        }
+
+        @include media($L) {
+          display: none;
+        }
+      }
+    }
+
+    &__number {
+      text-align: center;
+
+      @include media($ML) {
+        display: block;
+        font-weight: 700;
+      }
+
+      @include media($L) {
+        height: 50%;
+        width: 100%;
+      }
+    }
+
+    .circle {
+      display: inline-block;
+      width: 3.5rem;
+      height: 3.5rem;
+      line-height: 3.5rem;
+      border-radius: 50%;
+      color: $color-gray-light;
+      background: none;
+      box-shadow: inset 0 0 0 2px $color-gray-light;
+      margin: $size-base auto $size-XS;
+      text-align: center;
+
+      @include media($L) {
+        display: block;
+        width: $size-L;
+        height: $size-L;
+        line-height: $size-L;
+        font-size: $h4-font-size;
+        text-decoration: none;
+        margin-bottom: $size-base;
+      }
+    }
+  }
+
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+.usajobs-internship_title-banner {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: none;
+  background-color: $color-gold-light;
+
+  &-container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: $size-base $size-default;
+    max-width: 90rem;
+    font-size: $h1-font-size;
+    color: $color-base;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    @include media($ML) {
+      padding-top: $size-S;
+      padding-bottom: $size-S;
+    }
+
+    span.logo {
+      height: 2.5rem;
+      width: 2.5rem;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: center;
+
+      &.dos {
+        background-image: url(../../../img/logo/png/dos-student-internship-program-logo.png);
+      }
+    }
+
+    span {
+      color: $color-base;
+      margin: 0;
+      text-align: left;
+      font-weight: bold;
+      margin-left: $size-default;
+    }
+
+    &:not(.summary) {
+      font-size: $h4-font-size;
+
+      @include media($ML) {
+        padding-top: $size-base;
+        padding-bottom: $size-base;
+      }
+
+      svg {
+        @include media($L) {
+          margin-top: 0;
+          height: 1.3em !important;
+          width: 1.3em !important;
+        }
+      }
+
+      span {
+        margin-left: $size-base;
+      }
+    }
+
+    &::after {
+      clear: both;
+      content: "";
+      display: table;
+    }
+  }
+
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
+
+
+.usajobs-open-opps-opportunity-progress__container {
+  display: flex;
+
+  .usajobs-open-opps-opportunity-progress__step {
+    text-align: center;
+    width: 9rem;
+    margin-bottom: $size-default;
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    .progress-label {
+      line-height: 1;
+      margin: $size-S auto 0 auto;
+      max-width: 9rem;
+    }
+  }
+
+  .usajobs-open-opps-opportunity-progress__assigned {
+    background-color: $color-gray-lighter;
+    -webkit-font-smoothing: antialiased;
+    margin: $size-default 0 0 0;
+    padding: 0;
+    display: inline-block;
+    width: 6.5rem;
+    height: 6.5rem;
+    line-height: 6.5rem;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+
+    &.has-step {
+      background-color: $color-green;
+    }
+
+    .progress-icon {
+      display: inline-flex;
+      text-align: center;
+      margin-top: 0.6rem;
+      margin-left: 0.4rem;
+
+      svg {
+        width: 4.5rem;
+        height: 4.5rem;
+      }
+    }
+  }
+
+  .usajobs-open-opps-opportunity-progress__in-progress {
+    background-color: $color-gray-lighter;
+    -webkit-font-smoothing: antialiased;
+    margin: $size-default 0 0 0;
+    padding: 0;
+    display: inline-block;
+    width: 6.5rem;
+    height: 6.5rem;
+    line-height: 6.5rem;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+
+    &.has-step {
+      background-color: $color-gold-light;
+    }
+
+    .progress-icon {
+      display: inline-flex;
+      text-align: center;
+      margin-top: 1.5rem;
+      margin-left: 0;
+
+      svg {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+    }
+  }
+
+  .usajobs-open-opps-opportunity-progress__completed {
+    background-color: $color-gray-lighter;
+    -webkit-font-smoothing: antialiased;
+    margin: $size-default 0 0 0;
+    padding: 0;
+    display: inline-block;
+    width: 6.5rem;
+    height: 6.5rem;
+    line-height: 6.5rem;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+
+    &.has-step {
+      background-color: $color-primary-alt;
+    }
+
+    .progress-icon {
+      display: inline-flex;
+      text-align: center;
+      margin-top: 1.5rem;
+      margin-left: 0;
+
+      svg {
+        width: 3.5rem;
+        height: 3.5rem;
+      }
+    }
+  }
+
+  .progress-spacer {
+    height: 0.3rem;
+    width: 7.2rem;
+    background-color: $color-gray-lighter;
+    content: ' ';
+    margin-bottom: 3rem;
+    flex-grow: 8;
+    flex-shrink: 8;
+    align-self: center;
+  }
+}
+
+.usajobs-landing-fed-app-process__list {
+  display: block;
+  margin: $size-L 0 0 0;
+  padding: 0;
+  list-style-type: none;
+  position: relative;
+  overflow: hidden;
+
+  &>li {
+    display: list-item;
+    margin: 0;
+
+    &::before, &::after {
+      display: none;
+    }
+  }
+
+  .usajobs-landing-fed-app-process__item {
+    display: block;
+  }
+
+  .usajobs-landing-fed-app-process__step-number {
+    padding-top: 0.1rem;
+    text-align: center;
+    display: inline-block;
+    width: 2.975rem;
+    height: 2.975rem;
+    line-height: 2.975rem;
+    border-radius: 50%;
+    color: #fff;
+    background-color: inherit;
+    box-shadow: inset 0 0 0 2px $color-green;
+    color: $color-green;
+    background-color: $color-white;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    margin-top: 0;
+    padding: 0 1.5rem;
+    color: $color-base;
+    font-weight: bold;
+  }
+
+  .usajobs-landing-fed-app-process__text {
+    max-width: 62rem;
+    margin: 0;
+    padding: 0 0 3rem 4.5rem;
+    color: $color-base;
+  }
+}
+
+.no-flexbox {
+  .usajobs-landing-fed-app-process__figure {
+    display: table;
+
+    &::after {
+      clear: both;
+      content: "";
+      display: table;
+    }
+  }
+
+  .usajobs-landing-fed-app-process__step-number, .usajobs-landing-fed-app-process__step-title {
+    display: table-cell;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    width: -webkit-calc(100% - 4.475rem);
+    width: calc(100% - 4.475rem);
+  }
+}
+
+.lt-ie9 .no-flexbox .usajobs-landing-fed-app-process__step-title {
+  width: 75%;
+}
+
+.flexbox {
+  .usajobs-landing-fed-app-process__figure {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    -ms-align-items: center;
+    -o-align-items: center;
+    align-items: center;
+    -ms-flex-align: center;
+  }
+
+  .usajobs-landing-fed-app-process__step-number {
+    -webkit-flex-shrink: 0;
+    -moz-flex-shrink: 0;
+    flex-shrink: 0;
+    -ms-flex-negative: 0;
+  }
+
+  .usajobs-landing-fed-app-process__step-title {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.internship {
+  h2 {
+    color: $color-primary-darkest;
+    margin-bottom: 0;
+  }
+
+  .usa-form-xl {
+    max-width: inherit;
+  }
+
+  .usajobs-form__label-header {
+    margin-top: $size-M;
+  }
+
+  a.question, a.question:visited {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+
+  .usajobs-alert {
+
+    @include media($ML) {
+      margin-bottom: 0;
+    }
+  }
+
+  .usajobs-open-opps-opportunity.usajobs-open-opps-profile {
+    padding: $size-default $size-default 0 $size-default;
+
+    @include media($ML) {
+      padding: $size-default $size-M $size-M $size-M;
+    }
+
+    &.confirmation {
+      padding: $size-default;
+    }
+
+    a.question, a.question:visited {
+      color: $color-primary;
+      text-decoration: underline;
+    }
+
+    .usajobs-alert {
+      @include media($ML) {
+        margin-bottom: $size-M;
+      }
+    }
+  }
+
+  .usajobs-open-opps-opportunity.saved-internship-opportunities {
+    padding: $size-default $size-S;
+    background-color: $color-gray-lighter;
+
+    @include media($M-down) {
+      padding: $size-default;
+    }
+  }
+
+  // &.opportunity-gutter .usajobs-open-opps-opportunity.usajobs-open-opps-section {
+  //   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  // }
+
+  &.opportunity-gutter .usajobs-button_bar--slim .usajobs-button_bar__body {
+    border-bottom: 0;
+  }
+
+  .usa-fieldset-inputs label {
+    max-width: inherit;
+  }
+
+  .usajobs-button_bar--slim, .usajobs-button-bar--slim {
+    border-top: 0;
+  }
+
+  .read-less {
+    max-height: 13.5rem;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      content: '';
+      width: 100%;
+      height: 9rem;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: block;
+      background: linear-gradient(rgba(255, 255, 255, 0), white);
+      transition: height .5s;
+    }
+  }
+
+  .read-more {
+    text-decoration: underline;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+
+    &:visited {
+      color: $color-primary;
+    }
+  }
+
+  .usajobs-joa-prev-next {
+    &__body {
+      display: -webkit-box;
+      display: -moz-box;
+      display: box;
+      display: -webkit-flex;
+      display: -moz-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-lines: multiple;
+      -moz-box-lines: multiple;
+      box-lines: multiple;
+      -webkit-flex-wrap: wrap;
+      -moz-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      font-size: $small-font-size;
+      max-width: 160rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    &__prev {
+      display: block;
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 1;
+      -moz-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      text-decoration: none;
+      padding: 1.5rem 0 0.5rem 1.5rem;
+
+      @include media($ML) {
+        padding-left: 0;
+      }
+
+      &:visited {
+        color: $color-primary;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .program-title-body-container {
+    margin-left: 4.5rem;
+  }
+
+  .program-choice {
+    margin-top: $size-M;
+  }
+
+  .program-empty {
+    display: block;
+    padding: 5rem 4rem;
+    border: 2px dashed $color-gray-light;
+    text-align: center;
+
+    @include media($M) {
+      margin: $size-default 0;
+    }
+
+    h3 {
+      color: $color-primary;
+    }
+  }
+
+  .usajobs-card--large {
+    margin: $size-default -1.5rem;
+
+    @include media($M) {
+      margin: $size-default 0;
+    }
+
+    @include media($L) {
+      padding: $size-default $size-M;
+    }
+
+    &.review-application {
+      margin: 0;
+      box-shadow: none;
+      border-bottom: 0.1rem solid $color-gray-light;
+
+      &:first-child {
+        border-top: 0.1rem solid $color-gray-light;
+      }
+
+      h4 {
+        margin-top: 0;
+      }
+    }
+
+    .sorting-container {
+      display: block;
+
+      .sorting-arrows {
+        display: block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+
+        .sorting-arrow {
+          cursor: pointer;
+          margin: 1rem 0;
+        }
+      }
+
+      svg.svg-inline--fa {
+        display: block;
+        height: 2.5rem;
+        width: 1.7rem;
+      }
+    }
+
+    .usajobs-card__title {
+      width: 75%;
+      display: inline-block;
+
+      @include media($M) {
+        width: 90%;
+      }
+    }
+
+    .program-delete {
+      font-size: $small-font-size;
+      font-weight: normal;
+      float: right;
+      color: $color-secondary;
+
+      span {
+        margin-left: $size-base;
+        text-decoration: underline;
+      }
+    }
+
+    .usajobs-card__body p:last-child {
+      margin: 0;
+    }
+
+    .program-label {
+      margin-top: $size-S;
+      margin-bottom: 0;
+      font-size: 1.5rem;
+      font-weight: normal;
+      color: $color-gray;
+    }
+  }
+
+  .saved-internships-list {
+    overflow-y: scroll;
+    height: 33rem;
+    padding-right: $size-S;
+    margin-bottom: $size-default;
+
+    @include media($M-down) {
+      padding-right: 0;
+    }
+
+    .program-select {
+      font-size: $small-font-size;
+      font-weight: normal;
+      float: right;
+      color: $color-primary;
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: $size-S $size-default $size-S $size-default;
+
+      span {
+        margin-left: $size-base;
+        text-decoration: underline;
+        color: $color-primary;
+      }
+    }
+
+    .selected {
+      font-size: $small-font-size;
+      font-weight: normal;
+      float: right;
+      color: $color-green;
+      position: absolute;
+      top: $size-S;
+      right: $size-default;
+
+      span {
+        margin-left: 0.5rem;
+        text-decoration: none;
+      }
+    }
+
+    .usajobs-card--large {
+
+      @include media($M-down) {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      @include media($L) {
+        padding: $size-default $size-S;
+      }
+
+      &:first-child {
+        margin-top: $size-base;
+      }
+
+      &:last-child {
+        margin-bottom: $size-base;
+      }
+
+      a, a:visited {
+        color: $color-base;
+      }
+
+      .usajobs-card__title {
+        font-size: 1.9rem;
+        width: 68%;
+        display: inline-block;
+
+        @include media($XXL) {
+          width: 80%;
+        }
+      }
+
+      .program-label {
+        margin-top: $size-S;
+      }
+    }
+  }
+
+  .usajobs-profile__date-present {
+    margin-top: 1rem;
+  }
+
+  .select2-container {
+   display: block;
+  }
+
+  .usajobs-fieldset--horizontal {
+    .gpa {
+      clear: none;
+      display: block;
+      float: left;
+      margin-right: 1.5rem;
+      width: 9rem;
+
+      &:not(:first-child) {
+        width: 12rem;
+      }
+
+      &.usa-input-error input {
+        width: 100%;
+      }
+    }
+    
+    .usa-input-error {
+      &.exp-start-date, &.exp-end-date, &.completionYear {
+        clear: none;
+        display: block;
+        float: left;
+        margin-right: 0;
+        width: 9rem;
+
+        &:not(:first-child) {
+          margin-left: $size-default;
+        }
+
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .usajobs-section-header {
+    margin-top: 7.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5em 0;
+    border-bottom: 1px solid $color-primary;
+  }
+
+  .usajobs-profile-home-section {
+    position: relative;
+    background-color: $color-white;
+    // margin: 1.5rem 0;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    padding: 0;
+
+    @include media($M) {
+      margin: $size-default;
+    }
+
+    @include media($L) {
+      padding: 0 0 $size-M 0;
+      margin: $size-default 0 0 0;
+
+      &:first-child {
+        margin: $size-M 0 0 0;
+      }
+
+      &:only-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .add-record:visited, .transcript-title:visited {
+      color: $color-primary;
+    }
+
+    &__title {
+      margin: 0;
+      padding: $size-default $size-default 0;
+  
+      @include media($L) {
+        padding: $size-M $size-M 0;
+      }
+    }
+
+    &__sub-section {
+      margin-top: $size-M;
+      color: #205493;
+      // border: 0;
+      border-color: $color-primary-darker;
+
+      .usa-input-label-helper {
+        display: block;
+        font-size:$base-font-size;
+        font-weight: normal;
+        color: $color-gray;
+
+        @include media($L) {
+          display: inline-block;
+        }
+      }
+    }
+
+    &__sub-edit {
+      font-size: $base-font-size;
+      font-weight: normal;
+      float: right;
+
+      &:visited {
+        color: $color-primary;
+      }
+    }
+
+    &__status_complete_with_banner {
+      position: absolute;
+      top: $size-S;
+      right: $size-default;
+      color: $color-gray;
+      font-size: 1.4rem;
+  
+      @include media($ML) {
+        font-size: 1.7rem;
+      }
+  
+      @include media($L) {
+        top: $size-default;
+        right: $size-M;
+      }
+    }
+
+    &__status-icon {
+      fill: $color-green;
+      vertical-align: middle;
+    }
+
+    &__body {
+      padding: 0 $size-default;
+  
+      @include media($L) {
+        padding: 0 $size-M;
+      }
+
+      &-has-drawers {
+        padding: $size-default 0 0 0;
+      }
+
+      p:last-child {
+        margin-bottom: $size-default;
+      }
+    }
+
+    &__field {
+      &-list {
+        display: block;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        padding-bottom: $size-default;
+
+        &>li {
+          display: list-item;
+          margin: 0;
+        }
+
+        p {
+          margin: 0;
+
+          svg {
+            color: $color-green;
+          }
+        }
+      }
+
+      &-label {
+        margin-top: $size-default;
+        margin-bottom: 0;
+        font-size: $size-default;
+        font-weight: normal;
+        color: $color-gray;
+      }
+    }
+
+    &__footer {
+      display: block;
+      padding: $size-default;
+      background-color: $color-primary;
+      color: $color-white;
+      text-align: center;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  }
+
+    .consent-to-share {
+      background-color: #dce4ef;
+      padding: $size-S $size-default $size-default $size-default;
+      margin-bottom: 0;
+
+      @include media($M) {
+        margin: $size-default;
+      }
+
+      @include media($L) {
+        margin: $size-default 0 0 0;
+        padding: 0 $size-M $size-default $size-M;
+      }
+
+      #share-consent {
+        margin-top: $size-S;
+      }
+    }
+
+  .usajobs-profile-question--spacer {
+    margin-top: $size-M;
+  }
+
+  .usajobs-drawers {
+    border-bottom: 1px solid $color-gray-lighter;
+
+    &.no-border {
+      border-bottom: 0;
+      
+      .usajobs-drawer {
+        border-top: 0;
+      }
+    }
+
+    .usajobs-drawer {
+      margin-bottom: 0;
+      background-color: $color-white;
+      border-top: 1px solid $color-gray-lighter;
+
+      &-button {
+        font-size: 1.9rem;
+        font-weight: normal;
+        background-color: $color-white;
+        background-image: url(../../img/plus-circle.svg);
+        background-image: url(../../img/plus-circle.png);
+        background-position: $size-default $size-default;
+        background-size: 2rem;
+        padding: $size-default $size-default $size-base $size-L;
+        color: $color-primary;
+
+        @include media($L) {
+          background-position: $size-M $size-default;
+          padding-left: $size-XL;
+        }
+
+        &[aria-expanded="true"] {
+          background-image: url(../../img/minus-circle.svg);
+          background-image: url(../../img/minus-circle.png);
+          background-size: 2rem;
+        }
+
+        &--alt-handle {
+          background-image: url(../../img/icons/drawer/plus.svg);
+          padding: $size-default 4.5rem 0.5rem $size-default;
+          background-position: 95% center;
+          background-size: $size-default;
+
+          &[aria-expanded="true"] {
+            background-image: url(../../img/icons/drawer/minus.svg);
+            background-size: $size-default;
+          }
+
+          &.has-no-face {
+            padding-bottom: $size-default;
+          }
+        }
+
+        &--with-icon {
+          display: flex;
+          align-items: center;
+          line-height: 1.5;
+
+          &__figure {
+            flex-shrink: 0;
+            padding-right: 1rem;
+
+            @include media($L) {
+              padding-right: $size-default;
+            }
+
+            svg {
+              width: 4.4rem;
+              height: 4.4rem;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+
+      &-face {
+        background-color: #ffffff;
+        margin: 0;
+        padding-left: $size-default;
+        padding-bottom: $size-default;
+
+        @include media($L) {
+          padding-left: $size-M;
+        }
+
+        dt {
+          font-weight: bold;
+        }
+
+        dd {
+          margin: 0;
+        }
+      }
+
+      &-content {
+        background-color: $color-white;
+        overflow: auto;
+        padding: $size-default $size-default $size-M $size-default;
+        border: 0;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16) inset, 0 3px 6px rgba(0, 0, 0, 0.23) inset;
+
+        @include media($L) {
+          padding: $size-default $size-M $size-M $size-M;
+        }
+
+        .usajobs-grid {
+          padding: 0;
+        }
+
+        &__list {
+          display: block;
+          margin: 0;
+          padding: 0;
+          list-style-type: none;
+
+          @include media($M) {
+            padding-bottom: $size-default;
+          }
+
+          & > li {
+            display: list-item;
+            margin: 0;
+          }
+
+          p, dd {
+            margin: 0;
+          }
+        }
+
+        &__item-label {
+          margin-top: $size-default;
+          margin-bottom: 0;
+          font-size: $size-default;
+          font-weight: normal;
+          color: $color-gray;
+        }
+
+        &__item-content {
+          margin-top: 0;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
+          -ms-hyphens: auto;
+          -moz-hyphens: auto;
+          -webkit-hyphens: auto;
+          hyphens: auto;
+        }
+
+        & > *:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      .has-no-face {
+        padding-bottom: $size-default;
+      }
+
+      .usajobs-button-bar {
+        &--split {
+          border-top: 0;
+        }
+
+        &__body {
+          padding: 0;
+        }
+
+        &__delete {
+          display: inline-block;
+          padding: 0.6rem $size-default 0.6rem 2.5rem;
+          font-weight: bold;
+          background-image: url(../../img/icons/button-bar/times-circle.svg);
+          background-size: $size-SM $size-SM;
+          background-position: left center;
+          background-repeat: no-repeat;
+          color: $color-primary;
+        }
+
+        &__save, &__edit {
+          float: right;
+        }
+      }
+    }
+  }
+
+  .hidden-svg {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: -9999rem;
+  }
+
+  .usajobs-profile-help {
+    max-width: $L-screen;
+    background-color: $color-white;
+    padding: $size-default;
+
+    @include media($ML-down) {
+      border-top: 1px solid $color-gray-light;
+    }
+
+    @include media($ML) {
+      position: relative;
+      margin: $size-default 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+    }
+
+    @include media($L) {
+      margin: $size-M 0;
+    }
+
+    &--warning {
+      padding: 1rem 0;
+      border-top: 1px solid $color-gray-lighter;
+      border-bottom: 1px solid $color-gray-lighter;
+      background: $color-white;
+  
+      @include media($ML) {
+        padding: $size-default;
+      }
+
+      .usa-grid p {
+        padding-left: $size-M;
+
+        @include media($ML) {
+          padding-left: 0;
+        }
+      }
+    }
+
+    &__warning-icon {
+      color: $color-gold;
+      position: absolute;
+      margin-top: $size-S;
+      margin-left: $size-default;
+
+      @include media($ML) {
+        margin-left: 0;
+      }
+    }
+
+    &__title {
+      color: $color-primary-darker;
+    }
+
+    &-drawers {
+      margin-left: -$size-default;
+      margin-right: -$size-default;
+    }
+  }
+
+  .transcript-card-buttons {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    .transcript-card-button {
+      position: relative;
+      background-color: #ffffff;
+      margin: 1.5rem 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+      @include media($L) {
+        width: 46rem;
+      }
+
+      label {
+        width: 100%;
+        height: 100%;
+        max-width: inherit;
+        margin: 0;
+        padding: 1.2rem;
+        font-size: 1.9rem;
+        position: relative;
+
+        &::before {
+          vertical-align: baseline;
+          float: left;
+          margin-top: 2.8rem;
+          margin-right: 4rem;
+          display: none;
+        }
+
+        .radio-button {
+          text-align: center;
+          margin-top: 1.7rem;
+
+          @include media($L-down) {
+            width: 100%;
+            margin-bottom: $size-default;
+          }
+
+          @include media($L) {
+            text-align: left;
+          }
+
+          &::before {
+            text-indent: 0.15em;
+            content: ' ';
+            display: inline-block;
+            border-radius: 100%;
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #757575;
+            height: 1.4rem;
+            line-height: 1.4rem;
+            width: 1.4rem;
+          }
+        }
+
+        .transcript-info {
+          word-break: break-all;
+          width: 100%;
+          float: left;
+          font-size: 1.7rem;
+          
+          @include media($M-down) {
+            margin-bottom: $size-default;
+            text-align: center;
+          }
+
+          @include media($M) {
+            width: 52%;
+          }
+
+          @include media($L) {
+            width: 68%;
+            margin-top: 0.7rem
+          }
+        }
+
+        .transcript-card-button__sub-text {
+          display: block;
+          font-size: 1.4rem;
+        }
+      }
+
+      .transcript-icon {
+        width: 8rem;
+        display: block;
+        margin-left: auto;
+        text-align: center;
+        color: $color-gray-light;
+
+        @include media($M-down) {
+          margin-right: auto;
+        }
+        
+        @include media($M) {
+          right: 2rem;
+        }
+
+        &::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-alt.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+          margin: 0 auto;
+        }
+
+        &.doc::before, &.docx::before, &.rtf::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-word.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+        }
+
+        &.pdf::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-pdf.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+        }
+
+        &.jpg::before, &.jpeg::before, &.png::before, &.gif::before {
+          display: inline-block;
+          background-size: 3rem 4rem;
+          height: 4rem;
+          width: 3rem;
+          content: url(../../img/icons/document/file-image.svg);
+          color: $color-gray-light;
+          font-size: 4rem;
+          vertical-align: middle;
+        }
+
+        h6 {
+          margin-top: 0.7rem;
+          margin-bottom: 0;
+          line-height: 1;
+        }
+      }
+
+      [type=radio]:checked + label {
+        border: 1px inset #2e8540;
+        background-color: #e7f4e4;
+        margin: -2px 0;
+
+        .radio-button::before {
+          background-color: #0071bc;
+          box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0071bc;
+        }
+      }
+    }
+  }
+
+  .usa-unstyled-list [type=radio] + label, 
+  .usa-unstyled-list [type=checkbox] + label {
+    margin: 0px 2px 6px;
+  }
+
+  .skill-list {
+    margin-top: $size-default;
+
+    @include media($L-down) {
+      margin-bottom: $size-M;
+    }
+  }
+  
+  .usajobs-button_bar--slim.submit-application {
+    margin: 0;
+
+    @include media($L-down) {
+      margin: 0 $size-default;
+    }
+  }
+
+  #refreshing-transcripts {
+    .fa-circle-notch {
+      margin-right: $size-base;
+      color: #02bfe7;
+    }
+  }
+
+  .statement-of-interest, .overseas-length-text-area, .overseas-other-text-area {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  .update-application {
+    margin-right: $size-L;
+  }
+ 
+  .usa-button-secondary-alert-outline {
+    background-color: $color-white;
+    box-shadow: inset 0 0 0 2px $color-secondary;
+    color: $color-secondary;
+  }
+
+  .submitted-application-last {
+    padding: $size-SM;
+  }
+}

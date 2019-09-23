@@ -1,290 +1,100 @@
-<div class="alert alert-danger" style="display:none;">
-</div>
-<div class="row">
-  <div class="col-md-12 box box-pad-lr">
-    <div class="row">
-      <div class="col-md-12">
-
-        <div role="tabpanel">
-
-          <!-- Nav tabs -->
-          <ul class="nav nav-tabs box-pad-t" role="tablist">
-            <li role="presentation" class="active">
-              <a href="#submitted" aria-controls="open" role="tab" data-toggle="tab">
-                Submitted: <%- submitted.length %>
-              </a>
-            </li>
-            <li role="presentation">
-              <a href="#open" aria-controls="open" role="tab" data-toggle="tab">
-                Open: <%- open.length %>
-              </a>
-            </li>
-            <li role="presentation">
-              <a href="#assigned" aria-controls="assigned" role="tab" data-toggle="tab">
-                Assigned: <%- assigned.length %>
-              </a>
-            </li>
-            <li role="presentation">
-              <a href="#completed" aria-controls="completed" role="tab" data-toggle="tab">
-                Completed: <%- completed.length %>
-              </a>
-            </li>
-            <li role="presentation">
-              <a href="#draft" aria-controls="open" role="tab" data-toggle="tab">
-                Draft: <%- draft.length %>
-              </a>
-            </li>
-
-            <!-- Export button -->
-            <div class="export-button pull-right tip" data-toggle="tooltip" data-placement="left"
-                 title="Download list of tasks as a comma-separated file ready for import into Excel">
-              <a href="/api/task/export">
-                <i class="fa fa-download"></i>
-              </a>
-            </div>
-
-          </ul>
-
-          <!-- Tab panes -->
-          <div class="tab-content box-pad-t">
-            <div role="tabpanel" class="tab-pane active" id="submitted">
-            <% if ( submitted.length ) { %>
-             <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                    <td class="metrics-table__header">Actions</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(submitted).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                        <% if ( task.volunteers.length ) { %>
-                        <p><i>Sign-ups</i>
-                          <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
-                          <% } ); %>
-                        </p>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__author">
-                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
-                        <a href="/profile/<%- task.owner.id %>">
-                          <%- task.owner.name || task.owner.username %>
-                        </a>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__button">
-                        <a href="#open/<%- task.id %>"
-                           data-task-id="<%- task.id %>"
-                           data-task-title="<%- task.title %>"
-                           class="js-tip js-task-open"
-                           data-toggle="tooltip"
-                           data-placement="top"
-                           data-original-title="Publish Task">
-                         <span class='fa fa-check'></span>
-                        </a>
-                        <a href="#delete/<%- task.id %>"
-                           data-task-id="<%- task.id %>"
-                           data-task-title="<%- task.title %>"
-                           class="js-tip delete-task"
-                           data-toggle="tooltip"
-                           data-placement="top"
-                           data-original-title="Delete Task">
-                         <span class='fa fa-times'></span>
-                        </a>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            <% } %>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="open">
-              <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(open).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                        <% if ( task.volunteers.length ) { %>
-                        <p><i>Sign-ups</i>
-                          <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
-                          <% } ); %>
-                        </p>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__author">
-                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
-                        <a href="/profile/<%- task.owner.id %>">
-                          <%- task.owner.name || task.owner.username %>
-                        </a>
-                        <% } %>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="assigned">
-              <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(assigned).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                        <% if ( task.volunteers.length ) { %>
-                        <p><i>Sign-ups</i>
-                          <% _( task.volunteers ).forEach( function( vol ) { %>
-                            <a href="/profile/<%- vol.userId %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
-                          <% } ); %>
-                        </p>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__author">
-                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
-                        <a href="/profile/<%- task.owner.id %>">
-                          <%- task.owner.name || task.owner.username %>
-                        </a>
-                        <% } %>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="completed">
-              <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(completed).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                      </td>
-                      <td class="metrics-table__author">
-                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
-                        <a href="/profile/<%- task.owner.id %>">
-                          <%- task.owner.name || task.owner.username %>
-                        </a>
-                        <% } %>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="draft">
-            <% if ( draft.length ) { %>
-              <table class="metrics-table">
-                <thead>
-                  <tr>
-                    <td class="metrics-table__header">State</td>
-                    <td class="metrics-table__header">Title</td>
-                    <td class="metrics-table__header">Author</td>
-                    <td class="metrics-table__header">Actions</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% _(draft).forEach(function(task) { %>
-                    <tr>
-                      <td class="metrics-table__label">
-                        <a href="/tasks/<%- task.id %>"
-                           class="task__label--<%= task.state %>">
-                           <%=
-                             task.state.charAt( 0 ).toUpperCase() + task.state.slice( 1 )
-                            %>
-                        </a>
-                      </td>
-                      <td class="metrics-table__title">
-                        <a href="/tasks/<%- task.id %>"><%- task.title %></a>
-                      </td>
-                      <td class="metrics-table__author">
-                        <% if (!task.owner) { console.log('no owner for task', task) } else { %>
-                        <a href="/profile/<%- task.owner.id %>">
-                          <%- task.owner.name || task.owner.username %>
-                        </a>
-                        <% } %>
-                      </td>
-                      <td class="metrics-table__button">
-                        <a href="#delete/<%- task.id %>"
-                           data-task-id="<%- task.id %>"
-                           data-task-title="<%- task.title %>"
-                           class="js-tip delete-task"
-                           data-toggle="tooltip"
-                           data-placement="top"
-                           data-original-title="Delete Task">
-                         <span class='fa fa-times'></span>
-                        </a>
-                      </td>
-                    </tr>
-                  <% }); %>
-                </tbody>
-              </table>
-            <% } %>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
+<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
     </div>
   </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text"></p>
+  </div>
 </div>
+<p class="back-link"><a id="task-back" href="<%- returnUrl %>"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/opportunity-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+  <span class="usajobs-nav--openopps__section">
+    <span class="fas fa-question-circle" title="Help"></span>Help
+  </span>
+</a>
+<h2><%- agency.name || community.communityName || 'Sitewide' %></h2>
+<h3>Opportunities</h3>
+<div class="usajobs-grid-full">
+  <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Opportunity status</legend>
+    <ul class="usa-unstyled-list__radio--horizontal" id="opp-status">
+      <% if (community.duration == 'Cyclical') { %>
+        <li>
+          <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft" <% if (status == 'draft') { %>checked<% } %>>
+          <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- (_.findWhere(totals, { task_state: 'draft' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" <% if (status == 'submitted') { %>checked<% } %>>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- (_.findWhere(totals, { task_state: 'submitted' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="approved" name="opp-status" type="radio" class="filter-radio" value="approved" <% if (status == 'approved') { %>checked<% } %>>
+          <label for="approved"><span class="usajobs-pill--opportunity-status status-approved">Approved</span> <%- (_.findWhere(totals, { task_state: 'approved' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open" <% if (status == 'open') { %>checked<% } %>>
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- (_.findWhere(totals, { task_state: 'open' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed" <% if (status == 'completed') { %>checked<% } %>>
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- (_.findWhere(totals, { task_state: 'completed' }) || {}).count || 0 %></label>
+        </li>
+      <% } else { %>
+        <li>
+          <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" <% if (status == 'submitted') { %>checked<% } %>>
+          <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- (_.findWhere(totals, { task_state: 'submitted' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="open" name="opp-status" type="radio" class="filter-radio" value="open" <% if (status == 'open') { %>checked<% } %>>
+          <label for="open"><span class="usajobs-pill--opportunity-status status-open">Open</span> <%- (_.findWhere(totals, { task_state: 'open' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="not open" <% if (status == 'not open') { %>checked<% } %>>
+          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- (_.findWhere(totals, { task_state: 'not open' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="in progress"  <% if (status == 'in progress') { %>checked<% } %>>
+          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- (_.findWhere(totals, { task_state: 'in progress' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed" <% if (status == 'completed') { %>checked<% } %>>
+          <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- (_.findWhere(totals, { task_state: 'completed' }) || {}).count || 0 %></label>
+        </li>
+        <li>
+          <input id="canceled" name="opp-status" type="radio" class="filter-radio" value="canceled" <% if (status == 'canceled') { %>checked<% } %>>
+          <label for="canceled"><span class="usajobs-pill--opportunity-status status-canceled">Canceled</span> <%- (_.findWhere(totals, { task_state: 'canceled' }) || {}).count || 0 %></label>
+        </li>
+      <% } %>
+    </ul>
+  </fieldset>
+</div>
+<% if (community.communityName && community.targetAudience != "Students") { %>
+<div class="usajobs-grid-full task-filter">
+  <div class="usa-width-one-half">
+    <label class="sr-only" for="task-filter">Filter</label>
+      <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Agency" value="<%= filter %>">
+    <button id="task-filter-search" class="task-filter-search-button">Search</button>
+  </div>
+</div>
+<% } %>
+
+<div id="task-table" class="table-responsive"></div>
+
+<div id="task-page"></div>
+
+<div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+    title="Download list of tasks as a comma-separated file ready for import into Excel">
+    <% if (community.communityName) { %>
+      <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
+    <% } else if (agency.name) { %>
+      <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
+    <% } else { %>
+      <a href="/api/admin/task/export" >
+    <% } %>
+        <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+      </a>
+</div>
+
+
+

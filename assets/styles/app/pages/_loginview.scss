@@ -1,0 +1,62 @@
+@import '../../base-shared';
+
+
+.usajobs-content-gutter.login-gutter {
+  @include media($M-down) {
+    padding: 0;
+  }
+
+  .usa-form-large {
+    max-width: 46rem;
+  }
+
+  .usajobs-button_bar--slim {
+    @include media($SM-down) {
+      border-top: none;
+    }
+
+    .usajobs-button_bar__body {
+      @include media($SM-down) {
+        border-bottom: 1px solid #d6d7d9;
+      }
+    }
+
+  }
+}
+
+.usajobs-open-opps-opportunity.usajobs-open-opps-login {
+  margin-top: 0;
+  max-width: 160rem;
+  margin-right: auto;
+  margin-left: auto;
+
+  @include media($M) {
+    margin-top: $size-M;
+    padding: $size-M;
+  }
+
+    h1, h2 {
+        margin-top: 0;
+    }
+}
+
+.usajobs-button_bar--slim .usajobs-button_bar__body {
+  text-align: right;
+
+  #register-cancel {
+    @include media($M-down) {
+      margin-bottom: 1em;
+    }
+  }
+}
+
+.password-rules {
+    .success {
+        color: $color-green;
+        display: none;
+    }
+
+    .error {
+        color: $color-secondary-dark;
+    }
+}

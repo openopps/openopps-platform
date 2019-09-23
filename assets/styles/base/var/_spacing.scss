@@ -1,0 +1,26 @@
+// Spacing
+
+$size-XS: 0.25rem;              // 2.5px
+$size-base: 0.5rem;             // 5px
+$size-S: $size-base * 2;        // 10px
+$size-default: $size-base * 3;  // 15px
+$size-SM: $size-base * 4;       // 20px - Use this sparingly
+$size-M: $size-base * 6;        // 30px
+$size-L: $size-base * 9;        // 45px
+$size-XL: $size-M * 2;          // 60px
+$size-XXL: $size-default * 5;   // 75px
+
+
+$space-inset-default: $size-default $size-default $size-default $size-default;
+$space-inset-XS: $size-XS $size-XS $size-XS $size-XS;
+$space-inset-base: $size-base $size-base $size-base $size-base;
+$space-inset-M: $size-M $size-M $size-M $size-M;
+$space-inset-L: $size-L $size-L $size-L $size-L;
+
+$space-stack-default: 0 0 $size-default 0;
+$space-stack-XS: 0 0 $size-XS 0;
+$space-stack-S: 0 0 $size-S 0;
+$space-stack-M: 0 0 $size-M 0;
+$space-stack-L: 0 0 $size-L 0;
+$space-stack-XL: 0 0 $size-XL 0;
+$space-stack-XXL: 0 0 $size-XXL 0;

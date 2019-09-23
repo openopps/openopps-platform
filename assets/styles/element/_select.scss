@@ -1,0 +1,18 @@
+// Dropdown
+
+// IE fix
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  padding-right: 3.5rem;
+  background-size: 1.3rem;
+  background-image: url("../img/arrow-down.svg");
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  select {
+    background-image: url(../img/arrow-down.png);
+  }
+}

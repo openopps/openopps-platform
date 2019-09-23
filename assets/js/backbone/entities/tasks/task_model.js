@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('underscore');
 var Backbone = require('backbone');
+var async = require('async');
 
 var TaskModel = Backbone.Model.extend({
 
@@ -23,7 +24,14 @@ var TaskModel = Backbone.Model.extend({
   initialize: function () {
 
     this.listenTo(this, 'task:save', function (data) {
-      this.save(data);
+      this.save(data, {
+        success: function (data) {
+          this.trigger('task:save:success', data);
+        }.bind(this),
+        error: function ( model, response, options ) {
+          this.trigger( 'task:save:error', model, response, options );
+        }.bind(this),
+      });
     });
 
     this.listenTo(this, 'task:model:fetch', function (data) {
@@ -49,33 +57,37 @@ var TaskModel = Backbone.Model.extend({
       success: function (data) {
         self.trigger('task:update:success', data);
       },
+      error: function ( model, response, options ) {
+        self.trigger( 'task:update:error', model, response, options );
+      },
     });
   },
 
   updateState: function (state) {
     var self = this;
-
     this.save({
-      state: state
+      state: state,
     }, {
-      success: function(data) {
-        self.trigger("task:update:state:success", data);
-      }
+      success: function (data) {
+        self.trigger('task:update:state:success', data);
+      },
+      error: function ( model, response, options ) {
+        console.log(model);
+      },
     });
   },
 
   // TODO: I think this had to do with projects...
-  orphan: function(data) {
+  orphan: function (data) {
     var self = this;
 
     this.save({
-      projectId: null
+      projectId: null,
     }, {
-      success: function(data) {
-        self.trigger("task:update:orphan:success", data);
-      }
+      success: function (data) {
+        self.trigger('task:update:orphan:success', data);
+      },
     });
-
   },
 
   remoteGet: function (id) {
@@ -83,11 +95,11 @@ var TaskModel = Backbone.Model.extend({
     this.set({ id: id });
     this.fetch({
       success: function (data) {
-        self.trigger("task:model:fetch:success", data);
+        self.trigger('task:model:fetch:success', data);
       },
-      error: function(data, xhr) {
-        self.trigger("task:model:fetch:error", data, xhr);
-      }
+      error: function (data, xhr) {
+        self.trigger('task:model:fetch:error', data, xhr);
+      },
     });
   },
 
@@ -118,6 +130,37 @@ var TaskModel = Backbone.Model.extend({
       this.attributes.submittedAt ||
       ( ! this.isDraft() && ! this.isSubmission() )
     );
+  },
+
+  tagTypes: function (callback) {
+    var types = ['task-skills-required', 'task-time-required', 'task-people', 'task-length', 'task-time-estimate', 'career'];
+    var tagSources = {};
+    var requestAllTagsByType = function (type, cb) {
+      $.ajax({
+        url: '/api/ac/tag?type=' + type + '&list',
+        type: 'GET',
+        success: function (data) {
+          tagSources[type] = data;
+          return cb();
+        },
+      });
+    };
+
+    async.each(types, requestAllTagsByType, function (err) {
+      callback(tagSources);
+    });
+  },
+
+  loadCommunity: function (communityId, callback) {
+    if (communityId) {
+      $.ajax({
+        url: '/api/community/' + communityId,
+        type: 'GET',
+        success: callback,
+      });
+    } else {
+      callback(null);
+    }
   },
 
 });

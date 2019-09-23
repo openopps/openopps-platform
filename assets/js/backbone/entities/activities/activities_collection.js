@@ -20,13 +20,13 @@ var ActivityCollection = Backbone.Collection.extend({
     this.fetch({
       data: data,
       success: function (data) {
-        self.trigger("activity:collection:fetch:success", data);
+        self.trigger('activity:collection:fetch:success', data);
       },
-      error: function(data, xhr) {
-        self.trigger("activity:collection:fetch:error", data, xhr);
-      }
+      error: function (data, xhr) {
+        self.trigger('activity:collection:fetch:error', data, xhr);
+      },
     });
-  }
+  },
 
 });
 

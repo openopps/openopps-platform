@@ -39,7 +39,7 @@
     <script type="text/javascript">
       // this will only return true for IE <= 8.
       if (window.attachEvent && !window.addEventListener) {
-        document.write('<div class="alert alert-danger"><strong>You are using an old, unsupported version of Internet Explorer.</strong>  This website may not work correctly in your browser.  For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</div>');
+        document.write('<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert"><div class="usajobs-alert__figure"><div class="usajobs-alert__icon"></div></div><div class="usajobs-alert__body"><p class="usa-alert-text">You are using an old, unsupported version of Internet Explorer. This website may not work correctly in your browser. For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</p></div></div>');
       }
     </script>
 
@@ -47,13 +47,23 @@
       <div class="navigation">
       </div>
       <div class="container">
-        <div class="alert alert-danger server-alert">
-          500 error has occured
+        <div class="usa-alert usajobs-alert usajobs-alert--error server-alert" role="alert" data-object="alert">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <p class="usa-alert-text">
+              500 error has occured
+            </p>
+          </div>
         </div>
+        <!-- <div class="alert alert-danger server-alert">
+          500 error has occured
+        </div> -->
       </div>
     </div>
     <footer class="bg-white p1" id="footer"></footer>
     <%- partial ('sails.ejs') %>
     <script src="/js/bundle.js"></script>
     <%- partial ('analytics.ejs') %>
-

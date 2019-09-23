@@ -15,26 +15,24 @@
  *   validate: List of strings for the data-validate attribute - optional
  *     example: ['empty', 'count400']
  */
-
-var fs = require('fs');
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var jqSelection = require('../../vendor/jquery.selection');
 var marked = require('marked');
 var BaseComponent = require('../base/base_component');
-var EditorTemplate = fs.readFileSync(
-  __dirname + '/markdown_editor_template.html'
-).toString();
+var EditorTemplate = require('./markdown_editor_template.html');
 
 
 
 var MarkdownEditor = BaseComponent.extend({
   events: {
-    "click .btn": "clickButton"
+    'click .btn': 'clickButton',
+    'blur .validate': 'v',
+    'keyup .validate': 'v',
   },
 
-  initialize: function(options) {
+  initialize: function (options) {
     this.options = options;
     this.actions = {
       'header': {
@@ -45,27 +43,27 @@ var MarkdownEditor = BaseComponent.extend({
       'bold': {
         before: '**',
         text: 'text',
-        after: '**'
+        after: '**',
       },
       'italic': {
         before: '_',
         text: 'text',
-        after: '_'
+        after: '_',
       },
       'strikethrough': {
         before: '~~',
         text: 'text',
-        after: '~~'
+        after: '~~',
       },
       'code': {
         before: '`',
         text: 'code',
-        after: '`'
+        after: '`',
       },
       'link': {
         before: '[Link Title](',
         text: 'http://',
-        after: ')'
+        after: ')',
       },
       'list-ul': {
         before: '- ',
@@ -81,7 +79,7 @@ var MarkdownEditor = BaseComponent.extend({
     return this;
   },
 
-  render: function() {
+  render: function () {
     var data = {
       id: this.options.id,
       validate: this.options.validate,
@@ -89,25 +87,26 @@ var MarkdownEditor = BaseComponent.extend({
       maxlength: this.options.maxlength,
       placeholder: this.options.placeholder,
       title: this.options.title,
-      data: this.options.data
+      data: this.options.data,
+      preview: this.options.preview,
     };
     var template = _.template(EditorTemplate)(data);
     this.$el.html(template);
     return this;
   },
 
-  clickButton: function(e) {
+  clickButton: function (e) {
     var self = this;
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    var selText = this.$("#" + this.options.id).selection();
+    var selText = this.$('#' + this.options.id).selection();
     var editData = t.data('edit');
     if ((editData != 'preview') &&
       (editData != 'edit') &&
       (editData != 'help')) {
       // get the current selected positions
-      var pos = this.$("#" + this.options.id).selection('getPos');
-      var text = this.$("#" + this.options.id).val();
+      var pos = this.$('#' + this.options.id).selection('getPos');
+      var text = this.$('#' + this.options.id).val();
       // check if this modifier has already been inserted
       var origBefore = text.substring(pos.start - this.actions[editData].before.length, pos.start);
       var origAfter = text.substring(pos.end, pos.end + this.actions[editData].after.length);
@@ -124,16 +123,16 @@ var MarkdownEditor = BaseComponent.extend({
         selText = this.actions[editData].text;
       }
       // insert markdown syntax
-      this.$("#" + this.options.id).selection('insert', {
-          text: before,
-          mode: 'before'
-        })
+      this.$('#' + this.options.id).selection('insert', {
+        text: before,
+        mode: 'before',
+      })
         .selection('replace', {
-          text: selText
+          text: selText,
         })
         .selection('insert', {
           text: after,
-          mode: 'after'
+          mode: 'after',
         });
     } else if (editData == 'help') {
       // show help text and links to markdown syntax
@@ -150,22 +149,22 @@ var MarkdownEditor = BaseComponent.extend({
         this.$('.btn-edit').hide();
         this.$('.btn-preview').show();
         this.$('.preview').hide();
-        this.$("#" + this.options.id).show();
+        this.$('#' + this.options.id).show();
       } else {
         // render the preview using marked
-        var html = marked(this.$("#" + this.options.id).val());
+        var html = marked(this.$('#' + this.options.id).val());
         this.$('.btn-preview').hide();
         this.$('.btn-edit').show();
         this.$('.preview').html(html);
-        this.$("#" + this.options.id).hide();
+        this.$('#' + this.options.id).hide();
         this.$('.preview').show();
       }
     }
   },
 
-  cleanup: function() {
+  cleanup: function () {
     removeView(this);
-  }
+  },
 });
 
 

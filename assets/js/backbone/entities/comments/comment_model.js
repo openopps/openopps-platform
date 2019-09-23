@@ -19,12 +19,14 @@ var CommentModel = Backbone.Model.extend({
         value     : comment,
       }, {
         success: function (data) {
-          self.trigger("comment:save:success");
-        }
-      })
-    })
-  }
-
+          self.trigger('comment:save:success');
+        },
+        error: function (model, response, options) {
+          self.trigger('comment:save:error', model, response, options);
+        },
+      });
+    });
+  },
 });
 
 module.exports = CommentModel;

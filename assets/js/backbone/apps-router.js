@@ -1,8 +1,7 @@
-import $ from 'jquery';
-import _ from 'underscore';
-import Backbone from 'backbone';
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
 
-var fs = require('fs');
 var i18n = require('i18next');
 var XHR = require('i18next-xhr-backend');
 var i18nextJquery = require('jquery-i18next');
@@ -10,14 +9,15 @@ var i18nextJquery = require('jquery-i18next');
 var BrowseApp = require('./browse-app');
 
 
-var initialize = function() {
+var initialize = function () {
   var router, browse;
 
   // Initialize the internationalization library and start Backbone when it's done initializing.
-  var i18nConfigJSON = fs.readFileSync(__dirname + ('/config/i18n.json')).toString();
-  var i18nConfig = JSON.parse(i18nConfigJSON);
+  //var i18nConfigJSON = require('./config/i18n.json');
+  //var i18nConfig = JSON.parse(i18nConfigJSON);
+  var i18nConfig = require('./config/i18n.json');
   i18n.use(XHR)
-    .init(i18nConfig, function(err, t) {
+    .init(i18nConfig, function (err, t) {
       // TODO: Not sure if older version of jquery-i18next was
       // used previously, but it seems the version of it
       // on my system doesn't have a 'default' property--
@@ -36,5 +36,5 @@ var initialize = function() {
 };
 
 module.exports = {
-  initialize: initialize
+  initialize: initialize,
 };

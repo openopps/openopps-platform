@@ -1,0 +1,135 @@
+        <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+          <h2 class="usajobs-form__title">Step 3 - Review draft and submit</h2>
+          <div class="usajobs-width-two-thirds">
+            <h1 class="usajobs-open-opps-opportunity-item__title"><%- data.title %></h1>
+            <div class="usajobs-open-opps-opportunity__desc">
+              <div class="skills">
+                <div>Desired skills:</div>
+                <% _.each(madlibTags['skill'], function (t) { %>
+                  <a class="skill-label" href="/tasks?search=<%= t.name %>"><%= t.name %></a>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+          <div class="usajobs-width-one-third">
+            <div class="usajobs-open-opps-opportunity-requestor__wrapper">
+              <div class="usajobs-open-opps-opportunity-requestor">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure dos">
+                    
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name dos">
+                      U.S. Department of State
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="usajobs-grid-full preview">
+          <div class="usa-width-one-third personnel-needed mobile">
+            <div class="usajobs-opop__task-intro">
+              <h4>Bureau</h4>
+              <div><%- data.bureauName %></div>
+              <% if (data.officeName) { %>
+                <h4>Office/post</h4>
+                <div><%- data.officeName %></div>
+              <% } %>
+              <h4>Location</h4>
+              <div>
+                <% if (data.countrySubdivision) { %>
+                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
+                <% } else { %>
+                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
+                <% } %>
+              </div>
+              <% if (data.country) { %>
+                <h4>Country</h4>
+                <div><%- data.country %></div>
+              <% } %>
+              <h4>Time Commitment</h4>
+              <div><%-moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>
+              <div>32-40 hrs per week</div>
+              <h4>Number of Interns</h4>
+              <div><%- data.interns %></div>                       
+            </div>
+          </div>
+          <div class="usa-width-two-thirds opportunity-description">
+            <div class="usajobs-open-opps-opportunity__desc">
+              <h3>Who we are</h3>
+              <div><%= data.aboutHtml %></div>
+            </div>
+            <div class="usajobs-open-opps-opportunity__desc">
+              <h3>What you'll do</h3>
+              <div><%= data.detailsHtml %></div>
+            </div>
+            <% if (data.language.length > 0) { %>
+            <div class="usajobs-open-opps-opportunity__desc">
+              <h3>Foreign language</h3>
+              <p class="usajobs-form__help-brief">The following language(s) may be helpful in the internship.</p>
+              <% _.each(data.language, function (l,index) { %>
+              <div class="usajobs-grid-full">
+                <h4><%- l.selectLanguage %></h4>
+                <div class="usajobs-width-one-half">
+                  <ul class="languages-drawer-content__list">
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Speaking language skill level</h5>
+                      <p><%- l.spokenSkillLevel %></p>
+                    </li>
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Reading language skill level</h5>
+                      <p><%- l.readSkillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
+                <div class="usajobs-width-one-half">
+                  <ul class="languages-drawer-content__list">
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Writing language skill level</h5>
+                      <p><%- l.writtenSkillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <% }); %>
+            </div> 
+            <% } %>
+          </div>
+          <div class="usa-width-one-third personnel-needed desktop">
+            <div class="usajobs-opop__task-intro">
+              <h4>Bureau</h4>
+              <div><%- data.bureauName %></div>
+              <% if (data.officeName) { %>
+                <h4>Office/post</h4>
+                <div><%- data.officeName %></div>
+              <% } %>
+              <h4>Location</h4>
+              <div>
+                <% if (data.countrySubdivision) { %>
+                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
+                <% } else { %>
+                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
+                <% } %>
+              </div>
+              <% if (data.country) { %>
+                <h4>Country</h4>
+                <div><%- data.country %></div>
+              <% } %>
+              <h4>Time Commitment</h4>
+              <div><%- moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>
+              <div>32-40 hrs per week</div>
+              <h4>Number of Interns</h4>
+              <div><%- data.interns %></div>         
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="usajobs-button_bar--slim task-footer">
+        <div class="usajobs-button_bar__body">
+          <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit">Make changes</button>
+          <button class="usa-button usa-button-secondary internship-button" data-state="save" id="save">Save for later</button><button class="usa-button usa-button-primary internship-button" data-state="submit" id="submit">Submit</button>
+        </div>
+      </div>
+

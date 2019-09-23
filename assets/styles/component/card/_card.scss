@@ -1,0 +1,462 @@
+// Card -- Used in Applications, Saved Jobs, and Saved Searches
+//         These mixins handle the LAYOUT of the card only, not the display of individual data
+
+@import 'base-shared';
+
+@import '../../home-variables';
+
+@mixin card() {
+  &__body {
+    padding: $size-M $size-default;
+    border-top: 1px solid $color-gray-light;
+    text-decoration: none;
+  }
+
+  &__title {
+    margin-top: 0;
+  }
+
+  &__summary {
+    @include row();
+  }
+
+  &__summary-body {
+    @include media($home-switch-to-tabs) {
+      @include span-columns(4, 6);
+    }
+
+    @include media($L) {
+      @include span-columns(9, 12);
+    }
+  }
+
+  &__summary-status {
+    @include media($home-switch-to-tabs) {
+      @include span-columns(2, 6);
+      @include omega();
+    }
+
+    @include media($L) {
+      @include span-columns(3, 12);
+      @include omega();
+    }
+  }
+
+  &__primary-actions,
+  &__secondary-actions {
+    @include unstyledList();
+  }
+
+  &__details-container {
+    @include boxShadow(2, true);
+    padding: $size-M $size-default;
+    background-color: $color-gray-lightest;
+
+    @include media($M) {
+      padding: $size-M $size-M $size-M $size-L;
+    }
+  }
+
+  &__details {
+    @include clearfix();
+    margin-bottom: $size-default;
+  }
+
+  &__details &__status {
+    text-align: left;
+
+    &__status-item {
+      display: inline-block;
+      margin-bottom: $size-base;
+    }
+  }
+
+  &__primary-actions,
+  &__secondary-actions {
+    @include clearfix();
+
+    > li {
+      @include media($M) {
+        display: inline-block;
+        float: left;
+
+        &:first-child {
+          margin-right: $size-S;
+        }
+      }
+    }
+  }
+
+  &__secondary-actions {
+    > li:first-child {
+      margin-right: $size-default;
+    }
+
+    > li a,
+    > li a:visited {
+      display: block;
+      padding: $size-base 0;
+      color: $color-primary;
+    }
+  }
+
+  &__secondary-actions > li &__actions-delete,
+  &__secondary-actions > li &__actions-delete:visited,
+  &__actions-delete,
+  &__actions-delete:visited {
+    color: $color-secondary-dark;
+
+    &:hover {
+      color: $color-secondary-darkest;
+    }
+  }
+}
+
+
+@mixin cardInset() {
+  @include media($M) {
+    @include boxShadow(1);
+  }
+
+  @include media($L) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  &__body {
+    @include permaLink();
+    display: block;
+    padding: $size-M $size-default;
+    border-top: 1px solid $color-gray-light;
+    text-decoration: none;
+
+    @include media($M) {
+      padding: $size-default;
+      border-top: 0;
+    }
+  }
+}
+
+@mixin card-v2() {
+  &__body {
+    display: block;
+    padding: $size-M $size-default;
+    border-bottom: 1px solid $color-gray-lightest;
+    text-decoration: none;
+    color: $color-base;
+  }
+
+  &__title {
+    margin-top: 0;
+    color: $color-primary;
+  }
+
+  &__summary {
+    @include row();
+  }
+
+  &__summary-body {
+    @include media($ML) {
+      @include span-columns(3, 6);
+    }
+
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__eligibility {
+    @include media($ML) {
+      @include span-columns(3, 6);
+      @include omega();
+    }
+
+    @include media($L) {
+      @include span-columns(4, 12);
+      @include omega();
+    }
+  }
+}
+
+
+// This combines all the best bits and
+// is the current version to use as as a base for a list as of 12/2017
+@mixin card-v3() {
+  position: relative;
+  padding: $size-default;
+  border-bottom: 1px solid $color-gray-lighter;
+
+  &__body {
+    text-decoration: none;
+  }
+
+  &__title {
+    @include h3();
+    margin-top: 0;
+    color: $color-primary;
+    overflow-wrap: break-word; // This prevents whack titles from breaking the card
+    text-decoration: none;
+  }
+
+  &__body,
+  &__footer {
+    @include row();
+  }
+
+  &__summary {
+    @include row();
+  }
+
+  &__summary,
+  &__footer-item {
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__footer-item {
+    margin-bottom: 0;
+
+    @include media($ML) {
+      @include span-columns(3, 6);
+    }
+
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__footer-item.right {
+    @include media($ML) {
+      @include omega();
+    }
+  }
+
+  &__details,
+  &__footer-item.right {
+    @include media($L) {
+      @include span-columns(4, 12);
+      @include omega();
+    }
+  }
+
+  &__details-list {
+    @include unstyledList();
+    margin: 0;
+  }
+}
+
+// This combines all the best bits and
+// is the current version to use as as a single card as of 12/2017
+@mixin card-v4() {
+  position: relative;
+  background-color: $color-white;
+  margin: $size-default 0;
+  padding: $size-default;
+  @include boxShadow(1);
+
+  @include media($M) {
+    margin: $size-default;
+  }
+
+  @include media($L) {
+    padding: $size-M;
+  }
+
+  &__header {
+    display: block;
+    margin-top: 0;
+    color: $color-primary-alt-darkest;
+  }
+}
+
+
+
+@mixin card-core-v1() {
+  position: relative;
+  padding: $size-default;
+  border-bottom: 1px solid $color-gray-lighter;
+
+  &__body {
+    text-decoration: none;
+  }
+
+  &__title {
+    margin-top: 0;
+    overflow-wrap: break-word; // This prevents whack titles from breaking the card
+  }
+
+  &__body,
+  &__footer {
+    @include row();
+  }
+
+  &__summary,
+  &__footer-item {
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__footer-item {
+    margin-bottom: 0;
+
+    @include media($ML) {
+      @include span-columns(3, 6);
+    }
+
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__footer-item.right {
+    @include media($ML) {
+      @include omega();
+    }
+  }
+
+  &__details,
+  &__footer-item.right {
+    @include media($L) {
+      @include span-columns(4, 12);
+      @include omega();
+    }
+  }
+
+  &__details-list {
+    @include unstyledList();
+    margin: 0;
+  }
+
+  &__item.open-to {
+    @include clearfix();
+  }
+
+  &__closing-date {
+    margin-right: rem(55px); // avoid collision with save
+
+    @include media($ML) {
+      margin-right: 0;
+    }
+  }
+
+  &__hiring-path {
+    display: inline-block;
+    float: left;
+    margin: $size-base $size-base 0 0;
+
+    @include media($L) {
+      display: none;
+    }
+  }
+
+  &__uhp-icon {
+    float: left;
+  }
+
+  &__save-job {
+    position: absolute;
+    right: $size-default;
+    bottom: $size-default;
+
+    @include media($M) {
+      display: inline-block;
+      float: inherit;
+      width: auto;
+      top: $size-base;
+      right: $size-default;
+      bottom: auto;
+      margin: 0;
+    }
+  }
+
+  &__save-job-link,
+  &__save-job-link:visited {
+    color: $color-primary;
+    text-decoration: none;
+  }
+
+  &__save-job-text {
+    display: inline-block;
+    font-size: $small-font-size;
+  }
+
+  &__save-job-link[data-state=is-saved]::before {
+    @include icon-content("job/star", 1.83rem, 1.7rem);
+    padding-right: $size-XS;
+  }
+
+  &__save-job-link[data-state=is-unsaved]::before {
+    @include icon-content("job/star-o", 1.83rem, 1.7rem);
+    padding-right: $size-XS;
+  }
+}
+
+@mixin card-core-v2() {
+  &__footer-item,
+  &__footer-item.right {
+    @include media($M) {
+      @include span-columns(3, 6);
+    }
+  }
+
+  &__footer-item {
+    @include media($L) {
+      @include span-columns(8, 12);
+    }
+  }
+
+  &__footer-item.right {
+    @include media($M) {
+      @include omega();
+    }
+
+    @include media($L) {
+      @include span-columns(4, 12);
+      @include omega();
+    }
+  }
+
+  &__footer-item.application-status {
+    max-width: rem(200px);
+    margin-top: $size-base;
+    padding: 0 $size-S;
+    border-radius: $size-M;
+    font-size: $small-font-size;
+
+    @include media($SM) {
+      font-size: $base-font-size;
+    }
+
+    @include media($M) {
+      float: right;
+      margin-top: $size-S;
+    }
+
+    @include media($L) {
+      float: left;
+    }
+  }
+
+  &__footer-item.usajobs-search-result--core__closing-date {
+    max-width: inherit;
+  }
+
+  // have to repeat this given the changes above
+  &__save-job {
+    position: absolute;
+    right: $size-default;
+    bottom: $size-default;
+
+    @include media($M) {
+      display: inline-block;
+      float: inherit;
+      width: auto;
+      top: $size-base;
+      right: $size-default;
+      bottom: auto;
+      margin: 0;
+    }
+  }
+}

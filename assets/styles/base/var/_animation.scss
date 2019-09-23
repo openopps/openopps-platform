@@ -1,0 +1,16 @@
+// Animation
+
+$duration-fast:   0.3s;
+$duration-slow:   0.8s;
+
+@mixin animateFade() {
+  @-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+  }
+}

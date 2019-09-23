@@ -1,31 +1,31 @@
 var dbTools = require('./lib/dbTools');
-var fs = require("fs");
-var async = require("async");
-var dataDir = __dirname + '/init-tag-data'
+var fs = require('fs');
+var async = require('async');
+var dataDir = __dirname + '/init-tag-data';
 
-dbTools.checkTagTableSetup()
-.then(function() {
-  fs.readdir( dataDir, function( err, files ) {
+dbTools.checkTagTableSetup().then(function () {
+  fs.readdir( dataDir, function ( err, files ) {
     if( err ) {
-        console.error( "Could not list the directory.", err );
-        process.exit( 1 );
+      console.error( 'Could not list the directory.', err );
+      process.exit( 1 );
     }
-    async.eachSeries(files, function( file, done ) {
+    async.eachSeries(files, function ( file, done ) {
       // files are named type.txt
       type = file.split('.')[0];
-      dbTools.importTagsFromFile(dataDir + '/' + file, type)
-      .then(function() {
+      dbTools.importTagsFromFile(dataDir + '/' + file, type).then(function () {
         done();
-      })
-      .catch(function(err) {
+      }).catch(function (err) {
         if (err) {
-          console.log("Failed with error: ", err);
+          console.log('Failed with error: ', err);
           dbTools.end();
         }
       });
-    }, function(err) { // eachSeries completed
+    }, function (err) { // eachSeries completed
       if (err) {
-        console.log("Failed with error: ", err);
+        console.log('Failed with error: ', err);
+      } else {
+        console.log('Completed successfully.');
+        process.exit();
       }
       dbTools.end();
     });

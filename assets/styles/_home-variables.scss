@@ -1,0 +1,11 @@
+@import 'base/breakpoints';
+
+$home-switch-to-tabs: $ML;
+$home-sidenav-width-small: rem(120px);
+$home-sidenav-width-large: rem(170px);
+$home-sidenav-sub-menu-width-small: rem(150px);
+$home-sidenav-sub-menu-width-large: rem(170px);
+$home-sidenav-width-combined-small: $home-sidenav-width-small + $home-sidenav-sub-menu-width-small;
+$home-sidenav-width-combined-large: $home-sidenav-width-large + $home-sidenav-sub-menu-width-large;
+$home-tab-height: rem(120px);
+$home-summary-status-max-width: rem(175px);

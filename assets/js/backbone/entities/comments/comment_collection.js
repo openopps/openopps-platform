@@ -13,10 +13,9 @@ var CommentCollection = Backbone.Collection.extend({
   initialize: function () {
     var self = this;
 
-    this.listenTo(this, "comment:save", function (data, currentTarget) {
+    this.listenTo(this, 'comment:save', function (data, currentTarget) {
       self.addAndSave(data, currentTarget);
     });
-
   },
 
   addAndSave: function (data, currentTarget) {
@@ -27,7 +26,7 @@ var CommentCollection = Backbone.Collection.extend({
       value     : data['comment'],
       taskId    : data['taskId'],
       topic     : data['topic']
-    })
+    });
 
     self.add(comment);
 
@@ -35,13 +34,15 @@ var CommentCollection = Backbone.Collection.extend({
       if (model.attributes.value === data['comment']) {
         model.save(null, {
           success: function (modelInstance, response) {
-            self.trigger("comment:save:success", modelInstance, response, currentTarget);
-          }
+            self.trigger('comment:save:success', modelInstance, response, currentTarget);
+          },
+          error: function (model, response, options) {
+            self.trigger('comment:save:error', model, response, options);
+          },
         });
       }
     });
-
-  }
+  },
 });
 
 module.exports = CommentCollection;

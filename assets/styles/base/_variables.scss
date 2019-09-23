@@ -1,0 +1,23 @@
+// Variables
+// Breakpoints are in base/_breakpoints.scss
+
+@import 'var/colors';
+@import 'var/typography';
+@import 'var/spacing';
+@import 'var/layout';
+@import 'var/layers';
+@import 'var/animation';
+
+// The Leftovers
+$border-radius:     rem(3px);
+$box-shadow:        0 0 2px $color-shadow;
+$focus-shadow:      0 0 3px $color-focus, 0 0 7px $color-focus;
+
+$font-path:         '../fonts';
+$image-path:        '../img';
+
+// Set $asset-pipeline to true if you're using the Rails Asset Pipeline
+$asset-pipeline:      false;
+
+// 44 x 44 pixels hit target following Apple iOS Human Interface Guidelines
+$hit-area:          4.4rem !default;

@@ -1,0 +1,745 @@
+[
+  {
+    "name": "Bureau of Administration (A)",
+    "offices": [
+      "Office of the Executive Director (A-IRM/EX)",
+      "Office of the Procurement Executive (A/OPE)",
+      "Office of Emergency Management (A/OEM)",
+      "Office of Operations (A/OPR)",
+      "Office of Allowances (A/OPR/ALS)",
+      "Office of Language Services (A/OPR/LS)",
+      "Domestic Environmental and Safety Division (A/OPR/FMS/DESD)",
+      "Office of Real Property Management (A/OPR/RPM)",
+      "Office of Global Publishing Solutions (A/GIS/GPS)",
+      "Office of Directives Management (A/GIS/DIR)",
+      "Office of Information Programs and Services (A/GIS/IPS)",
+      "Office of Logistics Management (A/LM)",
+      "Office of Acquisitions Management (A/LM/AQM)",
+      "Office of Logistics Operations (A/LM/OPS)",
+      "Office of Small and Disadvantaged Business Utilization (A/SDBU)"
+    ]
+  },
+  {
+    "name": "Bureau of African Affairs (AF)",
+    "offices": [
+      "Office of Eastern African Affairs (AF/E)",
+      "Office of Central African Affairs (AF/C)",
+      "Office of South African Affairs (AF/S)",
+      "Office of West African Affairs (AF/W)",
+      "Office of Economic and Regional Affairs (AF/ERA)",
+      "Office of the Executive Director (AF/EX)",
+      "Office of Public Diplomacy and Public Affairs (AF/PDPA)",
+      "Office of Security Affairs (AF/SA)",
+      "Office of the U.S. Special Envoy for Sudan and South Sudan (S/USSESS)",
+      "U.S Embassy Cotonou ",
+      "U.S. Embassy Gaborone",
+      "U.S. Embassy in Ougadougou",
+      "U.S. Embassy in Cameroon",
+      "U.S. Embassy in Malabo",
+      "U.S. Embassy in Addis Ababa",
+      "U.S. Embassy Accra",
+      "U.S. Embassy Lilongwe",
+      "U.S. Embassy Maputo",
+      "U.S. Embassy Dakar",
+      "U.S. Embassy Dar es Salaam",
+      "U.S. Embassy Lome",
+      "U.S. Embassy Kampala",
+      "U.S. Embassy Lusaka"
+    ]
+  },
+  {
+    "name": "Bureau of Arms Control, Verification, and Compliance (AVC)",
+    "offices": [
+      "Office of Euro-Atlantic Security Affairs (AVC/ESA)",
+      "Nuclear Risk Reduction Center (AVC/NRRC)",
+      "Office of Chemical and Biological Weapons Affairs (ACV/CBW)",
+      "Office of Emerging Security Challenges (AVC/ESC)",
+      "Office of Multilateral and Nuclear Affairs (AVC/MNA)",
+      "Office of Verification, Planning, and Outreach (AVC/VPO)"
+    ]
+  },
+  {
+    "name": "Consular Affairs (CA)",
+    "offices": [
+      "Office of the Comptroller (CA/C)",
+      "Office of Consular Systems and Technology (CA/CST)",
+      "Office of Executive Director (CA/EX)",
+      "Office of Fraud Prevention Programs (CA/FPP)",
+      "Passport Services (CA/PPT)",
+      "Office of Policy Coordination and Public Affairs (CA/P)",
+      "Overseas Citizens Services (CA/OCS)",
+      "Visa Services (CA/VO)"
+    ]
+  },
+  {
+    "name": "Comptroller and Global Financial Services (CGFS)",
+    "offices": [
+      "Office of the Executive Director (CGFS/EX)",
+      "Government Accountability Office, Liaison Office (CGFS/GAO)",
+      "Office of International Cooperative Administrative Support Services (CGFS/ICASS)"
+    ]
+  },
+  {
+    "name": "Office of Budget & Planning(BP)",
+    "offices": []
+  },
+  {
+    "name": "Bureau of Conflict and Stabilization Operations (CSO)",
+    "offices": [
+      "Front Office (CSO/FO)",
+      "Office of Near Eastern Affairs (CSO/NEA)",
+      "Office of Partnerships and Strategic Communications (CSO/PSC)",
+      "Office of the Executive Director (CSO/EX)",
+      "Office of Western Hemisphere and European Affairs (CSO/WHA-EUR)",
+      "Office of Analysis. Planning, Programs and Learning (CSO/APPL)",
+      "Office of African Affairs (CSO/AF)",
+      "Office of East Asian and Pacific, and South and Central Asian Affairs (CSO/EPA-SCA)"
+    ]
+  },
+  {
+    "name": "Counterterrorism (CT)",
+    "offices": [
+      "Office of Countering Violent Extremism (CT/CVE)",
+      "Office of South and Central Asia and Near East  (CT/SCAN)",
+      "Office of Multilateral Affairs (CT/MA)",
+      "Office of Africa, Europe, and the Americas and Asia (CT/AEAA)",
+      "Office of the Executive Director (CT/EX)",
+      "Office of Strategy, Plans, and Initiatives (CT/SPI)",
+      "Office of Programs (CT/P)",
+      "Office of Counterterrorism Finance and Designations (CT/TFD)",
+      "Office of Terrorist Screening and Interdiction (CT/TSI)",
+      "Office of  Homeland Security (CT/HS)",
+      "Office of Technical Programs and Operations Policy (CT/TPOP)",
+      "Front Office/ Office of Public Affairs (CT/FO/PA)",
+      "Office of Crisis Response, Preparedness and Special Coordination (CT/CRSC)"
+    ]
+  },
+  {
+    "name": "Democracy, Human Rights & Labor (DRL)",
+    "offices": [
+      "Office of International Religious Freedom (DRL/IRF)",
+      "Office of Policy, Planning and Public Diplomacy (DRL/PPD)",
+      "Office of African Affairs (DRL/AF)",
+      "Office of East Asian and Pacific Affairs (DRL/EAP)",
+      "Office of  Near Eastern Affairs (DRL/NEA)",
+      "Office of Western Hemisphere Affairs (DRL/WHA)",
+      "Office of South and Central Asian Affairs (DRL/SCA)",
+      "Office of Global Programming (DRL/GP)",
+      "Office of Multilateral and Global Affairs (DRL/MLGA)",
+      "Office of International Labor Affairs (DRL/ILA)",
+      "Front Office (DRL/FO)",
+      "Office of Secretary and Human Rights (DRL/SHR)",
+      "Office of European Affairs (DRL/EUR)"
+    ]
+  },
+  {
+    "name": "Diplomatic Security",
+    "offices": [
+      "Project Coordination Division (DS/PSP/PCD)",
+      "Recruitment Unit (DS.DSS/RECU)",
+      "High Threat Programs Mission (DS/HTP)",
+      "Monitoring and Incident Response Division (DS/CTS/CMO/MIRD)",
+      "Emerging Technology Division (DS/CTS/TIE/ETD)",
+      "Cyber Threat Analysis Division (DS/CTS/CTI/CTAD)",
+      "Operations Medical Unit (DS/T/TPS/SLTD/CTB/OMU)",
+      "Personnel Security and Suitability (DS/SI/PSS) ",
+      "Facility Security Engineering Division (FSE)",
+      "International Programs Directorate (DS/IP)",
+      "Overseas Security Advisory Council (DS/OSAC)",
+      "Office of the Executive Director (DS/EX)",
+      "Office of Public Affairs (DS/PA)",
+      "Los Angeles Field Office (DS/FLD/LAFO)",
+      "San Francisco Field Office (DS/FLD/SFFO)",
+      "Houston Field Office (DS/FLD/HFO)",
+      "Dallas Regional Office (DS/FLD/HFO/DRO)",
+      "El Paso Regional Office (DS/FLD/HFO/EPRO)",
+      "Atlanta Field Office (DS/ICI/MFO/ARO)",
+      "Chicago Field Office (DS/FLD/CFO)",
+      "Honolulu Field Office (DS/FLD/LAFO/HRO)",
+      "New York Field Office (DS/FLD/NYFO)",
+      "Denver Resident Office (DS/FLD/SFFO/DNRO)",
+      "Boston Field Office (DS/ICI/BFO)",
+      "Portsmouth Field Office (DS/ICI/PRFO)",
+      "Office of Antiterroism Assistance (DS/T/ATA)"
+    ]
+  },
+  {
+    "name": "Under Secretary for Economic Growth, Engergy and Environment (E)",
+    "offices": []
+  },
+  {
+    "name": "Bureau of East Asian and Pacific Affairs (EAP)",
+    "offices": [
+      "Office of Multilateral Affairs (EAP/MLA)",
+      "Office of Australia, New Zealand, and Pacific Affairs (EAP/ANP)",
+      "Office of Japanese Affairs (EAP/J)",
+      "Office of Chinese and Mongolian Affairs (EAP/CM)",
+      "Office of Regional and Security Policy (EAP/RSP)",
+      "Office of Public Affairs (EAP/P)",
+      "Office of Mainland South Asian Affairs (EAP/MLS)",
+      "Office of Maritime South Asia Affairs (EAP/MTS)",
+      "Office of Korean Affairs (EAP/K)",
+      "Office of Public Diplomacy (EAP/PD)",
+      "Office of Taiwan Coordination (EAP/TC)",
+      "Office of Economic Policy (EAP/EP)",
+      "Office of the Executive Director (EAP/EX)",
+      "Front Office (EAP/FO)",
+      "Office of the Special Representative for North Korea Policy (EAP/S/NP)",
+      "Office of Special Representative and Policy Coordinator for Burma (EAP/SRB)",
+      "U.S. Embassy Seoul",
+      "U.S. Embassy Beijing",
+      "U.S. Consulate General Shanghai",
+      "U.S. Consulate General Guangzhou",
+      "U.S. Consulate General Sydney"
+    ]
+  },
+  {
+    "name": "Economic and Business Affairs (EB)",
+    "offices": [
+      "Front Office (EB/FO)",
+      "Office of Commercial and Business Affairs (EB/CBA)",
+      "Office of Intellectual Property Enforcement (EB/CBA/IPE)",
+      "International Communications and Information Policy (EB/CIP)",
+      "Policy Analysis and Public Diplomacy (EB/EPPD)",
+      "International Finance and Development, Office of Development Finance (EB/IFD/ODF)",
+      "International Finance and Development, Office  of Investment Affairs (EB/IFD/OIA)",
+      "International Finance and Development, Office of Monetary Affairs (EB/IFD/OMA)",
+      "Transportation Affairs (EB/TRA)",
+      "Threat Finance and Countermeasures and Economic Sanctions, Office of Sanctions  Policy and Implementation (EB/TFS/SPI)",
+      "Threat Finance Countermeasures and Economic Sanctions, Office of Threat Finance Countermeasures (EB/TFS/TFC)",
+      "Trade Policy and Negotiations, Office of Agricultural  Policy (EB/TPN/AGP)",
+      "Trade Policy and Negotiations, Office of Bilateral Trade Affairs (EB/TPN/BTA)",
+      "Trade Policy and Negotiations, Office of  Multilateral Trade Affairs (EB/TPN/MTA)"
+    ]
+  },
+  {
+    "name": "Bureau of Educational and Cultural Affairs (ECA)",
+    "offices": [
+      "Office of Acacemic Programs (ECA/A)",
+      "Office of Policy and Evaluation (ECA/P)",
+      "Office of Professional and Cultural Exchange (ECA/PE)",
+      "Office of the Deputy Assistant Secretary for Private Sector Exchanges (ECA/EC)",
+      "Office of Public Affairs and Strategic Communications (ECA/PASC)"
+    ]
+  },
+  {
+    "name": "Energy Resources (ENR)",
+    "offices": [
+      "Energy Diplomacy (ENR/EDP)",
+      "Energy Governance and Access (ENR/EGA)",
+      "Energy Transformation (ENR/ETR)"
+    ]
+  },
+  {
+    "name": "Bureau of European and Eurasian Affairs (EUR)",
+    "offices": [
+      "U.S. Embassy Baku",
+      "U.S. Embassy Brussels",
+      "The U.S. Mission to NATO (USNATO)",
+      "The U.S. Mission to the European Union (USEU)",
+      "U.S. Embassy Dublin",
+      "Front Office (EUR/FO)",
+      "Office of Nordic and Baltic Affairs (EUR/NB)",
+      "U.S. Embassy London",
+      "Office of South Central Europe (EUR/SCE)",
+      "Office of Southern European Affairs (EUR/SE)",
+      "U.S. Embassy Valletta",
+      "U.S. Embassy Vilnius",
+      "U.S. Embassy Prague",
+      "U.S. Embassy Oslo",
+      "U.S. Mission Geneva",
+      "U.S. Embassy Belgrade",
+      "Office of Public Diplomacy (EUR/PD)",
+      "U.S. Embassy Zagreb",
+      "U.S. Embassy in Tallinn",
+      "U.S. Embassy to the Holy See (The Vatican)",
+      "U.S. Embassy in Chisinau",
+      "Office of Western European Affairs (EUR/WE)",
+      "Office of European Union and Regional Affairs (EUR/ERA)",
+      "U.S. Embassy Athens",
+      "Office of Central European Affairs (EUR/CE)",
+      "Office of the Coordinator of U.S. Assistance to Europe and Eurasia (EUR/ACE)",
+      "Office of Caucasus Affairs and Regional Conflicts (EUR/CARC)",
+      "Office of Policy and Global Issues (EUR/PGI)",
+      "Office of Press and Policy Outreach (EUR/PRESS)",
+      "Office of Policy and Regional Affairs (EUR/PRA)",
+      "Office of European Security and Political Affairs (EUR/RPM)",
+      "Office of Russian Affairs (EUR/RUS)",
+      "Office of Ukraine, Moldova, and Belarusian Affairs (EUR/UMB)",
+      "U.S. Embassy Bern",
+      "U.S. Embassy Bucharest",
+      "U.S. Embassy Yerevan",
+      "U.S. Embassy Copenhagen",
+      "U.S. Embassy Budapest",
+      "U.S. Embassy Belgium",
+      "U.S. Embassy Tbilisi",
+      "U.S. Embassy Skopje",
+      "U.S. Embassy Luxembourg",
+      "U.S. Consulate Ponta Delgada",
+      "U.S. Consulate Rennes",
+      "U.S. Consulate Belfast",
+      "U.S. Consulate Franfurt",
+      "U.S. Consulate Madrid",
+      "U.S. Consulate Barcelona",
+      "U.S. Embassy Berlin",
+      "U.S. Embassy Paris",
+      "U.S. Embassy Vienna",
+      "U.S. Embassy Riga",
+      "U.S. Embassy Lisbon",
+      "U.S. Embassy Tirana",
+      "U.S. Embassy Munich",
+      "U.S. Embassy Hamburg",
+      "U.S. Embassy Bratislava",
+      "U.S. Embassy Nicosia",
+      "U.S. Embassy Sarajevo",
+      "U.S. Consulate Dusseldorf",
+      "U.S. Consulate Edinburgh",
+      "U.S. Consulate Lyon",
+      "U.S. Consulate Marseille",
+      "U.S. Consulate Strasbourg",
+      "U.S. Embassy Helsinki",
+      "U.S. Embassy Kyiv",
+      "U.S. Embassy Ljubljana",
+      "U.S. Embassy Moscow",
+      "U.S. Consulate Milan",
+      "U.S. Embassy Warsaw",
+      "U.S. Consulate Krakow",
+      "U.S. Embassy Rome",
+      "U.S. Consulate Florence",
+      "U.S. Embassy The Hague",
+      "U.S. Consulate Amsterdam",
+      "U.S. Consulate Naples",
+      "U.S. Embassy Sofia"
+    ]
+  },
+  {
+    "name": "Foreign Service Institute (FSI)",
+    "offices": [
+      "Leadership and Management School (FSI/LMS)",
+      "School of Applied Information Technology (FSI/SAIT)",
+      "School of Language Studies (FSI/SLS)",
+      "School of Professional and Area Studies (FSU.SPAS)",
+      "Transition Center (FSI/TC)",
+      "Office of the Director (FSI/FO)"
+    ]
+  },
+  {
+    "name": "Legislative Affairs (H)",
+    "offices": [
+      "Front Office (FO)",
+      "Office of Regional, Global, and Functional Affairs (RGF)"
+    ]
+  },
+  {
+    "name": "Office of the Director General of Human Resources (HR)",
+    "offices": [
+      "Office of Policy Coordination (HR/PC)",
+      "Family Liaison Office (HR/FLO)",
+      "Grievance Staff (HR/G)",
+      "Office of Accessibility and Accommodations (HR/OAA)",
+      "Office of Presidential Appointments (HR/PAS)",
+      "Office of Resource Management and Organization Analysis (HR/RMA)",
+      "Office of Career Development and Assignments (HR/CDA)",
+      "Office of Civil Service Human Resources Management (HR/CSHRM)",
+      "Office of Performance Evaluation (HR/PE)",
+      "Office of Recruitment, Examination and Employment (HR/REE)",
+      "Office of Overseas Employment (HR/OE)",
+      "Office of Retirement (HR/RET)",
+      "Executive Office (HR/EX)",
+      "Office of the Director General of Human Resources/State Magazine (DGHR/SMG)"
+    ]
+  },
+  {
+    "name": "International Information Programs (IIP)",
+    "offices": [
+      "Office of the Coordinator",
+      "Office of Policy, Outreach, and Governance (IPP/POG)",
+      "Office of Regional and Strategic Training (IIP/RST)",
+      "U.S. Speaker Program (IPP/PD/SP)",
+      "Office of Public Engagement (IIP/PR/PE)",
+      "Office of Analytics (IIP/Analytics)",
+      "Office of Editorial Content (IIP/EC)",
+      "Office of Language Resources (IIP/LR)",
+      "Office of the U.S. Speaker Program (IIP/USSP)",
+      "Deputy Coordinator for Platforms (IPP/PL)",
+      "The Office of Digital (IPP/PL/DI)",
+      "Office of American Spaces (IIP/AS)",
+      "Office of Design (IPP/PL/DE)"
+    ]
+  },
+  {
+    "name": "International Joint Commission (IJC)",
+    "offices": []
+  },
+  {
+    "name": "International Narcotics and Law Enforcement (INL)",
+    "offices": [
+      "Office of Budget Planning, Presentations, and Formulation (INL/RM/BP)",
+      "Office of Management Assistance and Program Support (INL/RM/MAPS)",
+      "The Office of Performance Quality, Risk Management and Oversight Services (INL/PQRMOS)",
+      "Office of Resource Management: Grants, Acquisitions, Procurement and Policy (INL/RM/GAPP)",
+      "Office of Western Hemisphere Programs (INL/WHP)",
+      "Office of Criminal Justice Assistance and Partnership (INL/CAP)",
+      "Office of Anti-Crime Programs (INL/C)",
+      "Office of Afghanistan and Pakistan (INL/AP)",
+      "The Office of Africa and Middle East Programs (INL/AME)",
+      "Office of Europe and Asia (INL/EA)",
+      "Office of Resource Management: Budget Execution Division (INL/RM/BE)",
+      "Office of Policy, Planning, and Coordination (INL/PC)"
+    ]
+  },
+  {
+    "name": "Intelligence and Research (INR)",
+    "offices": [
+      "Office of Analysis for South Asian Affairs (INR/SA)",
+      "Office of Analytic Outreach (INR/AO)",
+      "Office of Opinion Research (INR/OPN)",
+      "Office of Analysis for Russia and Eurasia (INR/REA)",
+      "Office of Technology and Innovation (INR/TIO)",
+      "Office of Technical Collection Affairs  (INR/TCA)",
+      "Office of Executive Director (INR/EX)",
+      "INR Watch (INR/Watch)",
+      "Office of Strategic, Proliferation, and Military Issues (INR/SPM)",
+      "Office of Analysis for Western Hemisphere Affairs (INR/WHA)",
+      "Office of Analysis for Africa (INR/AF)",
+      "Office of Analysis for East Asia and the Pacific (INR/EAP)",
+      "Office of the Geographer and Global Issues (INR/GGI)",
+      "Office of Economic Analysis (INR/EC)",
+      "Office of Analysis for Near Eastern Affairs (INR/NEA)"
+    ]
+  },
+  {
+    "name": "Bureau of International Organizations (IO)",
+    "offices": [
+      "Office of Economic and Development Affairs (IO/EDA)",
+      "Office of Public Affairs, Planning and Congressional Outreach (IO/PPC)",
+      "Office of Regional Policy and Coordination (IO/RPC)",
+      "Office of Management Policy and Resources (IO/MPR)",
+      "Office of Human Rights and Humanitarian Affairs (IO/HRH)",
+      "Office of International Conferences (IO/C)",
+      "Office of Peace Operations, Sanctions & Counter-terrorism (IO/PSC)",
+      "Office of Specialized and Technical Agencies (IO/STA)",
+      "Office of United Nations Education, Scientific and Cultural Organization Affairs (IO/UNESCO)",
+      "Office of United Nations Political Affairs (IO/UNP)"
+    ]
+  },
+  {
+    "name": "Information Resource Management (IRM)",
+    "offices": [
+      "Systems and Integration Office (IRM/OPS/SIO)",
+      "Messaging Systems Office (IRm/MSO)",
+      "The Office of IT Infrastructure (IRM/ITI)",
+      "The Office of Enterprise Network Management (IRM/ENM)",
+      "Office of External Affairs (IRM/EA)",
+      "Office of Information Assurance (IRM/IA/ITSC)",
+      "Office of eDiplomacy (IRM/EDIP)"
+    ]
+  },
+  {
+    "name": "International Security and Nonproliferation (ISN)",
+    "offices": [
+      "Office Multilateral Nuclear and Security Affairs (ISN/MNSA)",
+      "Office Nuclear Energy, Safety and Security (ISN/NESS)",
+      "Office Cooperative Threat Reduction (ISN/CTR)",
+      "Office Weapons of Mass Destruction Terrorism (ISN/WMDT)",
+      "Office Missile, Biological and Chemical Nonproliferation (ISN/MBC)",
+      "Office Conventional Arms Threat Reduction (ISN/CATR)",
+      "Office Export Control Cooperation (ISN/ECC)",
+      "Office Biological Policy Staff (ISN/BPS)",
+      "Office Counter Proliferation Initiatives (ISN/CPI)",
+      "Office Regional Affairs (ISN/RA)",
+      "Office Strategic Communications and Outreach (ISN/SCO)"
+    ]
+  },
+  {
+    "name": "Under Secretary of State for Civilian Security, Democracy, and Human Rights (J)",
+    "offices": []
+  },
+  {
+    "name": "Office of Global Criminal Justice (J/GCJ)",
+    "offices": []
+  },
+  {
+    "name": "Office to Monitor and Combat Trafficking in Persons (J/TIP)",
+    "offices": [
+      "International Programs (J/TIP/IP)",
+      "Public Engagement and Intergovernmental Affairs (J/TIP/PEIA)",
+      "Reports and Public Affairs Section (J/TIP/RPA)",
+      "Resource Management and Planning (J/TIP/RMP)"
+    ]
+  },
+  {
+    "name": "Undersecretary for Management (M)",
+    "offices": []
+  },
+  {
+    "name": "Office of Medical Services (MED)",
+    "offices": []
+  },
+  {
+    "name": "Office of Emergencies in the Diplomatic and Consular Services (M/EDCS)",
+    "offices": []
+  },
+  {   
+    "name": "Office of Fine Arts (M/FA)",
+    "offices": [
+      "Blair House – Historic Collections Management",
+      "Diplomatic Reception Rooms - Fundraising, Campaign \nResearch & Strategy",
+      "Diplomatic Reception Rooms - Historic Artifact Research"
+    ]
+  },
+  {
+    "name": "Major Events and Conferences Staff (M/MECS)",
+    "offices": []
+  },
+  {
+    "name": "Office of Overseas Building Operations",
+    "offices": []
+  },
+  {
+    "name": "Office of foreign Mission (M/OFM)",
+    "offices": [      
+      "Front Office (M/OFM/FO-SSP)",
+      "Executive Office (M/OFM/EX)",
+      "Diplomatic Motor Vehicles (M/OFM/DMV)",
+      "Houston Office (M/OFM/HO)",
+      "Miami Office (M/OFM/MIA)",
+      "Los Angeles Office (M/OFM/LA)",
+      "San Francisco Office (M/OFM/SF)",
+      "New York City Office (M/OFM/NY)"
+    ]
+  },
+  {
+    "name": "Management Policy, Rightsizing and Innovation - Innovation Team (M/PRI)",
+    "offices": []
+  },
+  {
+    "name": "White House Liaison (M/WHL)",
+    "offices": []
+  },
+  {
+    "name": "Bureau of Near Eastern Affairs (NEA)",
+    "offices": [
+      "Office of Arabian Affairs (NEA/ARP)",
+      "Office of Program Management - Ministry of Interior (NEA/ARP/OPM-MOI)",
+      "Office of Levant Affairs (NEA/LEV)",
+      "Office of Maghreb Affairs (NEA/MAG)",
+      "Office of Israel and Palestinian Affairs (NEA/IPA)",
+      "Office of Iraqi Affairs (NEA/I)",
+      "Office of Iranian Affairs (NEA/IR)",
+      "Office of Assistance Coordination",
+      "Office of Press and Public Diplomacy (NEA/PPD)",
+      "Office of Egyptian Affairs (NEA/EGY)",
+      "Executive Office (NEA-SCA/EX)",
+      "Front Office (NEA/FO)",
+      "Office of Regional Multilateral Affairs (NEA/RMA)",
+      "U.S. Embassy Abu Dhabi",
+      "U.S. Embassy Algiers",
+      "U.S. Consulate General Casablanca",
+      "U.S. Consulate General Dharan",
+      "U.S. Embassy Doha",
+      "U.S. Consulate General Dubai",
+      "U.S. Consulate General Jeddah",
+      "U.S. Embassy Manama",
+      "U.S. Embassy Muscat",
+      "U.S. Embassy Rabat",
+      "U.S. Embassy Riyadh"
+    ]
+  },
+  {
+    "name": "Oceans & International Environmental & Scientific Affairs",
+    "offices": [
+      "Office of Policy and Public Outreach (OES/PPO)",
+      "Office of Marine Conservation (OES/OMC)",
+      "Office of Space and Advanced Technology (OES/SAT)",
+      "Office of Ocean and Polar Affairs (OES/OPA)",
+      "Office of Conservation and Water (OES/E/ECW)",
+      "Office of Global Change (OES/E/EGC)",
+      "Office of International Health and Biodefense (OES/S/IHB)",
+      "Office of Science and Technology Cooperation (OES/STC)"
+    ]
+  },
+  {
+    "name": "Office of the Inspector General (OIC)",
+    "offices": [
+      "Office of Inspections (OIC/Inspections)",
+      "Office of Investigations (OIG/Office of Investigations)",
+      "Office of Evaluations and Special Projects (OIG/Office of Evaluations and Special Projects)",
+      "Office of Overseas Contingency Operations (OCO) Oversight (OIG/Overseas Contingency Operations (OCO) Oversight)",
+      "Office of General Counsel (OIG/ Office of the General Council)",
+      "Congressional & Public Affairs (OIG/Congressional and Public Affairs)",
+      "Office of the Executive Director (OIG/EX)"
+    ]
+  },
+  {
+    "name": "Undersecretary for Political Affairs (P)",
+    "offices": []
+  },
+  {
+    "name": "Public Affairs",
+    "offices": [
+      "Office of Strategic Planning (PA/OSP)",
+      "Press Office (PA/PRESS)",
+      "Office of Public Engagement (PA/OPE)",
+      "International Media Engagement (PA/IME)",
+      "Office of Website Management (PA/WM)",
+      "Foreign Press Center (PA/FPC)",
+      "Office of Video Services (PA/OVS)",
+      "Rapid Response Unit (PA/RRU)",
+      "Office of the Historian (PA/HO)",
+      "United States Diplomacy Center (PA/USDC)",
+      "Office of Digital Engagement (PA/ODE)",
+      "Office of the Executive Director (PA/EX)",
+      "Office of the Front Office (PA/FO)"
+    ]
+  },
+  {
+    "name": "Bureau of Political-Military Affairs (PM)",
+    "offices": [
+      "Office of Congressional & Public Affairs (PM/CPA)",
+      "Office of Defense Trade Controls Compliance (PM/DDTC)",
+      "Office of State/Defense Integration (PM/SDI)",
+      "Office of Weapons Removal and Abatement (PM/WRA)",
+      "Office of Security Assistance (PM/SA)",
+      "Office of Regional Security and Arms Transfers (PM/RSAT)"
+    ]
+  },
+  {
+    "name": "Population, Refugees, and Migration (PRM)",
+    "offices": [
+      "Office of Policy and Resource Planning (PRM/PRP)",
+      "Office of Refugee Admissions (PRM/A)",
+      "Office of Assistance for Africa (PRM/AFR)",
+      "Office of Assistance for Europe, Central Asia and the Americas (PRM/ECA)",
+      "Office of Multilateral Coordination and External Relations (PRM/MCE)",
+      "Office of Assistance for Asia and the Near East (PRM/ANE)",
+      "Office of International Migration (PRM/PIM)"
+    ]
+  },
+  {
+    "name": "Under Secretary for Public Diplomacy and Public Affairs (R)",
+    "offices": [
+      "Global Engagement Center (R/GEC)",
+      "Policy, Planning, & Resources for Public Diplomacy and Public Affairs (R/PPR)"
+    ]
+  },
+  {
+    "name": "Office of Secretary of State (S)",
+    "offices": [
+      "The Executive Secretariat Staff (S/ES-S)",
+      "Chief of Protocol (S/CPR)",
+      "Operation Center (S/ES-O)",
+      "Exec Tech (S/ES-IRM)",
+      "Executive Secretariat (S/ES)",
+      "Executive Office (S/ES-EX)",
+      "Office of Coordinator for Cyber Issues (S/CCI)",
+      "Foreign Service Grievances Board (S/FSGB)",
+      "Director of U.S. Foreign Assistance (S/DFA)",
+      "U.S. Department of State's Office of the Special Presidential Envoy for the Global Coalition to Counter ISIS (S/SECI)",
+      "Policy Planning Staff (S/P)",
+      "Office of Global Women's Issue (S/GWI)",
+      "Office of the U.S. Global AIDS Coordinator (S/GAC)",
+      "Office of Global Health Diplomacy (S/GHD)",
+      "Office of Civil Rights (S/OCR)"
+    ]
+  },
+  {
+    "name": "Bureau of South and Central Asian Affairs (SCA)",
+    "offices": [
+      "Front Office (SCA/FO)",
+      "Office of Central Asia (SCA/CEN)",
+      "Office of NSB (SCA/NSB)",
+      "Afghanistan Desk (SCA/A)",
+      "India Desk (SCA/I)",
+      "Pakistan Desk (SCA/P)",
+      "Office of Press and Public Diplomacy (SCA/PPD)",
+      "Office of Regional Affairs (SCA/RA)",
+      "Executive Office (SCA-NEA/EX)",
+      "U.S. Embassy Astana",
+      "U.S. Embassy Bishkek",
+      "U.S Embassy Colombo",
+      "U.S. Embassy Kathmandu",
+      "U.S. Embassy Tashkent"
+    ]
+  },
+  {
+    "name": "Office of the Science and Technology Adviser to the Secretary (STAS)",
+    "offices": []
+  },
+  {
+    "name": "Under Secretary for Arms Control and International Security (T)",
+    "offices": [
+      "Arms Control Verification and Compliance (AVC)",
+      "International Security and Nonproliferation (ISN)",
+      "Political -Military Affairs (PM)"
+    ]
+  },
+  {
+    "name": "The United States Mission to the Organization of American States (U.S. Mission to OAS)",
+    "offices": []
+  },
+  {
+    "name": "United States Mission to the UN (USN)",
+    "offices": [
+      "Host Country Affairs Office (USUN/NY/Host Country Affairs Office)",
+      "Legal Office (USN/NY/Legal Office)",
+      "Management and Reform Office (USN/NY/MR Office)",
+      "Political Office (USUN/NY/Political Office)",
+      "Executive Office (USUN/NY/Executive Office)",
+      "Protocol Office (USUN/NY/Protocol Office)",
+      "Management Office (USUN/NY/Management Office)",
+      "Budget Office (USUN/NY/Budget Office)",
+      "Research Unit (USUN/NY/Research Unit)",
+      "UN General Assembly (USUN/NY/UNGA)",
+      "Economic and Social Affairs Office (USUN/SY/ECOSOC)",
+      "PRESS Office (USUN/NY/PRESS)",
+      "Military Staff Committee (USUN/NY/MSC)",
+      "Information Resource Management Office (USUN./NY/IRM Office)",
+      "Regional Security Office (USUN/RSO)",
+      "Sanctions (USUN/NY/Sanctions)",
+      "Human Resources (USUN/NY/HR)"
+    ]
+  },
+  {
+    "name": "Western Hemisphere Affairs (WHA)",
+    "offices": [
+      "Office of Andean Affairs (WHA/AND)",
+      "Office of Brail and Southern Cone (WHA/BSC)",
+      "Office of Canadian Affairs (WHA/CAN)",
+      "Office of Caribbean Affairs (WHA/CAR)",
+      "Office of the Coordinator for Cuban Affairs (WHA/CCA)",
+      "Office of Central American Affairs (WHA/CEN)",
+      "Office of Economic Policy and Summit Coordination (WHA/EPSC)",
+      "Western Hemisphere Affairs Executive Office (WHA/EX)",
+      "Western Hemisphere Affairs Mexico Desk (WHA/MEX)",
+      "Office of Public Diplomacy and Public Affairs (WHA/PDA)",
+      "Office of Policy Planning and Coordination (WHA/PPC)",
+      "Race, Ethnicity, and Social Inclusion (WHA/RESIU)",
+      "U.S. Embassy Lima",
+      "U.S. Embassy Guatemala City",
+      "U.S. Embassy LaPaz",
+      "U.S. Embassy San Salvador",
+      "U.S. Embassy Mexico City",
+      "U.S. Consulate General Ciudad Juarez",
+      "U.S. Consulate General Monterrey",
+      "U.S. Consulate General Tijuana",
+      "U.S. Embassy Bogota",
+      "U.S. Embassy Santiago",
+      "U.S. Embassy San Jose",
+      "U.S. Embassy Brasillia",
+      "U.S. Consulate General San Paulo",
+      "U.S. Embassy Ottawa",
+      "U.S. Consulate General Toronto",
+      "U.S. Consulate General Vancouver",
+      "U.S. Embassy Quito",
+      "U.S. Consulate General Guayaquil",
+      "U.S. Embassy Santo Domingo",
+      "U.S. Embassy Panama City",
+      "U.S. Embassy Tegucigalpa",
+      "U.S. Embassy Asuncion",
+      "U.S. Embassy Port of Spain",
+      "U.S. Embassy Paramaribo",
+      "U.S. Embassy Montevideo "
+    ]
+  }
+]

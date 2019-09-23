@@ -1,11 +1,9 @@
-
-var fs = require('fs');
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var BaseComponent = require('../base/base_component');
 var Bootstrap = require('bootstrap');
-var PopoverProfile = fs.readFileSync(__dirname + '/templates/popover_profile.html').toString();
+var PopoverProfile = require('./templates/popover_profile.html');
 
 
 var Popovers = BaseComponent.extend({
@@ -19,18 +17,18 @@ var Popovers = BaseComponent.extend({
         title: 'load',
         container: 'body',
         content: '<div class="popover-spinner"><div class="loading">Fetching Information</div><i class="fa fa-spinner fa-spin"></i></div>',
-        template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title" style="display:none; visibility:hidden"></h3><div class="popover-content"></div></div>'
-      }).on("mouseleave", function () {
-        var _this = this;
-        var timeoutFn = function () {
-          if (!$(".popover:hover").length) {
-            $(_this).popover("hide");
-          } else {
-            setTimeout(timeoutFn, 100);
-          }
-        };
-        setTimeout(timeoutFn, 100);
-      });
+        template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title" style="display:none; visibility:hidden"></h3><div class="popover-content"></div></div>',
+      }).on('mouseleave', function () {
+      var _this = this;
+      var timeoutFn = function () {
+        if (!$('.popover:hover').length) {
+          $(_this).popover('hide');
+        } else {
+          setTimeout(timeoutFn, 100);
+        }
+      };
+      setTimeout(timeoutFn, 100);
+    });
   },
 
   popoverPeopleOn: function (e) {
@@ -45,14 +43,14 @@ var Popovers = BaseComponent.extend({
     target.popover('show');
     // Only load data if the popover hasn't previously been loaded
     if (popover.options.title == 'load') {
-      $.ajax({ url: '/api/user/' + target.data('userid') }).done(function(data) {
+      $.ajax({ url: '/api/user/' + target.data('userid') }).done(function (data) {
         var template = _.template(PopoverProfile)({data: data});
         popover.options.title = 'done';
         popover.options.content = template;
         popover.setContent();
         popover.$tip.addClass(popover.options.placement);
         // handle links in the popovers
-        $(".popover").on('click', ".link-backbone", function (e) {
+        $('.popover').on('click', '.link-backbone', function (e) {
           target.popover('hide');
           linkBackbone(e);
         });
@@ -65,7 +63,7 @@ var Popovers = BaseComponent.extend({
     var id = $(e.currentTarget).data('userid');
     $(e.currentTarget).popover('hide');
     Backbone.history.navigate('profile/' + id, { trigger: true });
-  }
+  },
 });
 
 module.exports = Popovers;

@@ -3,7 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var async = require('async');
 // TODO: var ModalPagesTemplate = require('../../../components/modal_pages_template.html');
-var ModalPagesTemplate = "";
+var ModalPagesTemplate = '';
 var ModalPages = require('../../../components/modal_pages');
 var ModalComponent = require('../../../components/modal');
 
@@ -15,7 +15,7 @@ var EmptyModalView = Backbone.View.extend({
 
   render: function () {
 
-  var template = _.template(ModalPagesTemplate);
+    var template = _.template(ModalPagesTemplate);
     this.$el.html(template);
     this.$el.localize();
     // Return this for chaining.
@@ -25,7 +25,7 @@ var EmptyModalView = Backbone.View.extend({
   cleanup: function () {
     if (this.md) { this.md.cleanup(); }
     removeView(this);
-  }
+  },
 
 });
 

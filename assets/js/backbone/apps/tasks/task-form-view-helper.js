@@ -1,7 +1,7 @@
 var _ = require('underscore');
 
 module.exports = {
-  annotateTimeRequired: function(data, userAgency) {
+  annotateTimeRequired: function (data, userAgency) {
     return _(data).map(function (item) {
       if (item.value == 'One time') {
         item.description = 'A one time task with a defined timeline';
@@ -18,37 +18,18 @@ module.exports = {
       return item;
     });
   },
-  /*
-   * return the unique identifier (agency.abbr) which we'll save on the
-   * server if the restrict agency checkbox is checked
-   */
-  // getRestrictAgencyValue: function ( view ) {
-    // var restrictAgencyChecked = ;
-    // if ( restrictAgencyChecked ) {
-      // view.model.attributes.restrict.projectNetwork = true;
-    // } else {
-      // view.model.attributes.restrict.projectNetwork = false;
-    // }
-    // return view.model.attributes.restrict.projectNetwork;
-  // },
 
-  /*
-   * Setup Time Options toggling
-   */
   toggleTimeOptions: function (view) {
-    var currentValue     = view.$('[name=task-time-required]:checked').val(),
+    var currentValue       = view.$('[name=task-time-required]:checked').val(),
         timeRequired       = view.$('#time-options-time-required'),
         timeRequiredAside  = view.$('#time-options-time-required aside'),
         completionDate     = view.$('#time-options-completion-date'),
         timeFrequency      = view.$('#time-options-time-frequency'),
         restrictAgency     = view.$('#task-restrict-agency'),
-        timeRequiredTag = _.findWhere(view.tagSources['task-time-required'], {id: parseInt(currentValue)});
+        timeRequiredTag    = _.findWhere(view.tagSources['task-time-required'], {id: parseInt(currentValue)});
+    var isRestricted       = _.property( 'projectNetwork', view.model.get( 'restrict' ) );
+    var isFullTimeDetail   = _.property( 'value' )( timeRequiredTag ) === 'Full Time Detail';
 
-    // restrict is a String with agency abbr or empty string for not restricted
-    var isRestricted = _.property( 'projectNetwork', view.model.get( 'restrict' ) );
-    var isFullTimeDetail = _.property( 'value' )( timeRequiredTag ) === 'Full Time Detail';
-
-    // hide everything by default
     timeRequired.hide();
     timeRequiredAside.hide();
     timeFrequency.hide();
@@ -76,7 +57,16 @@ module.exports = {
         completionDate.hide();
       }
     }
-
   },
 
+  getCompletedByDate: function () {
+    var month = $('#estimated-completion-date-1').val();
+    var day = $('#estimated-completion-date-2').val();
+    var year = $('#estimated-completion-date-3').val();
+    if(!month && !day && !year) {
+      return '';
+    } else {
+      return (year + '-' + month + '-' + day);
+    }
+  },
 };

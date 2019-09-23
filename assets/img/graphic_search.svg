@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="248px" height="130px" viewBox="0 0 248 130" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FCFCFC" offset="0%"></stop>
+            <stop stop-color="#466B9B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard">
+            <g id="Group" transform="translate(7.000000, 7.000000)">
+                <path d="M72.5227273,19.5 L52.4772727,0.5" id="Line-5" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <path d="M178.473684,102.5 L195.526316,117.5" id="Line-6" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <path d="M111.487654,31.5 L189.512346,22.5" id="Line-7" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <path d="M40.4833333,65.5 L68.5166667,49.5" id="Line-2" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <path d="M109.486486,49.5 L144.513514,65.5" id="Line-3" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <path d="M179.472222,59.5 L195.527778,39.5" id="Line-4" stroke="#FFFFFF" opacity="0.372735507" stroke-linecap="square" stroke-dasharray="6"></path>
+                <ellipse id="Oval-2" stroke="url(#linearGradient-1)" stroke-width="10" opacity="0.186990489" cx="212.5" cy="19" rx="18.5" ry="19"></ellipse>
+                <ellipse id="Oval-2-Copy" stroke="url(#linearGradient-1)" stroke-width="10" opacity="0.186990489" cx="164.5" cy="81" rx="18.5" ry="19"></ellipse>
+                <ellipse id="Oval-2-Copy-2" stroke="url(#linearGradient-1)" stroke-width="10" opacity="0.186990489" cx="18.5" cy="78" rx="18.5" ry="19"></ellipse>
+                <ellipse id="Oval-2-Copy-3" stroke="url(#linearGradient-1)" stroke-width="10" opacity="0.186990489" cx="87.5" cy="40" rx="18.5" ry="19"></ellipse>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,34 @@
+<main class="usajobs-opop" id="main-content" role="main">
+  <div class="usajobs-grid usajobs-opop-dashboard">
+    <h1>Welcome <%- window.cache.currentUser.givenName %><a href="/logout" class="logout">Sign out</a></h1>
+    <div class="usajobs-opop-dashboard__body">
+      <div class="usajobs-open-opps-participated__body">
+        <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/application-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+          <span class="usajobs-nav--openopps__section">
+            <span class="fas fa-question-circle" title="Help"></span>Help
+          </span>
+        </a>
+        <h2>Your opportunities</h2>
+        <h3>Participated</h3>
+        <div class="opportunity-participated"></div>
+        <h3>Created <a href="/tasks/create" id="create-opportunity" class="usa-button usa-button-secondary add-opportunity"><i class="fa fa-plus"></i> <span>Create opportunity</span></a>
+        </h3>
+        <div class="opportunity-created"></div>
+      </div>
+    </div>
+
+    <div class="usa-width-one-half announcement profile-home">
+      <div data-target="announcement-feed" class="announcement-feed"></div>
+      <a class="announcement read-more" href="#">Read more</a>
+    </div>
+    <div class="usa-width-one-half achievements profile-home">
+      <div data-target="achievements-feed" class="achievements-feed"></div>
+      <a class="achievements read-more" href="#">Read more</a>
+    </div>
+
+    <div class="usajobs-opop-dashboard__body">
+      <div data-target="search" class="search"></div>
+      <div data-target="users" class="users"></div>
+    </div>
+  </div>
+</main>

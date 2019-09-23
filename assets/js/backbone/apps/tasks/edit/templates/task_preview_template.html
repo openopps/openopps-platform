@@ -1,0 +1,93 @@
+<h2>Step 3 - Review draft and submit</h2>
+<hr>
+<h1 class="usajobs-open-opps-opportunity-item__title">
+  <%- data.title %>
+</h1>
+<p><em>Desired skills:</em></p>
+<div class="skills">
+  <% _.each(madlibTags['skill'], function (t) { %>
+    <a class="skill-label" href="javascript:void(0)"><%= t.name %></a>
+  <% }) %>
+</div>
+<div class="step-3-flex__wrapper">
+  <div class="step-3-flex__item paragraphs">
+    <h3>Introduction</h3>
+    <%= data.descriptionHtml %>
+    <h3>What you'll do</h3>
+    <%= data.detailsHtml %>
+    <% if (data.outcome) { %>
+      <h3>What you'll learn</h3>
+      <%= data.outcomeHtml %>
+    <% } %>
+    <% if (data.about) { %>
+      <h3>Who we are</h3>
+      <%= data.aboutHtml %>
+    <% } %>
+    <div class="related-keywords">
+      <h3>Related keywords</h3>
+      <div class="keywords">
+        <% _.each(madlibTags['keywords'], function (t) { %>
+          <a class="keyword-label" href="javascript:void(0)"><%= t.name %></a>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="step-3-flex__item personnel">
+    <div class="usajobs-opop__task-intro">
+      <div class="usajobs-grid-full">
+        <div class="usa-width-one-half">
+          <h4>Personnel needed</h4>
+          <p><%- madlibTags['task-people'][0].name.replace(' - ', '-') %></p>
+        </div>
+        <div class="usa-width-one-half">
+          <h4>Time commitment</h4>
+          <p><%- madlibTags['task-time-required'][0].name %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
+            <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
+        </div>
+        <% if (data.completedBy) { %>
+          <div class="usa-width-one-half">
+            <h4>Due date</h4>
+            <p><%- moment(data.completedBy).format('MM/DD/YY') %></p>
+          </div>
+        <% } %>
+        <div class="usa-width-one-half">
+          <h4>Location</h4>
+          <p>
+            <% if (madlibTags['location']) { %>
+              <% _.each(madlibTags['location'], function (location) { %>
+                <%= location.name %>
+              <% }); %>
+            <% } else { %>
+              Virtual
+            <% } %>
+          </p>
+        </div>
+        <% if (madlibTags['series']) { %>
+          <div class="usa-width-one-half">
+            <h4>Series</h4>
+            <p>
+              <% _.each(madlibTags['series'], function (series, index) { %>
+                <% if (index > 0) { %>, <% } %><%- series.name %>
+              <% }) %>
+            </p>
+          </div>
+        <% } %> 
+        <% if (madlibTags['career']) { %>
+          <div class="usa-width-one-half">
+            <h4>Career field</h4>
+            <p>
+              <% _.each(madlibTags['career'], function (career, index) { %>
+                <% if (index > 0) { %>, <% } %><%- career.name %>
+              <% }) %>
+            </p>
+          </div>
+        <% } %> 
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="step-3-flex__item happens-next tips-left">
+  <h4>What happens next?</h4>
+  <p>Once you submit your opportunity, we'll review it. We'll email you within <strong>two business days</strong> with recommended edits or approval.</p>
+  <p>Read our <a href="https://usajobs.github.io/openopps-help/opportunity/" target="_blank">step-by-step process<span class="sr-only">Opens in a new window</span></a> to learn more about creating an opportunity.</p>
+</aside>

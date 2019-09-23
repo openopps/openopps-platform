@@ -1,0 +1,180 @@
+<section class="usajobs-shell">
+  <div id="container" class="unauthorized">
+    <main class="usajobs-opop">
+
+      <div class="openopps-welcome">
+        <div class="usajobs-grid openopps-welcome__container">
+          <h1>Welcome to Open Opportunities!</h2>
+          <p>Discover opportunities that will help you find new connections, advance your career, and make a difference across government.</p>
+        </div>
+      </div>
+
+      <div id="create-your-profile" class="usajobs-grid openopps-create-profile <% if(!isGuest) { %>hidden<% } %>">
+        <div class="usa-form-xl">
+          <h2>Create your profile</h2>
+          <p>It looks like you don't have a USAJOBS profile. To get started, select the group you belong to.</p>
+          <ul class="usajobs-card-buttons">
+            <li class="usajobs-card-button--slim">
+              <input type="radio" value="fed" name="SelectedHiringPaths" id="hiring-path-fed">
+              <label for="hiring-path-fed">
+                <div class="usajobs-unique-hiring-paths__icon">
+                  <img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal Employees icon">
+                </div>
+                Federal Employee
+                <span class="usajobs-card-button__sub-text usajobs-card-button--slim__sub-text-with-icon">Current or former federal employees in the competitive or excepted service.</span>
+              </label>
+            </li>
+            <li class="usajobs-card-button--slim">
+              <input type="radio" value="student" name="SelectedHiringPaths" id="hiring-path-student">
+              <label for="hiring-path-student">
+                <div class="usajobs-unique-hiring-paths__icon">
+                  <img src="/img/icons/hiring-paths/svg/students.svg" alt="Students icon">
+                </div>
+                Student
+                <span class="usajobs-card-button__sub-text usajobs-card-button--slim__sub-text-with-icon">Current students enrolled in, or accepted at, accredited educational institutions from high school to graduate level. Includes internships, pathways and other student programs.</span>
+              </label>
+            </li>
+            <li class="usajobs-card-button--slim">
+              <input type="radio" value="contractor" name="SelectedHiringPaths" id="hiring-path-contractor">
+              <label for="hiring-path-contractor">
+                <div class="usajobs-unique-hiring-paths__icon">
+                  <img src="/img/icons/hiring-paths/svg/contractors.svg" alt="Contractors icon">
+                </div>
+                Contractor
+                <span class="usajobs-card-button__sub-text usajobs-card-button--slim__sub-text-with-icon">Current contractors working for the Federal Government.</span>
+              </label>
+            </li>
+          </ul>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <a href="/" class="usa-button usa-button-secondary usa-button-left" id="cancel-choose-profile">Back</a>
+              <button id="continue-choose-profile" class="usa-button usa-button-primary usajobs-button_bar__save" disabled>Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="profile-student" class="usajobs-grid openopps-create-profile hidden">
+        <div class="usa-form-xl">
+          <h2><img class="openopps-create-profile-header__icon" src="/img/icons/hiring-paths/svg/students.svg" alt="Students icon">Student</h2>
+          <p><strong>To access Open Opportunities, you need to create a USAJOBS profile. Make sure you:</strong></p>
+          <ul>
+            <li>Choose <strong>Student</strong> as one of your hiring paths.</li>
+            <li>Complete as much of your profile as possible.</li>
+          </ul>
+          <p>A complete profile will save you time and effort later. If you apply to an internship, we'll use this information to automatically populate your application(s).</p>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-student-create-profile">Back</button>
+              <a href="<%- studentURL %>" id="continue-student-create-profile" class="usa-button usa-button-primary usajobs-button_bar__save">Create your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="profile-federal-employee" class="usajobs-grid openopps-create-profile hidden">
+        <div class="usa-form-xl">
+          <h2><img class="openopps-create-profile-header__icon" src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal Employees icon">Federal Employee</h2>
+          <p><strong>To access Open Opportunities, you need to create a USAJOBS profile. Make sure you:</strong></p>
+          <ul>
+            <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ul>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-federal-create-profile">Back</button>
+              <a href="<%- fedURL %>" id="continue-federal-create-profile" class="usa-button usa-button-primary usajobs-button_bar__save">Create your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="profile-contractor" class="usajobs-grid openopps-create-profile hidden">
+        <div class="usa-form-xl">
+          <h2><img class="openopps-create-profile-header__icon" src="/img/icons/hiring-paths/svg/contractors.svg" alt="Contractors icon">Federal Contractor</h2>
+          <p><strong>If you're a federal contractor and need access to Open Opportunities, you need to create a USAJOBS profile. Make sure you:</strong></p>
+          <ul>
+            <li>Choose the hiring path(s) that fit you.</li>
+            <li>Select <strong>I am a current contractor working for the Federal Government</strong> in the <strong>Experience-Federal service</strong> section.</li>
+            <li>Include the agency you're currently working for.</li>
+            <li>Add your federal email address.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ul>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel-federal-create-profile">Back</button>
+              <a href="<%- fedURL %>" id="continue-federal-create-profile" class="usa-button usa-button-primary usajobs-button_bar__save">Create your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="missing-info-federal-employee" class="usajobs-grid openopps-create-profile <% if(isGuest || (hiringPath != 'fed' && hiringPath != 'contractor')) { %>hidden<% } %>">
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Your profile is missing information.</h2>
+        <div class="usa-form-xl">
+          <p><strong>To access Open Opportunities, you need to update your USAJOBS profile to:</strong></p>
+          <ul>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ul>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <a href="<%- fedURL %>" id="federal-edit-profile" class="usa-button usa-button-primary usa-button-left">Edit your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="missing-info-both" class="usajobs-grid openopps-create-profile <% if(isGuest || hiringPath == 'fed' || hiringPath == 'contractor') { %>hidden<% } %>">
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Your profile is missing information.</h2>
+        <div class="usa-form-xl">
+          <p>Only students and federal employees can access Open Opportunities. Update your USAJOBS profile to tell us if you're a student or federal employee.</p>
+          <p><strong>If you're a student:</strong></p>
+          <ul>
+            <li>Choose <strong>Student</strong> as one of your hiring paths.</li>
+          </ul>
+          <p><strong>If you're a federal employee trying to access Open Opportunities:</strong></p>
+          <ul>
+            <li>Choose <strong>Federal Employee</strong> as your hiring path.</li>
+            <li>Include your current agency in the <strong>Experience</strong> section.</li>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ul>
+          <p><strong>If you're a contractor currently working for the Federal Government:</strong></p>
+          <ul>
+            <li>Choose the hiring path(s) that fit you.</li>
+            <li>Choose <strong>I am a current contractor working for the Federal Government</strong> in the <strong>Experience-Federal service</strong> section.</li>
+            <li>Include the agency you're currently working for.</li>
+            <li>Add your federal email address.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ul>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <a href="<%- studentURL %>" id="both-edit-profile" class="usa-button usa-button-primary usa-button-left">Edit your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="validate-email-address" class="usajobs-grid openopps-create-profile hidden">
+        <h2 class="missing-info"><img class="openopps-create-profile-header__icon" src="/img/alerts/warning-yellow.svg" alt="Warning icon">Confirm your federal email address.</h2>
+        <div class="usa-form-xl">
+          <p><strong>To access Open Opportunities, you need to update your USAJOBS profile to:</strong></p>
+          <ol>
+            <li>Add your federal email address in the <strong>Experience</strong> section.</li>
+            <li>Confirm your federal email address &mdash; look for the confirmation email in your inbox.</li>
+          </ol>
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <a href="<%- fedURL %>" id="confirm-email-address" class="usa-button usa-button-primary usa-button-left">Edit your profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</section>

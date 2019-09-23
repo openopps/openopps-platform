@@ -1,0 +1,227 @@
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter opportunity-gutter">
+    <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert"  id="alert-closed" <% if (model.state != 'closed') { %>style="display: none;"<% } %>>
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+      </div>
+      <div class="usajobs-alert__body">
+        <p class="usa-alert-text">
+          This opportunity is <strong>closed</strong>.  It is no longer active, and no more modifications may be made.
+        </p>
+      </div>
+      <% if (alert.dismiss) { %>
+      <button class="usajobs-alert__close" data-behavior="alert.close">
+        <span class="usajobs-assistive-text">Close</span>
+      </button>
+      <% } %>
+    </div>
+    <% if (fromSearch) { %>
+      <div class="back-link" role="navigation" aria-label="Back to results"><a href="javascript:history.back()"><i class="fas fa-chevron-left"></i> Back to results</a></div>
+    <% } %>
+    <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+          <div class="usajobs-width-two-thirds">
+            <h1 class="usajobs-open-opps-opportunity-item__title"><%- model.title %></h1>
+            <div class="skills">
+              <div>Desired skills:</div>
+              <% _.each(madlibTags['skill'], function (t) { %>
+                <a class="skill-label" href="/search/internships?skill=<%= t.name %>"><%= t.name %></a>
+              <% }) %>
+            </div>
+          </div>
+
+          <div class="usajobs-width-one-third">
+            <div class="usajobs-open-opps-opportunity-requestor__wrapper">
+              <div class="usajobs-open-opps-opportunity-requestor">
+                <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure dos">
+                    
+                  </div>
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <p class="usajobs-open-opps-opportunity-requestor__name dos">
+                    U.S. Department of State
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="usajobs-opop-actions__col-sub-actions usajobs-opop-actions--v1-5__col-sub-actions">             
+          <% if (user && user.hiringPath != 'student' ) { %>
+         <% if(model.communityUser && model.communityUser.is_closed_group== true && model.communityUser.disabled== true){ %>                
+           <div></div>                     
+           <% } else { %>
+        <div><a class="usajobs-opop-actions__duplicate" href="#duplicate" id="internship-copy"><i class="fa fa-copy"></i> Duplicate</a></div>
+           <% } %>
+         <% } %>
+              <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
+              <% if (model.canEditTask && model.state != 'completed') { %>
+                <div><a class="usajobs-opop-actions__edit" href="/internships/<%- model.id %>/edit" id="internship-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
+              <% } else { %>
+                <% if (model.saved) { %>
+                  <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='unsave'><i class="fa fa-star"></i> Saved</a></div>
+                <% } else { %>
+                  <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='save'><i class="far fa-star"></i> Save</a></div>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile overview">
+        <div class="usajobs-grid-full">
+          <div class="usa-width-one-third personnel-needed mobile">
+            <div class="usajobs-opop__task-intro">
+              <% if (model.bureau) { %>
+              <h4>Bureau</h4>
+              <div>
+                <%- model.bureau.name %>
+              </div>
+              <% } %>
+              <% if (model.office) { %>
+              <h4>Office/Post</h4>
+              <div>
+                <%- model.office.name %>
+              </div>
+              <% } %>
+              <h4>Location</h4>
+              <div>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
+              </div>
+              <% if (model.country) { %>
+                <h4>Country</h4>
+                <div>
+                  <%- model.country.value %>
+                </div>
+              <% } %>
+              <% if (model.cycle) { %>
+                <h4>Time commitment</h4>
+                <div>
+                  <%-moment(model.cycle.cycleStartDate.split('T')[0]).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate.split('T')[0]).format('MMMM YYYY')%> 
+                </div>  
+                <div>32-40 hours per week</div>
+              <% } %>   
+              <h4>Number of interns</h4>
+              <div>
+                <%- model.interns %>
+              </div>
+            </div>
+          </div>
+          <div class="usa-width-two-thirds opportunity-description">
+            <div class="usajobs-open-opps-opportunity__desc">
+              <h3>Who we are</h3>
+              <%= model.aboutHtml %>
+              <h3>What you'll do</h3>
+              <%= model.detailsHtml %>             
+              <% if (model.language.length > 0) { %>
+              <h3>Foreign language</h3>
+              <p>The following language(s) may be helpful in the internship.</p>  
+              <% _.each(model.language, function (l,index) { %>         
+              <div class="usajobs-grid-full">
+                <h4><%- l.selectLanguage %></h4>
+                <div class="usajobs-width-one-half">
+                  <ul class="languages-drawer-content__list">
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Speaking language skill level</h5>
+                      <p><%- l.spokenSkillLevel %></p>
+                    </li>
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Reading language skill level</h5>
+                      <p><%- l.readSkillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
+                <div class="usajobs-width-one-half">
+                  <ul class="languages-drawer-content__list">
+                    <li class="languages-drawer-content__item">
+                      <h5 class="languages-drawer-content__item-label">Writing language skill level</h5>
+                      <p><%- l.writtenSkillLevel %></p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <% }); %>
+              <% } %>
+            </div>
+          </div>
+          <div class="usa-width-one-third personnel-needed desktop">
+            <div class="usajobs-opop__task-intro">
+              <% if (model.bureau) { %>
+              <h4>Bureau</h4>
+              <div>
+                <%- model.bureau.name %>
+              </div>
+              <% } %>
+              <% if (model.office) { %>
+              <h4>Office/Post</h4>
+              <div>
+                <%- model.office.name %>
+              </div>
+              <% } %>
+              <h4>Location</h4>
+              <div>
+                <% if (model.countrySubdivision) { %>
+                  <%= (model.cityName) ? model.cityName + ', ' + model.countrySubdivision.value : 'Virtual' %>
+                <% } else { %>
+                  <%= (model.cityName) ? model.cityName : 'Virtual' %>
+                <% } %>
+              </div>
+              <% if (model.country) { %>
+                <h4>Country</h4>
+                <div>
+                  <%- model.country.value %>
+                </div>
+              <% } %>
+              <% if (model.cycle) { %>
+                <h4>Time commitment</h4>
+                <div>
+                  <%-moment(model.cycle.cycleStartDate.split('T')[0]).format('MMMM YYYY')%> - <%-moment(model.cycle.cycleEndDate.split('T')[0]).format('MMMM YYYY')%>
+                </div>    
+                <div> 32-40 hours per week</div>
+              <% } %>
+              <h4>Number of interns</h4>
+              <div>
+                <%- model.interns %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="internship-applicants" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display: none"></div>
+      <div id="internship-interns" class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile" style="display: none"></div>
+      </main>
+    </main>
+    <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') {%>
+      <aside class="usajobs-rightrail internship" id="rightrail">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <h3>Before you apply</h3>
+          <p>To apply to the U.S. Department of State Student Internship Program (Unpaid), you must:</p>
+          <ul>
+            <li>Be a U.S. citizen.</li>
+            <li>Be a current student.</li>
+            <li>Have at least a 3.0 GPA on a 4-point scale.</li>
+            <li>Be able to receive and maintain a security clearance.</li>
+          </ul>
+          <h4>For more information</h4>
+          <p>Visit the <a href="https://careers.state.gov/intern/student-programs/" target="_blank">U.S. Department of State Student Internship Program (Unpaid) </a> website.</p>
+          <% var today = new Date(); if (today >= new Date(model.cycle.applyStartDate) && today <= new Date(model.cycle.applyEndDate)) { %>
+          <% if (!window.cache.currentUser || window.cache.currentUser.hiringPath == 'student') { %>
+            <% if (model.application) { %>
+              <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update application</span></a>
+    
+              <% } else { %>
+                <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
+              <% } %>
+          <% } %>
+          <% } %>
+        </div>
+      </aside>
+    <% } %>
+  </div>
+</section>

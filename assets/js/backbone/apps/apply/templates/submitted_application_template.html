@@ -1,0 +1,83 @@
+<div id="process-title-banners"></div>
+
+<div class="usajobs-content-gutter opportunity-gutter internship">
+  <div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <p class="usa-alert-text"></p>
+    </div>
+  </div>
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+    <div class="usajobs-profile-home-section">
+      <h2 class="usajobs-profile-home-section__title">Submitted application</h2>
+      <fieldset class="usajobs-fieldset">
+        <div class="usajobs-profile-home-section__body">
+          <p>You have submitted the following application to the <%= communityName.community_name %> for <%= cycle.name %>.</p>
+          <% if (new Date(cycle.apply_end_date) > new Date()) { %>
+            <button class="usa-button usa-button-primary update-application">Update</button>
+            <button class="usa-button usa-button-secondary-alert-outline withdraw-application">Withdraw</button>
+          <% } %>
+          <h3 class="usajobs-profile-home-section__sub-section">
+            Applied to these internship opportunities
+          </h3>
+        </div>
+        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
+          <% if (firstChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>1st choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- firstChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+          <% if (secondChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>2nd choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- secondChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+          <% if (thirdChoice) { %>
+            <div class="usajobs-card--large review-application">
+              <h4>3rd choice</h4>
+              <h3 class="usajobs-card__title" itemprop="title">
+                <%- thirdChoice.title %>
+              </h3>
+              <div class="usajobs-card__body">
+                <h5 class="program-label">
+                  Bureau/Office
+                </h5>
+                <p>
+                  <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+        <div class="usajobs-profile-home-section__body submitted-application-last">
+          
+        </div>
+      </fieldset>
+    </div>
+  </main>
+</div>

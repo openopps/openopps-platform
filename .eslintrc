@@ -1,26 +1,27 @@
 {
     "rules": {
-        "no-unused-vars": [ 0 ],
+        "no-unused-vars": [ "off" ],
         "indent": [
-          2,
+          "error",
           2,
           {
             "SwitchCase": 1,
             "VariableDeclarator": 2
           }
         ],
-        "quotes": [ 2, "single" ],
-        "linebreak-style": [ 2, "unix" ],
-        "semi": [ 2, "always" ],
-        "comma-dangle": [ 1, "always-multiline" ],
-        "no-console": [ 0 ],
-        "no-undef": [ 0 ],
-        "space-before-function-paren": [ 2, "always" ]
+        "quotes": [ "error", "single", { "avoidEscape": true, "allowTemplateLiterals": true } ],
+        "semi": [ "error", "always" ],
+        "comma-dangle": [ "warn", "always-multiline" ],
+        "no-console": [ "off" ],
+        "no-undef": [ "off" ],
+        "space-before-function-paren": [ "error", "always" ]
+    },
+    "parserOptions": {
+      "ecmaVersion": 8
     },
     "env": {
         "node": true,
-        "browser": true,
-        "es6": true
+        "browser": true
     },
     "extends": "eslint:recommended"
 }

@@ -1,7 +1,6 @@
 ---
 inherit: manifest.yml
-host: openopps-staging
+no-hostname: true
+domain: openopps.uat.usajobs.gov
 instances: 1
 memory: 512M
-env:
-  THEME: https://github.com/18F/open-opportunities-theme.git

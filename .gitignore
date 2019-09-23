@@ -15,6 +15,8 @@ cf-ssh.yml
 
 npm-debug.log
 
+.node_history
+
 # Ignore modules, should be built using `node install`
 node_modules
 
@@ -28,6 +30,9 @@ config/local.js
 assets/build
 assets/uploads
 assets/js/bundle.js
+assets/styles/main.css
+dist/
+bin/
 
 # Ignore uswds files, these are set up during npm install
 assets/styles/uswds.css
@@ -43,6 +48,9 @@ chef/cookbooks/*
 *.bak
 *.swp
 
+# ignore vscode config file
+.vscode/*
+
 .DS_STORE
 .tmp
 *.idea
@@ -52,6 +60,7 @@ chef/cookbooks/*
 
 # code coverage
 coverage
+.nyc_output
 
 .python-version
 .sass-cache/*
@@ -59,3 +68,6 @@ npm-debug.log*
 
 # Temporary root directory
 tmp/
+
+# ignore npm audit
+.audit

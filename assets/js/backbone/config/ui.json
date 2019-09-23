@@ -1,12 +1,12 @@
 {
   "home": {
-    "logged_in_path": "/dashboard"
+    "logged_in_path": "/home"
   },
   "faq" : {
     "show" : false,
     "url"  : "/faq"
   },
-  "systemEmail" : "test@midas.com",
+  "systemEmail" : "openopps@usajobs.gov",
   "contact": {
     "name": "openopps-platform group",
     "link": "https://groups.google.com/forum/#!forum/openopps-platform"
@@ -18,27 +18,35 @@
   "states" : [
     {
       "value": "draft",
-      "label":"Draft"
+      "label":"Draft",
+      "hide": true
     },
     {
       "value": "submitted",
-      "label":"Submitted"
+      "label":"Submitted",
+      "hide": true
     },
     {
       "value": "open",
       "label":"Open"
     },
     {
-      "value":"assigned",
-      "label":"Assigned"
+      "value": "not open",
+      "label":"Not open",
+      "hide": true
+    },
+    {
+      "value":"in progress",
+      "label":"In progress"
     },
     {
       "value": "completed",
       "label":"Completed"
     },
     {
-      "value":"archived",
-      "label":"Archived"
+      "value":"canceled",
+      "label":"Canceled",
+      "hide": true
     }
   ],
   "modalHome" : {
