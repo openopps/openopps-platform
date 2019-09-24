@@ -14,8 +14,11 @@
         <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
            <option value="" disabled>- Sort By -</option>
            <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>  
-          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>       
-          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>     
+          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option> 
+          <% if (target == 'sitewide') { %>     
+          <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>   
+          <% } %>     
+          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>            
         </select>
       </div>   
       <% } %> 
