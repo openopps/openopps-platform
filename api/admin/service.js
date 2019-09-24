@@ -87,14 +87,20 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
 
-  //This will get replaced with DoS own filter query for new ticket that is still in backlog.  Jodi
-  var agency = '';
-  if (community.targetAudience != 'Students') {
-    agency = 'or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
-  } 
+  var agency = "";
+  var office = "";
+  var bureau = "";
+
+  if (community.targetAudience != "Students") {
+    var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    var office = ' or lower(office->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+    var bureau = ' or lower(bureau->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  }
 
   if (filter) {
-    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() + '%\'' + agency + ')';
+    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() 
+    + '%\'' + agency + office + bureau +')';
   } 
 
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));

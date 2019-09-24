@@ -20,7 +20,17 @@ with tasks as (
 				join midas_user on application.user_id = midas_user.id
 				where application_task.task_id = task.id
 			) users
-		) as applicants
+		) as applicants,
+		(select row_to_json (office)
+			from (
+				select * from office where task.office_id = office.office_id
+			) office
+		) as office,
+		(select row_to_json (bureau)
+			from (
+				select * from bureau where task.bureau_id = bureau.bureau_id
+			) bureau
+		) as bureau
 	from task
 	left join cycle on task.cycle_id = cycle.cycle_id
 )
