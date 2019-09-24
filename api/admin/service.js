@@ -87,6 +87,10 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
 
+  var agency = "";
+  var office = "";
+  var bureau = "";
+
   if (community.targetAudience != "Students") {
     var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
   } else {

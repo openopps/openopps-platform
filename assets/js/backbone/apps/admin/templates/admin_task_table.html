@@ -29,6 +29,10 @@
     <tr>
       <th>Title</th>
       <th>Creator</th>
+      <% if (targetAudience == 'Students') { %>
+      <th>Bureau</th>
+      <th>Office/post</th>
+      <% } %> 
       <% if (target == 'sitewide') { %>    
       <th >Agency</th>
       <% } %> 
@@ -81,6 +85,18 @@
           </a>
           <% } %>
         </td>
+        <% if (targetAudience == 'Students') { %>    
+        <td class="metrics-table__agency center">
+          <% if (task.bureau) { %>
+          <%- task.bureau.name %>
+          <% } %> 
+        </td>
+        <td class="metrics-table__agency center">
+          <% if (task.office) { %>
+          <%- task.office.name %>
+          <% } %> 
+        </td>
+          <% } %> 
         <% if (target == 'sitewide') { %>  
         <td class="metrics-table__agency center">
             <% if (task.agency) { %>
