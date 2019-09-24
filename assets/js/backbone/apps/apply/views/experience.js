@@ -373,8 +373,8 @@ var experience = {
   },
 
   formatExperienceDates: function (data) {
-    var startDate = new Date(data.startDate);
-    var endDate = new Date(data.endDate);
+    var startDate = new Date(moment((data.startDate || '').split('T')[0]).format('YYYY/MM/DD'));
+    var endDate = new Date(moment((data.endDate || '').split('T')[0]).format('YYYY/MM/DD'));
     if (experience.isValidDate(startDate)) {       
       var startDateMonthStr=  (startDate.getMonth()+ 1).toString();     
       if(startDateMonthStr.length<2) {
