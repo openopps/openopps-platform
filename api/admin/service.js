@@ -27,6 +27,8 @@ function getOrderByClause (sortValue) {
       return 'lower(tasks.title)';
     case 'creator':
       return 'lower(tasks.owner->>\'last_name\'), lower(tasks.owner->>\'given_name\')';
+    case 'agency':
+      return 'lower(tasks.agency->>\'name\')';
     default:
       return 'tasks."createdAt" desc';
   }
@@ -43,7 +45,7 @@ function getUserListOrderByClause (sortValue) {
     case 'isAdmin':
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
-        return 'users."isAgencyAdmin" desc';
+      return 'users."isAgencyAdmin" desc';
     case 'is_manager':
       return 'users.is_manager desc';
     case 'agency':
@@ -498,7 +500,7 @@ module.exports.getCommunity = async function (id) {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
   }
   community.tasks = (await db.query(taskStateTotalsQuery, id)).rows;
-  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
   return community;
 };
 
