@@ -91,7 +91,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
   var office = "";
   var bureau = "";
 
-  if (community.targetAudience != "Students") {
+  if (community.referenceId != "dos") {
     var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
   } else {
     var office = ' or lower(office->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
