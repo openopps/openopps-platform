@@ -140,7 +140,7 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   filter: function (e) {
-    var val = $('#task-filter').val().trim();
+    var val = ($('#task-filter').val() || '').trim();
     if (val == this.data.filter) {
       return;
     }
@@ -151,7 +151,7 @@ var AdminTaskView = Backbone.View.extend({
   },
 
   filterChanged: function () {
-    var val = $('#task-filter').val().trim();
+    var val = ($('#task-filter').val() || '').trim();
     this.data.filter = val;
     var status = $('input[name=opp-status]:checked').val();
     this.data.status = status;
