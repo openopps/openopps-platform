@@ -12,9 +12,13 @@
           Sort by
         </label>
         <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
-           <option value="" disabled>- Sort By -</option>
-           <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>  
-          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option> 
+          <option value="" disabled>- Sort By -</option>
+          <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>  
+          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>
+          <% if (referenceId == 'dos') { %>
+          <option value="bureau" <% if (sort == 'bureau') { %>selected<% } %>>Bureau</option>
+          <option value="office" <% if (sort == 'office') { %>selected<% } %>>Office/post</option>
+          <% } %>
           <% if (target == 'sitewide') { %>     
           <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>   
           <% } %>     
