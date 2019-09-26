@@ -12,14 +12,12 @@ with tasks as (
 				) muser
 		) as owner,
 		(
-			select json_agg (users)
+			select count (applications)
 			from (
-				select midas_user.id, midas_user.name, midas_user.given_name, midas_user.last_name, midas_user.username, midas_user.government_uri
+				select application_task.task_id
 				from application_task
-				join application on application_task.application_id = application.application_id
-				join midas_user on application.user_id = midas_user.id
 				where application_task.task_id = task.id
-			) users
+			) applications
 		) as applicants,
 		(select row_to_json (office)
 			from (
