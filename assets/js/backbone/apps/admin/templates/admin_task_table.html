@@ -81,8 +81,8 @@
           </div>
           <% } else if (task.applicants) { %>
             <div class="sign-ups">
-              <strong><%- task.applicants.length %> applicant<% if (task.applicants.length != 1) { %>s<% } %>:</strong>
-              <% if (task.applicants.length > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
+              <strong><%- task.applicants %> applicant<% if (task.applicants != 1) { %>s<% } %>:</strong>
+              <% if (task.applicants > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
             </div>
           <% } %>
         </td>
