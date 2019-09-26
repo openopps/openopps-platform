@@ -29,6 +29,10 @@ function getOrderByClause (sortValue) {
       return 'lower(tasks.owner->>\'last_name\'), lower(tasks.owner->>\'given_name\')';
     case 'agency':
       return 'lower(tasks.agency->>\'name\')';
+    case 'bureau':
+      return 'lower(tasks.bureau->>\'name\')';
+    case 'office':
+        return 'lower(tasks.office->>\'name\')';
     default:
       return 'tasks."createdAt" desc';
   }
