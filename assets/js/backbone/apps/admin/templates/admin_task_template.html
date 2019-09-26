@@ -69,19 +69,19 @@
     </ul>
   </fieldset>
 </div>
-<% if (community.communityName) { %>
 <div class="usajobs-grid-full task-filter">
   <div class="usa-width-one-half">
     <label class="sr-only" for="task-filter">Filter</label>
     <% if (community.referenceId == "dos") { %>
       <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Bureau/Office post" value="<%= filter %>">
-      <% } else { %>
+    <% } else if (agency.name) { %>
+      <input type="text" class="" id="task-filter" placeholder="Filter by Title, or Creator" value="<%= filter %>">
+    <% } else { %>
       <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Agency" value="<%= filter %>">
     <% } %>
     <button id="task-filter-search" class="task-filter-search-button">Search</button>
   </div>
 </div>
-<% } %>
 
 <div id="task-table" class="table-responsive"></div>
 

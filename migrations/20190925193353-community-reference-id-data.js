@@ -14,9 +14,11 @@ exports.setup = function (options, seedLink) {
   seed = seedLink;
 };
 
-exports.up = function (db, callback) {
-  db.runSql(`update community set reference_id = 'dos' where community_name = 'U.S. Department of State Student Internship Program (Unpaid)'`, callback);
-  db.runSql(`update community set reference_id = 'vsfs' where community_name = 'Virtual Student Federal Service (VSFS)'`, callback);
+exports.up = function (db) {
+  return Promise.all([
+    db.runSql(`update community set reference_id = 'dos' where community_name = 'U.S. Department of State Student Internship Program (Unpaid)'`),
+    db.runSql(`update community set reference_id = 'vsfs' where community_name = 'Virtual Student Federal Service (VSFS)'`),
+  ]);
 };
 
 exports.down = function (db) {
