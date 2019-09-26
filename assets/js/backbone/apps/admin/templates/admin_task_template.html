@@ -73,7 +73,7 @@
 <div class="usajobs-grid-full task-filter">
   <div class="usa-width-one-half">
     <label class="sr-only" for="task-filter">Filter</label>
-    <% if (community.targetAudience == "Students") { %>
+    <% if (community.referenceId == "dos") { %>
       <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Bureau/Office post" value="<%= filter %>">
       <% } else { %>
       <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Agency" value="<%= filter %>">

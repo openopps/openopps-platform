@@ -29,7 +29,7 @@
     <tr>
       <th>Title</th>
       <th>Creator</th>
-      <% if (targetAudience == 'Students') { %>
+      <% if (referenceId == 'dos') { %>
       <th>Bureau</th>
       <th>Office/post</th>
       <% } %> 
@@ -58,7 +58,11 @@
   <tbody>
     <% if (tasks.length === 0) { %>
       <tr class="empty-row">
+        <% if (referenceId === 'dos') { %>
+        <td colspan="7">No tasks</td>
+        <% } else { %>
         <td colspan="5">No tasks</td>
+        <% } %>
       </tr>
     <% } %>
     <% _.each(tasks, function (task) { %>
@@ -85,7 +89,7 @@
           </a>
           <% } %>
         </td>
-        <% if (targetAudience == 'Students') { %>    
+        <% if (referenceId == 'dos') { %>    
         <td class="metrics-table__agency center">
           <% if (task.bureau) { %>
           <%- task.bureau.name %>
@@ -96,7 +100,7 @@
           <%- task.office.name %>
           <% } %> 
         </td>
-          <% } %> 
+        <% } %> 
         <% if (target == 'sitewide') { %>  
         <td class="metrics-table__agency center">
             <% if (task.agency) { %>
