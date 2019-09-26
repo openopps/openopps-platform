@@ -21,6 +21,15 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
+function getTaskFilterClause (filter, filterAgency) {
+  var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
+    `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
+  if (filterAgency) {
+    filterClause += ` or lower(tasks.agency->>'name') like '%` + filter.toLowerCase() + `%'`;
+  }
+  return '(' + filterClause + ')';
+}
+
 function getOrderByClause (sortValue) {
   switch (sortValue) {
     case 'title':
@@ -111,10 +120,14 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
   ]);
 };
 
-module.exports.getTaskStateMetrics = async function (state, page, sort) {
+module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
   var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
+  if (filter) {
+    whereClause += ' and ' + getTaskFilterClause(filter, true);
+  }
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, true) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery),
