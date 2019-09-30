@@ -13,19 +13,19 @@
         </label>
         <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
           <option value="" disabled>- Sort By -</option>
-          <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>  
+          <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
           <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>
           <% if (referenceId == 'dos') { %>
           <option value="bureau" <% if (sort == 'bureau') { %>selected<% } %>>Bureau</option>
           <option value="office" <% if (sort == 'office') { %>selected<% } %>>Office/post</option>
           <% } %>
-          <% if (target == 'sitewide') { %>     
-          <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>   
-          <% } %>     
-          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>            
+          <% if (target == 'sitewide') { %>
+          <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+          <% } %>
+          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>
         </select>
-      </div>   
-      <% } %> 
+      </div>
+      <% } %>
   </div>
 </div>
 <table class="usa-table-borderless task-table" role="presentation">
@@ -36,10 +36,15 @@
       <% if (referenceId == 'dos') { %>
       <th>Bureau</th>
       <th>Office/post</th>
-      <% } %> 
-      <% if (target == 'sitewide') { %>    
-      <th >Agency</th>
-      <% } %> 
+      <% } %>
+      <% if (target == 'sitewide') { %>
+      <th>Agency</th>
+      <% } %>
+      <% if (target == 'community') { %>
+        <% if (referenceId !== 'dos') { %>
+        <th>Agency</th>
+        <% } %>
+      <% } %>
       <th class="center">Date</th>
       <% if (status == 'submitted') { %>
         <% if (targetAudience !== 'Students') { %>
@@ -105,13 +110,22 @@
           <% } %> 
         </td>
         <% } %> 
-        <% if (target == 'sitewide') { %>  
+        <% if (target == 'sitewide') { %>
         <td class="metrics-table__agency center">
             <% if (task.agency) { %>
             <%- task.agency.name %>
-            <% } %> 
+            <% } %>
         </td>
-        <% } %> 
+        <% } %>
+        <% if (target == 'community') { %>
+          <% if (referenceId !== 'dos') { %>
+            <td class="metrics-table__agency center">
+              <% if (task.agency) { %>
+              <%- task.agency.name %>
+              <% } %>
+            </td>
+          <% } %>
+        <% } %>
         <td class="metrics-table__date">
           <%- moment(task.createdAt).format('MM/DD/YY') %>
       </td>
