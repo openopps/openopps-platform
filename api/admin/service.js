@@ -214,7 +214,7 @@ module.exports.getTopContributors = function () {
       db.query(topAgencyParticipants, [FY.start, FY.end]),
     ]).then(results => {
       resolve({
-        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
         creators: results[0].rows,
         creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         participants: results[1].rows,
@@ -242,7 +242,7 @@ module.exports.getTopAgencyContributors = function (agencyId) {
       // db.query(topAgencyParticipants, [FY.start, FY.end]),
     ]).then(results => {
       resolve({
-        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
         creators: results[0].rows,
         creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         // participants: results[1].rows,
