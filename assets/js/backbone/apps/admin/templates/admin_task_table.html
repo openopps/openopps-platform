@@ -22,6 +22,11 @@
           <% if (target == 'sitewide') { %>
           <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
           <% } %>
+          <% if (target == 'community') { %>
+            <% if (referenceId !== 'dos') { %>
+              <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+            <% } %>
+          <% } %>
           <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>
         </select>
       </div>
