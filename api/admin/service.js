@@ -143,6 +143,10 @@ module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, pag
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAgencyTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
   var whereClause = 'tasks.agency_id = ? and tasks.community_id is null and ' + getWhereClauseForTaskState(state);
+  if (filter) {
+    whereClause += ' and ' + getTaskFilterClause(filter);
+  }
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter) : ''));
   tasksByStateQuery =  tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery, agencyId),
