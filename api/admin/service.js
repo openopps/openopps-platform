@@ -93,7 +93,6 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
-   
   } else {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
@@ -116,6 +115,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
     + '%\'' + agency + office + bureau +')';
   } 
 
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos") : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
   return Promise.all([
@@ -234,7 +234,7 @@ module.exports.getTopContributors = function () {
       db.query(topAgencyParticipants, [FY.start, FY.end]),
     ]).then(results => {
       resolve({
-        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
         creators: results[0].rows,
         creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         participants: results[1].rows,
@@ -262,7 +262,7 @@ module.exports.getTopAgencyContributors = function (agencyId) {
       // db.query(topAgencyParticipants, [FY.start, FY.end]),
     ]).then(results => {
       resolve({
-        fiscalYear: 'FY' + today.getFullYear().toString().substr(2),
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
         creators: results[0].rows,
         creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
         // participants: results[1].rows,
@@ -524,8 +524,8 @@ module.exports.getCommunity = async function (id) {
     var filterState = { task_state: 'draft' };
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
   }
-  community.tasks = (await db.query(taskStateTotalsQuery, id)).rows;
-  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
+  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
   return community;
 };
 
