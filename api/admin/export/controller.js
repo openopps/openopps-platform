@@ -34,7 +34,7 @@ router.get('/api/admin/export', auth.isAdmin, async (ctx, next) => {
 
 router.get('/api/admin/export/contributor/created', auth.isAdmin, async (ctx, next) => {
   var today= new Date();
-  var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
+  var fiscalYear= 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2);
   if(ctx.state.user.isAdmin) {   
     await service.getExportData('TopContributor','created').then(results => {  
       ctx.response.set('Content-Type', 'text/csv');
@@ -61,7 +61,7 @@ router.get('/api/admin/export/contributor/created', auth.isAdmin, async (ctx, ne
 
 router.get('/api/admin/export/contributor/participant', auth.isAdmin, async (ctx, next) => {
   var today= new Date();
-  var fiscalYear= 'FY' + today.getFullYear().toString().substr(2);
+  var fiscalYear= 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2);
   if(ctx.state.user.isAdmin) {   
     await service.getExportData('TopContributor','participant').then(results => {  
       ctx.response.set('Content-Type', 'text/csv');
@@ -88,7 +88,7 @@ router.get('/api/admin/export/contributor/participant', auth.isAdmin, async (ctx
 
 router.get('/api/admin/export/agency/:id/contributor/created', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   var today = new Date();
-  var fiscalYear = 'FY' + today.getFullYear().toString().substr(2);
+  var fiscalYear = 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2);
   var agency = await service.lookupAgency(ctx.params.id);
   if(ctx.state.user.isAdmin || ctx.state.user.agencyId == ctx.params.id) {
     await service.getExportData('TopContributor','agency-created',ctx.params.id).then(results => {
