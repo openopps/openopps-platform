@@ -1,5 +1,5 @@
 with tasks as (
-	select task.title, task.state, task.cycle_id, task.community_id, task.agency_id, task.accepting_applicants,
+	select task.title, task.state, task.community_id, task.agency_id, task.accepting_applicants,
 	(select row_to_json (muser)
 		from (
 			select
@@ -20,10 +20,10 @@ with tasks as (
 select
 	count(*),
 	case
-		when state = 'open' and cycle.apply_start_date > now() then 'approved'
+		when state = 'in progress' and accepting_applicants = false then 'in progress'
+		when state in ('open', 'in progress') and accepting_applicants = true then 'open'
 		else state
 	end as task_state
 from tasks
-left join cycle on tasks.cycle_id = cycle.cycle_id
 where tasks.state <> 'archived' and tasks.community_id = ? [filter clause]
 group by task_state;
