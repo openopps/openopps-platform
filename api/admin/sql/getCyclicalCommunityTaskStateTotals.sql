@@ -13,7 +13,17 @@ with tasks as (
 		from (
 			select * from agency where task.agency_id = agency.agency_id
 		) agency
-	) as agency		
+	) as agency,
+	(select row_to_json (office)
+			from (
+				select * from office where task.office_id = office.office_id
+			) office
+		) as office,
+		(select row_to_json (bureau)
+			from (
+				select * from bureau where task.bureau_id = bureau.bureau_id
+			) bureau
+		) as bureau
 	from task
 )
 

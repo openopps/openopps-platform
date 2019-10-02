@@ -21,13 +21,13 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
-function getTaskFilterClause (filter, filterAgency) {
+function getTaskFilterClause (filter, filterAgency, extra) {
   var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
     `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
   if (filterAgency) {
     filterClause += ` or lower(tasks.agency->>'name') like '%` + filter.toLowerCase() + `%'`;
   }
-  return '(' + filterClause + ')';
+  return '(' + filterClause + extra + ')';
 }
 
 function getOrderByClause (sortValue) {
@@ -115,7 +115,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
     + '%\'' + agency + office + bureau +')';
   } 
 
-  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos") : ''));
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos", office + bureau) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
   if(cycleId){
