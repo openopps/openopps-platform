@@ -27,7 +27,7 @@ function getTaskFilterClause (filter, filterAgency, extra) {
   if (filterAgency) {
     filterClause += ` or lower(tasks.agency->>'name') like '%` + filter.toLowerCase() + `%'`;
   }
-  return '(' + filterClause + extra + ')';
+  return '(' + _.identity([filterClause, extra]).join(' ') + ')';
 }
 
 function getOrderByClause (sortValue) {
