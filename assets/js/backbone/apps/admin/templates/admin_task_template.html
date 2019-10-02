@@ -14,7 +14,7 @@
   </span>
 </a>
 <h2><%- agency.name || community.communityName || 'Sitewide' %></h2>
-<h3>Opportunities</h3>
+<h3 ><% if(cycleName) { %>Opportunities for <%-cycleName %> <% } else {%> Opportunities <% } %> </h3>
 <div class="usajobs-grid-full">
   <fieldset class="usajobs-fieldset">
     <legend class="usa-sr-only">Opportunity status</legend>
