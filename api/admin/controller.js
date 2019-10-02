@@ -118,8 +118,13 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/communities', auth.isCommunityAdmin, async (ctx, next) => {
-  ctx.body = await service.getCommunities(ctx.state.user);
+router.get('/api/admin/communities', auth, async (ctx, next) => {
+  var communities =  await service.getCommunities(ctx.state.user);
+  if (communities.length) {
+    ctx.body = communities;
+  } else {
+    ctx.status = 403;
+  }
 });
 
 router.get('/api/admin/community/:id', auth, async (ctx, next) => {
