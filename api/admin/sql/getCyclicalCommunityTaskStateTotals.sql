@@ -25,5 +25,5 @@ select
 	end as task_state
 from tasks
 left join cycle on tasks.cycle_id = cycle.cycle_id
-where tasks.state <> 'archived' and tasks.community_id = ? [filter clause]
+where tasks.state <> 'archived' and tasks.community_id = ? and tasks.cycle_id = ? [filter clause]
 group by task_state;

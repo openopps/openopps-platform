@@ -87,6 +87,10 @@ const communityPostQuery = 'select count(*) from comment ' +
 'join task on comment."taskId" = task.id ' +
 'where task.community_id = ?';
 
+const communityCyclicalPostQuery = 'select count(*) from comment ' +
+'join task on comment."taskId" = task.id ' +
+'where task.community_id = ? and task.cycle_id= ?';
+
 const volunteerCountQuery = 'select ' +
     'count(*) as signups, ' +
     'sum(case when assigned then 1 else 0 end) as assignments, ' +
@@ -106,6 +110,13 @@ const communityVolunteerCountQuery = 'select ' +
   'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ?';
+
+const communityVolunteerCyclicalCountQuery = 'select ' +
+  'count(*) as signups, ' +
+  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer join task on task.id = volunteer."taskId" ' +
+  'where task.community_id = ? and task.cycle_id = ? ';
 
 const communityTaskCreatedPerUserQuery = 'select count(*) as created from task ' +
   'inner join community_user on community_user.user_id = task."userId" ' +
@@ -438,9 +449,11 @@ module.exports = function (db) {
       postQuery: postQuery,
       agencyPostQuery: agencyPostQuery,
       communityPostQuery: communityPostQuery,
+      communityCyclicalPostQuery: communityCyclicalPostQuery,
       agencyVolunteerCountQuery: agencyVolunteerCountQuery,
       volunteerCountQuery: volunteerCountQuery,
       communityVolunteerCountQuery: communityVolunteerCountQuery,
+      communityVolunteerCyclicalCountQuery: communityVolunteerCyclicalCountQuery,
       ownerListQuery: ownerListQuery,
       userListFilteredQuery: userListFilteredQuery,
       userAgencyListFilteredQuery: userAgencyListFilteredQuery,

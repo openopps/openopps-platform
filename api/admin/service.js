@@ -86,13 +86,13 @@ module.exports.getMetrics = async function () {
   return { 'tasks': tasks, 'users': users };
 };
 
-module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page, sort, filter){
+module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleId, state, page, sort, filter){
   var community = await communityService.findById(communityId);
 
   if (community.duration == 'Cyclical') {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
-    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
+    var whereClause = 'tasks.community_id = ? and tasks.cycle_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
   } else {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
@@ -118,10 +118,57 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId, state
   taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos") : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
-  return Promise.all([
-    db.query(taskStateTotalsQuery, communityId),
-    db.query(tasksByStateQuery, [communityId, page]),
-  ]);
+  if(cycleId){
+    return Promise.all([
+      db.query(taskStateTotalsQuery, [communityId,cycleId]),
+      db.query(tasksByStateQuery, [communityId,cycleId, page]),
+    ]);
+  }
+  else {
+    return Promise.all([
+      db.query(taskStateTotalsQuery, communityId),
+      db.query(tasksByStateQuery, [communityId, page]),
+    ]);
+  }
+};
+
+module.exports.getInteractionsForCommunityCyclical = async function (communityId,cycleId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.communityCyclicalPostQuery, communityId,cycleId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.communityVolunteerCyclicalCountQuery, communityId,cycleId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+};
+
+
+module.exports.getCommunityCycle = async function (id,cycleId) {
+  var community = await communityService.findById(id); //await dao.Community.findOne('community_id = ?', id);
+  community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
+  if (community.duration == 'Cyclical') {
+    community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var filterState = false;
+  }
+  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), [id,cycleId])).rows;
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
+  
+  return community;
+};
+
+
+module.exports.getCommunityCyclicalTaskMetrics = async function (communityId,cycleId) {
+  var community = await communityService.findById(communityId);  
+  if (community.duration == 'Cyclical') {   
+    var taskQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskMetrics.sql', 'utf8'); 
+    var applicantsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityApplicantMetrics.sql', 'utf8'); 
+  } 
+  community.tasks = (await db.query(taskQuery, communityId)).rows;
+  community.applicants = (await db.query(applicantsQuery,communityId)).rows;
+  return community;
 };
 
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
@@ -518,14 +565,15 @@ module.exports.getCommunity = async function (id) {
   community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
   if (community.duration == 'Cyclical') {
     community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
-    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+  
     var filterState = false;
   } else {
     var filterState = { task_state: 'draft' };
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
+    community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
+    community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
   }
-  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
-  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
+ 
   return community;
 };
 
