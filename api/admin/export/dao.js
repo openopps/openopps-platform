@@ -31,7 +31,7 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
-  const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
