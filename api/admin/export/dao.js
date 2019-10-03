@@ -59,7 +59,19 @@ const exportTaskAgencyData = 'select task.id, task.title, description, task."cre
   '(' +
     'select count(*) ' +
     'from volunteer where "taskId" = task.id' +
-  ') as signups, ' +
+  ') as applicants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id ' +
+  ') as selected_participants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
+  ') as completed_participants, ' +
   'task.state, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
