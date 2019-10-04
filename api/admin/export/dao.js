@@ -36,7 +36,19 @@ const exportTaskData = 'select task.id, task.title, description, task."createdAt
   '(' +
     'select count(*) ' +
     'from volunteer where "taskId" = task.id' +
-  ') as signups, ' +
+  ') as applicants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id ' +
+  ') as selected_participants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
+  ') as completed_participants, ' +
   'task.state, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
@@ -47,7 +59,19 @@ const exportTaskAgencyData = 'select task.id, task.title, description, task."cre
   '(' +
     'select count(*) ' +
     'from volunteer where "taskId" = task.id' +
-  ') as signups, ' +
+  ') as applicants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id ' +
+  ') as selected_participants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
+  ') as completed_participants, ' +
   'task.state, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
@@ -107,15 +131,19 @@ var exportTopContributorAgencyParticipantFormat = {
 
 var exportTaskFormat = {
   'task_id': 'id',
-  'name': {field: 'title', filter: nullToEmptyString},
+  'title': {field: 'title', filter: nullToEmptyString},
   'description': {field: 'description', filter: nullToEmptyString},
   'created_date': {field: 'createdAt', filter: excelDateFormat},
   'published_date': {field: 'publishedAt', filter: excelDateFormat},
   'assigned_date': {field: 'assignedAt', filter: excelDateFormat},
   'submitted_date': {field: 'submittedAt', filter: excelDateFormat},
   'creator_name': {field: 'creator_name', filter: nullToEmptyString},
-  'signups': 'signups',
+  'applicants': 'applicants',
+  'selected_participants': {field: 'selected_participants', filter: nullToEmptyString},
+  'completed_participants': {field: 'completed_participants', filter: nullToEmptyString},
   'task_state': 'state',
+  'bureau': {field: 'bureau', filter: nullToEmptyString},
+  'office': {field: 'office', filter: nullToEmptyString},
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
 };

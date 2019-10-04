@@ -21,6 +21,7 @@ module.exports.getExportData = async function (type, target, id) {
   var records;
   var fieldNames;
   var fields;
+  var communityRefId = ((await db.query('select reference_id from community where community_id = ?', id)).rows[0] || {}).reference_id;
   if (type === 'task') {
     if (target === 'agency') {
       records = (await dao.Task.db.query(dao.query.exportTaskAgencyData, id)).rows;
@@ -29,8 +30,11 @@ module.exports.getExportData = async function (type, target, id) {
     } else {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
-    fieldNames = _.keys(dao.exportTaskFormat);
-    fields = _.values(dao.exportTaskFormat);
+    if (communityRefId != 'dos') {
+      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau']);
+    }
+    fieldNames = _.keys(exportTaskFormat || dao.exportTaskFormat);
+    fields = _.values(exportTaskFormat || dao.exportTaskFormat);
   } else if (type === 'user') {
     if (target === 'agency') {
       records = (await dao.User.db.query(dao.query.exportUserAgencyData, id)).rows;
