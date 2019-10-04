@@ -97,8 +97,9 @@ var AdminCommunityView = Backbone.View.extend({
           this.$('.cyclical-task-interactions-metrics').html(template);
           this.$el.localize();
           this.$('.cyclical-task-interactions-metrics').show();      
-          setTimeout(function () {
+          setTimeout(function () {       
             this.fetchData(this);
+            $('.recent-activity').addClass('admin-separator');
             this.renderTasksCyclical();
           }.bind(this), 50);
           if(this.options.communities) {
