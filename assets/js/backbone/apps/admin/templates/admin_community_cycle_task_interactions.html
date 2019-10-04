@@ -13,10 +13,23 @@
       </div>
       <div class="usa-width-one-third admin-dos-interactions">
         <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+        
         <ul class="usajobs-unstyled-list">
-            <li>Total applications: <%- numeral(community.interactions.signups).format('0,0') %></li>
-            <li>Total assigned: <%- numeral(community.interactions.assignments).format('0,0') %></li>
-            <li>Total completed: <%- numeral(community.interactions.completions).format('0,0') %></li>
-            <li>Discussion posts: <%- numeral(community.interactions.posts).format('0,0') %></li>
+            <h4>Completed applications</h4>
+            <li>Applications submitted: <%- community.interactions.submittedtotal %></li>             
+        </ul>
+        <ul class="usajobs-unstyled-list">
+            <h4>Incomplete applications</h4>
+            <li>Applications on Next Steps: <%- community.interactions.step0nextsteptotal %></li>
+            <li>Applications on step 1 - Select Internships: <%- community.interactions.step1selectinternshiptotal %></li>
+            <li>Applications on step 2 - Experiences & References: <%- community.interactions.step2expreftotal %></li>
+            <li>Applications on step 3 - Education & Transcript: <%- community.interactions.step3educationtotal %></li>
+            <li>Applications on step 4 - Languages & Skills: <%- community.interactions.step4languagetotal %></li>
+            <li>Applications on step 5 - Statement of interest: <%- community.interactions.step5statementtotal %></li>
+            <li>Applications on step 6 - Review application: <%- community.interactions.step6reviewtotal %></li>
+        </ul>
+        <ul class="usajobs-unstyled-list">
+            <h4>Completed internships</h4>
+            <li>Total completed: <%- community.interactions.internshipcompletetotal %></li>        
         </ul>
       </div>
