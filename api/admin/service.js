@@ -41,7 +41,7 @@ function getOrderByClause (sortValue) {
     case 'bureau':
       return 'lower(tasks.bureau->>\'name\')';
     case 'office':
-        return 'lower(tasks.office->>\'name\')';
+      return 'lower(tasks.office->>\'name\')';
     default:
       return 'tasks."createdAt" desc';
   }
@@ -132,15 +132,8 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
   }
 };
 
-module.exports.getInteractionsForCommunityCyclical = async function (communityId,cycleId) {
-  var interactions = {};
-  var temp = await dao.Task.db.query(dao.query.communityCyclicalPostQuery, communityId,cycleId);
-  interactions.posts = +temp.rows[0].count;
-  temp = await dao.Task.db.query(dao.query.communityVolunteerCyclicalCountQuery, communityId,cycleId);
-  interactions.signups = +temp.rows[0].signups;
-  interactions.assignments = +temp.rows[0].assignments;
-  interactions.completions = +temp.rows[0].completions;
-
+module.exports.getInteractionsForCommunityCyclical = async function (communityId,cycleId) { 
+  var interactions= (await dao.Application.db.query(dao.query.communityCyclicalPostQuery, communityId,cycleId)).rows[0];
   return interactions;
 };
 
