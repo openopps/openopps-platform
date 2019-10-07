@@ -46,8 +46,11 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
     }
-    fieldNames = _.keys(dao.exportUserFormat);
-    fields = _.values(dao.exportUserFormat);
+    if (target !== 'community') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['joined_community']);
+    }
+    fieldNames = _.keys(exportUserFormat || dao.exportUserFormat);
+    fields = _.values(exportUserFormat || dao.exportUserFormat);
   }
   else if (type === 'TopContributor') {
     var today = new Date();

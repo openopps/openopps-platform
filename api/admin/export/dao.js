@@ -4,13 +4,15 @@ const moment = require('moment');
 const util = require('util');
 
 const exportUserData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
-  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
+  'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
+  'm_user."createdAt" as account_create, m_user.title, agency.name as agency, ' +
+  'tagentity.name as location, m_user.bio, m_user."isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
   'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
-  'ORDER BY m_user.id';
+  'ORDER BY m_user.id desc';
 
 const exportUserAgencyData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
@@ -148,17 +150,19 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
   'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
 
 var exportUserFormat = {
-  'user_id': 'id',
   'name': {field: 'name', filter: nullToEmptyString},
-  'username': {field: 'username', filter: nullToEmptyString},
+  'hiring_path': 'hiring_path',
+  'logingov_email': 'logingov_email',
+  'official_federal_govt_email': {field: 'official_federal_govt_email', filter: nullToEmptyString},
+  'last_login': {field: 'last_login', filter: nullToEmptyString},
+  'account_create': 'account_create',
+  'joined_community': 'joined_community',
   'title': {field: 'title', filter: nullToEmptyString},
   'agency': {field: 'agency', filter: nullToEmptyString},
   'location': {field: 'location', filter: nullToEmptyString},
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',
-  'manager': 'is_manager',
   'disabled': 'disabled',
-  'announcement': {field: 'content', filter: nullToEmptyString},
 };
 
 var exportTopContributorCreatedFormat = {
