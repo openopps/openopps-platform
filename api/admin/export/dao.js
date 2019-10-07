@@ -83,13 +83,69 @@ const exportTaskCommunityData = 'select task.id, task.title, description, task."
   '(' +
     'select count(*) ' +
     'from volunteer where "taskId" = task.id' +
-  ') as signups, ' +
-  'task.state, ' +
+  ') as applicants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id ' +
+  ') as selected_participants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
+  ') as completed_participants,  ' +
+  'task.state,  ' +
+  'agency.name as agency_name, ' +
+  '(' +
+    'select bureau.name ' +
+    'from bureau where bureau.bureau_id = task.bureau_id ' +
+  ') as bureau, ' +
+  '(' +
+    'select office.name ' +
+    'from office where office.office_id = task.office_id ' +
+  ') as office, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task ' +
   'inner join midas_user on task."userId" = midas_user.id ' + 
   'left join agency on task.agency_id = agency.agency_id ' +
-  'where task.community_id = ?  order by task."createdAt" desc';
+  'where task.community_id = ? order by task."createdAt" desc';
+
+const exportTaskDoSCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task."submittedAt", midas_user.name as creator_name, ' +
+  '(' +
+    'select count(*) ' +
+    'from volunteer where "taskId" = task.id' +
+  ') as applicants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id ' +
+  ') as selected_participants, ' +
+  '(' +
+    'select string_agg(midas_user.name, \', \') ' +
+    'from volunteer ' +
+    'inner join midas_user on midas_user.id = volunteer."userId" ' +
+    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
+  ') as completed_participants,  ' +
+  'task.state,  ' +
+  'agency.name as agency_name, ' +
+  '(' +
+    'select bureau.name ' +
+    'from bureau where bureau.bureau_id = task.bureau_id ' +
+  ') as bureau, ' +
+  '(' +
+    'select office.name ' +
+    'from office where office.office_id = task.office_id ' +
+  ') as office, ' +
+  'agency.name as agency_name, task."completedAt" ' +
+  'from task ' +
+  'inner join midas_user on task."userId" = midas_user.id ' + 
+  'left join agency on task.agency_id = agency.agency_id ' +
+  'left join cycle on task.cycle_id = cycle.cycle_id ' +
+  'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
 
 var exportUserFormat = {
   'user_id': 'id',
@@ -217,6 +273,7 @@ module.exports = function (db) {
       exportUserCommunityData: exportUserCommunityData,
       exportTaskAgencyData: exportTaskAgencyData,
       exportTaskCommunityData: exportTaskCommunityData,
+      exportTaskDoSCommunityData: exportTaskDoSCommunityData,
       exportTaskData: exportTaskData,    
     },
     clean: clean,
