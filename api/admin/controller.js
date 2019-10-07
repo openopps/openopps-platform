@@ -105,7 +105,7 @@ router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async
 router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     //ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
-    await service.getCommunityTaskStateMetrics(ctx.params.id, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
+    await service.getCommunityTaskStateMetrics(ctx.params.id,ctx.query.cycle, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
       ctx.body = {
         totals: results[0].rows,
         tasks: results[1].rows,
@@ -113,6 +113,27 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
     }).catch(err => {
       ctx.status = 400;
     });
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/community/taskmetrics/:communityId/cyclical/:cycleId', auth, async (ctx, next) => {
+  ctx.body = await service.getCommunityCyclicalTaskMetrics(ctx.params.communityId,ctx.params.cycleId);
+});
+
+
+router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    ctx.body = await service.getCommunityCycle(ctx.params.id,ctx.params.cycleId);
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    ctx.body = await service.getInteractionsForCommunityCyclical(ctx.params.id,ctx.params.cycleId);
   } else {
     ctx.status = 403;
   }

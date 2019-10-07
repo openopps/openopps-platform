@@ -74,7 +74,10 @@ router.post('/api/application/apply/:taskId', auth, auth.checkToken, async (ctx,
     });
   } else {
     ctx.status = 400;
-    ctx.body = 'You must be a student to apply for this internship';
+    ctx.body = {
+      type: 'not-eligible',
+      message: 'You must be a student to apply for this internship',
+    };
   }
 });
 

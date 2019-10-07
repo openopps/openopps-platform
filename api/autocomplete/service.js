@@ -18,7 +18,7 @@ module.exports.tagByType = async function (type, name) {
 };
 
 module.exports.userByName =  async function (name) {
-  var splitName = '\'' + name.split(' ').join(' & ') + '\'';
+  var splitName = '%' + name.replace(/\s+/g, '%') + '%';
   var result = await dao.User.query(
     dao.query.userByName, name ? splitName : null
   );
