@@ -212,7 +212,7 @@ router.get('/api/admin/task/export/agency/:id', auth.isAdminOrAgencyAdmin, async
   } 
 });
 
-router.get('/api/admin/task/export/community/:id', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/task/export/community/:id', auth.isCommunityAdmin, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     await service.getExportData('task', 'community', ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
@@ -221,6 +221,30 @@ router.get('/api/admin/task/export/community/:id', auth.isAdmin, async (ctx, nex
       service.createAuditLog('DATA_EXPORTED', ctx, {
         userId: ctx.state.user.id,
         action: 'Task data exported for community id ' + ctx.params.id,
+      });
+    }).catch(err => {
+      log.info(err);
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/task/export/community/:id/cycle/:cycleId', auth.isCommunityAdmin, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    await service.getExportData('task', 'community', ctx.params.id, ctx.params.cycleId).then(rendered => {
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community_tasks.csv');
+      ctx.body = rendered;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Task data exported for community id ' + ctx.params.id + 'and cycle id ' + ctx.params.cycleId,
       });
     }).catch(err => {
       log.info(err);

@@ -17,7 +17,7 @@ module.exports.createAuditLog = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
-module.exports.getExportData = async function (type, target, id) {
+module.exports.getExportData = async function (type, target, id, cycleId) {
   var records;
   var fieldNames;
   var fields;
@@ -27,6 +27,9 @@ module.exports.getExportData = async function (type, target, id) {
       records = (await dao.Task.db.query(dao.query.exportTaskAgencyData, id)).rows;
     } else if (target === 'community') {
       records = (await dao.Task.db.query(dao.query.exportTaskCommunityData, id)).rows;
+      if (communityRefId == 'dos') {
+        records = (await dao.Task.db.query(dao.query.exportTaskDoSCommunityData, id, cycleId)).rows;
+      }
     } else {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
@@ -43,8 +46,11 @@ module.exports.getExportData = async function (type, target, id) {
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
     }
-    fieldNames = _.keys(dao.exportUserFormat);
-    fields = _.values(dao.exportUserFormat);
+    if (target !== 'community') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['joined_community']);
+    }
+    fieldNames = _.keys(exportUserFormat || dao.exportUserFormat);
+    fields = _.values(exportUserFormat || dao.exportUserFormat);
   }
   else if (type === 'TopContributor') {
     var today = new Date();

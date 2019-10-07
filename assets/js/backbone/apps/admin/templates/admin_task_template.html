@@ -91,6 +91,9 @@
     title="Download list of tasks as a comma-separated file ready for import into Excel">
     <% if (community.communityName) { %>
       <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
+      <% if (community.applicationProcess == "dos") { %>
+        <a href="/api/admin/task/export/community/<%- community.communityId %>/cycle/<%- cycle %>"</a>
+      <% } %>
     <% } else if (agency.name) { %>
       <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
     <% } else { %>
