@@ -9,10 +9,9 @@
 // Ensure we're in the project directory, so relative paths work as expected
 process.chdir(__dirname);
 
-require('app-module-path').addPath('lib/');
-const log = require('log')('app');
+console.log('starting application...');
 
-log.info('start');
+require('app-module-path').addPath('lib/');
 
 (async function () {
   // Ensure all our dependencies can be located:
@@ -20,11 +19,11 @@ log.info('start');
     await require('./app/initialize-on-startup')();
     require('./app/openopps')();
   } catch (e) {
-    log.error('Error starting app\n');
-    log.error(e);
+    console.error('Error starting app\n');
+    console.error(e);
     if(e.message.match('Cannot find module')) {
       var module = e.message.split('Cannot find module ')[1];
-      log.error('To fix the error please try running `npm install ' + module.replace(/'/g, '') + '`');
+      console.error('To fix the error please try running `npm install ' + module.replace(/'/g, '') + '`');
     }
     return;
   }

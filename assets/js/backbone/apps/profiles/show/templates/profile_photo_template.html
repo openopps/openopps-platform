@@ -2,7 +2,7 @@
   <div class="usajobs-open-opps-opportunity-requestor profile profile-edit">
     <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
       <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
-        <% if (data.hiringPath == 'fed' && data.photoId) { %>
+        <% if ((data.hiringPath == 'fed' || data.hiringPath == 'contractor') && data.photoId) { %>
           <img id="profile-picture" src="/api/user/photo/<%- data.id %>" alt="Profile picture of <%- data.name %>">
         <% } else { %>
           <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
@@ -10,7 +10,7 @@
       </div>
     </div>
   </div>
-  <% if (data.hiringPath == 'fed') { %>
+  <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
     <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
       <a href=#><%- data.photoId ? 'Update photo' : 'Upload photo' %>
         <label class="sr-only" for="fileupload">Upload photo</label>

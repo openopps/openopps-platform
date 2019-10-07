@@ -16,22 +16,32 @@ var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
 var AdminUserView = Backbone.View.extend({
   events: {
-    'click a.page'              : 'clickPage',
-    'click .link-backbone'      : linkBackbone,
-    'click .user-enable'        : 'toggleCheckbox',
-    'click .assign-admin'       : 'toggleCheckbox',
-    'click .member-enable'      : 'toggleCheckbox',
-    'click .user-reset'         : 'resetPassword',
-    'click #invite-members'     : 'inviteMembers',
-    'keyup #user-filter'        : 'filter',
-    'click .remove-member'      : 'removeMember',
+    'click a.page'                : 'clickPage',
+    'click .link-backbone'        : linkBackbone,
+    'click .user-enable'          : 'toggleCheckbox',
+    'click .assign-admin'         : 'toggleCheckbox',
+    'click .member-enable'        : 'toggleCheckbox',
+    'click .user-reset'           : 'resetPassword',
+    'click #invite-members'       : 'inviteMembers',
+    'click #user-filter-search'   : 'filter',
+    'click .remove-member'        : 'removeMember',
+    'change #sort-user-sitewide'  : 'sortUsers',
+    'change #sort-user-agency'    : 'sortUsers',
+    'change #sort-user-community' : 'sortUsers',
   },
 
   initialize: function (options) {
     this.options = options;
+    this.params = new URLSearchParams(window.location.search);
     this.data = {
-      page: 1,
+      page: this.params.get('p') || 1,
+      filter: this.params.get('f') || '',
+      sort: this.params.get('s') || 'createdAt',
+      returnUrl: '/admin',
     };
+    if (this.options.target !== 'sitewide') {
+      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    }
     this.agency = {};
     this.community = {};
   },
@@ -54,6 +64,7 @@ var AdminUserView = Backbone.View.extend({
       dataType: 'json',
       success: function (targetInfo) {
         this[this.options.target] = targetInfo;
+        this.data[this.options.target] = targetInfo;
         this.loadData();
       }.bind(this),
     });
@@ -66,6 +77,8 @@ var AdminUserView = Backbone.View.extend({
       agency: this.agency,
       community: this.community,
       target: this.options.target,
+      filter: this.data.filter,
+      returnUrl: this.data.returnUrl,
     };
 
     var template = _.template(AdminUserTemplate)(data);
@@ -175,31 +188,36 @@ var AdminUserView = Backbone.View.extend({
     });
   },
 
-  renderUsers: function (data) {
-    data.urlbase = '/admin/users';
-    data.q = data.q || '';
-    this.limit = this.limit || data.limit;
-    data.trueLimit = this.limit;
-    data.login = LoginConfig;
-    data.user = window.cache.currentUser;
+  renderUsers: function () {
+    this.data.urlbase = '/admin/users';
+    this.data.q = this.data.filter || '';
+    this.limit = this.limit || this.data.limit;
+    this.data.trueLimit = this.limit;
+    this.data.login = LoginConfig;
+    this.data.user = window.cache.currentUser;
 
-    data.firstOf = data.page * data.limit - data.limit + 1;
-    data.lastOf = data.page * data.limit - data.limit + data.users.length;
-    data.countOf = data.count;
-    data.target = this.options.target;
-    data.isAdministrator = this.isAdministrator;
+    this.data.firstOf = this.data.page * this.data.limit - this.data.limit + 1;
+    this.data.lastOf = this.data.page * this.data.limit - this.data.limit + this.data.users.length;
+    this.data.countOf = this.data.count;
+    this.data.target = this.options.target;
+    this.data.isAdministrator = this.isAdministrator;
 
+    this.renderSelectedUsers();
+  },
+
+  renderSelectedUsers: function () {
     // render the table
     var template;
     if (this.options.target === 'community') {
-      template = _.template(AdminCommunityUserTable)(data);
+      template = _.template(AdminCommunityUserTable)(this.data);
     }  else {
-      template = _.template(AdminUserTable)(data);
+      template = _.template(AdminUserTable)(this.data);
     } 
 
     // render the pagination
-    this.renderPagination(data);
-    this.$('#filter-count').html(data.users.length);
+    this.renderPagination(this.data);
+    // this.$('#filter-count').html(this.data.users.length);
+    //this.$('.usajobs-search-controls__sort-control option[value='+ this.data.sort +']').attr('selected', true);
     this.$('#user-table').html(template);
     this.$('.btn').tooltip();
     this.$('#user-table').show();
@@ -233,27 +251,20 @@ var AdminUserView = Backbone.View.extend({
 
   clickPage: function (e) {
     if (e.preventDefault) e.preventDefault();
-    // load this page of data
-    this.fetchData({
-      page: $(e.currentTarget).data('page'),
-      q: this.q,
-      limit: this.limit,
-    });
+    this.data.page = $(e.currentTarget).data('page');
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
   },
 
   filter: function (e) {
-    // get the input box value
-    var val = $(e.currentTarget).val().trim();
-    // if the filter is the same, don't do anything
-    if (val == this.q) {
+    var val = $('#user-filter').val().trim();
+    if (val == this.data.filter) {
       return;
     }
-    this.q = val;
-    // hide the table and show the spinner
-    this.$('#user-table').hide();
-    this.$('.spinner').show();
-    // fetch this query, starting from the beginning page
-    this.fetchData({ q: val });
+    this.data.filter = val;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
   },
 
   fetchData: function (data) {
@@ -267,12 +278,14 @@ var AdminUserView = Backbone.View.extend({
     $.ajax({
       url: url,
       dataType: 'json',
-      data: data,
+      data: {
+        page: this.data.page,
+        filter: this.data.filter,
+        sort: this.data.sort
+      },
       success: function (data) {
-        this.data = data;
-        this.data.community = this.community;
-        this.data.agency = this.agency,
-        this.renderUsers(data);
+        _.extend(this.data, data);
+        this.renderUsers();
         $('.tip').tooltip();
       }.bind(this),
     });
@@ -291,6 +304,17 @@ var AdminUserView = Backbone.View.extend({
       case 'member':
         return '/api/admin/community/' + this.community.communityId + '/member/' + id + '?action=' + elem.prop('checked');
     }
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    if (this.options.target === 'agency') {
+      url +='&id=' + this.agency.agencyId;
+    } else if(this.options.target === 'community') {
+      url +='&id=' + this.community.communityId ;
+    }
+    return url;
   },
 
   toggleCheckbox: function (e) {
@@ -319,7 +343,7 @@ var AdminUserView = Backbone.View.extend({
   isAdministrator: function (user, target) {
     return (target == 'sitewide' && user.isAdmin) ||
       (target == 'agency' && user.isAgencyAdmin) ||
-      (target == 'community' && user.isCommunityAdmin);
+      (target == 'community' && user.is_manager);
   },
 
   updateUser: function (t, data) {
@@ -397,6 +421,15 @@ var AdminUserView = Backbone.View.extend({
         }.bind(this),
       },
     }).render();
+  },
+
+  sortUsers: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.sort = target.value;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
   },
 
   submitReset: function (email) {

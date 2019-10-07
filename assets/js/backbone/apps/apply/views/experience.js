@@ -11,6 +11,9 @@ var experience = {
     $('#overseas-total-length').charCounter(250, {
       container: '#overseas-count',
     });
+    $('#duties').charCounter(5000, {
+      container: '#duties-accomplish',
+    });
   },
   
   toggleOverseasExperienceDetails: function () {
@@ -258,7 +261,7 @@ var experience = {
     } 
   },
 
-  toggleAddExperience: function (e) {
+  toggleAddExperience: function (e) { 
     experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
@@ -297,7 +300,8 @@ var experience = {
   },
 
   toggleExperienceOff: function (e) {
-    this.$el.html(templates.applyExperience(this.data));  
+    this.$el.html(templates.applyExperience(this.data)); 
+    experience.characterCount.bind(this)(); 
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);

@@ -20,7 +20,7 @@
                     <span class="fas fa-user fa-fw" focusable="false"></span>
                   <% if (user.name) { %>
                     <span class="usajobs-nav__first_name usajobs-nav--openopps__first-name"><%- user.givenName %></span>
-                    <span class="usajobs-nav__initials usajobs-nav--openopps__initials"><%- user.initials %></span>
+                    <span class="usajobs-nav__initials usajobs-nav--openopps__initials"><%- getInitials(user.name) %></span>
                   <% } else { %>
                     <span class="usajobs-nav__account_name"><%- user.username %></span>
                   <% } %>
@@ -109,13 +109,13 @@
     </ul>
     <% } %>
     <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
-      <% if (!user || user.hiringPath == 'fed') { %>
+      <% if (!user || user.hiringPath == 'fed' || user.hiringPath == 'contractor') { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
       <% } %>
       <% if (!user || user.isAdmin || (user.communities && user.communities.student.length > 0) || user.hiringPath == 'student') { %>
         <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search/internships" class="usajobs-openopps-secondary-nav__link subnav-link" title="Internships">Internships</a></li>
         <% } %>
-      <% if (user && user.hiringPath == 'fed') { %>
+      <% if (user && (user.hiringPath == 'fed' || user.hiringPath == 'contractor')) { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
       <% } %>
       <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>

@@ -1,4 +1,5 @@
 const _ = require ('lodash');
+const fs = require('fs');
 const log = require('log')('app:admin:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
@@ -10,6 +11,67 @@ const opportunityService = require('../opportunity/service');
 const elasticService = require('../../elastic/service');
 const communityService = require('../community/service');
 
+function getWhereClauseForTaskState (state) {
+  if (state == 'open') {
+    return "state in ('open', 'in progress') and \"accepting_applicants\" = true";
+  } else if (state == 'in progress') {
+    return "state = 'in progress' and \"accepting_applicants\" = false";
+  } else {
+    return "state = '" + state + "'";
+  }
+}
+
+function getTaskFilterClause (filter, filterAgency) {
+  var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
+    `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
+  if (filterAgency) {
+    filterClause += ` or lower(tasks.agency->>'name') like '%` + filter.toLowerCase() + `%'`;
+  }
+  return '(' + filterClause + ')';
+}
+
+function getOrderByClause (sortValue) {
+  switch (sortValue) {
+    case 'title':
+      return 'lower(tasks.title)';
+    case 'creator':
+      return 'lower(tasks.owner->>\'last_name\'), lower(tasks.owner->>\'given_name\')';
+    default:
+      return 'tasks."createdAt" desc';
+  }
+}
+
+function getUserListOrderByClause (sortValue) {
+  switch (sortValue) {
+    case 'name':
+      return 'lower(users.last_name), lower(users.given_name)';
+    case 'createdAt':
+      return 'users."createdAt" desc';
+    case 'last_login':
+      return 'users.last_login desc';
+    case 'isAdmin':
+      return 'users."isAdmin" desc';
+    case 'isAgencyAdmin':
+        return 'users."isAgencyAdmin" desc';
+    case 'is_manager':
+      return 'users.is_manager desc';
+    case 'agency':
+      return 'users.agency->>\'name\'';
+    default:
+      return sortValue;
+  }
+}
+
+function getWhereClauseForCyclicalTaskState (state) {
+  if (state == 'approved') {
+    return "state = 'open' and apply_start_date > now()";
+  } else if (state == 'open') {
+    return "state = 'open' and apply_start_date <= now()";
+  } else {
+    return "state = '" + state + "'";
+  }
+}
+
 module.exports = {};
 
 module.exports.getMetrics = async function () {
@@ -18,52 +80,58 @@ module.exports.getMetrics = async function () {
   return { 'tasks': tasks, 'users': users };
 };
 
-module.exports.getCommunityTaskStateMetrics = async function (communityId){
-  var states = {};
+module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page, sort, filter){
   var community = await communityService.findById(communityId);
 
   if (community.duration == 'Cyclical') {
-    states.approved = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" > now()", communityId, dao.options.internship));
-    states.open = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'open' and \"apply_start_date\" <= now()", communityId, dao.options.internship));
-    states.completed = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'completed'", communityId, dao.options.internship));
-    states.draft = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'draft'",communityId, dao.options.internship));
-    states.submitted = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'submitted'", communityId, dao.options.internship));
-    states.canceled = dao.clean.task(await dao.Task.query(dao.query.internshipCommunityStateQuery + "state = 'canceled'", communityId, dao.options.internship));
-    return states;
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
+    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
   } else {
-    states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state='in progress'and \"accepting_applicants\" = false",communityId, dao.options.task));
-    states.open = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", communityId, dao.options.task));
-    states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'not open'", communityId, dao.options.task));
-    states.completed = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'completed'", communityId, dao.options.task));
-    states.draft = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'draft'",communityId, dao.options.task));
-    states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'submitted'", communityId, dao.options.task));
-    states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskCommunityStateUserQuery + "state = 'canceled'", communityId, dao.options.task));
-    return states;
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
+    var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
+    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
+
+  //This will get replaced with DoS own filter query for new ticket that is still in backlog.  Jodi
+  var agency = "";
+  if (community.targetAudience != "Students") {
+    agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } 
+
+  if (filter) {
+    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() + '%\'' + agency + ')';
+  } 
+
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.targetAudience != "Students") : ''));
+  tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
+  
+  return Promise.all([
+    db.query(taskStateTotalsQuery, communityId),
+    db.query(tasksByStateQuery, [communityId, page]),
+  ]);
 };
 
-module.exports.getTaskStateMetrics = async function () {
-  var states = {};
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'completed'", dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'draft'", dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'not open'", dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'submitted'", dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskStateUserQuery + "state = 'canceled'", dao.options.task));
-  return states;
+module.exports.getTaskStateMetrics = async function (state, page, sort) {
+  var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
+  var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
+  var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
+  tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
+  return Promise.all([
+    db.query(taskStateTotalsQuery),
+    db.query(tasksByStateQuery, page),
+  ]);
 };
 
-module.exports.getAgencyTaskStateMetrics = async function  (agencyId) {
-  var states = {};
-  states.inProgress = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'in progress' and \"accepting_applicants\" = false", agencyId, dao.options.task));
-  states.completed = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'completed'", agencyId, dao.options.task));
-  states.draft = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'draft'", agencyId, dao.options.task));
-  states.open = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state in ('open', 'in progress') and \"accepting_applicants\" = true", agencyId, dao.options.task));
-  states.notOpen = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'not open'", agencyId, dao.options.task));
-  states.submitted = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'submitted'", agencyId, dao.options.task));
-  states.canceled = dao.clean.task(await dao.Task.query(dao.query.taskAgencyStateUserQuery + "state = 'canceled'", agencyId, dao.options.task));
-  return states;
+module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, page, sort, filter) {
+  var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAgencyTaskStateTotals.sql', 'utf8');
+  var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
+  var whereClause = 'tasks.agency_id = ? and tasks.community_id is null and ' + getWhereClauseForTaskState(state);
+  tasksByStateQuery =  tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
+  return Promise.all([
+    db.query(taskStateTotalsQuery, agencyId),
+    db.query(tasksByStateQuery, [agencyId, page]),
+  ]);
 };
 
 module.exports.getActivities = async function () {
@@ -86,6 +154,102 @@ module.exports.getActivities = async function () {
     }
   }
   return activities;
+};
+
+module.exports.getAgencyActivities = async function (agencyId) {
+  // var agency = await dao.Agency.findOne('agency_id = ?', id);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.agencyActivityQuery, { agencyId: agencyId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'comment') {
+      result = (await dao.Task.db.query(dao.query.activityCommentQuery, activity[i].id)).rows;
+      activities.push(buildCommentObj(result));
+    } else if (activity[i].type == 'volunteer') {
+      result = (await dao.Task.db.query(dao.query.activityVolunteerQuery, activity[i].id)).rows;
+      activities.push(buildVolunteerObj(result));
+    } else if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else {
+      result = (await dao.Task.db.query(dao.query.agencyActivityTaskQuery, [activity[i].id, agencyId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
+module.exports.getCommunityActivities = async function (communityId) {
+  var community = await communityService.findById(communityId);
+  var activities = [];
+  var result = {};
+  var activity = (await dao.Task.db.query(dao.query.communityActivityQuery, { communityId: communityId })).rows;
+  for (var i=0; i<activity.length; i++) {
+    if (activity[i].type == 'user') {
+      result = await dao.User.findOne('id = ?', activity[i].id);
+      activities.push(buildUserObj(result));
+    } else if (activity[i].type == 'task') {
+      result = (await dao.Task.db.query(dao.query.communityActivityTaskQuery, [activity[i].id, communityId])).rows;
+      activities.push(buildTaskObj(result));
+    }
+  }
+  return activities;
+};
+
+module.exports.getTopContributors = function () {
+  var topAgencyCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopAgencyCreators.sql', 'utf8');
+  var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
+  var today = new Date();
+  var FY = {};
+  if (today.getMonth() < 9) {
+    FY.start = [today.getFullYear() - 1, 10, 1].join('-');
+    FY.end = [today.getFullYear(), 09, 30].join('-');
+  } else {
+    FY.start = [today.getFullYear(), 10, 1].join('-');
+    FY.end = [today.getFullYear() + 1, 09, 30].join('-');
+  }
+  return new Promise((resolve, reject) => {
+    Promise.all([
+      db.query(topAgencyCreatorsQuery, [FY.start, FY.end]),
+      db.query(topAgencyParticipants, [FY.start, FY.end]),
+    ]).then(results => {
+      resolve({
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
+        creators: results[0].rows,
+        creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
+        participants: results[1].rows,
+        participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
+      });
+    }).catch(reject);
+  });
+};
+
+module.exports.getTopAgencyContributors = function (agencyId) {
+  var topCreatorsQuery = fs.readFileSync(__dirname + '/sql/getTopCreators.sql', 'utf8');
+  // var topAgencyParticipants = fs.readFileSync(__dirname + '/sql/getTopAgencyParticipants.sql', 'utf8');
+  var today = new Date();
+  var FY = {};
+  if (today.getMonth() < 9) {
+    FY.start = [today.getFullYear() - 1, 10, 1].join('-');
+    FY.end = [today.getFullYear(), 09, 30].join('-');
+  } else {
+    FY.start = [today.getFullYear(), 10, 1].join('-');
+    FY.end = [today.getFullYear() + 1, 09, 30].join('-');
+  }
+  return new Promise((resolve, reject) => {
+    Promise.all([
+      db.query(topCreatorsQuery, [agencyId, FY.start, FY.end]),
+      // db.query(topAgencyParticipants, [FY.start, FY.end]),
+    ]).then(results => {
+      resolve({
+        fiscalYear: 'FY' + (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString().substr(2),
+        creators: results[0].rows,
+        creatorMax: _.max(results[0].rows.map(row => { return parseInt(row.count); })),
+        // participants: results[1].rows,
+        // participantMax: _.max(results[1].rows.map(row => { return parseInt(row.count); })),
+      });
+    }).catch(reject);
+  });
 };
 
 function buildCommentObj (result) {
@@ -156,6 +320,18 @@ module.exports.getInteractions = async function () {
   return interactions;
 };
 
+module.exports.getInteractionsForAgency = async function (agencyId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.agencyPostQuery, agencyId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.agencyVolunteerCountQuery, agencyId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+};
+
 module.exports.getInteractionsForCommunity = async function (communityId) {
   var interactions = {};
   var temp = await dao.Task.db.query(dao.query.communityPostQuery, communityId);
@@ -168,71 +344,60 @@ module.exports.getInteractionsForCommunity = async function (communityId) {
   return interactions;
 };
 
-module.exports.getUsers = async function (page, limit) {
+module.exports.getUsers = async function (page, filter, sort) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserListBySort.sql', 'utf8').toString();
+  
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userListQuery, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
   return result;
 };
 
-module.exports.getUsersForAgency = async function (page, limit, agencyId) {
+module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
+
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userAgencyListQuery, agencyId, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [agencyId, page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
   return result;
 };
 
-module.exports.getUsersForCommunity = async function (page, limit, communityId) {
+module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
-  result.limit = typeof limit !== 'undefined' ? limit : 25;
+  var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
+
+  if (filter) {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
+  } else {
+    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
+  }
+
+  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  result.limit = 25;
   result.page = +page || 1;
-  result.users = (await dao.User.db.query(await dao.query.userCommunityListQuery, communityId, page)).rows;
+  result.users = (await db.query(usersBySortQuery, [communityId, page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
-  result = await this.getUserTaskCommunityMetrics (result, communityId);
-  return result;
-};
-
-module.exports.getUsersFiltered = async function (page, query) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  return result;
-};
-
-module.exports.getUsersForAgencyFiltered = async function (page, query, agencyId) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userAgencyListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    agencyId,
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
-  return result;
-};
-
-module.exports.getUsersForCommunityFiltered = async function (page, query, communityId) {
-  var result = { page: page, q: query, limit: 25 };
-  result.users = (await dao.User.db.query(dao.query.userCommunityListFilteredQuery,
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    '%' + query.toLowerCase() + '%',
-    communityId,
-    page)).rows;
-  result = await this.getUserTaskMetrics (result);
-  result = await this.getUserTaskCommunityMetrics(result, communityId);
-  result.count = typeof result.users[0] !== 'undefined' ? +result.users[0].full_count : 0;
   return result;
 };
 
@@ -330,12 +495,17 @@ module.exports.getAgency = async function (id) {
 
 module.exports.getCommunity = async function (id) {
   var community = await communityService.findById(id); //await dao.Community.findOne('community_id = ?', id);
-  community.tasks = (await dao.Task.db.query(dao.query.communityTaskStateQuery, id)).rows[0];
-  community.tasks.totalCreated = Object.values(community.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
   community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
   if (community.duration == 'Cyclical') {
     community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var filterState = false;
+  } else {
+    var filterState = { task_state: 'draft' };
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
   }
+  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
   return community;
 };
 
@@ -370,9 +540,30 @@ module.exports.checkCommunity = async function (user, ownerId) {
 
 module.exports.getDashboardTaskMetrics = async function (group, filter) {
   var tasks = dao.clean.task(await dao.Task.query(dao.query.taskMetricsQuery, {}, dao.options.taskMetrics));
-  var volunteers = await dao.Volunteer.find({ taskId: _.map(tasks, 'id') });
-  var agencyPeople = dao.clean.users(await dao.User.query(dao.query.volunteerDetailsQuery, {}, dao.options.user));
-  var generator = new TaskMetrics(tasks, volunteers, agencyPeople, group, filter);
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerTaskQuery)).rows; 
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
+
+module.exports.getDashboardAgencyTaskMetrics = async function (group, filter,agencyId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.agencyTaskMetricsQuery, agencyId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.volunteerAgencyTaskQuery,agencyId)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
+  generator.generateMetrics(function (err) {
+    if (err) res.serverError(err + ' metrics are unavailable.');
+    return null;
+  });
+  return generator.metrics;
+};
+
+module.exports.getDashboardCommunityTaskMetrics = async function (group, filter,communityId) {
+  var tasks = dao.clean.task(await dao.Task.query(dao.query.communityTaskMetricsQuery, communityId, dao.options.taskMetrics));
+  var volunteers = (await dao.Volunteer.db.query(dao.query.communityVolunteerTaskQuery,communityId)).rows;
+  var generator = new TaskMetrics(tasks, volunteers, group, filter);
   generator.generateMetrics(function (err) {
     if (err) res.serverError(err + ' metrics are unavailable.');
     return null;

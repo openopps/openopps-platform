@@ -160,7 +160,7 @@
                   <div class="form-group required-input">
                     <label for="experience-other">If you chose "Other", please specify.</label>  
                     <span class="field-validation-error error-empty" style="display:none;">You must enter details for other.</span>               
-                    <textarea id="experience-other" data-validate="empty" class="fullwidth form-control" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
+                    <textarea id="experience-other" maxlength="250" data-validate="empty" class="fullwidth form-control" name="overseas_experience_other"><%= overseasExperienceOther %></textarea>
                     <p class="usajobs-form__help-brief" id="other-count">
                       (250 characters remaining)
                     </p>
@@ -170,7 +170,7 @@
               <div class="form-group required-input" id="overseas-total-length-exp">
                 <label for="overseas-total-length">Please indicate the total length of your overseas experience(s).</label>
                 <span class="field-validation-error error-empty" style="display:none;">You must enter the total length of your overseas experience(s).</span> 
-                <textarea id="overseas-total-length" data-validate="empty" class="fullwidth form-control" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
+                <textarea id="overseas-total-length" maxlength="250" data-validate="empty" class="fullwidth form-control" name="overseas_experience_length"><%= overseasExperienceLength %></textarea>
                 <p class="usajobs-form__help-brief" id="overseas-count">
                   (250 characters remaining)
                 </p>

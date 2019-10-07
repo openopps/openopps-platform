@@ -27,6 +27,7 @@ var ApplyView = Backbone.View.extend({
     'click .apply-continue'                                       : 'applyContinue',
     'click .usajobs-drawer-button'                                : 'toggleDrawers',
     'click #back'                                                 : 'backClicked',
+    'click .view-internship'                                      : linkBackbone,
 
     //process flow events
     'click .usajobs-progress_indicator__body a'                   : 'historyApplicationStep',
@@ -53,6 +54,9 @@ var ApplyView = Backbone.View.extend({
     'click #edit-reference'                                       : function (e) { this.callMethod(Experience.toggleUpdateReference, e); },
     'click #save-add-reference'                                   : function () { this.callMethod(Experience.saveReference); },
     'click #save-update-reference'                                : function () { this.callMethod(Experience.updateReference); },
+    'keypress #duties'                                            : function () { this.callMethod(Experience.characterCount); },
+    'keypress #overseas-total-length'                             : function () { this.callMethod(Experience.characterCount); }, 
+    'keypress #experience-other'                                  : function () { this.callMethod(Experience.characterCount); },   
     'click .delete-record'                                        : 'deleteRecord',
 
     //education events
@@ -129,6 +133,9 @@ var ApplyView = Backbone.View.extend({
       this.$el.html(templates.submittedApplication(this.data));
       this.$el.localize();
       window.scrollTo(0, 0);
+    } else if (new Date(this.data.cycle.apply_end_date) < new Date()) {
+      Backbone.history.navigate('/home', { trigger: true, replace: true });
+      return;
     } else {
       this.$el.html(templates.getTemplateForStep(this.data.selectedStep)(this.data));
     }
