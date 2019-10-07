@@ -108,7 +108,7 @@ var InternshipsView = Backbone.View.extend({
       if(new Date(application.applyEndDate) > new Date()) {
         return 'In progress';
       } else {
-        return 'Not completed';
+        return 'Not submitted';
       }
     } else if (application.sequence == 3) {
       if (application.taskState == 'completed') {
