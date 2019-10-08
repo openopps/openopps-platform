@@ -40,12 +40,7 @@ var AdminAgenciesView = Backbone.View.extend({
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
-    var today = new Date();
-    var currentYear = today.getFullYear();  
-    currentYear = currentYear.toString();
-    var previousYear = parseInt(currentYear)-1;
-    previousYear = previousYear.toString();
-
+   
     function label (key) {
       if (key === 'undefined') return 'No date';   
       return group === 'week' ? 'W' + (+key.slice(4)) + '\n' + key.slice(0,4):
@@ -60,16 +55,19 @@ var AdminAgenciesView = Backbone.View.extend({
       success: function (data) {        
         data.label = label;
         if (group == 'fy') {
+          var currentYear =_.chain(data.tasks.published).keys().sort().last().value();
+          var previousYear = parseInt(currentYear)-1;
+          previousYear= previousYear.toString();
           var year = [currentYear, previousYear];
           data.range = _.filter(data.range, function (i) {
             return _.contains(year, i);
           });
         }
         if (group == 'month') {
-          self.generateMonthsDisplay(data,currentYear,previousYear);
+          self.generateMonthsDisplay(data);
         }
         if (group == 'quarter') {
-          self.generateQuartersDisplay(data,currentYear,previousYear);
+          self.generateQuartersDisplay(data);
         }
         var template = _.template(AdminAgencyTasks)(data);
         $('#search-results-loading').hide();
@@ -94,7 +92,10 @@ var AdminAgenciesView = Backbone.View.extend({
     return year + '' + quarter;
   }.bind(this),
 
-  generateMonthsDisplay: function (data,currentYear,previousYear) {
+  generateMonthsDisplay: function (data) {
+    var currentYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+    var previousYear= parseInt(currentYear)-1;
+    previousYear=previousYear.toString();
     var Myear = [previousYear];
     var previousYearRange = [];
     previousYearRange = _.filter(data.range, function (di) {
@@ -141,8 +142,11 @@ var AdminAgenciesView = Backbone.View.extend({
       data.range = [];
     }
   },
-
-  generateQuartersDisplay: function (data,currentYear,previousYear) {
+  generateQuartersDisplay: function (data) {
+    var currentYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
+    var previousYear= parseInt(currentYear)-1;
+    previousYear= previousYear.toString();
+   
     var Myear = [previousYear];
     var previousYearRange = [];
     previousYearRange = _.filter(data.range, function (di) {
