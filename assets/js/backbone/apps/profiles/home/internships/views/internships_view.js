@@ -41,7 +41,6 @@ var InternshipsView = Backbone.View.extend({
 
     // initialize sub components
     this.initializeAppliedSaved();
-    this.initializeBadges();
 
     this.listenTo(new ActivityCollection({ type: 'badges' }), 'activity:collection:fetch:success', function  (e) {
       var bs = e.toJSON().filter(function (b) {     
@@ -90,17 +89,6 @@ var InternshipsView = Backbone.View.extend({
       });
       this.savedView.render();
     }.bind(this));
-  },
-
-  initializeBadges: function () {
-    // _.each(['search', 'users'], function (type) {
-    //   this.listenTo(new ActivityCollection({ type: type }), 'activity:collection:fetch:success', function (e) {
-    //     var data = {};
-    //     data[type] = e.toJSON()[0];
-    //     var html = templates[type](data);
-    //     this.setTarget(type, html);
-    //   }.bind(this));
-    // }.bind(this));
   },
 
   getStatus: function (application) {

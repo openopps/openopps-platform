@@ -86,7 +86,11 @@ router.get('/api/user/activities/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/user/internship/activities', auth, async (ctx, next) => {
-  ctx.body = await service.getInternshipsActivities(ctx.state.user);
+  ctx.body = await service.getInternshipsActivities(ctx.state.user.id);
+});
+
+router.get('/api/user/internship/activities/:userId', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getInternshipsActivities(ctx.params.userId);
 });
 
 router.get('/api/user/internships/completed', auth, async (ctx, next) => {
