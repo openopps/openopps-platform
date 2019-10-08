@@ -87,9 +87,17 @@ const communityPostQuery = 'select count(*) from comment ' +
 'join task on comment."taskId" = task.id ' +
 'where task.community_id = ?';
 
-const communityCyclicalPostQuery = 'select count(*) from comment ' +
-'join task on comment."taskId" = task.id ' +
-'where task.community_id = ? and task.cycle_id= ?';
+const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 THEN 1 ELSE NULL end) as step0NextStepTotal, ' +
+'count(CASE when current_step = 1 THEN 1 ELSE NULL end) as step1SelectInternshipTotal, ' +
+ 'count(CASE when current_step = 2 THEN 1 ELSE NULL end) as step2ExpRefTotal,' +
+ 'count(CASE when current_step = 3 THEN 1 ELSE NULL end) as step3EducationTotal, ' +
+ 'count(CASE when current_step = 4 THEN 1 ELSE NULL end) as step4LanguageTotal, ' +
+  'count(CASE when current_step = 5 THEN 1 ELSE NULL end) as step5StatementTotal, ' +
+  'count(CASE when current_step = 6 THEN 1 ELSE NULL end) as step6ReviewTotal, ' +
+  'count(CASE when internship_completed_at is not null then 1 ELSE NULL end) as InternshipCompleteTotal, ' +
+  'count(CASE when submitted_at is not null then 1 ELSE NULL end) as submittedTotal ' +
+   'from application where application.community_id = ? and application.cycle_id = ? ' ;
+
 
 const volunteerCountQuery = 'select ' +
     'count(*) as signups, ' +
@@ -420,6 +428,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Application: dao({ db: db, table: 'application' }),
     Agency: dao({ db: db, table: 'agency' }),
     User: dao({ db: db, table: 'midas_user' }),
     Task: dao({ db: db, table: 'task' }),

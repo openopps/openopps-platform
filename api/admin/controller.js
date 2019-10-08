@@ -138,6 +138,7 @@ router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth, asyn
     ctx.status = 403;
   }
 });
+
 router.get('/api/admin/communities', auth, async (ctx, next) => {
   var communities =  await service.getCommunities(ctx.state.user);
   if (communities.length) {

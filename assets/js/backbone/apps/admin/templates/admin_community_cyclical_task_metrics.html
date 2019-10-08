@@ -1,17 +1,16 @@
 
-<h3 class="usajobs-section-header">Opportunities</h3>
+<h3 class="usajobs-section-header">Internships</h3>
 <div class="overflow-x">
     <table class="usa-table-borderless task-metrics-table" role="presentation">
       <thead>
-    
         <tr>
           <th scope="col"><span class="sr-only">Type</span></th>
-          <% _.each(tasks, function(t) { %>
-            <th scope="col"><%- t.name %></th>
+          <% _.each(tasks, function(t) { %>                    
+              <th scope="col"><%- t.name %></th>                  
             <% }); %> 
         </tr>
-      </thead>
-      <tbody>                 
+      </thead>    
+      <tbody>                     
         <tr>
           <th scope="row">Published</th>
           <% _.each(tasks, function(t) { %>
