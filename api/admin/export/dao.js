@@ -118,22 +118,26 @@ const exportTaskCommunityData = 'select task.id, task.title, description, task."
 
 const exportTaskDoSCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
-  '(' +
-    'select count(*) ' +
-    'from volunteer where "taskId" = task.id' +
+  '( ' +
+    'select count(application_task.task_id) ' +
+    'from application_task ' +
+    'join application on application_task.application_id = application.application_id ' +
+    'where application_task.task_id = task.id and application_task.sort_order <> -1 and application.submitted_at is not null ' +
   ') as applicants, ' +
   '(' +
-    'select string_agg(midas_user.name, \', \') ' +
-    'from volunteer ' +
-    'inner join midas_user on midas_user.id = volunteer."userId" ' +
-    'where "taskId" = task.id ' +
+    'select string_agg(trim(midas_user.given_name || \' \' || midas_user.last_name), \', \') ' +
+    'from application ' +
+    'inner join task_list_application tla on application.application_id = tla.application_id ' +
+    'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
+    'inner join midas_user on application.user_id = midas_user.id ' +
+    'where task_list.task_id = task.id and task_list.title in (\'Primary\', \'Alternate\') ' +
   ') as selected_participants, ' +
   '(' +
-    'select string_agg(midas_user.name, \', \') ' +
-    'from volunteer ' +
-    'inner join midas_user on midas_user.id = volunteer."userId" ' +
-    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
-  ') as completed_participants,  ' +
+    'select string_agg(trim(midas_user.given_name || \' \' || midas_user.last_name), \', \') ' +
+    'from application ' +
+    'inner join midas_user on application.user_id = midas_user.id ' +
+    'where application.internship_completed = task.id ' +
+  ') as completed_participants, ' +
   'task.state,  ' +
   'agency.name as agency_name, ' +
   '(' +
