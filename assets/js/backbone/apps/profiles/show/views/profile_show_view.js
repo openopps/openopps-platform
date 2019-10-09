@@ -157,16 +157,17 @@ var ProfileShowView = Backbone.View.extend({
     if (this.volView) { this.volView.cleanup(); }
     if (this.taskView) { this.taskView.cleanup(); }
     $.ajax('/api/user/activities/' + id).done(function (data) {
-      this.data.tasks = data.tasks;
+      this.data.tasks = {
+        volunteered: _.filter(data.tasks.volunteered, function (item) { return item.state != 'archived'; }),
+        created: _.filter(data.tasks.created, this.filterCreated),
+      };
       this.volView = new HomeActivityView({
         model: this.model,
         el: '.opportunity-participated',
         template: _.template(ParticipatedTemplate),
         target: 'task',
         handle: 'volTask',  // used in css id
-        data: _.sortBy(_.filter(data.tasks.volunteered, function (item) { 
-          return item.state != 'archived';
-        }), 'updatedAt').reverse(),
+        data: _.sortBy(this.data.tasks.volunteered, 'updatedAt').reverse(),
         getStatus: this.getStatus,
       });
       this.volView.render();
@@ -177,7 +178,7 @@ var ProfileShowView = Backbone.View.extend({
         template: _.template(CreatedTemplate),
         target: 'task',
         handle: 'task',  // used in css id
-        data: _.sortBy(_.filter(data.tasks.created, this.filterCreated), 'updatedAt').reverse(),
+        data: _.sortBy(this.data.tasks.created, 'updatedAt').reverse(),
       });
       this.taskView.render();
     }.bind(this));
@@ -246,11 +247,11 @@ var ProfileShowView = Backbone.View.extend({
     var data = this.data.tasks[target.id == 'sort-participated' ? 'volunteered' : 'created'];
     var sortedData = [];
     if(target.id == 'sort-participated' && target.value == 'state') {
-      sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
+      sortedData = _.sortBy(data, function (item) {
         return this.getStatus(item);
       }.bind(this));
     } else {
-      sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
+      sortedData = _.sortBy(data, target.value);
     }
     if(target.value == 'updatedAt') {
       sortedData = sortedData.reverse();
@@ -274,7 +275,8 @@ var ProfileShowView = Backbone.View.extend({
   renderInternshipOpportunities: function (id) {
     if (this.appliedView) { this.appliedView.cleanup(); }
     if (this.savedView) { this.savedView.cleanup(); }
-    $.ajax('/api/user/internship/activities/' + id).done(function (data) { 
+    $.ajax('/api/user/internship/activities/' + id).done(function (data) {
+      _.extend(this.data, data);
       this.appliedView = new InternshipsActivityView({
         model: this.model,
         el: '.internships-applied',
