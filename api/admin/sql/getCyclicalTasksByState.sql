@@ -17,7 +17,7 @@ with tasks as (
 				select application_task.task_id
 				from application_task
 				join application on application_task.application_id = application.application_id
-				where application_task.task_id = task.id and application.submitted_at is not null
+				where application_task.task_id = task.id and application_task.sort_order <> -1 and application.submitted_at is not null
 			) applications
 		) as applicants,
 		(select row_to_json (office)
