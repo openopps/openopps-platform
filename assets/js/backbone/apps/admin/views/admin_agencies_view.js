@@ -55,13 +55,12 @@ var AdminAgenciesView = Backbone.View.extend({
       success: function (data) {        
         data.label = label;
         if (group == 'fy') {
-          var currentYear =_.chain(data.tasks.published).keys().sort().last().value();
-          var previousYear = parseInt(currentYear)-1;
-          previousYear= previousYear.toString();
-          var year = [currentYear, previousYear];
-          data.range = _.filter(data.range, function (i) {
-            return _.contains(year, i);
-          });
+          var today = new Date();
+          var currentYear = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
+          var previousYear= currentYear-1;       
+          previousYear= previousYear.toString();    
+          var year= [previousYear,currentYear];
+          data.range = year;
         }
         if (group == 'month') {
           self.generateMonthsDisplay(data);
@@ -93,8 +92,10 @@ var AdminAgenciesView = Backbone.View.extend({
   }.bind(this),
 
   generateMonthsDisplay: function (data) {
-    var currentYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
-    var previousYear= parseInt(currentYear)-1;
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1;  
     previousYear=previousYear.toString();
     var Myear = [previousYear];
     var previousYearRange = [];
@@ -114,8 +115,7 @@ var AdminAgenciesView = Backbone.View.extend({
     var currentMYear = [currentYear];
     var currentYearRange = _.filter(data.range, function (di) {
       return _.contains(currentMYear, di.slice(0,4));
-    });
-    var today = new Date();
+    }); 
     var year = today.getFullYear();
     var month = (today.getMonth()+ 1).toString();
     var currentYearMonth;
@@ -143,8 +143,10 @@ var AdminAgenciesView = Backbone.View.extend({
     }
   },
   generateQuartersDisplay: function (data) {
-    var currentYear =_.chain(data.tasks.published).keys().sort().last().value().slice(0,4);
-    var previousYear= parseInt(currentYear)-1;
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1;
     previousYear= previousYear.toString();
    
     var Myear = [previousYear];
