@@ -36,6 +36,9 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
     if (communityRefId != 'dos') {
       var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau']);
     }
+    if (target != 'sitewide') {
+      var exportTaskFormat = _.omit(exportTaskFormat || dao.exportTaskFormat, 'community_name');
+    }
     fieldNames = _.keys(exportTaskFormat || dao.exportTaskFormat);
     fields = _.values(exportTaskFormat || dao.exportTaskFormat);
   } else if (type === 'user') {

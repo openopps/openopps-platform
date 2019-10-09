@@ -33,7 +33,7 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
-const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -52,9 +52,11 @@ const exportTaskData = 'select task.id, task.title, description, task."createdAt
     'where "taskId" = task.id and volunteer."taskComplete" = true ' +
   ') as completed_participants, ' +
   'task.state, ' +
-  'agency.name as agency_name, task."completedAt" ' +
+  'agency.name as agency_name, community.community_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
-  'left join agency on task.agency_id = agency.agency_id ';
+  'left join agency on task.agency_id = agency.agency_id ' +
+  'left join community on task.community_id = community.community_id ' +
+  'where task.state <> \'archived\' and (community.target_audience is null or community.target_audience <> 2) ';
 
 const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
@@ -78,7 +80,7 @@ const exportTaskAgencyData = 'select task.id, task.title, description, task."cre
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
   'left join agency on task.agency_id = agency.agency_id ' + 
-  'where task.agency_id = ?';
+  'where task.state <> \'archived\' and task.community_id is null and task.agency_id = ?';
 
 const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
@@ -205,6 +207,7 @@ var exportTaskFormat = {
   'bureau': {field: 'bureau', filter: nullToEmptyString},
   'office': {field: 'office', filter: nullToEmptyString},
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
+  'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
 };
 
