@@ -166,7 +166,7 @@ router.get('/api/admin/export/community/:id', auth, async (ctx, next) => {
 
 router.get('/api/admin/task/export', auth.isAdmin, async (ctx, next) => {
   if(ctx.state.user.isAdmin) {
-    var exportData = await service.getExportData('task').then(rendered => {
+    var exportData = await service.getExportData('task', 'sitewide').then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
       ctx.response.set('Content-disposition', 'attachment; filename=tasks.csv');
       ctx.body = rendered;
