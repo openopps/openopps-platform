@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
-function StateMetrics (tasks) {
+function StateMetrics (tasks,group) {
+  this.group= group;
   this.tasks = tasks;
   this.publishedTasks= _.filter(this.tasks,function (task){
     return task.publishedAt;
@@ -40,7 +41,15 @@ _.extend(StateMetrics.prototype, {
   },
 
   range: function () {
-    return _.keys(this.publishedCount() || {});
+    if(this.group=='fy'){
+      var today = new Date();
+      var year = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
+      var yearSet= [year,(year-1).toString()];
+      return yearSet;
+    }
+    else{  
+      return _.keys(this.publishedCount() || {});
+    } 
   },
 
   calculateCarryover: function () {
