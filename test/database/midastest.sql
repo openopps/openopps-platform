@@ -21787,7 +21787,7 @@ ALTER TABLE ONLY task_share
 -- Name: public; Type: ACL; Schema: -; Owner: midas
 --
 
-GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO midas;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
