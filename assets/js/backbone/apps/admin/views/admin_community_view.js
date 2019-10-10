@@ -164,11 +164,7 @@ var AdminCommunityView = Backbone.View.extend({
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
-    var today = new Date();
-    var currentYear = today.getFullYear();  
-    currentYear=currentYear.toString();
-    var previousYear = parseInt(currentYear)-1;
-    previousYear= previousYear.toString();
+   
     function label (key) {
       if (key === 'undefined') return 'No date';   
       return group === 'week' ? 'W' + (+key.slice(4)) + '\n' + key.slice(0,4):
@@ -182,17 +178,19 @@ var AdminCommunityView = Backbone.View.extend({
       dataType: 'json',
       success: function (data) {        
         data.label = label;     
-        if(group=='fy'){     
-          var year= [currentYear, previousYear];
-          data.range = _.filter(data.range, function (i) {
-            return _.contains(year, i);
-          });
+        if(group=='fy'){ 
+          var today = new Date();
+          var currentYear = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
+          var previousYear= currentYear-1;       
+          previousYear= previousYear.toString();    
+          var year= [previousYear,currentYear];
+          data.range = year;
         }      
         if(group=='month'){            
-          self.generateMonthsDisplay(data,currentYear,previousYear);
+          self.generateMonthsDisplay(data);
         }
         if(group=='quarter'){
-          self.generateQuartersDisplay(data,currentYear,previousYear);       
+          self.generateQuartersDisplay(data);       
         }     
         data.community = self.community; 
          
@@ -220,7 +218,12 @@ var AdminCommunityView = Backbone.View.extend({
     return year+''+quarter;
   }.bind(this),
 
-  generateMonthsDisplay: function (data,currentYear,previousYear){
+  generateMonthsDisplay: function (data){
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1; 
+    previousYear=previousYear.toString();
    
     var Myear= [previousYear];  
     var previousYearRange= [];
@@ -241,7 +244,7 @@ var AdminCommunityView = Backbone.View.extend({
     var currentYearRange  = _.filter(data.range, function (di) {
       return _.contains(currentMYear, di.slice(0,4));
     });
-    var today = new Date();
+   
     var year = today.getFullYear();
     var month = (today.getMonth()+ 1).toString();        
     var currentYearMonth;      
@@ -270,7 +273,12 @@ var AdminCommunityView = Backbone.View.extend({
     }
   },
 
-  generateQuartersDisplay: function (data,currentYear,previousYear){
+  generateQuartersDisplay: function (data){
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1;
+    previousYear= previousYear.toString();
     var Myear= [previousYear];  
     var previousYearRange= [];
     previousYearRange  = _.filter(data.range, function (di) {
@@ -305,7 +313,6 @@ var AdminCommunityView = Backbone.View.extend({
       data.range=[];
     }
   },
-
   loadInteractionsData: function (callback) {
     $.ajax({
       url: '/api/admin/community/interactions/' + this.communityId,

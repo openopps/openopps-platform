@@ -159,6 +159,32 @@
           </div>
         </div>
       </div>
+      <% if (user.id !== data.id) { %>
+        <div class="usajobs-opop-profile-opportunity__body">
+          <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+            <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/application-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+              <span class="usajobs-nav--openopps__section">
+                <span class="fas fa-question-circle" title="Help"></span>Help
+              </span>
+            </a>
+            <% if (data.hiringPath != 'student') { %>
+              <h2>Opportunities</h2>
+              <% if (data.hiringPath == 'fed') { %>
+                <h3>Participated</h3>
+                <div class="opportunity-participated"></div>
+              <% } %>
+              <h3>Created</h3>
+              <div class="opportunity-created"></div>
+            <% } else { %>
+              <h2>Internship opportunities</h2>
+              <h3>Applied</h3>
+              <div class="internships-applied"></div>
+              <h3 id="saved">Saved</h3>
+              <div class="internships-saved"></div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
     </main>
     <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
       <aside class="usajobs-rightrail" id="rightrail">

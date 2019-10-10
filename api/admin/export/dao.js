@@ -33,7 +33,7 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id';
 
-const exportTaskData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -52,9 +52,11 @@ const exportTaskData = 'select task.id, task.title, description, task."createdAt
     'where "taskId" = task.id and volunteer."taskComplete" = true ' +
   ') as completed_participants, ' +
   'task.state, ' +
-  'agency.name as agency_name, task."completedAt" ' +
+  'agency.name as agency_name, community.community_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
-  'left join agency on task.agency_id = agency.agency_id ';
+  'left join agency on task.agency_id = agency.agency_id ' +
+  'left join community on task.community_id = community.community_id ' +
+  'where task.state <> \'archived\' and (community.target_audience is null or community.target_audience <> 2) ';
 
 const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
@@ -78,7 +80,7 @@ const exportTaskAgencyData = 'select task.id, task.title, description, task."cre
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
   'left join agency on task.agency_id = agency.agency_id ' + 
-  'where task.agency_id = ?';
+  'where task.state <> \'archived\' and task.community_id is null and task.agency_id = ?';
 
 const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
@@ -116,22 +118,26 @@ const exportTaskCommunityData = 'select task.id, task.title, description, task."
 
 const exportTaskDoSCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
-  '(' +
-    'select count(*) ' +
-    'from volunteer where "taskId" = task.id' +
+  '( ' +
+    'select count(application_task.task_id) ' +
+    'from application_task ' +
+    'join application on application_task.application_id = application.application_id ' +
+    'where application_task.task_id = task.id and application_task.sort_order <> -1 and application.submitted_at is not null ' +
   ') as applicants, ' +
   '(' +
-    'select string_agg(midas_user.name, \', \') ' +
-    'from volunteer ' +
-    'inner join midas_user on midas_user.id = volunteer."userId" ' +
-    'where "taskId" = task.id ' +
+    'select string_agg(trim(midas_user.given_name || \' \' || midas_user.last_name), \', \') ' +
+    'from application ' +
+    'inner join task_list_application tla on application.application_id = tla.application_id ' +
+    'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
+    'inner join midas_user on application.user_id = midas_user.id ' +
+    'where task_list.task_id = task.id and task_list.title in (\'Primary\', \'Alternate\') ' +
   ') as selected_participants, ' +
   '(' +
-    'select string_agg(midas_user.name, \', \') ' +
-    'from volunteer ' +
-    'inner join midas_user on midas_user.id = volunteer."userId" ' +
-    'where "taskId" = task.id and volunteer."taskComplete" = true ' +
-  ') as completed_participants,  ' +
+    'select string_agg(trim(midas_user.given_name || \' \' || midas_user.last_name), \', \') ' +
+    'from application ' +
+    'inner join midas_user on application.user_id = midas_user.id ' +
+    'where application.internship_completed = task.id ' +
+  ') as completed_participants, ' +
   'task.state,  ' +
   'agency.name as agency_name, ' +
   '(' +
@@ -205,6 +211,7 @@ var exportTaskFormat = {
   'bureau': {field: 'bureau', filter: nullToEmptyString},
   'office': {field: 'office', filter: nullToEmptyString},
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
+  'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
 };
 
