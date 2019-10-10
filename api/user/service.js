@@ -191,15 +191,9 @@ async function canAdministerAccount (user, attributes) {
   return false;
 }
 
-async function checkAgency (user, attributes) {
-  var owner = (await dao.TagEntity.db.query(dao.query.userAgencyQuery, attributes.id)).rows[0];
-  if (owner && owner.isAdmin) {
-    return false;
-  }
-  if (owner && owner.name) {
-    return _.find(user.tags, { 'type': 'agency' }).name == owner.name;
-  }
-  return false;
+async function checkAgency (agencyAdmin, attributes) {
+  var user = await dao.User.findOne('id = ?', attributes.id).catch(() => { return {}});
+  return !user.isAdmin && agencyAdmin.agencyId == user.agencyId;
 }
 
 async function updatePassword (attributes) {
