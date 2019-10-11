@@ -82,6 +82,25 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       fields = _.values(dao.exportTopContributorAgencyCreatedFormat);
     }
   }
+  
+  else if(type=='taskInteractions') {
+    var getcycleTasksTotal = fs.readFileSync(__dirname + '/sql/getCycleTaskTotal.sql', 'utf8');
+    var getCycleInteractions=  fs.readFileSync(__dirname + '/sql/getCycleInteractions.sql', 'utf8');
+    if (communityRefId == 'dos') {
+    
+      if(target=='communityCycleTask'){
+        records= (await db.query(getcycleTasksTotal, id)).rows;
+        fieldNames = _.keys(dao.exportCycleTaskFormat);
+        fields = _.values(dao.exportCycleTaskFormat);     
+      }
+      if(target=='communityCycleInteractions'){
+        records= (await db.query(getCycleInteractions, id)).rows;
+        fieldNames = _.keys(dao.exportCycleInteractionsFormat);
+        fields = _.values(dao.exportCycleInteractionsFormat);
+      
+      }
+    }
+  }
   fields.forEach(function (field, fIndex, fields) {
     if (typeof(field) === 'object') {      
       records.forEach(function (rec, rIndex, records) {
