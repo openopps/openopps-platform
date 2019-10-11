@@ -218,6 +218,27 @@ var exportTaskFormat = {
   'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
 };
+var exportCycleTaskFormat = {
+  'Cycle Name':{field: 'name', filter: nullToEmptyString},
+  'Total created': {field: 'totalcreated', filter: nullToEmptyString},
+  'Submitted': {field: 'submitted', filter: nullToEmptyString},
+  'Approved': {field: 'approved', filter: nullToEmptyString},
+  'Open': {field: 'open', filter: nullToEmptyString},
+  'Completed' :{field:'completed',filter:nullToEmptyString},
+
+};
+var exportCycleInteractionsFormat = {
+  'Cycle Name':{field: 'name', filter: nullToEmptyString},
+  'Applications submitted': {field: 'submittedTotal', filter: nullToEmptyString},
+  'Applications on Next Steps': {field: 'step0NextStepTotal', filter: nullToEmptyString},
+  'Applications on step 1 - Select Internships': {field: 'step1SelectInternshipTotal', filter: nullToEmptyString},
+  'Applications on step 2 - Experiences & References': {field: 'step2ExpRefTotal', filter: nullToEmptyString},
+  'Applications on step 3 - Education & Transcript' :{field:'step3EducationTotal',filter:nullToEmptyString},
+  'Applications on step 4 - Languages & Skills' :{field:'step4LanguageTotal',filter:nullToEmptyString},
+  'Applications on step 5 - Statement of interest' :{field:'step5StatementTotal',filter:nullToEmptyString},
+  'Applications on step 6 - Review application' :{field:'step6ReviewTotal',filter:nullToEmptyString},
+  'Total completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
+};
 
 
 function nullToEmptyString (str) {
@@ -299,5 +320,8 @@ module.exports = function (db) {
     exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
     exportTopContributorAgencyCreatedFormat: exportTopContributorAgencyCreatedFormat,
     exportTopContributorAgencyParticipantFormat: exportTopContributorAgencyParticipantFormat,
+    exportCycleTaskFormat:exportCycleTaskFormat,
+    exportCycleInteractionsFormat:exportCycleInteractionsFormat,
+
   };
 };
