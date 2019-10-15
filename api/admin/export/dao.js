@@ -7,33 +7,39 @@ const exportUserData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, m_user.title, agency.name as agency, ' +
-  'tagentity.name as location, m_user.bio, m_user."isAdmin", m_user.disabled ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, m_user."isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'ORDER BY m_user.id desc';
 
 const exportUserAgencyData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, m_user.title, agency.name as agency, ' +
-  'tagentity.name as location, m_user.bio, m_user."isAgencyAdmin" as "isAdmin", m_user.disabled ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, m_user."isAgencyAdmin" as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'WHERE m_user.agency_id = ? ORDER BY m_user.id desc';
 
 const exportUserCommunityData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, community_user.created_at as "joined_community", m_user.title, agency.name as agency, ' +
-  'tagentity.name as location, m_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id desc';
 
