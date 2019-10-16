@@ -36,7 +36,7 @@ var AdminTaskView = Backbone.View.extend({
     };
     if (this.options.target !== 'sitewide') {      
       if(this.cycle){
-        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId + '/' + '?cycle=' + this.cycle;
+        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId + '?cycle=' + this.cycle;
       }
       else{
         this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;

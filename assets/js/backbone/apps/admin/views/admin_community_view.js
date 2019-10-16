@@ -104,7 +104,7 @@ var AdminCommunityView = Backbone.View.extend({
             this.initializeCommunitySelect();
           }       
         }.bind(this));
-        Backbone.history.navigate('/admin/community/' + $('#communities').val() + '/' + '?cycle=' + $('#cycles').val(), { trigger: true  });      
+        Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  });      
       }.bind(this),
     });
   },
