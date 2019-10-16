@@ -34,8 +34,13 @@ var AdminTaskView = Backbone.View.extend({
       returnUrl: '/admin',
       cycle: this.params.get('cid'),
     };
-    if (this.options.target !== 'sitewide') {
-      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    if (this.options.target !== 'sitewide') {      
+      if(this.cycle){
+        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId + '/' + '?cycle=' + this.cycle;
+      }
+      else{
+        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+      }
     }
     this.agency = {};
     this.community = {};
@@ -82,7 +87,7 @@ var AdminTaskView = Backbone.View.extend({
       url: url,
       data: this.data,
       dataType: 'json',
-      success: function (data) {
+      success: function (data) {      
         this.tasks = data.tasks;
         _.extend(data, this.data);
         data.agency = this.agency;
