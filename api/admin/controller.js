@@ -118,10 +118,6 @@ router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/community/taskmetrics/:communityId/cyclical/:cycleId', auth, async (ctx, next) => {
-  ctx.body = await service.getCommunityCyclicalTaskMetrics(ctx.params.communityId,ctx.params.cycleId);
-});
-
 
 router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {

@@ -153,17 +153,6 @@ module.exports.getCommunityCycle = async function (id,cycleId) {
 };
 
 
-module.exports.getCommunityCyclicalTaskMetrics = async function (communityId,cycleId) {
-  var community = await communityService.findById(communityId);  
-  if (community.duration == 'Cyclical') {   
-    var taskQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskMetrics.sql', 'utf8'); 
-    var applicantsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityApplicantMetrics.sql', 'utf8'); 
-  } 
-  community.tasks = (await db.query(taskQuery, communityId)).rows;
-  community.applicants = (await db.query(applicantsQuery,communityId)).rows;
-  return community;
-};
-
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();

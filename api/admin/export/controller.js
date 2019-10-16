@@ -164,6 +164,55 @@ router.get('/api/admin/export/community/:id', auth, async (ctx, next) => {
   }
 });
 
+router.get('/api/admin/export/community/internships/:id/:cycleId', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    await service.getExportData('taskInteractions', 'communityCycleTask', ctx.params.id).then(rendered => {
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community_internships.csv');
+      ctx.body = rendered;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Internships data exported for community ' + ctx.params.id,
+      });
+    }).catch(err => {
+      log.info(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+router.get('/api/admin/export/community/Interactions/:id/:cycleId', auth, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    await service.getExportData('taskInteractions', 'communityCycleInteractions', ctx.params.id).then(rendered => {
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community_interactions.csv');
+      ctx.body = rendered;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Interactions data exported for community ' + ctx.params.id,
+      });
+    }).catch(err => {
+      log.info(err);
+      ctx.status = 500;
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
 router.get('/api/admin/task/export', auth.isAdmin, async (ctx, next) => {
   if(ctx.state.user.isAdmin) {
     var exportData = await service.getExportData('task', 'sitewide').then(rendered => {

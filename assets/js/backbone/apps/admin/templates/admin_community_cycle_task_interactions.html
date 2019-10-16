@@ -1,5 +1,5 @@
 
-	  <div class="usa-width-one-third admin-dos-interactions">
+	  <div class="usa-width-one-third admin-dos-interactions ">
         <h3><i class="fa fa-rocket "></i><span class="box-icon-text">Internships <a href="/admin/community/<%=community.communityId %>/tasks?cid=<%=cycleId %>" class="admin-manage-link">Manage</a></span></h3>
         <ul class="usajobs-unstyled-list">
           <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
@@ -10,8 +10,15 @@
             <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>    
           <% } %>
         </ul>
+     <div class="export-button tip admin-dos-interactions " data-toggle="tooltip" data-placement="bottom"
+      title="Download list of internships as a comma-separated file ready for import into Excel">        
+      <a href="/api/admin/export/community/internships/<%- community.communityId %>/<%- cycleId %>/">    
+      <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download list (.csv)</span>
+     </a>
+    </div> 
+       
       </div>
-      <div class="usa-width-one-third admin-dos-interactions">
+      <div class="usa-width-one-third admin-dos-interactions ">
         <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
         
         <ul class="usajobs-unstyled-list">
@@ -32,4 +39,11 @@
             <h4>Completed internships</h4>
             <li>Total completed: <%- community.interactions.internshipcompletetotal %></li>        
         </ul>
-      </div>
+     <div class="export-button tip admin-dos-interactions" data-toggle="tooltip" data-placement="bottom"
+        title="Download list of all interactions as a comma-separated file ready for import into Excel">        
+      <a href="/api/admin/export/community/Interactions/<%- community.communityId %>/<%- cycleId %>/">    
+      <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download list (.csv)</span>
+     </a>
+    </div>
+   
+  </div>

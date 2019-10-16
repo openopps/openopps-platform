@@ -7,31 +7,41 @@ const exportUserData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, m_user.title, agency.name as agency, ' +
-  'tagentity.name as location, m_user.bio, m_user."isAdmin", m_user.disabled ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, m_user."isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'ORDER BY m_user.id desc';
 
 const exportUserAgencyData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
-  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
+  'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
+  'm_user."createdAt" as account_create, m_user.title, agency.name as agency, ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, m_user."isAgencyAdmin" as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
-  'WHERE m_user.agency_id = ? ORDER BY m_user.id';
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
+  'WHERE m_user.agency_id = ? ORDER BY m_user.id desc';
 
 const exportUserCommunityData = 'SELECT ' +
-  'DISTINCT ON (m_user.id) m_user.id, m_user.name, m_user.username, m_user.title, m_user.bio, ' +
-  'm_user."isAdmin", m_user.disabled, tagentity.name as location, agency.name as agency ' +
+  'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
+  'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
+  'm_user."createdAt" as account_create, community_user.created_at as "joined_community", m_user.title, agency.name as agency, ' +
+  'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
+  'm_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
-  'LEFT JOIN tagentity ON tagentity_users__user_tags.tagentity_users = tagentity.id AND tagentity.type = \'location\' ' +
+  'LEFT JOIN country ON m_user.country_id = country.country_id ' +
+  'LEFT JOIN country_subdivision ON m_user.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
-  'WHERE community_user.community_id = ? ORDER BY m_user.id';
+  'WHERE community_user.community_id = ? ORDER BY m_user.id desc';
 
 const exportTaskData = 'select task.id, task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
@@ -160,9 +170,9 @@ var exportUserFormat = {
   'hiring_path': 'hiring_path',
   'logingov_email': 'logingov_email',
   'official_federal_govt_email': {field: 'official_federal_govt_email', filter: nullToEmptyString},
-  'last_login': {field: 'last_login', filter: nullToEmptyString},
-  'account_create': 'account_create',
-  'joined_community': 'joined_community',
+  'last_login': {field: 'last_login', filter: excelDateFormat},
+  'account_create': {field: 'account_create', filter: excelDateFormat},
+  'joined_community': {field: 'joined_community', filter: excelDateFormat},
   'title': {field: 'title', filter: nullToEmptyString},
   'agency': {field: 'agency', filter: nullToEmptyString},
   'location': {field: 'location', filter: nullToEmptyString},
@@ -213,6 +223,27 @@ var exportTaskFormat = {
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
   'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
+};
+var exportCycleTaskFormat = {
+  'Cycle Name':{field: 'name', filter: nullToEmptyString},
+  'Total created': {field: 'totalcreated', filter: nullToEmptyString},
+  'Submitted': {field: 'submitted', filter: nullToEmptyString},
+  'Approved': {field: 'approved', filter: nullToEmptyString},
+  'Open': {field: 'open', filter: nullToEmptyString},
+  'Completed' :{field:'completed',filter:nullToEmptyString},
+
+};
+var exportCycleInteractionsFormat = {
+  'Cycle Name':{field: 'name', filter: nullToEmptyString},
+  'Applications submitted': {field: 'submittedTotal', filter: nullToEmptyString},
+  'Applications on Next Steps': {field: 'step0NextStepTotal', filter: nullToEmptyString},
+  'Applications on step 1 - Select Internships': {field: 'step1SelectInternshipTotal', filter: nullToEmptyString},
+  'Applications on step 2 - Experiences & References': {field: 'step2ExpRefTotal', filter: nullToEmptyString},
+  'Applications on step 3 - Education & Transcript' :{field:'step3EducationTotal',filter:nullToEmptyString},
+  'Applications on step 4 - Languages & Skills' :{field:'step4LanguageTotal',filter:nullToEmptyString},
+  'Applications on step 5 - Statement of interest' :{field:'step5StatementTotal',filter:nullToEmptyString},
+  'Applications on step 6 - Review application' :{field:'step6ReviewTotal',filter:nullToEmptyString},
+  'Total completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
 };
 
 
@@ -295,5 +326,8 @@ module.exports = function (db) {
     exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
     exportTopContributorAgencyCreatedFormat: exportTopContributorAgencyCreatedFormat,
     exportTopContributorAgencyParticipantFormat: exportTopContributorAgencyParticipantFormat,
+    exportCycleTaskFormat:exportCycleTaskFormat,
+    exportCycleInteractionsFormat:exportCycleInteractionsFormat,
+
   };
 };
