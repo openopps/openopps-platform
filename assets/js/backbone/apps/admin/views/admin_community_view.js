@@ -22,15 +22,15 @@ var AdminCommunityView = Backbone.View.extend({
     this.adminMainView = options.adminMainView;
     this.communityId = options.communityId || options.communities[0].communityId;
     this.params = new URLSearchParams(window.location.search);   
-    this.community= {};
+    this.cycleParam= this.params.get('cycle'),  
+    this.community= {};  
   },
 
   render: function (replace) {
     var self = this;
     this.$el.show();
-    this.loadCommunityData();
-    $('#search-results-loading').hide();
-    Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
+    this.loadCommunityData(replace);
+    $('#search-results-loading').hide();   
     return this;
   },
 
@@ -38,23 +38,23 @@ var AdminCommunityView = Backbone.View.extend({
     $(event.currentTarget).closest('.usajobs-alert').hide();
   },
 
-  loadCommunityData: function () {
+  loadCommunityData: function (replace) {
     // get meta data for community
     $.ajax({
       url: '/api/admin/community/' + this.communityId,
       dataType: 'json',
-      success: function (communityInfo) {
-        this.community = communityInfo;    
-        
-        if(this.community.cycles && this.community.cycles.length>0){
+      success: function (communityInfo) {      
+        this.community = communityInfo;        
+        if(this.community.cycles && this.community.cycles.length>0){   
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
             updateSuccess: this.params.has('updateSuccess'),
             saveSuccess:this.params.has('saveSuccess'),
+            cycleId: this.cycleParam ,  
           });
-          this.$el.html(template);
-          this.rendertasksInteractionsCyclical();
+          this.$el.html(template);        
+          this.rendertasksInteractionsCyclical();            
         }
         else {
           this.loadInteractionsData(function (interactions) {
@@ -73,13 +73,14 @@ var AdminCommunityView = Backbone.View.extend({
             if(this.options.communities) {
               this.initializeCommunitySelect();
             }
-          }.bind(this)); 
+          }.bind(this));
+          Backbone.history.navigate('/admin/community/' + this.communityId, {replace:replace }); 
         }     
       }.bind(this),
     });
   },
   rendertasksInteractionsCyclical:function () {
-    var cycleId = this.$('#cycles').val();   
+    var cycleId = $('#cycles').val();  
     $.ajax({
       url: '/api/admin/community/' + this.communityId +'/cyclical/'+ cycleId,
       dataType: 'json',
@@ -101,8 +102,9 @@ var AdminCommunityView = Backbone.View.extend({
           }.bind(this), 50);
           if(this.options.communities) {
             this.initializeCommunitySelect();
-          }
-        }.bind(this));      
+          }       
+        }.bind(this));
+        Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  });      
       }.bind(this),
     });
   },
@@ -305,12 +307,12 @@ var AdminCommunityView = Backbone.View.extend({
 
   changeCommunity: function (event) {
     if($('#communities').val()) {
-      Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
+      Backbone.history.navigate('/admin/community/' + $('#communities').val(), {trigger:true, replace:true });
      
     }
   },
-  changeCycles: function (event) {
-    this.rendertasksInteractionsCyclical();
+  changeCycles: function (event) {   
+    this.rendertasksInteractionsCyclical(); 
   },
 
   renderActivities: function (self, data) {
