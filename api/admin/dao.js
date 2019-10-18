@@ -95,8 +95,12 @@ const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 THEN
   'count(CASE when current_step = 5 THEN 1 ELSE NULL end) as step5StatementTotal, ' +
   'count(CASE when current_step = 6 THEN 1 ELSE NULL end) as step6ReviewTotal, ' +
   'count(CASE when internship_completed_at is not null then 1 ELSE NULL end) as InternshipCompleteTotal, ' +
+  'count(case when task_list.title = \'Primary\' then 1 else null end) as PrimaryCount, ' +
+  'count(case when task_list.title = \'Alternate\' then 1 else null end) as AlternateCount,' +
   'count(CASE when submitted_at is not null then 1 ELSE NULL end) as submittedTotal ' +
-   'from application where application.community_id = ? and application.cycle_id = ? ' ;
+   'from application app left join task_list_application tla on app.application_id = tla.application_id ' +
+   'left join task_list on tla.task_list_id = task_list.task_list_id '+
+   'where app.community_id = ? and app.cycle_id = ? ' ;
 
 
 const volunteerCountQuery = 'select ' +
