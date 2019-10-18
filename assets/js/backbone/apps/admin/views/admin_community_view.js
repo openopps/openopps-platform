@@ -4,7 +4,6 @@ var $ = require('jquery');
 var AdminCommunityTemplate = require('../templates/admin_community_template.html');
 var AdminCommunityDashboardActivitiesTemplate = require('../templates/admin_community_dashboard_activities_template.html');
 var AdminCommunityTasks = require('../templates/admin_community_task_metrics.html');
-var AdminCommunityCyclicalTasks = require('../templates/admin_community_cyclical_task_metrics.html');
 var AdminCommunityCyclicalTasksInteractions = require('../templates/admin_community_cycle_task_interactions.html');
 var AdminCommunityView = Backbone.View.extend({
 
@@ -23,15 +22,15 @@ var AdminCommunityView = Backbone.View.extend({
     this.adminMainView = options.adminMainView;
     this.communityId = options.communityId || options.communities[0].communityId;
     this.params = new URLSearchParams(window.location.search);   
-    this.community= {};
+    this.cycleParam= this.params.get('cycle'),  
+    this.community= {};  
   },
 
   render: function (replace) {
     var self = this;
     this.$el.show();
-    this.loadCommunityData();
-    $('#search-results-loading').hide();
-    Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
+    this.loadCommunityData(replace);
+    $('#search-results-loading').hide();   
     return this;
   },
 
@@ -39,23 +38,23 @@ var AdminCommunityView = Backbone.View.extend({
     $(event.currentTarget).closest('.usajobs-alert').hide();
   },
 
-  loadCommunityData: function () {
+  loadCommunityData: function (replace) {
     // get meta data for community
     $.ajax({
       url: '/api/admin/community/' + this.communityId,
       dataType: 'json',
-      success: function (communityInfo) {
-        this.community = communityInfo;    
-        
-        if(this.community.cycles && this.community.cycles.length>0){
+      success: function (communityInfo) {      
+        this.community = communityInfo;        
+        if(this.community.cycles && this.community.cycles.length>0){   
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
             updateSuccess: this.params.has('updateSuccess'),
             saveSuccess:this.params.has('saveSuccess'),
+            cycleId: this.cycleParam ,  
           });
-          this.$el.html(template);
-          this.rendertasksInteractionsCyclical();
+          this.$el.html(template);        
+          this.rendertasksInteractionsCyclical();            
         }
         else {
           this.loadInteractionsData(function (interactions) {
@@ -74,13 +73,14 @@ var AdminCommunityView = Backbone.View.extend({
             if(this.options.communities) {
               this.initializeCommunitySelect();
             }
-          }.bind(this)); 
+          }.bind(this));
+          Backbone.history.navigate('/admin/community/' + this.communityId, {replace:replace }); 
         }     
       }.bind(this),
     });
   },
   rendertasksInteractionsCyclical:function () {
-    var cycleId = this.$('#cycles').val();   
+    var cycleId = $('#cycles').val();  
     $.ajax({
       url: '/api/admin/community/' + this.communityId +'/cyclical/'+ cycleId,
       dataType: 'json',
@@ -97,65 +97,18 @@ var AdminCommunityView = Backbone.View.extend({
           this.$('.cyclical-task-interactions-metrics').html(template);
           this.$el.localize();
           this.$('.cyclical-task-interactions-metrics').show();      
-          setTimeout(function () {
-            this.fetchData(this);
-            this.renderTasksCyclical();
+          setTimeout(function () {       
+            this.fetchData(this);         
           }.bind(this), 50);
           if(this.options.communities) {
             this.initializeCommunitySelect();
-          }
-        }.bind(this));      
+          }       
+        }.bind(this));
+        Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  });      
       }.bind(this),
     });
   },
-
-
-  renderTasksCyclical: function (){
-    var cycleId = $('#cycles').val();
-    $.ajax({
-      url: '/api/admin/community/taskmetrics/'+ this.communityId +'/cyclical/'+ cycleId,
-      dataType: 'json',
-      success: function (data) { 
-    
-        var array=[];
-        data.tasks= _.sortBy(data.tasks, 'postingstartdate').reverse(); 
-       
-        var pluckcycleId=_.pluck(data.tasks,'cycle_id').sort() ;
-        var pluckappcycleId=_.pluck(data.applicants,'cycle_id').sort() ;
-        var difference=_.difference(pluckcycleId,pluckappcycleId);
-       
-        var arraydiff=[];
-        var newapp= _.each(difference,function (d){
-          var newData={
-            applicant:0,
-            cycle_id:d,       
-          };
-          arraydiff.push(newData);
-        });    
-        data.applicants=_.union(data.applicants,arraydiff).sort();
-             
-        var index=  _.findIndex(data.tasks, { cycle_id: cycleId});
-        var currentItem = data.tasks[index];
-        array.push(currentItem);
-        var nextcycleId;
-        if(index >= 0 && index < data.tasks.length - 1 && data.tasks.length > 1)
-        {
-          var nextItem = data.tasks[index + 1];
-          nextcycleId= nextItem.cycle_id;
-          array.push(nextItem);        
-        }  
-        
-        data.tasks= array;       
-         
-        var template = _.template(AdminCommunityCyclicalTasks)(data);
-        $('#search-results-loading').hide();     
-        this.$('.cyclical-task-metrics').html(template);
-        this.$el.localize();
-        this.$('.cyclical-task-metrics').show();
-      }.bind(this),
-    });
-  },
-
+ 
   renderTasks: function () {
     var self=this,
         group = this.$('.group').val() || 'fy',
@@ -354,17 +307,20 @@ var AdminCommunityView = Backbone.View.extend({
 
   changeCommunity: function (event) {
     if($('#communities').val()) {
-      Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
+      Backbone.history.navigate('/admin/community/' + $('#communities').val(), {trigger:true, replace:true });
      
     }
   },
-  changeCycles: function (event) {
-    this.rendertasksInteractionsCyclical();
+  changeCycles: function (event) {   
+    this.rendertasksInteractionsCyclical(); 
   },
 
   renderActivities: function (self, data) {
-    var template = _.template(AdminCommunityDashboardActivitiesTemplate)(data);
-    self.$('.activity-block').html(template);
+    var template = _.template(AdminCommunityDashboardActivitiesTemplate)(data);  
+    self.$('.activity-block').html(template);  
+    if(this.community.cycles && this.community.cycles.length>0){
+      self.$('.activity-block .usajobs-section-header').addClass('admin-separator');
+    }
     _(data).forEach(function (activity) {
 
       if (!activity || !activity.user ||

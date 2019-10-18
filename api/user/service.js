@@ -56,10 +56,10 @@ async function getCompletedInternship(userId) {
   return (await dao.Application.find('internship_completed_at is not null and user_id = ?', userId).catch(() => { return []; })).length;
 }
 
-async function getInternshipsActivities (user) {
+async function getInternshipsActivities (userId) {
   return {
-    applications: (await dao.Application.db.query(dao.query.applicationStatus, user.id)).rows,
-    savedOpportunities: (await db.query(dao.query.savedTask, user.id)).rows,
+    applications: (await dao.Application.db.query(dao.query.applicationStatus, userId)).rows,
+    savedOpportunities: (await db.query(dao.query.savedTask, userId)).rows,
   };
 }
 

@@ -30,6 +30,7 @@ var InternshipsActivityView = Backbone.View.extend({
       sort: this.options.sort || 'updatedAt',
       data: this.options.data,
       getStatus: this.options.getStatus,
+      displayOnly: this.options.displayOnly || false,
       count: {},
     };
 

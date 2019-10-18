@@ -42,7 +42,7 @@
   <tbody>
     <% if (users.length === 0) { %>
       <tr class="empty-row">
-        <td colspan="10">
+        <td colspan="7">
           No users found.
         </td>
       </tr>
@@ -62,7 +62,7 @@
           <%- (u.agency || {}).name %>
         </td>
         <td class="admin-table-joineddate">
-          <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
+          <%- moment(u.joined_date).format('MM/DD/YYYY hh:mma') %>
         </td>
         <td>
           Created: <%- u.communityTaskCreated %> <br/>
