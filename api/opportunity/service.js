@@ -253,7 +253,7 @@ async function isCommunityAdmin (user, task) {
   }
 }
 
-async function updateOpportunityState (attributes, done) {
+async function updateOpportunityState (ctx, attributes, done) {
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   attributes.updatedAt = new Date();
   attributes.assignedAt = attributes.state === 'in progress' && !origTask.assignedAt ? new Date : origTask.assignedAt;
@@ -270,7 +270,7 @@ async function updateOpportunityState (attributes, done) {
   });
 }
 
-async function updateOpportunity (attributes, done) {
+async function updateOpportunity (ctx, attributes, done) {
   var errors = await Task.validateOpportunity(attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(null, null, errors);
@@ -293,7 +293,15 @@ async function updateOpportunity (attributes, done) {
   
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
-    
+    var audit = Audit.createAudit('TASK_UPDATED', ctx, {
+      taskId: task.id,
+      previous: _.omitBy(origTask, (value, key) => { return _.isEqual(attributes[key], value); }),
+      changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origTask[key], value); }),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
+    });
+
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
@@ -321,11 +329,6 @@ async function updateOpportunity (attributes, done) {
       else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
-      // eslint-disable-next-line no-empty
-      else{
-
-      }
-
     }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {

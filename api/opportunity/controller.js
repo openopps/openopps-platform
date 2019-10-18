@@ -129,7 +129,7 @@ router.put('/api/task/state/:id', auth, async (ctx, next) => {
 router.put('/api/task/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
-    await service.updateOpportunity(ctx.request.body, function (task, stateChange, errors) {
+    await service.updateOpportunity(ctx, ctx.request.body, function (task, stateChange, errors) {
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
