@@ -21,13 +21,13 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
-function getTaskFilterClause (filter, filterAgency) {
+function getTaskFilterClause (filter, filterAgency, extra) {
   var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
     `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
   if (filterAgency) {
     filterClause += ` or lower(tasks.agency->>'name') like '%` + filter.toLowerCase() + `%'`;
   }
-  return '(' + filterClause + ')';
+  return '(' + _.identity([filterClause, extra]).join(' ') + ')';
 }
 
 function getOrderByClause (sortValue) {
@@ -36,6 +36,12 @@ function getOrderByClause (sortValue) {
       return 'lower(tasks.title)';
     case 'creator':
       return 'lower(tasks.owner->>\'last_name\'), lower(tasks.owner->>\'given_name\')';
+    case 'agency':
+      return 'lower(tasks.agency->>\'name\')';
+    case 'bureau':
+      return 'lower(tasks.bureau->>\'name\')';
+    case 'office':
+        return 'lower(tasks.office->>\'name\')';
     default:
       return 'tasks."createdAt" desc';
   }
@@ -52,7 +58,7 @@ function getUserListOrderByClause (sortValue) {
     case 'isAdmin':
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
-        return 'users."isAgencyAdmin" desc';
+      return 'users."isAgencyAdmin" desc';
     case 'is_manager':
       return 'users.is_manager desc';
     case 'agency':
@@ -80,42 +86,99 @@ module.exports.getMetrics = async function () {
   return { 'tasks': tasks, 'users': users };
 };
 
-module.exports.getCommunityTaskStateMetrics = async function (communityId, state, page, sort, filter){
+module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleId, state, page, sort, filter){
   var community = await communityService.findById(communityId);
 
   if (community.duration == 'Cyclical') {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getCyclicalTasksByState.sql', 'utf8').toString();
-    var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
+    var whereClause = 'tasks.community_id = ? and tasks.cycle_id = ? and ' + getWhereClauseForCyclicalTaskState(state);
   } else {
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
     var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
 
-  //This will get replaced with DoS own filter query for new ticket that is still in backlog.  Jodi
   var agency = "";
-  if (community.targetAudience != "Students") {
-    agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
-  } 
+  var office = "";
+  var bureau = "";
+
+  if (community.referenceId != "dos") {
+    var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    var office = ' or lower(office->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+    var bureau = ' or lower(bureau->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  }
 
   if (filter) {
-    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() + '%\'' + agency + ')';
+    whereClause += ' and (lower(title) like \'%' + filter.toLowerCase() + '%\' or lower(owner->>\'name\') like \'%' + filter.toLowerCase() 
+    + '%\'' + agency + office + bureau +')';
   } 
 
-  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.targetAudience != "Students") : ''));
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos", office + bureau) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
-  return Promise.all([
-    db.query(taskStateTotalsQuery, communityId),
-    db.query(tasksByStateQuery, [communityId, page]),
-  ]);
+  if(cycleId){
+    return Promise.all([
+      db.query(taskStateTotalsQuery, [communityId,cycleId]),
+      db.query(tasksByStateQuery, [communityId,cycleId, page]),
+    ]);
+  }
+  else {
+    return Promise.all([
+      db.query(taskStateTotalsQuery, communityId),
+      db.query(tasksByStateQuery, [communityId, page]),
+    ]);
+  }
 };
 
-module.exports.getTaskStateMetrics = async function (state, page, sort) {
+module.exports.getInteractionsForCommunityCyclical = async function (communityId,cycleId) {
+  var interactions = {};
+  var temp = await dao.Task.db.query(dao.query.communityCyclicalPostQuery, communityId,cycleId);
+  interactions.posts = +temp.rows[0].count;
+  temp = await dao.Task.db.query(dao.query.communityVolunteerCyclicalCountQuery, communityId,cycleId);
+  interactions.signups = +temp.rows[0].signups;
+  interactions.assignments = +temp.rows[0].assignments;
+  interactions.completions = +temp.rows[0].completions;
+
+  return interactions;
+};
+
+
+module.exports.getCommunityCycle = async function (id,cycleId) {
+  var community = await communityService.findById(id); //await dao.Community.findOne('community_id = ?', id);
+  community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
+  if (community.duration == 'Cyclical') {
+    community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
+    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+    var filterState = false;
+  }
+  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), [id,cycleId])).rows;
+  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
+  
+  return community;
+};
+
+
+module.exports.getCommunityCyclicalTaskMetrics = async function (communityId,cycleId) {
+  var community = await communityService.findById(communityId);  
+  if (community.duration == 'Cyclical') {   
+    var taskQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskMetrics.sql', 'utf8'); 
+    var applicantsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityApplicantMetrics.sql', 'utf8'); 
+  } 
+  community.tasks = (await db.query(taskQuery, communityId)).rows;
+  community.applicants = (await db.query(applicantsQuery,communityId)).rows;
+  return community;
+};
+
+module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
   var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
+  if (filter) {
+    whereClause += ' and ' + getTaskFilterClause(filter, true);
+  }
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, true) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery),
@@ -127,6 +190,10 @@ module.exports.getAgencyTaskStateMetrics = async function  (agencyId, state, pag
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getAgencyTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
   var whereClause = 'tasks.agency_id = ? and tasks.community_id is null and ' + getWhereClauseForTaskState(state);
+  if (filter) {
+    whereClause += ' and ' + getTaskFilterClause(filter);
+  }
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter) : ''));
   tasksByStateQuery =  tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   return Promise.all([
     db.query(taskStateTotalsQuery, agencyId),
@@ -498,14 +565,15 @@ module.exports.getCommunity = async function (id) {
   community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
   if (community.duration == 'Cyclical') {
     community.cycles = await dao.Cycle.find('community_id = ?', community.communityId);
-    var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCyclicalCommunityTaskStateTotals.sql', 'utf8');
+  
     var filterState = false;
   } else {
     var filterState = { task_state: 'draft' };
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
+    community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
+    community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
   }
-  community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
-  community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0)
+ 
   return community;
 };
 

@@ -13,13 +13,13 @@
       </label>
       <select name="sort-user-sitewide" id="sort-user-sitewide" class="usajobs-search-controls__sort-control">
         <option value="" disabled>- Sort By -</option>
-        <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+        <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>      
         <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
         <option value="username" <% if (sort == 'username') { %>selected<% } %>>Login.gov email</option>
         <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
         <option value="last_login" <% if (sort == 'last_login') { %>selected<% } %>>Last login</option>
         <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
-        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>
+        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>     
       </select>
       <% } %>
     <% if (target === 'agency') { %>
@@ -28,7 +28,7 @@
       </label>
         <select name="sort-user-agency" id="sort-user-agency" class="usajobs-search-controls__sort-control">
           <option value="" disabled>- Sort By -</option>
-          <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+          <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>       
           <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
           <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
           <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
@@ -43,7 +43,10 @@
   <thead>
     <tr>
       <th class="admin-table-name">Name</th>
-      <% if (target == 'sitewide') { %><th class="admin-table-usertype">User type</th><% } %>
+      <% if (target == 'sitewide') { %>
+        <th>Agency</th>
+        <th class="admin-table-usertype">User type</th>   
+      <% } %>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <th>Created</th>
@@ -74,8 +77,16 @@
           data-agency-admin="<%- u.isAgencyAdmin %>">
         <td class="admin-table-name">
           <%- u.name %>
-        </td>
+        </td>      
         <% if (target == 'sitewide') { %>
+          <% if (u.agency) { %>
+            <td >
+              <%- u.agency.name %>
+            </td>
+            <% }else { %>
+              <td> </td>
+              <% } %>
+
           <td class="admin-table-usertype">
             <% if (u.hiring_path == 'fed') { %>
               <span><img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal employee" title="Federal employee"></span>

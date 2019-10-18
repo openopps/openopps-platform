@@ -24,12 +24,15 @@ var AdminTaskView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
+    this.cycle= this.params.get('cid');
+    
     this.data = {
       page: this.params.get('p') || 1,
       status: this.params.get('q') || 'submitted',
       filter: this.params.get('f') || '',
       sort: this.params.get('s') || 'date',
       returnUrl: '/admin',
+      cycle: this.params.get('cid'),
     };
     if (this.options.target !== 'sitewide') {
       this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
@@ -84,7 +87,8 @@ var AdminTaskView = Backbone.View.extend({
         _.extend(data, this.data);
         data.agency = this.agency;
         data.community = this.community;
-        data.filter = this.data.filter;      
+        data.filter = this.data.filter; 
+        data.cycleName= this.getCommunityCycleName(data.cycle);          
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -105,6 +109,7 @@ var AdminTaskView = Backbone.View.extend({
       status: this.data.status,
       filter: this.data.filter,
       targetAudience: this.community.targetAudience,
+      referenceId: this.community.referenceId,
       cycles: (this.community.cycles || {}),
       countOf: totalResults,
       firstOf: this.data.page * 25 - 24,
@@ -155,13 +160,16 @@ var AdminTaskView = Backbone.View.extend({
     var status = $('input[name=opp-status]:checked').val();
     this.data.status = status;
     this.data.page = 1;
-    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    Backbone.history.navigate(this.generateURL(), { trigger: false });  
     this.loadData();
   },
 
   generateURL: function () {
-    var url = window.location.pathname;
+    var url = window.location.pathname;   
     url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    if(this.data.cycle){  
+      url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort + '&cid=' + this.data.cycle;
+    }
     return url;
   },
 
@@ -170,6 +178,15 @@ var AdminTaskView = Backbone.View.extend({
     var cycleName = _.find(this.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
     if (cycleName) {
       return cycleName.name;
+    }
+  },
+
+  getCommunityCycleName: function (cycle){
+    if(cycle){
+      var cycleName = _.find(this.community.cycles, function (c) { return c.cycleId == cycle; });
+      if(cycleName){
+        return cycleName.name;
+      }
     }
   },
 

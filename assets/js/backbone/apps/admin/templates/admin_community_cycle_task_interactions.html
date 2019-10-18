@@ -1,0 +1,23 @@
+
+	  <div class="usa-width-one-third">
+        <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks?cid=<%=cycleId %>" class="admin-manage-link">Manage</a></span></h3>
+        <ul class="usajobs-unstyled-list">
+          <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
+          <% if (community.duration == 'Cyclical') { %>
+            <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>
+            <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+            <li>Approved: <%- numeral((_.findWhere(community.tasks, { task_state: 'approved' }) || {}).count).format('0,0') %></li>
+            <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+            <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>    
+          <% } %>
+        </ul>
+      </div>
+      <div class="usa-width-one-third">
+        <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+        <ul class="usajobs-unstyled-list">
+            <li>Total applications: <%- numeral(community.interactions.signups).format('0,0') %></li>
+            <li>Total assigned: <%- numeral(community.interactions.assignments).format('0,0') %></li>
+            <li>Total completed: <%- numeral(community.interactions.completions).format('0,0') %></li>
+            <li>Discussion posts: <%- numeral(community.interactions.posts).format('0,0') %></li>
+        </ul>
+      </div>

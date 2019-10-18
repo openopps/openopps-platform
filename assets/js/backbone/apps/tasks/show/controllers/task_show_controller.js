@@ -78,10 +78,6 @@ var TaskShowController = BaseView.extend({
 
     if (this.taskItemView) this.taskItemView.cleanup();
     if (this.taskEditFormView) this.taskEditFormView.cleanup();
-    if(this.options.community && this.options.community.communityType && this.options.community.communityTypeValue) {
-      this.madlibTags = this.madlibTags || {};
-      this.madlibTags[this.options.community.communityType.toLowerCase()] = [this.options.community.communityTypeValue];
-    }
     $('#search-results-loading').show();
     this.model.tagTypes(function (tagTypes) {
       this.model.trigger('task:tag:types', tagTypes);

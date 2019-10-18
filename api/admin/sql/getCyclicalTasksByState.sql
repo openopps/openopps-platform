@@ -12,15 +12,23 @@ with tasks as (
 				) muser
 		) as owner,
 		(
-			select json_agg (users)
+			select count (applications)
 			from (
-				select midas_user.id, midas_user.name, midas_user.given_name, midas_user.last_name, midas_user.username, midas_user.government_uri
+				select application_task.task_id
 				from application_task
-				join application on application_task.application_id = application.application_id
-				join midas_user on application.user_id = midas_user.id
 				where application_task.task_id = task.id
-			) users
-		) as applicants
+			) applications
+		) as applicants,
+		(select row_to_json (office)
+			from (
+				select * from office where task.office_id = office.office_id
+			) office
+		) as office,
+		(select row_to_json (bureau)
+			from (
+				select * from bureau where task.bureau_id = bureau.bureau_id
+			) bureau
+		) as bureau
 	from task
 	left join cycle on task.cycle_id = cycle.cycle_id
 )

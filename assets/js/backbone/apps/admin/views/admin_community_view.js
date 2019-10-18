@@ -4,6 +4,8 @@ var $ = require('jquery');
 var AdminCommunityTemplate = require('../templates/admin_community_template.html');
 var AdminCommunityDashboardActivitiesTemplate = require('../templates/admin_community_dashboard_activities_template.html');
 var AdminCommunityTasks = require('../templates/admin_community_task_metrics.html');
+var AdminCommunityCyclicalTasks = require('../templates/admin_community_cyclical_task_metrics.html');
+var AdminCommunityCyclicalTasksInteractions = require('../templates/admin_community_cycle_task_interactions.html');
 var AdminCommunityView = Backbone.View.extend({
 
   events: {
@@ -13,13 +15,14 @@ var AdminCommunityView = Backbone.View.extend({
     'change #sort-user-community' : 'sortUsers',
     'change .group'         : 'renderTasks', 
     'change input[name=type]':'renderTasks',
+    'change #cycles'         : 'changeCycles',
   },
 
   initialize: function (options) {
     this.options = options;
     this.adminMainView = options.adminMainView;
     this.communityId = options.communityId || options.communities[0].communityId;
-    this.params = new URLSearchParams(window.location.search);
+    this.params = new URLSearchParams(window.location.search);   
     this.community= {};
   },
 
@@ -27,7 +30,6 @@ var AdminCommunityView = Backbone.View.extend({
     var self = this;
     this.$el.show();
     this.loadCommunityData();
-    //this.loadInteractionsData();
     $('#search-results-loading').hide();
     Backbone.history.navigate('/admin/community/' + this.communityId, { replace: replace });
     return this;
@@ -43,10 +45,9 @@ var AdminCommunityView = Backbone.View.extend({
       url: '/api/admin/community/' + this.communityId,
       dataType: 'json',
       success: function (communityInfo) {
-        this.community = communityInfo;
-      
-        this.loadInteractionsData(function (interactions) {
-          communityInfo.interactions = interactions;
+        this.community = communityInfo;    
+        
+        if(this.community.cycles && this.community.cycles.length>0){
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
@@ -54,14 +55,103 @@ var AdminCommunityView = Backbone.View.extend({
             saveSuccess:this.params.has('saveSuccess'),
           });
           this.$el.html(template);
+          this.rendertasksInteractionsCyclical();
+        }
+        else {
+          this.loadInteractionsData(function (interactions) {
+            communityInfo.interactions = interactions;
+            var template = _.template(AdminCommunityTemplate)({
+              community: communityInfo,
+              communities: this.options.communities,
+              updateSuccess: this.params.has('updateSuccess'),
+              saveSuccess:this.params.has('saveSuccess'),
+            });
+            this.$el.html(template);
+            setTimeout(function () {
+              this.fetchData(this);
+              this.renderTasks();
+            }.bind(this), 50);
+            if(this.options.communities) {
+              this.initializeCommunitySelect();
+            }
+          }.bind(this)); 
+        }     
+      }.bind(this),
+    });
+  },
+  rendertasksInteractionsCyclical:function () {
+    var cycleId = this.$('#cycles').val();   
+    $.ajax({
+      url: '/api/admin/community/' + this.communityId +'/cyclical/'+ cycleId,
+      dataType: 'json',
+      success: function (communityInfo) {    
+        this.community = communityInfo;        
+        this.loadCyclicalInteractionsData(function (interactions) {
+          communityInfo.interactions = interactions;
+          var template = _.template(AdminCommunityCyclicalTasksInteractions)({
+            community: communityInfo,
+            communities: this.options.communities, 
+            cycleId:cycleId,  
+          });   
+          $('#search-results-loading').hide();  
+          this.$('.cyclical-task-interactions-metrics').html(template);
+          this.$el.localize();
+          this.$('.cyclical-task-interactions-metrics').show();      
           setTimeout(function () {
             this.fetchData(this);
-            this.renderTasks();
+            this.renderTasksCyclical();
           }.bind(this), 50);
           if(this.options.communities) {
             this.initializeCommunitySelect();
           }
         }.bind(this));      
+      }.bind(this),
+    });
+  },
+
+
+  renderTasksCyclical: function (){
+    var cycleId = $('#cycles').val();
+    $.ajax({
+      url: '/api/admin/community/taskmetrics/'+ this.communityId +'/cyclical/'+ cycleId,
+      dataType: 'json',
+      success: function (data) { 
+    
+        var array=[];
+        data.tasks= _.sortBy(data.tasks, 'postingstartdate').reverse(); 
+       
+        var pluckcycleId=_.pluck(data.tasks,'cycle_id').sort() ;
+        var pluckappcycleId=_.pluck(data.applicants,'cycle_id').sort() ;
+        var difference=_.difference(pluckcycleId,pluckappcycleId);
+       
+        var arraydiff=[];
+        var newapp= _.each(difference,function (d){
+          var newData={
+            applicant:0,
+            cycle_id:d,       
+          };
+          arraydiff.push(newData);
+        });    
+        data.applicants=_.union(data.applicants,arraydiff).sort();
+             
+        var index=  _.findIndex(data.tasks, { cycle_id: cycleId});
+        var currentItem = data.tasks[index];
+        array.push(currentItem);
+        var nextcycleId;
+        if(index >= 0 && index < data.tasks.length - 1 && data.tasks.length > 1)
+        {
+          var nextItem = data.tasks[index + 1];
+          nextcycleId= nextItem.cycle_id;
+          array.push(nextItem);        
+        }  
+        
+        data.tasks= array;       
+         
+        var template = _.template(AdminCommunityCyclicalTasks)(data);
+        $('#search-results-loading').hide();     
+        this.$('.cyclical-task-metrics').html(template);
+        this.$el.localize();
+        this.$('.cyclical-task-metrics').show();
       }.bind(this),
     });
   },
@@ -73,11 +163,7 @@ var AdminCommunityView = Backbone.View.extend({
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
-    var today = new Date();
-    var currentYear = today.getFullYear();  
-    currentYear=currentYear.toString();
-    var previousYear = parseInt(currentYear)-1;
-    previousYear= previousYear.toString();
+   
     function label (key) {
       if (key === 'undefined') return 'No date';   
       return group === 'week' ? 'W' + (+key.slice(4)) + '\n' + key.slice(0,4):
@@ -91,17 +177,19 @@ var AdminCommunityView = Backbone.View.extend({
       dataType: 'json',
       success: function (data) {        
         data.label = label;     
-        if(group=='fy'){     
-          var year= [currentYear, previousYear];
-          data.range = _.filter(data.range, function (i) {
-            return _.contains(year, i);
-          });
+        if(group=='fy'){ 
+          var today = new Date();
+          var currentYear = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
+          var previousYear= currentYear-1;       
+          previousYear= previousYear.toString();    
+          var year= [previousYear,currentYear];
+          data.range = year;
         }      
         if(group=='month'){            
-          self.generateMonthsDisplay(data,currentYear,previousYear);
+          self.generateMonthsDisplay(data);
         }
         if(group=='quarter'){
-          self.generateQuartersDisplay(data,currentYear,previousYear);       
+          self.generateQuartersDisplay(data);       
         }     
         data.community = self.community; 
          
@@ -113,7 +201,7 @@ var AdminCommunityView = Backbone.View.extend({
           self.$('.task-metrics').show();
           self.$('.group').val(group);  
           self.$('input[name=type][value="' + filter +'"]').prop('checked', true); 
-        }     
+        }       
       }.bind(this),
     });
   },
@@ -129,7 +217,12 @@ var AdminCommunityView = Backbone.View.extend({
     return year+''+quarter;
   }.bind(this),
 
-  generateMonthsDisplay: function (data,currentYear,previousYear){
+  generateMonthsDisplay: function (data){
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1; 
+    previousYear=previousYear.toString();
    
     var Myear= [previousYear];  
     var previousYearRange= [];
@@ -150,7 +243,7 @@ var AdminCommunityView = Backbone.View.extend({
     var currentYearRange  = _.filter(data.range, function (di) {
       return _.contains(currentMYear, di.slice(0,4));
     });
-    var today = new Date();
+   
     var year = today.getFullYear();
     var month = (today.getMonth()+ 1).toString();        
     var currentYearMonth;      
@@ -179,7 +272,12 @@ var AdminCommunityView = Backbone.View.extend({
     }
   },
 
-  generateQuartersDisplay: function (data,currentYear,previousYear){
+  generateQuartersDisplay: function (data){
+    var today = new Date();
+    var currentYear = today.getFullYear();  
+    currentYear = currentYear.toString();
+    var previousYear = parseInt(currentYear)-1;
+    previousYear= previousYear.toString();
     var Myear= [previousYear];  
     var previousYearRange= [];
     previousYearRange  = _.filter(data.range, function (di) {
@@ -214,10 +312,24 @@ var AdminCommunityView = Backbone.View.extend({
       data.range=[];
     }
   },
-
   loadInteractionsData: function (callback) {
     $.ajax({
       url: '/api/admin/community/interactions/' + this.communityId,
+      dataType: 'json',
+      success: function (interactions) {
+        interactions.count = _(interactions).reduce(function (sum, value, key) {
+          return sum + value;
+        }, 0);
+        callback(interactions);
+      },
+    });
+  },
+
+  
+  loadCyclicalInteractionsData: function (callback) {
+    var cycleId = this.$('#cycles').val();
+    $.ajax({
+      url: '/api/admin/community/interactions/' + this.communityId +'/cyclical/'+ cycleId,
       dataType: 'json',
       success: function (interactions) {
         interactions.count = _(interactions).reduce(function (sum, value, key) {
@@ -245,6 +357,9 @@ var AdminCommunityView = Backbone.View.extend({
       Backbone.history.navigate('/admin/community/' + $('#communities').val(), { trigger: true });
      
     }
+  },
+  changeCycles: function (event) {
+    this.rendertasksInteractionsCyclical();
   },
 
   renderActivities: function (self, data) {

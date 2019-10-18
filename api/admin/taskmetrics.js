@@ -52,7 +52,7 @@ _.extend(TaskMetrics.prototype, {
   },
 
   generateStateMetrics: function (next) {
-    var stateMetrics = new StateMetrics(this.tasks);
+    var stateMetrics = new StateMetrics(this.tasks, this.group);
     _.extend(this.metrics, stateMetrics.metrics());
     next();
   },
