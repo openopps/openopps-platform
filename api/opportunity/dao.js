@@ -200,6 +200,7 @@ const clean = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency'}),
+    AuditLog: dao({ db: db, table: 'audit_log' }),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user' }),
     TaskTags: dao({ db: db, table: 'tagentity_tasks__task_tags' }),

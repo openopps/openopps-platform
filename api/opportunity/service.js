@@ -11,6 +11,7 @@ const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
+const Audit = require('../model/Audit');
 
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
@@ -629,29 +630,37 @@ function getRestrictValues (user) {
   return restrict;
 }
 
-async function deleteTask (id,cycleId) {
+async function deleteTask (ctx, task, cycleId) {
   if(cycleId){
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
     if((cycle) && (cycle.applyStartDate > new Date())) {
-      return await removeTask(id);
+      return await removeTask(ctx, task);
     }
     else {
       return false;
     }
   }
   else{
-    return await removeTask(id);
+    return await removeTask(ctx, task);
   }
 }
 
-async function removeTask (id) {
-  await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
-    dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
-      dao.Task.delete('id = ?', id).then(async (task) => {
-        await elasticService.deleteOpportunity(id);
-        return id;
+async function removeTask (ctx, task) {
+  await dao.TaskTags.delete('task_tags = ?', task.id).then(async () => {
+    dao.Volunteer.delete('"taskId" = ?', task.id).then(async () => {
+      dao.Task.delete('id = ?', task.id).then(async () => {
+        var audit = Audit.createAudit('TASK_DELETED', ctx, {
+          taskId: task.id,
+          title: task.title,
+          creator: task.userId,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
+        await elasticService.deleteOpportunity(task.id);
+        return true;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
         return false;
