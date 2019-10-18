@@ -21,6 +21,15 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
+function getWhereClauseForUsers (filter) {
+  if (filter) {
+    return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    return '';
+  }
+}
+
 function getTaskFilterClause (filter, filterAgency, extra) {
   var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
     `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
@@ -396,13 +405,7 @@ module.exports.getInteractionsForCommunity = async function (communityId) {
 module.exports.getUsers = async function (page, filter, sort) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserListBySort.sql', 'utf8').toString();
-  
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -415,14 +418,8 @@ module.exports.getUsers = async function (page, filter, sort) {
 module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
-
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
-  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
   result.users = (await db.query(usersBySortQuery, [agencyId, page])).rows;
@@ -434,13 +431,7 @@ module.exports.getUsersForAgency = async function (page, filter, sort, agencyId)
 module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
-
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
