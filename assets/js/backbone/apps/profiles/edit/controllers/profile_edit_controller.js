@@ -7,6 +7,7 @@ var BaseController = require('../../../../base/base_controller');
 var ProfileModel = require('../../../../entities/profiles/profile_model');
 var ProfileEditView = require('../views/profile_edit_view');
 var ProfileSkillsView = require('../views/profile_skills_view');
+var profileBureauOfficeView =  require('../views/profile_bureau_office_view');
 var Login = require('../../../../config/login.json');
 
 // templates
@@ -28,7 +29,7 @@ var Profile = BaseController.extend({
     // Clean up previous views
     if (this.profileEditView) { this.profileEditView.cleanup(); }
     if (this.profileSkillsView) { this.profileSkillsView.cleanup(); }
-
+    if (this.profileBureauOfficeView) { this.profileBureauOfficeView.cleanup(); }
     this.initializeProfileModelInstance();  
   },
 
@@ -89,7 +90,11 @@ var Profile = BaseController.extend({
     };
     if (this.action == 'skills') {
       this.profileSkillsView = new ProfileSkillsView(data).render();
-    } else {
+    }
+    else if(this.action=='bureau-office'){
+      this.profileBureauOffice = new profileBureauOfficeView(data).render();
+    }
+    else {
       this.profileEditView = new ProfileEditView(data).render();
     }
   },

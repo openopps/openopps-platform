@@ -27,7 +27,8 @@ const communityAdminsQuery = 'select midas_user.* from midas_user ' +
 const communitiesQuery = 'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'WHERE ' +
     'community.is_closed_group = false ' +
@@ -35,7 +36,8 @@ const communitiesQuery = 'SELECT ' +
   'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'JOIN community_user ' +
     'ON community_user.community_id = community.community_id ' +
