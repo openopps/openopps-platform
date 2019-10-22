@@ -58,10 +58,34 @@ describe('User Service', () => {
     });
   });
 
-  // describe('.getActivities', () => {
-  //   it('', async () => {
-  //   });
-  // });
+  describe('.getActivities', () => {
+    it('For user with id = 1 should return 1 created opportunity and 1 opportunity applied to', async () => {
+      var activities = await userService.getActivities(1);
+      assert.isTrue(activities.tasks.created.length == 1 && activities.tasks.volunteered.length == 1);
+    });
+    it('For user with id = 2 should return 0 created opportunity and 0 opportunity applied to', async () => {
+      var activities = await userService.getActivities(2);
+      assert.isTrue(activities.tasks.created.length == 0 && activities.tasks.volunteered.length == 0);
+    });
+  });
+
+  describe('.canAdministerAccount', () => {
+    it('Sitewide admins can administer any account', async () => {
+      assert.isTrue(await userService.canAdministerAccount({ isAdmin: true }, { id: 5 }));
+    });
+    it('Agency admins can administer users within their agency', async () => {
+      assert.isTrue(await userService.canAdministerAccount({ isAgencyAdmin: true, agencyId: 207 }, { id: 12 }));
+    });
+    it('Agency admins cannot administer users from another agency', async () => {
+      assert.isFalse(await userService.canAdministerAccount({ isAgencyAdmin: true, agencyId: 207 }, { id: 10 }));
+    });
+    it('Agency admins cannot administer sitewide admins', async () => {
+      assert.isFalse(await userService.canAdministerAccount({ isAgencyAdmin: true, agencyId: 207 }, { id: 5 }));
+    });
+    it('Standard user cannot administer another user', async () => {
+      assert.isFalse(await userService.canAdministerAccount({ }, { id: 5 }));
+    });
+  });
 
   // describe('.[function]', () => {
   //   it('', async () => {
