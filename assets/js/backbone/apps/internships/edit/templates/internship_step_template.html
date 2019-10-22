@@ -244,9 +244,11 @@
               <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="cancel" id="cancel">Cancel</button>
               <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit" style="display:none">Make changes</button>
               <% if (data.state === 'draft' || data.state === 'canceled') { %>
-                <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button><% } %><button class="usa-button usa-button-primary internship-button" data-state="preview" id="preview">Preview</button>
+                <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button>
+              <% } %>
+              <button class="usa-button usa-button-primary internship-button" data-state="preview" id="preview">Preview</button>
               <% if (_.contains(['draft', 'canceled', 'submitted'], data.state)) { %>
-                <button class="usa-button usa-button-primary internship-button" data-state="submit" id="save" style="display:none">Submit</button>
+                <button class="usa-button usa-button-primary internship-button" data-state="submit" id="submit" style="display:none">Submit</button>
               <% } else { %>
                 <button class="usa-button usa-button-primary internship-button" data-state="save" id="save" style="display:none">Save</button>
               <% } %>

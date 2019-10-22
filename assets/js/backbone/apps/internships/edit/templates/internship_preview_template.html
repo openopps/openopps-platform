@@ -129,7 +129,14 @@
       <div class="usajobs-button_bar--slim task-footer">
         <div class="usajobs-button_bar__body">
           <button class="usa-button usa-button-secondary usa-button-left internship-button" data-state="edit" id="edit">Make changes</button>
-          <button class="usa-button usa-button-secondary internship-button" data-state="save" id="save">Save for later</button><button class="usa-button usa-button-primary internship-button" data-state="submit" id="submit">Submit</button>
+          <% if (data.state === 'draft' || data.state === 'canceled') { %>
+            <button class="usa-button usa-button-secondary internship-button" data-state="draft">Save for later</button>
+          <% } %>
+          <% if (_.contains(['draft', 'canceled', 'submitted'], data.state)) { %>
+            <button class="usa-button usa-button-primary internship-button" data-state="submit" id="submit">Submit</button>
+          <% } else { %>
+            <button class="usa-button usa-button-primary internship-button" data-state="save" id="save">Save</button>
+          <% } %>
         </div>
       </div>
 

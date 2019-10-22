@@ -86,6 +86,19 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'participant'],
   },
+  'TASK_UPDATED': {
+    action: 'TASK_UPDATED',
+    description: 'A user has made changes to an opportunity.',
+    severity: 'info',
+    data: ['taskId', 'previous', 'changes'],
+  },
+  'TASK_DELETED': {
+    action: 'TASK_DELETED',
+    description: 'A user has deleted an opportunity.',
+    severity: 'info',
+    data: ['taskId', 'creator', 'title'],
+  },
+  // Community events
   'COMMUNITY_ADD_MEMBER': {
     action: 'COMMUNITY_ADD_MEMBER',
     description: 'A new user is added as a member of a community.',
