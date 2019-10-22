@@ -14,7 +14,7 @@
   </span>
 </a>
 <h2><%- agency.name || community.communityName || 'Sitewide' %></h2>
-<h3>Opportunities</h3>
+<h3 ><% if(cycleName) { %>Opportunities for <%-cycleName %> <% } else {%> Opportunities <% } %> </h3>
 <div class="usajobs-grid-full">
   <fieldset class="usajobs-fieldset">
     <legend class="usa-sr-only">Opportunity status</legend>
@@ -69,6 +69,19 @@
     </ul>
   </fieldset>
 </div>
+<div class="usajobs-grid-full task-filter">
+  <div class="usa-width-one-half">
+    <label class="sr-only" for="task-filter">Filter</label>
+    <% if (community.referenceId == "dos") { %>
+      <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Bureau/Office post" value="<%= filter %>">
+    <% } else if (agency.name) { %>
+      <input type="text" class="" id="task-filter" placeholder="Filter by Title or Creator" value="<%= filter %>">
+    <% } else { %>
+      <input type="text" class="" id="task-filter" placeholder="Filter by Title, Creator, or Agency" value="<%= filter %>">
+    <% } %>
+    <button id="task-filter-search" class="task-filter-search-button">Search</button>
+  </div>
+</div>
 
 <div id="task-table" class="table-responsive"></div>
 
@@ -78,6 +91,9 @@
     title="Download list of tasks as a comma-separated file ready for import into Excel">
     <% if (community.communityName) { %>
       <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
+      <% if (community.applicationProcess == "dos") { %>
+        <a href="/api/admin/task/export/community/<%- community.communityId %>/cycle/<%- cycle %>"</a>
+      <% } %>
     <% } else if (agency.name) { %>
       <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
     <% } else { %>

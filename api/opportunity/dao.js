@@ -27,7 +27,8 @@ const communityAdminsQuery = 'select midas_user.* from midas_user ' +
 const communitiesQuery = 'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'WHERE ' +
     'community.is_closed_group = false ' +
@@ -35,7 +36,8 @@ const communitiesQuery = 'SELECT ' +
   'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'JOIN community_user ' +
     'ON community_user.community_id = community.community_id ' +
@@ -102,7 +104,7 @@ const taskQuery = 'select @task.*, @tags.*, @owner.id, @owner.name, @owner.photo
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
   'left join @bureau bureau on bureau.bureau_id = task.bureau_id ' +
   'left join @office office on office.office_id = task.office_id';
-   
+  
 const userQuery = 'select @midas_user.*, @agency.* ' +
   'from @midas_user midas_user ' +
   'left join @agency on agency.agency_id = midas_user.agency_id  ' +
@@ -134,7 +136,7 @@ const options = {
       agency: '',
       tags: [],
       bureau: '',
-      office: ''
+      office: '',
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -200,6 +202,7 @@ const clean = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency'}),
+    AuditLog: dao({ db: db, table: 'audit_log' }),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user' }),
     TaskTags: dao({ db: db, table: 'tagentity_tasks__task_tags' }),
@@ -241,7 +244,7 @@ module.exports = function (db) {
       taskCommunitiesQuery:taskCommunitiesQuery,
       user: userQuery,
       volunteer: volunteerQuery,
-      volunteerListQuery: volunteerListQuery,   
+      volunteerListQuery: volunteerListQuery,      
     },
     options: options,
     clean: clean,

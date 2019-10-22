@@ -11,7 +11,7 @@
             <p class="usa-alert-text">
               You are an <% if (user.isAgencyAdmin && !user.isAdmin) { %> agency <% } %> administrator.
               <% if (user.id !== data.id) { %>
-                You are viewing <% if (data.hiringPath == 'student') { %>a student's<% } else { %>another user's<% } %> profile.
+                You are viewing <% if (data.hiringPath == 'student') { %>a student's<% } else if (data.hiringPath == 'contractor') { %>a contractor's<% } else { %>another user's<% } %> profile.
               <% } %>
             </p>
           </div>
@@ -122,6 +122,37 @@
           </div>
         </div>
       </div>
+
+  <% if (user.communities.student && user.communities.student.length>0 ) { %>
+    <% _(user.communities.student).forEach(function (community, i) { %>
+    <% if (community.referenceId=='dos') { %>
+    <div class="usajobs-opop-skill__body">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+        <div class="usajobs-grid-full">
+          <div class="usajobs-opop-section-edit skills-edit">
+            <a href="/profile/edit/bureau_office/<%- data.id %>/">Edit</a>
+          </div>
+          <h2><span class="usa-input-optional">Bureau and Office/post</span></h2>
+          <div class="usajobs-opop-profile-details usa-width-three-fourths">
+            <div class="profile-bureau">
+              <% if(!_.isEmpty(data.bureau)) { %>
+              <div class="usajobs-profile-home-section__field-label">Bureau</div>
+              <span><%- data.bureau.name %></span>
+              <% } %>
+            </div>
+            <div class="profile-office">
+              <% if(!_.isEmpty(data.office)) { %>
+              <div class="usajobs-profile-home-section__field-label">Office/post</div>
+              <span><%- data.office.name %></span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+    <% }); %>
+ <% } %>
       <div class="usajobs-opop-skill__body">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
           <div class="usajobs-grid-full">
@@ -159,6 +190,32 @@
           </div>
         </div>
       </div>
+      <% if (user.id !== data.id) { %>
+        <div class="usajobs-opop-profile-opportunity__body">
+          <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+            <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/application-status/"  target="_blank" rel="noopener noreferrer" title="Help">
+              <span class="usajobs-nav--openopps__section">
+                <span class="fas fa-question-circle" title="Help"></span>Help
+              </span>
+            </a>
+            <% if (data.hiringPath != 'student') { %>
+              <h2>Opportunities</h2>
+              <% if (data.hiringPath == 'fed') { %>
+                <h3>Participated</h3>
+                <div class="opportunity-participated"></div>
+              <% } %>
+              <h3>Created</h3>
+              <div class="opportunity-created"></div>
+            <% } else { %>
+              <h2>Internship opportunities</h2>
+              <h3>Applied</h3>
+              <div class="internships-applied"></div>
+              <h3 id="saved">Saved</h3>
+              <div class="internships-saved"></div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
     </main>
     <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
       <aside class="usajobs-rightrail" id="rightrail">

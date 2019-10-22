@@ -86,7 +86,11 @@ router.get('/api/user/activities/:id', auth, async (ctx, next) => {
 });
 
 router.get('/api/user/internship/activities', auth, async (ctx, next) => {
-  ctx.body = await service.getInternshipsActivities(ctx.state.user);
+  ctx.body = await service.getInternshipsActivities(ctx.state.user.id);
+});
+
+router.get('/api/user/internship/activities/:userId', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getInternshipsActivities(ctx.params.userId);
 });
 
 router.get('/api/user/internships/completed', auth, async (ctx, next) => {
@@ -156,6 +160,18 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
     ctx.status = 403;
     ctx.body = { success: false };
   }
+});
+
+router.put('/api/user/bureau-office/:id', auth, async (ctx, next) => {
+  await service.updateProfileBureauOffice(ctx.request.body, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
 });
 
 router.put('/api/user/:id', auth, async (ctx, next) => {

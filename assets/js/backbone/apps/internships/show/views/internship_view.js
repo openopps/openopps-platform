@@ -110,6 +110,7 @@ var InternshipView = BaseView.extend({
   },
 
   displayError: function (error) {
+    var modalTitle = 'You\'ve already selected 3 internships';
     var primaryButton = {
       text: 'Close',
       action: function () {
@@ -122,13 +123,19 @@ var InternshipView = BaseView.extend({
         this.modalComponent.cleanup();
         Backbone.history.navigate('/apply/' + error.responseJSON.applicationId + '?step=1', { trigger: true });
       }.bind(this);
+    } else if (error.responseJSON && error.responseJSON.type == 'not-eligible') {
+      modalTitle = 'Only students can apply for these internships';
+      primaryButton.text = 'Close';
+      primaryButton.action = function () {
+        this.modalComponent.cleanup();
+      }.bind(this);
     }
     this.modalComponent = new ModalComponent({
       el: '#site-modal',
       id: 'internship-apply-error',
       alert: 'error',
       primary: primaryButton,
-      modalTitle: 'You\'ve already selected 3 internships',
+      modalTitle: modalTitle,
       modalBody: error.responseJSON ? error.responseJSON.message : error.responseText,
     }).render();
   },

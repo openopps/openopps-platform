@@ -32,11 +32,17 @@ var NavView = Backbone.View.extend({
     this.initializeProfileListeners();
   },
 
+  getIdleModal: function () {
+    if (!this.idleModal) {
+      this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
+    }
+    return this.idleModal;
+  },
+
   initializeLoginListeners: function () {
     this.listenTo(window.cache.userEvents, 'user:login:success', function (userData) {
       this.doRender({ user: userData });
-      this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
-      this.idleModal.resetTimeout();
+      this.getIdleModal().resetTimeout();
       var referrer = window.location.search.replace('?','') + window.location.hash;
       Backbone.history.navigate('/' + (referrer || 'home'), { trigger: true, replace: true });
       this.activePage();
@@ -58,7 +64,10 @@ var NavView = Backbone.View.extend({
     }.bind(this));
 
     this.listenTo(window.cache.userEvents, 'user:logout', function () {
-      if(this.idleModal) this.idleModal.cleanup();
+      if(this.idleModal) {
+        this.idleModal.cleanup();
+        this.idleModal = undefined;
+      }
       Backbone.history.navigate('/logout', {trigger: true});
     }.bind(this));
   },
@@ -86,8 +95,7 @@ var NavView = Backbone.View.extend({
   render: function () {
     this.doRender({ user: window.cache.currentUser, systemName: window.cache.system.name });
     if(window.cache.currentUser) {
-      this.idleModal = new IdleModal({ el: '#login-wrapper' }).render();
-      this.idleModal.resetTimeout();
+      this.getIdleModal().resetTimeout();
     }
     return this;
   },
@@ -121,6 +129,10 @@ var NavView = Backbone.View.extend({
       this.showSubMenu1();
       this.activateProfile();
     }
+    else if (window.cache.currentUser && window.location.pathname.match('profile/edit/bureau_office/' + window.cache.currentUser.id)) {
+      this.showSubMenu1();
+      this.activateProfile();
+    }
     else if (window.location.pathname.match(/home/)) {
       this.showSubMenu1();
       this.activateHome();
@@ -150,7 +162,12 @@ var NavView = Backbone.View.extend({
     } else if (window.cache.currentUser && window.location.pathname.match('/profile/edit/skills/' + window.cache.currentUser.id)) {
       //set Profile to active
       $('a[title="Profile"]').addClass('is-active');
-    } else if (window.location.pathname.match(/home/)) {
+    } else if (window.cache.currentUser && window.location.pathname.match('/profile/edit/bureau_office/' + window.cache.currentUser.id)) {
+      //set Profile to active
+      $('a[title="Profile"]').addClass('is-active');
+    }
+    
+    else if (window.location.pathname.match(/home/)) {
       //set Administration to active
       $('a[title="Home"]').addClass('is-active');
     } else if (window.location.pathname.match(/admin/)) {
@@ -278,7 +295,10 @@ var NavView = Backbone.View.extend({
 
   cleanup: function () {
     this.loginController && this.loginController.cleanup();
-    this.idleModal && this.idleModal.cleanup();
+    if (this.idleModal) {
+      this.idleModal.cleanup();
+      this.idleModal = undefined;
+    }
     removeView(this);
   },
 });

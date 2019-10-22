@@ -11,6 +11,9 @@ var experience = {
     $('#overseas-total-length').charCounter(250, {
       container: '#overseas-count',
     });
+    $('#duties').charCounter(5000, {
+      container: '#duties-accomplish',
+    });
   },
   
   toggleOverseasExperienceDetails: function () {
@@ -258,7 +261,7 @@ var experience = {
     } 
   },
 
-  toggleAddExperience: function (e) {
+  toggleAddExperience: function (e) { 
     experience.updateExperienceDataObject.bind(this)();
     var data = { employerName: '' };
     var template = templates.applyAddExperience(data);
@@ -297,7 +300,8 @@ var experience = {
   },
 
   toggleExperienceOff: function (e) {
-    this.$el.html(templates.applyExperience(this.data));  
+    this.$el.html(templates.applyExperience(this.data)); 
+    experience.characterCount.bind(this)(); 
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
     window.scrollTo(0, 0);
@@ -369,8 +373,8 @@ var experience = {
   },
 
   formatExperienceDates: function (data) {
-    var startDate = new Date(data.startDate);
-    var endDate = new Date(data.endDate);
+    var startDate = new Date(moment((data.startDate || '').split('T')[0]).format('YYYY/MM/DD'));
+    var endDate = new Date(moment((data.endDate || '').split('T')[0]).format('YYYY/MM/DD'));
     if (experience.isValidDate(startDate)) {       
       var startDateMonthStr=  (startDate.getMonth()+ 1).toString();     
       if(startDateMonthStr.length<2) {

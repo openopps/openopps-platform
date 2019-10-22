@@ -2,6 +2,7 @@
 <div class="top-contributors usajobs-grid-full">
   <div class="usa-width-one-half">
     <h3>Opportunities created</h3>
+    <% if (creators && creators.length) { %>
     <div class="opportunities-created usajobs-grid-full">
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
@@ -10,6 +11,13 @@
         <h5 class="graph-header"># of opportunities</h5>
       </div>
     </div>
+    <% } else { %>
+    <div class="opportunities-created usajobs-grid-full">
+      <div class="usa-width-one-whole">
+        <p>No opportunities created yet.</p>
+      </div>
+    </div>
+    <% } %>
     <% _.each(creators, function (creator, index) { %>
       <div class="opportunities-created usajobs-grid-full">
         <div class="usa-width-one-half">
@@ -24,11 +32,18 @@
         </div>
       </div>
     <% }); %>
-    <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+    <% if (creators && creators.length) { %>
+    <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" title="Download list of all top contributors opportunities created list as a comma-separated file ready for import into Excel">        
+      <a href="<%- dataExportCreatedUrl %>">    
+        <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+      </a>
+    </div>
+    <% } %>
   </div>
 
   <div class="usa-width-one-half">
     <h3>Participating in opportunities</h3>
+    <% if (participants && participants.length) { %>
     <div class="opportunities-created usajobs-grid-full">
       <div class="usa-width-one-half">
         <h5 class="graph-header">Agency</h5>
@@ -37,6 +52,13 @@
         <h5 class="graph-header"># of opportunities</h5>
       </div>
     </div>
+    <% } else { %>
+    <div class="opportunities-created usajobs-grid-full">
+      <div class="usa-width-one-whole">
+        <p>No opportunities participated in yet.</p>
+      </div>
+    </div>
+    <% } %>
     <% _.each(participants, function (participant, index) { %>
     <div class="opportunities-participating usajobs-grid-full">
       <div class="usa-width-one-half">
@@ -51,6 +73,15 @@
       </div>
     </div>
     <% }); %>
-    <i class="fa fa-download"></i><span class="opportunities-participating--download box-icon-text">Download full list (.csv)</span>
+    <% if (participants && participants.length) { %>
+    <div class="usa-width-one-whole">
+      <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+          title="Download list of all top contributors participated list as a comma-separated file ready for import into Excel">        
+            <a href="<%- dataExportParticipantUrl %>">    
+          <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
+        </a>
+      </div>
+    </div>
+    <% } %>
   </div>
 </div>

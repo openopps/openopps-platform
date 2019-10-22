@@ -47,17 +47,17 @@ _.extend(TaskMetrics.prototype, {
   createMetrics: function () {
     async.parallel([
       this.generateStateMetrics.bind(this),
-      this.generateVolunteerAgencyMetrics.bind(this),
+      this.generateVolunteerMetrics.bind(this),
     ], this.done);
   },
 
   generateStateMetrics: function (next) {
-    var stateMetrics = new StateMetrics(this.tasks);
+    var stateMetrics = new StateMetrics(this.tasks, this.group);
     _.extend(this.metrics, stateMetrics.metrics());
     next();
   },
 
-  generateVolunteerAgencyMetrics: function (next) {
+  generateVolunteerMetrics: function (next) {
     var generator = new VolunteerMetrics(this.volunteers,this.tasks,this.group); 
     generator.calculate(function () {
       _.extend(this.metrics, generator.metrics);

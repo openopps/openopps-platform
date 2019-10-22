@@ -5,6 +5,7 @@ var Modal = require('../../../components/modal');
 
 // templates
 var AdminTopContributorsTemplate = require('../templates/admin_dashboard_top_contributors_template.html');
+var AdminAgenciesTopContributorsTemplate = require('../templates/admin_agencies_dashboard_top_contributors_template.html');
 
 var AdminTopContributorsView = Backbone.View.extend({
   events: {
@@ -13,23 +14,38 @@ var AdminTopContributorsView = Backbone.View.extend({
 
   initialize: function (options) {
     this.options = options;
+    this.dataUrl = '/api/admin/contributors';
+    if (this.options.target !== 'sitewide') {
+      this.dataUrl = '/api/admin/' + this.options.target + '/' + this.options.targetId + '/contributors';
+    }
+    this.dataExportCreatedUrl = '/api/admin/export/contributor/created/';
+    if (this.options.target !== 'sitewide') {
+      this.dataExportCreatedUrl = '/api/admin/export/' + this.options.target + '/' + this.options.targetId + '/contributor/created';
+    }
+    this.dataExportParticipantUrl = '/api/admin/export/contributor/participant/';
+    if (this.options.target !== 'sitewide') {
+      this.dataExportParticipantUrl = '/api/admin/export/' + this.options.target + '/' + this.options.targetId + '/contributor/participant';
+    }
   },
 
   render: function () {
     this.loadData();
-    // var template = _.template(AdminTopContributorsTemplate)({});
-    // this.$el.html(template);
   },
 
   loadData: function () {
     $.ajax({
-      url: '/api/admin/contributors',
+      url: this.dataUrl,
       dataType: 'json',
       success: function (data) {
-        this.contributors = data;   
-        var template = _.template(AdminTopContributorsTemplate)(data);
+        data.dataExportCreatedUrl = this.dataExportCreatedUrl;
+        data.dataExportParticipantUrl = this.dataExportParticipantUrl;
+        this.contributors = data;
+        var template = _.template(AdminTopContributorsTemplate);
+        if (this.options.target != 'sitewide') {
+          template = _.template(AdminAgenciesTopContributorsTemplate);
+        }
         $('#search-results-loading').hide();
-        this.$el.html(template);
+        this.$el.html(template(data));
         this.$el.show();
       }.bind(this),
       error: function () {

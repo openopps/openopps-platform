@@ -18,8 +18,9 @@ module.exports.tagByType = async function (type, name) {
 };
 
 module.exports.userByName =  async function (name) {
+  var splitName = '%' + name.replace(/\s+/g, '%') + '%';
   var result = await dao.User.query(
-    dao.query.userByName, name ? '%' + name.toLowerCase() + '%' || name.toLowerCase() + '%' || '%' + name.toLowerCase() : null
+    dao.query.userByName, name ? splitName : null
   );
   return result.map(tag => {
     tag.field = 'value';

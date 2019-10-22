@@ -159,8 +159,7 @@ gulp.task('create-release', function (done) {
 gulp.task('publish', gulp.series('build', 'create-release', function (done) {
   const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
-  const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
-  octopusApi.init({
+  octopusApi.initializeApi({
     host: process.env.OctoHost,
     apiKey: process.env.OctoKey,
   });
@@ -177,7 +176,7 @@ gulp.task('publish', gulp.series('build', 'create-release', function (done) {
         packageVersion: tags[0].replace('v', ''),
         releaseNotes: releaseNotes,
       };
-      simpleCreateRelease(releaseParams).then((release) => {
+      octopusApi.octopusApi.releases.create(releaseParams).then((release) => {
         console.log('Octopus release created:', release);
         done();
       }, (error) => {
@@ -224,9 +223,9 @@ gulp.task('patch-release', function (done) {
 });
 
 gulp.task('patch', gulp.series('build', 'patch-release', function (done) {
+  const git = require('gulp-git');
   const octopusApi = require('octopus-deploy');
-  const simpleCreateRelease = require('octopus-deploy/lib/commands/simple-create-release');
-  octopusApi.init({
+  octopusApi.initializeApi({
     host: process.env.OctoHost,
     apiKey: process.env.OctoKey,
   });
@@ -238,7 +237,7 @@ gulp.task('patch', gulp.series('build', 'patch-release', function (done) {
       packageVersion: tag.replace('v', ''),
       releaseNotes: 'Patch release ' + tag.replace('v', '').split('-')[0],
     };
-    simpleCreateRelease(releaseParams).then((release) => {
+    octopusApi.octopusApi.releases.create(releaseParams).then((release) => {
       console.log('Octopus release created:', release);
       done();
     }, (error) => {

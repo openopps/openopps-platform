@@ -14,6 +14,7 @@ var HomeCreatedTemplate = require('../templates/home_created_template.html');
 var HomeParticipatedTemplate = require('../templates/home_participated_template.html');
 var AnnouncementTemplate = require('../templates/home_announcement_template.html');
 var AchievementsTemplate = require('../templates/home_achievements_template.html');
+var ModalComponent = require('../../../../components/modal');
 
 var templates = {
   main: _.template(HomeTemplate),
@@ -33,6 +34,7 @@ var HomeView = Backbone.View.extend({
     'click .read-more'             : 'readMore',
     'change #sort-participated'    : 'sortTasks',
     'change #sort-created'         : 'sortTasks',
+    'click .delete-opportunity'    : 'deleteOpportunity'
   },
 
   initialize: function (options) {
@@ -188,6 +190,38 @@ var HomeView = Backbone.View.extend({
       this.taskView.options.data = sortedData;
       this.taskView.render();
     }
+  },
+
+  deleteOpportunity: function (event) {
+    this.deleteModal = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Delete opportunity confirmation',
+      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-opportunity-title') + '</strong>? <strong>This cannot be undone</strong>.',
+      primary: {
+        text: 'Delete opportunity',
+        action: function () {
+          this.submitDelete.bind(this)(event.currentTarget.getAttribute('data-opportunity-id'));
+        }.bind(this),
+      },
+    });
+    this.deleteModal.render();
+  },
+  
+  submitDelete: function (opportunityId) {
+    $.ajax({
+      url: '/api/task/' + opportunityId,
+      type: 'DELETE',
+      data: {
+        opportunityId: opportunityId,
+      }
+    }).done(function ( model, response, options ) {
+      this.deleteModal.cleanup();
+      this.render();
+    }.bind(this)).fail(function (error) {
+      this.deleteModal.displayError('An unexpected error occured attempting to delete this opportunity.', 'Delete opportunity error');
+    }.bind(this));
   },
 
   logout: function (e) {

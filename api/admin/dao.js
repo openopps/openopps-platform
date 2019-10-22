@@ -79,9 +79,29 @@ const taskHistoryQuery = 'select "assignedAt", "completedAt", "createdAt", "publ
 
 const postQuery = 'select count(*) from comment ';
 
+const agencyPostQuery = 'select count(*) from comment ' +
+'join task on comment."taskId" = task.id ' +
+'where task.agency_id = ?';
+
 const communityPostQuery = 'select count(*) from comment ' +
 'join task on comment."taskId" = task.id ' +
 'where task.community_id = ?';
+
+const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 THEN 1 ELSE NULL end) as step0NextStepTotal, ' +
+'count(CASE when current_step = 1 THEN 1 ELSE NULL end) as step1SelectInternshipTotal, ' +
+ 'count(CASE when current_step = 2 THEN 1 ELSE NULL end) as step2ExpRefTotal,' +
+ 'count(CASE when current_step = 3 THEN 1 ELSE NULL end) as step3EducationTotal, ' +
+ 'count(CASE when current_step = 4 THEN 1 ELSE NULL end) as step4LanguageTotal, ' +
+  'count(CASE when current_step = 5 THEN 1 ELSE NULL end) as step5StatementTotal, ' +
+  'count(CASE when current_step = 6 THEN 1 ELSE NULL end) as step6ReviewTotal, ' +
+  'count(CASE when internship_completed_at is not null then 1 ELSE NULL end) as InternshipCompleteTotal, ' +
+  'count(case when task_list.title = \'Primary\' then 1 else null end) as PrimaryCount, ' +
+  'count(case when task_list.title = \'Alternate\' then 1 else null end) as AlternateCount,' +
+  'count(CASE when submitted_at is not null then 1 ELSE NULL end) as submittedTotal ' +
+   'from application app left join task_list_application tla on app.application_id = tla.application_id ' +
+   'left join task_list on tla.task_list_id = task_list.task_list_id '+
+   'where app.community_id = ? and app.cycle_id = ? ' ;
+
 
 const volunteerCountQuery = 'select ' +
     'count(*) as signups, ' +
@@ -89,12 +109,26 @@ const volunteerCountQuery = 'select ' +
     'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer';
 
+const agencyVolunteerCountQuery = 'select ' +
+  'count(*) as signups, ' +
+  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer join task on task.id = volunteer."taskId" ' +
+  'where task.agency_id = ?';
+
 const communityVolunteerCountQuery = 'select ' +
   'count(*) as signups, ' +
   'sum(case when assigned then 1 else 0 end) as assignments, ' +
   'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ?';
+
+const communityVolunteerCyclicalCountQuery = 'select ' +
+  'count(*) as signups, ' +
+  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
+  'from volunteer join task on task.id = volunteer."taskId" ' +
+  'where task.community_id = ? and task.cycle_id = ? ';
 
 const communityTaskCreatedPerUserQuery = 'select count(*) as created from task ' +
   'inner join community_user on community_user.user_id = task."userId" ' +
@@ -136,7 +170,7 @@ const userCommunityListFilteredQuery = 'select midas_user.id, midas_user.name, m
   'count(*) over() as full_count, agency.name as agency, community_user.created_at as joined_at, ' +
   'community_user.is_manager as "isCommunityAdmin", community_user.disabled ' +
   'from midas_user inner join community_user on midas_user.id = community_user.user_id ' +
-  'inner join agency on agency.agency_id = midas_user.agency_id ' +
+  'left join agency on agency.agency_id = midas_user.agency_id ' +
   'where midas_user.disabled = \'f\' ' +
   'and (lower(username) like ? or lower(midas_user.name) like ? or lower(agency.name) like ?) ' +
   'and community_user.community_id = ? ' +
@@ -179,10 +213,10 @@ const activityQuery = 'select comment."createdAt", comment.id, \'comment\' as ty
   'inner join community on community_user.community_id = community.community_id ' +
   'where community.target_audience <> 2 ' +
   'union all ' +
-  'select task."createdAt", task.id, \'task\' as type ' +
+  'select task."submittedAt" as "createdAt", task.id, \'task\' as type ' +
   'from task ' +
   'inner join midas_user on midas_user.id = task."userId" ' +
-  'where task.cycle_id is null ' +
+  'where task.cycle_id is null and task."submittedAt" is not null ' +
   'order by "createdAt" desc ' +
   'limit 20';
 
@@ -198,10 +232,42 @@ const activityVolunteerQuery = 'select midas_user.name, midas_user.username, tas
   'left join task on volunteer."taskId" = task.id ' +
   'where volunteer.id = ? ';
 
-const activityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task."createdAt" ' +
+const activityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task."submittedAt" as "createdAt" ' +
   'from midas_user ' +
   'inner join task on midas_user.id = task."userId" ' +
-  'where task.id = ? ';
+  'where task."submittedAt" is not null and task.id = ? ';
+
+const agencyActivityQuery = 'select comment."createdAt", comment.id, \'comment\' as type ' +
+  'from midas_user ' +
+  'inner join comment on midas_user.id = comment."userId" ' +
+  'inner join task on comment."taskId" = task.id ' +
+  'where task.cycle_id is null ' +
+  'and task.agency_id = $agencyId ' +
+  'union all ' +
+  'select volunteer."createdAt", volunteer.id, \'volunteer\' as type ' +
+  'from volunteer ' +
+  'inner join midas_user on midas_user.id = volunteer."userId" ' +
+  'inner join task on volunteer."taskId" = task.id ' +
+  'where task.cycle_id is null ' +
+  'and task.agency_id = $agencyId ' +
+  'union all ' +
+  'select midas_user."createdAt" as "createdAt", id, \'user\' as type ' +
+  'from midas_user ' +
+  'inner join agency on midas_user.agency_id = agency.agency_id ' +
+  'where agency.agency_id = $agencyId ' +
+  'union all ' +
+  'select task."createdAt", task.id, \'task\' as type ' +
+  'from task ' +
+  'inner join midas_user on midas_user.id = task."userId" ' +
+  'where task.agency_id = $agencyId ' +
+  'and task."submittedAt" is not null ' +
+  'order by "createdAt" desc ' +
+  'limit 20';
+
+const agencyActivityTaskQuery = 'select midas_user.name, midas_user.username, task.title, task.id "taskId", midas_user.id "userId", task.agency_id, task."createdAt" ' +
+  'from midas_user ' +
+  'inner join task on midas_user.id = task."userId" ' +
+  'where task.id = ? and task.agency_id = ? ';
 
 const communityActivityQuery = 'select community_user.created_at as "createdAt", id, \'user\' as type ' +
   'from midas_user ' +
@@ -226,18 +292,44 @@ const communityActivityTaskQuery = 'select midas_user.name, midas_user.username,
   'inner join task on midas_user.id = task."userId" ' +
   'where task.id = ? and task.community_id = ? ';
 
-const taskMetricsQuery = 'select @task.*, @tags.* ' +
-  'from @task task ' +
+const communityTaskMetricsQuery = 'select @task.*, @tags.* ' +
+  'from @task task ' + 
   'left join community on task.community_id = community.community_id '+
   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
-   'where  (community.target_audience <> 2 or community.target_audience is null) ';
+   'where community.target_audience <> 2 and task.state <> \'archived\' and task.community_id= ? ';
+
+const communityVolunteerTaskQuery='select volunteer.*, task.* ' +
+   'from volunteer ' +
+   'join task on task.id = volunteer."taskId" ' +
+   'where task."completedAt" is not null and task.state <> \'archived\' and task.community_id = ?' ;
+
+const taskMetricsQuery = 'select @task.*, @tags.* ' +
+   'from @task task ' +
+   'left join community on task.community_id = community.community_id '+
+   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
+   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+   'where (community.target_audience <> 2 or community.target_audience is null) and task.state <> \'archived\' ';
+
 const volunteerDetailsQuery = 'select @m_user.*, @tags.* ' +
   'from @midas_user m_user ' +
   'inner join volunteer on m_user.id = volunteer."userId" ' +
   'left join tagentity_users__user_tags user_tags on user_tags.user_tags = m_user.id ' +
   'left join @tagentity tags on tags.id = user_tags.tagentity_users ' +
   "where tags.type = 'agency' ";
+
+
+const volunteerAgencyTaskQuery='select volunteer.*, task.* ' +
+  'from volunteer ' +
+  'join task on task.id = volunteer."taskId" ' +
+  'where task.agency_id= ? and task."completedAt" is not null and task.state <> \'archived\' ';
+
+const agencyTaskMetricsQuery = 'select @task.*, @tags.* ' +
+  'from @task task ' +
+   'left join community on task.community_id = community.community_id '+
+   'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
+   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
+   'where task.agency_id= ? and task.state <> \'archived\' and (community.target_audience <> 2 or community.target_audience is null) ';
 
 const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   'from midas_user inner join tagentity_users__user_tags on midas_user.id = tagentity_users__user_tags.user_tags ' +
@@ -247,11 +339,11 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
 
 const userCommunityQuery = '';
 
-const volunteerTaskQuery='select volunteer.* ' +
+const volunteerTaskQuery='select volunteer.*, task.* ' +
 'from volunteer ' +
 'join task on task.id = volunteer."taskId" ' +
- "where task.state ='completed' ";
-
+'where task."completedAt" is not null and task.state <> \'archived\' ' ;
+ 
 var exportFormat = {
   'user_id': 'id',
   'name': {field: 'name', filter: nullToEmptyString},
@@ -302,7 +394,7 @@ const options = {
   },
   taskMetrics: {
     fetch: {
-      tags: [],
+      tags: [],   
     },
     exclude: {
       task: [ 'deletedAt' ],
@@ -341,6 +433,7 @@ const clean = {
 
 module.exports = function (db) {
   return {
+    Application: dao({ db: db, table: 'application' }),
     Agency: dao({ db: db, table: 'agency' }),
     User: dao({ db: db, table: 'midas_user' }),
     Task: dao({ db: db, table: 'task' }),
@@ -354,10 +447,13 @@ module.exports = function (db) {
     query: {
       taskQuery: taskQuery,
       taskStateQuery: taskStateQuery,
+      agencyTaskMetricsQuery: agencyTaskMetricsQuery,
       agencyTaskStateQuery: agencyTaskStateQuery,
       communityTaskStateQuery: communityTaskStateQuery,
       communityTaskCreatedPerUserQuery: communityTaskCreatedPerUserQuery,
-      communityTaskVolunteerPerUserQuery: communityTaskVolunteerPerUserQuery,
+      communityTaskVolunteerPerUserQuery: communityTaskVolunteerPerUserQuery,     
+      communityTaskMetricsQuery:communityTaskMetricsQuery,
+      communityVolunteerTaskQuery:communityVolunteerTaskQuery,
       volunteerQuery: volunteerQuery,
       userQuery: userQuery,
       agencyUsersQuery: agencyUsersQuery,
@@ -365,9 +461,13 @@ module.exports = function (db) {
       withTasksQuery: withTasksQuery,
       taskHistoryQuery: taskHistoryQuery,
       postQuery: postQuery,
+      agencyPostQuery: agencyPostQuery,
       communityPostQuery: communityPostQuery,
+      communityCyclicalPostQuery: communityCyclicalPostQuery,
+      agencyVolunteerCountQuery: agencyVolunteerCountQuery,
       volunteerCountQuery: volunteerCountQuery,
       communityVolunteerCountQuery: communityVolunteerCountQuery,
+      communityVolunteerCyclicalCountQuery: communityVolunteerCyclicalCountQuery,
       ownerListQuery: ownerListQuery,
       userListFilteredQuery: userListFilteredQuery,
       userAgencyListFilteredQuery: userAgencyListFilteredQuery,
@@ -380,6 +480,8 @@ module.exports = function (db) {
       activityCommentQuery: activityCommentQuery,
       activityVolunteerQuery: activityVolunteerQuery,
       activityTaskQuery: activityTaskQuery,
+      agencyActivityQuery: agencyActivityQuery,
+      agencyActivityTaskQuery: agencyActivityTaskQuery,
       communityActivityQuery: communityActivityQuery,
       communityActivityVolunteerQuery: communityActivityVolunteerQuery,
       communityActivityTaskQuery: communityActivityTaskQuery,
@@ -392,6 +494,7 @@ module.exports = function (db) {
       ownerCommunityListQuery: ownerCommunityListQuery,
       communityListQuery: communityListQuery,
       volunteerTaskQuery: volunteerTaskQuery,
+      volunteerAgencyTaskQuery:volunteerAgencyTaskQuery,
     },
     clean: clean,
     options: options,

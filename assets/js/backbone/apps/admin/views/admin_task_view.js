@@ -17,20 +17,30 @@ var AdminTaskView = Backbone.View.extend({
     'click a.page'              : 'clickPage',
     'click .approve-error'      : 'approveError',
     'click #task-back'          : linkBackbone,
-    'change #sort-results'       : 'sortStatus',
+    'click #task-filter-search' : 'filter',
+    'change #sort-results'      : 'sortStatus',
   },
 
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
+    this.cycle= this.params.get('cid');
+    
     this.data = {
       page: this.params.get('p') || 1,
       status: this.params.get('q') || 'submitted',
+      filter: this.params.get('f') || '',
       sort: this.params.get('s') || 'date',
       returnUrl: '/admin',
+      cycle: this.params.get('cid'),
     };
-    if (this.options.target !== 'sitewide') {
-      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    if (this.options.target !== 'sitewide') {      
+      if(this.cycle){
+        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId + '?cycle=' + this.cycle;
+      }
+      else{
+        this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+      }
     }
     this.agency = {};
     this.community = {};
@@ -77,11 +87,13 @@ var AdminTaskView = Backbone.View.extend({
       url: url,
       data: this.data,
       dataType: 'json',
-      success: function (data) {
+      success: function (data) {      
         this.tasks = data.tasks;
         _.extend(data, this.data);
         data.agency = this.agency;
         data.community = this.community;
+        data.filter = this.data.filter; 
+        data.cycleName= this.getCommunityCycleName(data.cycle);          
         var template = _.template(AdminTaskTemplate)(data);
         $('#search-results-loading').hide();
         this.$el.html(template);
@@ -100,12 +112,15 @@ var AdminTaskView = Backbone.View.extend({
     var data = {
       tasks: tasks,
       status: this.data.status,
+      filter: this.data.filter,
       targetAudience: this.community.targetAudience,
+      referenceId: this.community.referenceId,
       cycles: (this.community.cycles || {}),
       countOf: totalResults,
       firstOf: this.data.page * 25 - 24,
       lastOf: this.data.page * 25 - 25 + tasks.length,
       sort: this.data.sort,
+      target:this.options.target,
     };
     var template = _.template(AdminTaskTable)(data);
     this.$('#task-table').html(template);
@@ -133,24 +148,50 @@ var AdminTaskView = Backbone.View.extend({
     window.scrollTo(0, 0);
   },
 
-  generateURL: function () {
-    var url = window.location.pathname;
-    url += '?q=' + this.data.status + '&p=' + this.data.page + '&s=' + this.data.sort;
-    return url;
-  },
-
-  filterChanged: function () {
-    var status = $('input[name=opp-status]:checked').val();
-    this.data.status = status;
+  filter: function (e) {
+    var val = ($('#task-filter').val() || '').trim();
+    if (val == this.data.filter) {
+      return;
+    }
+    this.data.filter = val;
     this.data.page = 1;
     Backbone.history.navigate(this.generateURL(), { trigger: false });
     this.loadData();
   },
 
+  filterChanged: function () {
+    var val = ($('#task-filter').val() || '').trim();
+    this.data.filter = val;
+    var status = $('input[name=opp-status]:checked').val();
+    this.data.status = status;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });  
+    this.loadData();
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;   
+    url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    if(this.data.cycle){  
+      url += '?q=' + this.data.status + '&p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort + '&cid=' + this.data.cycle;
+    }
+    return url;
+  },
+
+
   getCycleName: function (submittedTaskCycleId) {  
     var cycleName = _.find(this.community.cycles, function (cycle) { return cycle.cycleId == submittedTaskCycleId; });
     if (cycleName) {
       return cycleName.name;
+    }
+  },
+
+  getCommunityCycleName: function (cycle){
+    if(cycle){
+      var cycleName = _.find(this.community.cycles, function (c) { return c.cycleId == cycle; });
+      if(cycleName){
+        return cycleName.name;
+      }
     }
   },
 

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
-function StateMetrics (tasks) {
+function StateMetrics (tasks,group) {
+  this.group= group;
   this.tasks = tasks;
   this.publishedTasks= _.filter(this.tasks,function (task){
     return task.publishedAt;
@@ -34,13 +35,21 @@ _.extend(StateMetrics.prototype, {
 
   completedByAdminCount: function () {
     return _.chain(this.completedTasks)
-      .filter(function (task) { return task.updatedBy !== task.userId; })
+      .filter(function (task) { return  task.updatedBy !== task.userId; })
       .countBy(function (task) { return task.completedAtCode; }.bind(this))
       .value();
   },
 
   range: function () {
-    return _.keys(this.publishedCount() || {});
+    if(this.group=='fy'){
+      var today = new Date();
+      var year = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
+      var yearSet= [year,(year-1).toString()];
+      return yearSet;
+    }
+    else{  
+      return _.keys(this.publishedCount() || {});
+    } 
   },
 
   calculateCarryover: function () {
@@ -55,7 +64,7 @@ _.extend(StateMetrics.prototype, {
     _.each(this.tasks, function (task) {
       _.each(range, function (dateCode) { 
         var wasOpen =   task.publishedAtCode < dateCode;  
-        var notCompleted = task.isNotArchived && (!task.completedAt || task.completedAtCode > dateCode);
+        var notCompleted =  (!task.completedAt || task.completedAtCode >= dateCode);
         if (wasOpen && notCompleted) {
           carryOver[dateCode] += 1;
         }

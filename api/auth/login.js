@@ -30,6 +30,27 @@ async function userFound (user, tokenset, done) {
   }
 }
 
+function createNewAccount (accountType, tokenset) {
+  return new Promise((resolve, reject) => {
+    Profile.get(tokenset).then(async (profile) => {
+      resolve({
+        name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
+        givenName: profile.GivenName,
+        middleName: profile.MiddleName,
+        lastName: profile.LastName,
+        linkedId: tokenset.claims.sub,
+        username: profile.URI,
+        governmentUri: tokenset.claims['usaj:governmentURI'] || '',
+        hiringPath: accountType,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        disabled: false,
+        isAdmin: false,
+      });
+    }).catch(reject);
+  });
+}
+
 module.exports = {};
 
 module.exports.removeDuplicateFederalURI = (tokenset) => {
@@ -46,16 +67,15 @@ module.exports.processFederalLogin = (tokenset, done) => {
       dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims['usaj:governmentURI'].toLowerCase()).then(user => {
         userFound(user, tokenset, done);
       }).catch(async () => {
-        var account = await dao.AccountStaging.findOne('linked_id = ?', tokenset.claims.sub).catch(() => {
-          return {
-            linkedId: tokenset.claims.sub,
-            governmentUri: tokenset.claims['usaj:governmentURI'].toLowerCase(),
-          };
-        });
-        done(null, _.extend(account, {
-          type: 'staging',
-          tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
-        }));
+        // create new account
+        var accountType = tokenset.claims['usaj:hiringPath'] || 'contractor';
+        await createNewAccount(accountType, tokenset).then(async user => {
+          await dao.User.insert(user).then(user => {
+            done(null, _.extend(user, {
+              tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
+            }));
+          });
+        }).catch(done);
       });
     });
   });
@@ -69,26 +89,13 @@ module.exports.processStudentLogin = (tokenset, done) => {
       userFound(user, tokenset, done);
     }).catch(async () => {
       // create new account
-      await Profile.get(tokenset).then(async (profile) => {
-        var user = {
-          name: _.filter([profile.GivenName, profile.MiddleName, profile.LastName], _.identity).join(' '),
-          givenName: profile.GivenName,
-          middleName: profile.MiddleName,
-          lastName: profile.LastName,
-          linkedId: tokenset.claims.sub,
-          username: profile.URI,
-          hiringPath: 'student',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          disabled: false,
-          isAdmin: false,
-        };
+      await createNewAccount('student', tokenset).then(async user => {
         await dao.User.insert(user).then(user => {
           done(null, _.extend(user, {
             tokenset: _.pick(tokenset, ['access_token', 'id_token', 'refresh_token', 'expires_at']),
           }));
         });
-      });
+      }).catch(done);
     });
   });
 };
