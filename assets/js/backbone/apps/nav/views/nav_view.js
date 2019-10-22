@@ -129,6 +129,10 @@ var NavView = Backbone.View.extend({
       this.showSubMenu1();
       this.activateProfile();
     }
+    else if (window.cache.currentUser && window.location.pathname.match('profile/edit/bureau_office/' + window.cache.currentUser.id)) {
+      this.showSubMenu1();
+      this.activateProfile();
+    }
     else if (window.location.pathname.match(/home/)) {
       this.showSubMenu1();
       this.activateHome();
@@ -158,7 +162,12 @@ var NavView = Backbone.View.extend({
     } else if (window.cache.currentUser && window.location.pathname.match('/profile/edit/skills/' + window.cache.currentUser.id)) {
       //set Profile to active
       $('a[title="Profile"]').addClass('is-active');
-    } else if (window.location.pathname.match(/home/)) {
+    } else if (window.cache.currentUser && window.location.pathname.match('/profile/edit/bureau_office/' + window.cache.currentUser.id)) {
+      //set Profile to active
+      $('a[title="Profile"]').addClass('is-active');
+    }
+    
+    else if (window.location.pathname.match(/home/)) {
       //set Administration to active
       $('a[title="Home"]').addClass('is-active');
     } else if (window.location.pathname.match(/admin/)) {
