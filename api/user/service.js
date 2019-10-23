@@ -123,6 +123,21 @@ async function updateProfile (attributes, done) {
   }).catch (err => { return done({'message':'Error updating profile.'}); });
 }
 
+async function updateProfileBureauOffice (attributes, done) {
+  attributes.updatedAt =new Date();
+  return await dao.User.findOne('id = ?', attributes.id).then(async (e) => { 
+    return await dao.User.update(attributes).then((user) => {
+      return done(!user, user);
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+} 
+
 async function updateSkills (attributes, done) {
   attributes.tags=JSON.parse(attributes.tags);
   var errors = User.validateTags({ invalidAttributes: {} }, attributes);
@@ -139,7 +154,7 @@ async function updateSkills (attributes, done) {
     return done({'message':'Error updating skills.'});
   });
 }
-
+  
 async function updateProfileStatus (ctx, opts, done) {
   if (await canAdministerAccount(opts.user, { id: opts.id })) {
     var user = await getProfile(opts.id);
@@ -240,4 +255,5 @@ module.exports = {
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
   updatePhotoId: updatePhotoId,
+  updateProfileBureauOffice:updateProfileBureauOffice,
 };

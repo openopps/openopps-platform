@@ -16,7 +16,9 @@
       <option value="" disabled>- Sort By -</option>
       <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
       <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+      <% if (community.referenceId!='dos') { %>
       <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+      <% } %>
       <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Joined date</option>
       <option value="is_manager" <% if (sort == 'is_manager') { %>selected<% } %>>Community admin</option>
     </select>
@@ -28,7 +30,16 @@
     <tr>
       <th class="admin-table-name">Name</th>
       <th>Federal email</th>
-      <th>Agency</th>
+
+      <% if (community.referenceId=='dos') { %>
+        <th>Bureau</th>
+        <th>Office/post</th>
+        <% } %>
+        
+        <% if (community.referenceId!='dos') { %>
+        <th>Agency</th>
+       <% } %>
+
       <th>Joined date</th>
       <th>Community<br/>opportunities</th>
       <% if (community.isClosedGroup) { %>
@@ -58,9 +69,15 @@
         <td class="admin-table-username">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
         </td>
+        <% if (community.referenceId=='dos') { %>
+          <td><%- (u.bureau || {}).name %></td>
+          <td><%-(u.office || {}).name %></td>
+          <% } %>
+        <% if (community.referenceId!='dos') { %>
         <td>
           <%- (u.agency || {}).name %>
         </td>
+        <% } %>
         <td class="admin-table-joineddate">
           <%- moment(u.joined_date).format('MM/DD/YYYY hh:mma') %>
         </td>

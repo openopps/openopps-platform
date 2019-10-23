@@ -26,6 +26,12 @@ dao.query.isCommunityManager = `
     where community_user.user_id = ? and cycle_id = ?
 `;
 
+dao.query.isJOACreated = `
+    select secondary_application_url
+    from cycle      
+    where cycle_id = ?
+`;
+
 dao.query.getApplicationExistingCount = `
     select count(task_list_application.*) applicant_count
     from task_list_application

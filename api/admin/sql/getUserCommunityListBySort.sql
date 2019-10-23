@@ -8,7 +8,18 @@ with users as (
 			from (
 				select * from agency where midas_user.agency_id = agency.agency_id
 			) agency
-		) as agency
+		) as agency,
+        (
+			select row_to_json (bureau)
+			from (
+				select * from bureau where midas_user.bureau_id = bureau.bureau_id
+			) bureau
+		) as bureau,
+        (select row_to_json (office)
+			from (
+				select * from office where midas_user.office_id = office.office_id
+			) office
+		) as office
     from midas_user inner join community_user on midas_user.id = community_user.user_id
     where midas_user.disabled = 'f' and community_user.community_id = ? 
 )

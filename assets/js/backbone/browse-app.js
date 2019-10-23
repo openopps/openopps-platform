@@ -43,6 +43,7 @@ var BrowseRouter = Backbone.Router.extend({
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/:id(/)'                                : 'showProfile',
     'profile/edit/skills/:id(/)'                    : 'editSkills',
+    'profile/edit/bureau_office/:id(/)'             : 'editBureauOffice',
     'profile/edit/:id(/)'                           : 'editProfile',
     'profile/:action/:key'                          : 'resetProfile',
     'admin(/)'                                      : 'showAdmin',
@@ -574,6 +575,11 @@ var BrowseRouter = Backbone.Router.extend({
     this.cleanupChildren();
     this.profileEditController = new ProfileEditController({ id: id, action: 'skills', data: this.data });
     
+  },
+
+  editBureauOffice : function (id){
+    this.cleanupChildren();
+    this.profileEditController = new ProfileEditController({ id: id, action: 'bureau-office', data: this.data });
   },
 
   editProfile: function (id) {
