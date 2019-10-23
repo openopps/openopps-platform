@@ -134,6 +134,12 @@ var HomeView = Backbone.View.extend({
     }
   },
 
+  checkDosBureau: function () {
+    if(_.where(window.cache.currentUser.communities.student, { referenceId: "dos" })) {
+      return true;
+    };
+  },
+
   showAllParticipated: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);

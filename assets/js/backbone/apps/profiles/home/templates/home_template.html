@@ -1,5 +1,23 @@
 <main class="usajobs-opop" id="main-content" role="main">
   <div class="usajobs-grid usajobs-opop-dashboard">
+      <% if (window.cache.currentUser.referenceId == 'dos') { %>
+      <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <h3 class="usa-alert-heading">Update your profile</h3>
+            <p class="usa-alert-text">
+                You need to add your Bureau and Office/post to your profile before you can create an internship. 
+            </p>
+            <a href="/profile/<%- window.cache.currentUser.id %>" class="usa-button usa-button-primary usajobs-button_bar__save" id="saveExperienceContinue">Go to profile</a>
+          </div>
+          <button class="usajobs-alert__close" data-behavior="alert.close">
+            <span class="usajobs-assistive-text">Close</span>
+          </button>
+        </div>
+        <% } %>
     <h1>Welcome <%- window.cache.currentUser.givenName %><a href="/logout" class="logout">Sign out</a></h1>
     <div class="usajobs-opop-dashboard__body">
       <div class="usajobs-open-opps-participated__body">
