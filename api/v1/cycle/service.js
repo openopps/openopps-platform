@@ -18,6 +18,11 @@ service.checkIsManager = async function (userId, cycleId) {
   return user.rows[0].is_manager;
 };
 
+service.checkIsJOACreated = async function (cycleId) {
+  var user = await dao.Cycle.db.query(dao.query.isJOACreated, cycleId);
+  return user.rows[0].secondary_application_url;
+};
+
 service.getPhaseData = async function (userId, cycleId) {
   var results = {};
   var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, userId, cycleId);
