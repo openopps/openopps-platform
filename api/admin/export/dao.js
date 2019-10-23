@@ -243,7 +243,10 @@ var exportCycleInteractionsFormat = {
   'Applications on step 4 - Languages & Skills' :{field:'step4LanguageTotal',filter:nullToEmptyString},
   'Applications on step 5 - Statement of interest' :{field:'step5StatementTotal',filter:nullToEmptyString},
   'Applications on step 6 - Review application' :{field:'step6ReviewTotal',filter:nullToEmptyString},
-  'Total completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
+  'Primary selections' :{field:'PrimaryCount', filter:nullToEmptyString},
+  'Alternate selections' :{field:'AlternateCount', filter:nullToEmptyString},
+  'Successfully completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
+  
 };
 
 
