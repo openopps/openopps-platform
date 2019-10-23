@@ -12,8 +12,8 @@
 <h1 ><% if(communityId) { %>Manage<% } else {%>Create<% } %> Community</h1>
 
 <div>All fields are required unless otherwise noted</div>
-<form action="javascript:void(0)" class="usa-form-xl " role="form" id="form-community-edit">
-  <fieldset class="usajobs-fieldset">
+<form action="javascript:void(0)" role="form" id="form-community-edit">
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Community attributes</legend>  
     <h2>Community attributes</h2>
     <div class="form-group required-input "> 
@@ -85,7 +85,7 @@
       </fieldset>
     </div>  
   </fieldset>
-  <fieldset class="usajobs-fieldset">
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Community information</legend>
     <h2>Community information</h2>
     <div class="required-input">
@@ -146,42 +146,105 @@
   <fieldset class="usajobs-fieldset">
     <legend class="usa-sr-only">Bureau and office/post information</legend>
     <h2>Bureau and office/post information</h2>
+    <button class="usa-button-secondary"><i class="fas fa-plus"></i> Add new</button>
     <div class="usajobs-grid-full">
       <div class="bureau-office-information">
-        <ul class="usajobs-unstyled-list">
-          <li><h4 class="bureau-office-name">Bureau of Environmental Policy</h4> 
-            <span class="edit-delete-links">
-              <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-bureau" alt="Edit bureau" title="Edit bureau"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit bureau</span></a>
-              <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
-            </span>
-            <ul class="usajobs-unstyled-list">
-              <li><span class="bureau-office-name">Office of Peruvian Affairs</span> 
-                <span class="edit-delete-links">
-                  <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a> 
-                  <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
-                </span>
-              </li>
-              <li><span class="bureau-office-name">Office of Energy and Mining</span> 
-                <span class="edit-delete-links">
-                  <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a> 
-                  <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete office</span></a>
-                </span>
-              </li>
-            </ul>
-          </li>
-          <li><h4 class="bureau-office-name">Bureau of Nuclear Arms Control</h4> 
-            <span class="edit-delete-links">
-              <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-bureau" alt="Edit bureau" title="Edit bureau"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit bureau</span></a> 
-              <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span><span class="usa-sr-only">Delete bureau</span></a>
-            </span>
-          </li>
-        </ul>
+        <table class="usa-table-borderless bureau-office-table" role="presentation">
+          <thead>
+            <tr>
+              <th class="bureau-office-name">Name</th>
+              <th class="bureau-office-edit">Edit</th>
+              <th class="bureau-office-delete">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="bureau-office-name"><strong>Bureau of Environmental Policy</strong></th>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-bureau" alt="Edit bureau" title="Edit bureau"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit bureau</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Peruvian Affairs</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Energy and Mining</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="bureau-office-name"><strong>Bureau of Nuclear Arms Control</strong></th>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-bureau" alt="Edit bureau" title="Edit bureau"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit bureau</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Peruvian Affairs</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Energy and Mining</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="bureau-office-name"><strong>Bureau of Nuclear Arms Control</strong></th>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-bureau" alt="Edit bureau" title="Edit bureau"><span class="fa fa-edit"></span><span class="usa-sr-only">Edit bureau</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Peruvian Affairs</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="bureau-office-name"><span class="bureau-office-name">Office of Energy and Mining</span></td>
+              <td class="bureau-office-edit">
+                <a href="#edit" data-cycle-id="#" data-cycle-title="#" class="edit-office" alt="Edit office" title="Edit office"> <span class="fa fa-edit"></span><span class="usa-sr-only">Edit office</span></a>
+              </td>
+              <td class="bureau-office-delete">
+                <a href="#delete" data-cycle-id="#" data-cycle-title="#" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <button class="usa-button">Add</button>
-      <a href="#" class="remove-bureau-office">Remove</a>
     </div>
   </fieldset>
-  <fieldset class="usajobs-fieldset">
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Save or cancel</legend>
     <div class="usajobs-button_bar--slim">
       <div class="usajobs-button_bar__body">
