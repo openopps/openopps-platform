@@ -1,0 +1,35 @@
+<section class="usajobs-canvas">
+        <div class="usajobs-content-gutter profile-gutter">
+          <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+            <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+              <form action="" class="usajobs-form" role="form" >
+                <fieldset class="usajobs-fieldset bureau-office">
+                  <legend class="usa-sr-only">Bureau and Office/post</legend>
+                  <h2>Bureau and Office/post</h2>
+                  <div class="profile_tag_bureau">
+                        <label for="bureau">Bureau</label>                 
+                        <select id="profile_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty">
+                          <option></option>
+                          <% if (bureaus.length) { %>
+                            <% _(bureaus).forEach(function (bureau, i) { %>
+                              <option value="<%= bureau.bureauId %>" data-offices="<%= JSON.stringify(bureau.offices) %>"><%= bureau.name %></option>
+                            <% }); %>
+                          <% } %>
+                        </select>
+                      </div>
+                      <div class="required-input profile_tag_office" style="display: none;">
+                        <label for="office">Office/post</label>                     
+                        <input type="hidden" id="profile_tag_office" name="office_id" class="dropdown " data-validate="empty">
+                      </div>
+                </fieldset>
+                <div class="usajobs-button_bar--slim">
+                  <div class="usajobs-button_bar__body">
+                    <a href="#" class="usa-button usa-button-secondary usa-button-left" id="bureau-office-cancel">Cancel and return to Profile</a>                 
+                    <a href="javascript:void(0)" id="bureau-office-save" type="submit" class="usa-button" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Saving..." data-success-text="Saved!" data-fail-text="Save Failed.">Save Bureau and Office/post</a>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </main>
+        </div>
+      </section>

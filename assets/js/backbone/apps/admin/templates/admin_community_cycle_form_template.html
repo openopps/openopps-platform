@@ -194,13 +194,25 @@
             </div>
         </div>
     </fieldset>
-    <div id="alternate-application">
-        <label for="secondary-application-url">
-            <h3 class="usa-input-optional">Secondary application link</h3>
-        </label>
-        <span class="field-validation-error error-html" style="display:none;">The special characters '
-            < ' or '>' are not allowed</span>
-        <input type="text" id="secondary-application-url" class="fullwidth form-control validate" value="<%= cycle.secondaryApplicationUrl %>" data-validate="html" />
+    <fieldset class="usajobs-fieldset">
+        <div id="alternate-application">
+            <label for="secondary-application-url">
+                <h3 class="usa-input-optional">Secondary application link</h3>
+            </label>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '
+                < ' or '>' are not allowed</span>
+            <input type="text" id="secondary-application-url" class="fullwidth form-control validate" value="<%= cycle.secondaryApplicationUrl %>" data-validate="html" />
+        </div>
+    </fieldset>
+    <div>
+        <h3>Date cycle closed</h3>
+        <label>
+        <% if (cycle.closedDate) { %>
+            <%- moment(cycle.closedDate).format('MM/DD/YY') %>
+        <% } else { %> 
+            N/A
+        <% } %>
+    </label>
     </div>
     <div class="usajobs-button_bar--slim">
         <div class="usajobs-button_bar__body">

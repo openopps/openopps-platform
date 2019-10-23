@@ -93,10 +93,24 @@ var ProfileModel = Backbone.Model.extend({
           id: +this.id,
           username: form.username, 
           tags:JSON.stringify(form.tags)  },        
-      }).done(function (data) {     
+      }).done(function (data) {       
         _this.trigger('skills:save:success', data);
       }).fail(function (data) {
         _this.trigger('skills:save:fail', data);
+      });
+    });
+    
+    this.listenTo(this, 'bureau-office:save', function (form) {          
+      $.ajax({
+        url: this.urlRoot + '/bureau-office/' + this.id,
+        method: 'PUT',
+        dataType: 'json',     
+        data: form ,
+      }).done(function (data) {
+                  
+        _this.trigger('bureau-office:save:success', data);
+      }).fail(function (data) {
+        _this.trigger('bureau-office:save:fail', data);
       });
     });
 
