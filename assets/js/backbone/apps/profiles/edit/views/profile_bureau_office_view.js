@@ -64,6 +64,7 @@ var profileBureauOfficeView = Backbone.View.extend({
       $('#profile_tag_office').select2('data', {id: this.model.toJSON().office.officeId, text: this.model.toJSON().office.name});
     }
   },
+
   initializeBureaus: function () {
     $.ajax({
       url: '/api/enumerations/bureaus', 
@@ -88,6 +89,8 @@ var profileBureauOfficeView = Backbone.View.extend({
     data.bureauId = this.$('#profile_tag_bureau').select2('data')? this.$('#profile_tag_bureau').select2('data').id : null,
     data.officeId = this.$('#profile_tag_office').select2('data') ? this.$('#profile_tag_office').select2('data').id : null,   
     this.model.trigger('bureau-office:save', data);
+    window.cache.currentUser.bureauId = data.bureauId;
+    window.cache.currentUser.office.officeId = data.officeId;
   },
 
  
@@ -123,6 +126,7 @@ var profileBureauOfficeView = Backbone.View.extend({
       $('#profile_tag_office').select2('data', null);  
     }
   },
+
   initializeSelect2: function () {
     $('#profile_tag_bureau').select2({
       placeholder: 'Select a bureau',

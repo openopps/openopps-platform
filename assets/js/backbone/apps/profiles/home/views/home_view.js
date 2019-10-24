@@ -34,7 +34,8 @@ var HomeView = Backbone.View.extend({
     'click .read-more'             : 'readMore',
     'change #sort-participated'    : 'sortTasks',
     'change #sort-created'         : 'sortTasks',
-    'click .delete-opportunity'    : 'deleteOpportunity'
+    'click .delete-opportunity'    : 'deleteOpportunity',
+    'click .usajobs-alert__close'  : 'closeAlert',
   },
 
   initialize: function (options) {
@@ -43,7 +44,7 @@ var HomeView = Backbone.View.extend({
   },
 
   render: function () {
-    this.$el.html(templates.main);
+    this.$el.html(templates.main({ checkDosBureau: this.checkDosBureau() }));
     $('#search-results-loading').hide();
     this.$el.localize();
 
@@ -132,6 +133,19 @@ var HomeView = Backbone.View.extend({
       default:
         return (task.assigned ? 'Assigned' : 'Applied');
     }
+  },
+
+  checkDosBureau: function () {
+    if(_.where(window.cache.currentUser.communities.student, { referenceId: "dos" })) {
+      if(window.cache.currentUser.office.officeId) {
+        return false;
+      };
+    };
+    return true;
+  },
+
+  closeAlert: function (event) {
+    $(event.currentTarget).closest('.usajobs-alert').hide();
   },
 
   showAllParticipated: function (e) {
