@@ -1,0 +1,44 @@
+<form action="javascript:void(0)" class="usa-form-xl " role="form" >
+<div class="form-group required-input usa-fieldset-inputs">
+    <h5>Select bureau or office/post</h5>
+    <fieldset class="usajobs-fieldset">
+      <legend class="usa-sr-only">Add new bureau or office/post</legend>    
+      <span class="field-validation-error" style="display:none;" >Please select Bureau or office/post.</span>
+      <ul class="usa-unstyled-list" id="community-bureau-office-group">
+        <li>
+          <input id="community-bureau"  name="community-bureau-office-group" type="radio" value="bureau" checked >
+          <label for="community-bureau">Bureau</label>
+        </li>
+        <li>
+          <input id="community-office" name="community-bureau-office-group" type="radio" value="office">
+          <label for="community-office">Office/post </label>
+        </li>
+      </ul>
+    </fieldset>
+  </div> 
+  <fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">bureau name</legend> 
+  <div id="community-bureau-name"  class='bureau-section'>
+    <label for="community-bureau-name">Enter the name of the bureau you want to add.</label>
+    <span class="field-validation-error" style="display:none;">You must enter the name of the bureau you want to add.</span>
+    <input type="text" id="community-bureau-field" />
+  </div>
+</fieldset>
+
+  <div class="community_tag_bureau bureau-office-section">
+    <label for="bureau">Select the bureau that the office or post belongs to.</label>                 
+    <select id="community_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty" >
+      <option></option>
+      <% if (bureaus.length) { %>
+        <% _(bureaus).forEach(function (bureau, i) { %>
+          <option value="<%= bureau.bureauId %>" ><%= bureau.name %></option>
+        <% }); %>
+      <% } %>
+    </select>
+  </div>
+  <div id="community-office-name" class="bureau-office-section" >
+      <label for="community-office-name">Enter the name of the office or post you want to add.</label>
+      <span class="field-validation-error" style="display:none;">You must enter the name of the office or post you want to add.</span>
+      <input type="text" id="community-office-field" />
+    </div>
+</form>
