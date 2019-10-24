@@ -248,7 +248,7 @@ router.get('/api/admin/community/:communityId/member/:userId', auth, async (ctx,
 });
 
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
+  if (ctx.state.user.isAdmin || await service.canAgencyChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getOwnerOptions(ctx.params.taskId, function (results, err) {
       if (err) {
         ctx.status = 400;
@@ -281,7 +281,7 @@ router.get('/api/admin/community/changeOwner/:taskId', auth, async (ctx, next) =
 
 router.post('/api/admin/changeOwner', auth, async (ctx, next) => {
   if (ctx.state.user.isAdmin
-    || await service.canChangeOwner(ctx.state.user, ctx.request.body.taskId)
+    || await service.canAgencyChangeOwner(ctx.state.user, ctx.request.body.taskId)
     ||  await service.canCommunityChangeOwner(ctx.state.user, ctx.request.body.taskId)) {
     await service.changeOwner(ctx, ctx.request.body, processResult.bind(ctx));
   } else {
