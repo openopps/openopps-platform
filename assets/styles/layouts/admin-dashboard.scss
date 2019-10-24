@@ -81,52 +81,35 @@
   }
 
   .bureau-office-information {
-    height: 25rem;
-    max-width: 46rem;
+    height: 35rem;
     width: 100%;
     overflow-y: auto;
     border: 1px solid $color-gray-lighter;
-    padding: $size-default $size-SM;
-    margin-top: $size-M;
+    padding: $size-default $size-default $size-SM $size-default;
+    margin-top: $size-SM;
 
-    ul ul {
-      padding-left: 2rem;
-    }
-
-    li {
-      position: relative;
-    }
-
-    &>ul:first-child li:first-child h4.bureau-office-name {
-      margin-top: 0;
-    }
-
-    span.bureau-office-name {
-      display: block;
-      margin-top: 1.5rem;
+    .bureau-office-table {
+      margin: 0;
+      width: 100%;
     }
 
     .bureau-office-name {
-      width: calc(100% - 5.5rem);
+      width: 84%;
     }
 
-    .edit-delete-links {
-      position: absolute;
-      right: 0;
-      top: 0;
-
-      .edit-bureau, .edit-office {
-        margin-right: 0.5rem;
-      }
-
-      .delete-bureau, .delete-office {
-        color: $color-secondary;
-      }
+    .bureau-office-edit {
+      width: 8%;
+      text-align: center;
     }
-  }
 
-  .remove-bureau-office {
-    color: $color-secondary;
+    .bureau-office-delete {
+      width: 8%;
+      text-align: center;
+    }
+
+    .delete-bureau, .delete-office {
+      color: $color-secondary;
+    }
   }
 
   .admin-agency-name {
