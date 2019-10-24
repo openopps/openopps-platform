@@ -20,20 +20,30 @@ router.post('/api/v1/cycle/beginPhase', auth.bearer, async (ctx, next) => {
     return false;
   }
 
-  await Handler[ctx.request.fields.action](ctx).then(async results => {
+  if (ctx.request.fields.action == 'closeCycle') {
+    if (await service.checkIsJOACreated(ctx.request.fields.cycleId) == null) {    
+      ctx.status = 403;
+      ctx.body = { message: 'Exclusive job not created.' };    
+      return false;
+    }
+  }
+
+  Handler[ctx.request.fields.action](ctx).then(async results => {
     service.createAuditLog('PHASE_STARTED', ctx, {
       cycleId: ctx.request.fields.cycleId,
       results: results,
     });    
 
-    ctx.status = 202;
-    ctx.body = { message: 'Acknowledged' };
+
   }).catch(err => {    
     ctx.status = 403;
     ctx.body = { message: err };
     service.recordError(ctx.state.user.id, err);
     return false;
   });
+
+  ctx.status = 202;
+  ctx.body = { message: 'Acknowledged' };
 });
 
 Handler.startPrimaryPhase = async function (ctx) {
@@ -63,10 +73,6 @@ Handler.startAlternatePhase = async function (ctx) {
 };
 
 Handler.closeCycle = async function (ctx) {
-  var isJOACreated = await service.checkIsJOACreated(ctx.request.fields.cycleId);
-  if (isJOACreated == null) {    
-    throw 'Exclusive job not created.';
-  }
   await service.archivePhase(ctx.request.fields.cycleId);
 };
 
