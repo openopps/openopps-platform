@@ -612,12 +612,11 @@ module.exports.getDashboardCommunityTaskMetrics = async function (group, filter,
   return generator.metrics;
 };
 
-module.exports.canChangeOwner = async function (user, taskId) {
+module.exports.canAgencyChangeOwner = async function (user, taskId) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
     return undefined;
   });
-  var agency = _.find(user.tags, { type: 'agency' });
-  return task && (task.restrict.name == agency.name);
+  return task && !task.communityId && (task.agencyId == user.agencyId);
 };
 
 module.exports.canCommunityChangeOwner = async function (user, taskId) {

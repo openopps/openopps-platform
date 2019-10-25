@@ -24,6 +24,12 @@ const communityAdminsQuery = 'select midas_user.* from midas_user ' +
   'inner join community on community_user.community_id = community.community_id ' + 
   'where community_user.is_manager and midas_user.disabled = false and community.community_id = ?';
 
+const communityBureauAdminsQuery = 'select midas_user.* from midas_user ' +
+  'inner join community_user on community_user.user_id = midas_user.id ' +
+  'inner join community on community_user.community_id = community.community_id ' +
+  'where community_user.is_manager and midas_user.disabled = false ' +
+  'and community.community_id = ? and midas_user.bureau_id = ? and midas_user.office_id = ?';
+
 const communitiesQuery = 'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
@@ -229,6 +235,7 @@ module.exports = function (db) {
       comments: commentsQuery,
       communityUserQuery: communityUserQuery,
       communityAdminsQuery: communityAdminsQuery,
+      communityBureauAdminsQuery: communityBureauAdminsQuery,
       communitiesQuery: communitiesQuery,
       communityTaskQuery:communityTaskQuery,
       completedInternsQuery:completedInternsQuery,

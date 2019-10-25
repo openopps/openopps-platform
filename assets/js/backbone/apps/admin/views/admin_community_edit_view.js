@@ -3,7 +3,9 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
+var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
+var ModalComponent = require('../../../components/modal');
 
 var AdminCommunityEditView = Backbone.View.extend({
 
@@ -12,11 +14,14 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #community-edit-save'  : 'save',
     'blur .validate'     : 'validateField',
     'change .validate'   : 'validateField',
+    'click #add-bureau-office':'addbureauOfficeDisplay',
+   
   },
 
   initialize: function (options) {
     this.options = options; 
     this.departments={};  
+    this.bureaus                = [];
     return this;
   },
 
@@ -30,7 +35,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     else{
       var data = {
         communityId: '', 
-        departments : this.departments,      
+        departments : this.departments,    
       };     
       this.$el.html(_.template(AdminCommunityFormTemplate)(data));   
       this.$el.localize(); 
@@ -111,13 +116,13 @@ var AdminCommunityEditView = Backbone.View.extend({
       url: '/api/admin/community/' + this.options.communityId,
       dataType: 'json',
       success: function (community) { 
-        this.community = new CommunityModel(community);
+        this.community = new CommunityModel(community);      
         community.departments=this.departments;      
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
-        this.initializeAgencySelect();
+        this.initializeAgencySelect();    
         this.initializeformFields(community);
         $('#search-results-loading').hide();
       }.bind(this),
@@ -182,6 +187,79 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#community-save-error').get(0).scrollIntoView();      
       }.bind(this),
     });
+  },
+
+  addbureauOfficeDisplay:function (){
+    // this.initializeSelect2();  
+    this.initializeBureaus();  
+    console.log(this.bureaus);
+    var data = {  
+      bureaus: this.bureaus,
+      
+    };  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }   
+    var modalContent = _.template(AdminCommunityAddBureauOfficeTemplate)(data);  
+    this.modalComponent = new ModalComponent({   
+      el: '#site-modal',
+      id: 'add-bureau-office',
+      modalTitle: 'Add new bureau or office/post',
+      modalBody: modalContent,
+     
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {     
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add',
+        action: function () {     
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },       
+    }).render();  
+    this.changebureau();
+
+    $('input[name=community-bureau-office-group]').on('change', function (e) {       
+      this.changebureau();
+    }.bind(this));
+  },
+
+
+  changebureau: function (){
+    if( $('input[name=community-bureau-office-group]:checked').val()=='bureau'){
+      $('.bureau-section').show();
+      $('.bureau-office-section').hide();
+    }
+    else{
+      $('.bureau-section').hide();
+      $('.bureau-office-section').show();
+      
+    }
+   
+  },
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {     
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        });
+      }.bind(this),
+    });
+  },
+
+  initializeSelect2: function () {
+    $('#community_tag_bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });  
   },
 
   cleanup: function () {
