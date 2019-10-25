@@ -1,4 +1,4 @@
-<form action="javascript:void(0)" class="usa-form-xl " role="form" >
+
 <div class="form-group required-input usa-fieldset-inputs">
     <h5>Select bureau or office/post</h5>
     <fieldset class="usajobs-fieldset">
@@ -21,24 +21,27 @@
   <div id="community-bureau-name"  class='bureau-section'>
     <label for="community-bureau-name">Enter the name of the bureau you want to add.</label>
     <span class="field-validation-error" style="display:none;">You must enter the name of the bureau you want to add.</span>
-    <input type="text" id="community-bureau-field" />
+    <input type="text" id="community-new-bureau" data-validate="count100,html" />
+    <p id="community-new-bureau-count" class="usajobs-form__help-brief">(100 characters remaining)</p>
   </div>
+  
 </fieldset>
 
-  <div class="community_tag_bureau bureau-office-section">
-    <label for="bureau">Select the bureau that the office or post belongs to.</label>                 
-    <select id="community_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty" >
-      <option></option>
-      <% if (bureaus.length) { %>
-        <% _(bureaus).forEach(function (bureau, i) { %>
-          <option value="<%= bureau.bureauId %>" ><%= bureau.name %></option>
-        <% }); %>
-      <% } %>
-    </select>
-  </div>
+<div class="community_tag_bureau bureau-office-section">
+  <label for="bureau">Select the bureau that the office or post belongs to.</label>                 
+  <select id="community_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty" >
+    <option></option>
+    <% if (bureaus.length) { %>
+      <% _(bureaus).forEach(function (bureau, i) { %>
+        <option value="<%= bureau.bureauId %>" ><%= bureau.name %></option>
+      <% }); %>
+    <% } %>
+  </select>
+</div>
+
   <div id="community-office-name" class="bureau-office-section" >
       <label for="community-office-name">Enter the name of the office or post you want to add.</label>
       <span class="field-validation-error" style="display:none;">You must enter the name of the office or post you want to add.</span>
-      <input type="text" id="community-office-field" />
+      <input type="text" id="community-new-office"  data-validate="count100,html" />
+      <p id="community-new-office-count" class="usajobs-form__help-brief">(100 characters remaining)</p>
     </div>
-</form>
