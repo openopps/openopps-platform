@@ -18,7 +18,7 @@ async function findCycleApplyOverlap (data) {
 
 function forceEasternTimezone (data) {
   Object.keys(data).forEach(key => {
-    if(key.match(/.*Date$/)) {
+    if(key.match(/.*Date$/) && key != 'closedDate') {
       var internationalDateFormat = moment(data[key]).format('YYYY-MM-DD');
       if(key.match(/.*EndDate$/)) {
         data[key] = moment.tz(internationalDateFormat, 'America/New_York').endOf('day').format();
