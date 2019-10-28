@@ -21,9 +21,9 @@ router.post('/api/v1/cycle/beginPhase', auth.bearer, async (ctx, next) => {
   }
 
   if (ctx.request.fields.action == 'closeCycle') {
-    if (await service.checkIsJOACreated(ctx.request.fields.cycleId) == null) {    
+    if (!await service.checkIsJOACreated(ctx.request.fields.cycleId)) {
       ctx.status = 403;
-      ctx.body = { message: 'Exclusive job not created.' };    
+      ctx.body = { message: 'Exclusive job not created.' };
       return false;
     }
   }
