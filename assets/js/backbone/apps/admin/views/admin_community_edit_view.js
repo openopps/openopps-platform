@@ -134,7 +134,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeCounts: function () {
-    [{ id: 'community-name', count: 100}, { id: 'description', count: 500}].forEach(function (item) {
+    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}].forEach(function (item) {
       $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
     });
   },
@@ -189,13 +189,10 @@ var AdminCommunityEditView = Backbone.View.extend({
     });
   },
 
-  addbureauOfficeDisplay:function (){
-    // this.initializeSelect2();  
+  addbureauOfficeDisplay:function (){ 
     this.initializeBureaus();  
-    console.log(this.bureaus);
     var data = {  
-      bureaus: this.bureaus,
-      
+      bureaus: this.bureaus,     
     };  
     if (this.modalComponent) { this.modalComponent.cleanup(); }   
     var modalContent = _.template(AdminCommunityAddBureauOfficeTemplate)(data);  
@@ -204,8 +201,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       id: 'add-bureau-office',
       modalTitle: 'Add new bureau or office/post',
       modalBody: modalContent,
-     
-      validateBeforeSubmit: true,
+          
       secondary: {
         text: 'Cancel',
         action: function () {     
@@ -219,11 +215,15 @@ var AdminCommunityEditView = Backbone.View.extend({
         }.bind(this),
       },       
     }).render();  
+    this.initializeCounts();
     this.changebureau();
 
     $('input[name=community-bureau-office-group]').on('change', function (e) {       
-      this.changebureau();
+      this.changebureau();    
     }.bind(this));
+    this.initializeSelect2();
+    //adding this to show select2 data in modal
+    $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
   },
 
 
@@ -256,9 +256,9 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   initializeSelect2: function () {
     $('#community_tag_bureau').select2({
-      placeholder: 'Select a bureau',
-      width: '100%',
+      placeholder: 'Select a bureau',  
       allowClear: true,
+      width:'100%',  
     });  
   },
 
