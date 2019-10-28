@@ -273,16 +273,26 @@ dao.query.getApplicantNotSelected = `
 
 dao.query.GetCycleApplicantData = `
   select 
-      given_name,
-      last_name,
-      case when pri.task_id is not null then task.title end as "primary",
-      case when alt.task_id is not null then task.title end as "alternate",
-      board.task_id as "board_id",
-      case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
+    midas_user.id as "applicant_id",
+    application.application_id,
+    midas_user.given_name,
+    midas_user.last_name,
+    midas_user.username as "applicant_email",
+    task_owner."name" as "opportunity_creator_name",
+    task_owner."username" as "opportunity_creator_email",
+    case when pri.task_id is not null then task.title end as "primary",
+    case when alt.task_id is not null then task.title end as "alternate",
+    board.date_last_contacted,
+    bureau."name" as "bureau",
+    task.suggested_security_clearance as "security clearance level",
+    board.task_id as "board_id",
+    case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
   from midas_user
     inner join application on midas_user.id = application.user_id
     inner join application_task on application.application_id = application_task.application_id
     inner join task on application_task.task_id = task.id
+    left join midas_user task_owner on task."userId" = task_owner.id
+    left join bureau on task.bureau_id = bureau.bureau_id
     left join lateral (
       select *
             from task_list
