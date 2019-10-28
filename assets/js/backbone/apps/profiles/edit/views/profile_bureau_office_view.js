@@ -89,7 +89,7 @@ var profileBureauOfficeView = Backbone.View.extend({
     data.bureauId = this.$('#profile_tag_bureau').select2('data')? this.$('#profile_tag_bureau').select2('data').id : null,
     data.officeId = this.$('#profile_tag_office').select2('data') ? this.$('#profile_tag_office').select2('data').id : null,   
     this.model.trigger('bureau-office:save', data);
-    window.cache.currentUser.bureauId = data.bureauId;
+    window.cache.currentUser.bureau.bureauId = data.bureauId;
     window.cache.currentUser.office.officeId = data.officeId;
   },
 
