@@ -284,7 +284,8 @@ dao.query.GetCycleApplicantData = `
     case when alt.task_id is not null then task.title end as "alternate",
     board.date_last_contacted,
     bureau."name" as "bureau",
-    task.suggested_security_clearance as "security clearance level",
+    office."name" as "office/post",
+    task.suggested_security_clearance as "security_clearance_level",
     board.task_id as "board_id",
     case when application_task.sort_order = -1 then null else application_task.sort_order end as "board_preference"
   from midas_user
@@ -293,6 +294,7 @@ dao.query.GetCycleApplicantData = `
     inner join task on application_task.task_id = task.id
     left join midas_user task_owner on task."userId" = task_owner.id
     left join bureau on task.bureau_id = bureau.bureau_id
+    left join office on task.office_id = office.office_id
     left join lateral (
       select *
             from task_list
