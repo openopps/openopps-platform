@@ -136,12 +136,15 @@ var HomeView = Backbone.View.extend({
   },
 
   checkDosBureau: function () {
-    if(_.where(window.cache.currentUser.communities.student, { referenceId: "dos" })) {
+    if(_.findWhere(window.cache.currentUser.communities.student, { referenceId: "dos" })) {
       if(window.cache.currentUser.bureau.bureauId) {
         return false;
-      };
-    };
-    return true;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   },
 
   closeAlert: function (event) {
