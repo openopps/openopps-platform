@@ -123,15 +123,16 @@
         </div>
       </div>
 
-  <% if (user.communities.student && user.communities.student.length>0 ) { %>
-    <% _(user.communities.student).forEach(function (community, i) { %>
-    <% if (community.referenceId=='dos') { %>
+  
+    <% if (dos) { %>
     <div class="usajobs-opop-skill__body">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
         <div class="usajobs-grid-full">
+          <% if (data.isOwner || data.canEditProfile) { %>
           <div class="usajobs-opop-section-edit skills-edit">
             <a href="/profile/edit/bureau_office/<%- data.id %>/">Edit</a>
           </div>
+          <% } %>
           <h2><span class="usa-input-optional">Bureau and Office/post</span></h2>
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-bureau">
@@ -151,8 +152,6 @@
       </div>
     </div>
     <% } %>
-    <% }); %>
- <% } %>
       <div class="usajobs-opop-skill__body">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
           <div class="usajobs-grid-full">
