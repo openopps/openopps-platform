@@ -28,7 +28,7 @@ const communityBureauAdminsQuery = 'select midas_user.* from midas_user ' +
   'inner join community_user on community_user.user_id = midas_user.id ' +
   'inner join community on community_user.community_id = community.community_id ' +
   'where community_user.is_manager and midas_user.disabled = false ' +
-  'and community.community_id = ? and midas_user.bureau_id = ? and midas_user.office_id = ?';
+  'and community.community_id = ? and midas_user.bureau_id = ?';
 
 const communitiesQuery = 'SELECT ' +
     'community.community_id, ' +
