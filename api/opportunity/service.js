@@ -490,7 +490,8 @@ async function sendTaskSubmittedNotification (user, task) {
     }
   };
   if (task.communityId && task.bureauId) {
-    _.forEach((await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureauId, task.officeId)), updateBaseData);
+    var bureauAdmins = await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureauId);
+    _.forEach(bureauAdmins.length ? bureauAdmins : (await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else if (task.communityId) {
     _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
