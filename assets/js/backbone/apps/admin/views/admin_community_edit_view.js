@@ -344,8 +344,7 @@ var AdminCommunityEditView = Backbone.View.extend({
           // eslint-disable-next-line no-empty
           else{
             
-          }
-       
+          }  
         },
       },      
     }).render();  
@@ -356,14 +355,10 @@ var AdminCommunityEditView = Backbone.View.extend({
       self.changebureau(bureauId,officeId);    
     }.bind(this));
 
-    $('.validateBureauOffice').on('change', function (e) {
-      self.checkBureauOfficeExist(self,bureauId,officeId);
-       
-    }.bind(this));
     $('.validate').on('change', function (e) {
-      self.validatebureauOffice(bureauId,officeId);
-       
+      self.validatebureauOffice(bureauId,officeId);       
     }.bind(this));
+    
 
     self.initializeSelect2();
     
