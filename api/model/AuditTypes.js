@@ -118,6 +118,18 @@ module.exports = {
     severity: 'info',
     data: ['userId', 'action'],
   },
+  'BUREAU_UPDATED': {
+    action: 'BUREAU_UPDATED',
+    description: 'A user has made changes to the bureau.',
+    severity: 'info',
+    data: ['bureauId', 'previous', 'changes'],
+  },
+  'OFFICE_UPDATED': {
+    action: 'OFFICE_UPDATED',
+    description: 'A user has made changes to the office.',
+    severity: 'info',
+    data: ['officeId', 'previous', 'changes'],
+  },
   // API events
   'PHASE_STARTED': {
     action: 'PHASE_STARTED',

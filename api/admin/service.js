@@ -108,11 +108,11 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
 
-  var agency = "";
-  var office = "";
-  var bureau = "";
+  var agency = '';
+  var office = '';
+  var bureau = '';
 
-  if (community.referenceId != "dos") {
+  if (community.referenceId != 'dos') {
     var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
   } else {
     var office = ' or lower(office->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
@@ -124,7 +124,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
     + '%\'' + agency + office + bureau +')';
   } 
 
-  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos", office + bureau) : ''));
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != 'dos', office + bureau) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
   if(cycleId){
@@ -740,6 +740,56 @@ module.exports.getCommunities = async function (user) {
   } else {
     return await dao.Community.query(dao.query.communityListQuery, user.id);
   }
+};
+module.exports.saveBureauOffice = async function (ctx,attributes,done) { 
+  if(attributes.officeId && attributes.bureauId){
+    var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId);
+    attributes.lastModified = new Date();
+    return await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId).then(async (e) => { 
+      return await dao.Office.update(attributes).then(async (office) => {
+        var audit = module.exports.createAuditLog('OFFICE_UPDATED', ctx, {      
+          officeId: office.officeId,
+          previous: _.omitBy(origOffice, (value, key) => { return _.isEqual(attributes[key], value); }),
+          changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origOffice[key], value); }),
+        });     
+        office.updateOffice=true;
+        return done(!office, office);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+  else if(attributes.bureauId){   
+    var origBureau = await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId);
+    attributes.lastModified = new Date();
+    return await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId).then(async (e) => { 
+      return await dao.Bureau.update(attributes).then(async (bureau) => {
+        var audit = module.exports.createAuditLog('BUREAU_UPDATED', ctx, {      
+          bureauId: bureau.bureauId,
+          previous: _.omitBy(origBureau, (value, key) => { return _.isEqual(attributes[key], value); }),
+          changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origBureau[key], value); }),
+        });   
+        bureau.updateBureau=true;
+        return done(!bureau, bureau);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+  // eslint-disable-next-line no-empty
+  else{
+    
+  }
+  
+
 };
 
 module.exports.createAuditLog = async function (type, ctx, auditData) {
