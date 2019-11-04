@@ -90,6 +90,7 @@ async function processUnpaidApplication (user, data, callback) {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+    log.info('Application (application id '+ applicationId +') for ' + username + ' first submitted on ' + new Date());
     callback(null, application.applicationId);
   }
 }
@@ -224,7 +225,6 @@ async function createApplicationSkill (user, applicationId, tag) {
 module.exports.apply = async function (user, taskId, getTasks, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
-      // need a way to determine DoS Unpaid vs VSFS
       if (community.applicationProcess == 'dos') {
         await new Promise((resolve, reject) => {
           processUnpaidApplication(user, { task: task, community: community }, (err, applicationId) => {
@@ -367,6 +367,9 @@ module.exports.updateApplication = async function (userId, applicationId, data) 
     return await dao.Application.update(data).then((application) => {
       if (application.submittedAt) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
+        log.info('Application (application id '+ applicationId +') for ' + username + ' submitted on ' + new Date());
+      } else {
+        log.info('Application (application id '+ applicationId +') for ' + username + ' updated on ' + new Date());
       }
       return application;
     }).catch((err) => {
@@ -415,7 +418,7 @@ module.exports.saveEducation = async function (attributes,done) {
 
 async function insertExperience (attributes) {
   return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
-    return await dao.Experience.insert(attributes).then(async (experience) => {   
+    return await dao.Experience.insert(attributes).then(async (experience) => {  
       return experience;
     }).catch(err => {
       return false;
@@ -480,7 +483,7 @@ module.exports.getEducation= async function (educationId){
 };
 
 async function insertReference (attributes) {
-  return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
+  return await dao.Application.findOne('application_id = ? and user_id = ?', attributes.applicationId,attributes.userId).then(async (e) => { 
     return await dao.Reference.insert(attributes).then(async (reference) => {   
       return reference;
     }).catch(err => {
@@ -493,7 +496,7 @@ async function insertReference (attributes) {
 }
 
 async function updateReference (attributes) {
-  return await dao.Reference.findOne('reference_id = ? and user_id = ?',attributes.referenceId,attributes.userId).then(async (e) => { 
+  return await dao.Reference.findOne('reference_id = ? and user_id = ?', attributes.referenceId,attributes.userId).then(async (e) => { 
     return await dao.Reference.update(attributes).then((reference) => {
       return reference;
     }).catch((err) => {
