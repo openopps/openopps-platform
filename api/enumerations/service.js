@@ -25,9 +25,9 @@ module.exports.getBureausAll = async function () {
     }
 
     if (bureau_data[i].office_id != null) {
-      currentBureau.offices.push({ id: bureau_data[i].office_id, text: bureau_data[i].office_name,name:bureau_data[i].office_name.toLowerCase()});
-      currentBureau.offices= _.sortBy(currentBureau.offices, 'name');
-      
+      currentBureau.offices.push({ id: bureau_data[i].office_id, text: bureau_data[i].office_name, name: bureau_data[i].office_name, sortByName: bureau_data[i].office_name.toLowerCase()});
+      currentBureau.offices= _.sortBy(currentBureau.offices, 'sortByName');
+
     }
     if (i == bureau_data.length - 1) {
       bureaus.push(currentBureau);

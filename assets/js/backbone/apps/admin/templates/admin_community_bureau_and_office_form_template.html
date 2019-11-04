@@ -1,0 +1,73 @@
+<fieldset class="usajobs-fieldset">
+    <legend class="usa-sr-only">Bureau and office/post information</legend>
+    <h2>Bureau and office/post information</h2>
+    <a id="add-bureau-office" class="usa-button usa-button-secondary" href="/admin/community/<%- communityId %>/bureau-Office?edit=new"><i class="fas fa-plus"></i> Add new</a>
+  
+    <div class="usajobs-grid-full">
+      <div class="usa-width-one-whole bureau-office-information">
+        <table class="usa-table-borderless bureau-office-table" role="presentation">
+          <tr>
+            <td>
+              <div class="table-static-header">
+                <table>
+                  <tr>
+                    <th class="bureau-office-name"><div>Name</div></th>
+                    <th class="bureau-office-edit"><div>Edit</div></th>
+                    <th class="bureau-office-delete"><div>Delete</div></th>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="scrolling-table">
+                <table>
+                <% _.each(bureaus, function (d) { %>
+                  <tr>
+                    <th scope="row" class="bureau-office-name"><strong><%-d.name %></strong></th>
+                    <td class="bureau-office-edit">
+                        <a href="/admin/community/<%- communityId %>?bureau=<%- d.bureauId %>"
+                          data-bureau-id="<%- d.bureauId %>"
+                          data-bureau-title="<%- d.name %>"
+                          class="edit-bureau-office"
+                          alt="Edit bureau"
+                          title="Edit bureau">
+                          <span class='fas fa-edit'></span>
+                          <span class="usa-sr-only">Edit Bureau</span>
+                        </a>       
+                    </td>
+                    <td class="bureau-office-delete">
+                      <a href="#delete" data-bureau-id="<%- d.bureauId %>" data-bureau-title="<%- d.name %>" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
+                    </td>
+                  </tr>
+                  <% _.each(d.offices, function (o) { %>
+                  <tr>
+                    <td class="bureau-office-name"><span class="bureau-office-name"><%-o.name %></span></td>
+                    <td class="bureau-office-edit">                     
+                      <a href="/admin/community/<%- communityId %>?office=<%- o.id %>"
+                        data-bureau-id="<%- d.bureauId %>"
+                        data-bureau-title="<%- d.name %>"
+                        data-office-id="<%- o.id %>"
+                        data-office-title="<%- o.name %>"
+                        class="edit-bureau-office"
+                        alt="Edit office"
+                        title="Edit office">
+                        <span class='fas fa-edit'></span>
+                        <span class="usa-sr-only">Edit office</span>
+                      </a>  
+                    </td>
+                    <td class="bureau-office-delete">
+                      <a href="#delete" data-office-id="<%- o.id %>" data-office-title="<%- o.name %>" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+                    </td>
+                  </tr>
+                  <% }); %>
+                <% }); %>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </fieldset>

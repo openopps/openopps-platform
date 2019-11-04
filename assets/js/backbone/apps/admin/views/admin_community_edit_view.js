@@ -4,6 +4,8 @@ var $ = require('jquery');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
+var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
+var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
 
@@ -14,29 +16,36 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #community-edit-save'  : 'save',
     'blur .validate'     : 'validateField',
     'change .validate'   : 'validateField',
-    'click #add-bureau-office':'addbureauOfficeDisplay',
+    //'click #add-bureau-office':'addbureauOfficeDisplay',
+    'click .edit-bureau-office':'addbureauOfficeDisplay',
+    
    
   },
 
   initialize: function (options) {
     this.options = options; 
     this.departments={};  
+    this.communityInfo={};
     this.bureaus                = [];
+    this.params = new URLSearchParams(window.location.search);   
     return this;
   },
 
   render: function () {
     $('#search-results-loading').show();
+    this.initializeBureaus(); 
     this.initializeAgencySelect();
     this.loadDepartments();  
     if(this.options.communityId){
-      this.loadCommunity();    
+      this.loadCommunity(); 
+           
     }
     else{
       var data = {
         communityId: '', 
-        departments : this.departments,    
-      };     
+        departments : this.departments,         
+      };   
+        
       this.$el.html(_.template(AdminCommunityFormTemplate)(data));   
       this.$el.localize(); 
       this.initializeCounts();
@@ -44,7 +53,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
     return this;
   },
-
+ 
   loadDepartments: function (){ 
     $.ajax({
       url: '/api/admin/community/agencies',  
@@ -115,22 +124,47 @@ var AdminCommunityEditView = Backbone.View.extend({
     $.ajax({
       url: '/api/admin/community/' + this.options.communityId,
       dataType: 'json',
-      success: function (community) { 
+      success: function (community) {      
         this.community = new CommunityModel(community);      
-        community.departments=this.departments;      
+        community.departments=this.departments;     
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));
+
+        if(community.referenceId=='dos'){
+          this.renderBureausAndOffices();
+        }
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
         $('#search-results-loading').hide();
+       
       }.bind(this),
       error: function () {
         $('#search-results-loading').hide();
         showWhoopsPage();
       },
     });
+  },
+
+  renderBureausAndOffices: function () {
+    var bureauOfficeTemplate = _.template(AdminCommunityBureauAndOfficeFormTemplate)({
+      bureaus: this.bureaus,
+      communityId:this.options.communityId,     
+    });
+    $('#bureau-office').html(bureauOfficeTemplate);
+  },
+  
+  renderBureausOfficesMessages: function (data,self) { 
+    var bureauOfficeMessageTemplate = _.template(AdminCommunityBureauOfficeMessageTemplate)({
+      updateOffice:data.updateOffice,
+      updateBureau:data.updateBureau,
+      name:data.name,
+     
+    });
+   
+    $('#bureau-office-message').html(bureauOfficeMessageTemplate);
+    window.scrollTo(0, 0);
   },
 
   initializeCounts: function () {
@@ -188,53 +222,232 @@ var AdminCommunityEditView = Backbone.View.extend({
       }.bind(this),
     });
   },
+  validatebureauOffice: function (bureauId,officeId) {
+    
+    var abort = false; 
+    if($('#community-new-office').val()=='' && bureauId && officeId){
+      $('#community-office-name').addClass('usa-input-error');     
+      $('#community-office-name>.field-validation-error').show();
+      $('#community-office-name>.exist-validation-error').hide();
+      abort=true;
+    }
+    else if($('#community-new-bureau').val()=='' && bureauId){
+      $('#community-bureau-name').addClass('usa-input-error');     
+      $('#community-bureau-name>.field-validation-error').show();
+      $('#community-bureau-name>.exist-validation-error').hide();
+      abort=true;
+    } 
+    else{
+      $('#community-bureau-name').removeClass('usa-input-error');     
+      $('#community-bureau-name>.field-validation-error').hide();   
+      $('#community-bureau-name').removeClass('usa-input-error');     
+      $('#community-bureau-name>.field-validation-error').hide();
+      abort=false;
+    }
 
-  addbureauOfficeDisplay:function (){ 
-    this.initializeBureaus();  
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }  
+    return abort;
+  },
+
+  addbureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var bureauId= $(event.currentTarget ).data('bureau-id');
+    var bureauName=$(event.currentTarget ).data('bureau-title');
+    var officeId=$(event.currentTarget ).data('office-id');
+    var officeName=$(event.currentTarget ).data('office-title');
+    var self = this;
+    
+    self.initializeBureaus();  
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); } 
+    var communityId= this.options.communityId; 
+  
     var data = {  
-      bureaus: this.bureaus,     
-    };  
-    if (this.modalComponent) { this.modalComponent.cleanup(); }   
-    var modalContent = _.template(AdminCommunityAddBureauOfficeTemplate)(data);  
-    this.modalComponent = new ModalComponent({   
+      bureaus: this.bureaus,  
+      bureauName:bureauName, 
+      bureauId:bureauId,
+      officeId:officeId,
+      officeName:officeName,
+    }; 
+   
+    var modalContent = _.template(AdminCommunityAddBureauOfficeTemplate)(data); 
+   
+    var bureauOfficeData;   
+    var modalTitle;
+    if(bureauId && officeId){
+      modalTitle ='Edit office/post';
+    }
+    else if(bureauId){
+      modalTitle='Edit bureau';
+    }
+    else{
+      modalTitle='Add new bureau or office/post';
+    }
+     
+    self.modalComponent = new ModalComponent({         
       el: '#site-modal',
       id: 'add-bureau-office',
-      modalTitle: 'Add new bureau or office/post',
-      modalBody: modalContent,
-          
+      modalTitle:  modalTitle,
+      modalBody: modalContent,  
+      action: function (){    
+      } ,     
       secondary: {
         text: 'Cancel',
-        action: function () {     
-          this.modalComponent.cleanup();
+        action: function () {          
+          self.modalComponent.cleanup();    
         }.bind(this),
       },
       primary: {
-        text: 'Add',
-        action: function () {     
-          this.modalComponent.cleanup();
-        }.bind(this),
-      },       
+        text:  bureauId || officeId ?'Save':'Add',
+        action: function () {
+          
+          if(!self.validatebureauOffice(bureauId,officeId) && !self.checkBureauOfficeExist(self,bureauId,officeId,bureauName,officeName)){
+            if(bureauId && officeId){
+              bureauOfficeData={
+                bureauId:bureauId,
+                officeId :officeId,
+                name: $('#community-new-office').val(),
+              };    
+            }
+            else if(bureauId){
+              bureauOfficeData={
+                bureauId:  bureauId,   
+                name: $('#community-new-bureau').val(),
+              };
+            }             
+            $.ajax({
+              url: '/api/admin/community/'+ communityId +'/bureau-office',
+              method: 'PUT',
+              data:bureauOfficeData,        
+            }).done(function (data) {          
+              var index = _.findIndex(self.bureaus, { bureauId: data.bureauId });          
+              if(data.bureauId && data.officeId){
+                var indexOffice = _.findIndex(self.bureaus[index].offices, { id: data.officeId });
+                self.bureaus[index].offices[indexOffice].name = data.name;
+              }
+              else{
+                if (index == -1) {
+                  self.bureaus.push(data);
+                } else {
+                  self.bureaus[index].name = data.name;
+                } 
+              }           
+              self.renderBureausAndOffices(self.bureaus);
+              self.renderBureausOfficesMessages(data,self);         
+              self.modalComponent.cleanup();
+            }.bind(this)).fail(function () {
+              self.modalComponent.cleanup();
+            }.bind(this));
+          }
+          // eslint-disable-next-line no-empty
+          else{
+            
+          }  
+        },
+      },      
     }).render();  
-    this.initializeCounts();
-    this.changebureau();
+    self.initializeCounts();
+    self.changebureau(bureauId,officeId);
 
     $('input[name=community-bureau-office-group]').on('change', function (e) {       
-      this.changebureau();    
+      self.changebureau(bureauId,officeId);    
     }.bind(this));
-    this.initializeSelect2();
+
+    $('.validate').on('change', function (e) {
+      self.validatebureauOffice(bureauId,officeId);       
+    }.bind(this));
+    
+
+    self.initializeSelect2();
+    
     //adding this to show select2 data in modal
     $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
   },
+  checkBureauOfficeExist:function (self,bureauId,officeId,targetBureauName,targetOfficeName){  
+    var abort= false;
+    var bureauName=$('#community-new-bureau').val();
+    var officeName=$('#community-new-office').val();
+   
+    var index = _.findIndex(self.bureaus, { bureauId:bureauId.toString() });
+   
+    if(bureauId && officeId && officeName){
+      var indexOfficeName='';
+      if(targetOfficeName){
+        var updatedOfficeArray = _.reject(self.bureaus[index].offices, function (o) { 
+          return o.name.replace(/\s/g, '').toLowerCase()==targetOfficeName.replace(/\s/g, '').toLowerCase(); 
+        }); 
+        indexOfficeName = _.findIndex(updatedOfficeArray, function (o){
+          return o.name.replace(/\s/g, '').toLowerCase() == officeName.replace(/\s/g, '').toLowerCase();
+        });
+      }
+      else{
+        indexOfficeName = _.findIndex(self.bureaus[index].offices, function (o){
+          return o.name.replace(/\s/g, '').toLowerCase() == officeName.replace(/\s/g, '').toLowerCase();
+        });
+      }
+      if(indexOfficeName!==-1){
+        $('#community-office-name').addClass('usa-input-error');     
+        $('#community-office-name>.exist-validation-error').show();
+        abort=true;
+      }
+      else{
+        $('#community-office-name').removeClass('usa-input-error');     
+        $('#community-office-name>.exist-validation-error').hide();
+        abort= false;
+      }  
+    }
+    else if(bureauId && bureauName){
+      var indexBureauName='';
+      if(targetBureauName){
+        var updatedBureauArray = _.reject(self.bureaus, function (b) { 
+          return b.name.replace(/\s/g, '').toLowerCase()==targetBureauName.replace(/\s/g, '').toLowerCase(); 
+        }); 
+        indexBureauName = _.findIndex(updatedBureauArray, function (b) {
+          return b.name.replace(/\s/g, '').toLowerCase() == bureauName.replace(/\s/g, '').toLowerCase();
+        });
+      }
+      else{
+        indexBureauName = _.findIndex(self.bureaus, function (b) {
+          return b.name.replace(/\s/g, '').toLowerCase() == bureauName.replace(/\s/g, '').toLowerCase();
+        });
+      }
+    
+      if(indexBureauName!==-1){
+        $('#community-bureau-name').addClass('usa-input-error');     
+        $('#community-bureau-name>.exist-validation-error').show();
+        abort=true;
+      }
+      else{
+        $('#community-bureau-name').removeClass('usa-input-error');     
+        $('#community-bureau-name>.exist-validation-error').hide();
+        abort=false;
+      }  
+    }
+    return abort;
+  },
 
-
-  changebureau: function (){
-    if( $('input[name=community-bureau-office-group]:checked').val()=='bureau'){
+  changebureau: function (bureauId,officeId){ 
+    if(bureauId && officeId){
+      $('.bureau-section').hide();
+      $('.bureau-office-section').show();
+    }
+    else if(bureauId){
       $('.bureau-section').show();
       $('.bureau-office-section').hide();
     }
-    else{
+    else if( $('input[name=community-bureau-office-group]:checked').val()=='bureau'){
+      $('.bureau-section').show();
+      $('.bureau-office-section').hide();
+    }
+    else if( $('input[name=community-bureau-office-group]:checked').val()=='office'){
       $('.bureau-section').hide();
+     
       $('.bureau-office-section').show();
+    }
+    // eslint-disable-next-line no-empty
+    else{
       
     }
    

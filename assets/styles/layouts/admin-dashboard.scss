@@ -81,16 +81,52 @@
   }
 
   .bureau-office-information {
-    height: 35rem;
+    max-height: 35rem;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     border: 1px solid $color-gray-lighter;
-    padding: $size-default $size-default $size-SM $size-default;
+    padding: 0 0 $size-SM $size-default;
     margin-top: $size-SM;
 
     .bureau-office-table {
       margin: 0;
       width: 100%;
+      position: relative;
+
+      > tbody > tr > td {
+        border: 0;
+        padding: 0;
+      }
+    }
+
+    .table-static-header {
+      table {
+        width: 97.85%;
+        margin: 0;
+
+        > tbody > tr {
+          border-bottom: 1px solid $color-gray;
+
+          > th {
+            border: 0;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    .scrolling-table {
+      height: 30.5rem;
+      overflow-y: auto;
+
+      table {
+        width: 99%;
+        margin: 0;
+
+        tr:first-child th, tr:first-child td {
+          border-top: 0;
+        }
+      }
     }
 
     .bureau-office-name {
