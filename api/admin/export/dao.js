@@ -158,11 +158,14 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
     'select office.name ' +
     'from office where office.office_id = task.office_id ' +
   ') as office, ' +
+  'concat_ws(\', \', task.city_name, country_subdivision.value, country.value) as location, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task ' +
   'inner join midas_user on task."userId" = midas_user.id ' + 
   'left join agency on task.agency_id = agency.agency_id ' +
   'left join cycle on task.cycle_id = cycle.cycle_id ' +
+  'left join country on task.country_id = country.country_id ' +
+  'left join country_subdivision on task.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
 
 var exportUserFormat = {
@@ -220,6 +223,7 @@ var exportTaskFormat = {
   'task_state': 'state',
   'bureau': {field: 'bureau', filter: nullToEmptyString},
   'office': {field: 'office', filter: nullToEmptyString},
+  'location': {field: 'location', filter: nullToEmptyString},
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
   'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
