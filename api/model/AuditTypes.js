@@ -118,17 +118,31 @@ module.exports = {
     severity: 'info',
     data: ['userId', 'action'],
   },
+  //Bureau events
   'BUREAU_UPDATED': {
     action: 'BUREAU_UPDATED',
     description: 'A user has made changes to the bureau.',
     severity: 'info',
-    data: ['bureauId', 'previous', 'changes'],
+    data: ['bureauId','user', 'previous', 'changes'],
   },
+  'BUREAU_ADDED': {
+    action: 'BUREAU_ADDED',
+    description: 'A new bureau is added.',
+    severity: 'info',
+    data: ['bureauId', 'user', 'bureauName'],
+  },
+  //Office events
   'OFFICE_UPDATED': {
     action: 'OFFICE_UPDATED',
     description: 'A user has made changes to the office.',
     severity: 'info',
-    data: ['officeId', 'previous', 'changes'],
+    data: ['officeId','user', 'previous', 'changes'],
+  },
+  'OFFICE_ADDED': {
+    action: 'OFFICE_ADDED',
+    description: 'A new office is added.',
+    severity: 'info',
+    data: ['bureauId','user','officeId', 'user', 'officeName'],
   },
   // API events
   'PHASE_STARTED': {
