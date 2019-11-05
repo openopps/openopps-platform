@@ -214,8 +214,8 @@ var HomeView = Backbone.View.extend({
       id: 'confirm-deletion',
       alert: 'error',
       action: 'delete',
-      modalTitle: 'Delete opportunity confirmation',
-      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-opportunity-title') + '</strong>? <strong>This cannot be undone</strong>.',
+      modalTitle: 'Confirm delete opportunity',
+      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-opportunity-title') + '</strong>? <p><strong>If you delete this opportunity, you can\'t get it back</strong>.</p>',
       primary: {
         text: 'Delete opportunity',
         action: function () {

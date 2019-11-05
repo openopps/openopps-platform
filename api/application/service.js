@@ -90,7 +90,7 @@ async function processUnpaidApplication (user, data, callback) {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    log.info('Application (application id '+ applicationId +') for ' + username + ' first submitted on ' + new Date());
+    log.info('Application (application id '+ application.applicationId +') for ' + username + ' first submitted on ' + new Date());
     callback(null, application.applicationId);
   }
 }
