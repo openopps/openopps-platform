@@ -65,6 +65,7 @@ dao.query.internshipSummaryQuery = `
     community.community_name,
     "cycle".name as "cycleName",
     "cycle".is_processing,
+    "cycle".is_archived,
     task.title as "taskTitle", 
     bureau.name as "bureauName",
     office.name as "officeName",
