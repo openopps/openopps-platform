@@ -42,7 +42,8 @@ dao.query.internshipListQuery = `
 `;
 
 dao.query.internshipArchiveListQuery = `
-  select 
+  select
+    task.id,
     "cycle".name as "Cycle", 
     task.title as "Title", 
     coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
@@ -64,6 +65,7 @@ dao.query.internshipSummaryQuery = `
     community.community_name,
     "cycle".name as "cycleName",
     "cycle".is_processing,
+    "cycle".is_archived,
     task.title as "taskTitle", 
     bureau.name as "bureauName",
     office.name as "officeName",
