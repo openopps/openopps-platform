@@ -51,7 +51,7 @@ service.removeApplicationTask  = async function(task_id, application_task_id, ta
 service.updateLastContacted = async function (emails) {
   
   await emails.forEach(email => {
-    dao.TaskListApplication.db.query('update task_list_application set date_last_contacted = ?, template_name = ? where task_list_application_id = ?',email.date_last_contacted, email.template_name, email.task_list_application_id);
+    dao.TaskListApplication.db.query('update task_list_application tla set date_last_contacted = ?, last_contacted_by = mu.id, template_name = ? from midas_user mu where mu.username = ? and tla.task_list_application_id = ?',email.date_last_contacted, email.template_name, email.last_contacted_by.toLowerCase( ), email.task_list_application_id);
   });
   return true;
 };
