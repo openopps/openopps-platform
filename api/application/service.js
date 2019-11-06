@@ -89,8 +89,17 @@ async function processUnpaidApplication (user, data, callback) {
       sortOrder: sortOrder,
       createdAt: new Date(),
       updatedAt: new Date(),
+    }).then(async () => {
+      var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
+        applicationId: application.applicationId,
+        userId: application.userId,
+        createdAt: application.createdAt,
+        updatedAt: application.updatedAt,
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        log.error(err);
+      });
     });
-    log.info('Application (application id '+ application.applicationId +') for ' + username + ' first submitted on ' + new Date());
     callback(null, application.applicationId);
   }
 }
@@ -367,9 +376,24 @@ module.exports.updateApplication = async function (userId, applicationId, data) 
     return await dao.Application.update(data).then((application) => {
       if (application.submittedAt) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
-        log.info('Application (application id '+ applicationId +') for ' + username + ' submitted on ' + new Date());
+        var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
+          applicationId: application.applicationId,
+          userId: application.userId,
+          createdAt: application.createdAt,
+          updatedAt: application.updatedAt,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
       } else {
-        log.info('Application (application id '+ applicationId +') for ' + username + ' updated on ' + new Date());
+        var audit = Audit.createAudit('APPLICATION_UPDATED', ctx, {
+          applicationId: application.applicationId,
+          userId: application.userId,
+          updatedAt:application.updatedAt,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
       }
       return application;
     }).catch((err) => {
