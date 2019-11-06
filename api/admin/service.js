@@ -749,6 +749,7 @@ module.exports.saveBureauOffice = async function (ctx,attributes,done) {
       return await dao.Office.update(attributes).then(async (office) => {
         var audit = module.exports.createAuditLog('OFFICE_UPDATED', ctx, {      
           officeId: office.officeId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
           previous: _.omitBy(origOffice, (value, key) => { return _.isEqual(attributes[key], value); }),
           changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origOffice[key], value); }),
         });     
@@ -763,13 +764,14 @@ module.exports.saveBureauOffice = async function (ctx,attributes,done) {
       return false;
     });
   }
-  else if(attributes.bureauId){   
+  else if(attributes.bureauId && !attributes.selected){   
     var origBureau = await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId);
     attributes.lastModified = new Date();
     return await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId).then(async (e) => { 
       return await dao.Bureau.update(attributes).then(async (bureau) => {
         var audit = module.exports.createAuditLog('BUREAU_UPDATED', ctx, {      
           bureauId: bureau.bureauId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
           previous: _.omitBy(origBureau, (value, key) => { return _.isEqual(attributes[key], value); }),
           changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origBureau[key], value); }),
         });   
@@ -784,12 +786,36 @@ module.exports.saveBureauOffice = async function (ctx,attributes,done) {
       return false;
     });
   }
-  // eslint-disable-next-line no-empty
-  else{
-    
-  }
   
-
+  else if(attributes.selected=='bureau'){
+    attributes.lastModified = new Date();
+    await dao.Bureau.insert(attributes).then(async (bureau) => {
+      var audit = module.exports.createAuditLog('BUREAU_ADDED', ctx, {      
+        bureauId: bureau.bureauId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        bureauName: bureau.name,   
+      });  
+      bureau.insertBureau= true;  
+      return done(null, bureau);
+    }).catch(err => {
+      return done(true);
+    });
+  }
+  else if(attributes.selected=='office'){
+    attributes.lastModified = new Date();
+    await dao.Office.insert(attributes).then(async (office) => {
+      var audit = module.exports.createAuditLog('OFFICE_ADDED', ctx, {
+        bureauId:office.bureauId,      
+        officeId: office.officeId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        officeName: office.name,   
+      });  
+      office.insertOffice= true;  
+      return done(null, office);
+    }).catch(err => {
+      return done(true);
+    });
+  }
 };
 
 module.exports.createAuditLog = async function (type, ctx, auditData) {
