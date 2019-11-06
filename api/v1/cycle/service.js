@@ -58,6 +58,7 @@ service.archivePhase = async function (cycleId) {
   var closedPhase = await dao.Phase.findOne('name = ?', 'Close phase');
   if (closedPhase != null) {
     cycle.phaseId = closedPhase.phaseId;
+    cycle.closedDate = new Date();
   }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
