@@ -373,7 +373,7 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
 
 module.exports.updateApplication = async function (userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
-    return await dao.Application.update(data).then((application) => {
+    return await dao.Application.update(data).then(async (application) => {
       if (application.submittedAt) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
         var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
