@@ -25,7 +25,6 @@ var InternshipEditFormView = Backbone.View.extend({
     'click #cancel-language'                    : 'toggleLanguagesOff',  
     'click #save-language'                      : 'saveLanguage',
     'click .internship-button'                  : 'submit',   
-    'click .opportunity-location'               : 'toggleInternLocationOptions',
     'click .expandorama-button-skills'          : 'toggleAccordion1',
     'click .expandorama-button-team'            : 'toggleAccordion2',
     'click .expandorama-button-keywords'        : 'toggleAccordion3',
@@ -156,7 +155,6 @@ var InternshipEditFormView = Backbone.View.extend({
     // }
 
     this.$( '.js-success-message' ).hide();
-    this.toggleInternLocationOptions();  
     $('#search-results-loading').hide();
     return this;
   },
@@ -282,7 +280,6 @@ var InternshipEditFormView = Backbone.View.extend({
       $('#keywords').attr('aria-hidden', false);
     }
     this.$( '.js-success-message' ).hide();
-    this.toggleInternLocationOptions();  
     $('#search-results-loading').hide();
     return this;
   },
@@ -850,36 +847,6 @@ var InternshipEditFormView = Backbone.View.extend({
       default:
         this.trigger( 'internship:tags:save:done', { draft: false, saveState: true } );
         break;
-    }
-  },
-
-  toggleInternLocationOptions: function (e) {
-    $('.opportunity-location').removeClass('selected');
-    if(e) {
-      $(e.currentTarget).addClass('selected');
-    } else {
-      if(this.model.attributes.country&&this.model.attributes.cityName) {
-        $('#specific-location').addClass('selected');
-        $('#task_tag_city').val(this.model.attributes.cityName);
-      } else {
-        $('#anywhere').addClass('selected');
-      }
-    }
-    var target = $('.opportunity-location.selected')[0]  || {};
-    if(target.id != 'anywhere') {
-      $('#s2id_task_tag_location').show();
-      $('.intern-tag-address').show();
-      $('#task_tag_country').addClass('validate');
-      // $('#task_tag_countrySubdivision').addClass('validate');
-      $('#task_tag_city').addClass('validate');
-    } else {
-      $('#s2id_task_tag_location').hide();
-      $('#task_tag_country').select2('data', null); 
-      $('#task_tag_countrySubdivision').select2('data',null);
-      $('.intern-tag-address').hide();
-      $('#task_tag_country').removeClass('validate');
-      // $('#task_tag_countrySubdivision').removeClass('validate');
-      $('#task_tag_city').removeClass('validate');
     }
   },
 

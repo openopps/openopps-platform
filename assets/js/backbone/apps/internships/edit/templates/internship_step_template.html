@@ -43,29 +43,11 @@
           </label>
           <div class="form-group">
             <label for="time-required" class="no-margin-top">Where is the internship located?</label>
-            <ul class="usa-unstyled-list opportunity-options__list">
-              <li>
-                <button type="button" class="opportunity-options__button opportunity-location" id="anywhere" value="anywhere">
-                  <span class="opportunity-options__icon">
-                    <i class="fas fa-tv"></i>
-                  </span>
-                  <span class="opportunity-options__text">Virtual</span>
-                </button>
-              </li>
-              <li>
-                <button type="button" class="opportunity-options__button opportunity-location" id="specific-location" value="specific-location">
-                  <span class="opportunity-options__icon">
-                    <i class="fas fa-users"></i>
-                  </span>
-                  <span class="opportunity-options__text">In person</span>
-                </button>
-              </li>
-            </ul>
             <div id="intern-tag-address" class="intern-tag-address">
                 <div class="required-input task_tag_country">
                     <label for="country">Country</label>
                     <span class="field-validation-error error-empty" style="display:none;">You must enter a country for this internship.</span>              
-                    <input  id="task_tag_country" class="dropdown" data-validate="empty" />
+                    <input  id="task_tag_country" class="dropdown validate" data-validate="empty" />
                   </div>
                   <div class="required-input task_tag_countrySubdivision">
                       <label for="countrySubdivision">State</label>
