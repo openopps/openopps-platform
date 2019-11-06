@@ -172,7 +172,6 @@ router.put('/api/admin/community/:id/bureau-office', auth, async (ctx, next) => 
   }); 
 });
 
-
 router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.filter, ctx.query.sort, ctx.params.id);

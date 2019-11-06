@@ -47,7 +47,7 @@ dao.query.internshipArchiveListQuery = `
     "cycle".name as "Cycle", 
     task.title as "Title", 
     coalesce(task.city_name || ', ' || country.value, 'Virtual') as "Location",
-	  "cycle".review_end_date
+	  "cycle".closed_date
   from 
     task 
     inner join "cycle" on task."cycle_id" = "cycle"."cycle_id"
