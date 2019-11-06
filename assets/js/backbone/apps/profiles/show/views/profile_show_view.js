@@ -115,7 +115,9 @@ var ProfileShowView = Backbone.View.extend({
       ui: UIConfig,
     };
 
-    data.dos = _.findWhere(data.data.communities.student, { referenceId: 'dos' });
+  
+    data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
+    
 
     data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
     data.loginGovEmail = data.data.username;
