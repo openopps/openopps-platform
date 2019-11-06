@@ -98,6 +98,19 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'creator', 'title'],
   },
+  //Application events
+  'APPLICATION_SUBMITTED': {
+    action: 'APPLICATION_SUBMITTED',
+    description: 'An application was submitted by the user.',
+    severity: 'info',
+    data: ['applicationId', 'userId', 'createdAt', 'updatedAt'],
+  },
+  'APPLICATION_UPDATED': {
+    action: 'APPLICATION_UPDATED',
+    description: 'An application was updated by the user.',
+    severity: 'info',
+    data: ['applicationId', 'userId', 'updatedAt'],
+  },
   // Community events
   'COMMUNITY_ADD_MEMBER': {
     action: 'COMMUNITY_ADD_MEMBER',
