@@ -111,9 +111,9 @@ var InternshipsView = Backbone.View.extend({
         }
       } else {
         if (application.reviewProgress == 'Primary') {
-          return 'Selected';
+          return 'Primary Select';
         } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate';
+          return 'Alternate Select';
         } else {
           return 'Not selected';
         }
