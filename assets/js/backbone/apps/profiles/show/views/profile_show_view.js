@@ -114,11 +114,8 @@ var ProfileShowView = Backbone.View.extend({
       saved: this.saved,
       ui: UIConfig,
     };
-
   
     data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
-    
-
     data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
     data.loginGovEmail = data.data.username;
     data.fedEmail = data.data.governmentUri;
@@ -234,9 +231,9 @@ var ProfileShowView = Backbone.View.extend({
         }
       } else {
         if (application.reviewProgress == 'Primary') {
-          return 'Selected';
+          return 'Primary Select';
         } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate';
+          return 'Alternate Select';
         } else {
           return 'Not selected';
         }
