@@ -25,8 +25,11 @@ module.exports.getBureausAll = async function () {
     }
 
     if (bureau_data[i].office_id != null) {
-      currentBureau.offices.push({ id: bureau_data[i].office_id, text: bureau_data[i].office_name, name: bureau_data[i].office_name, sortByName: bureau_data[i].office_name.toLowerCase()});
+      currentBureau.offices.push({ id: bureau_data[i].office_id, text: bureau_data[i].office_name, name: bureau_data[i].office_name, sortByName: bureau_data[i].office_name.toLowerCase(),isDisabled:bureau_data[i].is_disabled});
       currentBureau.offices= _.sortBy(currentBureau.offices, 'sortByName');
+      currentBureau.offices=_.reject(currentBureau.offices,function (o){
+        return o.isDisabled == true;
+      });
 
     }
     if (i == bureau_data.length - 1) {

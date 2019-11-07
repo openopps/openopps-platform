@@ -5,6 +5,7 @@ const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const Profile = require('../auth/profile');
 const Import = require('./import');
+const Audit = require('../model/Audit');
 
 async function findOrCreateApplication (user, data) {
   var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [user.id, data.community.communityId, data.task.cycleId]))[0];
@@ -371,14 +372,14 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
   });
 };
 
-module.exports.updateApplication = async function (userId, applicationId, data) {
+module.exports.updateApplication = async function (ctx,userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
     return await dao.Application.update(data).then(async (application) => {
       if (application.submittedAt) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
         var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
           applicationId: application.applicationId,
-          userId: application.userId,
+          userId: ctx.state.user.id,
           createdAt: application.createdAt,
           updatedAt: application.updatedAt,
         });
@@ -388,7 +389,7 @@ module.exports.updateApplication = async function (userId, applicationId, data) 
       } else {
         var audit = Audit.createAudit('APPLICATION_UPDATED', ctx, {
           applicationId: application.applicationId,
-          userId: application.userId,
+          userId: ctx.state.user.id,
           updatedAt:application.updatedAt,
         });
         await dao.AuditLog.insert(audit).catch((err) => {

@@ -38,7 +38,7 @@
                         </a>       
                     </td>
                     <td class="bureau-office-delete">
-                      <a href="#delete" data-bureau-id="<%- d.bureauId %>" data-bureau-title="<%- d.name %>" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
+                      <a href="javascript:void(0)" data-bureau-id="<%- d.bureauId %>" data-bureau-title="<%- d.name %>" class="delete-bureau" alt="Delete bureau" title="Delete bureau"><span class="fa fa-times"></span> <span class="usa-sr-only">Delete bureau</span> </a>
                     </td>
                   </tr>
                   <% _.each(d.offices, function (o) { %>
@@ -58,7 +58,8 @@
                       </a>  
                     </td>
                     <td class="bureau-office-delete">
-                      <a href="#delete" data-office-id="<%- o.id %>" data-office-title="<%- o.name %>" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
+                      <a href="javascript:void(0)"  data-bureau-id="<%- d.bureauId %>"
+                        data-bureau-title="<%- d.name %>" data-office-id="<%- o.id %>" data-office-title="<%- o.name %>" class="delete-office" alt="Delete office" title="Delete office"><span class="fa fa-times"></span><span class="usa-sr-only">Delete office</span></a>
                     </td>
                   </tr>
                   <% }); %>

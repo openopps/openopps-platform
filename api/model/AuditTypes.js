@@ -144,6 +144,13 @@ module.exports = {
     severity: 'info',
     data: ['bureauId', 'user', 'bureauName'],
   },
+  
+  'BUREAU_DELETED': {
+    action: 'BUREAU_DELETED',
+    description: 'A bureau is deleted.',
+    severity: 'info',
+    data: ['bureauId', 'user','offices'],
+  },
   //Office events
   'OFFICE_UPDATED': {
     action: 'OFFICE_UPDATED',
@@ -156,6 +163,12 @@ module.exports = {
     description: 'A new office is added.',
     severity: 'info',
     data: ['bureauId','user','officeId', 'user', 'officeName'],
+  },
+  'OFFICE_DELETED': {
+    action: 'OFFICE_DELETED',
+    description: 'An office is deleted.',
+    severity: 'info',
+    data: ['bureauId','officeId', 'user','officeName'],
   },
   // API events
   'PHASE_STARTED': {
