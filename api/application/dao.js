@@ -77,6 +77,7 @@ module.exports = function (db) {
     ApplicationLanguageSkill: dao({ db: db, table: 'application_language_skill' }),
     ApplicationSkill: dao({ db:db, table:'application_skill' }),
     ApplicationTask: dao({ db: db, table: 'application_task' }),
+    AuditLog:dao({ db: db, table: 'audit_log' }),
     Community: dao({ db: db, table: 'community' }),
     CommunityEmailTemplate: dao({ db: db, table: 'community_email_template' }),
     Country: dao({ db: db, table: 'country' }),

@@ -45,7 +45,7 @@ router.get('/api/application/:id', auth, auth.checkToken, async (ctx, next) => {
 });
 
 router.put('/api/application/:id', auth, async (ctx, next) => {
-  var result = await service.updateApplication(ctx.state.user.id, ctx.params.id, ctx.request.body);
+  var result = await service.updateApplication(ctx,ctx.state.user.id, ctx.params.id, ctx.request.body);
   if (result) {
     ctx.status = 200;
     ctx.body = result;
