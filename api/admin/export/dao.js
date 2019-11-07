@@ -33,6 +33,14 @@ const exportUserCommunityData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, community_user.created_at as "joined_community", m_user.title, agency.name as agency, ' +
+  '(' +
+    'select bureau.name ' +
+    'from bureau where bureau.bureau_id = m_user.bureau_id ' +
+  ') as bureau, ' +
+  '(' +
+    'select office.name ' +
+    'from office where office.office_id = m_user.office_id ' +
+  ') as office, ' +
   'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
   'm_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
@@ -178,6 +186,8 @@ var exportUserFormat = {
   'joined_community': {field: 'joined_community', filter: excelDateFormat},
   'title': {field: 'title', filter: nullToEmptyString},
   'agency': {field: 'agency', filter: nullToEmptyString},
+  'office': {field: 'office', filter: nullToEmptyString},
+  'bureau': {field: 'bureau', filter: nullToEmptyString},
   'location': {field: 'location', filter: nullToEmptyString},
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',

@@ -49,6 +49,12 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
     }
+    if (communityRefId == 'dos') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['agency']);
+    }
+    if (communityRefId != 'dos') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['office', 'bureau']);
+    }
     if (target !== 'community') {
       var exportUserFormat = _.omit(dao.exportUserFormat, ['joined_community']);
     }
