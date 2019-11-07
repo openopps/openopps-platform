@@ -19,7 +19,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change .validate'   : 'validateField',
     'click #add-bureau-office':'addbureauOfficeDisplay',
     'click .edit-bureau-office':'addbureauOfficeDisplay',
-    //'click .delete-bureau' :'deleteBureau',
+    'click .delete-bureau' :'deleteBureau',
+    'click .delete-office' :'deleteOffice',
     
    
   },
@@ -164,6 +165,8 @@ var AdminCommunityEditView = Backbone.View.extend({
       name:data.name,
       insertBureau:data.insertBureau,
       insertOffice:data.insertOffice,
+      deleteBureau: data.deleteBureau,
+      deleteOffice: data.deleteOffice,
      
     });
    
@@ -536,12 +539,96 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
    
   },
+  deleteBureau: function (event) {
+    var data ={
+      bureauId:$(event.currentTarget ).data('bureau-id'),
+      bureauName:$(event.currentTarget ).data('bureau-title'),
+      officeId:$(event.currentTarget ).data('office-id'),
+      officeName:$(event.currentTarget ).data('office-title'),
+    };
+    var communityId= this.options.communityId;
+    var deleteModal = new Modal({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm delete bureau or office/post',
+      modalBody: 'Are you sure you want to delete <strong>' + data.bureauName + '</strong>? <strong>If you delete the bureau, you will also delete all of its offices and posts</strong>.',
+      primary: {
+        text: 'Delete',
+        action: function () {
+          this.submitDelete.bind(this)(data, deleteModal,communityId);
+        }.bind(this),
+      },
+    });
+    deleteModal.render();
+  },
+
+  submitDelete: function (data, deleteModal,communityId) {  
+    $.ajax({
+      url: '/api/admin/community/'+ communityId +'/bureau/'+ data.bureauId,
+      type: 'DELETE',    
+    }).done(function (data) {
+      deleteModal.cleanup();
+      
+      this.bureaus= _.reject(this.bureaus,function (b){
+        return b.bureauId== data.bureauId;
+      });   
+      this.renderBureausAndOffices(this.bureaus);
+      this.renderBureausOfficesMessages(data,this);  
+    }.bind(this)).fail(function (error) {
+      deleteModal.displayError('There was an error attempting to delete this bureau.', 'Error Deleting');
+    }.bind(this));
+  },
+  
+
+  deleteOffice: function (event) {
+    var data ={
+      bureauId:$(event.currentTarget ).data('bureau-id'),
+      bureauName:$(event.currentTarget ).data('bureau-title'),
+      officeId:$(event.currentTarget ).data('office-id'),
+      officeName:$(event.currentTarget ).data('office-title'),
+    };
+    var communityId= this.options.communityId;
+    var deleteModal = new Modal({
+      id: 'confirm-office-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm delete office/post',
+      modalBody: 'Are you sure you want to delete <strong>' + data.officeName + '</strong>? <strong> This cannot be undone</strong>.',
+      primary: {
+        text: 'Delete',
+        action: function () {
+          this.submitOfficeDelete.bind(this)(data, deleteModal,communityId);
+        }.bind(this),
+      },
+    });
+    deleteModal.render();
+  },
+
+  submitOfficeDelete: function (data, deleteModal,communityId) {
+   
+    $.ajax({
+      url: '/api/admin/community/'+ communityId +'/bureau/'+ data.bureauId + '/office/' + data.officeId,
+      type: 'DELETE',    
+    }).done(function (data) {   
+      deleteModal.cleanup();
+      var index=  _.findIndex(this.bureaus, { bureauId:data.bureauId });
+      this.bureaus[index].offices= _.reject(this.bureaus[index].offices,function (o){
+        return o.id== data.officeId;
+      }); 
+      this.renderBureausAndOffices(this.bureaus);
+      this.renderBureausOfficesMessages(data,this);  
+    }.bind(this)).fail(function (error) {
+      deleteModal.displayError('There was an error attempting to delete this bureau.', 'Error Deleting');
+    }.bind(this));
+  },
+
   initializeBureaus: function () {
     $.ajax({
       url: '/api/enumerations/bureaus', 
       type: 'GET',
       async: false,
-      success: function (data) {           
+      success: function (data) {             
         this.bureaus = _.sortBy(data, function (b){
           return b.name.toLowerCase();
         });
