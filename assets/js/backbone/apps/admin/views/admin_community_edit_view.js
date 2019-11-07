@@ -8,6 +8,7 @@ var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_comm
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
+var Modal = require('../../../components/modal');
 
 var AdminCommunityEditView = Backbone.View.extend({
 
@@ -18,6 +19,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change .validate'   : 'validateField',
     'click #add-bureau-office':'addbureauOfficeDisplay',
     'click .edit-bureau-office':'addbureauOfficeDisplay',
+    //'click .delete-bureau' :'deleteBureau',
     
    
   },
@@ -224,21 +226,43 @@ var AdminCommunityEditView = Backbone.View.extend({
       }.bind(this),
     });
   },
+  validatebureau: function (){
+    var abort = false; 
+    var selectedBureauValue= $('#community_tag_bureau').val();
+    var selectedValue=  $('input[name=community-bureau-office-group]:checked').val();
+    if(selectedBureauValue =='' && selectedValue=='office') {
+      $('#community_drop_bureau').addClass('usa-input-error');     
+      $('#community_drop_bureau>.field-validation-error').show();
+      abort=true;
+    }
+    else{
+      $('#community_drop_bureau').removeClass('usa-input-error');     
+      $('#community_drop_bureau>.field-validation-error').hide();
+      abort=false;
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    } 
+    return abort;
+  },
+
   validatebureauOffice: function (bureauId,officeId) {
 
     var selectedValue=  $('input[name=community-bureau-office-group]:checked').val();
     var bureauValue=$('#community-new-bureau').val();
     var officeValue= $('#community-new-office').val();
-    var selectedBureauValue= $('#community_tag_bureau').val();
+    var selectedBureauValue= $('#community_tag_bureau').val();  
     var abort = false; 
     if((officeValue=='' && bureauId && officeId) || ( selectedValue=='office')){
       if(selectedBureauValue =='') {
         $('#community_drop_bureau').addClass('usa-input-error');     
         $('#community_drop_bureau>.field-validation-error').show();
+        abort=true;
       }
       else{
         $('#community_drop_bureau').removeClass('usa-input-error');     
         $('#community_drop_bureau>.field-validation-error').hide();
+        abort=false;
       }
       if(officeValue==''){
         $('#community-office-name').addClass('usa-input-error');     
@@ -411,10 +435,13 @@ var AdminCommunityEditView = Backbone.View.extend({
       self.changebureau(bureauId,officeId);    
     }.bind(this));
 
-    $('.validate').on('change', function (e) {
+    $('.validate').on('blur', function (e) {
       self.validatebureauOffice(bureauId,officeId);       
     }.bind(this));
-    
+
+    $('.validate').on('change', function (e) {
+      self.validatebureau();      
+    }.bind(this));
 
     self.initializeSelect2();
     
@@ -514,8 +541,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       url: '/api/enumerations/bureaus', 
       type: 'GET',
       async: false,
-      success: function (data) { 
-              
+      success: function (data) {           
         this.bureaus = _.sortBy(data, function (b){
           return b.name.toLowerCase();
         });
