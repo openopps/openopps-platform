@@ -818,6 +818,73 @@ module.exports.saveBureauOffice = async function (ctx,attributes,done) {
   }
 };
 
+module.exports.deleteBureauOffice = async function (ctx,done) { 
+  var bureauId = ctx.params.bureauId; 
+  if(ctx.params.bureauId){  
+    var origBureau = await dao.Bureau.findOne('bureau_id = ?',bureauId);   
+    return await dao.Bureau.findOne('bureau_id = ?',bureauId).then(async (e) => { 
+      origBureau.lastModified = new Date();
+      origBureau.isDisabled= true;
+      return await dao.Bureau.update(origBureau).then(async (bureau) => {
+        var offices = await dao.Office.find('bureau_id = ?',bureauId);
+        if(offices.length >0){
+          offices.forEach(async (value) => {
+            value.lastModified= new Date();
+            value.isDisabled= true;
+            await dao.Office.update(value).then(async () => {
+              done(null, true);     
+            }).catch (err => {
+              done(err);
+            });  
+          });
+        }  
+        var audit = module.exports.createAuditLog('BUREAU_DELETED', ctx, {      
+          bureauId: bureau.bureauId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'), 
+          offices: offices,      
+        });  
+        bureau.offices = offices; 
+        bureau.deleteBureau=true;        
+        return done(!bureau, bureau);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+};
+
+module.exports.deleteOffice = async function (ctx,done) { 
+  var bureauId = ctx.params.bureauId; 
+  var officeId= ctx.params.officeId;
+  if(bureauId && officeId){  
+    var origOffice = await dao.Office.findOne('bureau_id = ? and office_id = ?',bureauId,officeId);   
+    return await dao.Office.findOne('bureau_id = ? and office_id = ?',bureauId,officeId).then(async (e) => { 
+      origOffice.lastModified = new Date();
+      origOffice.isDisabled= true;
+      return await dao.Office.update(origOffice).then(async (office) => {   
+        var audit = module.exports.createAuditLog('OFFICE_DELETED', ctx, {
+          bureauId : office.bureauId,      
+          officeId: office.officeId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),  
+          officeName:office.name,     
+        });       
+        office.deleteOffice=true;        
+        return done(!office, office);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+};
+
 module.exports.createAuditLog = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
   await dao.AuditLog.insert(audit).catch(() => {});
