@@ -68,7 +68,7 @@ function importProfileData (user, applicationId) {
   });
 }
 
-async function processUnpaidApplication (user, data, callback) {
+async function processUnpaidApplication (ctx,user, data, callback) {
   var application = await findOrCreateApplication(user, data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
   if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
@@ -93,7 +93,7 @@ async function processUnpaidApplication (user, data, callback) {
     }).then(async () => {
       var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
         applicationId: application.applicationId,
-        userId: application.userId,
+        userId: ctx.state.user.id,
         createdAt: application.createdAt,
         updatedAt: application.updatedAt,
       });
@@ -232,12 +232,12 @@ async function createApplicationSkill (user, applicationId, tag) {
 }
 
 
-module.exports.apply = async function (user, taskId, getTasks, callback) {
+module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
       if (community.applicationProcess == 'dos') {
         await new Promise((resolve, reject) => {
-          processUnpaidApplication(user, { task: task, community: community }, (err, applicationId) => {
+          processUnpaidApplication(ctx,user, { task: task, community: community }, (err, applicationId) => {
             if (err) {
               reject(err);
             } else {
