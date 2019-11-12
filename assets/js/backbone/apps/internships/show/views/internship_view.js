@@ -177,7 +177,7 @@ var InternshipView = BaseView.extend({
         '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
         'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
         'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
-        'your application and click <strong>Submit application</strong>. You must submit changes before '+ moment.tz(cycleData.applyEndDate, 'America/New_York').format('MMMM DD, YYYY') +' at 11:59 pm EST.</li></ol>',
+        'your application and click <strong>Submit application</strong>. You must submit changes before '+ moment.tz(cycleData.applyEndDate, 'America/New_York').format('MMMM DD, YYYY') +' at 11:59 p.m. EST.</li></ol>',
         primary: {
           text: 'Update application',
           action: function () {
