@@ -17,7 +17,6 @@ async function findOrCreateApplication (user, data) {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    importProfileData(user, application.applicationId);
   }
   return application;
 }
@@ -231,7 +230,6 @@ async function createApplicationSkill (user, applicationId, tag) {
   });
 }
 
-
 module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
@@ -372,7 +370,7 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
   });
 };
 
-module.exports.updateApplication = async function (ctx,userId, applicationId, data) {
+module.exports.updateApplication = async function (ctx, userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
     return await dao.Application.update(data).then(async (application) => {
       if (application.submittedAt) {
@@ -392,6 +390,9 @@ module.exports.updateApplication = async function (ctx,userId, applicationId, da
           userId: ctx.state.user.id,
           updatedAt:application.updatedAt,
         });
+        if (data.currentStep == 1) {
+          importProfileData(ctx.state.user, application.applicationId);
+        }
         await dao.AuditLog.insert(audit).catch((err) => {
           log.error(err);
         });
