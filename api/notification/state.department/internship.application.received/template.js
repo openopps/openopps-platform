@@ -1,5 +1,5 @@
 module.exports = {
-  subject: 'Thank you for your application to the U.S. Department of State Student Internship Program (Unpaid)',
+  subject: 'U.S. Department of State Student Internship Program (Unpaid) - Thank you for your application',
   to: '<%= user.username %>',
   data: function (model, done) {
     var data = {
