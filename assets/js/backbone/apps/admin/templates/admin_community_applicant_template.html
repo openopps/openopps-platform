@@ -1,0 +1,42 @@
+
+
+<p class="back-link" role="navigation" aria-label="Back"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<h2><%= community.communityName %></h2>
+<h3>Applicants</h3>
+<div id="cycle-table" class="table-responsive">
+<table class="usa-table-borderless user-table" role="presentation">
+    <thead>
+      <tr>     
+        <th>Applicant name</th>
+        <th>Email address</th>
+        <th>Applicant status</th>
+        <th>Last update</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (applicants.length === 0) { %>
+        <tr class="empty-row">
+          <td colspan="7">
+            No applicants found.
+          </td>
+        </tr>
+      <% } %>
+      <% _.each(applicants, function (a) { %>
+        <tr data-id="<%- a.applicantId %>"
+            data-user-name="<%- a.applicantName %>">         
+          <td class="admin-table-name">    
+            <a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.applicantName %></a>         
+          </td>         
+             <td> <%- a.username %></td>  
+             <% if (getStatus(a)=='Not completed' || getStatus(a)=='In progress') { %>
+              <td><%= getStatus(a) %></td>
+              <% }
+              else { %>
+                <td><a class="link-backbone" href="/admin/community/<%=community.communityId %>/applicant-submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>"> <%= getStatus(a) %></a></td>
+               <% } %>           
+             <td><%- moment(a.updatedAt).format('MM/DD/YYYY hh:mma') %></td>     
+        </tr>       
+      <% }); %>
+    </tbody>
+  </table>
+</div>
