@@ -489,9 +489,9 @@ async function sendTaskSubmittedNotification (user, task) {
       notification.createNotification(data);
     }
   };
-  if (task.communityId && task.bureauId) {
-    var bureauAdmins = await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureauId);
-    _.forEach(bureauAdmins.length ? bureauAdmins : (await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
+  if (task.communityId && task.bureau_id) {
+    var bureauAdmins = await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id);
+    _.forEach(bureauAdmins.length ? bureauAdmins : (await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id)), updateBaseData);
   } else if (task.communityId) {
     _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
