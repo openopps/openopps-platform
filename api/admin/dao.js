@@ -87,13 +87,13 @@ const communityPostQuery = 'select count(*) from comment ' +
 'join task on comment."taskId" = task.id ' +
 'where task.community_id = ?';
 
-const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 THEN 1 ELSE NULL end) as step0NextStepTotal, ' +
-'count(CASE when current_step = 1 THEN 1 ELSE NULL end) as step1SelectInternshipTotal, ' +
- 'count(CASE when current_step = 2 THEN 1 ELSE NULL end) as step2ExpRefTotal,' +
- 'count(CASE when current_step = 3 THEN 1 ELSE NULL end) as step3EducationTotal, ' +
- 'count(CASE when current_step = 4 THEN 1 ELSE NULL end) as step4LanguageTotal, ' +
-  'count(CASE when current_step = 5 THEN 1 ELSE NULL end) as step5StatementTotal, ' +
-  'count(CASE when current_step = 6 THEN 1 ELSE NULL end) as step6ReviewTotal, ' +
+const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 and submitted_at is null  THEN 1 ELSE NULL end) as step0NextStepTotal, ' +
+'count(CASE when current_step = 1 and submitted_at is null THEN 1 ELSE NULL end) as step1SelectInternshipTotal, ' +
+ 'count(CASE when current_step = 2 and submitted_at is null THEN 1 ELSE NULL end) as step2ExpRefTotal,' +
+ 'count(CASE when current_step = 3 and submitted_at is null THEN 1 ELSE NULL end) as step3EducationTotal, ' +
+ 'count(CASE when current_step = 4 and submitted_at is null THEN 1 ELSE NULL end) as step4LanguageTotal, ' +
+  'count(CASE when current_step = 5 and submitted_at is null THEN 1 ELSE NULL end) as step5StatementTotal, ' +
+  'count(CASE when current_step = 6 and submitted_at is null THEN 1 ELSE NULL end) as step6ReviewTotal, ' +
   'count(CASE when internship_completed_at is not null then 1 ELSE NULL end) as InternshipCompleteTotal, ' +
   'count(case when task_list.title = \'Primary\' then 1 else null end) as PrimaryCount, ' +
   'count(case when task_list.title = \'Alternate\' then 1 else null end) as AlternateCount,' +
