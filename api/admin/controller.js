@@ -126,6 +126,22 @@ router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next)
     ctx.status = 403;
   }
 });
+router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  });
+});
+router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, async (ctx, next) => {
+  await service.getApplicantsInternships(ctx.params.userId, ctx.params.cycleId).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  });
+});
 
 router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
