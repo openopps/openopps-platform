@@ -28,4 +28,4 @@ app.application_id AS "id", app.submitted_at AS "submittedAt",
   INNER JOIN cycle c ON app.cycle_id = c.cycle_id 
   join midas_user on midas_user.id = app.user_id
   LEFT JOIN phase ON c.phase_id = phase.phase_id 
-  WHERE app.community_id = 4 and app.cycle_id= 27
+  WHERE app.community_id = ? and app.cycle_id= ?
