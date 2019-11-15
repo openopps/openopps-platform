@@ -160,7 +160,26 @@ module.exports.getCommunityCycle = async function (id,cycleId) {
   
   return community;
 };
-
+module.exports.getApplicantsForCycle = async (communityId, cycleId) => {
+  return new Promise((resolve, reject) => { 
+    db.query(fs.readFileSync(__dirname + '/sql/getCommunityCycleApplicants.sql', 'utf8'), communityId,cycleId).then(results => {
+      resolve(results.rows);
+    }).catch(err => {
+      reject({ status: 401 });
+    });   
+   
+  });
+};
+module.exports.getApplicantsInternships = async (userId, cycleId) => {
+  return new Promise((resolve, reject) => { 
+    db.query(fs.readFileSync(__dirname + '/sql/getCommunityApplicantsInternships.sql', 'utf8'), userId,cycleId).then(results => {
+      resolve(results.rows);
+    }).catch(err => {
+      reject({ status: 401 });
+    });   
+   
+  });
+};
 
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');

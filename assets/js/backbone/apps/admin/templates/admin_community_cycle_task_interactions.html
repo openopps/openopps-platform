@@ -3,7 +3,8 @@
         <h3><i class="fa fa-rocket "></i><span class="box-icon-text">Internships <a href="/admin/community/<%=community.communityId %>/tasks?cid=<%=cycleId %>" class="admin-manage-link">Manage</a></span></h3>
         <ul class="usajobs-unstyled-list">
           <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
-          <% if (community.duration == 'Cyclical') { %>         
+          <% if (community.duration == 'Cyclical') { %>
+            <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>         
             <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
             <li>Approved: <%- numeral((_.findWhere(community.tasks, { task_state: 'approved' }) || {}).count).format('0,0') %></li>
             <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
@@ -20,7 +21,7 @@
       </div>
       <div class="usa-width-one-third admin-dos-interactions ">
         <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
-        
+        <a href="/admin/community/<%=community.communityId %>/applicants?cid=<%=cycleId %>" class="admin-manage-link">Search applications</a>
         <ul class="usajobs-unstyled-list">
             <h4>Completed applications</h4>
             <li>Applications submitted: <%- community.interactions.submittedtotal %></li>             

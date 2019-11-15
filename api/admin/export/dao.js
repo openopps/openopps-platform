@@ -134,7 +134,7 @@ const exportTaskCommunityData = 'select task.id, task.title, description, task."
   'left join agency on task.agency_id = agency.agency_id ' +
   'where task.community_id = ? order by task."createdAt" desc';
 
-const exportTaskDoSCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskDoSCommunityData = 'select task.id, task.title, description, task.interns, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '( ' +
     'select count(application_task.task_id) ' +
@@ -222,6 +222,7 @@ var exportTaskFormat = {
   'task_id': 'id',
   'title': {field: 'title', filter: nullToEmptyString},
   'description': {field: 'description', filter: nullToEmptyString},
+  'number_of_positions': {field: 'interns', filter: nullToEmptyString},
   'created_date': {field: 'createdAt', filter: excelDateFormat},
   'published_date': {field: 'publishedAt', filter: excelDateFormat},
   'in_progress_date': {field: 'assignedAt', filter: excelDateFormat},

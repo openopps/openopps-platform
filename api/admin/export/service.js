@@ -34,7 +34,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
     if (communityRefId != 'dos') {
-      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau', 'location']);
+      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau', 'location', 'number_of_positions']);
     }
     if (target != 'sitewide') {
       var exportTaskFormat = _.omit(exportTaskFormat || dao.exportTaskFormat, 'community_name');
