@@ -24,6 +24,7 @@ var AdminCommunityView = Backbone.View.extend({
     this.params = new URLSearchParams(window.location.search);   
     this.cycleParam= this.params.get('cycle'),  
     this.community= {};  
+    this.cycleId= '';
   },
 
   render: function (replace) {
@@ -79,33 +80,35 @@ var AdminCommunityView = Backbone.View.extend({
       }.bind(this),
     });
   },
-  rendertasksInteractionsCyclical:function () {
-    var cycleId = $('#cycles').val();  
+  rendertasksInteractionsCyclical:function () { 
+    var self= this;
+    self.cycleId = self.$('#cycles').val(); 
+    Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  }); 
     $.ajax({
-      url: '/api/admin/community/' + this.communityId +'/cyclical/'+ cycleId,
+      url: '/api/admin/community/' + self.communityId +'/cyclical/'+ self.cycleId ,
       dataType: 'json',
       success: function (communityInfo) {    
-        this.community = communityInfo;        
-        this.loadCyclicalInteractionsData(function (interactions) {
+        self.community = communityInfo;        
+        self.loadCyclicalInteractionsData(function (interactions) {
           communityInfo.interactions = interactions;
           var template = _.template(AdminCommunityCyclicalTasksInteractions)({
             community: communityInfo,
-            communities: this.options.communities, 
-            cycleId:cycleId,  
+            communities: self.options.communities, 
+            cycleId:self.cycleId,  
           });   
           $('#search-results-loading').hide();  
-          this.$('.cyclical-task-interactions-metrics').html(template);
-          this.$el.localize();
-          this.$('.cyclical-task-interactions-metrics').show();      
+          self.$('.cyclical-task-interactions-metrics').html(template);
+          self.$el.localize();
+          self.$('.cyclical-task-interactions-metrics').show();      
           setTimeout(function () {       
-            this.fetchData(this);         
-          }.bind(this), 50);
-          if(this.options.communities) {
-            this.initializeCommunitySelect();
+            self.fetchData(self);         
+          }.bind(self), 50);
+          if(self.options.communities) {
+            self.initializeCommunitySelect();
           }       
-        }.bind(this));
-        Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  });      
-      }.bind(this),
+        }.bind(self));
+          
+      }.bind(self),
     });
   },
  
@@ -279,10 +282,13 @@ var AdminCommunityView = Backbone.View.extend({
   },
 
   
-  loadCyclicalInteractionsData: function (callback) {
-    var cycleId = this.$('#cycles').val();
+  loadCyclicalInteractionsData: function (callback) { 
+   
+    var self= this;
+    var cycleId = self.cycleId; 
+  
     $.ajax({
-      url: '/api/admin/community/interactions/' + this.communityId +'/cyclical/'+ cycleId,
+      url: '/api/admin/community/interactions/' + self.communityId +'/cyclical/'+ cycleId,
       dataType: 'json',
       success: function (interactions) {
         interactions.count = _(interactions).reduce(function (sum, value, key) {
@@ -309,7 +315,7 @@ var AdminCommunityView = Backbone.View.extend({
     if($('#communities').val()) {
       Backbone.history.navigate('/admin/community/' + $('#communities').val(), {trigger:true, replace:true });
      
-    }
+    } 
   },
   changeCycles: function (event) {   
     this.rendertasksInteractionsCyclical(); 
