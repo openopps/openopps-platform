@@ -224,7 +224,7 @@ var exportTaskFormat = {
   'description': {field: 'description', filter: nullToEmptyString},
   'created_date': {field: 'createdAt', filter: excelDateFormat},
   'published_date': {field: 'publishedAt', filter: excelDateFormat},
-  'assigned_date': {field: 'assignedAt', filter: excelDateFormat},
+  'in_progress_date': {field: 'assignedAt', filter: excelDateFormat},
   'submitted_date': {field: 'submittedAt', filter: excelDateFormat},
   'creator_name': {field: 'creator_name', filter: nullToEmptyString},
   'applicants': 'applicants',
