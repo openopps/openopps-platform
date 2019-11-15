@@ -25,9 +25,9 @@
         <tr data-id="<%- a.applicantId %>"
             data-user-name="<%- a.applicantName %>">         
           <td class="admin-table-name">    
-            <a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.applicantName %></a>         
+            <%- a.applicantName %>        
           </td>         
-             <td> <%- a.username %></td>  
+             <td><a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.username %></a></td>  
              <% if (getStatus(a)=='Not completed' || getStatus(a)=='In progress') { %>
               <td><%= getStatus(a) %></td>
               <% }
