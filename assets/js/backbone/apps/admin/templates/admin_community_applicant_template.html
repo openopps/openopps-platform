@@ -25,14 +25,14 @@
         <tr data-id="<%- a.applicantId %>"
             data-user-name="<%- a.applicantName %>">         
           <td class="admin-table-name">    
-            <a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.applicantName %></a>         
+            <%- a.applicantName %>        
           </td>         
-             <td> <%- a.username %></td>  
+             <td><a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.username %></a></td>  
              <% if (getStatus(a)=='Not completed' || getStatus(a)=='In progress') { %>
               <td><%= getStatus(a) %></td>
               <% }
               else { %>
-                <td><a class="link-backbone" href="/admin/community/<%=community.communityId %>/applicant-submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>"> <%= getStatus(a) %></a></td>
+                <td><a class="link-backbone" target="_blank" rel="noopen nofollow" href="/applicant/submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>&cmid=<%=community.communityId %>"> <%= getStatus(a) %></a></td>
                <% } %>           
              <td><%- moment(a.updatedAt).format('MM/DD/YYYY hh:mma') %></td>     
         </tr>       
