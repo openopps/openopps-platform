@@ -98,10 +98,7 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminCommunityApplicantView(target, this.options[target + 'Id']);
           this.adminCommunityApplicantView.render();
           break;
-        case 'applicant-submitted':
-          this.initializeAdminCommunitySubmittedApplicantView(target, this.options[target + 'Id']);
-          this.adminCommunityApplicantSubmittedView.render();
-          break;
+      
         default:
           break;
       }
@@ -189,16 +186,7 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  initializeAdminCommunitySubmittedApplicantView: function (target, targetId) {
-    if (this.adminCommunityApplicantSubmittedView) {
-      this.adminCommunityApplicantSubmittedView.cleanup();
-    }
-    this.adminCommunityApplicantSubmittedView = new AdminCommunityApplicantSubmittedView({
-      el: '#admin-applicant-submitted',
-      target: target,
-      targetId: targetId,
-    });
-  },
+ 
 
   initializeAdminCommunityEditView: function (targetId) {
     if (this.adminCommunityEditView) {

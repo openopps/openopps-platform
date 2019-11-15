@@ -32,7 +32,7 @@
               <td><%= getStatus(a) %></td>
               <% }
               else { %>
-                <td><a class="link-backbone" href="/admin/community/<%=community.communityId %>/applicant-submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>"> <%= getStatus(a) %></a></td>
+                <td><a class="link-backbone" target="_blank" rel="noopen nofollow" href="/applicant/submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>&cmid=<%=community.communityId %>"> <%= getStatus(a) %></a></td>
                <% } %>           
              <td><%- moment(a.updatedAt).format('MM/DD/YYYY hh:mma') %></td>     
         </tr>       

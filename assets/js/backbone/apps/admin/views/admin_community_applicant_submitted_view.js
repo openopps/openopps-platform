@@ -28,7 +28,7 @@ var AdminCommunityApplicantSubmittedView = Backbone.View.extend({
 
   loadApplicantsSubmitted:function (Info){
     var cycleId= this.params.get('cid');
-    var userId= this.params.get('uid'); 
+    var userId= this.params.get('uid');   
     $.ajax({
       url: '/api/admin/community/applicant/'+ userId +'/submitted/'+ cycleId,
       dataType: 'json',
@@ -58,8 +58,9 @@ var AdminCommunityApplicantSubmittedView = Backbone.View.extend({
   },
 
   loadCommunityData: function () {
+    var communityId= this.params.get('cmid');
     $.ajax({
-      url: '/api/admin/community/' + this.options.targetId,
+      url: '/api/admin/community/' + communityId,
       dataType: 'json',
       success: function (Info) {
         this.community=Info;
