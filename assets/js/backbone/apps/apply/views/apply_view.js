@@ -262,17 +262,19 @@ var ApplyView = Backbone.View.extend({
   updateApplicationStep: function (step) {
     this.data.currentStep = step;
     this.data.selectedStep = step;
-    
-    this.modalComponent = new ModalComponent({
-      el: '#site-modal',
-      id: 'import-profile',
-      modalTitle: 'Importing your information from USAJOBS',
-      modalBody: '<p>Please wait while we import your education, work experience, references, and languages from your USAJOBS profile.</p>',
-      disableClose: true,
-      disablePrimary: true,
-      primary: {},
-      secondary: {},
-    }).render();
+
+    if (step == 1) {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'import-profile',
+        modalTitle: 'Importing your information from USAJOBS',
+        modalBody: '<p>Please wait while we import your education, work experience, references, and languages from your USAJOBS profile.</p>',
+        disableClose: true,
+        disablePrimary: true,
+        primary: {},
+        secondary: {},
+      }).render();
+    }
 
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
