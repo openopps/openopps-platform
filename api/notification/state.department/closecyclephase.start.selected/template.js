@@ -5,10 +5,13 @@ module.exports = {
     var data = {
       email: model.email,
       given_name: model.given_name,         
-      office: model.office,
+      bureau_office: model.bureau_office,
+      location: model.location,
+      suggested_security_clearance: model.suggested_security_clearance,
       session: model.session,
       jobLink: model.jobLink,
       contact_email: model.contact_email,
+      contact_name: model.contact_name,
       title: model.title,
     };
     done(null, data);
