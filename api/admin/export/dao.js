@@ -33,6 +33,14 @@ const exportUserCommunityData = 'SELECT ' +
   'DISTINCT ON (m_user.id) m_user.name, m_user.hiring_path, m_user.username as logingov_email, ' +
   'm_user.government_uri as official_federal_govt_email, m_user.last_login as last_login, ' +
   'm_user."createdAt" as account_create, community_user.created_at as "joined_community", m_user.title, agency.name as agency, ' +
+  '(' +
+    'select bureau.name ' +
+    'from bureau where bureau.bureau_id = m_user.bureau_id ' +
+  ') as bureau, ' +
+  '(' +
+    'select office.name ' +
+    'from office where office.office_id = m_user.office_id ' +
+  ') as office, ' +
   'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
   'm_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
   'FROM midas_user m_user ' +
@@ -126,7 +134,7 @@ const exportTaskCommunityData = 'select task.id, task.title, description, task."
   'left join agency on task.agency_id = agency.agency_id ' +
   'where task.community_id = ? order by task."createdAt" desc';
 
-const exportTaskDoSCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskDoSCommunityData = 'select task.id, task.title, description, task.interns, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '( ' +
     'select count(application_task.task_id) ' +
@@ -158,11 +166,14 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
     'select office.name ' +
     'from office where office.office_id = task.office_id ' +
   ') as office, ' +
+  'concat_ws(\', \', task.city_name, country_subdivision.value, country.value) as location, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task ' +
   'inner join midas_user on task."userId" = midas_user.id ' + 
   'left join agency on task.agency_id = agency.agency_id ' +
   'left join cycle on task.cycle_id = cycle.cycle_id ' +
+  'left join country on task.country_id = country.country_id ' +
+  'left join country_subdivision on task.country_subdivision_id = country_subdivision.country_subdivision_id ' +
   'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
 
 var exportUserFormat = {
@@ -175,6 +186,8 @@ var exportUserFormat = {
   'joined_community': {field: 'joined_community', filter: excelDateFormat},
   'title': {field: 'title', filter: nullToEmptyString},
   'agency': {field: 'agency', filter: nullToEmptyString},
+  'office': {field: 'office', filter: nullToEmptyString},
+  'bureau': {field: 'bureau', filter: nullToEmptyString},
   'location': {field: 'location', filter: nullToEmptyString},
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',
@@ -209,9 +222,10 @@ var exportTaskFormat = {
   'task_id': 'id',
   'title': {field: 'title', filter: nullToEmptyString},
   'description': {field: 'description', filter: nullToEmptyString},
+  'number_of_positions': {field: 'interns', filter: nullToEmptyString},
   'created_date': {field: 'createdAt', filter: excelDateFormat},
   'published_date': {field: 'publishedAt', filter: excelDateFormat},
-  'assigned_date': {field: 'assignedAt', filter: excelDateFormat},
+  'in_progress_date': {field: 'assignedAt', filter: excelDateFormat},
   'submitted_date': {field: 'submittedAt', filter: excelDateFormat},
   'creator_name': {field: 'creator_name', filter: nullToEmptyString},
   'applicants': 'applicants',
@@ -220,6 +234,7 @@ var exportTaskFormat = {
   'task_state': 'state',
   'bureau': {field: 'bureau', filter: nullToEmptyString},
   'office': {field: 'office', filter: nullToEmptyString},
+  'location': {field: 'location', filter: nullToEmptyString},
   'agency_name': {field: 'agency_name', filter: nullToEmptyString},
   'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
@@ -243,7 +258,10 @@ var exportCycleInteractionsFormat = {
   'Applications on step 4 - Languages & Skills' :{field:'step4LanguageTotal',filter:nullToEmptyString},
   'Applications on step 5 - Statement of interest' :{field:'step5StatementTotal',filter:nullToEmptyString},
   'Applications on step 6 - Review application' :{field:'step6ReviewTotal',filter:nullToEmptyString},
-  'Total completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
+  'Primary selections' :{field:'PrimaryCount', filter:nullToEmptyString},
+  'Alternate selections' :{field:'AlternateCount', filter:nullToEmptyString},
+  'Successfully completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
+  
 };
 
 

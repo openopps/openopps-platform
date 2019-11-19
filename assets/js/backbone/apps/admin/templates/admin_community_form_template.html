@@ -8,12 +8,13 @@
     <p class="usa-alert-text">An unexpected error occured trying to save your changes.</p>
   </div>
 </div>
+<div id="bureau-office-message"></div>
  <div class=" usajobs-canvas usajobs-open-opps-admin-dashboard"> 
 <h1 ><% if(communityId) { %>Manage<% } else {%>Create<% } %> Community</h1>
 
 <div>All fields are required unless otherwise noted</div>
-<form action="javascript:void(0)" class="usa-form-xl " role="form" id="form-community-edit">
-  <fieldset class="usajobs-fieldset">
+<form action="javascript:void(0)" role="form" id="form-community-edit">
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Community attributes</legend>  
     <h2>Community attributes</h2>
     <div class="form-group required-input "> 
@@ -85,7 +86,7 @@
       </fieldset>
     </div>  
   </fieldset>
-  <fieldset class="usajobs-fieldset">
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Community information</legend>
     <h2>Community information</h2>
     <div class="required-input">
@@ -143,7 +144,9 @@
     <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />
     <% } %>
   </fieldset>
-  <fieldset class="usajobs-fieldset">
+  <div id="bureau-office">
+</div>  
+  <fieldset class="usajobs-fieldset usa-form-xl">
     <legend class="usa-sr-only">Save or cancel</legend>
     <div class="usajobs-button_bar--slim">
       <div class="usajobs-button_bar__body">

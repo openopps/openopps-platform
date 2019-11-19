@@ -19,19 +19,29 @@ router.post('/api/v1/cycle/beginPhase', auth.bearer, async (ctx, next) => {
     ctx.body = { message: 'Forbidden' };
     return false;
   }
+
+  if (ctx.request.fields.action == 'closeCycle') {
+    if (!await service.checkIsJOACreated(ctx.request.fields.cycleId)) {
+      ctx.status = 403;
+      ctx.body = { message: 'Exclusive job not created.' };
+      return false;
+    }
+  }
+
   Handler[ctx.request.fields.action](ctx).then(async results => {
     service.createAuditLog('PHASE_STARTED', ctx, {
       cycleId: ctx.request.fields.cycleId,
       results: results,
-    });
-  }).catch(err => {
-    if (err.length > 1) {
-      err = err[0];
-    } else if (err.stack) {
-      err = err.stack;
-    }
+    });    
+
+
+  }).catch(err => {    
+    ctx.status = 403;
+    ctx.body = { message: err };
     service.recordError(ctx.state.user.id, err);
+    return false;
   });
+
   ctx.status = 202;
   ctx.body = { message: 'Acknowledged' };
 });

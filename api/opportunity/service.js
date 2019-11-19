@@ -11,6 +11,7 @@ const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
+const Audit = require('../model/Audit');
 
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
@@ -252,7 +253,8 @@ async function isCommunityAdmin (user, task) {
   }
 }
 
-async function updateOpportunityState (attributes, done) {
+async function updateOpportunityState (ctx, attributes, done) {
+  attributes = ctx;
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   attributes.updatedAt = new Date();
   attributes.assignedAt = attributes.state === 'in progress' && !origTask.assignedAt ? new Date : origTask.assignedAt;
@@ -269,7 +271,7 @@ async function updateOpportunityState (attributes, done) {
   });
 }
 
-async function updateOpportunity (attributes, done) {
+async function updateOpportunity (ctx, attributes, done) {
   var errors = await Task.validateOpportunity(attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(null, null, errors);
@@ -292,7 +294,15 @@ async function updateOpportunity (attributes, done) {
   
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
-    
+    var audit = Audit.createAudit('TASK_UPDATED', ctx, {
+      taskId: task.id,
+      previous: _.omitBy(origTask, (value, key) => { return _.isEqual(attributes[key], value); }),
+      changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origTask[key], value); }),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
+    });
+
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
@@ -320,11 +330,6 @@ async function updateOpportunity (attributes, done) {
       else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
-      // eslint-disable-next-line no-empty
-      else{
-
-      }
-
     }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
@@ -485,7 +490,10 @@ async function sendTaskSubmittedNotification (user, task) {
       notification.createNotification(data);
     }
   };
-  if (task.communityId) {
+  if (task.communityId && task.bureau_id) {
+    var bureauAdmins = await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id);
+    _.forEach(bureauAdmins.length ? bureauAdmins : (await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id)), updateBaseData);
+  } else if (task.communityId) {
     _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
     _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
@@ -629,29 +637,37 @@ function getRestrictValues (user) {
   return restrict;
 }
 
-async function deleteTask (id,cycleId) {
+async function deleteTask (ctx, task, cycleId) {
   if(cycleId){
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
     if((cycle) && (cycle.applyStartDate > new Date())) {
-      return await removeTask(id);
+      return await removeTask(ctx, task);
     }
     else {
       return false;
     }
   }
   else{
-    return await removeTask(id);
+    return await removeTask(ctx, task);
   }
 }
 
-async function removeTask (id) {
-  await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
-    dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
-      dao.Task.delete('id = ?', id).then(async (task) => {
-        await elasticService.deleteOpportunity(id);
-        return id;
+async function removeTask (ctx, task) {
+  await dao.TaskTags.delete('task_tags = ?', task.id).then(async () => {
+    dao.Volunteer.delete('"taskId" = ?', task.id).then(async () => {
+      dao.Task.delete('id = ?', task.id).then(async () => {
+        var audit = Audit.createAudit('TASK_DELETED', ctx, {
+          taskId: task.id,
+          title: task.title,
+          creator: task.userId,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
+        await elasticService.deleteOpportunity(task.id);
+        return true;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
         return false;

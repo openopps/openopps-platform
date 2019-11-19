@@ -34,7 +34,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
     if (communityRefId != 'dos') {
-      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau']);
+      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau', 'location', 'number_of_positions']);
     }
     if (target != 'sitewide') {
       var exportTaskFormat = _.omit(exportTaskFormat || dao.exportTaskFormat, 'community_name');
@@ -48,6 +48,12 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       records = (await dao.User.db.query(dao.query.exportUserCommunityData, id)).rows;
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
+    }
+    if (communityRefId == 'dos') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['agency']);
+    }
+    if (communityRefId != 'dos') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['office', 'bureau']);
     }
     if (target !== 'community') {
       var exportUserFormat = _.omit(dao.exportUserFormat, ['joined_community']);

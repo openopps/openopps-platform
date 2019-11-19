@@ -129,7 +129,7 @@ router.put('/api/task/state/:id', auth, async (ctx, next) => {
 router.put('/api/task/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
-    await service.updateOpportunity(ctx.request.body, function (task, stateChange, errors) {
+    await service.updateOpportunity(ctx, ctx.request.body, function (task, stateChange, errors) {
       if (errors) {
         ctx.status = 400;
         return ctx.body = errors;
@@ -208,9 +208,9 @@ router.delete('/api/task/:id', auth, async (ctx) => {
   if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
       if (['draft', 'submitted'].indexOf(task.state) != -1) {
-        ctx.body = await service.deleteTask(ctx.params.id);
+        ctx.body = await service.deleteTask(ctx, task);
       } else if (task.state == 'open' && task.cycleId) {
-        ctx.body = await service.deleteTask(ctx.params.id, task.cycleId);	
+        ctx.body = await service.deleteTask(ctx, task, task.cycleId);	
       } else {
         log.info('Wrong state');
         ctx.status = 400;

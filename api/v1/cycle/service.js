@@ -18,6 +18,11 @@ service.checkIsManager = async function (userId, cycleId) {
   return user.rows[0].is_manager;
 };
 
+service.checkIsJOACreated = async function (cycleId) {
+  var user = await dao.Cycle.db.query(dao.query.isJOACreated, cycleId);
+  return (user.rows[0].secondary_application_url != null && user.rows[0].secondary_application_url.trim() != '');
+};
+
 service.getPhaseData = async function (userId, cycleId) {
   var results = {};
   var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, userId, cycleId);
@@ -53,6 +58,7 @@ service.archivePhase = async function (cycleId) {
   var closedPhase = await dao.Phase.findOne('name = ?', 'Close phase');
   if (closedPhase != null) {
     cycle.phaseId = closedPhase.phaseId;
+    cycle.closedDate = new Date();
   }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);

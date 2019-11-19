@@ -262,6 +262,20 @@ var ApplyView = Backbone.View.extend({
   updateApplicationStep: function (step) {
     this.data.currentStep = step;
     this.data.selectedStep = step;
+
+    if (step == 1) {
+      this.modalComponent = new ModalComponent({
+        el: '#site-modal',
+        id: 'import-profile',
+        modalTitle: 'Importing your information from USAJOBS',
+        modalBody: '<p>Please wait while we import your education, work experience, references, and languages from your USAJOBS profile.</p>',
+        disableClose: true,
+        disablePrimary: true,
+        primary: {},
+        secondary: {},
+      }).render();
+    }
+
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
@@ -275,9 +289,11 @@ var ApplyView = Backbone.View.extend({
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
       Backbone.history.loadUrl(Backbone.history.getFragment());
+      if (this.modalComponent) { this.modalComponent.cleanup(); }
       this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
+      if (this.modalComponent) { this.modalComponent.cleanup(); }
       showWhoopsPage();
     });
   },

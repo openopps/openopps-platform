@@ -24,10 +24,17 @@ const communityAdminsQuery = 'select midas_user.* from midas_user ' +
   'inner join community on community_user.community_id = community.community_id ' + 
   'where community_user.is_manager and midas_user.disabled = false and community.community_id = ?';
 
+const communityBureauAdminsQuery = 'select midas_user.* from midas_user ' +
+  'inner join community_user on community_user.user_id = midas_user.id ' +
+  'inner join community on community_user.community_id = community.community_id ' +
+  'where community_user.is_manager and midas_user.disabled = false ' +
+  'and community.community_id = ? and midas_user.bureau_id = ?';
+
 const communitiesQuery = 'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'WHERE ' +
     'community.is_closed_group = false ' +
@@ -35,7 +42,8 @@ const communitiesQuery = 'SELECT ' +
   'SELECT ' +
     'community.community_id, ' +
     'community.community_name, ' +
-    'community.target_audience ' +
+    'community.target_audience, ' +
+    'community.reference_id ' +
   'FROM community ' +
   'JOIN community_user ' +
     'ON community_user.community_id = community.community_id ' +
@@ -200,6 +208,7 @@ const clean = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency'}),
+    AuditLog: dao({ db: db, table: 'audit_log' }),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user' }),
     TaskTags: dao({ db: db, table: 'tagentity_tasks__task_tags' }),
@@ -226,6 +235,7 @@ module.exports = function (db) {
       comments: commentsQuery,
       communityUserQuery: communityUserQuery,
       communityAdminsQuery: communityAdminsQuery,
+      communityBureauAdminsQuery: communityBureauAdminsQuery,
       communitiesQuery: communitiesQuery,
       communityTaskQuery:communityTaskQuery,
       completedInternsQuery:completedInternsQuery,

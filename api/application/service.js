@@ -5,6 +5,7 @@ const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const Profile = require('../auth/profile');
 const Import = require('./import');
+const Audit = require('../model/Audit');
 
 async function findOrCreateApplication (user, data) {
   var application = (await dao.Application.find('user_id = ? and community_id = ? and cycle_id = ?', [user.id, data.community.communityId, data.task.cycleId]))[0];
@@ -16,7 +17,6 @@ async function findOrCreateApplication (user, data) {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    importProfileData(user, application.applicationId);
   }
   return application;
 }
@@ -67,7 +67,7 @@ function importProfileData (user, applicationId) {
   });
 }
 
-async function processUnpaidApplication (user, data, callback) {
+async function processUnpaidApplication (ctx,user, data, callback) {
   var application = await findOrCreateApplication(user, data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
   if (_.find(applicationTasks, (applicationTask) => { return applicationTask.taskId == data.task.id; })) {
@@ -89,6 +89,16 @@ async function processUnpaidApplication (user, data, callback) {
       sortOrder: sortOrder,
       createdAt: new Date(),
       updatedAt: new Date(),
+    }).then(async () => {
+      var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
+        applicationId: application.applicationId,
+        userId: ctx.state.user.id,
+        createdAt: application.createdAt,
+        updatedAt: application.updatedAt,
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        log.error(err);
+      });
     });
     callback(null, application.applicationId);
   }
@@ -220,14 +230,12 @@ async function createApplicationSkill (user, applicationId, tag) {
   });
 }
 
-
-module.exports.apply = async function (user, taskId, getTasks, callback) {
+module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   await dao.Task.findOne('id = ?', taskId).then(async task => {
     await dao.Community.findOne('community_id = ?', task.communityId).then(async community => {
-      // need a way to determine DoS Unpaid vs VSFS
       if (community.applicationProcess == 'dos') {
         await new Promise((resolve, reject) => {
-          processUnpaidApplication(user, { task: task, community: community }, (err, applicationId) => {
+          processUnpaidApplication(ctx,user, { task: task, community: community }, (err, applicationId) => {
             if (err) {
               reject(err);
             } else {
@@ -362,11 +370,32 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
   });
 };
 
-module.exports.updateApplication = async function (userId, applicationId, data) {
+module.exports.updateApplication = async function (ctx, userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
-    return await dao.Application.update(data).then((application) => {
+    return await dao.Application.update(data).then(async (application) => {
       if (application.submittedAt) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
+        var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
+          applicationId: application.applicationId,
+          userId: ctx.state.user.id,
+          createdAt: application.createdAt,
+          updatedAt: application.updatedAt,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
+      } else {
+        var audit = Audit.createAudit('APPLICATION_UPDATED', ctx, {
+          applicationId: application.applicationId,
+          userId: ctx.state.user.id,
+          updatedAt:application.updatedAt,
+        });
+        if (data.currentStep == 1) {
+          importProfileData(ctx.state.user, application.applicationId);
+        }
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
       }
       return application;
     }).catch((err) => {
@@ -415,7 +444,7 @@ module.exports.saveEducation = async function (attributes,done) {
 
 async function insertExperience (attributes) {
   return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
-    return await dao.Experience.insert(attributes).then(async (experience) => {   
+    return await dao.Experience.insert(attributes).then(async (experience) => {  
       return experience;
     }).catch(err => {
       return false;
@@ -480,7 +509,7 @@ module.exports.getEducation= async function (educationId){
 };
 
 async function insertReference (attributes) {
-  return await dao.Application.findOne('application_id = ? and user_id = ?',attributes.applicationId,attributes.userId).then(async (e) => { 
+  return await dao.Application.findOne('application_id = ? and user_id = ?', attributes.applicationId,attributes.userId).then(async (e) => { 
     return await dao.Reference.insert(attributes).then(async (reference) => {   
       return reference;
     }).catch(err => {
@@ -493,7 +522,7 @@ async function insertReference (attributes) {
 }
 
 async function updateReference (attributes) {
-  return await dao.Reference.findOne('reference_id = ? and user_id = ?',attributes.referenceId,attributes.userId).then(async (e) => { 
+  return await dao.Reference.findOne('reference_id = ? and user_id = ?', attributes.referenceId,attributes.userId).then(async (e) => { 
     return await dao.Reference.update(attributes).then((reference) => {
       return reference;
     }).catch((err) => {

@@ -19,6 +19,7 @@ var InternshipEditFormView = require('./apps/internships/edit/views/internship_e
 var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
 var AdminCommunityEditView=require('./apps/admin/views/admin_community_edit_view');
+var AdminCommunityApplicantSubmittedView= require('./apps/admin/views/admin_community_applicant_submitted_view');
 var HomeController = require('./apps/home/controllers/home_controller');
 var ApplyController = require('./apps/apply/controllers/apply_controller');
 var ApplyCongratulationsView = require('./apps/apply/views/apply_congratulations_view');
@@ -43,6 +44,7 @@ var BrowseRouter = Backbone.Router.extend({
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/:id(/)'                                : 'showProfile',
     'profile/edit/skills/:id(/)'                    : 'editSkills',
+    'profile/edit/bureau_office/:id(/)'             : 'editBureauOffice',
     'profile/edit/:id(/)'                           : 'editProfile',
     'profile/:action/:key'                          : 'resetProfile',
     'admin(/)'                                      : 'showAdmin',
@@ -51,13 +53,14 @@ var BrowseRouter = Backbone.Router.extend({
     'apply/congratulations'                         : 'showApplyCongratulations',
     'apply/:id(/)'                                  : 'showApply',
     'application/:id(/)'                            : 'showApply',
+    'applicant/submitted'                           :'showApplicantSubmittedInternships',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'welcome(/)'                                    : 'showWelcome',
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
     'loggedOut'                                     : 'showLogout',
     'whoops'                                        : 'showWhoops',
-    '*notFound'                                     : 'notFound',
+    '*notFound'                                     : 'notFound',  
   },
 
   data: { saved: false },
@@ -111,6 +114,7 @@ var BrowseRouter = Backbone.Router.extend({
     if (this.internshipView) { this.internshipView.cleanup(); }   
     this.applyController && this.applyController.cleanup();
     if (this.adminCommunityEditView) { this.adminCommunityEditView.cleanup(); }
+    if (this.adminCommunityApplicantSubmittedView) { this.adminCommunityApplicantSubmittedView.cleanup(); }  
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
     this.welcomeView && this.welcomeView.cleanup();
@@ -386,6 +390,14 @@ var BrowseRouter = Backbone.Router.extend({
       el: '#container',         
     }).render();
   },
+  showApplicantSubmittedInternships: function () {
+    this.navView && this.navView.render();
+    $('#search-results-loading').show();
+    this.cleanupChildren();
+    this.adminCommunityApplicantSubmittedView = new AdminCommunityApplicantSubmittedView({
+      el: '#container',         
+    }).render();
+  },
 
 
   /*
@@ -574,6 +586,11 @@ var BrowseRouter = Backbone.Router.extend({
     this.cleanupChildren();
     this.profileEditController = new ProfileEditController({ id: id, action: 'skills', data: this.data });
     
+  },
+
+  editBureauOffice : function (id){
+    this.cleanupChildren();
+    this.profileEditController = new ProfileEditController({ id: id, action: 'bureau-office', data: this.data });
   },
 
   editProfile: function (id) {

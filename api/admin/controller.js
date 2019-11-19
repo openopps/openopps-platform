@@ -126,6 +126,22 @@ router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next)
     ctx.status = 403;
   }
 });
+router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  });
+});
+router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, async (ctx, next) => {
+  await service.getApplicantsInternships(ctx.params.userId, ctx.params.cycleId).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  });
+});
 
 router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
@@ -159,6 +175,42 @@ router.get('/api/admin/community/interactions/:id', auth, async (ctx, next) => {
     ctx.status = 403;
   }
 });
+
+router.put('/api/admin/community/:id/bureau-office', auth, async (ctx, next) => {
+  await service.saveBureauOffice(ctx,ctx.request.body, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+
+router.delete('/api/admin/community/:id/bureau/:bureauId', auth, async (ctx, next) => {
+  await service.deleteBureauOffice(ctx, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
+  await service.deleteOffice(ctx, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+
 
 router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
@@ -248,7 +300,7 @@ router.get('/api/admin/community/:communityId/member/:userId', auth, async (ctx,
 });
 
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
-  if (ctx.state.user.isAdmin || await service.canChangeOwner(ctx.state.user, ctx.params.taskId)) {
+  if (ctx.state.user.isAdmin || await service.canAgencyChangeOwner(ctx.state.user, ctx.params.taskId)) {
     await service.getOwnerOptions(ctx.params.taskId, function (results, err) {
       if (err) {
         ctx.status = 400;
@@ -281,7 +333,7 @@ router.get('/api/admin/community/changeOwner/:taskId', auth, async (ctx, next) =
 
 router.post('/api/admin/changeOwner', auth, async (ctx, next) => {
   if (ctx.state.user.isAdmin
-    || await service.canChangeOwner(ctx.state.user, ctx.request.body.taskId)
+    || await service.canAgencyChangeOwner(ctx.state.user, ctx.request.body.taskId)
     ||  await service.canCommunityChangeOwner(ctx.state.user, ctx.request.body.taskId)) {
     await service.changeOwner(ctx, ctx.request.body, processResult.bind(ctx));
   } else {

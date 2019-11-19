@@ -34,7 +34,8 @@ var HomeView = Backbone.View.extend({
     'click .read-more'             : 'readMore',
     'change #sort-participated'    : 'sortTasks',
     'change #sort-created'         : 'sortTasks',
-    'click .delete-opportunity'    : 'deleteOpportunity'
+    'click .delete-opportunity'    : 'deleteOpportunity',
+    'click .usajobs-alert__close'  : 'closeAlert',
   },
 
   initialize: function (options) {
@@ -43,7 +44,7 @@ var HomeView = Backbone.View.extend({
   },
 
   render: function () {
-    this.$el.html(templates.main);
+    this.$el.html(templates.main({ checkDosBureau: this.checkDosBureau() }));
     $('#search-results-loading').hide();
     this.$el.localize();
 
@@ -134,6 +135,22 @@ var HomeView = Backbone.View.extend({
     }
   },
 
+  checkDosBureau: function () {
+    if(_.findWhere(window.cache.currentUser.communities.student, { referenceId: "dos" })) {
+      if(window.cache.currentUser.bureau.bureauId) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  },
+
+  closeAlert: function (event) {
+    $(event.currentTarget).closest('.usajobs-alert').hide();
+  },
+
   showAllParticipated: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
@@ -197,8 +214,8 @@ var HomeView = Backbone.View.extend({
       id: 'confirm-deletion',
       alert: 'error',
       action: 'delete',
-      modalTitle: 'Delete opportunity confirmation',
-      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-opportunity-title') + '</strong>? <strong>This cannot be undone</strong>.',
+      modalTitle: 'Confirm delete opportunity',
+      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-opportunity-title') + '</strong>? <p><strong>If you delete this opportunity, you can\'t get it back</strong>.</p>',
       primary: {
         text: 'Delete opportunity',
         action: function () {

@@ -86,6 +86,32 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'participant'],
   },
+  'TASK_UPDATED': {
+    action: 'TASK_UPDATED',
+    description: 'A user has made changes to an opportunity.',
+    severity: 'info',
+    data: ['taskId', 'previous', 'changes'],
+  },
+  'TASK_DELETED': {
+    action: 'TASK_DELETED',
+    description: 'A user has deleted an opportunity.',
+    severity: 'info',
+    data: ['taskId', 'creator', 'title'],
+  },
+  //Application events
+  'APPLICATION_SUBMITTED': {
+    action: 'APPLICATION_SUBMITTED',
+    description: 'An application was submitted by the user.',
+    severity: 'info',
+    data: ['applicationId', 'userId', 'createdAt', 'updatedAt'],
+  },
+  'APPLICATION_UPDATED': {
+    action: 'APPLICATION_UPDATED',
+    description: 'An application was updated by the user.',
+    severity: 'info',
+    data: ['applicationId', 'userId', 'updatedAt'],
+  },
+  // Community events
   'COMMUNITY_ADD_MEMBER': {
     action: 'COMMUNITY_ADD_MEMBER',
     description: 'A new user is added as a member of a community.',
@@ -104,6 +130,45 @@ module.exports = {
     description: 'A user has exported data from the system.',
     severity: 'info',
     data: ['userId', 'action'],
+  },
+  //Bureau events
+  'BUREAU_UPDATED': {
+    action: 'BUREAU_UPDATED',
+    description: 'A user has made changes to the bureau.',
+    severity: 'info',
+    data: ['bureauId','user', 'previous', 'changes'],
+  },
+  'BUREAU_ADDED': {
+    action: 'BUREAU_ADDED',
+    description: 'A new bureau is added.',
+    severity: 'info',
+    data: ['bureauId', 'user', 'bureauName'],
+  },
+  
+  'BUREAU_DELETED': {
+    action: 'BUREAU_DELETED',
+    description: 'A bureau is deleted.',
+    severity: 'info',
+    data: ['bureauId', 'user','offices'],
+  },
+  //Office events
+  'OFFICE_UPDATED': {
+    action: 'OFFICE_UPDATED',
+    description: 'A user has made changes to the office.',
+    severity: 'info',
+    data: ['officeId','user', 'previous', 'changes'],
+  },
+  'OFFICE_ADDED': {
+    action: 'OFFICE_ADDED',
+    description: 'A new office is added.',
+    severity: 'info',
+    data: ['bureauId','user','officeId', 'user', 'officeName'],
+  },
+  'OFFICE_DELETED': {
+    action: 'OFFICE_DELETED',
+    description: 'An office is deleted.',
+    severity: 'info',
+    data: ['bureauId','officeId', 'user','officeName'],
   },
   // API events
   'PHASE_STARTED': {

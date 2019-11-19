@@ -162,6 +162,18 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/user/bureau-office/:id', auth, async (ctx, next) => {
+  await service.updateProfileBureauOffice(ctx.request.body, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+
 router.put('/api/user/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
