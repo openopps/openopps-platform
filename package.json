@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "8.1.1",
+  "version": "8.2.0",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -19,7 +19,7 @@
     "bourbon": "4.2.7",
     "bourbon-neat": "1.9.0",
     "cfenv": "^1.2.2",
-    "csv-parse": "^2.0.0",
+    "csv-parse": "^4.6.3",
     "csvtojson": "^1.1.9",
     "d3": "^4.13.0",
     "db-migrate": "^0.11.6",

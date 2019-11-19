@@ -17,20 +17,30 @@ module.exports.createAuditLog = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
-module.exports.getExportData = async function (type, target, id) {
+module.exports.getExportData = async function (type, target, id, cycleId) {
   var records;
   var fieldNames;
   var fields;
+  var communityRefId = ((await db.query('select reference_id from community where community_id = ?', id)).rows[0] || {}).reference_id;
   if (type === 'task') {
     if (target === 'agency') {
       records = (await dao.Task.db.query(dao.query.exportTaskAgencyData, id)).rows;
     } else if (target === 'community') {
       records = (await dao.Task.db.query(dao.query.exportTaskCommunityData, id)).rows;
+      if (communityRefId == 'dos') {
+        records = (await dao.Task.db.query(dao.query.exportTaskDoSCommunityData, id, cycleId)).rows;
+      }
     } else {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;
     }
-    fieldNames = _.keys(dao.exportTaskFormat);
-    fields = _.values(dao.exportTaskFormat);
+    if (communityRefId != 'dos') {
+      var exportTaskFormat = _.omit(dao.exportTaskFormat, ['office', 'bureau']);
+    }
+    if (target != 'sitewide') {
+      var exportTaskFormat = _.omit(exportTaskFormat || dao.exportTaskFormat, 'community_name');
+    }
+    fieldNames = _.keys(exportTaskFormat || dao.exportTaskFormat);
+    fields = _.values(exportTaskFormat || dao.exportTaskFormat);
   } else if (type === 'user') {
     if (target === 'agency') {
       records = (await dao.User.db.query(dao.query.exportUserAgencyData, id)).rows;
@@ -39,8 +49,11 @@ module.exports.getExportData = async function (type, target, id) {
     } else {
       records = (await dao.User.db.query(dao.query.exportUserData)).rows;
     }
-    fieldNames = _.keys(dao.exportUserFormat);
-    fields = _.values(dao.exportUserFormat);
+    if (target !== 'community') {
+      var exportUserFormat = _.omit(dao.exportUserFormat, ['joined_community']);
+    }
+    fieldNames = _.keys(exportUserFormat || dao.exportUserFormat);
+    fields = _.values(exportUserFormat || dao.exportUserFormat);
   }
   else if (type === 'TopContributor') {
     var today = new Date();
@@ -67,6 +80,25 @@ module.exports.getExportData = async function (type, target, id) {
       records= (await db.query(topCreated, [id, FY.start, FY.end])).rows;
       fieldNames = _.keys(dao.exportTopContributorAgencyCreatedFormat);
       fields = _.values(dao.exportTopContributorAgencyCreatedFormat);
+    }
+  }
+  
+  else if(type=='taskInteractions') {
+    var getcycleTasksTotal = fs.readFileSync(__dirname + '/sql/getCycleTaskTotal.sql', 'utf8');
+    var getCycleInteractions=  fs.readFileSync(__dirname + '/sql/getCycleInteractions.sql', 'utf8');
+    if (communityRefId == 'dos') {
+    
+      if(target=='communityCycleTask'){
+        records= (await db.query(getcycleTasksTotal, id)).rows;
+        fieldNames = _.keys(dao.exportCycleTaskFormat);
+        fields = _.values(dao.exportCycleTaskFormat);     
+      }
+      if(target=='communityCycleInteractions'){
+        records= (await db.query(getCycleInteractions, id)).rows;
+        fieldNames = _.keys(dao.exportCycleInteractionsFormat);
+        fields = _.values(dao.exportCycleInteractionsFormat);
+      
+      }
     }
   }
   fields.forEach(function (field, fIndex, fields) {

@@ -33,6 +33,9 @@
               <th scope="col">Opportunity status</th>
               <th scope="col">Opportunity</th>
               <th scope="col">Updated date</th>
+              <% if (count.draft > 0) { %>
+              <th scope="col" class="center" data-target="delete">Delete</th>
+              <% } %>
             </tr>
             </thead>
             <tbody>
@@ -43,16 +46,35 @@
                       <%= data[ i ].state.charAt( 0 ).toUpperCase() + data[ i ].state.slice( 1 ) %>
                     </span>
                   </td>
+                  <% if (count.draft > 0) { %>
+                  <td class="open-opps-title-65">
+                  <% } else { %>
                   <td class="open-opps-title">
+                  <% } %>
                     <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
                       data[ i ].title = 'Untitled draft';
                     } %>
-                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
+                    <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-opportunity-id="<%- data[i].id %>"><%- data[i].title %></a>
                   </td>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>
                     <%- updated.toLocaleDateString() %>
                   </td>
+                  <% if ('draft' === data[ i ].state) { %>
+                    <td class="metrics-table__button">
+                      <a href="#delete"
+                        data-opportunity-id="<%- data[i].id %>"
+                        data-opportunity-title="<%- data[i].title %>"
+                        class="delete-opportunity"
+                        alt="Delete opportunity"
+                        title="Delete opportunity">
+                        <span class='fa fa-times'></span>
+                        <span class="usa-sr-only">Delete opportunity</span>
+                      </a>
+                    </td>
+                  <% } else { %>
+                    <td>&nbsp;</td>
+                  <% } %>
                 </tr>
               <% } %>
             </tbody>

@@ -26,6 +26,22 @@
   }
 }
 
+.usajobs-opop-profile-opportunity__body {
+  margin-top: $size-SM;
+  padding: 0;
+
+  .usajobs-nav--openopps__section-link {
+    position: absolute;
+    top: 1.5rem;
+    right: 0;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+
 @include media($M) {
   .usajobs-opop-section__edit {
     top: $size-default;
@@ -335,6 +351,15 @@
     a, a:visited {
       color: #006FBB;
     }
+}
+
+.open-opps-title-65 {
+  width: 65%;
+  min-width: 13.5rem;
+
+  a, a:visited {
+    color: #006FBB;
+  }
 }
 
 .application-program-title {
