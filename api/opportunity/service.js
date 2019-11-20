@@ -253,8 +253,7 @@ async function isCommunityAdmin (user, task) {
   }
 }
 
-async function updateOpportunityState (ctx, attributes, done) {
-  attributes = ctx;
+async function updateOpportunityState (attributes, done) {
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   attributes.updatedAt = new Date();
   attributes.assignedAt = attributes.state === 'in progress' && !origTask.assignedAt ? new Date : origTask.assignedAt;
