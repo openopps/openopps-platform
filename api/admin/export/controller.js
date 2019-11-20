@@ -309,4 +309,28 @@ router.get('/api/admin/task/export/community/:id/cycle/:cycleId', auth.isCommuni
   }
 });
 
+router.get('/api/admin/applicants/export/community/:id/cycle/:cycleId', auth.isCommunityAdmin, async (ctx, next) => {
+  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
+    await service.getExportData('cycleApplications', '', ctx.params.id, ctx.params.cycleId).then(rendered => {
+      ctx.response.set('Content-Type', 'text/csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=internship_applications.csv');
+      ctx.body = rendered;
+      service.createAuditLog('DATA_EXPORTED', ctx, {
+        userId: ctx.state.user.id,
+        action: 'Application data exported for community id ' + ctx.params.id + 'and cycle id ' + ctx.params.cycleId,
+      });
+    }).catch(err => {
+      log.info(err);
+    });
+  } else {
+    service.createAuditLog('FORBIDDEN_ACCESS', ctx, {
+      userId: ctx.state.user.id,
+      path: ctx.path,
+      method: ctx.method,
+      status: 'blocked',
+    });
+    ctx.status = 403;
+  }
+});
+
 module.exports = router.routes();
