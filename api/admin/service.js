@@ -279,6 +279,9 @@ module.exports.getCommunityActivities = async function (communityId) {
       activities.push(buildTaskObj(result));
     }
   }
+  activities.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
   return activities;
 };
 
