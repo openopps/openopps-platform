@@ -127,11 +127,11 @@ router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next)
   }
 });
 router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
-  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId).then(results => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId,ctx.query.sort).then(results => {
     ctx.status = 200;
     ctx.body = results;
   }).catch(err => {
-    ctx.status = err.status;
+    ctx.status = 403;
   });
 });
 router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, async (ctx, next) => {

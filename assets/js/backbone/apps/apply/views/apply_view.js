@@ -256,14 +256,10 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    this.updateApplicationStep(1);
-  },
-
-  updateApplicationStep: function (step) {
-    this.data.currentStep = step;
-    this.data.selectedStep = step;
-
-    if (step == 1) {
+    if(this.data.currentStep != 0) {
+      this.updateApplicationStep(1);
+    } else {
+      var start = Date.now();
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
         id: 'import-profile',
@@ -274,8 +270,33 @@ var ApplyView = Backbone.View.extend({
         primary: {},
         secondary: {},
       }).render();
+      $.ajax({
+        url: '/api/application/import/profile',
+        method: 'POST',
+        data: {
+          applicationId: this.data.applicationId,
+        },
+      }).done(function () {
+        var duration = Date.now() - start;
+        if (duration < 2000) {
+          setTimeout(() => {
+            this.modalComponent.cleanup();
+            this.updateApplicationStep(1);
+          }, 2000 - duration);
+        } else {
+          this.modalComponent.cleanup();
+          this.updateApplicationStep(1);
+        }
+      }.bind(this)).fail(function () {
+        this.modalComponent.cleanup();
+        showWhoopsPage();
+      });
     }
+  },
 
+  updateApplicationStep: function (step) {
+    this.data.currentStep = step;
+    this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
@@ -289,11 +310,9 @@ var ApplyView = Backbone.View.extend({
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
       Backbone.history.loadUrl(Backbone.history.getFragment());
-      if (this.modalComponent) { this.modalComponent.cleanup(); }
       this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
-      if (this.modalComponent) { this.modalComponent.cleanup(); }
       showWhoopsPage();
     });
   },

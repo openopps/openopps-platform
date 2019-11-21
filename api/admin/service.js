@@ -77,6 +77,17 @@ function getUserListOrderByClause (sortValue) {
   }
 }
 
+function getApplicantListOrderByClause (sortValue) {
+  switch (sortValue) {
+    case 'name':
+      return 'lower(applications.last_name), lower(applications.given_name)';
+    case 'updatedAt':
+      return 'applications."updatedAt" desc';  
+    default:
+      return sortValue; 
+  }
+}
+
 function getWhereClauseForCyclicalTaskState (state) {
   if (state == 'approved') {
     return "state = 'open' and apply_start_date > now()";
@@ -160,15 +171,13 @@ module.exports.getCommunityCycle = async function (id,cycleId) {
   
   return community;
 };
-module.exports.getApplicantsForCycle = async (communityId, cycleId) => {
-  return new Promise((resolve, reject) => { 
-    db.query(fs.readFileSync(__dirname + '/sql/getCommunityCycleApplicants.sql', 'utf8'), communityId,cycleId).then(results => {
-      resolve(results.rows);
-    }).catch(err => {
-      reject({ status: 401 });
-    });   
-   
-  });
+module.exports.getApplicantsForCycle = async (communityId, cycleId,sort) => {
+  var result = {};
+  var applicantsBySortQuery = fs.readFileSync(__dirname + '/sql/getCommunityCycleApplicants.sql', 'utf8') .toString();
+  applicantsBySortQuery =  applicantsBySortQuery.replace('[order by]', getApplicantListOrderByClause(sort));
+  result.applications = (await db.query(applicantsBySortQuery, [communityId,cycleId])).rows;
+  return result;
+
 };
 module.exports.getApplicantsInternships = async (userId, cycleId) => {
   return new Promise((resolve, reject) => { 
@@ -270,6 +279,9 @@ module.exports.getCommunityActivities = async function (communityId) {
       activities.push(buildTaskObj(result));
     }
   }
+  activities.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
   return activities;
 };
 
