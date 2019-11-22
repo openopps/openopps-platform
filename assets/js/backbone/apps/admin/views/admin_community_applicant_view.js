@@ -62,37 +62,6 @@ var AdminCommunityApplicantView = Backbone.View.extend({
     });
     return this;
   },
-  getStatus: function (application) {
-    if (application.submittedAt == null) {
-      if(new Date(application.applyEndDate) > new Date()) {
-        return 'In progress';
-      } else {
-        return 'Not submitted';
-      }
-    } else if (application.sequence == 3) {
-      if (application.taskState == 'completed') {
-        if (application.internshipComplete) {
-          return 'Completed';
-        } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
-          return 'Not completed';
-        } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate';
-        } else {
-          return 'Not selected';
-        }
-      } else {
-        if (application.reviewProgress == 'Primary') {
-          return 'Primary Select';
-        } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate Select';
-        } else {
-          return 'Not selected';
-        }
-      }
-    } else {
-      return 'Applied';
-    }
-  },
 
   sortApplicants: function (e) {
     var target = $(e.currentTarget)[0];
@@ -124,8 +93,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
     var data={
       applicants:this.applicants,
       community:this.community,
-      cycleId: this.params.get('cid'),
-      getStatus: this.getStatus,
+      cycleId: this.params.get('cid'),    
       sort:this.data.sort,
       filter: this.data.filter,
     };   
