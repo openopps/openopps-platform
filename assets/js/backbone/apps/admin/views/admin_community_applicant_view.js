@@ -9,6 +9,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
 
   events: {
     'change #sort-applicant-community' : 'sortApplicants',
+    'click #applicant-filter-search'   : 'filter',
   },
 
   initialize: function (options) {
@@ -20,6 +21,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
       user: window.cache.currentUser,
       target: this.options.target,
       sort: this.params.get('s') || 'name',
+      filter: this.params.get('f') || '',
     };
   
   },
@@ -50,8 +52,9 @@ var AdminCommunityApplicantView = Backbone.View.extend({
       dataType: 'json',
       data: {     
         sort: this.data.sort,
+        filter:this.data.filter,
       },
-      success: function (data) {     
+      success: function (data) {         
         this.applicants= data.applications;   
         this.renderTemplate();     
         $('#search-results-loading').hide();
@@ -102,8 +105,19 @@ var AdminCommunityApplicantView = Backbone.View.extend({
   generateURL: function () {
     var url = window.location.pathname;
     url += window.location.search.split('&')[0];  
-    url += '&s=' + this.data.sort;  
+    url += '&s=' + this.data.sort +'&f=' + this.data.filter;  
     return url;
+  },
+
+  filter: function (e) {
+    var val = $('#applicant-filter').val().trim();
+    if (val == this.data.filter) {
+      return;
+    }
+    this.data.filter = val;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadApplicants();
+    
   },
 
   renderTemplate: function () {  
@@ -113,6 +127,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
       cycleId: this.params.get('cid'),
       getStatus: this.getStatus,
       sort:this.data.sort,
+      filter: this.data.filter,
     };   
     var template = _.template(AdminCommunityApplicantTemplate)(data);
     this.$el.html(template);
