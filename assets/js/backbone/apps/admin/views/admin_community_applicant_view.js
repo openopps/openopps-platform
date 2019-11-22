@@ -8,7 +8,7 @@ var AdminCommunityApplicantTemplate = require('../templates/admin_community_appl
 var AdminCommunityApplicantView = Backbone.View.extend({
 
   events: {
-     
+    'change #sort-applicant-community' : 'sortApplicants',
   },
 
   initialize: function (options) {
@@ -19,6 +19,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
     this.data = {
       user: window.cache.currentUser,
       target: this.options.target,
+      sort: this.params.get('s') || 'name',
     };
   
   },
@@ -44,11 +45,14 @@ var AdminCommunityApplicantView = Backbone.View.extend({
 
   loadApplicants:function (Info){
     var cycleId= this.params.get('cid');
-    $.ajax({
-      url: '/api/admin/community/' + this.options.targetId +'/applicants/' + cycleId,
+    $.ajax({  
+      url: '/api/admin/community/' + this.options.targetId +'/applicants/' + cycleId,    
       dataType: 'json',
-      success: function (data) {
-        this.applicants= data;   
+      data: {     
+        sort: this.data.sort,
+      },
+      success: function (data) {     
+        this.applicants= data.applications;   
         this.renderTemplate();     
         $('#search-results-loading').hide();
       }.bind(this),
@@ -87,14 +91,29 @@ var AdminCommunityApplicantView = Backbone.View.extend({
     }
   },
 
+  sortApplicants: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.sort = target.value;   
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadApplicants();
+    
+    window.scrollTo(0, 0);
+  },
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += window.location.search.split('&')[0];  
+    url += '&s=' + this.data.sort;  
+    return url;
+  },
+
   renderTemplate: function () {  
     var data={
       applicants:this.applicants,
       community:this.community,
       cycleId: this.params.get('cid'),
       getStatus: this.getStatus,
-    };
-    
+      sort:this.data.sort,
+    };   
     var template = _.template(AdminCommunityApplicantTemplate)(data);
     this.$el.html(template);
     this.rendered = true;

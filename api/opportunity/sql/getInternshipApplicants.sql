@@ -4,4 +4,4 @@ select
 from application_task
 join application on application.application_id = application_task.application_id
 join midas_user on midas_user.id = application.user_id
-where application_task.task_id = ? and application.submitted_at is not null;
+where application_task.task_id = ? and application.submitted_at is not null and application_task.sort_order > 0;
