@@ -116,6 +116,7 @@ var ApplyView = Backbone.View.extend({
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
+    this.data.experience = _.sortBy(this.data.experience, 'sortOrder');
     this.data.languages        = this.data.languages || [];
     this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
