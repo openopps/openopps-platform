@@ -127,7 +127,7 @@ router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next)
   }
 });
 router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
-  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId,ctx.query.sort).then(results => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId,ctx.query.sort,ctx.query.filter).then(results => {
     ctx.status = 200;
     ctx.body = results;
   }).catch(err => {

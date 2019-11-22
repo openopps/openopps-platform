@@ -97,6 +97,13 @@ function getWhereClauseForCyclicalTaskState (state) {
     return "state = '" + state + "'";
   }
 }
+function getWhereClauseForApplicants (filter) {
+  if (filter) {
+    return 'and (lower(applications."applicantName") like \'%' + filter.replace(/\s+/g, '%').toLowerCase()+ '%\' or lower(status) like \'%' + filter.toLowerCase() + '%\' or lower(applications.username) like \'%' + filter.toLowerCase(/\s+/g, '%') + '%\')' ;
+  } else {
+    return '';
+  }
+}
 
 module.exports = {};
 
@@ -171,10 +178,11 @@ module.exports.getCommunityCycle = async function (id,cycleId) {
   
   return community;
 };
-module.exports.getApplicantsForCycle = async (communityId, cycleId,sort) => {
+module.exports.getApplicantsForCycle = async (communityId, cycleId,sort,filter) => {
   var result = {};
   var applicantsBySortQuery = fs.readFileSync(__dirname + '/sql/getCommunityCycleApplicants.sql', 'utf8') .toString();
   applicantsBySortQuery =  applicantsBySortQuery.replace('[order by]', getApplicantListOrderByClause(sort));
+  applicantsBySortQuery = applicantsBySortQuery.replace('[filter clause]', getWhereClauseForApplicants(filter));
   result.applications = (await db.query(applicantsBySortQuery, [communityId,cycleId])).rows;
   return result;
 
