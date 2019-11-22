@@ -10,6 +10,7 @@ var AdminCommunityApplicantView = Backbone.View.extend({
   events: {
     'change #sort-applicant-community' : 'sortApplicants',
     'click #applicant-filter-search'   : 'filter',
+    'click #applicant-back'                    : linkBackbone,
   },
 
   initialize: function (options) {
@@ -90,12 +91,14 @@ var AdminCommunityApplicantView = Backbone.View.extend({
   },
 
   renderTemplate: function () {  
+    var cycleId=this.params.get('cid');
     var data={
       applicants:this.applicants,
       community:this.community,
-      cycleId: this.params.get('cid'),    
+      cycleId: cycleId,    
       sort:this.data.sort,
       filter: this.data.filter,
+      returnUrl :'/admin/community/'+ this.options.targetId + '?cycle=' + cycleId,
     };   
     var template = _.template(AdminCommunityApplicantTemplate)(data);
     this.$el.html(template);
