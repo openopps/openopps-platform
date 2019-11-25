@@ -39,5 +39,5 @@ left join country_subdivision on task.country_subdivision_id = country_subdivisi
 inner join midas_user creator on task."userId" = creator.id
 inner join cycle on app.cycle_id = cycle.cycle_id
 left join phase on cycle.phase_id = phase.phase_id
-where cycle.community_id = ? and cycle.cycle_id = ?
+where cycle.community_id = ? and cycle.cycle_id = ? and apptask.sort_order > 0
 order by app.application_id, apptask.sort_order
