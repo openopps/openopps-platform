@@ -291,7 +291,7 @@ var ApplyView = Backbone.View.extend({
       }.bind(this)).fail(function () {
         this.modalComponent.cleanup();
         showWhoopsPage();
-      });
+      }.bind(this));
     }
   },
 
