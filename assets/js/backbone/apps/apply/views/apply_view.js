@@ -283,7 +283,7 @@ var ApplyView = Backbone.View.extend({
           setTimeout(function () {
             this.modalComponent.cleanup();
             this.updateApplicationStep(1);
-          }, 2000 - duration);
+          }.bind(this), 2000 - duration);
         } else {
           this.modalComponent.cleanup();
           this.updateApplicationStep(1);
