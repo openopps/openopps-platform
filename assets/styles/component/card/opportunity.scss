@@ -1044,6 +1044,13 @@
     content: "";
     display: table;
   }
+
+  @include media($M-down) {
+    .internship-participant {
+      width: 12.33rem;
+      text-align: left;
+    }
+  }
 }
 
 .internship-participant {
