@@ -214,16 +214,16 @@ service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
-          office: results[i].office,
+          bureau_office: results[i].bureau_office,
+          location: results[i].location,
+          suggested_security_clearance: results[i].suggested_security_clearance,
           session: results[i].session,
           jobLink: results[i].joblink,
           title: results[i].title,
-          contact_email: results[i].contact_email,  //todo
-          systemname: 'USAJOBS Agency Talent Portal',
-          urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          contact_email: results[i].contact_email,
+          contact_name: results[i].contact_name,      
         },
-        layout: 'state.department/layout.html',
+        layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
     }
@@ -262,16 +262,16 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
         model: {
           given_name: results[i].given_name,
           email: results[i].email,
-          office: results[i].office, 
+          bureau_office: results[i].bureau_office,
+          location: results[i].location,
+          suggested_security_clearance: results[i].suggested_security_clearance,
           session: results[i].session,
           jobLink: results[i].joblink,
-          contact_email: results[i].contact_email,  //todo
           title: results[i].title,
-          systemname: 'USAJOBS Agency Talent Portal',
-          urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          contact_email: results[i].contact_email,
+          contact_name: results[i].contact_name,     
         },
-        layout: 'state.department/layout.html',
+        layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
     }

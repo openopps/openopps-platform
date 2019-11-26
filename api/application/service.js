@@ -46,27 +46,6 @@ function sortApplicationTasks (tasks) {
   }
 }
 
-function importProfileData (user, applicationId) {
-  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
-    var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
-    Profile.get(user.tokenset).then(profile => {
-      Promise.all([
-        Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
-        Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
-        Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
-        Import.profileReferences(user.id, applicationId, profile.Profile.References),
-        Import.profileSkills(user.id, applicationId, profileSkillObject),
-      ]).catch((err) => {
-        // record data import error
-      });
-    }).catch((err) => {
-      // record error getting USAJOBS profile
-    });
-  }).catch((err) => {
-    // record error locating application
-  });
-}
-
 async function processUnpaidApplication (ctx,user, data, callback) {
   var application = await findOrCreateApplication(user, data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
@@ -119,6 +98,32 @@ async function updateEducation ( educationId, data ) {
 }
 
 module.exports = {};
+
+module.exports.importProfileData = function (user, applicationId) {
+  return new Promise(resolve => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
+      var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
+      Profile.get(user.tokenset).then(profile => {
+        Promise.all([
+          Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
+          Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
+          Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
+          Import.profileReferences(user.id, applicationId, profile.Profile.References),
+          Import.profileSkills(user.id, applicationId, profileSkillObject),
+        ]).then(resolve).catch((err) => {
+          resolve();
+          // record data import error
+        });
+      }).then(resolve).catch((err) => {
+        resolve();
+        // record error getting USAJOBS profile
+      });
+    }).catch((err) => {
+      resolve();
+      // record error locating application
+    });
+  });
+};
 
 module.exports.updateLanguage = async function (userId, data) {
   return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', data.applicationLanguageSkillId, userId).then(async (l) => {
@@ -390,9 +395,6 @@ module.exports.updateApplication = async function (ctx, userId, applicationId, d
           userId: ctx.state.user.id,
           updatedAt:application.updatedAt,
         });
-        if (data.currentStep == 1) {
-          importProfileData(ctx.state.user, application.applicationId);
-        }
         await dao.AuditLog.insert(audit).catch((err) => {
           log.error(err);
         });

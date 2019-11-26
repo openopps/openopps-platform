@@ -1,30 +1,47 @@
 <p>Hello <% if (given_name) { %><%- given_name %><% } %>,</p>
 
-<p>Congratulations! You have been selected as an alternate for an internship with the U.S. Department of State Student Internship Program (Unpaid). The internship is with: <strong><%- office %></strong> for the <%- session %>.</p>
-<p><strong>What does being an alternate mean?</strong></p>
-<p>We have chosen a primary candidate for the internship. If the primary candidate does not accept their offer, 
+<p>Congratulations! You have been selected as an alternate for an internship with the U.S. Department of State Student Internship Program (Unpaid) for the <%- session %>.</p>
+<p>
+  <div><strong>What does being an alternate mean?</strong></div>
+  <div>&nbsp;</div>
+  <div>We have chosen a primary candidate for the internship. If the primary candidate does not accept their offer, 
   then you may move into the primary position. However, this alternate internship offer is also contingent upon 
   you receiving a security clearance or a Public Trust certificate, depending on the sensitivity level of your internship. You 
-  <strong>must complete the steps below</strong> to continue the application process as an alternate.
+  <strong>must complete the steps below</strong> to continue the application process as an alternate.</div>
+  <div>&nbsp;</div>
+  <div>Internships are full-time between 32-40 hours a week, for 10 consecutive weeks. <a href="https://careers.state.gov/intern/student-internships/">Learn more about your internship placement and responsibilities</a>.</div>
 </p>
-<p>Internships are full-time between 32-40 hours a week, for 10 consecutive weeks. <a href="https://careers.state.gov/intern/student-internships/selection-process/">Learn more about your internship placement and responsibilities</a>.</p>
-<p style="font-size:14pt;font-weight:bold;color:rgb(54,95,145)">Next Step</p>
-<p style="font-size:13pt;font-weight:bold;color:rgb(79,129,189);margin-bottom:0px">1. Submit your resume</p>
-<p>If you want to accept this internship as an alternate, <strong>you must submit your resume and answer a few more questions.</strong></p>
-<ol>
-  <li style="margin-bottom:0px">Click the link below to sign into USAJOBS and view the internship posting.</li>
-  <li style="margin-bottom:0px">Click <strong>Apply</strong> and follow the steps to submit your resume. You will also need to answer a few more questions.</li>
-  <li style="margin-bottom:0px">Do not share this link with anyone else—it is only for applicants who have been selected for this internship.</li>
-</ol>
-
-<p><a href="<%- jobLink %>"><%- title %></a></p>
-<p style="font-size:13pt;font-weight:bold;color:rgb(79,129,189);margin:25px 0px 0px">2. Look for security clearance email</p>
-Once you submit your resume and complete the application, we will send you another email to start the security clearance process.
-<strong>You must complete the security clearance process even as an alternate.</strong>
-
-<p style="font-size:14pt;font-weight:bold;color:rgb(54,95,145);margin:25px 0px 0px">Housing and Travel Arrangements</p>
-Please do not make any housing or travel arrangements until we notify you that you’ve received your security clearance and are officially assigned to the internship.
-
-<p style="font-size:14pt;font-weight:bold;color:rgb(54,95,145);margin:25px 0px 0px">No longer interested?</p>
-If you do not want to accept this internship offer, please let us know by emailing <%- contact_email %>
-<br><br>
+<div>&nbsp;</div>
+<div style="font-size:14pt;font-weight:bold;color:rgb(54,95,145)">Next Steps</div>
+<div>&nbsp;</div>
+<p>
+  <div style="font-size:13pt;font-weight:bold;color:rgb(79,129,189);margin-bottom:0px">1. Submit additional information</div>
+  <div>If you want to accept this internship as an alternate, <strong>you must answer a few more questions.</strong></div>
+  <ol>
+    <li>Click the link below to sign into USAJOBS and view the internship posting.</li>
+    <li>Click <strong>Apply</strong> and follow the steps to complete the questionnaire. You will need the following information:
+      <ol type="a" style="margin-top:0px">
+        <li style="margin-bottom:0px">Selection Status: Alternate</li>
+        <li style="margin-bottom:0px">Location: <%- location %></li>
+        <li style="margin-bottom:0px">Requested Security Clearance: <%- suggested_security_clearance %></li>
+        <li style="margin-bottom:0px">Bureau/Office: <%- bureau_office %></li>
+        <li style="margin-bottom:0px">Supervisor/Point of Contact: <%- contact_name %></li>
+      </ol>
+    </li></br>
+    <li>Do not share this link with anyone else&mdash;it is only for applicants who have been selected for this internship.</li>
+  </ol>
+</p>
+<p><a href="<%- jobLink %>"><%- jobLink %></a></p>
+<p>
+  <div style="font-size:13pt;font-weight:bold;color:rgb(79,129,189);margin:25px 0px 0px">2. Look for security clearance email</div>
+  <div>Once you submit your questionnaire, you will receive an email to start the security clearance process. It may take up to two weeks to receive the security clearance email. If you do not receive the security clearance email within two weeks, please contact <a href="mailto:studentinternship@state.gov">studentinternship@state.gov</a>.</div></br>
+  <div><strong>You must complete the security clearance process even as an alternate.</strong></div>
+</p>
+<p>
+  <div style="font-size:14pt;font-weight:bold;color:rgb(54,95,145);margin:25px 0px 0px">Housing and Travel Arrangements</div>
+  <div>Please do not make any housing or travel arrangements until we notify you that you have received your security clearance and are officially assigned to the internship.</div>
+</p>
+<p>
+  <div style="font-size:14pt;font-weight:bold;color:rgb(54,95,145);margin:25px 0px 0px">No longer interested?</div>
+  <div>If you do not want to accept this internship offer, please let us know by emailing <a href="mailto:studentinternship@state.gov">studentinternship@state.gov</a>.</div>
+</p>

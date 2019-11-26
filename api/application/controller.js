@@ -66,6 +66,15 @@ router.delete('/api/application/:id', auth, async (ctx, next) => {
   });
 });
 
+router.post('/api/application/import/profile', auth, auth.checkToken, async (ctx, next) => {
+  await service.importProfileData(ctx.state.user, ctx.request.body.applicationId).then(() => {
+    ctx.status = 200;
+  }).catch(err => {
+    log.error(err);
+    ctx.status = 400;
+  })
+});
+
 router.post('/api/application/apply/:taskId', auth, auth.checkToken, async (ctx, next) => {
   if(ctx.state.user.hiringPath == 'student') {
     await service.apply(ctx,ctx.state.user, ctx.params.taskId, (ctx.request.body || {}).getTasks, (err, results) => {

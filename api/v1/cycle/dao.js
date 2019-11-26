@@ -230,8 +230,10 @@ dao.query.getCommunityCreators = `
 `;
 
 dao.query.getApplicantSelected = `
-  select cycle.secondary_application_url as joblink, cycle.name as session, task.title, 
-         mu.username as email, mu.given_name, o."name" as office, mu2.username as contact_email
+  select cycle.secondary_application_url as joblink, cycle.name as session, task.title,
+    task.suggested_security_clearance, array_to_string(array[task.city_name, country_subdivision.value, country.value], ', ') as "location",
+    mu.username as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
+    mu2.username as contact_email, array_to_string(array[mu2.given_name, mu2.last_name], ' ') as contact_name
   from "cycle"
     inner join task on task.cycle_id = cycle.cycle_id
     inner join task_list tl on tl.task_id = task.id
@@ -239,14 +241,18 @@ dao.query.getApplicantSelected = `
     inner join application a on a.application_id = tla.application_id
     inner join midas_user mu on mu.id = a.user_id
     inner join midas_user mu2 on mu2.id = task."userId"
+    left join country on country.country_id = task.country_id
+    left join country_subdivision on country_subdivision.country_subdivision_id = task.country_subdivision_id
+    left join bureau b on b.bureau_id = task.bureau_id
     left join office o on o.office_id = task.office_id
-  where cycle.cycle_id = ?
-    and tl.title = 'Primary'
+  where cycle.cycle_id = ? and tl.title = 'Primary'
 `;
 
 dao.query.getApplicantAlternate = `
-  select cycle.secondary_application_url as joblink, cycle.name as session, task.title, 
-         mu.username as email, mu.given_name, o."name" as office, mu2.username as contact_email
+  select cycle.secondary_application_url as joblink, cycle.name as session, task.title,
+    task.suggested_security_clearance, array_to_string(array[task.city_name, country_subdivision.value, country.value], ', ') as "location",
+    mu.username as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
+    mu2.username as contact_email, array_to_string(array[mu2.given_name, mu2.last_name], ' ') as contact_name
   from "cycle"
     inner join task on task.cycle_id = cycle.cycle_id
     inner join task_list tl on tl.task_id = task.id
@@ -254,9 +260,11 @@ dao.query.getApplicantAlternate = `
     inner join application a on a.application_id = tla.application_id
     inner join midas_user mu on mu.id = a.user_id
     inner join midas_user mu2 on mu2.id = task."userId"
+    left join country on country.country_id = task.country_id
+    left join country_subdivision on country_subdivision.country_subdivision_id = task.country_subdivision_id
+    left join bureau b on b.bureau_id = task.bureau_id
     left join office o on o.office_id = task.office_id
-  where cycle.cycle_id = ?
-    and tl.title = 'Alternate'
+  where cycle.cycle_id = ? and tl.title = 'Alternate'
 `;
 
 dao.query.getApplicantNotSelected = `
