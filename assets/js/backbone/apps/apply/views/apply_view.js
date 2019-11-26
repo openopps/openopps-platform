@@ -39,6 +39,7 @@ var ApplyView = Backbone.View.extend({
     'click .program-select'                                       : function (e) { this.callMethod(Program.selectSavedOpportunity, e); },
     
     //experience events
+    'change #check-experience'                                    : function () { this.callMethod(Experience.toggleWorkExperience); },
     'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
@@ -146,6 +147,7 @@ var ApplyView = Backbone.View.extend({
         $('#saveProgramContinue').removeAttr('disabled');
       }
     }
+    
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     Education.renderComponentEducation.bind(this)();
@@ -155,6 +157,14 @@ var ApplyView = Backbone.View.extend({
     Experience.characterCount();
     this.checkStatementHeight();
     this.closeSubNav();
+
+    if (this.data.selectedStep == 2) {
+      if (this.data.experience.length < 1 ) {
+        $('#check-experience-details').css('display', 'block');
+      } else {
+        $('#check-experience-details').css('display', 'none');
+      }
+    }
 
     $('.apply-hide').hide();
     $('.usa-footer-search--intern').show();
@@ -475,6 +485,9 @@ var ApplyView = Backbone.View.extend({
               applicationData[recordData.section] = recordList;
             
               $(e.currentTarget).closest('li').remove();
+              if (applicationData.experience.length < 1) {
+                $('#check-experience-details').css('display', 'block');
+              }
               //  this.updateApplicationStep(this.data.selectedStep);
               this.modalComponent.cleanup();
             }.bind(this),

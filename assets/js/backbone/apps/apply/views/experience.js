@@ -15,6 +15,22 @@ var experience = {
       container: '#duties-accomplish',
     });
   },
+
+  toggleWorkExperience: function () {
+    if ($('#experience-id').length < 1) {
+      $('#check-experience-details').css('display', 'block');
+      if($('input#check-experience').is(':checked')) {
+        $('#add-experience').attr('disabled','disabled');
+      } else {
+        $("input[name='checkExperience']:checkbox").prop('checked', false);
+        $('#add-experience').removeAttr('disabled');
+      }
+    } else {
+      $('#check-experience-details').css('display', 'none');
+    }
+    $('#check-experienceQn').removeClass('usa-input-error');    
+    $('#check-experienceQn .field-validation-error').hide();
+  },
   
   toggleOverseasExperienceDetails: function () {
     $('#overseas-experience-details').hide();
@@ -109,6 +125,10 @@ var experience = {
     if ($('#experience-id').length) {
       modelData.experienceId = $('#experience-id').val();
       modelData.updatedAt = $('#updated-at').val();
+      $('#check-experience-details').css('display', 'none');  
+      $('#add-experience').removeAttr('disabled');
+    } else {
+      $('#check-experience-details').css('display', 'block');
     }
 
     return modelData;
@@ -149,6 +169,7 @@ var experience = {
   saveExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();   
     var experienceValidation=experience.validateAddExperienceFields(data);
+    this.data.declineExperience = false;
     if(!this.validateFields() && !experienceValidation) {
       var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
@@ -168,7 +189,7 @@ var experience = {
           // display modal alert type error
         }.bind(this),
       });
-    }
+    }  
   },
 
   updateExperience: function () {
@@ -189,13 +210,23 @@ var experience = {
           // display modal alert type error
         }.bind(this),
       });
-    }
+    } 
   },
 
   validateExperience:function (){
   
     var children = this.$el.find( '.validate' );
     var abort = false;
+
+    if($('li[data-section=experience]').length < 1 && !$('input#check-experience').is(':checked')) {
+      $('#check-experienceQn').addClass('usa-input-error');    
+      $('#check-experienceQn .field-validation-error').show();
+      abort = true;
+    } else {
+      $('#check-experienceQn').removeClass('usa-input-error');    
+      $('#check-experienceQn .field-validation-error').hide();
+    }
+
     if($('[name=has_overseas_experience]:checked').length==0){ 
       $('#overseas-experienceQn').addClass('usa-input-error');    
       $('#overseas-experienceQn .field-validation-error').show();
@@ -246,7 +277,8 @@ var experience = {
     var validateExperience= experience.validateExperience.bind(this);
     var data = experience.getDataFromExperiencePage.bind(this)();
     this.data.currentStep = Math.max(this.data.currentStep, 2);
-    this.data.selectedStep = 3;  
+    this.data.selectedStep = 3; 
+    data.declineExperience = $('input#check-experience').is(':checked'); 
     if(!validateExperience()){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
@@ -304,6 +336,11 @@ var experience = {
     experience.characterCount.bind(this)(); 
     experience.renderExperienceComponent.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    if (this.data.experience.length < 1 ) {
+      $('#check-experience-details').css('display', 'block');
+    } else {
+      $('#check-experience-details').css('display', 'none');
+    }
     window.scrollTo(0, 0);
   },
 

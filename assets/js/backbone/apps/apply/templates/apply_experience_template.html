@@ -8,8 +8,8 @@
         <legend class="usa-sr-only">Experience &amp; References</legend>
         <div class="usajobs-profile-home-section__body">
           <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
-          <h3 id="experience" class="usajobs-profile-home-section__sub-section usa-input-optional">Experience</h3>
-          <p>Please list your federal, military, and professional experience here.</p>
+          <h3 id="experience" class="usajobs-profile-home-section__sub-section">Experience</h3>
+          <p>Please list your federal, military, professional, and volunteer experience here.</p>
         </div>
         <% if (experience.length) { %>
         <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
@@ -95,7 +95,15 @@
         </div>
         <% }; %>
         <div class="usajobs-profile-home-section__body">
-          <p><a id="add-experience" class="add-record" href="javascript:void(0);">+ Add experience</a></p>
+          <div class="form-group required-input" id="check-experienceQn">
+            <span class="field-validation-error" style="display:none;" >You must either add work experience or 
+              check that you do not wish to provide any.</span>           
+            <p><button id="add-experience" class="add-record" <% if(declineExperience) {%>disabled<% } %>>Add work experience</button></p>
+            <div id="check-experience-details">
+              <input type="checkbox" name="checkExperience" id="check-experience" value="false"  <% if(declineExperience) { %>checked<% } %> />
+              <label for="check-experience">I do not wish to provide or do not have any work experience</label>
+            </div>  
+          </div>
           <div class="form-group required-input" id="overseas-experienceQn">
             <fieldset class="usajobs-fieldset">
               <legend class="usa-sr-only">Do you have any overseas experience?</legend>
@@ -307,7 +315,7 @@
           <div class="usajobs-button_bar--slim">
             <div class="usajobs-button_bar__body">
               <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
-              <a class="usa-button usa-button-primary usajobs-button_bar__save" id="saveExperienceContinue">Save and continue</a>
+              <button class="usa-button usa-button-primary usajobs-button_bar__save" id="saveExperienceContinue">Save and continue</button>
             </div>
           </div>
         </div>
