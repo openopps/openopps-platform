@@ -63,7 +63,7 @@ function getUserListOrderByClause (sortValue) {
     case 'createdAt':
       return 'users."createdAt" desc';
     case 'last_login':
-      return 'users.last_login desc';
+      return 'users.last_login desc nulls last';
     case 'isAdmin':
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
