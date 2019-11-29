@@ -374,6 +374,22 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
     });
   });
 };
+module.exports.swapExperiences = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[1].sortOrder, data[0].experienceId]);
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[0].sortOrder, data[1].experienceId]);
+      }).then(async () => { 
+        resolve((await dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your experiences from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
 
 module.exports.updateApplication = async function (ctx, userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
