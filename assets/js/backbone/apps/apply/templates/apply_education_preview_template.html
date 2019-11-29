@@ -1,6 +1,6 @@
 <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
   <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-    <% _.each(data.education, function (d,index) { %>
+    <% _.each(_.sortBy(data.education,'sortOrder'), function (d,index) { %>
     <li class="usajobs-drawer" data-section="education" data-id="edu-1">
       <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
       <dl class="usajobs-drawer-face">
