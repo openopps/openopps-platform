@@ -2,32 +2,34 @@
     <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
       <% _.each(experience, function (e, index) { %>
       <li class="usajobs-drawer" data-section="experience" data-id="exp-<%= e.experienceId %>">
-        <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-<%= e.experienceId %>"><%= e.formalTitle %></button>
-        <% if (index==0) { %>
-        <div class="order-options" data-sort="<%= index %>">             
-          <a href="javascript:void(0)">
-            <i class="fas fa-arrow-alt-circle-down exp-sort-arrow" data-action="down" data-id="<%= e.experienceId %>"></i>
-          </a>
-        </div>
-        <% }
-        else if (index== (experience.length-1)) { %>
-        <div class="order-options" data-sort="<%= index %>">
-          <a href="javascript:void(0)">
-            <i class="fas fa-arrow-alt-circle-up exp-sort-arrow" data-action="up" data-id="<%= e.experienceId %>"></i>
-          </a>             
-        </div>
-        <% } 
-        else { %>
+        <button class="usa-accordion-button usajobs-drawer-button" aria-controls="exp-<%= e.experienceId %>"><%= e.formalTitle %></button>    
+        <% if (index==0 && experience.length !=1) { %>
+          <div class="order-options" data-sort="<%= index %>">             
+              <a href="javascript:void(0)">
+                <i class="fas fa-arrow-alt-circle-down exp-sort-arrow" data-action="down" data-id="<%= e.experienceId %>"></i>
+              </a>
+            </div>
+          <% }
+          else if (index== (experience.length-1) && index!=0) { %>
           <div class="order-options" data-sort="<%= index %>">
             <a href="javascript:void(0)">
               <i class="fas fa-arrow-alt-circle-up exp-sort-arrow" data-action="up" data-id="<%= e.experienceId %>"></i>
-            </a>
-            <a href="javascript:void(0)">
-              <i class="fas fa-arrow-alt-circle-down exp-sort-arrow" data-action="down" data-id="<%= e.experienceId %>"></i>
-            </a>
+            </a>             
           </div>
-          <% } %>
-        
+          <% } 
+          else if (index==0 && experience.length==1) { %>         
+            <% }
+          else { %>
+            <div class="order-options" data-sort="<%= index %>">
+              <a href="javascript:void(0)">
+                <i class="fas fa-arrow-alt-circle-up exp-sort-arrow" data-action="up" data-id="<%= e.experienceId %>"></i>
+              </a>
+              <a href="javascript:void(0)">
+                <i class="fas fa-arrow-alt-circle-down exp-sort-arrow" data-action="down" data-id="<%= e.experienceId %>"></i>
+              </a>
+            </div>
+            <% } %>
+                             
         <dl class="usajobs-drawer-face">
           <dt><%= e.employerName %></dt>
           <dd>
