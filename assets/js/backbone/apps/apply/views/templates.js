@@ -18,6 +18,7 @@ const ApplyStatementTemplate = require('../templates/apply_statement_template.ht
 const SubmittedApplicationTemplate = require('../templates/submitted_application_template.html');
 var ApplyEducationPreviewTemplate = require('../templates/apply_education_preview_template.html');
 const ApplyTranscriptTemplate=require('../templates/apply_transcript_template.html');
+const ApplyExperiencePreviewTemplate = require('../templates/apply_experience_preview_template.html');
 
 var templates = {
   main: _.template(ApplyTemplate),
@@ -38,6 +39,7 @@ var templates = {
   submittedApplication: _.template(SubmittedApplicationTemplate),
   applyeducationPreview:_.template(ApplyEducationPreviewTemplate),
   applyTranscript:_.template(ApplyTranscriptTemplate),
+  applyExperiencePreview:_.template(ApplyExperiencePreviewTemplate),
 };
 
 templates.getTemplateForStep = function (step) {
