@@ -21,7 +21,7 @@ function recordError (userId, err) {
 module.exports = {};
 
 module.exports.profileEducation = (userId, applicationId, educationRecords) => {
-  return Promise.all(_.map(educationRecords, async (record) => {
+  return Promise.all(_.map(educationRecords, async (record,index) => {
     try {
       var education = _.extend(fixUpperCaseAttributeNames(record), {
         userId: userId,
@@ -34,6 +34,7 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
         gpaMax:record.GPAMax ? record.GPAMax :'',
         createdAt: new Date(),
         updatedAt: new Date(),
+        sortOrder: record.SortOrder?record.SortOrder:index,
       });
       return dao.Education.insert(education);
     } catch (err) {
@@ -44,7 +45,7 @@ module.exports.profileEducation = (userId, applicationId, educationRecords) => {
 };
 
 module.exports.profileExperience = (userId, applicationId, experienceRecords) => {
-  return Promise.all(_.map(experienceRecords, async (record) => {
+  return Promise.all(_.map(experienceRecords, async (record,index) => {
     try {
       var experience = _.extend(fixUpperCaseAttributeNames(record), {
         userId: userId,
@@ -54,6 +55,7 @@ module.exports.profileExperience = (userId, applicationId, experienceRecords) =>
         isPresent: record.EndDate ? false : true,
         createdAt: new Date(),
         updatedAt: new Date(),
+        sortOrder: record.SortOrder?record.SortOrder:index,
       });
       return dao.Experience.insert(experience);
     } catch (err) {
