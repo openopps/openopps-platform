@@ -45,7 +45,7 @@ router.get('/api/application/:id', auth, auth.checkToken, async (ctx, next) => {
 });
 
 router.put('/api/application/:id', auth, async (ctx, next) => {
-  var result = await service.updateApplication(ctx,ctx.state.user.id, ctx.params.id, ctx.request.body);
+  var result = await service.updateApplication(ctx, ctx.state.user.id, ctx.params.id, ctx.request.body);
   if (result) {
     ctx.status = 200;
     ctx.body = result;
@@ -55,7 +55,7 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
 });
 
 router.delete('/api/application/:id', auth, async (ctx, next) => {
-  await service.deleteApplication(ctx.state.user.id, ctx.params.id, (err) => {
+  await service.deleteApplication(ctx, ctx.state.user.id, ctx.params.id, (err) => {
     if (err) {
       ctx.status = 400;
       ctx.body = err.message;
