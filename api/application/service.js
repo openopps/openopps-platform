@@ -275,6 +275,7 @@ module.exports.deleteApplication = async (ctx, userId, applicationId, callback) 
     await dao.Application.delete(application).then(async () => {
       var audit = Audit.createAudit('APPLICATION_WITHDRAWN', ctx, {
         applicationId: application.applicationId,
+        cycleId: application.cycleId,
         userId: ctx.state.user.id,
       });
       await dao.AuditLog.insert(audit).catch((err) => {

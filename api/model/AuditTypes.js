@@ -115,7 +115,7 @@ module.exports = {
     action: 'APPLICATION_WITHDRAWN',
     description: 'An application was withdrawn by the user.',
     severity: 'info',
-    data: ['applicationId', 'userId'],
+    data: ['applicationId', 'cycleId', 'userId'],
   },
   // Community events
   'COMMUNITY_ADD_MEMBER': {
