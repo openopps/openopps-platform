@@ -269,15 +269,22 @@ module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   });
 };
 
-module.exports.deleteApplication = async (userId, applicationId, callback) => { 
+module.exports.deleteApplication = async (ctx, userId, applicationId, callback) => { 
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
     var applicationNotificationData= await getNotificationApplicationData(userId, applicationId );     
-    await dao.Application.delete(application).then(async () => {  
+    await dao.Application.delete(application).then(async () => {
+      var audit = Audit.createAudit('APPLICATION_WITHDRAWN', ctx, {
+        applicationId: application.applicationId,
+        userId: ctx.state.user.id,
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        log.error(err);
+      });
       if(applicationNotificationData) {
         var notificationData = await getNotificationTemplateData(applicationNotificationData, 'state.department/internship.application.withdraw');
         if(!notificationData.model.user.bounced) {
           notification.createNotification(notificationData);
-        }       
+        }     
       }   
       callback();       
     }).catch((err) => {
