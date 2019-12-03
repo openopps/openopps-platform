@@ -38,7 +38,7 @@ var AdminCommunityCycleView = Backbone.View.extend({
       alert: 'error',
       action: 'delete',
       modalTitle: 'Delete cycle confirmation',
-      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-cycle-title') + '</strong>? <strong>This cannot be undone</strong>.',
+      modalBody: 'Are you sure you want to delete <strong>' + event.currentTarget.getAttribute('data-cycle-title') + '</strong>? <strong>If you delete this cycle, you can\'t get it back</strong>.',
       primary: {
         text: 'Delete cycle',
         action: function () {

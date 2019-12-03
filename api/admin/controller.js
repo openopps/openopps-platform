@@ -199,6 +199,7 @@ router.delete('/api/admin/community/:id/bureau/:bureauId', auth, async (ctx, nex
     }
   }); 
 });
+
 router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
   await service.deleteOffice(ctx, async (errors, result) => {    
     if (errors) {
@@ -211,6 +212,23 @@ router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth
   }); 
 });
 
+router.get('/api/admin/bureau/:bureauId', auth, async (ctx, next) => {
+  var count =  await service.getBureauCount(ctx.params.bureauId);
+  if (count.length) {
+    ctx.body = count;
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
+  var count =  await service.getBureauOfficeCount(ctx.params.bureauId, ctx.params.officeId);
+  if (count.length) {
+    ctx.body = count;
+  } else {
+    ctx.status = 403;
+  }
+});
 
 router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {

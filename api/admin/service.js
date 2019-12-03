@@ -924,6 +924,24 @@ module.exports.deleteOffice = async function (ctx,done) {
   }
 };
 
+module.exports.getBureauCount = async function (bureauId) {
+  if (bureauId) {
+    var count = (await db.query(fs.readFileSync(__dirname + '/sql/getBureauCount.sql', 'utf8'), bureauId)).rows[0].count;
+    return count;
+  } else {
+    return -1;
+  }
+};
+
+module.exports.getBureauOfficeCount = async function (bureauId, officeId) {
+  if (bureauId && officeId) {
+    var count = (await db.query(fs.readFileSync(__dirname + '/sql/getBureauOfficeCount.sql', 'utf8'), bureauId, officeId)).rows[0].count;
+    return count;
+  } else {
+    return -1;
+  }
+};
+
 module.exports.createAuditLog = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
   await dao.AuditLog.insert(audit).catch(() => {});
