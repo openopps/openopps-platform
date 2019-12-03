@@ -407,6 +407,7 @@ var experience = {
     }).done(experience.onSuccess.bind(this)).fail(experience.onError.bind(this));
   },
   moveExperience : function (e) {
+    if (e.preventDefault) e.preventDefault();
     var action = e.currentTarget.getAttribute('data-action');
     var experienceId= e.currentTarget.getAttribute('data-id');
     var sort = parseInt($(e.currentTarget).closest('.order-options')[0].getAttribute('data-sort')); 

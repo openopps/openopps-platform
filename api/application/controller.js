@@ -108,6 +108,15 @@ router.put('/api/application/:applicationId/experience/swap', auth, async (ctx, 
     ctx.body = err.message;
   });
 });
+router.put('/api/application/:applicationId/education/swap', auth, async (ctx, next) => {
+  await service.swapEducations(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
+});
 
 router.delete('/api/application/:applicationId/task/:taskId', auth, async (ctx, next) => {
   await service.deleteApplicationTask(ctx.state.user.id, ctx.params.applicationId, ctx.params.taskId).then((result) => {
