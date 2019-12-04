@@ -378,7 +378,7 @@ var AdminCommunityView = Backbone.View.extend({
       var currentStart = new Date(cycle.postingStartDate);
       var currentEnd = new Date(cycle.postingEndDate);
       
-      if (!selectedCycle) { selectedCycle = cycle };
+      if (!selectedCycle) { selectedCycle = cycle; }
       if(previousEnd === '') { previousEnd = currentEnd; }
 
       if (currentEnd.getTime() >= previousEnd.getTime()){
