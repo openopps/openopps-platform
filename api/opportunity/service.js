@@ -221,6 +221,11 @@ async function getCommunities (userId) {
   return communityTypes;
 }
 
+async function getUsdosSupportEmail () {
+  var supportEmail = (await dao.Community.query(dao.query.usdosSupportEmailQuery));
+  return supportEmail;
+}
+
 async function isStudent (userId,taskId) {
   var taskCommunities = await dao.Community.query(dao.query.taskCommunitiesQuery, userId,taskId);
   var communityTypes = {
@@ -747,6 +752,7 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };
