@@ -36,6 +36,11 @@ router.get('/api/task/communities', auth, async (ctx, next) => {
   ctx.body = data;
 });
 
+router.get('/api/task/community/supportEmail', auth, async (ctx, next) => {
+  var supportEmail = await service.getUsdosSupportEmail();
+  ctx.body = supportEmail;
+});
+
 router.get('/api/task/saved', auth, async (ctx, next) => {
   ctx.body = await service.getSavedOpportunities(ctx.state.user);
 });
