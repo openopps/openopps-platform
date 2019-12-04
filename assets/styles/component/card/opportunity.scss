@@ -1035,6 +1035,17 @@
     }
   }
 }
+.internship-cancel {
+  display: block;
+  width: 100%;
+  padding: 0 0 .5rem 0;
+  margin-top: $size-M;
+  text-align: right;
+  color:$color-secondary;
+  &:hover {
+    color: $color-secondary;
+  }
+}
 
 .internship-participant__wrapper {
   display: block;
@@ -1093,7 +1104,7 @@
       cursor: pointer;
     }
   }
-
+ 
   .usajobs-open-opps-opportunity-requestor__body {
     width: 8.5rem;
   }
