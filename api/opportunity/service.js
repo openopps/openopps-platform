@@ -376,11 +376,9 @@ async function completedInternship (attributes, done) {
 }
 async function canceledInternship (attributes, done) {
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
-  attributes.updatedAt = new Date();
-  attributes.completedAt = new Date();
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   await dao.Task.update(attributes).then(async (t) => {
-    var task = await findById(t.id, true);
+    var task = await findById(t.id, true);  
     await elasticService.indexOpportunity(task.id);
     return done(true);
   }).catch (err => {
