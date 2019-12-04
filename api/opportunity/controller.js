@@ -173,6 +173,20 @@ router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
   }
 });
 
+router.put('/api/task/internship/cancel/:id', auth, async (ctx, next) => {
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
+    ctx.request.body.updatedBy = ctx.state.user.id;
+    await service.canceledInternship(ctx.request.body, function (done) {
+      ctx.body = { success: true };
+    }).catch(err => {
+      log.info(err);
+    });
+  } else {
+    ctx.status = 401;
+    ctx.body = null;
+  }
+});
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {

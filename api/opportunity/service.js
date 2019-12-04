@@ -374,6 +374,19 @@ async function completedInternship (attributes, done) {
     return done(false);
   });
 }
+async function canceledInternship (attributes, done) {
+  var origTask = await dao.Task.findOne('id = ?', attributes.id);
+  attributes.updatedAt = new Date();
+  attributes.completedAt = new Date();
+  attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+  await dao.Task.update(attributes).then(async (t) => {
+    var task = await findById(t.id, true);
+    await elasticService.indexOpportunity(task.id);
+    return done(true);
+  }).catch (err => {
+    return done(false);
+  });
+}
 
 function volunteersCompleted (task) {
   dao.Volunteer.find('"taskId" = ? and assigned = true and "taskComplete" = true', task.id).then(volunteers => {
@@ -735,6 +748,7 @@ module.exports = {
   publishTask: publishTask,
   completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
+  canceledInternship:canceledInternship,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
