@@ -269,15 +269,23 @@ module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   });
 };
 
-module.exports.deleteApplication = async (userId, applicationId, callback) => { 
+module.exports.deleteApplication = async (ctx, userId, applicationId, callback) => { 
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
     var applicationNotificationData= await getNotificationApplicationData(userId, applicationId );     
-    await dao.Application.delete(application).then(async () => {  
+    await dao.Application.delete(application).then(async () => {
+      var audit = Audit.createAudit('APPLICATION_WITHDRAWN', ctx, {
+        applicationId: application.applicationId,
+        cycleId: application.cycleId,
+        userId: ctx.state.user.id,
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        log.error(err);
+      });
       if(applicationNotificationData) {
         var notificationData = await getNotificationTemplateData(applicationNotificationData, 'state.department/internship.application.withdraw');
         if(!notificationData.model.user.bounced) {
           notification.createNotification(notificationData);
-        }       
+        }     
       }   
       callback();       
     }).catch((err) => {
@@ -368,6 +376,39 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
         resolve((await db.query(dao.query.applicationTasks, applicationId)).rows);
       }).catch((err) => {
         reject({ status: 400, message: 'An unexpected error occured attempting to update your internship selections from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
+module.exports.swapEducations = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[1].sortOrder, data[0].educationId]);
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[0].sortOrder, data[1].educationId]);
+      }).then(async () => { 
+        resolve(( dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '', degreeLevel: '', honor: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your educations from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
+
+module.exports.swapExperiences = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[1].sortOrder, data[0].experienceId]);
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[0].sortOrder, data[1].experienceId]);
+      }).then(async () => { 
+        resolve((await dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your experiences from your application.' });
       });
     }).catch((err) => {
       reject({ status: 403 });

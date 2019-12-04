@@ -63,7 +63,7 @@ function getUserListOrderByClause (sortValue) {
     case 'createdAt':
       return 'users."createdAt" desc';
     case 'last_login':
-      return 'users.last_login desc';
+      return 'users.last_login desc nulls last';
     case 'isAdmin':
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
@@ -921,6 +921,24 @@ module.exports.deleteOffice = async function (ctx,done) {
       log.error(err);
       return false;
     });
+  }
+};
+
+module.exports.getBureauCount = async function (bureauId) {
+  if (bureauId) {
+    var count = (await db.query(fs.readFileSync(__dirname + '/sql/getBureauCount.sql', 'utf8'), bureauId)).rows[0].count;
+    return count;
+  } else {
+    return -1;
+  }
+};
+
+module.exports.getBureauOfficeCount = async function (bureauId, officeId) {
+  if (bureauId && officeId) {
+    var count = (await db.query(fs.readFileSync(__dirname + '/sql/getBureauOfficeCount.sql', 'utf8'), bureauId, officeId)).rows[0].count;
+    return count;
+  } else {
+    return -1;
   }
 };
 

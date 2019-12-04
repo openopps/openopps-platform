@@ -4,6 +4,7 @@ const templates = require('./templates');
 const _ = require('underscore');
 const Backbone = require('backbone');
 var Transcripts = require('./transcripts');
+const actions = { up: -1, down: 1 };
 
 function renderEducation (){ 
   var data= _.extend({data:this.data}, { completedMonthFunction: education.getCompletedDateMonth });
@@ -228,11 +229,21 @@ var education = {
    
   saveEducation:function (){
     var data = getDataFromAddEducationPage(); 
+    var maxSortOrder= _.max(this.data.education, function (o){return o.sortOrder;});    
+   
     var callback= education.toggleAddEducationOff.bind(this);
     if(!validateFields.bind(this)()) {
       if(this.data.editEducation){
         data.educationId = this.data.editEducation;
-        data.updatedAt = this.educationData.updatedAt;      
+        data.updatedAt = this.educationData.updatedAt;  
+        var sortOrderData= _.filter(this.data.education, function (g){
+          return  g.educationId== data.educationId;
+        });
+        data.sortOrder =sortOrderData[0].sortOrder;     
+      }
+      else{
+        var sortOrder= !_.isEmpty(maxSortOrder) ? (maxSortOrder.sortOrder + 1) : 0;
+        data.sortOrder=  sortOrder;
       }
       $.ajax({
         url: '/api/application/'+this.data.applicationId+'/Education',
@@ -288,6 +299,44 @@ var education = {
       $('#eduCompletionYear').removeClass('usa-input-error'); 
       $('#eduCompletionYear>.completionYear-error').hide();  
     }
+  },
+
+  onError:function (error) {
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'sort-educations',
+      alert: 'error',
+      modalTitle: 'An unexpected error occured',
+      modalBody: 'An unexpected error occured attempting to update your educations from your application.',
+      primary: null,
+      secondary: null,
+    }).render();
+  },
+  
+  onSuccess: function (results) {
+    this.data.education = results;  
+    renderEducation.bind(this)();
+  },
+  swapEducations: function (education1, education2) {
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId + '/education/swap',
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify([education1, education2 ]),
+    }).done(education.onSuccess.bind(this)).fail(education.onError.bind(this));
+  },
+
+  moveEducation:function (e){
+    if (e.preventDefault) e.preventDefault();
+    var action = e.currentTarget.getAttribute('data-action');
+    var educationId= e.currentTarget.getAttribute('data-id');
+    var sort = parseInt($(e.currentTarget).closest('.order-options')[0].getAttribute('data-sort')); 
+    this.data.education= _.sortBy(this.data.education,'sortOrder');
+    var education1= _.findWhere(this.data.education, { educationId: educationId }); 
+    var education2= _.filter(this.data.education,function (f,index){     
+      return index== (sort + actions[action]);
+    }); 
+    education.swapEducations.bind(this)(education1, education2[0]);
   },
 
   getCompletedDateMonth:function (month){
