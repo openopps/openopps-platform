@@ -105,7 +105,9 @@ var AdminCommunityView = Backbone.View.extend({
           }.bind(self), 50);
           if(self.options.communities) {
             self.initializeCommunitySelect();
-          }       
+
+          }  
+          self.getDefaultCycle();     
         }.bind(self));
           
       }.bind(self),
@@ -364,6 +366,29 @@ var AdminCommunityView = Backbone.View.extend({
         self.renderActivities(self, activityData);
       }.bind(this),
     });
+  },
+
+  getDefaultCycle: function () {
+    var cycles = this.community.cycles;
+    var previousEnd = '';
+    var today = new Date();
+    var selectedCycle;
+
+    cycles.forEach(cycle => {
+      var currentStart = new Date(cycle.postingStartDate);
+      var currentEnd = new Date(cycle.postingEndDate);
+      
+      if (!selectedCycle) { selectedCycle = cycle; }
+      if(previousEnd === '') { previousEnd = currentEnd; }
+
+      if (currentEnd.getTime() >= previousEnd.getTime()){
+          if (currentEnd.getTime() <= today.getTime()) {
+            previousEnd = currentEnd;
+            selectedCycle = cycle;
+          }
+      } 
+    });
+    $('#cycles').val(selectedCycle.cycleId);
   },
 
   cleanup: function () {
