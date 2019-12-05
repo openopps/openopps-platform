@@ -98,6 +98,12 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'creator', 'title'],
   },
+  'INTERNSHIP_CANCELED': {
+    action: 'INTERNSHIP_CANCELED',
+    description: 'A user has canceled an internship.',
+    severity: 'info',
+    data: ['taskId','title','user', 'taskCreator'],
+  },
   //Application events
   'APPLICATION_SUBMITTED': {
     action: 'APPLICATION_SUBMITTED',

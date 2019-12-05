@@ -309,7 +309,7 @@ var experience = {
     var template = templates.applyAddExperience(data);
     this.$el.html(template);
     this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 }); 
     this.initializeCountriesSelect();
     window.scrollTo(0, 0);
   },
@@ -328,6 +328,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    experience.characterCount.bind(this)(); 
     this.initializeCountriesSelect();
     $('#apply_country').select2('data', { 
       id: data.country.countryId, 
@@ -407,6 +408,7 @@ var experience = {
     }).done(experience.onSuccess.bind(this)).fail(experience.onError.bind(this));
   },
   moveExperience : function (e) {
+    if (e.preventDefault) e.preventDefault();
     var action = e.currentTarget.getAttribute('data-action');
     var experienceId= e.currentTarget.getAttribute('data-id');
     var sort = parseInt($(e.currentTarget).closest('.order-options')[0].getAttribute('data-sort')); 

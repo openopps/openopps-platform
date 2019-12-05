@@ -125,6 +125,29 @@ dao.query.taskListQuery = `
   where task_id = ? and sort_order = 0
 `;
 
+dao.query.GetApplicationsToRemoveForPhase = `
+  select
+    task_list_application_id,
+    task_list_application.task_list_id,
+    task_list_application.application_id,
+    task_list_application.sort_order,
+    task_list_application.date_last_viewed,
+    task_list_application.date_last_contacted,
+    task_list_application.created_at,
+    task_list_application.updated_at,
+    task_list_application.updated_by,
+    task_list.task_id
+    from task_list_application
+      inner join task_list on task_list_application.task_list_id = task_list.task_list_id
+    where task_list_application.task_list_id in (
+      select task_list_id
+      from task_list inner join task on task_list.task_id = task.id
+      where 
+        task.cycle_id = ?
+        and task_list.title = 'For review'
+    )
+`;
+
 dao.query.RemoveApplicationsForPhase = `
   delete from task_list_application
   where task_list_id in (

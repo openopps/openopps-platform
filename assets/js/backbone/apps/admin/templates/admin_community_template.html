@@ -86,7 +86,7 @@
             <% _.each(_.sortBy(community.cycles, 'postingStartDate').reverse(), function (c) { %>          
                 <option value=<%- c.cycleId %> <% if (c.cycleId == cycleId) { %>selected<% } %>><%- c.name %></option>
             <% }); %>
-          </select>              
+          </select>  
         </fieldset>
       </div>
     </div>

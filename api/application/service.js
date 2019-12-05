@@ -382,6 +382,23 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
     });
   });
 };
+module.exports.swapEducations = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[1].sortOrder, data[0].educationId]);
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[0].sortOrder, data[1].educationId]);
+      }).then(async () => { 
+        resolve(( dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '', degreeLevel: '', honor: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your educations from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
+
 module.exports.swapExperiences = async function (userId, applicationId, data) {
   return new Promise((resolve, reject) => {
     dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {

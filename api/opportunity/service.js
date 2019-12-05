@@ -221,6 +221,11 @@ async function getCommunities (userId) {
   return communityTypes;
 }
 
+async function getUsdosSupportEmail () {
+  var supportEmail = (await dao.Community.query(dao.query.usdosSupportEmailQuery));
+  return supportEmail;
+}
+
 async function isStudent (userId,taskId) {
   var taskCommunities = await dao.Community.query(dao.query.taskCommunitiesQuery, userId,taskId);
   var communityTypes = {
@@ -367,6 +372,26 @@ async function completedInternship (attributes, done) {
     var completedInterns= (await dao.TaskListApplication.db.query(dao.query.completedInternsQuery,task.id)).rows;
     _.forEach(completedInterns, (intern) => {
       sendInternSurveydNotification(intern, 'internship.completed.survey');
+    });
+    await elasticService.indexOpportunity(task.id);
+    return done(true);
+  }).catch (err => {
+    return done(false);
+  });
+}
+async function canceledInternship (ctx,attributes, done) {
+  var origTask = await dao.Task.findOne('id = ?', attributes.id);
+  attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+  await dao.Task.update(attributes).then(async (t) => {
+    var task = await findById(t.id, true);  
+    var audit = Audit.createAudit('INTERNSHIP_CANCELED', ctx, {
+      taskId: t.id,
+      title:origTask.title,
+      user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+      taskCreator:_.pick(await dao.User.findOne('id = ?', origTask.userId), 'id', 'name', 'username'),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
     });
     await elasticService.indexOpportunity(task.id);
     return done(true);
@@ -735,6 +760,7 @@ module.exports = {
   publishTask: publishTask,
   completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
+  canceledInternship:canceledInternship,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
@@ -747,6 +773,7 @@ module.exports = {
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };

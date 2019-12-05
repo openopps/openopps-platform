@@ -36,6 +36,11 @@ router.get('/api/task/communities', auth, async (ctx, next) => {
   ctx.body = data;
 });
 
+router.get('/api/task/community/supportEmail', auth, async (ctx, next) => {
+  var supportEmail = await service.getUsdosSupportEmail();
+  ctx.body = supportEmail;
+});
+
 router.get('/api/task/saved', auth, async (ctx, next) => {
   ctx.body = await service.getSavedOpportunities(ctx.state.user);
 });
@@ -163,6 +168,20 @@ router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
     await service.completedInternship(ctx.request.body, function (done) {
+      ctx.body = { success: true };
+    }).catch(err => {
+      log.info(err);
+    });
+  } else {
+    ctx.status = 401;
+    ctx.body = null;
+  }
+});
+
+router.put('/api/task/internship/cancel/:id', auth, async (ctx, next) => {
+  if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
+    ctx.request.body.updatedBy = ctx.state.user.id;
+    await service.canceledInternship(ctx,ctx.request.body, function (done) {
       ctx.body = { success: true };
     }).catch(err => {
       log.info(err);

@@ -13,7 +13,7 @@ service.getUserPreferences = async function(userId) {
     
     var user = await dao.User.findOne("id = ?", userId);
     if (user != null) {
-        var result = await dao.TaskShare.find("user_id = ?", userId);
+        var result = await dao.CommunityUser.find("user_id = ?", userId);
         preferences.isOOAdmin = user.isAdmin;
         preferences.isOOAgencyAdmin = user.isAgencyAdmin;
         preferences.governmentURI = user.governmentURI;

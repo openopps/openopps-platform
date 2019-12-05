@@ -24,7 +24,8 @@ var InternshipView = BaseView.extend({
     'click #internship-edit'            : linkBackbone,
     'click #save'                       : 'toggleSave',
     'click .toggle-internship-complete' : 'toggleInternComplete',
-    'click #close-internship'           : 'closeInternship'
+    'click #close-internship'           : 'closeInternship',
+    'click #internship-cancel'            : 'cancel',
   },
 
   initialize: function (options) {
@@ -35,7 +36,6 @@ var InternshipView = BaseView.extend({
     this.selectedInterns={};
     
   },
-
 
   modalOptions: {
     el: '#site-modal',
@@ -52,6 +52,7 @@ var InternshipView = BaseView.extend({
       model: this.model.toJSON(),
       madlibTags: this.organizeTags(this.model.attributes.tags),
       fromSearch: this.params.has('fromSearch'),
+      checkDosAdmins: this.checkDosAdmins(),
     };
    
     _.each(['details', 'about'], function (part) {
@@ -189,6 +190,51 @@ var InternshipView = BaseView.extend({
     }
   },
 
+  cancel: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'cancel-internship',
+      modalTitle: 'Are you sure you want to cancel this internship?',
+      modalBody: 'If you cancel this internship, applicants will no longer be able to apply to it. You will also remove any applicants who have already applied for this internship.',
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Confirm',
+        action: function () {
+          this.cancelInternship();
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+    }).render();
+  
+  },
+
+  cancelInternship: function () {
+    var state = 'canceled';
+    $.ajax({
+      url: '/api/task/internship/cancel/' +  this.model.attributes.id,
+      type: 'PUT',
+      data: {
+        id: this.model.attributes.id,
+        state: state,      
+      },
+      success: function (data) {    
+        this.model.attributes.state = 'canceled';
+        this.data.model.state = 'canceled';
+        this.model.attributes.canceledAt = new Date();
+        this.data.model.canceledAt = new Date();   
+        this.render();
+      }.bind(this),
+      error: function (err) {
+        // display modal alert type error
+      }.bind(this),
+    });
+  },
   copy: function (e) {
     if (e.preventDefault) e.preventDefault();
     var self = this;
@@ -219,10 +265,8 @@ var InternshipView = BaseView.extend({
               taskId: self.model.attributes.id,
               title: $('#task-copy-title').val(),
             },
-          }).done(function (data) {
-            console.log(data);
-            self.modalComponent.cleanup();
-            
+          }).done(function (data) {        
+            self.modalComponent.cleanup();        
             Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
           });
         },
@@ -291,13 +335,21 @@ var InternshipView = BaseView.extend({
     }
   },
 
-  renderSelectedInterns: function () {
+  renderSelectedInterns: function () { 
     var selectedInternsTemplate = _.template(InternsTemplate)({
       interns: this.selectedInterns,
       data: this.model.attributes,     
     });
     $('#internship-interns').html(selectedInternsTemplate);
   }, 
+  checkDosAdmins: function () {
+    var dos= _.findWhere(window.cache.currentUser.communities.student, { referenceId: 'dos' });
+    if((!_.isEmpty(dos) && window.cache.currentUser.isCommunityAdmin) || window.cache.currentUser.isAdmin || (window.cache.currentUser.id==this.model.attributes.userId) ) {
+      return true;
+    } else {
+      return false;
+    }
+  },
 
   closeInternship: function (e) {
     if (e.preventDefault) e.preventDefault();

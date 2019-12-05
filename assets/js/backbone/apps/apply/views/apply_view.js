@@ -78,6 +78,7 @@ var ApplyView = Backbone.View.extend({
     'mouseleave .gpa-input'                                       : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'blur .gpa-input'                                             : function (e) { this.callMethod(Education.gpaBlur, e); },
     'blur .completionYear-input'                                  : function (e) { this.callMethod(Education.completionYearBlur, e); },
+    'click .edu-sort-arrow'                                        : function (e) { this.callMethod(Education.moveEducation, e); },  
     
     //language events
     'click #add-language, .edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -118,7 +119,7 @@ var ApplyView = Backbone.View.extend({
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
-    this.data.experience = _.sortBy(this.data.experience, 'sortOrder');
+    this.data.experience = _.sortBy(this.data.experience, 'sortOrder');  
     this.data.languages        = this.data.languages || [];
     this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
