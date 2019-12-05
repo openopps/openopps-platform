@@ -177,12 +177,12 @@ router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
     if (error) {
-      ctx.flash('error', 'Error Copying Opportunity');
       ctx.status = 400;
       log.info(error);
-      return ctx.body = null;
+      ctx.body = error.message;
+    } else {
+      ctx.body = task;
     }
-    ctx.body = task;
   });
 });
 
