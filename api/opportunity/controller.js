@@ -181,7 +181,7 @@ router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
 router.put('/api/task/internship/cancel/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
-    await service.canceledInternship(ctx.request.body, function (done) {
+    await service.canceledInternship(ctx,ctx.request.body, function (done) {
       ctx.body = { success: true };
     }).catch(err => {
       log.info(err);
