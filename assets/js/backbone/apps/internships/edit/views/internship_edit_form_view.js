@@ -310,6 +310,9 @@ var InternshipEditFormView = Backbone.View.extend({
     if (this.model.attributes.office) {
       $('#task_tag_office').val(this.model.attributes.officeId);
     }
+    if (this.model.attributes.cityName) {
+      $('#task_tag_city').val(this.model.attributes.cityName);
+    }
   },
 
   loadAudienceCommunityData: function () {
