@@ -219,13 +219,15 @@ var InternshipView = BaseView.extend({
               taskId: self.model.attributes.id,
               title: $('#task-copy-title').val(),
             },
-          }).done(function (data) {
-            console.log(data);
-            self.modalComponent.cleanup();
-            
-            Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            success: function (data) {
+              self.modalComponent.cleanup();
+              Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            },
+            error: function (error, status) {
+              this.modalComponent.displayError(error.responseText, 'Copy this opportunity');
+            }.bind(this)
           });
-        },
+        }.bind(this),
       },
     }).render();
   },
