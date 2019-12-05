@@ -379,11 +379,20 @@ async function completedInternship (attributes, done) {
     return done(false);
   });
 }
-async function canceledInternship (attributes, done) {
+async function canceledInternship (ctx,attributes, done) {
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);  
+    var audit = Audit.createAudit('INTERNSHIP_CANCELED', ctx, {
+      taskId: t.id,
+      title:origTask.title,
+      user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+      taskCreator:_.pick(await dao.User.findOne('id = ?', origTask.userId), 'id', 'name', 'username'),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
+    });
     await elasticService.indexOpportunity(task.id);
     return done(true);
   }).catch (err => {
