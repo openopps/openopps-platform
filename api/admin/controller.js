@@ -4,6 +4,7 @@ const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
 const communityService = require('../community/service');
+const systemSetting = require('./systemSetting');
 
 var router = new Router();
 
@@ -43,6 +44,22 @@ router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
   }).catch(err => {
     ctx.status = 400;
   });
+});
+
+router.get('/api/admin/settings', auth.isAdmin, async (ctx, next) => {
+  await systemSetting.getAll().then(settings => {
+    ctx.body = settings;
+  }).catch(err => {
+    ctx.status = 400;
+  })
+});
+
+router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {
+  await systemSetting.save(ctx.request.body.key, ctx.request.body.value, ctx.state.user.id).then(result => {
+    ctx.body = result.rows[0];
+  }).catch(err => {
+    ctx.status = 400;
+  })
 });
 
 router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {

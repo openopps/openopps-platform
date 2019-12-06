@@ -1,0 +1,9 @@
+<form action="javascript:void(0)" class="usa-form-xl " role="form" id="admin-community-add-bureau" >
+  <div class="required-input" >
+    <label for="system-setting-value"><%= display %></label>
+    <span class="field-validation-error error-empty" style="display:none;">You must provide a value.</span>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '
+        < ' or '>' are not allowed.</span>
+    <input type="text" id="system-setting-value" class="fullwidth form-control validate" data-validate="empty,html" value="<%= value %>"  />
+  </div>
+</form>

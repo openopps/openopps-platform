@@ -5,7 +5,6 @@ module.exports = {
     var data = {
       task: model.task,
       user: model.user,
-      survey: openopps.survey,
     };
     done(null, data);
   },
