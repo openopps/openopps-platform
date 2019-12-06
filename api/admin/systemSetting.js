@@ -29,7 +29,7 @@ module.exports.get = function (key) {
       text: 'SELECT * FROM system_setting WHERE key = $1',
       values: [key],
     }).then(queryResult => {
-      resolve(queryResult.rows);
+      resolve(queryResult.rows[0]);
     }).catch(reject);;
   });
 };
