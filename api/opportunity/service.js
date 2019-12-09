@@ -382,8 +382,18 @@ async function completedInternship (attributes, done) {
 async function canceledInternship (ctx,attributes, done) {
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+
+  var getApplicants = fs.readFileSync(__dirname + '/sql/getInternshipApplicants.sql', 'utf8');  
+  var applicants= (await db.query(getApplicants, attributes.id)).rows;
+
   await dao.Task.update(attributes).then(async (t) => {
-    var task = await findById(t.id, true);  
+    var task = await findById(t.id, true);
+    var cycle=  await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    if(new Date(cycle.applyEndDate) > new Date() && applicants.length>0){
+      _.forEach(applicants, (applicant) => {
+        sendApplicantsCanceledNotification(applicant, 'internship.applicants.canceled');
+      });  
+    }
     var audit = Audit.createAudit('INTERNSHIP_CANCELED', ctx, {
       taskId: t.id,
       title:origTask.title,
@@ -547,6 +557,12 @@ async function sendHiringManagerSurveyNotification (user) {
 
 async function sendInternSurveydNotification (user) {
   var data = await getInternNotificationTemplateData(user, 'state.department/internship.completed.survey');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+async function sendApplicantsCanceledNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
   if(!data.model.bounced) {
     notification.createNotification(data);
   }
@@ -770,6 +786,7 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   sendHiringManagerSurveyNotification: sendHiringManagerSurveyNotification,
   sendInternSurveydNotification: sendInternSurveydNotification,
+  sendApplicantsCanceledNotification:sendApplicantsCanceledNotification,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
