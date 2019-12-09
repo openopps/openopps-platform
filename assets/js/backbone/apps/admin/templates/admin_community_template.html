@@ -83,10 +83,6 @@
           <label for="cycles" class="usa-sr-only">Cycle</label>
           <h3 class="usajobs-section-header admin-separator">Cycle</h3>
           <select id="cycles" class="dropdown">    
-            <!-- <% _.each(_.sortBy(community.cycles, 'postingStartDate').reverse(), function (c) { %>          
-                <option value=<%- c.cycleId %> <% if (c.cycleId == cycleId) { %>selected<% } %>><%- c.name %></option>
-            <% }); %> -->
-
             <% _.each(community.cycles, function (c) { %>          
               <option value=<%- c.cycleId %> <% if (c.cycleId == cycleId) { %>selected<% } %>><%- c.name %></option>
             <% }); %>

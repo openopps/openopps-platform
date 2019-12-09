@@ -384,7 +384,7 @@ var AdminCommunityView = Backbone.View.extend({
       if(previousEnd === '') { previousEnd = currentEnd; }
 
       if (currentEnd.getTime() >= previousEnd.getTime()){
-        if (currentEnd.getTime() <= today.getTime()) {
+        if (currentStart.getTime() <= today.getTime()) {
           previousEnd = currentEnd;
           selectedCycle = cycle;
         }
