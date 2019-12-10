@@ -334,6 +334,15 @@ async function updateOpportunity (ctx, attributes, done) {
       else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
+      
+      var getApplicantsForUpdates = fs.readFileSync(__dirname + '/sql/getInternshipApplicantsForUpdates.sql', 'utf8');  
+      var applicants = (await db.query(getApplicantsForUpdates, attributes.id)).rows;
+
+      if ((task.cityName !== origTask.cityName || task.countrySubdivisionId !== origTask.countrySubdivisionId || task.countryId !== origTask.countryId || task.bureauId !== origTask.bureauId || task.officeId !== origTask.officeId) && new Date(task.cycle.applyEndDate) > new Date() && applicants.length > 0) {
+        _.forEach(applicants, (applicant) => {
+          sendApplicantsUpdatedNotification(applicant, 'internship.applicants.update');
+        });
+      }
     }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
@@ -561,8 +570,16 @@ async function sendInternSurveydNotification (user) {
     notification.createNotification(data);
   }
 }
+
 async function sendApplicantsCanceledNotification (user) {
   var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+
+async function sendApplicantsUpdatedNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.update');
   if(!data.model.bounced) {
     notification.createNotification(data);
   }
@@ -786,7 +803,8 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   sendHiringManagerSurveyNotification: sendHiringManagerSurveyNotification,
   sendInternSurveydNotification: sendInternSurveydNotification,
-  sendApplicantsCanceledNotification:sendApplicantsCanceledNotification,
+  sendApplicantsCanceledNotification: sendApplicantsCanceledNotification,
+  sendApplicantsUpdatedNotification: sendApplicantsUpdatedNotification,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
