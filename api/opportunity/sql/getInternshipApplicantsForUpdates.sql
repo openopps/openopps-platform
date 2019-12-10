@@ -11,4 +11,4 @@ inner join bureau on task.bureau_id = bureau.bureau_id
 left join office on task.office_id = office.office_id
 left join country on task.country_id = country.country_id
 left join country_subdivision on task.country_subdivision_id = country_subdivision.country_subdivision_id
-where application_task.task_id = 792 and task.state = 'open';
+where application_task.task_id = ? and task.state = 'open';
