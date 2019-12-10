@@ -232,13 +232,15 @@ var ApplyView = Backbone.View.extend({
     var target = element.siblings('.usajobs-drawer-content');
     var open = element.attr('aria-expanded') == 'true';
     if (!open) {
-      target.slideDown('fast', function () {
-        $('html, body').animate({
-          scrollTop: element.offset().top,
+      setTimeout(function () {
+        target.slideDown('fast', function () {
+          $('html, body').animate({
+            scrollTop: element.offset().top,
+          });
+          element.attr('aria-expanded', 'true');
+          target.attr('aria-hidden', 'false');
         });
-        element.attr('aria-expanded', 'true');
-        target.attr('aria-hidden', 'false');
-      });
+      }, 25);
     } else {
       target.slideUp(function () {
         element.attr('aria-expanded', 'false');
