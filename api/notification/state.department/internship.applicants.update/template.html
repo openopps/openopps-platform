@@ -1,0 +1,17 @@
+<p>Hello <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>The Department of State Student Internship Program has changed the bureau, office, post or location of one of your internship opportunity selections. Please review the updated information:</p>
+
+<ul>
+  <li>Internship name: <a href="<%- globals.urlPrefix %>/internships/<%- user.taskId %>"><%- user.internshipName %></a></li>
+  <li>Bureau/Office: <%- user.internshipBureau %>/<%- user.internshipOffice %></li>
+  <li>Location: <%- user.internshipLocation %></li>
+</ul>
+
+<p>If you'd like to select a different internship to apply to, you must update your selections before the application period closes on <%- moment(user.applyEndDate).format('MMMM DD, YYYY') %> at 11:59 p.m. ET.</p>
+
+<p><a href="<%- globals.urlPrefix %>">Sign into Open Opportunities to select a different intersnhip</a>.</p>
+
+<p>You can check the status of your application on your <a href="<%- globals.urlPrefix %>/home">Open Opportunities dashboard</a>. If you need to make an update, don't forget to submit your application again.</p>
+
+<p>If you don't want to select a different internship or make any updates, you don't need to do anything.</p>
