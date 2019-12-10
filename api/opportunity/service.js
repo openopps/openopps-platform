@@ -570,6 +570,12 @@ async function sendInternSurveydNotification (user) {
     notification.createNotification(data);
   }
 }
+async function sendApplicantsCanceledNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
 
 async function sendApplicantsCanceledNotification (user) {
   var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
