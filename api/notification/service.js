@@ -45,7 +45,7 @@ function createNotification (notification) {
       sendEmail(options, function (err, info) {
         log.info(err ? err : info);
         if (!err) {
-          insertNotification(action, data);
+          insertNotification(data._action, data);
         }
       });
     });
@@ -122,6 +122,7 @@ function insertNotification (action, data) {
   var newNotification = {
     action: action,
     model: data,
+    recipientId: data.user.id,
     isActive: 't',
     createdAt: new Date(),
     updatedAt: new Date(),
