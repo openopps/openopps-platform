@@ -302,6 +302,7 @@ var AdminDashboardView = Backbone.View.extend({
               },
               success: function (result) {
                 this.modalComponent.cleanup();
+                $('a[data-key="' + data.key + '"]').data('value', result.value);
                 $('#' + data.key).children('td')[1].innerText = result.value;
                 $('#' + data.key).children('td')[2].innerText = moment(result.updated_at).format('MM/DD/YYYY hh:mma');
               }.bind(this),
