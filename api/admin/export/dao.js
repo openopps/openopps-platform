@@ -174,7 +174,9 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
   'left join cycle on task.cycle_id = cycle.cycle_id ' +
   'left join country on task.country_id = country.country_id ' +
   'left join country_subdivision on task.country_subdivision_id = country_subdivision.country_subdivision_id ' +
-  'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
+  'where task.community_id = ? and cycle.cycle_id = ? and ' +
+  '((cycle.closed_date is not null and cycle.closed_date <= NOW()) or cycle.review_end_date <= NOW()) ' +
+  'order by task."createdAt" desc';
 
 var exportUserFormat = {
   'name': {field: 'name', filter: nullToEmptyString},
