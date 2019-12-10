@@ -161,6 +161,7 @@ service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) 
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   }
 }; 
@@ -181,6 +182,7 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
     layout: 'state.department/layout.html',
   };
   notification.createNotification(data);
+  var throttle = await checkEmailThrottle(i, 20);
 };
 
 service.sendAlternatePhaseStartedNotification = async function (cycleId) {
@@ -201,6 +203,7 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -226,6 +229,7 @@ service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
         layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -249,6 +253,7 @@ service.sendCloseCyclePhaseNotSelectedNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -274,6 +279,7 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
         layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -301,6 +307,7 @@ service.sendCloseCyclePhaseCreatorNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -323,6 +330,7 @@ service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) 
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -345,10 +353,20 @@ service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleI
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
 
+function checkEmailThrottle(index, limit) {
+  return new Promise(resolve => {
+    if((index + 1) % limit == 0) {
+      setTimeout(resolve, 1500);
+    } else {
+      resolve();
+    }
+  });
+};
 
 function getNextInternshipIndex (internshipIndex) {
   var counter = 0;
