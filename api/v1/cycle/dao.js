@@ -269,14 +269,11 @@ dao.query.getApplicantAlternate = `
 
 dao.query.getApplicantNotSelected = `
   select cycle.name as session, mu.username as email, mu.given_name    
-  from "cycle"
-    inner join task on task.cycle_id = cycle.cycle_id
-    inner join task_list tl on tl.task_id = task.id
-    inner join task_list_application tla on tla.task_list_id = tl.task_list_id 
-    inner join application a on a.application_id = tla.application_id
-    inner join midas_user mu on mu.id = a.user_id    
-  where cycle.cycle_id = ?
-    and tl.title not in ('Primary','Alternate')
+    from "cycle"
+      inner join application a on a.cycle_id = cycle.cycle_id
+      inner join midas_user mu on mu.id = a.user_id    
+    where cycle.cycle_id = ? and a.submitted_at is not null
+      and a.application_id not in (select application_id from task_list_application)
 `;
 
 dao.query.GetCycleApplicantData = `
