@@ -4,6 +4,7 @@ const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
 const communityService = require('../community/service');
+const systemSetting = require('./systemSetting');
 
 var router = new Router();
 
@@ -43,6 +44,22 @@ router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
   }).catch(err => {
     ctx.status = 400;
   });
+});
+
+router.get('/api/admin/settings', auth.isAdmin, async (ctx, next) => {
+  await systemSetting.getAll().then(settings => {
+    ctx.body = settings;
+  }).catch(err => {
+    ctx.status = 400;
+  })
+});
+
+router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {
+  await systemSetting.save(ctx.request.body.key, ctx.request.body.value, ctx.state.user.id).then(result => {
+    ctx.body = result.rows[0];
+  }).catch(err => {
+    ctx.status = 400;
+  })
 });
 
 router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
@@ -127,11 +144,11 @@ router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next)
   }
 });
 router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
-  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId).then(results => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId,ctx.query.sort,ctx.query.filter).then(results => {
     ctx.status = 200;
     ctx.body = results;
   }).catch(err => {
-    ctx.status = err.status;
+    ctx.status = 403;
   });
 });
 router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, async (ctx, next) => {
@@ -199,6 +216,7 @@ router.delete('/api/admin/community/:id/bureau/:bureauId', auth, async (ctx, nex
     }
   }); 
 });
+
 router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
   await service.deleteOffice(ctx, async (errors, result) => {    
     if (errors) {
@@ -211,6 +229,23 @@ router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth
   }); 
 });
 
+router.get('/api/admin/bureau/:bureauId', auth, async (ctx, next) => {
+  var count =  await service.getBureauCount(ctx.params.bureauId);
+  if (count.length) {
+    ctx.body = count;
+  } else {
+    ctx.status = 403;
+  }
+});
+
+router.get('/api/admin/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
+  var count =  await service.getBureauOfficeCount(ctx.params.bureauId, ctx.params.officeId);
+  if (count.length) {
+    ctx.body = count;
+  } else {
+    ctx.status = 403;
+  }
+});
 
 router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {

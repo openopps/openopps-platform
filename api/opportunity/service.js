@@ -221,6 +221,11 @@ async function getCommunities (userId) {
   return communityTypes;
 }
 
+async function getUsdosSupportEmail () {
+  var supportEmail = (await dao.Community.query(dao.query.usdosSupportEmailQuery));
+  return supportEmail;
+}
+
 async function isStudent (userId,taskId) {
   var taskCommunities = await dao.Community.query(dao.query.taskCommunitiesQuery, userId,taskId);
   var communityTypes = {
@@ -329,6 +334,15 @@ async function updateOpportunity (ctx, attributes, done) {
       else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
+      
+      var getApplicantsForUpdates = fs.readFileSync(__dirname + '/sql/getInternshipApplicantsForUpdates.sql', 'utf8');  
+      var applicants = (await db.query(getApplicantsForUpdates, attributes.id)).rows;
+
+      if ((task.cityName !== origTask.cityName || task.countrySubdivisionId !== origTask.countrySubdivisionId || task.countryId !== origTask.countryId || task.bureauId !== origTask.bureauId || task.officeId !== origTask.officeId) && new Date(task.cycle.applyEndDate) > new Date() && applicants.length > 0) {
+        _.forEach(applicants, (applicant) => {
+          sendApplicantsUpdatedNotification(applicant, 'internship.applicants.update');
+        });
+      }
     }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
@@ -367,6 +381,36 @@ async function completedInternship (attributes, done) {
     var completedInterns= (await dao.TaskListApplication.db.query(dao.query.completedInternsQuery,task.id)).rows;
     _.forEach(completedInterns, (intern) => {
       sendInternSurveydNotification(intern, 'internship.completed.survey');
+    });
+    await elasticService.indexOpportunity(task.id);
+    return done(true);
+  }).catch (err => {
+    return done(false);
+  });
+}
+async function canceledInternship (ctx,attributes, done) {
+  var origTask = await dao.Task.findOne('id = ?', attributes.id);
+  attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
+
+  var getApplicants = fs.readFileSync(__dirname + '/sql/getInternshipApplicants.sql', 'utf8');  
+  var applicants= (await db.query(getApplicants, attributes.id)).rows;
+
+  await dao.Task.update(attributes).then(async (t) => {
+    var task = await findById(t.id, true);
+    var cycle=  await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
+    if(new Date(cycle.applyEndDate) > new Date() && applicants.length>0){
+      _.forEach(applicants, (applicant) => {
+        sendApplicantsCanceledNotification(applicant, 'internship.applicants.canceled');
+      });  
+    }
+    var audit = Audit.createAudit('INTERNSHIP_CANCELED', ctx, {
+      taskId: t.id,
+      title:origTask.title,
+      user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+      taskCreator:_.pick(await dao.User.findOne('id = ?', origTask.userId), 'id', 'name', 'username'),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
     });
     await elasticService.indexOpportunity(task.id);
     return done(true);
@@ -432,6 +476,27 @@ function sendTaskStateUpdateNotification (user, task) {
   }
 }
 
+async function canUpdateInternship (user, id) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
+  if (!task) {
+    return false;
+  } else if (user.isAdmin
+  || await isCommunityAdmin(user, task)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+async function checkCommunityAdmin (user, id) {
+  var task = await dao.Task.findOne('id = ?', id);
+  if (task && task.communityId) {
+    return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
+      return {};
+    })).isManager;
+  } else {
+    return false;
+  }
+}
 async function getInternNotificationTemplateData (intern, action) {
   var data = {
     action: action,
@@ -522,6 +587,20 @@ async function sendHiringManagerSurveyNotification (user) {
 
 async function sendInternSurveydNotification (user) {
   var data = await getInternNotificationTemplateData(user, 'state.department/internship.completed.survey');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+async function sendApplicantsCanceledNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
+  if(!data.model.bounced) {
+    notification.createNotification(data);
+  }
+}
+
+
+async function sendApplicantsUpdatedNotification (user) {
+  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.update');
   if(!data.model.bounced) {
     notification.createNotification(data);
   }
@@ -745,6 +824,9 @@ module.exports = {
   publishTask: publishTask,
   completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
+  canceledInternship:canceledInternship, 
+  canUpdateInternship:canUpdateInternship,
+  checkCommunityAdmin:checkCommunityAdmin,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
@@ -754,12 +836,16 @@ module.exports = {
   sendTasksDueNotifications: sendTasksDueNotifications,
   sendHiringManagerSurveyNotification: sendHiringManagerSurveyNotification,
   sendInternSurveydNotification: sendInternSurveydNotification,
+  sendApplicantsCanceledNotification: sendApplicantsCanceledNotification,
+  sendApplicantsUpdatedNotification: sendApplicantsUpdatedNotification,
   canUpdateOpportunity: canUpdateOpportunity,
   canAdministerTask: canAdministerTask,
   getCommunities: getCommunities,
+  getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };
+
 
 module.exports.getApplicantsForTask = async (user, taskId) => {
   return new Promise((resolve, reject) => {

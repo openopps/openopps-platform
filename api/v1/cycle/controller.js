@@ -61,7 +61,7 @@ Handler.startPrimaryPhase = async function (ctx) {
 };
 
 Handler.startAlternatePhase = async function (ctx) {
-  await service.startAlternateProcessing(ctx.request.fields.cycleId);
+  await service.startAlternateProcessing(ctx.state.user, ctx.request.fields.cycleId);
   return new Promise((resolve, reject) => {
     drawMany(ctx).then(results => {
       service.sendAlternatePhaseStartedNotification(ctx.request.fields.cycleId);

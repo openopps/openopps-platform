@@ -39,6 +39,7 @@ var ApplyView = Backbone.View.extend({
     'click .program-select'                                       : function (e) { this.callMethod(Program.selectSavedOpportunity, e); },
     
     //experience events
+    'change #check-experience'                                    : function () { this.callMethod(Experience.toggleWorkExperience); },
     'change [name=has_vsfs_experience]'                           : function () { this.callMethod(Experience.toggleVsfsDetails); },
     'change [name=has_overseas_experience]'                       : function () { this.callMethod(Experience.toggleOverseasExperienceDetails); },
     'change [name=overseas_experience_types]'                     : function () { this.callMethod(Experience.toggleOverseasExperienceFilterOther); },
@@ -57,7 +58,8 @@ var ApplyView = Backbone.View.extend({
     'keypress #duties'                                            : function () { this.callMethod(Experience.characterCount); },
     'keypress #overseas-total-length'                             : function () { this.callMethod(Experience.characterCount); }, 
     'keypress #experience-other'                                  : function () { this.callMethod(Experience.characterCount); },   
-    'click .delete-record'                                        : 'deleteRecord',
+    'click .delete-record'                                        : 'deleteRecord',  
+		 'click .exp-sort-arrow'                                        : function (e) { this.callMethod(Experience.moveExperience, e); },  
 
     //education events
     'click #add-education'                                        : function () { this.callMethod(Education.toggleAddEducation); },
@@ -76,6 +78,7 @@ var ApplyView = Backbone.View.extend({
     'mouseleave .gpa-input'                                       : function (e) { this.callMethod(Education.gpaKeyDown, e); },
     'blur .gpa-input'                                             : function (e) { this.callMethod(Education.gpaBlur, e); },
     'blur .completionYear-input'                                  : function (e) { this.callMethod(Education.completionYearBlur, e); },
+    'click .edu-sort-arrow'                                        : function (e) { this.callMethod(Education.moveEducation, e); },  
     
     //language events
     'click #add-language, .edit-language'                         : function (e) { this.callMethod(Language.toggleLanguagesOn, e); },
@@ -116,6 +119,7 @@ var ApplyView = Backbone.View.extend({
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
+    this.data.experience = _.sortBy(this.data.experience, 'sortOrder');  
     this.data.languages        = this.data.languages || [];
     this.data.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
@@ -146,6 +150,7 @@ var ApplyView = Backbone.View.extend({
         $('#saveProgramContinue').removeAttr('disabled');
       }
     }
+    
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: this.data.currentStep, selectedStep: this.data.selectedStep });
     Education.renderComponentEducation.bind(this)();
@@ -155,6 +160,14 @@ var ApplyView = Backbone.View.extend({
     Experience.characterCount();
     this.checkStatementHeight();
     this.closeSubNav();
+
+    if (this.data.selectedStep == 2) {
+      if (this.data.experience.length < 1 ) {
+        $('#check-experience-details').css('display', 'block');
+      } else {
+        $('#check-experience-details').css('display', 'none');
+      }
+    }
 
     $('.apply-hide').hide();
     $('.usa-footer-search--intern').show();
@@ -219,13 +232,15 @@ var ApplyView = Backbone.View.extend({
     var target = element.siblings('.usajobs-drawer-content');
     var open = element.attr('aria-expanded') == 'true';
     if (!open) {
-      target.slideDown('fast', function () {
-        $('html, body').animate({
-          scrollTop: element.offset().top,
+      setTimeout(function () {
+        target.slideDown('fast', function () {
+          $('html, body').animate({
+            scrollTop: element.offset().top,
+          });
+          element.attr('aria-expanded', 'true');
+          target.attr('aria-hidden', 'false');
         });
-        element.attr('aria-expanded', 'true');
-        target.attr('aria-hidden', 'false');
-      });
+      }, 25);
     } else {
       target.slideUp(function () {
         element.attr('aria-expanded', 'false');
@@ -256,14 +271,10 @@ var ApplyView = Backbone.View.extend({
 
   // summary section
   summaryContinue: function () {
-    this.updateApplicationStep(1);
-  },
-
-  updateApplicationStep: function (step) {
-    this.data.currentStep = step;
-    this.data.selectedStep = step;
-
-    if (step == 1) {
+    if(this.data.currentStep != 0) {
+      this.updateApplicationStep(1);
+    } else {
+      var start = Date.now();
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
         id: 'import-profile',
@@ -274,8 +285,33 @@ var ApplyView = Backbone.View.extend({
         primary: {},
         secondary: {},
       }).render();
+      $.ajax({
+        url: '/api/application/import/profile',
+        method: 'POST',
+        data: {
+          applicationId: this.data.applicationId,
+        },
+      }).done(function () {
+        var duration = Date.now() - start;
+        if (duration < 2000) {
+          setTimeout(function () {
+            this.modalComponent.cleanup();
+            this.updateApplicationStep(1);
+          }.bind(this), 2000 - duration);
+        } else {
+          this.modalComponent.cleanup();
+          this.updateApplicationStep(1);
+        }
+      }.bind(this)).fail(function () {
+        this.modalComponent.cleanup();
+        showWhoopsPage();
+      }.bind(this));
     }
+  },
 
+  updateApplicationStep: function (step) {
+    this.data.currentStep = step;
+    this.data.selectedStep = step;
     $.ajax({
       url: '/api/application/' + this.data.applicationId,
       method: 'PUT',
@@ -289,11 +325,9 @@ var ApplyView = Backbone.View.extend({
       this.data.updatedAt = result.updatedAt;
       Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });      
       Backbone.history.loadUrl(Backbone.history.getFragment());
-      if (this.modalComponent) { this.modalComponent.cleanup(); }
       this.render();
       window.scrollTo(0, 0);
     }.bind(this)).fail(function () {
-      if (this.modalComponent) { this.modalComponent.cleanup(); }
       showWhoopsPage();
     });
   },
@@ -475,8 +509,11 @@ var ApplyView = Backbone.View.extend({
               applicationData[recordData.section] = recordList;
             
               $(e.currentTarget).closest('li').remove();
-              //  this.updateApplicationStep(this.data.selectedStep);
+              if (applicationData.experience.length < 1) {
+                $('#check-experience-details').css('display', 'block');
+              }          
               this.modalComponent.cleanup();
+              Experience.renderExperience.bind(this)();
             }.bind(this),
             error: function (err) {
               this.modalComponent.cleanup();

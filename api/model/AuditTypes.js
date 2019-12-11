@@ -98,6 +98,12 @@ module.exports = {
     severity: 'info',
     data: ['taskId', 'creator', 'title'],
   },
+  'INTERNSHIP_CANCELED': {
+    action: 'INTERNSHIP_CANCELED',
+    description: 'A user has canceled an internship.',
+    severity: 'info',
+    data: ['taskId','title','user', 'taskCreator'],
+  },
   //Application events
   'APPLICATION_SUBMITTED': {
     action: 'APPLICATION_SUBMITTED',
@@ -110,6 +116,12 @@ module.exports = {
     description: 'An application was updated by the user.',
     severity: 'info',
     data: ['applicationId', 'userId', 'updatedAt'],
+  },
+  'APPLICATION_WITHDRAWN': {
+    action: 'APPLICATION_WITHDRAWN',
+    description: 'An application was withdrawn by the user.',
+    severity: 'info',
+    data: ['applicationId', 'cycleId', 'userId'],
   },
   // Community events
   'COMMUNITY_ADD_MEMBER': {

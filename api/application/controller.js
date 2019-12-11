@@ -45,7 +45,7 @@ router.get('/api/application/:id', auth, auth.checkToken, async (ctx, next) => {
 });
 
 router.put('/api/application/:id', auth, async (ctx, next) => {
-  var result = await service.updateApplication(ctx,ctx.state.user.id, ctx.params.id, ctx.request.body);
+  var result = await service.updateApplication(ctx, ctx.state.user.id, ctx.params.id, ctx.request.body);
   if (result) {
     ctx.status = 200;
     ctx.body = result;
@@ -55,7 +55,7 @@ router.put('/api/application/:id', auth, async (ctx, next) => {
 });
 
 router.delete('/api/application/:id', auth, async (ctx, next) => {
-  await service.deleteApplication(ctx.state.user.id, ctx.params.id, (err) => {
+  await service.deleteApplication(ctx, ctx.state.user.id, ctx.params.id, (err) => {
     if (err) {
       ctx.status = 400;
       ctx.body = err.message;
@@ -64,6 +64,15 @@ router.delete('/api/application/:id', auth, async (ctx, next) => {
       ctx.body = 'success';
     }
   });
+});
+
+router.post('/api/application/import/profile', auth, auth.checkToken, async (ctx, next) => {
+  await service.importProfileData(ctx.state.user, ctx.request.body.applicationId).then(() => {
+    ctx.status = 200;
+  }).catch(err => {
+    log.error(err);
+    ctx.status = 400;
+  })
 });
 
 router.post('/api/application/apply/:taskId', auth, auth.checkToken, async (ctx, next) => {
@@ -83,6 +92,24 @@ router.post('/api/application/apply/:taskId', auth, auth.checkToken, async (ctx,
 
 router.put('/api/application/:applicationId/task/swap', auth, async (ctx, next) => {
   await service.swapApplicationTasks(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
+});
+router.put('/api/application/:applicationId/experience/swap', auth, async (ctx, next) => {
+  await service.swapExperiences(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch((err) => {
+    ctx.status = err.status;
+    ctx.body = err.message;
+  });
+});
+router.put('/api/application/:applicationId/education/swap', auth, async (ctx, next) => {
+  await service.swapEducations(ctx.state.user.id, ctx.params.applicationId, ctx.request.body).then((results) => {
     ctx.status = 200;
     ctx.body = results;
   }).catch((err) => {

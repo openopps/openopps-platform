@@ -28,7 +28,7 @@ const applicationExperienceQuery = 'SELECT @experience.*, @country.*, @countrySu
   'FROM @experience experience ' +
   'JOIN @country country on country.country_id = experience.country_id ' +
   'LEFT JOIN @country_subdivision countrySubdivision on "countrySubdivision".country_subdivision_id = experience.country_subdivision_id ' +
-  'WHERE experience.application_id = ?';
+  'WHERE experience.application_id = ? ';
 
 const applicationLanguageQuery = 'SELECT @language.*, @details.*, @speakingProficiency.*, @readingProficiency.*, @writingProficiency.* ' +
   'FROM @application_language_skill language ' +

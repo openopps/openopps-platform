@@ -1,0 +1,1 @@
+select count(id) from task where bureau_id = ?;

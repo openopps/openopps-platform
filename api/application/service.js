@@ -46,27 +46,6 @@ function sortApplicationTasks (tasks) {
   }
 }
 
-function importProfileData (user, applicationId) {
-  dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
-    var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
-    Profile.get(user.tokenset).then(profile => {
-      Promise.all([
-        Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
-        Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
-        Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
-        Import.profileReferences(user.id, applicationId, profile.Profile.References),
-        Import.profileSkills(user.id, applicationId, profileSkillObject),
-      ]).catch((err) => {
-        // record data import error
-      });
-    }).catch((err) => {
-      // record error getting USAJOBS profile
-    });
-  }).catch((err) => {
-    // record error locating application
-  });
-}
-
 async function processUnpaidApplication (ctx,user, data, callback) {
   var application = await findOrCreateApplication(user, data);
   var applicationTasks = await dao.ApplicationTask.find('application_id = ? and sort_order <> -1', application.applicationId);
@@ -119,6 +98,32 @@ async function updateEducation ( educationId, data ) {
 }
 
 module.exports = {};
+
+module.exports.importProfileData = function (user, applicationId) {
+  return new Promise(resolve => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, user.id).then(async () => {
+      var profileSkillObject = (await db.query(dao.query.profileSkills, user.id)).rows;
+      Profile.get(user.tokenset).then(profile => {
+        Promise.all([
+          Import.profileEducation(user.id, applicationId, profile.Profile.Educations),
+          Import.profileExperience(user.id, applicationId, profile.Profile.WorkExperiences),
+          Import.profileLanguages(user.id, applicationId, profile.Profile.Languages),
+          Import.profileReferences(user.id, applicationId, profile.Profile.References),
+          Import.profileSkills(user.id, applicationId, profileSkillObject),
+        ]).then(resolve).catch((err) => {
+          resolve();
+          // record data import error
+        });
+      }).then(resolve).catch((err) => {
+        resolve();
+        // record error getting USAJOBS profile
+      });
+    }).catch((err) => {
+      resolve();
+      // record error locating application
+    });
+  });
+};
 
 module.exports.updateLanguage = async function (userId, data) {
   return await dao.ApplicationLanguageSkill.findOne('application_language_skill_id = ? and user_id =  ?', data.applicationLanguageSkillId, userId).then(async (l) => {
@@ -264,15 +269,23 @@ module.exports.apply = async function (ctx,user, taskId, getTasks, callback) {
   });
 };
 
-module.exports.deleteApplication = async (userId, applicationId, callback) => { 
+module.exports.deleteApplication = async (ctx, userId, applicationId, callback) => { 
   await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async (application) => {
     var applicationNotificationData= await getNotificationApplicationData(userId, applicationId );     
-    await dao.Application.delete(application).then(async () => {  
+    await dao.Application.delete(application).then(async () => {
+      var audit = Audit.createAudit('APPLICATION_WITHDRAWN', ctx, {
+        applicationId: application.applicationId,
+        cycleId: application.cycleId,
+        userId: ctx.state.user.id,
+      });
+      await dao.AuditLog.insert(audit).catch((err) => {
+        log.error(err);
+      });
       if(applicationNotificationData) {
         var notificationData = await getNotificationTemplateData(applicationNotificationData, 'state.department/internship.application.withdraw');
         if(!notificationData.model.user.bounced) {
           notification.createNotification(notificationData);
-        }       
+        }     
       }   
       callback();       
     }).catch((err) => {
@@ -369,6 +382,39 @@ module.exports.swapApplicationTasks = async function (userId, applicationId, dat
     });
   });
 };
+module.exports.swapEducations = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[1].sortOrder, data[0].educationId]);
+        yield transaction.query('UPDATE education SET sort_order = $1 WHERE education_id = $2', [data[0].sortOrder, data[1].educationId]);
+      }).then(async () => { 
+        resolve(( dao.Education.query(dao.query.applicationEducation, applicationId, { fetch: { country: '', countrySubdivision: '', degreeLevel: '', honor: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your educations from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
+
+module.exports.swapExperiences = async function (userId, applicationId, data) {
+  return new Promise((resolve, reject) => {
+    dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
+      db.transaction(function* (transaction) {
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[1].sortOrder, data[0].experienceId]);
+        yield transaction.query('UPDATE experience SET sort_order = $1 WHERE experience_id = $2', [data[0].sortOrder, data[1].experienceId]);
+      }).then(async () => { 
+        resolve((await dao.Experience.query(dao.query.applicationExperience, applicationId, { fetch: { country: '', countrySubdivision: '' }})));
+      }).catch((err) => {
+        reject({ status: 400, message: 'An unexpected error occured attempting to update your experiences from your application.' });
+      });
+    }).catch((err) => {
+      reject({ status: 403 });
+    });
+  });
+};
 
 module.exports.updateApplication = async function (ctx, userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
@@ -390,9 +436,6 @@ module.exports.updateApplication = async function (ctx, userId, applicationId, d
           userId: ctx.state.user.id,
           updatedAt:application.updatedAt,
         });
-        if (data.currentStep == 1) {
-          importProfileData(ctx.state.user, application.applicationId);
-        }
         await dao.AuditLog.insert(audit).catch((err) => {
           log.error(err);
         });

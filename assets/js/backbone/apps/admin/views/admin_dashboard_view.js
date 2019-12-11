@@ -10,14 +10,17 @@ var AdminDashboardTemplate = require('../templates/admin_dashboard_template.html
 var AdminSummaryTemplate = require('../templates/admin_summary_template.html');
 var AdminDashboardTasks = require('../templates/admin_dashboard_task_metrics.html');
 var AdminDashboardActivities = require('../templates/admin_dashboard_activities.html');
-
 var AdminAnnouncementView = require('./admin_announcement_view');
 var AdminTopContributorsView = require('./admin_top_contributors_view');
+var AdminSystemSettngsTemplate = require('../templates/admin_system_settings_template.html');
+var AdminSystemSettngFormTemplate = require('../templates/admin_system_setting_form_template.html');
+
 var AdminDashboardView = Backbone.View.extend({
 
   events: {
-    'change .group': 'renderTasks', 
-    'change input[name=type]':'renderTasks',
+    'change .group':              'renderTasks', 
+    'change input[name=type]':    'renderTasks',
+    'click .edit-system-setting': 'editSystemSetting',
   },
 
   initialize: function (options) {
@@ -258,6 +261,58 @@ var AdminDashboardView = Backbone.View.extend({
     this.adminAnnouncementView.render();
   },
 
+  renderSystemSettings: function (systemSettings) {
+    var template = _.template(AdminSystemSettngsTemplate)({ systemSettings: systemSettings });
+    $('.settings-block').html(template);
+  },
+
+  editSystemSetting: function (event) {
+    event.preventDefault && event.preventDefault();
+    this.renderEditSettingModal({
+      key: $(event.currentTarget).data('key'),
+      value: $(event.currentTarget).data('value'),
+      display: $(event.currentTarget).data('display'),
+    });
+  },
+
+  renderEditSettingModal: function (data) {
+    this.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'edit-system-setting',
+      modalTitle:  'Edit system setting',
+      modalBody: _.template(AdminSystemSettngFormTemplate)(data),
+      action: function (){    
+      } ,     
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          this.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Save',
+        action: function () {
+          if (!validate({ currentTarget: $('#system-setting-value') })) {
+            $.ajax({
+              url: '/api/admin/setting',
+              method: 'PUT',
+              data: {
+                key: data.key,
+                value: $('#system-setting-value').val(),
+              },
+              success: function (result) {
+                this.modalComponent.cleanup();
+                $('a[data-key="' + data.key + '"]').data('value', result.value);
+                $('#' + data.key).children('td')[1].innerText = result.value;
+                $('#' + data.key).children('td')[2].innerText = moment(result.updated_at).format('MM/DD/YYYY hh:mma');
+              }.bind(this),
+            })
+          }
+        }.bind(this),
+      }
+    }).render();
+  },
+
   fetchData: function (self, data) {
     $.ajax({
       url: '/api/admin/metrics',
@@ -283,6 +338,11 @@ var AdminDashboardView = Backbone.View.extend({
       success: function (data) {
         self.renderActivities(self, data);
       },
+    });
+    $.ajax({
+      url: '/api/admin/settings',
+      dataType: 'json',
+      success: this.renderSystemSettings.bind(this),
     });
   },
 
