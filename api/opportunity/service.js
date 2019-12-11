@@ -476,6 +476,27 @@ function sendTaskStateUpdateNotification (user, task) {
   }
 }
 
+async function canUpdateInternship (user, id) {
+  var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
+  if (!task) {
+    return false;
+  } else if (user.isAdmin
+  || await isCommunityAdmin(user, task)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+async function checkCommunityAdmin (user, id) {
+  var task = await dao.Task.findOne('id = ?', id);
+  if (task && task.communityId) {
+    return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
+      return {};
+    })).isManager;
+  } else {
+    return false;
+  }
+}
 async function getInternNotificationTemplateData (intern, action) {
   var data = {
     action: action,
@@ -577,12 +598,6 @@ async function sendApplicantsCanceledNotification (user) {
   }
 }
 
-async function sendApplicantsCanceledNotification (user) {
-  var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.canceled');
-  if(!data.model.bounced) {
-    notification.createNotification(data);
-  }
-}
 
 async function sendApplicantsUpdatedNotification (user) {
   var data = await getInternNotificationTemplateData(user, 'state.department/internship.applicants.update');
@@ -799,7 +814,9 @@ module.exports = {
   publishTask: publishTask,
   completedInternship: completedInternship,
   copyOpportunity: copyOpportunity,
-  canceledInternship:canceledInternship,
+  canceledInternship:canceledInternship, 
+  canUpdateInternship:canUpdateInternship,
+  checkCommunityAdmin:checkCommunityAdmin,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
   sendTaskNotification: sendTaskNotification,
@@ -818,6 +835,7 @@ module.exports = {
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
 };
+
 
 module.exports.getApplicantsForTask = async (user, taskId) => {
   return new Promise((resolve, reject) => {
