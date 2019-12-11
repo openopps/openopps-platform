@@ -174,7 +174,9 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
   'left join cycle on task.cycle_id = cycle.cycle_id ' +
   'left join country on task.country_id = country.country_id ' +
   'left join country_subdivision on task.country_subdivision_id = country_subdivision.country_subdivision_id ' +
-  'where task.community_id = ? and cycle.cycle_id = ? order by task."createdAt" desc';
+  'where task.community_id = ? and cycle.cycle_id = ? and ' +
+  '((cycle.closed_date is not null and cycle.closed_date <= NOW()) or cycle.review_end_date <= NOW()) ' +
+  'order by task."createdAt" desc';
 
 var exportUserFormat = {
   'name': {field: 'name', filter: nullToEmptyString},
@@ -239,6 +241,7 @@ var exportTaskFormat = {
   'community_name': {field: 'community_name', filter: nullToEmptyString},
   'completion_date': {field: 'completedAt', filter: excelDateFormat},
 };
+
 var exportCycleTaskFormat = {
   'Cycle Name':{field: 'name', filter: nullToEmptyString},
   'Total created': {field: 'totalcreated', filter: nullToEmptyString},
@@ -246,8 +249,8 @@ var exportCycleTaskFormat = {
   'Approved': {field: 'approved', filter: nullToEmptyString},
   'Open': {field: 'open', filter: nullToEmptyString},
   'Completed' :{field:'completed',filter:nullToEmptyString},
-
 };
+
 var exportCycleInteractionsFormat = {
   'Cycle Name':{field: 'name', filter: nullToEmptyString},
   'Applications submitted': {field: 'submittedTotal', filter: nullToEmptyString},
@@ -261,9 +264,19 @@ var exportCycleInteractionsFormat = {
   'Primary selections' :{field:'PrimaryCount', filter:nullToEmptyString},
   'Alternate selections' :{field:'AlternateCount', filter:nullToEmptyString},
   'Successfully completed' :{field:'InternshipCompleteTotal', filter:nullToEmptyString},
-  
 };
 
+var exportCommunityCycleApplicationsFormat = {
+  'applicant_name': {field: 'applicant_name', filter: nullToEmptyString},
+  'applicant_email': {field: 'applicant_email', filter: nullToEmptyString},
+  'application_status': {field: 'application_status', filter: nullToEmptyString},
+  'internship_name': {field: 'internship_name', filter: nullToEmptyString},
+  'internship_creator': {field: 'internship_creator', filter: nullToEmptyString},
+  'internship_bureau': {field: 'internship_bureau', filter: nullToEmptyString},
+  'internship_office': {field: 'internship_office', filter: nullToEmptyString},
+  'internship_location': {field: 'internship_location', filter: nullToEmptyString},
+  'last_updated': {field: 'last_updated', filter: excelDateFormat},
+};
 
 function nullToEmptyString (str) {
   return str ? str : '';
@@ -344,8 +357,8 @@ module.exports = function (db) {
     exportTopContributorParticipantFormat: exportTopContributorParticipantFormat,
     exportTopContributorAgencyCreatedFormat: exportTopContributorAgencyCreatedFormat,
     exportTopContributorAgencyParticipantFormat: exportTopContributorAgencyParticipantFormat,
-    exportCycleTaskFormat:exportCycleTaskFormat,
-    exportCycleInteractionsFormat:exportCycleInteractionsFormat,
-
+    exportCycleTaskFormat: exportCycleTaskFormat,
+    exportCycleInteractionsFormat: exportCycleInteractionsFormat,
+    exportCommunityCycleApplicationsFormat: exportCommunityCycleApplicationsFormat,
   };
 };

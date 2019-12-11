@@ -1,8 +1,36 @@
-<div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
+<div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers internship">
   <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true">
-    <% _.each(data.education, function (d,index) { %>
+    <% _.each(_.sortBy(data.education,'sortOrder'), function (d,index) { %>
     <li class="usajobs-drawer" data-section="education" data-id="edu-1">
       <button class="usa-accordion-button usajobs-drawer-button" aria-controls="edu-1"><%- d.degreeLevel.value %></button>
+      <% if (data.selectedStep==3) { %>
+      <% if (index==0 && data.education.length !=1) { %>
+        <div class="order-options" data-sort="<%= index %>">             
+            <a href="javascript:void(0)">
+              <i class="fas fa-arrow-alt-circle-down edu-sort-arrow" data-action="down" data-id="<%= d.educationId %>"></i>
+            </a>
+          </div>
+        <% }
+        else if (index== (data.education.length-1) && index!=0) { %>
+        <div class="order-options" data-sort="<%= index %>">
+          <a href="javascript:void(0)">
+            <i class="fas fa-arrow-alt-circle-up edu-sort-arrow" data-action="up" data-id="<%= d.educationId %>"></i>
+          </a>             
+        </div>
+        <% } 
+        else if (index==0 && data.education.length==1) { %>         
+          <% }
+        else { %>
+          <div class="order-options" data-sort="<%= index %>">
+            <a href="javascript:void(0)">
+              <i class="fas fa-arrow-alt-circle-up edu-sort-arrow" data-action="up" data-id="<%= d.educationId %>"></i>
+            </a>
+            <a href="javascript:void(0)">
+              <i class="fas fa-arrow-alt-circle-down edu-sort-arrow" data-action="down" data-id="<%= d.educationId %>"></i>
+            </a>
+          </div>
+          <% } %>
+          <% } %>
       <dl class="usajobs-drawer-face">
         <dt><%- d.schoolName %></dt>
         <dd>

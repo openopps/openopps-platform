@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
+const systemSetting = require('../admin/systemSetting');
 const protocol = openopps.emailProtocol || '';
 var transportConfig = openopps[protocol.toLowerCase()] || {};
 
@@ -19,7 +20,7 @@ function createNotification (notification) {
   var path = __dirname + '/' + notification.action + '/template';
   var template = require(path);
 
-  template.data(notification.model, function (err, data) {
+  template.data(notification.model, async function (err, data) {
     if (err) {
       log.info(err);
       return done(err);
@@ -35,6 +36,8 @@ function createNotification (notification) {
       systemEmail: openopps.systemEmail,
       googleAnalytics: openopps.googleAnalytics,
       logo: notification.model.logo,
+      participantSurvey: (await systemSetting.get('participantSurveyURL')).value,
+      creatorSurvey: (await systemSetting.get('creatorSurveyURL')).value,
     };
 
     renderTemplate(template, data, function (err, options) {
@@ -45,7 +48,7 @@ function createNotification (notification) {
       sendEmail(options, function (err, info) {
         log.info(err ? err : info);
         if (!err) {
-          insertNotification(action, data);
+          insertNotification(data._action, data);
         }
       });
     });
@@ -122,6 +125,7 @@ function insertNotification (action, data) {
   var newNotification = {
     action: action,
     model: data,
+    recipientId: data.user.id,
     isActive: 't',
     createdAt: new Date(),
     updatedAt: new Date(),

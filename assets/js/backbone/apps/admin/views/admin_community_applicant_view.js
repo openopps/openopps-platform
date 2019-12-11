@@ -8,7 +8,9 @@ var AdminCommunityApplicantTemplate = require('../templates/admin_community_appl
 var AdminCommunityApplicantView = Backbone.View.extend({
 
   events: {
-     
+    'change #sort-applicant-community' : 'sortApplicants',
+    'click #applicant-filter-search'   : 'filter',
+    'click #applicant-back'                    : linkBackbone,
   },
 
   initialize: function (options) {
@@ -19,6 +21,8 @@ var AdminCommunityApplicantView = Backbone.View.extend({
     this.data = {
       user: window.cache.currentUser,
       target: this.options.target,
+      sort: this.params.get('s') || 'name',
+      filter: this.params.get('f') || '',
     };
   
   },
@@ -44,57 +48,58 @@ var AdminCommunityApplicantView = Backbone.View.extend({
 
   loadApplicants:function (Info){
     var cycleId= this.params.get('cid');
-    $.ajax({
-      url: '/api/admin/community/' + this.options.targetId +'/applicants/' + cycleId,
+    $.ajax({  
+      url: '/api/admin/community/' + this.options.targetId +'/applicants/' + cycleId,    
       dataType: 'json',
-      success: function (data) {
-        this.applicants= data;   
+      data: {     
+        sort: this.data.sort,
+        filter:this.data.filter,
+      },
+      success: function (data) {         
+        this.applicants= data.applications;   
         this.renderTemplate();     
         $('#search-results-loading').hide();
       }.bind(this),
     });
     return this;
   },
-  getStatus: function (application) {
-    if (application.submittedAt == null) {
-      if(new Date(application.applyEndDate) > new Date()) {
-        return 'In progress';
-      } else {
-        return 'Not submitted';
-      }
-    } else if (application.sequence == 3) {
-      if (application.taskState == 'completed') {
-        if (application.internshipComplete) {
-          return 'Completed';
-        } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
-          return 'Not completed';
-        } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate';
-        } else {
-          return 'Not selected';
-        }
-      } else {
-        if (application.reviewProgress == 'Primary') {
-          return 'Primary Select';
-        } else if (application.reviewProgress == 'Alternate') {
-          return 'Alternate Select';
-        } else {
-          return 'Not selected';
-        }
-      }
-    } else {
-      return 'Applied';
+
+  sortApplicants: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.sort = target.value;   
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadApplicants();
+    
+    window.scrollTo(0, 0);
+  },
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += window.location.search.split('&')[0];  
+    url += '&s=' + this.data.sort +'&f=' + this.data.filter;  
+    return url;
+  },
+
+  filter: function (e) {
+    var val = $('#applicant-filter').val().trim();
+    if (val == this.data.filter) {
+      return;
     }
+    this.data.filter = val;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadApplicants();
+    
   },
 
   renderTemplate: function () {  
+    var cycleId=this.params.get('cid');
     var data={
       applicants:this.applicants,
       community:this.community,
-      cycleId: this.params.get('cid'),
-      getStatus: this.getStatus,
-    };
-    
+      cycleId: cycleId,    
+      sort:this.data.sort,
+      filter: this.data.filter,
+      returnUrl :'/admin/community/'+ this.options.targetId + '?cycle=' + cycleId,
+    };   
     var template = _.template(AdminCommunityApplicantTemplate)(data);
     this.$el.html(template);
     this.rendered = true;

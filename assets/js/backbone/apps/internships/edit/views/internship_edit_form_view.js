@@ -55,6 +55,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.countryCode            = '';
     this.communityId= '';
     this.communities=  {};
+    this.supportEmail           = '';
 
     this.initializeListeners();
 
@@ -107,6 +108,7 @@ var InternshipEditFormView = Backbone.View.extend({
     
     this.initializeBureaus();
     this.initializeSuggestedClearance();
+    this.getSupportEmail();
     this.data = {
       data: this.model.toJSON(),
       tagTypes: this.options.tagTypes,
@@ -120,6 +122,7 @@ var InternshipEditFormView = Backbone.View.extend({
       suggestedClearances: this.suggestedClearances,
       cycles: this.cycles, 
       bureaus: this.bureaus,
+      supportEmail: this.supportEmail,
     },
    
     compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
@@ -307,20 +310,37 @@ var InternshipEditFormView = Backbone.View.extend({
     if (this.model.attributes.office) {
       $('#task_tag_office').val(this.model.attributes.officeId);
     }
+    if (this.model.attributes.cityName) {
+      $('#task_tag_city').val(this.model.attributes.cityName);
+    }
   },
 
-  loadAudienceCommunityData:function (){
+  loadAudienceCommunityData: function () {
     $.ajax({
-      url: '/api/task/communities',  
+      url: '/api/task/communities',
       type: 'GET',
       async: false,
-      success: function (data){ 
-        this.communities= data;  
-       
-        var USDOS = _.findWhere(this.communities.student, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
-        this.communityId = USDOS.communityId;
-        this.initializeCycle(this.communityId);
-       
+      success: function (data){
+        this.communities = data;
+        if (!this.communities.student.length) {
+          this.getSupportEmail();
+          this.$('#student-community-member-error').show();
+        } else {
+          var USDOS = _.findWhere(this.communities.student, { communityName: 'U.S. Department of State Student Internship Program (Unpaid)' }) || {};
+          this.communityId = USDOS.communityId;
+          this.initializeCycle(this.communityId);
+        }
+      }.bind(this),
+    });
+  },
+
+  getSupportEmail: function () {
+    $.ajax({
+      url: '/api/task/community/supportEmail',
+      type: 'GET',
+      async: false,
+      success: function (data){
+        this.supportEmail = data[0].supportEmail;
       }.bind(this),
     });
   },

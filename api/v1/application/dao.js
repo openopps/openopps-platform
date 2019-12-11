@@ -40,16 +40,19 @@ dao.query.ApplicantSummary = `
         ) item
       ) as educations,
     (
-        select json_agg(item)
+        select json_agg(item order by sort_order)
         from (
-        select coalesce(task.city_name || ', ' || country.value, 'Virtual') as loc,
-        task.id,
-        task.title
-      from 
-        application_task apps
-        inner join task on apps.task_id = task.id
-        left join country on task.country_id = country.country_id
-      where apps.application_id = application.application_id
+          select coalesce(task.city_name || ', ' || country.value, 'Virtual') as loc,
+            task.id,
+            task.title,
+            apps.sort_order
+          from 
+            application_task apps
+            inner join task on apps.task_id = task.id
+            left join country on task.country_id = country.country_id
+          where 
+            apps.application_id = application.application_id
+            and apps.sort_order != -1
         ) item
       ) as "desiredOpportunities",
       application.cumulative_gpa as gpa,

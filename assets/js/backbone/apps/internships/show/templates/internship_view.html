@@ -222,6 +222,18 @@
           <% } %>
         </div>
       </aside>
+    <% }
+    else { %>
+      <% if (checkDosAdmins) {%>
+      <% var today = new Date(moment().tz("America/New_York").format('MM/DD/YYYY')); 
+      if ((new Date(model.cycle.applyEndDate) > today && model.state=='open') && model.state !=='completed' && model.state !=='canceled' || _.contains(['draft', 'submitted','approved'], model.state)) { %>
+      <aside class="usajobs-rightrail internship" id="rightrail">
+          <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">   
+          <a class="internship-cancel" href="javascript:void();" id="internship-cancel">Cancel this internship</a>   
+        </div>
+      </aside>
+      <% } %>
+    <% } %> 
     <% } %>
   </div>
 </section>

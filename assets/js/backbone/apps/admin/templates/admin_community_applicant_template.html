@@ -1,9 +1,30 @@
 
 
-<p class="back-link" role="navigation" aria-label="Back"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
+<p class="back-link" role="navigation" aria-label="Back"><a id="applicant-back" href="<%= returnUrl %>"><i class="fas fa-chevron-circle-left"></i>Back</a></p>
 <h2><%= community.communityName %></h2>
 <h3>Applicants</h3>
-<div id="cycle-table" class="table-responsive">
+<div class="usajobs-grid-full user-filter">
+  <div class="usa-width-one-half">
+    <label class="sr-only" for="applicant-filter">Filter</label>
+    <input type="text" class="" id="applicant-filter" placeholder="Filter by name, email or status " value="<%= filter %>">
+    <button id="applicant-filter-search" class="user-filter-search-button">Search</button>
+  </div>
+</div>
+<div class="usajobs-grid usajobs-search-controls">
+  
+    <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+      <label class="usajobs-search-controls__sort-label" for="sort-applicant-community">
+        Sort by
+      </label>
+      <select name="sort-applicant-community" id="sort-applicant-community" class="usajobs-search-controls__sort-control">
+        <option value="" disabled >- Sort By -</option>
+        <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+        <option value="username" <% if (sort == 'username') { %>selected<% } %>> Email</option>
+         <option value="status"<% if (sort == 'status') { %>selected<% } %>>Status</option>
+         <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last Update</option>        
+      </select>
+    </div>
+  </div>
 <table class="usa-table-borderless user-table" role="presentation">
     <thead>
       <tr>     
@@ -28,15 +49,21 @@
             <%- a.applicantName %>        
           </td>         
              <td><a class="link-backbone" href="/profile/<%=a.applicantId %>"><%- a.username %></a></td>  
-             <% if (getStatus(a)=='Not completed' || getStatus(a)=='In progress') { %>
-              <td><%= getStatus(a) %></td>
+             <% if (a.status=='Not completed' || a.status=='In progress') { %>
+              <td><%= a.status %></td>
               <% }
               else { %>
-                <td><a class="link-backbone" target="_blank" rel="noopen nofollow" href="/applicant/submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>&cmid=<%=community.communityId %>"> <%= getStatus(a) %></a></td>
+                <td><a class="link-backbone" target="_blank" rel="noopen nofollow" href="/applicant/submitted?cid=<%=cycleId %>&uid=<%=a.applicantId %>&uname=<%=a.applicantName %>&cmid=<%=community.communityId %>"> <%= a.status %></a></td>
                <% } %>           
              <td><%- moment(a.updatedAt).format('MM/DD/YYYY hh:mma') %></td>     
         </tr>       
       <% }); %>
     </tbody>
   </table>
+</div>
+<div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
+  title="Download list of applicants as a comma-separated file ready for import into Excel">
+  <a href="/api/admin/applicants/export/community/<%- community.communityId %>/cycle/<%- cycleId %>">
+    <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+  </a>
 </div>
