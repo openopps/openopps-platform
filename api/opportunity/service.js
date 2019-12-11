@@ -606,6 +606,31 @@ async function sendApplicantsUpdatedNotification (user) {
   }
 }
 
+function newInternship (title, attributes, cycleId, user) {
+  return {
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    title: title,
+    userId: user.id,
+    restrict: getRestrictValues(user),
+    state: 'draft',
+    description: attributes.description,
+    details: attributes.details,
+    outcome: attributes.outcome,
+    about: attributes.about,
+    agencyId: attributes.agencyId,
+    communityId: attributes.communityId,
+    officeId: attributes.officeId,
+    bureauId: attributes.bureauId,
+    cityName: attributes.cityName,
+    cycleId: cycleId,
+    countryId: attributes.countryId,
+    countrySubdivisionId: attributes.countrySubdivisionId,
+    interns: attributes.interns,
+    suggestedSecurityClearance: attributes.suggestedSecurityClearance,
+  };
+}
+
 async function copyOpportunity (attributes, user, done) {
   var results = await dao.Task.findOne('id = ?', attributes.taskId);
   var language= await dao.LanguageSkill.find('task_id = ?',attributes.taskId);
@@ -627,36 +652,16 @@ async function copyOpportunity (attributes, user, done) {
     agencyId: user.agencyId,
     communityId: results.communityId,
   };
-  var intern = {
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    title: attributes.title,
-    userId: user.id,
-    restrict: getRestrictValues(user),
-    state: 'draft',
-    description: results.description,
-    details: results.details,
-    outcome: results.outcome,
-    about: results.about,
-    agencyId: results.agencyId,
-    communityId: results.communityId,
-    officeId: results.officeId,
-    bureauId: results.bureauId,
-    cityName: results.cityName,
-    cycleId: results.cycleId,
-    countryId: results.countryId,
-    countrySubdivisionId: results.countrySubdivisionId,
-    interns: results.interns,
-    language: language,
-    suggestedSecurityClearance: results.suggestedSecurityClearance,
-  };
-  if(await isStudent(results.userId,results.id)){
-    await dao.Task.insert(intern)
-      .then(async (intern) => {
+  if(await isStudent(results.userId,results.id)) {
+    var cycleId = await getCurrentCycle(results.communityId, results.cycleId);
+    if (!cycleId) {
+      return done({'message':'There are no current cycle dates set. Please contact your administrator to request the cycle times be added.'});
+    } else {
+      var intern = newInternship(attributes.title, results, cycleId, user);
+      await dao.Task.insert(intern).then(async (intern) => {
         if(language && language.length >0){
           language.forEach(async (value) => {
             var newValue= _.omit(value,'languageSkillId');
-            
             newValue.updatedAt= new Date();
             newValue.createdAt= new Date();      
             newValue.taskId = intern.id;
@@ -667,7 +672,6 @@ async function copyOpportunity (attributes, user, done) {
             });  
           });
         }
-
         tags.map(tag => {
           dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: intern.id }).catch(err => {
             log.info('register: failed to update tag ', attributes.username, tag, err);
@@ -686,9 +690,8 @@ async function copyOpportunity (attributes, user, done) {
         await elasticService.indexOpportunity(intern.id);
         return done(null, { 'taskId': intern.id });
       }).catch (err => { return done({'message':'Error copying task.'}); });
-  }
-
-  else{
+    }
+  } else {
     await dao.Task.insert(task)
       .then(async (task) => {
         tags.map(tag => {
@@ -703,8 +706,7 @@ async function copyOpportunity (attributes, user, done) {
 }
 
 function getRestrictValues (user) {
-  
-  var restrict = {
+  return restrict = {
     name: user.agency.name,
     abbr: user.agency.abbr,
     parentAbbr: '',
@@ -712,7 +714,15 @@ function getRestrictValues (user) {
     domain: user.agency.domain,
     projectNetwork: false,
   };
-  return restrict;
+}
+
+async function getCurrentCycle (communityId, cycleId) {
+  var cycles = await dao.Cycle.find('community_id = ? and posting_start_date <= now() and posting_end_date >= now()', communityId);
+  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId })) {
+    return cycleId
+  } else {
+    return (_.sortBy(cycles, 'cycleId' )[0] || {}).cycleId;
+  }
 }
 
 async function deleteTask (ctx, task, cycleId) {
