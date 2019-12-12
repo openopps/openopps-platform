@@ -45,7 +45,32 @@ service.startPhaseProcessing = async function (cycleId) {
   return await dao.Cycle.update(cycle);
 };
 
-service.startAlternateProcessing = async function (cycleId) {
+service.startAlternateProcessing = async function (user, cycleId) {
+  var applicationsToRemove = (await dao.TaskListApplication.db.query(dao.query.GetApplicationsToRemoveForPhase, cycleId)).rows;
+  for(let i=0; i < applicationsToRemove.length; i++) {
+    var historyRecord = {
+      taskListApplicationId: applicationsToRemove[i].task_list_application_id,
+      action: 'delete',
+      actionBy: user.id,
+      actionDate: new Date,
+      details: {
+          'removed_by_userId': user.id, 
+          'action_by_username': user.username,
+          'phase': 'Alternate phase',
+          'task_list_id': applicationsToRemove[i].task_list_id,
+          'application_id': applicationsToRemove[i].application_id,
+          'sort_order': applicationsToRemove[i].sort_order,
+          'date_last_viewed': applicationsToRemove[i].date_last_viewed,
+          'date_last_contacted': applicationsToRemove[i].date_last_contacted,
+          'created_at': applicationsToRemove[i].created_at,
+          'updated_at': applicationsToRemove[i].updated_at,
+          'updated_by': applicationsToRemove[i].updated_by,
+      },
+      taskId: applicationsToRemove[i].task_id,
+      application_id: applicationsToRemove[i].application_id,
+    }
+    await dao.TaskListApplicationHistory.insert(historyRecord);
+  }
   await dao.Cycle.db.query(dao.query.RemoveApplicationsForPhase, cycleId).then(async () => {
     var cycle = await dao.Cycle.findOne('cycle_id = ?', cycleId);
     cycle.isProcessing = true;
@@ -62,12 +87,12 @@ service.archivePhase = async function (cycleId) {
   }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
-  //await service.sendCloseCyclePhaseSelectedNotification(cycleId);
-  //await service.sendCloseCyclePhaseAlternateNotification(cycleId);
-  return await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
-  //await service.sendCloseCyclePhaseCreatorNotification(cycleId);
-  //await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
-  //return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
+  await service.sendCloseCyclePhaseSelectedNotification(cycleId);
+  await service.sendCloseCyclePhaseAlternateNotification(cycleId);
+  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
+  await service.sendCloseCyclePhaseCreatorNotification(cycleId);
+  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {

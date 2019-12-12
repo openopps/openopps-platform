@@ -53,6 +53,8 @@ const communitiesQuery = 'SELECT ' +
     'AND community_user.disabled = false ' +
     'AND community_user.user_id = ?';
 
+const usdosSupportEmailQuery = 'select * from community where reference_id = \'dos\'';
+
 const communityTaskQuery = 'select * from community ' +
 'join task on task.community_id = community.community_id ' + 
 'where task.community_id = ?';
@@ -237,6 +239,7 @@ module.exports = function (db) {
       communityAdminsQuery: communityAdminsQuery,
       communityBureauAdminsQuery: communityBureauAdminsQuery,
       communitiesQuery: communitiesQuery,
+      usdosSupportEmailQuery: usdosSupportEmailQuery,
       communityTaskQuery:communityTaskQuery,
       completedInternsQuery:completedInternsQuery,
       countrySubdivision:countrySubdivisionQuery,

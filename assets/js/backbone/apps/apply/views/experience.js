@@ -2,6 +2,8 @@
 const $ = require('jquery');
 const _ = require('underscore');
 const templates = require('./templates');
+const actions = { up: -1, down: 1 };
+const ModalComponent = require('../../../components/modal');
 
 var experience = {
   characterCount: function () {
@@ -14,6 +16,22 @@ var experience = {
     $('#duties').charCounter(5000, {
       container: '#duties-accomplish',
     });
+  },
+
+  toggleWorkExperience: function () {
+    if ($('#experience-id').length < 1) {
+      $('#check-experience-details').css('display', 'block');
+      if($('input#check-experience').is(':checked')) {
+        $('#add-experience').attr('disabled','disabled');
+      } else {
+        $("input[name='checkExperience']:checkbox").prop('checked', false);
+        $('#add-experience').removeAttr('disabled');
+      }
+    } else {
+      $('#check-experience-details').css('display', 'none');
+    }
+    $('#check-experienceQn').removeClass('usa-input-error');    
+    $('#check-experienceQn .field-validation-error').hide();
   },
   
   toggleOverseasExperienceDetails: function () {
@@ -109,6 +127,14 @@ var experience = {
     if ($('#experience-id').length) {
       modelData.experienceId = $('#experience-id').val();
       modelData.updatedAt = $('#updated-at').val();
+      var sortOrderData= _.filter(this.data.experience, function (g){
+        return  g.experienceId== modelData.experienceId;
+      });
+      modelData.sortOrder =sortOrderData[0].sortOrder; 
+      $('#check-experience-details').css('display', 'none');  
+      $('#add-experience').removeAttr('disabled');
+    } else {
+      $('#check-experience-details').css('display', 'block');
     }
 
     return modelData;
@@ -149,6 +175,11 @@ var experience = {
   saveExperience: function () {
     var data = experience.getDataFromAddExperiencePage.bind(this)();   
     var experienceValidation=experience.validateAddExperienceFields(data);
+    var maxSortOrder= _.max(this.data.experience, function (o){return o.sortOrder;});    
+    var sortOrder= !_.isEmpty(maxSortOrder) ? (maxSortOrder.sortOrder + 1) : 0;
+    data.sortOrder=  sortOrder;
+    this.data.declineExperience = false;
+   
     if(!this.validateFields() && !experienceValidation) {
       var callback = experience.toggleExperienceOff.bind(this);
       $.ajax({
@@ -168,7 +199,7 @@ var experience = {
           // display modal alert type error
         }.bind(this),
       });
-    }
+    }  
   },
 
   updateExperience: function () {
@@ -189,13 +220,23 @@ var experience = {
           // display modal alert type error
         }.bind(this),
       });
-    }
+    } 
   },
 
   validateExperience:function (){
   
     var children = this.$el.find( '.validate' );
     var abort = false;
+
+    if($('li[data-section=experience]').length < 1 && !$('input#check-experience').is(':checked')) {
+      $('#check-experienceQn').addClass('usa-input-error');    
+      $('#check-experienceQn .field-validation-error').show();
+      abort = true;
+    } else {
+      $('#check-experienceQn').removeClass('usa-input-error');    
+      $('#check-experienceQn .field-validation-error').hide();
+    }
+
     if($('[name=has_overseas_experience]:checked').length==0){ 
       $('#overseas-experienceQn').addClass('usa-input-error');    
       $('#overseas-experienceQn .field-validation-error').show();
@@ -246,7 +287,8 @@ var experience = {
     var validateExperience= experience.validateExperience.bind(this);
     var data = experience.getDataFromExperiencePage.bind(this)();
     this.data.currentStep = Math.max(this.data.currentStep, 2);
-    this.data.selectedStep = 3;  
+    this.data.selectedStep = 3; 
+    data.declineExperience = $('input#check-experience').is(':checked'); 
     if(!validateExperience()){
       $.ajax({
         url: '/api/application/' + this.data.applicationId,
@@ -267,7 +309,7 @@ var experience = {
     var template = templates.applyAddExperience(data);
     this.$el.html(template);
     this.$el.localize();
-    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 }); 
     this.initializeCountriesSelect();
     window.scrollTo(0, 0);
   },
@@ -286,6 +328,7 @@ var experience = {
     this.$el.html(template);
     this.$el.localize();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    experience.characterCount.bind(this)(); 
     this.initializeCountriesSelect();
     $('#apply_country').select2('data', { 
       id: data.country.countryId, 
@@ -303,7 +346,13 @@ var experience = {
     this.$el.html(templates.applyExperience(this.data)); 
     experience.characterCount.bind(this)(); 
     experience.renderExperienceComponent.bind(this)();
+    experience.renderExperience.bind(this)();
     this.renderProcessFlowTemplate({ currentStep: Math.max(this.data.currentStep, 2), selectedStep: 2 });
+    if (this.data.experience.length < 1 ) {
+      $('#check-experience-details').css('display', 'block');
+    } else {
+      $('#check-experience-details').css('display', 'none');
+    }
     window.scrollTo(0, 0);
   },
 
@@ -325,10 +374,59 @@ var experience = {
     }
   },
 
+
+  onError:function (error) {
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'sort-experiences',
+      alert: 'error',
+      modalTitle: 'An unexpected error occured',
+      modalBody: 'An unexpected error occured attempting to update your experiences from your application.',
+      primary: null,
+      secondary: null,
+    }).render();
+  },
+  
+  onSuccess: function (results) {
+    this.data.experience = results;  
+    experience.renderExperience.bind(this)();
+  },
+  
+  renderExperience: function (){ 
+    var data ={
+      experience:_.sortBy(this.data.experience,'sortOrder'),
+    };  
+    $('#experience-preview-id').html(templates.applyExperiencePreview(data));
+   
+  },
+  swapExperiences: function (experience1, experience2) {
+    $.ajax({
+      url: '/api/application/' + this.data.applicationId + '/experience/swap',
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify([experience1, experience2 ]),
+    }).done(experience.onSuccess.bind(this)).fail(experience.onError.bind(this));
+  },
+  moveExperience : function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var action = e.currentTarget.getAttribute('data-action');
+    var experienceId= e.currentTarget.getAttribute('data-id');
+    var sort = parseInt($(e.currentTarget).closest('.order-options')[0].getAttribute('data-sort')); 
+    this.data.experience= _.sortBy(this.data.experience,'sortOrder');
+    var experience1= _.findWhere(this.data.experience, { experienceId: experienceId }); 
+    var experience2= _.filter(this.data.experience,function (f,index){     
+      return index== (sort + actions[action]);
+    }); 
+    experience.swapExperiences.bind(this)(experience1, experience2[0]);
+  },
+
+
+
   renderExperienceComponent: function () {
     experience.toggleOverseasExperienceDetails.bind(this)();
     experience.toggleOverseasExperienceFilterOther.bind(this)();
     experience.toggleSecurityClearanceDetails.bind(this)();
+    experience.renderExperience.bind(this)();
   },
 
   validateAddExperienceFields: function (data) {

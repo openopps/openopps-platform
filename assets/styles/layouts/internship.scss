@@ -1075,6 +1075,7 @@
       margin-bottom: 0;
       background-color: $color-white;
       border-top: 1px solid $color-gray-lighter;
+      position: relative;
 
       &-button {
         font-size: 1.9rem;
@@ -1242,6 +1243,18 @@
           float: right;
         }
       }
+    }
+  }
+
+  .order-options {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: $size-default;
+    top: $size-default;
+
+    @include media($L) {
+      right: $size-M;
     }
   }
 
