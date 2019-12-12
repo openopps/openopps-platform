@@ -21,6 +21,15 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
+function getWhereClauseForUsers (filter) {
+  if (filter) {
+    return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    return '';
+  }
+}
+
 function getTaskFilterClause (filter, filterAgency, extra) {
   var filterClause =  `lower(tasks.title) like '%` + filter.replace(/\s+/g, '%').toLowerCase() +
     `%' or lower(tasks.owner->>'name') like '%` + filter.replace(/\s+/g, '%').toLowerCase() + `%'`;
@@ -54,7 +63,7 @@ function getUserListOrderByClause (sortValue) {
     case 'createdAt':
       return 'users."createdAt" desc';
     case 'last_login':
-      return 'users.last_login desc';
+      return 'users.last_login desc nulls last';
     case 'isAdmin':
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
@@ -99,11 +108,11 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
     var whereClause = 'tasks.community_id = ? and ' + getWhereClauseForTaskState(state);
   }
 
-  var agency = "";
-  var office = "";
-  var bureau = "";
+  var agency = '';
+  var office = '';
+  var bureau = '';
 
-  if (community.referenceId != "dos") {
+  if (community.referenceId != 'dos') {
     var agency = ' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
   } else {
     var office = ' or lower(office->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
@@ -115,7 +124,7 @@ module.exports.getCommunityTaskStateMetrics = async function (communityId,cycleI
     + '%\'' + agency + office + bureau +')';
   } 
 
-  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != "dos", office + bureau) : ''));
+  taskStateTotalsQuery = taskStateTotalsQuery.replace('[filter clause]', (filter ? ' and ' + getTaskFilterClause(filter, community.referenceId != 'dos', office + bureau) : ''));
   tasksByStateQuery = tasksByStateQuery.replace('[where clause]', whereClause).replace('[order by]', getOrderByClause(sort));
   
   if(cycleId){
@@ -151,7 +160,26 @@ module.exports.getCommunityCycle = async function (id,cycleId) {
   
   return community;
 };
-
+module.exports.getApplicantsForCycle = async (communityId, cycleId) => {
+  return new Promise((resolve, reject) => { 
+    db.query(fs.readFileSync(__dirname + '/sql/getCommunityCycleApplicants.sql', 'utf8'), communityId,cycleId).then(results => {
+      resolve(results.rows);
+    }).catch(err => {
+      reject({ status: 401 });
+    });   
+   
+  });
+};
+module.exports.getApplicantsInternships = async (userId, cycleId) => {
+  return new Promise((resolve, reject) => { 
+    db.query(fs.readFileSync(__dirname + '/sql/getCommunityApplicantsInternships.sql', 'utf8'), userId,cycleId).then(results => {
+      resolve(results.rows);
+    }).catch(err => {
+      reject({ status: 401 });
+    });   
+   
+  });
+};
 
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
@@ -396,13 +424,7 @@ module.exports.getInteractionsForCommunity = async function (communityId) {
 module.exports.getUsers = async function (page, filter, sort) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserListBySort.sql', 'utf8').toString();
-  
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -415,14 +437,8 @@ module.exports.getUsers = async function (page, filter, sort) {
 module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
-
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
-  usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
   result.users = (await db.query(usersBySortQuery, [agencyId, page])).rows;
@@ -434,13 +450,7 @@ module.exports.getUsersForAgency = async function (page, filter, sort, agencyId)
 module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
-
-  if (filter) {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', 'where lower(name) like \'%' + filter.toLowerCase() + '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'');
-  } else {
-    usersBySortQuery = usersBySortQuery.replace('[where clause]', '');
-  }
-
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -621,12 +631,11 @@ module.exports.getDashboardCommunityTaskMetrics = async function (group, filter,
   return generator.metrics;
 };
 
-module.exports.canChangeOwner = async function (user, taskId) {
+module.exports.canAgencyChangeOwner = async function (user, taskId) {
   var task = await dao.Task.findOne('id = ?', taskId).catch((err) => { 
     return undefined;
   });
-  var agency = _.find(user.tags, { type: 'agency' });
-  return task && (task.restrict.name == agency.name);
+  return task && !task.communityId && (task.agencyId == user.agencyId);
 };
 
 module.exports.canCommunityChangeOwner = async function (user, taskId) {
@@ -749,6 +758,149 @@ module.exports.getCommunities = async function (user) {
     return await dao.Community.find();
   } else {
     return await dao.Community.query(dao.query.communityListQuery, user.id);
+  }
+};
+module.exports.saveBureauOffice = async function (ctx,attributes,done) { 
+  if(attributes.officeId && attributes.bureauId){
+    var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId);
+    attributes.lastModified = new Date();
+    return await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId).then(async (e) => { 
+      return await dao.Office.update(attributes).then(async (office) => {
+        var audit = module.exports.createAuditLog('OFFICE_UPDATED', ctx, {      
+          officeId: office.officeId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+          previous: _.omitBy(origOffice, (value, key) => { return _.isEqual(attributes[key], value); }),
+          changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origOffice[key], value); }),
+        });     
+        office.updateOffice=true;
+        return done(!office, office);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+  else if(attributes.bureauId && !attributes.selected){   
+    var origBureau = await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId);
+    attributes.lastModified = new Date();
+    return await dao.Bureau.findOne('bureau_id = ?',attributes.bureauId).then(async (e) => { 
+      return await dao.Bureau.update(attributes).then(async (bureau) => {
+        var audit = module.exports.createAuditLog('BUREAU_UPDATED', ctx, {      
+          bureauId: bureau.bureauId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+          previous: _.omitBy(origBureau, (value, key) => { return _.isEqual(attributes[key], value); }),
+          changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origBureau[key], value); }),
+        });   
+        bureau.updateBureau=true;
+        return done(!bureau, bureau);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+  
+  else if(attributes.selected=='bureau'){
+    attributes.lastModified = new Date();
+    await dao.Bureau.insert(attributes).then(async (bureau) => {
+      var audit = module.exports.createAuditLog('BUREAU_ADDED', ctx, {      
+        bureauId: bureau.bureauId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        bureauName: bureau.name,   
+      });  
+      bureau.insertBureau= true;  
+      return done(null, bureau);
+    }).catch(err => {
+      return done(true);
+    });
+  }
+  else if(attributes.selected=='office'){
+    attributes.lastModified = new Date();
+    await dao.Office.insert(attributes).then(async (office) => {
+      var audit = module.exports.createAuditLog('OFFICE_ADDED', ctx, {
+        bureauId:office.bureauId,      
+        officeId: office.officeId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        officeName: office.name,   
+      });  
+      office.insertOffice= true;  
+      return done(null, office);
+    }).catch(err => {
+      return done(true);
+    });
+  }
+};
+
+module.exports.deleteBureauOffice = async function (ctx,done) { 
+  var bureauId = ctx.params.bureauId; 
+  if(ctx.params.bureauId){  
+    var origBureau = await dao.Bureau.findOne('bureau_id = ?',bureauId);   
+    return await dao.Bureau.findOne('bureau_id = ?',bureauId).then(async (e) => { 
+      origBureau.lastModified = new Date();
+      origBureau.isDisabled= true;
+      return await dao.Bureau.update(origBureau).then(async (bureau) => {
+        var offices = await dao.Office.find('bureau_id = ?',bureauId);
+        if(offices.length >0){
+          offices.forEach(async (value) => {
+            value.lastModified= new Date();
+            value.isDisabled= true;
+            await dao.Office.update(value).then(async () => {
+              done(null, true);     
+            }).catch (err => {
+              done(err);
+            });  
+          });
+        }  
+        var audit = module.exports.createAuditLog('BUREAU_DELETED', ctx, {      
+          bureauId: bureau.bureauId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'), 
+          offices: offices,      
+        });  
+        bureau.offices = offices; 
+        bureau.deleteBureau=true;        
+        return done(!bureau, bureau);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }
+};
+
+module.exports.deleteOffice = async function (ctx,done) { 
+  var bureauId = ctx.params.bureauId; 
+  var officeId= ctx.params.officeId;
+  if(bureauId && officeId){  
+    var origOffice = await dao.Office.findOne('bureau_id = ? and office_id = ?',bureauId,officeId);   
+    return await dao.Office.findOne('bureau_id = ? and office_id = ?',bureauId,officeId).then(async (e) => { 
+      origOffice.lastModified = new Date();
+      origOffice.isDisabled= true;
+      return await dao.Office.update(origOffice).then(async (office) => {   
+        var audit = module.exports.createAuditLog('OFFICE_DELETED', ctx, {
+          bureauId : office.bureauId,      
+          officeId: office.officeId,
+          user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),  
+          officeName:office.name,     
+        });       
+        office.deleteOffice=true;        
+        return done(!office, office);
+      }).catch((err) => {
+        log.error(err);
+        return false;
+      });
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
   }
 };
 

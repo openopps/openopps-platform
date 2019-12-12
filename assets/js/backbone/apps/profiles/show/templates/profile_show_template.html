@@ -122,6 +122,36 @@
           </div>
         </div>
       </div>
+
+  
+    <% if (dos) { %>
+    <div class="usajobs-opop-skill__body">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+        <div class="usajobs-grid-full">
+          <% if (data.isOwner || data.canEditProfile) { %>
+          <div class="usajobs-opop-section-edit skills-edit">
+            <a href="/profile/edit/bureau_office/<%- data.id %>/">Edit</a>
+          </div>
+          <% } %>
+          <h2><span class="usa-input-optional">Bureau and Office/post</span></h2>
+          <div class="usajobs-opop-profile-details usa-width-three-fourths">
+            <div class="profile-bureau">
+              <% if(!_.isEmpty(data.bureau)) { %>
+              <div class="usajobs-profile-home-section__field-label">Bureau</div>
+              <span><%- data.bureau.name %></span>
+              <% } %>
+            </div>
+            <div class="profile-office">
+              <% if(!_.isEmpty(data.office)) { %>
+              <div class="usajobs-profile-home-section__field-label">Office/post</div>
+              <span><%- data.office.name %></span>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
       <div class="usajobs-opop-skill__body">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
           <div class="usajobs-grid-full">

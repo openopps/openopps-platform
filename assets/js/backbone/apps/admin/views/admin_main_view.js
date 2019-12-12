@@ -4,6 +4,8 @@ var Backbone = require('backbone');
 
 var AdminUserView = require('./admin_user_view');
 var AdminCommunityCycleView = require('./admin_community_cycle_view');
+var AdminCommunityApplicantView = require('./admin_community_applicant_view');
+var AdminCommunityApplicantSubmittedView = require('./admin_community_applicant_submitted_view');
 var AdminTaskView = require('./admin_task_view');
 var AdminAgenciesView = require('./admin_agencies_view');
 var AdminDashboardView = require('./admin_dashboard_view');
@@ -92,6 +94,11 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminTaskView(target, this.options[target + 'Id']);
           this.adminTaskView.render();
           break;
+        case 'applicants':
+          this.initializeAdminCommunityApplicantView(target, this.options[target + 'Id']);
+          this.adminCommunityApplicantView.render();
+          break;
+      
         default:
           break;
       }
@@ -167,6 +174,19 @@ var AdminMainView = Backbone.View.extend({
       targetId: targetId,
     });
   },
+  
+  initializeAdminCommunityApplicantView: function (target, targetId) {
+    if (this.adminCommunityApplicantView) {
+      this.adminCommunityApplicantView.cleanup();
+    }
+    this.adminCommunityApplicantView = new AdminCommunityApplicantView({
+      el: '#admin-applicant',
+      target: target,
+      targetId: targetId,
+    });
+  },
+
+ 
 
   initializeAdminCommunityEditView: function (targetId) {
     if (this.adminCommunityEditView) {

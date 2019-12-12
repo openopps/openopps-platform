@@ -1,0 +1,102 @@
+<% if(updateOffice) { %>
+    <div id="office-edit-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+      </div>
+      <div class="usajobs-alert__body">
+        <h3 class="usa-alert-heading">
+          Office updated
+        </h3>
+        <p class="usa-alert-text">You have successfully updated the <%- name %> to your community.</p>
+      </div>
+      <button class="usajobs-alert__close" data-behavior="alert.close">
+        <span class="usajobs-assistive-text">Close</span>
+      </button>
+    </div>
+    <% } %>
+    <% if(updateBureau) { %>
+    <div id="bureau-edit-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+        <div class="usajobs-alert__figure">
+          <div class="usajobs-alert__icon">
+          </div>
+        </div>
+        <div class="usajobs-alert__body">
+          <h3 class="usa-alert-heading">
+            Bureau updated
+          </h3>
+          <p class="usa-alert-text">You have successfully updated the <%- name %> to your community.</p>
+        </div>
+        <button class="usajobs-alert__close" data-behavior="alert.close">
+          <span class="usajobs-assistive-text">Close</span>
+        </button>
+      </div>
+      <% } %>
+      <% if(insertBureau) { %>
+        <div id="bureau-add-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+            <div class="usajobs-alert__figure">
+              <div class="usajobs-alert__icon">
+              </div>
+            </div>
+            <div class="usajobs-alert__body">
+              <h3 class="usa-alert-heading">
+                Bureau added
+              </h3>
+              <p class="usa-alert-text">You have successfully added the <%- name %> to your community.</p>
+            </div>
+            <button class="usajobs-alert__close" data-behavior="alert.close">
+              <span class="usajobs-assistive-text">Close</span>
+            </button>
+          </div>
+          <% } %>
+          <% if(insertOffice) { %>
+            <div id="office-add-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+                <div class="usajobs-alert__figure">
+                  <div class="usajobs-alert__icon">
+                  </div>
+                </div>
+                <div class="usajobs-alert__body">
+                  <h3 class="usa-alert-heading">
+                    Office added
+                  </h3>
+                  <p class="usa-alert-text">You have successfully added the <%- name %> to your community.</p>
+                </div>
+                <button class="usajobs-alert__close" data-behavior="alert.close">
+                  <span class="usajobs-assistive-text">Close</span>
+                </button>
+              </div>
+              <% } %>
+              <% if(deleteBureau) { %>
+                <div id="bureau-delete-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+                    <div class="usajobs-alert__figure">
+                      <div class="usajobs-alert__icon">
+                      </div>
+                    </div>
+                    <div class="usajobs-alert__body">
+                      <h3 class="usa-alert-heading">
+                        Bureau deleted
+                      </h3>
+                      <p class="usa-alert-text">You have successfully removed the <%- name %> from your community.</p>
+                    </div>
+                    <button class="usajobs-alert__close" data-behavior="alert.close">
+                      <span class="usajobs-assistive-text">Close</span>
+                    </button>
+                  </div>
+                  <% } %>
+                  <% if(deleteOffice) { %>
+                    <div id="office-delete-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+                        <div class="usajobs-alert__figure">
+                          <div class="usajobs-alert__icon">
+                          </div>
+                        </div>
+                        <div class="usajobs-alert__body">
+                          <h3 class="usa-alert-heading">
+                            Office deleted
+                          </h3>
+                          <p class="usa-alert-text">You have successfully removed the <%- name %> from your community.</p>
+                        </div>
+                        <button class="usajobs-alert__close" data-behavior="alert.close">
+                          <span class="usajobs-assistive-text">Close</span>
+                        </button>
+                      </div>
+                      <% } %>

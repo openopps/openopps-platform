@@ -1,0 +1,51 @@
+
+<form action="javascript:void(0)" class="usa-form-xl " role="form" id="admin-community-add-bureau" >
+<div class="form-group required-input usa-fieldset-inputs">
+  <% if ((!bureauId) ) { %>   <h5>Select bureau or office/post</h5> <% } %>
+    <fieldset class="usajobs-fieldset">
+      <legend class="usa-sr-only"> <% if (bureauId || officeId) { %>Edit <% }else {%> Add new <% } %>bureau or office/post</legend>   
+      <% if ((!bureauId) ) { %> 
+      <span class="field-validation-error" style="display:none;" >Please select Bureau or office/post.</span>
+      <ul class="usa-unstyled-list" id="community-bureau-office-group">
+        <li>
+          <input id="community-bureau"  name="community-bureau-office-group" type="radio" value="bureau"<% if (bureauId) { %> checked <% } %> checked >
+          <label for="community-bureau">Bureau</label>
+        </li>
+        <li>
+          <input id="community-office" name="community-bureau-office-group" type="radio" value="office" <% if (officeId) { %> checked <% } %>>
+          <label for="community-office">Office/post </label>
+        </li>
+      </ul>
+      <% } %>
+    </fieldset>
+  </div>
+
+<div id="community-bureau-name" class="bureau-section" >
+  <label for="community-bureau-name"><% if(bureauId) { %>Bureau Name<% } else {%>Enter the name of the bureau you want to add<% } %></label>
+    <span class="field-validation-error error-empty" style="display:none;">You must enter the name of the bureau.</span>
+    <span class="field-validation-error exist-validation-error error-empty" style="display:none;">Bureau already exists.</span>
+    <input type="text" id="community-new-bureau" class="fullwidth form-control validate validateBureauOffice" data-validate="empty,count100,html" value="<%= bureauName %>"  />
+    <p id="community-new-bureau-count" class="usajobs-form__help-brief">(100 characters remaining)</p>
+</div>
+<% if ((!bureauId) ) { %>
+<div class="required-input community_tag_bureau bureau-office-section" id="community_drop_bureau">
+  <label for="bureau">Select the bureau that the office or post belongs to.</label>  
+  <span class="field-validation-error error-empty" style="display:none;">You must select the bureau that the office or post belongs to.</span>               
+  <select id="community_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty" >
+    <option></option>
+    <% if (bureaus.length) { %>
+      <% _(bureaus).forEach(function (bureau, i) { %>
+        <option value="<%= bureau.bureauId %>" ><%= bureau.name %></option>
+      <% }); %>
+    <% } %>
+  </select>
+</div>
+<% } %>
+<div id="community-office-name" class="bureau-office-section" >
+    <label for="community-office-name"><% if(bureauId && officeId) { %>Office/post Name<% } else {%>Enter the name of the office or post you want to add.<% } %></label>   
+      <span class="field-validation-error" style="display:none;">You must enter the name of the Office/post.</span>
+      <span class="field-validation-error exist-validation-error error-empty" style="display:none;">Office already exists.</span>
+      <input type="text" id="community-new-office" class="fullwidth form-control validate validateBureauOffice" data-validate="count100,html" value="<%= officeName %>" />
+      <p id="community-new-office-count" class="usajobs-form__help-brief">(100 characters remaining)</p>
+</div>
+</form>

@@ -11,6 +11,7 @@ const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
+const Audit = require('../model/Audit');
 
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
@@ -269,7 +270,7 @@ async function updateOpportunityState (attributes, done) {
   });
 }
 
-async function updateOpportunity (attributes, done) {
+async function updateOpportunity (ctx, attributes, done) {
   var errors = await Task.validateOpportunity(attributes);
   if (!_.isEmpty(errors.invalidAttributes)) {
     return done(null, null, errors);
@@ -292,7 +293,15 @@ async function updateOpportunity (attributes, done) {
   
   attributes.updatedAt = new Date();
   await dao.Task.update(attributes).then(async (task) => {
-    
+    var audit = Audit.createAudit('TASK_UPDATED', ctx, {
+      taskId: task.id,
+      previous: _.omitBy(origTask, (value, key) => { return _.isEqual(attributes[key], value); }),
+      changes: _.omitBy(attributes, (value, key) => { return _.isEqual(origTask[key], value); }),
+    });
+    await dao.AuditLog.insert(audit).catch((err) => {
+      log.error(err);
+    });
+
     task.userId = task.userId || origTask.userId; // userId is null if editted by owner
     task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
     task.volunteers = (await dao.Task.db.query(dao.query.volunteer, task.id)).rows;
@@ -320,11 +329,6 @@ async function updateOpportunity (attributes, done) {
       else if(attributes.language && attributes.language.length==0){
         await dao.LanguageSkill.delete('task_id = ?',task.id);    
       }
-      // eslint-disable-next-line no-empty
-      else{
-
-      }
-
     }
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
@@ -485,7 +489,10 @@ async function sendTaskSubmittedNotification (user, task) {
       notification.createNotification(data);
     }
   };
-  if (task.communityId) {
+  if (task.communityId && task.bureau_id) {
+    var bureauAdmins = await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id);
+    _.forEach(bureauAdmins.length ? bureauAdmins : (await dao.User.query(dao.query.communityBureauAdminsQuery, task.communityId, task.bureau_id)), updateBaseData);
+  } else if (task.communityId) {
     _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
     _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
@@ -520,6 +527,31 @@ async function sendInternSurveydNotification (user) {
   }
 }
 
+function newInternship (title, attributes, cycleId, user) {
+  return {
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    title: title,
+    userId: user.id,
+    restrict: getRestrictValues(user),
+    state: 'draft',
+    description: attributes.description,
+    details: attributes.details,
+    outcome: attributes.outcome,
+    about: attributes.about,
+    agencyId: attributes.agencyId,
+    communityId: attributes.communityId,
+    officeId: attributes.officeId,
+    bureauId: attributes.bureauId,
+    cityName: attributes.cityName,
+    cycleId: cycleId,
+    countryId: attributes.countryId,
+    countrySubdivisionId: attributes.countrySubdivisionId,
+    interns: attributes.interns,
+    suggestedSecurityClearance: attributes.suggestedSecurityClearance,
+  };
+}
+
 async function copyOpportunity (attributes, user, done) {
   var results = await dao.Task.findOne('id = ?', attributes.taskId);
   var language= await dao.LanguageSkill.find('task_id = ?',attributes.taskId);
@@ -541,36 +573,16 @@ async function copyOpportunity (attributes, user, done) {
     agencyId: user.agencyId,
     communityId: results.communityId,
   };
-  var intern = {
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    title: attributes.title,
-    userId: user.id,
-    restrict: getRestrictValues(user),
-    state: 'draft',
-    description: results.description,
-    details: results.details,
-    outcome: results.outcome,
-    about: results.about,
-    agencyId: results.agencyId,
-    communityId: results.communityId,
-    officeId: results.officeId,
-    bureauId: results.bureauId,
-    cityName: results.cityName,
-    cycleId: results.cycleId,
-    countryId: results.countryId,
-    countrySubdivisionId: results.countrySubdivisionId,
-    interns: results.interns,
-    language: language,
-    suggestedSecurityClearance: results.suggestedSecurityClearance,
-  };
-  if(await isStudent(results.userId,results.id)){
-    await dao.Task.insert(intern)
-      .then(async (intern) => {
+  if(await isStudent(results.userId,results.id)) {
+    var cycleId = await getCurrentCycle(results.communityId, results.cycleId);
+    if (!cycleId) {
+      return done({'message':'There are no current cycle dates set. Please contact your administrator to request the cycle times be added.'});
+    } else {
+      var intern = newInternship(attributes.title, results, cycleId, user);
+      await dao.Task.insert(intern).then(async (intern) => {
         if(language && language.length >0){
           language.forEach(async (value) => {
             var newValue= _.omit(value,'languageSkillId');
-            
             newValue.updatedAt= new Date();
             newValue.createdAt= new Date();      
             newValue.taskId = intern.id;
@@ -581,7 +593,6 @@ async function copyOpportunity (attributes, user, done) {
             });  
           });
         }
-
         tags.map(tag => {
           dao.TaskTags.insert({ tagentity_tasks: tag.tagentityTasks, task_tags: intern.id }).catch(err => {
             log.info('register: failed to update tag ', attributes.username, tag, err);
@@ -600,9 +611,8 @@ async function copyOpportunity (attributes, user, done) {
         await elasticService.indexOpportunity(intern.id);
         return done(null, { 'taskId': intern.id });
       }).catch (err => { return done({'message':'Error copying task.'}); });
-  }
-
-  else{
+    }
+  } else {
     await dao.Task.insert(task)
       .then(async (task) => {
         tags.map(tag => {
@@ -617,8 +627,7 @@ async function copyOpportunity (attributes, user, done) {
 }
 
 function getRestrictValues (user) {
-  
-  var restrict = {
+  return restrict = {
     name: user.agency.name,
     abbr: user.agency.abbr,
     parentAbbr: '',
@@ -626,32 +635,48 @@ function getRestrictValues (user) {
     domain: user.agency.domain,
     projectNetwork: false,
   };
-  return restrict;
 }
 
-async function deleteTask (id,cycleId) {
+async function getCurrentCycle (communityId, cycleId) {
+  var cycles = await dao.Cycle.find('community_id = ? and posting_start_date <= now() and posting_end_date >= now()', communityId);
+  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId })) {
+    return cycleId
+  } else {
+    return (_.sortBy(cycles, 'cycleId' )[0] || {}).cycleId;
+  }
+}
+
+async function deleteTask (ctx, task, cycleId) {
   if(cycleId){
     var cycle= await dao.Cycle.findOne('cycle_id=?',cycleId).catch(err=>{
       return null;
     });
     if((cycle) && (cycle.applyStartDate > new Date())) {
-      return await removeTask(id);
+      return await removeTask(ctx, task);
     }
     else {
       return false;
     }
   }
   else{
-    return await removeTask(id);
+    return await removeTask(ctx, task);
   }
 }
 
-async function removeTask (id) {
-  await dao.TaskTags.delete('task_tags = ?', id).then(async (task) => {
-    dao.Volunteer.delete('"taskId" = ?', id).then(async (task) => {
-      dao.Task.delete('id = ?', id).then(async (task) => {
-        await elasticService.deleteOpportunity(id);
-        return id;
+async function removeTask (ctx, task) {
+  await dao.TaskTags.delete('task_tags = ?', task.id).then(async () => {
+    dao.Volunteer.delete('"taskId" = ?', task.id).then(async () => {
+      dao.Task.delete('id = ?', task.id).then(async () => {
+        var audit = Audit.createAudit('TASK_DELETED', ctx, {
+          taskId: task.id,
+          title: task.title,
+          creator: task.userId,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
+        await elasticService.deleteOpportunity(task.id);
+        return true;
       }).catch(err => {
         log.info('delete: failed to delete task ', err);
         return false;

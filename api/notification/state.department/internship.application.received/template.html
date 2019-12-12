@@ -9,7 +9,7 @@
   <li><a href="<%- globals.urlPrefix %>/internships/<%- application.tasks[2].taskId %>"><%- application.tasks[2].title %></a></li>
 </ul>
 
-<p>View your application in your <a href="<%- globals.urlPrefix %>/home/">dashboard</a>.</p>
+<p>View your application in your <a href="<%- globals.urlPrefix %>/home">dashboard</a>.</p>
 
 <p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">What happens next?</p>
 
@@ -23,6 +23,11 @@
   <li><strong>Send offer emails.</strong><br>
     They will send you an email with a conditional offer, if you're selected for an internship.</li>
 </ol>
+
+<p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">Can I update my application?</p>
+
+<p>Yes, you can update your application. You must make all updates before 11:59 p.m. ET on the closing date 
+  <%- moment(cycle.applyEndDate).format('MMMM DD, YYYY') %>. Don't forget to click submit.</p>
 
 <p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">What happens if I'm not selected?</p>
 

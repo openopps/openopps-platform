@@ -45,7 +45,7 @@ function createNotification (notification) {
       sendEmail(options, function (err, info) {
         log.info(err ? err : info);
         if (!err) {
-          insertNotification(action, data);
+          insertNotification(data._action, data);
         }
       });
     });

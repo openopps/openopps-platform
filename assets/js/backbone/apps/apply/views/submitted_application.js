@@ -3,12 +3,13 @@ const _ = require('underscore');
 const Backbone = require('backbone');
 var $ = require('jquery');
 var ModalComponent = require('../../../components/modal');
+const moment = require('moment-timezone');
 
 var submittedApplication = {
   updateApplication: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
-  
+ 
     if (this.data.submittedAt !== null) {
       this.modalComponent = new ModalComponent({
         el: '#site-modal',
@@ -18,7 +19,7 @@ var submittedApplication = {
         '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
         'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
         'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
-        'your application and click <strong>Submit application</strong>.</li></ol>',
+        'your application and click <strong>Submit application</strong>. You must submit changes before '+ moment.tz(this.data.cycle.apply_end_date, 'America/New_York').format('MMMM DD, YYYY') +' at 11:59 p.m. ET.</li></ol>',
         primary: {
           text: 'Update application',
           action: function () {

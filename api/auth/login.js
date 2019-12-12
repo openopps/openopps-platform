@@ -20,6 +20,7 @@ async function userFound (user, tokenset, done) {
       data.isAdmin = false;
       data.isAgencyAdmin = false;
       data.isCommunityAdmin = false;
+      dao.CommunityUser.delete('user_id = ?', user.id)
     }
     data.username = tokenset.claims.email;
     data.linkedId = user.linkedId || tokenset.claims.sub; // set linked id if not already set

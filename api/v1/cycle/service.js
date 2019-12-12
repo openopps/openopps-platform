@@ -18,6 +18,11 @@ service.checkIsManager = async function (userId, cycleId) {
   return user.rows[0].is_manager;
 };
 
+service.checkIsJOACreated = async function (cycleId) {
+  var user = await dao.Cycle.db.query(dao.query.isJOACreated, cycleId);
+  return (user.rows[0].secondary_application_url != null && user.rows[0].secondary_application_url.trim() != '');
+};
+
 service.getPhaseData = async function (userId, cycleId) {
   var results = {};
   var phaseData = await dao.Task.db.query(dao.query.GetPhaseData, userId, cycleId);
@@ -53,15 +58,16 @@ service.archivePhase = async function (cycleId) {
   var closedPhase = await dao.Phase.findOne('name = ?', 'Close phase');
   if (closedPhase != null) {
     cycle.phaseId = closedPhase.phaseId;
+    cycle.closedDate = new Date();
   }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
-  await service.sendCloseCyclePhaseSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseAlternateNotification(cycleId);
-  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseCreatorNotification(cycleId);
-  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
-  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
+  //await service.sendCloseCyclePhaseSelectedNotification(cycleId);
+  //await service.sendCloseCyclePhaseAlternateNotification(cycleId);
+  return await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
+  //await service.sendCloseCyclePhaseCreatorNotification(cycleId);
+  //await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  //return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -155,6 +161,7 @@ service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) 
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   }
 }; 
@@ -175,6 +182,7 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
     layout: 'state.department/layout.html',
   };
   notification.createNotification(data);
+  var throttle = await checkEmailThrottle(i, 20);
 };
 
 service.sendAlternatePhaseStartedNotification = async function (cycleId) {
@@ -195,6 +203,7 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -220,6 +229,7 @@ service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
         layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -243,6 +253,7 @@ service.sendCloseCyclePhaseNotSelectedNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -268,6 +279,7 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
         layout: 'state.department/layout2.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -295,6 +307,7 @@ service.sendCloseCyclePhaseCreatorNotification = async function (cycleId) {
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -317,6 +330,7 @@ service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) 
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
@@ -339,10 +353,20 @@ service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleI
         layout: 'state.department/layout.html',
       };
       notification.createNotification(data);
+      var throttle = await checkEmailThrottle(i, 20);
     }
   } 
 };
 
+function checkEmailThrottle(index, limit) {
+  return new Promise(resolve => {
+    if((index + 1) % limit == 0) {
+      setTimeout(resolve, 1500);
+    } else {
+      resolve();
+    }
+  });
+};
 
 function getNextInternshipIndex (internshipIndex) {
   var counter = 0;

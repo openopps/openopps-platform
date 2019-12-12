@@ -2,7 +2,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var marked = require('marked');
-
+const moment = require('moment-timezone');
 var BaseView = require('../../../../base/base_view');
 var UIConfig = require('../../../../config/ui.json');
 var ModalComponent = require('../../../../components/modal');
@@ -163,8 +163,9 @@ var InternshipView = BaseView.extend({
   },
 
   updateApplication: function () {
-    if (this.modalComponent) { this.modalComponent.cleanup(); }  
-    var applicationData=this.model.attributes.application;  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+    var cycleData= this.model.attributes.cycle;
+    var applicationData=this.model.attributes.application; 
     if (applicationData.submitted_at == null) {
       Backbone.history.navigate('apply/' + applicationData.application_id, { trigger: true });
     } else {
@@ -176,7 +177,7 @@ var InternshipView = BaseView.extend({
         '<ol><li>Go to the page you want to edit by using the progress bar at the top of the page or by clicking the <strong>Save and continue</strong> ' +
         'button on each page.</li><li>Click <strong>Save and continue</strong> once you make your change.</li><li>Click <strong>Save and continue</strong> ' +
         'on all of the pages following the page you edited (you don\'t have to <strong>Save and continue</strong> on any previous pages).</li><li>Review ' +
-        'your application and click <strong>Submit application</strong>.</li></ol>',
+        'your application and click <strong>Submit application</strong>. You must submit changes before '+ moment.tz(cycleData.applyEndDate, 'America/New_York').format('MMMM DD, YYYY') +' at 11:59 p.m. ET.</li></ol>',
         primary: {
           text: 'Update application',
           action: function () {
@@ -218,13 +219,15 @@ var InternshipView = BaseView.extend({
               taskId: self.model.attributes.id,
               title: $('#task-copy-title').val(),
             },
-          }).done(function (data) {
-            console.log(data);
-            self.modalComponent.cleanup();
-            
-            Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            success: function (data) {
+              self.modalComponent.cleanup();
+              Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            },
+            error: function (error, status) {
+              this.modalComponent.displayError(error.responseText, 'Copy this opportunity');
+            }.bind(this)
           });
-        },
+        }.bind(this),
       },
     }).render();
   },

@@ -24,6 +24,10 @@
     position: absolute;
     right: $size-M;
   }
+
+  h2 {
+    width: calc(100% - 4rem);
+  }
 }
 
 .usajobs-opop-profile-opportunity__body {
@@ -487,6 +491,19 @@
 
 form [type=submit] {
     display: inline-block;
+}
+
+.usajobs-open-opps-profile .bureau-office {
+  position: relative;
+    width: 100%;   
+    padding-left: 0; 
+    padding-bottom: 1.9rem;
+      
+    left: 0; 
+
+    h2 {
+      margin-top: 0;
+    }
 }
 
 //skills

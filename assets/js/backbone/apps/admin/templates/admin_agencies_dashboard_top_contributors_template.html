@@ -2,6 +2,7 @@
 <div class="top-contributors usajobs-grid-full">
   <div class="usa-width-one-half">
     <h3>Opportunities created</h3>
+    <% if (creators && creators.length) { %>
     <div class="opportunities-created usajobs-grid-full">
       <div class="usa-width-one-half">
         <h5 class="graph-header">Creator</h5>
@@ -10,6 +11,13 @@
         <h5 class="graph-header"># of opportunities</h5>
       </div>
     </div>
+    <% } else { %>
+    <div class="opportunities-created usajobs-grid-full">
+      <div class="usa-width-one-whole">
+        <p>No opportunities created yet.</p>
+      </div>
+    </div>
+    <% } %>
     <% _.each(creators, function (creator, index) { %>
       <div class="opportunities-created usajobs-grid-full">
         <div class="usa-width-one-half">
@@ -23,12 +31,14 @@
           </div>
         </div>
       </div>
-    <% }); %> 
+    <% }); %>
+    <% if (creators && creators.length) { %>
     <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" title="Download list of all top contributors opportunities created list as a comma-separated file ready for import into Excel">        
       <a href="<%- dataExportCreatedUrl %>">
         <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download full list (.csv)</span>
       </a>
     </div>
+    <% } %>
   </div>
 
 
