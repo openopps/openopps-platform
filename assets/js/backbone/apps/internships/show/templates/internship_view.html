@@ -111,6 +111,14 @@
               <div>
                 <%- model.interns %>
               </div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (model.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- model.suggestedSecurityClearance %>
+                <% } %>
+              </div>
             </div>
           </div>
           <div class="usa-width-two-thirds opportunity-description">
@@ -188,6 +196,14 @@
               <h4>Number of interns</h4>
               <div>
                 <%- model.interns %>
+              </div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (model.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- model.suggestedSecurityClearance %>
+                <% } %>
               </div>
             </div>
           </div>
