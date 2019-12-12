@@ -122,7 +122,6 @@ function insertNotification (action, data) {
   var newNotification = {
     action: action,
     model: data,
-    recipientId: data.user.id,
     isActive: 't',
     createdAt: new Date(),
     updatedAt: new Date(),
