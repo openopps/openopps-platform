@@ -87,12 +87,12 @@ service.archivePhase = async function (cycleId) {
   }
   cycle.isArchived = true;
   await dao.Cycle.update(cycle);
-  await service.sendCloseCyclePhaseSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseAlternateNotification(cycleId);
-  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseCreatorNotification(cycleId);
-  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
-  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
+  //await service.sendCloseCyclePhaseSelectedNotification(cycleId);
+  //await service.sendCloseCyclePhaseAlternateNotification(cycleId);
+  return await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
+  //await service.sendCloseCyclePhaseCreatorNotification(cycleId);
+  //await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  //return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
