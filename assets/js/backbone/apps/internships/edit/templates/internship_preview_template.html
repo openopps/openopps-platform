@@ -53,7 +53,15 @@
               <div><%-moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>
               <div>32-40 hrs per week</div>
               <h4>Number of Interns</h4>
-              <div><%- data.interns %></div>                       
+              <div><%- data.interns %></div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (data.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- data.suggestedSecurityClearance %>
+                <% } %>
+              </div>
             </div>
           </div>
           <div class="usa-width-two-thirds opportunity-description">
@@ -121,7 +129,15 @@
               <div><%- moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>
               <div>32-40 hrs per week</div>
               <h4>Number of Interns</h4>
-              <div><%- data.interns %></div>         
+              <div><%- data.interns %></div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (data.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- data.suggestedSecurityClearance %>
+                <% } %>
+              </div>
             </div>
           </div>
         </div>
