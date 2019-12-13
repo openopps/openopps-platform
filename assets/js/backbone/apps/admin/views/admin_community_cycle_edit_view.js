@@ -86,6 +86,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         cycleStartDate: this.getDateFromFormGroup('start-internship-date'),
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
         secondaryApplicationUrl: $('#secondary-application-url').val(),
+        exclusiveEndDate: this.getDateFromFormGroup('exclusive-end-date'),
         updatedAt: this.cycle.get('updatedAt'),
       };
       if(new Date(data.postingEndDate)>new Date(data.applyEndDate)){ 
@@ -115,6 +116,10 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         $('#end-review-date').removeClass('usa-input-error');  
         $('#end-review-date>.exceed-date-error').hide(); 
       }
+      if(('#secondary-application-url').length > 0) {
+        //require exclusive date
+        
+      }
       if(!abort){
         this.cycle.trigger('cycle:save', data);
       }
@@ -129,6 +134,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
       $('#' + formGroup + '-1').val(),
       $('#' + formGroup + '-2').val(),
       $('#' + formGroup + '-3').val(),
+      $('#' + formGroup + '-4').val(),
     ].join('/');
   },
 
@@ -184,6 +190,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
       ['start-application-date', 'stop-application-date'],
       ['start-review-date', 'end-review-date'],
       ['start-internship-date', 'stop-internship-date'],
+      ['exclusive-end-date', 'exclusive-end-date'],
     ], function (abort, dateRange) {
       return !this.validDateRange(dateRange) || abort;
     }.bind(this), false);
