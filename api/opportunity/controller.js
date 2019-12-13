@@ -179,7 +179,7 @@ router.put('/api/task/internship/complete/:id', auth, async (ctx, next) => {
 });
 
 router.put('/api/task/internship/cancel/:id', auth, async (ctx, next) => {
-  if (await service.canUpdateOpportunity(ctx.state.user, ctx.request.body.id)) {
+  if (await service.canUpdateInternship(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
     await service.canceledInternship(ctx,ctx.request.body, function (done) {
       ctx.body = { success: true };
@@ -192,16 +192,24 @@ router.put('/api/task/internship/cancel/:id', auth, async (ctx, next) => {
   }
 });
 
+router.get('/api/task/community/communityManager/:id', auth, async (ctx, next) => {
+  await service.checkCommunityAdmin(ctx.state.user, ctx.params.id).then(results => {
+    ctx.status = 200;
+    ctx.body = results;
+  }).catch(err => {
+    ctx.status = err.status;
+  });
+});
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
     if (error) {
-      ctx.flash('error', 'Error Copying Opportunity');
       ctx.status = 400;
       log.info(error);
-      return ctx.body = null;
+      ctx.body = error.message;
+    } else {
+      ctx.body = task;
     }
-    ctx.body = task;
   });
 });
 

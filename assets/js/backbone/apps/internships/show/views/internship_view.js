@@ -34,6 +34,7 @@ var InternshipView = BaseView.extend({
     this.interns = {};
     this.notCompletedInterns={};
     this.selectedInterns={};
+    this.isDosManager;
     
   },
 
@@ -265,11 +266,15 @@ var InternshipView = BaseView.extend({
               taskId: self.model.attributes.id,
               title: $('#task-copy-title').val(),
             },
-          }).done(function (data) {        
-            self.modalComponent.cleanup();        
-            Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            success: function (data) {
+              self.modalComponent.cleanup();
+              Backbone.history.navigate('/internships/' + data.taskId + '/edit',{ trigger : true});
+            },
+            error: function (error, status) {
+              this.modalComponent.displayError(error.responseText, 'Copy this opportunity');
+            }.bind(this)
           });
-        },
+        }.bind(this),
       },
     }).render();
   },
@@ -308,7 +313,7 @@ var InternshipView = BaseView.extend({
       $.ajax({
         url: '/api/task/applicants/' + this.model.attributes.id,
         method: 'GET',
-      }).done(function (results) {
+      }).done(function (results) {       
         $('#internship-applicants').show();
         $('#internship-applicants').html(_.template(ApplicantsTemplate)({
           applicants: results,
@@ -343,12 +348,24 @@ var InternshipView = BaseView.extend({
     $('#internship-interns').html(selectedInternsTemplate);
   }, 
   checkDosAdmins: function () {
+    this.checkDosCommunityManager();
     var dos= _.findWhere(window.cache.currentUser.communities.student, { referenceId: 'dos' });
-    if((!_.isEmpty(dos) && window.cache.currentUser.isCommunityAdmin) || window.cache.currentUser.isAdmin || (window.cache.currentUser.id==this.model.attributes.userId) ) {
+    if((!_.isEmpty(dos) && this.isDosManager) || window.cache.currentUser.isAdmin) {
       return true;
     } else {
       return false;
     }
+  },
+
+  checkDosCommunityManager: function () { 
+    $.ajax({
+      url: '/api/task/community/communityManager/' +  this.model.attributes.id,
+      type: 'GET',
+      async: false,
+      success: function (data){     
+        this.isDosManager=data;
+      }.bind(this),
+    });
   },
 
   closeInternship: function (e) {
