@@ -507,9 +507,10 @@ var TaskItemView = BaseView.extend({
       } else if(location.length == 0 || !window.cache.currentUser.agency) {
         this.completeProfile(location, window.cache.currentUser.agency);
       } else {
+        var skill = _.find(window.cache.currentUser.tags, (tag) => { return tag.type == 'skill'; });
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
-          modalBody: ParticipateCheckList,
+          modalBody: _.template(ParticipateCheckList)({e, skill}),
           primary: {
             text: 'Yes, submit my name',
             action: this.volunteer.bind(this),
