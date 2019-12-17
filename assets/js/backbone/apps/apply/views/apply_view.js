@@ -293,11 +293,11 @@ var ApplyView = Backbone.View.extend({
         },
       }).done(function () {
         var duration = Date.now() - start;
-        if (duration < 2000) {
+        if (duration < 1500) {
           setTimeout(function () {
             this.modalComponent.cleanup();
             this.updateApplicationStep(1);
-          }.bind(this), 2000 - duration);
+          }.bind(this), 1500 - duration);
         } else {
           this.modalComponent.cleanup();
           this.updateApplicationStep(1);
