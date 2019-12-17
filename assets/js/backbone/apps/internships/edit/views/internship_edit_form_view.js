@@ -367,12 +367,6 @@ var InternshipEditFormView = Backbone.View.extend({
       maximumInputLength: 35,
     });
 
-    this.tagFactory.createTagDropDown({
-      type: 'location',
-      selector: '#task_tag_location',
-      width: '100%',
-      data: this.data['madlibTags'].location,
-    });
 
     this.tagFactory.createTagDropDown({
       type: 'keywords',
@@ -396,7 +390,7 @@ var InternshipEditFormView = Backbone.View.extend({
       allowClear: true,
     });
 
-    if(this.cycles.length>0){
+    if(this.cycles.length>0 && !this.checkDosBureau()){
       if($('#task_tag_bureau').select2('data')) {
         this.showOfficeDropdownOnRender();
       }
@@ -516,10 +510,18 @@ var InternshipEditFormView = Backbone.View.extend({
           this.cycles.push(cycle);
         }
         this.cycles = _.sortBy(this.cycles, 'postingStartDate');
-        if(this.cycles.length>0){
-          this.data.cycles=this.cycles;       
-          this.renderSteps();                      
-          this.renderInitialize();                      
+        if(this.cycles.length>0){       
+          if(this.checkDosBureau()){
+            this.$('#no-bureau-office-error').show();
+            this.$('#internship-edit').hide();
+          }
+          else {
+            this.$('#no-bureau-office-error').hide();
+            this.$('#internship-edit').show();
+            this.data.cycles=this.cycles;       
+            this.renderSteps();                      
+            this.renderInitialize(); 
+          }                     
         }
         else{
           this.$('#cycle-error').show();
@@ -531,6 +533,15 @@ var InternshipEditFormView = Backbone.View.extend({
     
    
   },
+
+  checkDosBureau: function () {
+    if(window.cache.currentUser && window.cache.currentUser.bureau.bureauId) {
+      return false;
+    } else {
+      return true;
+    } 
+  },
+
 
   initializeBureaus: function () {
     $.ajax({
@@ -693,7 +704,7 @@ var InternshipEditFormView = Backbone.View.extend({
         $('#language-select').removeClass('usa-input-error');   
       }
     }.bind(this));
-    $('#languageId').focus();
+    $('#s2id_languageId').focus();
   },
   
   initializeCountriesSelect: function () {  
@@ -703,7 +714,7 @@ var InternshipEditFormView = Backbone.View.extend({
       minimumInputLength: 3,  
       ajax: {
         url: '/api/ac/country',
-        dataType: 'json',
+        dataType: 'json',       
         data: function (term) {       
           return { q: term };
         },
@@ -746,7 +757,8 @@ var InternshipEditFormView = Backbone.View.extend({
       this.countryCode && this.loadCountrySubivisionData();
     }.bind(this));
 
-    $('#task_tag_country').focus();
+    $('#s2id_task_tag_country').focus();
+  
   },
 
   loadCountrySubivisionData: function () {
