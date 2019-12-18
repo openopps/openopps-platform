@@ -297,7 +297,7 @@ dao.query.getApplicantNotSelected = `
     inner join midas_user mu on mu.id = a.user_id
     left join task_list_application tla on tla.application_id = a.application_id
     left join task_list tl on tl.task_list_id = tla.task_list_id
-  where cycle.cycle_id = 2 and a.submitted_at is not null
+  where cycle.cycle_id = ? and a.submitted_at is not null
     and (tl.title is null or tl.title not in ('Primary','Alternate'))
 `;
 
