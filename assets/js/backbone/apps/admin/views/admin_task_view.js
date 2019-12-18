@@ -115,6 +115,7 @@ var AdminTaskView = Backbone.View.extend({
       filter: this.data.filter,
       targetAudience: this.community.targetAudience,
       referenceId: this.community.referenceId,
+      communityId: this.community.communityId,
       cycles: (this.community.cycles || {}),
       countOf: totalResults,
       firstOf: this.data.page * 25 - 24,
