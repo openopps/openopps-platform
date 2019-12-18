@@ -12,6 +12,7 @@ async function userFound (user, tokenset, done) {
       id: user.id,
       hiringPath: tokenset.claims['usaj:hiringPath'],
       governmentUri: tokenset.claims['usaj:governmentURI'],
+      disabled: user.disabled,
     };
     if (tokenset.claims['usaj:governmentURI'] && tokenset.claims['usaj:hiringPath'] != 'fed') {
       data.hiringPath = 'contractor';
@@ -63,9 +64,11 @@ module.exports.processFederalLogin = (tokenset, done) => {
     userFound(user, tokenset, done);
   }).catch(async () => {
     dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims.email.toLowerCase()).then(user => {
+      user.disabled = false;
       userFound(user, tokenset, done);
     }).catch(async () => {
       dao.User.findOne('linked_id = \'\' and lower(username) = ?', tokenset.claims['usaj:governmentURI'].toLowerCase()).then(user => {
+        user.disabled = false;
         userFound(user, tokenset, done);
       }).catch(async () => {
         // create new account
