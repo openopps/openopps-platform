@@ -58,10 +58,10 @@
           <th id="publishId" class="center" data-target="publish-delete">Approve</th>
         <% } %>
       <% } %>
-      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) { %>
         <th class="center" data-target="publish-delete">Delete</th>
       <% } %>
-      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase())) { %>
+      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) { %>
         <th class="center" data-target="change-add">Change<br/> owner</th>
       <% } %>
       <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
@@ -133,10 +133,12 @@
         <% } %>
         <td class="metrics-table__date">
           <%- moment(task.createdAt).format('MM/DD/YY') %>
-      </td>
+        </td>
         <% if (_.contains(['submitted'], status.toLowerCase())) { %>
           <td class="metrics-table__button">
-            <% if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
+            <% if (target == 'community' && !window.cache.currentUser.isAdmin && task.bureau_id && task.bureau_id != window.cache.currentUser.bureauId && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id })) { %>
+              &nbsp;
+            <% } else if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
               <a href="#open/<%- task.id %>"
                 data-task-id="<%- task.id %>"
                 data-task-title="<%- task.title %>"
@@ -167,7 +169,7 @@
               </a>
             <% } %>
           </td>
-        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id }))) { %>
           <td class="metrics-table__button">
             <a href="#change-owner/<%- task.id %>"
               data-task-id="<%- task.id %>"
@@ -180,7 +182,8 @@
             </a>
           </td>
         <% } %>
-        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase())) { %>
+
+        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id }))) { %>
           <td class="metrics-table__button">
             <a href="#delete/<%- task.id %>"
               data-task-id="<%- task.id %>"

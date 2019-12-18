@@ -564,6 +564,16 @@ module.exports.updateCommunityAdmin = async function (user, communityId, done) {
   });
 };
 
+module.exports.updateCommunityApprover = async function (user, communityId, done) {
+  var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
+  communityUser.isApprover = user.isCommunityApprover;
+  await dao.CommunityUser.update(communityUser).then(async () => {
+    return done(null);
+  }).catch (err => {
+    return done(err);
+  });
+};
+
 module.exports.getAgency = async function (id) {
   var agency = await dao.Agency.findOne('agency_id = ?', id);
   agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, id)).rows[0];
