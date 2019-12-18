@@ -205,22 +205,22 @@
         </div>
     </fieldset>
     <fieldset class="usajobs-fieldset">
-        <div class="form-group" id="exclusive-end-date">
-            <h3 class="usa-input-optional">Exclusive job announcement close date</h3>
+        <div class="form-group" id="exclusive-end-date" style="display:none;">
+            <h3>Exclusive job announcement close date</h3>
             <span class="usa-form-hint" id="exclusiveEndDateHint">For example: 03 09 2018</span>
-            <span class="field-validation-error error-date" style="display:none;" data-valmsg-for="exclusive-end-date" data-valmsg-replace="true">You must enter a valid date</span>
+            <span class="field-validation-error require-error-date" style="display:none;" data-valmsg-for="exclusive-end-date" data-valmsg-replace="true">You must enter a valid date</span>
             <div class="exclusive-end-date">
                 <div class="usa-form-group usa-form-group-month">
                     <label for="exclusive-end-date-1">Month</label>
-                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-1" name="exclusive-end--date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.exclusiveEndDate) { %> value="<%- moment(cycle.exclusiveEndDate).format('MM') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-1" name="exclusive-end-date-1" type="text" maxlength="2" placeholder="MM" <% if (cycle.exclusivePostingEndDate) { %> value="<%- moment(cycle.exclusivePostingEndDate).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                     <label for="exclusive-end-date-2">Day</label>
-                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-2" name="exclusive-end-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.exclusiveEndDate) { %> value="<%- moment(cycle.exclusiveEndDate).format('DD') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-2" name="exclusive-end-date-2" type="text" maxlength="2" placeholder="DD" <% if (cycle.exclusivePostingEndDate) { %> value="<%- moment(cycle.exclusivePostingEndDate).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
                     <label for="exclusive-end-date-3">Year</label>
-                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-3" name="exclusive-end-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.exclusiveEndDate) { %> value="<%- moment(cycle.exclusiveEndDate).format('YYYY') %>" <% } %> >
+                    <input class="usa-input-inline" aria-describedby="exclusiveEndDateHint" id="exclusive-end-date-3" name="exclusive-end-date-3" type="text" maxlength="4" placeholder="YYYY" <% if (cycle.exclusivePostingEndDate) { %> value="<%- moment(cycle.exclusivePostingEndDate).format('YYYY') %>" <% } %> >
                 </div>
             </div>
         </div>
