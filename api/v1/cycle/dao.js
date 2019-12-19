@@ -255,7 +255,7 @@ dao.query.getCommunityCreators = `
 dao.query.getApplicantSelected = `
   select cycle.secondary_application_url as joblink, cycle.name as session, task.title,
     task.suggested_security_clearance, array_to_string(array[task.city_name, country_subdivision.value, country.value], ', ') as "location",
-    'brice.corum@opm.gov' as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
+    mu.username as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
     mu2.username as contact_email, array_to_string(array[mu2.given_name, mu2.last_name], ' ') as contact_name,
     cycle.exclusive_posting_end_date
   from "cycle"
@@ -275,7 +275,7 @@ dao.query.getApplicantSelected = `
 dao.query.getApplicantAlternate = `
   select cycle.secondary_application_url as joblink, cycle.name as session, task.title,
     task.suggested_security_clearance, array_to_string(array[task.city_name, country_subdivision.value, country.value], ', ') as "location",
-    'brice.corum@opm.gov' as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
+    mu.username as email, mu.given_name, array_to_string(array[b.name, o.name], '/') as bureau_office,
     mu2.username as contact_email, array_to_string(array[mu2.given_name, mu2.last_name], ' ') as contact_name,
     cycle.exclusive_posting_end_date
   from "cycle"
