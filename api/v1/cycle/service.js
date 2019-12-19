@@ -89,10 +89,10 @@ service.archivePhase = async function (cycleId) {
   await dao.Cycle.update(cycle);
   await service.sendCloseCyclePhaseSelectedNotification(cycleId);
   await service.sendCloseCyclePhaseAlternateNotification(cycleId);
-  await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
-  await service.sendCloseCyclePhaseCreatorNotification(cycleId);
-  await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
-  return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
+  //await service.sendCloseCyclePhaseNotSelectedNotification(cycleId);
+  //await service.sendCloseCyclePhaseCreatorNotification(cycleId);
+  //await service.sendCloseCyclePhaseCommunityUserNotification(cycleId);
+  //return await service.sendCloseCyclePhaseCommunityManagerNotification(cycleId);
 };
 
 service.updatePhaseForCycle = async function (cycleId) {
@@ -300,7 +300,8 @@ service.sendCloseCyclePhaseAlternateNotification = async function (cycleId) {
           jobLink: results[i].joblink,
           title: results[i].title,
           contact_email: results[i].contact_email,
-          contact_name: results[i].contact_name,     
+          contact_name: results[i].contact_name,
+          exclusive_posting_end_date: results[i].exclusive_posting_end_date,
         },
         layout: 'state.department/layout2.html',
       };

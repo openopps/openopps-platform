@@ -7,6 +7,12 @@ var _ = require('lodash');
 var router = new Router();
 var Handler = {};
 
+router.get('/api/v1/cycle/archive', async (ctx, next) => {
+  await service.archivePhase(16);
+  ctx.status = 202;
+  ctx.body = { message: 'Acknowledged' };
+});
+
 router.get('/api/v1/cycle/getPhaseData', auth.bearer, async (ctx, next) => {
   var data = await service.getPhaseData(ctx.state.user.id, ctx.query.cycleID);
   ctx.body = data;

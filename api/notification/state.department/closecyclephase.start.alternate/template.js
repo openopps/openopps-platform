@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = {
   subject: 'U.S. Department of State Student Internship Program (Unpaid)—You have been selected as an alternate for an internship.',
   to: '<%= email %>',
@@ -14,7 +16,7 @@ module.exports = {
       contact_email: model.contact_email,
       contact_name: model.contact_name,
       title: model.title,
-      exclusive_posting_end_date: model.exclusive_posting_end_date,
+      exclusive_posting_end_date: moment(model.exclusive_posting_end_date).format('MM/DD/YYYY'),
     };
     done(null, data);
   },
