@@ -14,6 +14,7 @@ module.exports = {
       contact_email: model.contact_email,
       contact_name: model.contact_name,
       title: model.title,
+      exclusive_posting_end_date: model.exclusive_posting_end_date,
     };
     done(null, data);
   },

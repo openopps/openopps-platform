@@ -249,7 +249,8 @@ service.sendCloseCyclePhaseSelectedNotification = async function (cycleId) {
           jobLink: results[i].joblink,
           title: results[i].title,
           contact_email: results[i].contact_email,
-          contact_name: results[i].contact_name,      
+          contact_name: results[i].contact_name,
+          exclusive_posting_end_date: results[i].exclusive_posting_end_date,
         },
         layout: 'state.department/layout2.html',
       };
