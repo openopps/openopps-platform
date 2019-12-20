@@ -487,12 +487,12 @@
       color: #487E40;
     }
 
-    .delete-task, .approve-error {
+    .delete-task, .approve-error, .delete-applicant-participant {
       color: #CD2026;
       cursor: pointer;
     }
 
-    .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error {
+    .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error, .delete-applicant-participant {
       padding: 7px 10px;
     }
 

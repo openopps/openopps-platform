@@ -67,6 +67,9 @@
       <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
         <th class="center" data-target="change-add">Add<br/> participant</th>
       <% } %>
+      <% if (_.contains(['open','in progress'], status.toLowerCase()) && window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin) && target != 'community' && targetAudience !== 'Students') { %>
+        <th class="center" data-target="applicant-delete">Delete<br/>applicant/participant</th>
+      <% } %>
     </tr>
   </thead>
   <tbody>
@@ -209,7 +212,24 @@
               </a>
             </td>
           <% } %>
-        <% } else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
+        <% } %>   
+      <% if (_.contains(['open', 'in progress'], status.toLowerCase())) { %>
+            <% if ((window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin) && target != 'community') && targetAudience !== 'Students') { %>
+              <td class="metrics-table__button">
+                <a href="#delete/<%- task.id %>"
+                  data-task-id="<%- task.id %>"
+                  data-task-title="<%- task.title %>"
+                  class="delete-applicant-participant"
+                  alt="Delete applicant/participant"
+                  title="Delete applicant/participant">
+                  <span class='fa fa-user-times'></span>
+                  <span class="usa-sr-only">Delete Opportunity</span>
+                </a>
+              </td>
+            <% } %>
+          <% }
+        
+        else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
           <td>&nbsp;</td>
         <% } %>
       </tr>
