@@ -957,4 +957,33 @@ module.exports.createAuditLog = async function (type, ctx, auditData) {
   await dao.AuditLog.insert(audit).catch(() => {});
 };
 
+module.exports.deleteApplicantOrParticipant = async function (ctx,taskId,userId,reason) {  
+  return await dao.Volunteer.findOne('"taskId" = ? and "userId" = ?',taskId,userId).then(async (e) => { 
+    return await dao.Volunteer.delete('"taskId" = ? and "userId" = ?', taskId,userId).then(async (volunteer) => {
+      var audit = module.exports.createAuditLog('VOLUNTEER_DELETED', ctx, {      
+        volunteerId: userId,
+        taskId: taskId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        volunteer: _.pick(await dao.User.findOne('id = ?',userId), 'id', 'name', 'username'),
+        reason:reason,              
+      });  
+     
+      return volunteer;
+    }).catch(err => {
+      log.info('delete: failed to delete Volunteer ', err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+};
+
+
+module.exports.getTaskVolunteers = async function (taskId) {
+  var volunteers = (await db.query(fs.readFileSync(__dirname + '/sql/getTasksVolunteers.sql', 'utf8'), taskId)).rows;
+  return volunteers;
+  
+};
+
 

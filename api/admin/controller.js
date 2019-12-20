@@ -62,6 +62,19 @@ router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {
   })
 });
 
+router.delete('/api/admin/volunteer/:taskId/user/:userId',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteApplicantOrParticipant(ctx,ctx.params.taskId,ctx.params.userId,ctx.query.reason);
+});
+
+router.get('/api/admin/task/volunteer/:taskId', auth, async (ctx, next) => {
+  await service.getTaskVolunteers(ctx.params.taskId).then(volunteers => {
+    ctx.status = 200;
+    ctx.body = volunteers;
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
+
 router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   await service.getTopAgencyContributors(ctx.params.id).then(results => {
     ctx.body = results;
