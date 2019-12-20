@@ -24,7 +24,19 @@ function getWhereClauseForTaskState (state) {
 function getWhereClauseForUsers (filter) {
   if (filter) {
     return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
-      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
+      '%\' or lower(username) like \'%' + filter.toLowerCase() + 
+      '%\' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    return '';
+  }
+}
+
+function getWhereClauseForAgencyAndCommunityUsers (filter) {
+  if (filter) {
+    return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
+      '%\' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
   } else {
     return '';
   }
@@ -457,7 +469,7 @@ module.exports.getUsers = async function (page, filter, sort) {
 module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
-  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForAgencyAndCommunityUsers(filter));
   usersBySortQuery = usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -470,7 +482,7 @@ module.exports.getUsersForAgency = async function (page, filter, sort, agencyId)
 module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
-  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForAgencyAndCommunityUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
