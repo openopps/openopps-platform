@@ -14,7 +14,7 @@ with tasks as (
 			select midas_user.id, midas_user.name, midas_user.given_name, midas_user.last_name, midas_user.username, midas_user.government_uri
 				from volunteer
 				join midas_user on volunteer."userId" = midas_user.id
-				where volunteer."taskId" = task.id
+				where midas_user.disabled = false and volunteer."taskId" = task.id
 		) users
 	) as volunteers,
 	(select row_to_json (agency)
