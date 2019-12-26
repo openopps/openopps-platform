@@ -327,7 +327,7 @@ var AdminUserView = Backbone.View.extend({
     var id = $(t.parents('tr')[0]).data('id');
     var username = $(t.parents('tr')[0]).data('user-name');
 
-    if (t.hasClass('assign-admin')) {
+    if (t.hasClass('assign-admin')) { 
       this.confirmAdminAssign(t, {
         id: id,
         name: username,
@@ -335,7 +335,7 @@ var AdminUserView = Backbone.View.extend({
         checked: t.prop('checked'),
         url: this.getUrlFor(id, t),
       });
-    } else if (t.has('assign-approver')) {
+    } else if (t.hasClass('assign-approver')) { 
       this.confirmApproverAssign(t, {
         id: id,
         name: username,
