@@ -137,7 +137,7 @@ var AdminAgenciesView = Backbone.View.extend({
       var updateCurrentArray = _.difference(monthsCurrent,currentYearRange);
       var currentYearData = _.chain(updateCurrentArray).sort().value();
       var currentYearDataUnion = _.union(currentYearData,currentYearRange).sort();
-      data.range = _.union(currentYearDataUnion,previousYearDataUnion);
+      data.range = _.union(currentYearDataUnion,previousYearDataUnion).sort(function (a, b) { return b-a; });
     } else {
       data.range = [];
     }
@@ -177,7 +177,7 @@ var AdminAgenciesView = Backbone.View.extend({
       var updateCurrentArray = _.difference(monthsCurrent,currentYearRange);
       var currentYearData =_.chain(updateCurrentArray).sort().value();
       var currentYearDataUnion = _.union(currentYearData,currentYearRange).sort();
-      data.range = _.union(currentYearDataUnion,previousYearDataUnion);
+      data.range = _.union(currentYearDataUnion,previousYearDataUnion).sort(function (a, b) { return b-a; });
     }
     else{
       data.range = [];

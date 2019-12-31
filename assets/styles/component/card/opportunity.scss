@@ -1104,9 +1104,55 @@
       cursor: pointer;
     }
   }
- 
+
+  
   .usajobs-open-opps-opportunity-requestor__body {
     width: 8.5rem;
+  }
+
+ 
+  .project-people__remove {
+    padding: 0;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    color: #fff;
+    background-color: $color-secondary;
+    text-decoration: none;
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    margin: 0;
+    vertical-align: initial;
+
+
+    &:after {
+      margin-top: 0;
+      content: url(../img/icons/close/times.svg);
+    }
+  }
+}
+.project-people__wrapper {
+  margin-top: 15px;
+  margin-bottom: $size-default;
+
+  &::after {
+    clear: both;
+    content: "";
+    display: block;
+  }
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: $size-S;
+
+    &:hover {
+      color: $color-primary-darker;
+    }
   }
 }
 
@@ -1161,6 +1207,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     @include media($L) {
       padding-bottom: 0;

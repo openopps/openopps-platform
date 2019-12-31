@@ -14,11 +14,12 @@ var ModalComponent = require('../../../../components/modal');
 var TaskEditFormView = Backbone.View.extend({
 
   events: {
-    'blur .validate'                   : 'validateField',
-    'change .validate'                 : 'validateField',
-    'click #change-owner'              : 'displayChangeOwner',
-    'click #add-participant'           : 'displayAddParticipant',
+    'blur .validate'                      : 'validateField',
+    'change .validate'                    : 'validateField',
+    'click #change-owner'                 : 'displayChangeOwner',
+    'click #add-participant'              : 'displayAddParticipant',
     'click .usa-button'                   : 'submit',
+    'click .opportunity-people'           : 'togglePeopleOptions',
     'click .time-options-time-required'   : 'toggleTimeOptions',
     'click .opportunity-location'         : 'toggleLocationOptions',
     'click .expandorama-button-skills'    : 'toggleAccordion1',
@@ -144,6 +145,7 @@ var TaskEditFormView = Backbone.View.extend({
     }
 
     this.$( '.js-success-message' ).hide();
+    this.togglePeopleOptions();
     this.toggleTimeOptions();
     this.toggleLocationOptions();
     this.toggleCareerField();
@@ -461,6 +463,20 @@ var TaskEditFormView = Backbone.View.extend({
     }
   },
 
+  togglePeopleOptions: function (e) {
+    $('.opportunity-people').removeClass('selected');
+    if(e) {
+      $(e.currentTarget).addClass('selected');
+    } else {
+      var opportunityPeople = this.data.data.peopleNeeded;
+      if(this.data.data.peopleNeeded) {
+        $('[value="' + this.data.data.peopleNeeded + '"]').addClass('selected');
+      } else {
+        $('[value="1"]').addClass('selected');
+      }
+    }
+  },
+
   /*
    * Setup Time Options toggling
    */
@@ -566,19 +582,20 @@ var TaskEditFormView = Backbone.View.extend({
 
   getDataFromPage: function () {
     var modelData = {
-      id          : this.model.get('id'),
-      communityId : $('#federal-programs').val(),
-      title       : this.$('#task-title').val(),
-      description : this.$('#opportunity-introduction').val(),
-      details     : this.$('#opportunity-details').val(),
-      outcome     : this.$('#opportunity-skills').val(),
-      about       : this.$('#opportunity-team').val(),
-      submittedAt : this.$('#js-edit-date-submitted').val() || null,
-      publishedAt : this.$('#publishedAt').val() || null,
-      assignedAt  : this.$('#assignedAt').val() || null,
-      completedAt : this.$('#completedAt').val() || null,
-      state       : this.model.get('state'),
-      restrict    : this.model.get('restrict'),
+      id           : this.model.get('id'),
+      communityId  : $('#federal-programs').val(),
+      title        : this.$('#task-title').val(),
+      description  : this.$('#opportunity-introduction').val(),
+      details      : this.$('#opportunity-details').val(),
+      outcome      : this.$('#opportunity-skills').val(),
+      about        : this.$('#opportunity-team').val(),
+      submittedAt  : this.$('#js-edit-date-submitted').val() || null,
+      publishedAt  : this.$('#publishedAt').val() || null,
+      assignedAt   : this.$('#assignedAt').val() || null,
+      completedAt  : this.$('#completedAt').val() || null,
+      state        : this.model.get('state'),
+      restrict     : this.model.get('restrict'),
+      peopleNeeded : this.$('.opportunity-people.selected').val(),
     };
     
     if (this.agency) {
