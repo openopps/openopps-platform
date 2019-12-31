@@ -183,8 +183,13 @@ function insertAWSNotification (notification) {
   });
 }
 
+function runSchedule (scheduledJob) {
+  return true;
+}
+
 module.exports = {
   createNotification: createNotification,
   processNotification: processNotification,
   insertAWSNotification: insertAWSNotification,
+  runSchedule: runSchedule,
 };
