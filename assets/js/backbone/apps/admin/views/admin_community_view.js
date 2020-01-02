@@ -375,8 +375,7 @@ var AdminCommunityView = Backbone.View.extend({
     var previousEnd = '';
     var today = new Date();
     var selectedCycle;
-
-    this.cycles.forEach(cycle => {
+    _(this.cycles).each(function (cycle, i){
       var currentStart = new Date(cycle.postingStartDate);
       var currentEnd = new Date(cycle.postingEndDate);
       
