@@ -154,15 +154,16 @@
               <div class="estimated-completion-date">
                 <div class="usa-form-group usa-form-group-month">
                   <label for="estimated-completion-date-1">Month</label>
-                  <input class="usa-input-inline" aria-describedby="dateHint" id="estimated-completion-date-1" name="estimated-completion-date-1" type="number" min="1" max="12" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('MM') %>" <% } %> >
+                  <input class="usa-input-inline" aria-describedby="dateHint" id="estimated-completion-date-1" name="estimated-completion-date-1" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}" type="number" min="1" max="12" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('MM') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-day">
                   <label for="estimated-completion-date-2">Day</label>
-                  <input class="usa-input-inline" aria-describedby="dateHint" id="estimated-completion-date-2" name="estimated-completion-date-2" type="number" min="1" max="31" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('DD') %>" <% } %> >
+                  <input class="usa-input-inline" aria-describedby="dateHint" id="estimated-completion-date-2" name="estimated-completion-date-2" type="number" min="1" max="31" onkeyup="if(this.value>31){this.value='31';}else if(this.value<0){this.value='0';}" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('DD') %>" <% } %> >
                 </div>
                 <div class="usa-form-group usa-form-group-year">
-                  <label for="estimated-completion-date-3">Year</label>
-                  <input class="usa-input-inline" aria-describedby="dateHint" id="estimated-completion-date-3" name="estimated-completion-date-3" type="number" min="2008" max="2043" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('YYYY') %>" <% } %> >
+                  <label for="estimated-completion-date-3">Year</label>           
+                <input class="usa-input-inline check-year" aria-describedby="dateHint" id="estimated-completion-date-3" name="estimated-completion-date-3" type="number" onkeyup="if (this.value.length > 4) {
+                  this.value = this.value.slice(0,4);}" <% if (data.completedBy) { %> value="<%- moment(data.completedBy).format('YYYY') %>" <% } %> >
                 </div>
               </div>
               <span class="usajobs-form__help-brief" id="dateHint">For example: 03 09 2018</span>

@@ -26,6 +26,8 @@ var TaskEditFormView = Backbone.View.extend({
     'click .expandorama-button-team'      : 'toggleAccordion2',
     'click .expandorama-button-keywords'  : 'toggleAccordion3',
     'change [name=CareerField]'           : 'toggleCareerField',
+  
+
   },
 
   initialize: function (options) {
@@ -101,7 +103,20 @@ var TaskEditFormView = Backbone.View.extend({
   validateField: function (e) {
     return validate(e);
   },
-
+  
+  isPastDate: function (completionDate)
+  {   
+    var todaysDate = new Date().toISOString().slice(0, 10);
+    var inputCompletionDate = completionDate;
+ 
+    if(todaysDate <= inputCompletionDate){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
+  
   render: function () {
     var compiledTemplate;
     this.loadAudienceCommunityData();
@@ -115,7 +130,7 @@ var TaskEditFormView = Backbone.View.extend({
       madlibTags: this.options.madlibTags,
       ui: UIConfig,
       agency: this.agency,
-      communities:this.communities,
+      communities:this.communities,   
       accordion1: {
         open: false,
       },
@@ -365,21 +380,21 @@ var TaskEditFormView = Backbone.View.extend({
       abort = abort || iAbort;
     } );
 
-    var completedBy = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null;
+    var completedBy = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null; 
     if(completedBy) {
       var iAbort = false;
       try {
-        iAbort = (new Date(completedBy).toISOString().split('T')[0]) !== completedBy;
+        iAbort = (new Date(completedBy).toISOString().split('T')[0]) !== completedBy || (this.isPastDate(completedBy)==true);
       } catch (err) {
         iAbort = true;
-      }
-      if(iAbort) {
-        $('#time-options-completion-date').addClass('usa-input-error');
-        $('#time-options-completion-date input').toggleClass('usa-input-inline usa-input-inline-error');
-        $('#time-options-completion-date > .field-validation-error').show();
+      }  
+      if(iAbort) {             
+        $('#time-options-completion-date').addClass('usa-input-error');  
+        $('#time-options-completion-date input').addClass('usa-input-inline-error usa-input-inline');  
+        $('#time-options-completion-date > .field-validation-error').show();     
       } else {
         $('#time-options-completion-date').removeClass('usa-input-error');
-        $('#time-options-completion-date input').toggleClass('usa-input-inline-error usa-input-inline');
+        $('#time-options-completion-date input').removeClass('usa-input-inline-error usa-input-inline'); 
         $('#time-options-completion-date > .field-validation-error').hide();
       }
       abort = abort || iAbort;
