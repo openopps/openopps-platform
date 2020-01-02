@@ -32,6 +32,8 @@ async function getProfile (id) {
     profile.countrySubdivision = await dao.CountrySubdivision.findOne('country_subdivision_id = ?', profile.countrySubdivisionId).catch(() => { return {}; });
     profile.tags = (await dao.TagEntity.db.query(dao.query.tag, id)).rows;
     profile.agency = await dao.Agency.findOne('agency_id = ?', profile.agencyId).catch(() => { return undefined; });
+    profile.communityApprover = await dao.CommunityUser.find('user_id = ? and is_approver = ?', id, true);
+    profile.isCommunityApprover = profile.communityApprover.length > 0;
     return dao.clean.profile(profile);
   } else {
     return undefined;

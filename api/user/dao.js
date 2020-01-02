@@ -131,6 +131,7 @@ module.exports = function (db) {
     Cycle: dao({ db: db, table: 'cycle' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
+    CommunityUser: dao({ db: db, table: 'community_user' }),
     query: {
       tag: tagQuery,
       participated: taskParticipatedQuery,
