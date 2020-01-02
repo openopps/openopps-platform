@@ -45,6 +45,14 @@
             </div>
         </div>
 
+        <h4 class="usajobs-search-filters__title community">Community</h4>
+        <select id="community" class="dropdown">
+            <option value=""></option>
+            <% _.each(communities, function (c) { %>
+                <option value=<%- c.communityId %> <% if (filters.community && c.communityId == filters.community.id) { %>selected<% } %>><%- c.communityName %></option>
+            <% }); %>
+        </select>
+
         <h4 class="usajobs-search-filters__title skill">Skill</h4>
         <input type="text" id="skill" title="Skill" />
 
