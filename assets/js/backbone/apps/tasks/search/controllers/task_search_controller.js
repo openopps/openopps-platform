@@ -8,7 +8,7 @@ var TaskModel = require('../../../../entities/tasks/task_model');
 var TaskListView = require('../views/task_search_view');
 var InternshipListView = require('../views/internship_search_view');
 
-TaskController = Backbone.View.extend({
+var TaskController = Backbone.View.extend({
   events: {
     'click #create-opportunity' : linkBackbone,
     'click #create-internship' : linkBackbone,
