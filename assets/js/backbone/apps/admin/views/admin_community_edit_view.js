@@ -540,19 +540,28 @@ var AdminCommunityEditView = Backbone.View.extend({
    
   },
   deleteBureau: function (event) {
-    var data ={
-      bureauId:$(event.currentTarget ).data('bureau-id'),
-      bureauName:$(event.currentTarget ).data('bureau-title'),
-      officeId:$(event.currentTarget ).data('office-id'),
-      officeName:$(event.currentTarget ).data('office-title'),
+    var data = {
+      bureauId: $(event.currentTarget).data('bureau-id'),
+      bureauName: $(event.currentTarget).data('bureau-title'),
+      officeId: $(event.currentTarget).data('office-id'),
+      officeName: $(event.currentTarget).data('office-title'),
     };
-    var communityId= this.options.communityId;
+    $.ajax({
+      url: '/api/admin/bureau/' + data.bureauId, 
+      type: 'GET',
+      async: false,
+      success: function (data) {             
+        this.count = data;
+      }.bind(this),
+    });
+    data.count = this.count;
+    var communityId = this.options.communityId;
     var deleteModal = new Modal({
       id: 'confirm-deletion',
       alert: 'error',
       action: 'delete',
       modalTitle: 'Confirm delete bureau or office/post',
-      modalBody: 'Are you sure you want to delete <strong>' + data.bureauName + '</strong>? <strong>If you delete the bureau, you will also delete all of its offices and posts</strong>.',
+      modalBody: '<strong>' + data.count + '</strong> internship' + (data.count != 1 ? 's are' : ' is') + ' currently using this bureau. Are you sure you want to remove <strong>' + data.bureauName + '</strong> from your community? <strong>If you delete the bureau, you will also delete all of its offices and posts</strong>.',
       primary: {
         text: 'Delete',
         action: function () {
@@ -582,19 +591,28 @@ var AdminCommunityEditView = Backbone.View.extend({
   
 
   deleteOffice: function (event) {
-    var data ={
-      bureauId:$(event.currentTarget ).data('bureau-id'),
-      bureauName:$(event.currentTarget ).data('bureau-title'),
-      officeId:$(event.currentTarget ).data('office-id'),
-      officeName:$(event.currentTarget ).data('office-title'),
+    var data = {
+      bureauId: $(event.currentTarget).data('bureau-id'),
+      bureauName: $(event.currentTarget).data('bureau-title'),
+      officeId: $(event.currentTarget).data('office-id'),
+      officeName: $(event.currentTarget).data('office-title'),
     };
-    var communityId= this.options.communityId;
+    $.ajax({
+      url: '/api/admin/bureau/' + data.bureauId + '/office/' + data.officeId, 
+      type: 'GET',
+      async: false,
+      success: function (data) {             
+        this.count = data;
+      }.bind(this),
+    });
+    data.count = this.count;
+    var communityId = this.options.communityId;
     var deleteModal = new Modal({
       id: 'confirm-office-deletion',
       alert: 'error',
       action: 'delete',
       modalTitle: 'Confirm delete office/post',
-      modalBody: 'Are you sure you want to delete <strong>' + data.officeName + '</strong>? <strong> This cannot be undone</strong>.',
+      modalBody: '<strong>' + data.count + '</strong> internship' + (data.count != 1 ? 's are' : ' is') + ' currently using this office/post. Are you sure you want to remove <strong>' + data.officeName + '</strong> from your community? <strong>This cannot be undone</strong>.',
       primary: {
         text: 'Delete',
         action: function () {

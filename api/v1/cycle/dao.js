@@ -125,6 +125,29 @@ dao.query.taskListQuery = `
   where task_id = ? and sort_order = 0
 `;
 
+dao.query.GetApplicationsToRemoveForPhase = `
+  select
+    task_list_application_id,
+    task_list_application.task_list_id,
+    task_list_application.application_id,
+    task_list_application.sort_order,
+    task_list_application.date_last_viewed,
+    task_list_application.date_last_contacted,
+    task_list_application.created_at,
+    task_list_application.updated_at,
+    task_list_application.updated_by,
+    task_list.task_id
+    from task_list_application
+      inner join task_list on task_list_application.task_list_id = task_list.task_list_id
+    where task_list_application.task_list_id in (
+      select task_list_id
+      from task_list inner join task on task_list.task_id = task.id
+      where 
+        task.cycle_id = ?
+        and task_list.title = 'For review'
+    )
+`;
+
 dao.query.RemoveApplicationsForPhase = `
   delete from task_list_application
   where task_list_id in (
@@ -269,11 +292,13 @@ dao.query.getApplicantAlternate = `
 
 dao.query.getApplicantNotSelected = `
   select cycle.name as session, mu.username as email, mu.given_name    
-    from "cycle"
-      inner join application a on a.cycle_id = cycle.cycle_id
-      inner join midas_user mu on mu.id = a.user_id    
-    where cycle.cycle_id = ? and a.submitted_at is not null
-      and a.application_id not in (select application_id from task_list_application)
+  from "cycle"
+    inner join application a on a.cycle_id = cycle.cycle_id
+    inner join midas_user mu on mu.id = a.user_id
+    left join task_list_application tla on tla.application_id = a.application_id
+    left join task_list tl on tl.task_list_id = tla.task_list_id
+  where cycle.cycle_id = ? and a.submitted_at is not null
+    and (tl.title is null or tl.title not in ('Primary','Alternate'))
 `;
 
 dao.query.GetCycleApplicantData = `

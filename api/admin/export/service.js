@@ -60,8 +60,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
     }
     fieldNames = _.keys(exportUserFormat || dao.exportUserFormat);
     fields = _.values(exportUserFormat || dao.exportUserFormat);
-  }
-  else if (type === 'TopContributor') {
+  } else if (type === 'TopContributor') {
     var today = new Date();
     var FY = {};
     if (today.getMonth() < 9) {
@@ -87,9 +86,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       fieldNames = _.keys(dao.exportTopContributorAgencyCreatedFormat);
       fields = _.values(dao.exportTopContributorAgencyCreatedFormat);
     }
-  }
-  
-  else if(type=='taskInteractions') {
+  } else if (type == 'taskInteractions') {
     var getcycleTasksTotal = fs.readFileSync(__dirname + '/sql/getCycleTaskTotal.sql', 'utf8');
     var getCycleInteractions=  fs.readFileSync(__dirname + '/sql/getCycleInteractions.sql', 'utf8');
     if (communityRefId == 'dos') {
@@ -106,7 +103,13 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       
       }
     }
+  } else if (type === 'cycleApplications') {
+    var communityCycleApplications = fs.readFileSync(__dirname + '/sql/getCommunityCycleApplications.sql', 'utf8');  
+    records= (await db.query(communityCycleApplications, id, cycleId)).rows;
+    fieldNames = _.keys(dao.exportCommunityCycleApplicationsFormat);
+    fields = _.values(dao.exportCommunityCycleApplicationsFormat);
   }
+
   fields.forEach(function (field, fIndex, fields) {
     if (typeof(field) === 'object') {      
       records.forEach(function (rec, rIndex, records) {
@@ -115,6 +118,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       fields[fIndex] = field.field;   
     }  
   });
+
   return json2csv({
     data: records,
     fields: fields,

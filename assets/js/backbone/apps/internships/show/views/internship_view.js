@@ -24,7 +24,8 @@ var InternshipView = BaseView.extend({
     'click #internship-edit'            : linkBackbone,
     'click #save'                       : 'toggleSave',
     'click .toggle-internship-complete' : 'toggleInternComplete',
-    'click #close-internship'           : 'closeInternship'
+    'click #close-internship'           : 'closeInternship',
+    'click #internship-cancel'            : 'cancel',
   },
 
   initialize: function (options) {
@@ -33,9 +34,9 @@ var InternshipView = BaseView.extend({
     this.interns = {};
     this.notCompletedInterns={};
     this.selectedInterns={};
+    this.isDosManager;
     
   },
-
 
   modalOptions: {
     el: '#site-modal',
@@ -52,6 +53,7 @@ var InternshipView = BaseView.extend({
       model: this.model.toJSON(),
       madlibTags: this.organizeTags(this.model.attributes.tags),
       fromSearch: this.params.has('fromSearch'),
+      checkDosAdmins: this.checkDosAdmins(),
     };
    
     _.each(['details', 'about'], function (part) {
@@ -189,6 +191,51 @@ var InternshipView = BaseView.extend({
     }
   },
 
+  cancel: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'cancel-internship',
+      modalTitle: 'Are you sure you want to cancel this internship?',
+      modalBody: 'If you cancel this internship, applicants will no longer be able to apply to it. You will also remove any applicants who have already applied for this internship.',
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Confirm',
+        action: function () {
+          this.cancelInternship();
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+    }).render();
+  
+  },
+
+  cancelInternship: function () {
+    var state = 'canceled';
+    $.ajax({
+      url: '/api/task/internship/cancel/' +  this.model.attributes.id,
+      type: 'PUT',
+      data: {
+        id: this.model.attributes.id,
+        state: state,      
+      },
+      success: function (data) {    
+        this.model.attributes.state = 'canceled';
+        this.data.model.state = 'canceled';
+        this.model.attributes.canceledAt = new Date();
+        this.data.model.canceledAt = new Date();   
+        this.render();
+      }.bind(this),
+      error: function (err) {
+        // display modal alert type error
+      }.bind(this),
+    });
+  },
   copy: function (e) {
     if (e.preventDefault) e.preventDefault();
     var self = this;
@@ -266,7 +313,7 @@ var InternshipView = BaseView.extend({
       $.ajax({
         url: '/api/task/applicants/' + this.model.attributes.id,
         method: 'GET',
-      }).done(function (results) {
+      }).done(function (results) {       
         $('#internship-applicants').show();
         $('#internship-applicants').html(_.template(ApplicantsTemplate)({
           applicants: results,
@@ -293,13 +340,33 @@ var InternshipView = BaseView.extend({
     }
   },
 
-  renderSelectedInterns: function () {
+  renderSelectedInterns: function () { 
     var selectedInternsTemplate = _.template(InternsTemplate)({
       interns: this.selectedInterns,
       data: this.model.attributes,     
     });
     $('#internship-interns').html(selectedInternsTemplate);
   }, 
+  checkDosAdmins: function () {
+    this.checkDosCommunityManager();
+    var dos= _.findWhere(window.cache.currentUser.communities.student, { referenceId: 'dos' });
+    if((!_.isEmpty(dos) && this.isDosManager) || window.cache.currentUser.isAdmin) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  checkDosCommunityManager: function () { 
+    $.ajax({
+      url: '/api/task/community/communityManager/' +  this.model.attributes.id,
+      type: 'GET',
+      async: false,
+      success: function (data){     
+        this.isDosManager=data;
+      }.bind(this),
+    });
+  },
 
   closeInternship: function (e) {
     if (e.preventDefault) e.preventDefault();

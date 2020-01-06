@@ -19,9 +19,9 @@
       <% } %>
     <% } %>
   <% } %>
-  <% if (page != numberOfPages) { %>
+  <% if (page != numberOfPages && numberOfPages!=0 ) { %>
     <li class="usajobs-search-pagination__next-page-container">
-        <a class="usajobs-search-pagination__next-page page" data-page="<%- parseInt(page) + 1 %>" href="<%- urlbase %>?p=<%- parseInt(page) + 1 %>&q=<%- q %>" title="Go To Next Page">Next</a>
+      <a class="usajobs-search-pagination__next-page page" data-page="<%- parseInt(page) + 1 %>" href="<%- urlbase %>?p=<%- parseInt(page) + 1 %>&q=<%- q %>" title="Go To Next Page">Next</a>
     </li>
   <% } %>
 </ul>

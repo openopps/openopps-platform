@@ -25,6 +25,7 @@ var AdminCommunityView = Backbone.View.extend({
     this.cycleParam= this.params.get('cycle'),  
     this.community= {};  
     this.cycleId= '';
+    this.cycles ={};
   },
 
   render: function (replace) {
@@ -46,7 +47,9 @@ var AdminCommunityView = Backbone.View.extend({
       dataType: 'json',
       success: function (communityInfo) {      
         this.community = communityInfo;        
-        if(this.community.cycles && this.community.cycles.length>0){   
+        if(this.community.cycles && this.community.cycles.length>0){ 
+          this.getDefaultCycle();  
+          communityInfo.cycles= this.cycles;
           var template = _.template(AdminCommunityTemplate)({
             community: communityInfo,
             communities: this.options.communities,
@@ -80,10 +83,10 @@ var AdminCommunityView = Backbone.View.extend({
       }.bind(this),
     });
   },
-  rendertasksInteractionsCyclical:function () { 
+  rendertasksInteractionsCyclical:function () {     
     var self= this;
     self.cycleId = self.$('#cycles').val(); 
-    Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + $('#cycles').val(), { trigger: true  }); 
+    Backbone.history.navigate('/admin/community/' + $('#communities').val() + '?cycle=' + self.cycleId, { trigger: true  }); 
     $.ajax({
       url: '/api/admin/community/' + self.communityId +'/cyclical/'+ self.cycleId ,
       dataType: 'json',
@@ -105,7 +108,8 @@ var AdminCommunityView = Backbone.View.extend({
           }.bind(self), 50);
           if(self.options.communities) {
             self.initializeCommunitySelect();
-          }       
+
+          }           
         }.bind(self));
           
       }.bind(self),
@@ -364,6 +368,33 @@ var AdminCommunityView = Backbone.View.extend({
         self.renderActivities(self, activityData);
       }.bind(this),
     });
+  },
+
+  getDefaultCycle: function () {
+    this.cycles = this.community.cycles;
+    var previousEnd = '';
+    var today = new Date();
+    var selectedCycle;
+
+    this.cycles.forEach(cycle => {
+      var currentStart = new Date(cycle.postingStartDate);
+      var currentEnd = new Date(cycle.postingEndDate);
+      
+      if (!selectedCycle) { selectedCycle = cycle; }
+      if(previousEnd === '') { previousEnd = currentEnd; }
+
+      if (currentEnd.getTime() >= previousEnd.getTime()){
+        if (currentStart.getTime() <= today.getTime()) {
+          previousEnd = currentEnd;
+          selectedCycle = cycle;
+        }
+      } 
+    });
+    this.cycles= _.sortBy(this.cycles,'postingStartDate').reverse();
+    var sortedArray = _.reject(this.cycles, function (c) {
+      return c.cycleId== selectedCycle.cycleId;
+    });
+    this.cycles= (sortedArray.reverse().concat(selectedCycle)).reverse(); 
   },
 
   cleanup: function () {
