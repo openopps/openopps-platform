@@ -37,7 +37,7 @@ module.exports = {
   },
   /**
    *
-   * Determines if being community manager makes the
+   * Determines if the community manager role makes the
    * user eligible for a badge, and if so, awards
    * that badge to the user.
    *
