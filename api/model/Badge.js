@@ -32,6 +32,32 @@ module.exports = {
     } else {
       return null;
     }
+
+    
+  },
+  /**
+   *
+   * Determines if being community manager makes the
+   * user eligible for a badge, and if so, awards
+   * that badge to the user.
+   *
+   * @param { Object } communityUser
+   * @param { Object } user
+   * @param { object } opts - optional
+   */
+  awardCommunityManagerBadge: (communityUser, opts) => {  
+    var badge ={     
+      user: communityUser.community_user_id,      
+      silent: (opts && !_.isUndefined(opts.silent)) ? opts.silent : false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    
+    var isCommunityManager = _.find(communityUser.community_users, { is_manager: true });
+    if (isCommunityManager ) {
+      badge.type = 'community manager';   
+    }
+    return badge.type ? badge : null;
   },
   /**
    *
