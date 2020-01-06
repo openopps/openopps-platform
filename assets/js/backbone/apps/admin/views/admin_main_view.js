@@ -54,6 +54,10 @@ var AdminMainView = Backbone.View.extend({
     return !!(window.cache.currentUser && window.cache.currentUser.isCommunityAdmin);
   },
 
+  isCommunityApprover: function () {
+    return !!(window.cache.currentUser && window.cache.currentUser.isCommunityApprover);
+  },
+
   routeTarget: function (target, agencyId, communityId, replace) {
     if (!target) {
       target = 'sitewide';
@@ -252,7 +256,7 @@ var AdminMainView = Backbone.View.extend({
       });
       this.adminCommunityView.render(replace);
     };
-    if(this.isAdmin() || this.isCommunityAdmin()) {
+    if(this.isAdmin() || this.isCommunityAdmin() || this.isCommunityApprover()) {
       $.ajax({
         url: '/api/admin/communities',
         dataType: 'json',

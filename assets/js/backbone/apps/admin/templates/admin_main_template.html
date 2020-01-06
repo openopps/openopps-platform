@@ -18,7 +18,7 @@
             </a>
           </li>
           <% } %>
-          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isCommunityAdmin)) { %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isCommunityAdmin || window.cache.currentUser.isCommunityApprover)) { %>
           <li class="usajobs-nav-secondary__container">
             <a class="usajobs-nav-secondary__item" href="/admin/community" data-target="community">
               Community

@@ -204,8 +204,8 @@ async function canAdministerTask (user, id) {
   if (!task) {
     return false;
   } else if (user.isAdmin
-    || (user.isAgencyAdmin && await checkAgency(user, task.userId))
-    || await isCommunityAdmin(user, task)) {
+    || (user.isAgencyAdmin && user.agencyId == task.agencyId)
+    || await isCommunityAdmin(user, task) || await isCommunityApprover(user, task)) {
     return true;
   } else {
     return false;
@@ -253,6 +253,24 @@ async function isCommunityAdmin (user, task) {
     return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
       return {};
     })).isManager;
+  } else {
+    return false;
+  }
+}
+
+async function isCommunityApprover (user, task) {
+  if (task && task.communityId) {
+    var community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => {
+      return undefined;
+    });
+    // If community is DoS then must check same bureau
+    if(!community || (community.referenceId == 'dos' && task.bureauId != user.bureauId)) {
+      return false;
+    } else {
+      return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
+        return {};
+      })).isApprover;
+    }
   } else {
     return false;
   }

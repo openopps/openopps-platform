@@ -78,6 +78,15 @@ module.exports.isCommunityManager = async function (user, communityId) {
   }
 };
 
+module.exports.isCommunityApprover = async function (user, communityId) {
+  if(user.isAdmin) {
+    return true;
+  } else {
+    var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', [user.id, communityId]).catch(() => { return null; });
+    return communityUser && (communityUser.isManager || communityUser.isApprover);
+  }
+};
+
 module.exports.sendCommunityInviteNotification = async function (admin, data) {
   try {
     var community = await dao.Community.findOne('community_id = ?', data.communityId);

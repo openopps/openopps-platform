@@ -24,7 +24,19 @@ function getWhereClauseForTaskState (state) {
 function getWhereClauseForUsers (filter) {
   if (filter) {
     return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
-      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() + '%\'';
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
+      '%\' or lower(username) like \'%' + filter.toLowerCase() + 
+      '%\' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
+  } else {
+    return '';
+  }
+}
+
+function getWhereClauseForAgencyAndCommunityUsers (filter) {
+  if (filter) {
+    return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
+      '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
+      '%\' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
   } else {
     return '';
   }
@@ -457,7 +469,7 @@ module.exports.getUsers = async function (page, filter, sort) {
 module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
-  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForAgencyAndCommunityUsers(filter));
   usersBySortQuery = usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -470,7 +482,7 @@ module.exports.getUsersForAgency = async function (page, filter, sort, agencyId)
 module.exports.getUsersForCommunity = async function (page, filter, sort, communityId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserCommunityListBySort.sql', 'utf8').toString();
-  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForAgencyAndCommunityUsers(filter));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
@@ -557,6 +569,16 @@ module.exports.updateProfile = async function (user, done) {
 module.exports.updateCommunityAdmin = async function (user, communityId, done) {
   var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
   communityUser.isManager = user.isCommunityAdmin;
+  await dao.CommunityUser.update(communityUser).then(async () => {
+    return done(null);
+  }).catch (err => {
+    return done(err);
+  });
+};
+
+module.exports.updateCommunityApprover = async function (user, communityId, done) {
+  var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
+  communityUser.isApprover = user.isCommunityApprover;
   await dao.CommunityUser.update(communityUser).then(async () => {
     return done(null);
   }).catch (err => {
@@ -945,6 +967,35 @@ module.exports.getBureauOfficeCount = async function (bureauId, officeId) {
 module.exports.createAuditLog = async function (type, ctx, auditData) {
   var audit = Audit.createAudit(type, ctx, auditData);
   await dao.AuditLog.insert(audit).catch(() => {});
+};
+
+module.exports.deleteApplicantOrParticipant = async function (ctx,taskId,userId,reason) {  
+  return await dao.Volunteer.findOne('"taskId" = ? and "userId" = ?',taskId,userId).then(async (e) => { 
+    return await dao.Volunteer.delete('"taskId" = ? and "userId" = ?', taskId,userId).then(async (volunteer) => {
+      var audit = module.exports.createAuditLog('VOLUNTEER_DELETED', ctx, {      
+        volunteerId: userId,
+        taskId: taskId,
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),
+        volunteer: _.pick(await dao.User.findOne('id = ?',userId), 'id', 'name', 'username'),
+        reason:reason,              
+      });  
+     
+      return volunteer;
+    }).catch(err => {
+      log.info('delete: failed to delete Volunteer ', err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+};
+
+
+module.exports.getTaskVolunteers = async function (taskId) {
+  var volunteers = (await db.query(fs.readFileSync(__dirname + '/sql/getTasksVolunteers.sql', 'utf8'), taskId)).rows;
+  return volunteers;
+  
 };
 
 

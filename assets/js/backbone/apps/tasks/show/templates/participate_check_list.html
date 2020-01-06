@@ -11,6 +11,10 @@
     <div>If this opportunity is for a specific location (i.e. it is not a virtual opportunity), I am located within the same commuting area.</div>
 </div>
 <div class="check-list">
-    <div class="check"><span class="fa fa-check"></span></div>
-    <div>I've updated my profile, including my biography and skills (optional, but recommended).</div>
+    <% if (!window.cache.currentUser.bio || !skill) { %>
+        <div class="warning"><span class="fas fa-exclamation-triangle"></span></div>
+    <% } else { %>
+        <div class="check"><span class="fa fa-check"></span></div>
+    <% } %>
+    <div>I've updated my profile, including my biography and/or skills (optional, but recommended).</div>
 </div>

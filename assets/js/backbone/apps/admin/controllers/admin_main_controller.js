@@ -8,6 +8,8 @@ var ModalComponent = require('../../../components/modal');
 
 var ChangeOwnerTemplate = require('../templates/change_owner_template.html').toString();
 var AddParticipantTemplate = require('../templates/add_participant_template.html').toString();
+var ApplicantParticipantTemplate = require('../templates/admin_applicant_participant_template.html').toString();
+var DeleteApplicantParticipantTemplate = require('../templates/admin_delete_applicant_participant_template.html').toString();
 
 var Admin = {};
 
@@ -16,6 +18,7 @@ Admin.ShowController = BaseController.extend({
   events: {
     'click .task-change-owner'   : 'changeOwner',
     'click .task-add-participant': 'addParticipant',
+    'click .delete-applicant-participant'  :'deleteApplicantOrParticipant',
   },
 
   // Initialize the admin view
@@ -38,12 +41,93 @@ Admin.ShowController = BaseController.extend({
     this.displayAddParticipantModal(event, { taskId: taskId, title: title });
   },
 
+  deleteApplicantOrParticipant: function (event) {
+    if (event.preventDefault) event.preventDefault();
+    var taskId = $(event.currentTarget).data('task-id');
+    var title = $( event.currentTarget ).data('task-title');
+    
+    $.ajax({
+      url: '/api/admin/task/volunteer/' + taskId,
+    }).done(function (data) {
+      this.displayApplicantOrParticipant(event, { volunteers: data, taskId: taskId, title: title });
+    }.bind(this)); 
+  },
+
+  displayApplicantOrParticipant: function (event,data,taskId) { 
+    if (event.preventDefault) event.preventDefault();
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+    var modalContent = _.template(ApplicantParticipantTemplate)(data);
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'delete-participant',
+      modalTitle: 'Delete applicant/participant',
+      modalBody: modalContent,
+      secondary: {},
+      primary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+    }).render();
+  
+   
+    $('.project-people__remove').on('click', function (e) {
+      if (e.preventDefault) e.preventDefault();   
+      var userId = $(e.currentTarget).data('userid');
+      var userName = $(e.currentTarget).data('username');
+      data.userName= userName;
+      data.volunteerFlag= $(e.currentTarget).data('volunteerflag');
+      this.removeApplicantOrParticipant(data,userId);     
+    }.bind(this));    
+  },
+
+  removeApplicantOrParticipant: function (data,userId){  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+    var modalContent = _.template(DeleteApplicantParticipantTemplate)(data);
+    this.modalComponent = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm delete '+ data.volunteerFlag,
+      modalBody: modalContent,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Delete',
+        action: function () {
+          data.reason=$('#applicant-remove-reason').val();       
+          this.submitDelete.bind(this)(data,userId);
+        }.bind(this),
+      },    
+    }).render(); 
+  }, 
+  submitDelete: function (data, userId) { 
+    var self =this;
+    self.data = data;   
+    $.ajax({
+      url: '/api/admin/volunteer/'+ data.taskId +'/user/' + userId +'?' + $.param({
+        reason : self.data.reason,
+      }),
+      type: 'DELETE',        
+    }).done(function (data) {
+      this.modalComponent.cleanup();
+      Backbone.history.loadUrl(Backbone.history.getFragment());
+    }.bind(this)).fail(function (error) {
+      
+    }.bind(this));
+  },
+
   displayAddParticipantModal: function (event, data) {
     this.target = $(event.currentTarget).parent();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
 
-    var modalContent = _.template(AddParticipantTemplate)(data);
-    
+    var modalContent = _.template(AddParticipantTemplate)(data); 
+      
     $('body').addClass('modal-is-open');
 
     this.modalComponent = new ModalComponent({
