@@ -56,8 +56,12 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
 
 router.get('/api/task/communitylist', async (ctx, next) => {
   var communities =  await service.getCommunityList();
-  if (communities.length) {
-    ctx.body = communities;
+  var communityTypes = {
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
+  };
+  if (communityTypes.federal.length) {
+    ctx.body = communityTypes;
   } else {
     ctx.status = 403;
   }

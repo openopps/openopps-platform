@@ -35,8 +35,7 @@ var TaskListView = Backbone.View.extend({
     this.tagFactory = new TagFactory();
     this.collection = options.collection;
     this.queryParams = options.queryParams;
-    // this.community = {},
-    this.communities = {};
+    this.communities = [];
     this.careers = [];
     this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
@@ -58,8 +57,7 @@ var TaskListView = Backbone.View.extend({
     $('#search-results-loading').show();
     var template = _.template(TaskListTemplate)({
       placeholder: '',
-      // community: this.community,
-      communities: this.communities,
+
       user: window.cache.currentUser,
       ui: UIConfig,
       agencyName: this.userAgency.name,
@@ -168,8 +166,8 @@ var TaskListView = Backbone.View.extend({
     });
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
-        var community = _.findWhere(this.communities, { communityId: parseInt($('#community').select2('data').id) });
-        this.filters.community = _.pick(community, 'communityType', 'communityName', 'communityId');
+        var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
+        this.filters.community = _.pick(c, 'type', 'name', 'id');
       } else {
         this.filters.community = [];
       }
@@ -199,10 +197,13 @@ var TaskListView = Backbone.View.extend({
       dataType: 'json',
       async: false,
       success: function (data) {
-        this.communities = data;
+        this.communities = data.federal;
         this.filterLookup["community"] = {};
-        data.forEach(function (community) {
-          this.filterLookup["community"][community.communityId] = community.communityName;
+        this.communities.forEach(function (community) {
+          community.type = "community";
+          community.id = community.communityId;
+          community.name = community.communityName;
+          this.filterLookup["community"][community.id] = community.name;
         }.bind(this));
       }.bind(this),
     });
@@ -280,8 +281,6 @@ var TaskListView = Backbone.View.extend({
       term: this.filters.term,
       filters: this.filters,
       agency: this.agency,
-      // community: this.community,
-      communities: this.communities,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
     });
@@ -307,7 +306,7 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    this.tagTypes = { career: this.careers };
+    this.tagTypes = { career: this.careers, community: this.communities, };
     this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
