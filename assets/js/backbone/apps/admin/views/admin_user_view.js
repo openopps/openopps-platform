@@ -20,6 +20,7 @@ var AdminUserView = Backbone.View.extend({
     'click .link-backbone'        : linkBackbone,
     'click .user-enable'          : 'toggleCheckbox',
     'click .assign-admin'         : 'toggleCheckbox',
+    'click .assign-approver'      : 'toggleCheckbox',
     'click .member-enable'        : 'toggleCheckbox',
     'click .user-reset'           : 'resetPassword',
     'click #invite-members'       : 'inviteMembers',
@@ -119,7 +120,7 @@ var AdminUserView = Backbone.View.extend({
               userId: $('#community-add-member').select2('data').id,
             };
             $.ajax({
-              url: '/api/community/member',
+              url: '/api/community/' + data.communityId + '/member',
               type: 'POST',
               data: data,
               success: function () {
@@ -201,6 +202,7 @@ var AdminUserView = Backbone.View.extend({
     this.data.countOf = this.data.count;
     this.data.target = this.options.target;
     this.data.isAdministrator = this.isAdministrator;
+    this.data.isApprover = this.isApprover;
 
     this.renderSelectedUsers();
   },
@@ -301,6 +303,8 @@ var AdminUserView = Backbone.View.extend({
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
       case 'community':
         return '/api/admin/communityAdmin/' + id + '/' + this.community.communityId + '?action=' + elem.prop('checked');
+      case 'approver':
+        return '/api/admin/community/' + this.community.communityId + '/approver/' + id + '?action=' + elem.prop('checked');
       case 'member':
         return '/api/admin/community/' + this.community.communityId + '/member/' + id + '?action=' + elem.prop('checked');
     }
@@ -323,11 +327,18 @@ var AdminUserView = Backbone.View.extend({
     var id = $(t.parents('tr')[0]).data('id');
     var username = $(t.parents('tr')[0]).data('user-name');
 
-    if (t.hasClass('assign-admin')) {
+    if (t.hasClass('assign-admin')) { 
       this.confirmAdminAssign(t, {
         id: id,
         name: username,
         agency: this.agency.name,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else if (t.hasClass('assign-approver')) { 
+      this.confirmApproverAssign(t, {
+        id: id,
+        name: username,
         checked: t.prop('checked'),
         url: this.getUrlFor(id, t),
       });
@@ -346,8 +357,11 @@ var AdminUserView = Backbone.View.extend({
       (target == 'community' && user.is_manager);
   },
 
+  isApprover: function (user, target) {
+    return (target == 'community' && user.is_approver);
+  },
+
   updateUser: function (t, data) {
-    var self = this;
     var spinner = $($(t.parent()[0]).children('.icon-spin')[0]);
     // Show spinner and hide checkbox
     spinner.show();
@@ -371,7 +385,30 @@ var AdminUserView = Backbone.View.extend({
       id: 'confirm-assign',
       modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
       modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
-                  + data.name + '</strong> as <strong>' + (data.agency ? data.agency : this.data.target) + '</strong> administrator?',
+                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' administrator</strong>?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.modal.render();
+  },
+
+  confirmApproverAssign: function (t, data) {
+    this.modal = new Modal({
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' BIC',
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' BIC</strong>?',
       primary: {
         text: (data.checked ? 'Assign' : 'Remove'),
         action: function () {

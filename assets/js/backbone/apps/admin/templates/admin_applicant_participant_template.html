@@ -1,0 +1,49 @@
+
+<% if (volunteers.length > 0) { %>
+  <% if (_.where(volunteers, { assigned: false }).length > 0) { %>
+    <h3>Applicants</h3>       
+    <% _.each(_.where(volunteers, { assigned: false }), function (v) { %>
+      <div class="internship-participant ">       
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>"> 
+            <a href="/profile/<%- v.userId %>" target="_blank" rel="noopener noreferrer nofollow" > <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div></a>
+            <button id="delete-applicant" class="project-people__remove" data-volunteerflag="applicant" data-volunteerid="<%- v.id %>" data-username= "<%- v.name %>" data-userid="<%- v.userId %>" data-behavior="remove" >  
+              <span class="usajobs-assistive-text">Remove</span>      
+            </button> 
+          </div>
+          <a href="/profile/<%- v.userId %>" target="_blank" rel="noopener noreferrer nofollow" >
+          <div class="usajobs-open-opps-opportunity-requestor__body">
+            <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+          </div>
+        </a>
+        </div>   
+    </div>  
+    <% }); %>
+    <% } %>
+
+    <% if (_.where(volunteers, { assigned: true }).length > 0) { %>
+    <h3>Participants</h3>   
+    <% _.each(_.where(volunteers, { assigned: true }), function (v) { %>
+      <div class="internship-participant">        
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+            <a href="/profile/<%- v.userId %>" target="_blank" rel="noopener noreferrer nofollow"><div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div></a>
+              <button id="delete-participant" class="project-people__remove" data-volunteerflag="participant" data-volunteerid="<%- v.id %>" data-username= "<%- v.name %>" data-userid="<%- v.userId %>" data-behavior="remove" >
+                <span class="usajobs-assistive-text">Remove</span>         
+              </button>   
+          </div>
+          <a href="/profile/<%- v.userId %>" target="_blank" rel="noopener noreferrer nofollow" >
+          <div class="usajobs-open-opps-opportunity-requestor__body">
+            <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+          </div>
+        </a>
+        </div>        
+      </a>
+    </div>
+    <% }); %>
+    <% } %> 
+    
+  <% } else { %>
+    <span>No applicants available</span>
+   <% } %> 
+    

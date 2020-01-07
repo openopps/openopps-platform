@@ -93,7 +93,7 @@ var AdminDashboardView = Backbone.View.extend({
           var currentYear = (today.getFullYear() + (today.getMonth() >= 9 ? 1 : 0)).toString();
           var previousYear= currentYear-1;       
           previousYear= previousYear.toString();    
-          var year= [previousYear,currentYear];
+          var year= [currentYear,previousYear];
           data.range = year;
         }      
         if(group=='month'){            
@@ -170,7 +170,7 @@ var AdminDashboardView = Backbone.View.extend({
     var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
     var currentYearData=_.chain(updateCurrentArray).sort().value(); 
     var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
-    data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
+    data.range=_.union(currentYearDataUnion,previousYearDataUnion).sort(function (a, b) { return b-a; });
   },
 
   generateQuartersDisplay: function (data){
@@ -207,7 +207,7 @@ var AdminDashboardView = Backbone.View.extend({
     var updateCurrentArray= _.difference(monthsCurrent,currentYearRange); 
     var currentYearData=_.chain(updateCurrentArray).sort().value(); 
     var currentYearDataUnion= _.union(currentYearData,currentYearRange).sort();  
-    data.range=_.union(previousYearDataUnion,currentYearDataUnion).sort();
+    data.range=_.union(currentYearDataUnion,previousYearDataUnion).sort(function (a, b) { return b-a; });
   },
 
 
@@ -306,10 +306,10 @@ var AdminDashboardView = Backbone.View.extend({
                 $('#' + data.key).children('td')[1].innerText = result.value;
                 $('#' + data.key).children('td')[2].innerText = moment(result.updated_at).format('MM/DD/YYYY hh:mma');
               }.bind(this),
-            })
+            });
           }
         }.bind(this),
-      }
+      },
     }).render();
   },
 

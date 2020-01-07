@@ -15,7 +15,7 @@
           </label>
           <select name="sort-created" id="sort-created" class="usajobs-search-controls__sort-control">
             <option value="" disabled>- Sort By -</option>
-            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Status</option>
+            <option value="state" <% if (sort == 'state') { %>selected<% } %>>Opportunity status</option>
             <option value="title" <% if (sort == 'title') { %>selected<% } %>>Opportunity</option>
             <option value="updatedAt" <% if (sort == 'updatedAt') { %>selected<% } %>>Last updated</option>
           </select>
@@ -32,7 +32,7 @@
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col">Opportunity status</th>
               <th scope="col">Opportunity</th>
-              <th scope="col">Updated date</th>
+              <th scope="col">Last updated</th>
               <% if (count.draft > 0) { %>
               <th scope="col" class="center" data-target="delete">Delete</th>
               <% } %>
@@ -93,7 +93,7 @@
         	<tr class="usajobs-grid open-opps-row header">
         		<th scope="col">Opportunity status</th>
         		<th scope="col">Opportunity</th>
-        		<th scope="col">Updated date</th>
+        		<th scope="col">Last updated</th>
         	</tr>
         	</thead>
           <tbody>

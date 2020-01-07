@@ -326,7 +326,8 @@
 
   .user-enable[type=checkbox]:checked,
   .assign-admin[type=checkbox]:checked,
-  .member-enable[type=checkbox]:checked {
+  .member-enable[type=checkbox]:checked,
+  .assign-approver[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -342,7 +343,8 @@
 
   .user-enable[type=checkbox],
   .assign-admin[type=checkbox],
-  .member-enable[type=checkbox] {
+  .member-enable[type=checkbox],
+  .assign-approver[type=checkbox] {
     border: none;
     height: auto;
 
@@ -485,12 +487,12 @@
       color: #487E40;
     }
 
-    .delete-task, .approve-error {
+    .delete-task, .approve-error, .delete-applicant-participant {
       color: #CD2026;
       cursor: pointer;
     }
 
-    .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error {
+    .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error, .delete-applicant-participant {
       padding: 7px 10px;
     }
 
