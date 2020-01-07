@@ -893,3 +893,8 @@ module.exports.getSelectionsForTask = async (user, taskId) => {
     });
   });
 };
+
+
+module.exports.getCommunityList = async () => {
+  return await dao.Community.find();
+};

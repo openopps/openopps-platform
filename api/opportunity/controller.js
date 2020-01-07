@@ -54,6 +54,15 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
   })
 });
 
+router.get('/api/task/communitylist', async (ctx, next) => {
+  var communities =  await service.getCommunityList();
+  var communityTypes = {
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
+  };
+  ctx.body = communityTypes;
+});
+
 router.get('/api/task/selections/:id', auth, async (ctx, next) => {
   if (await service.canUpdateOpportunity(ctx.state.user, ctx.params.id)) {
     await service.getSelectionsForTask(ctx.state.user, ctx.params.id).then(results => {
@@ -200,6 +209,7 @@ router.get('/api/task/community/communityManager/:id', auth, async (ctx, next) =
     ctx.status = err.status;
   });
 });
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
