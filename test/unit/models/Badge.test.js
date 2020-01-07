@@ -148,9 +148,7 @@ describe('Testing badge awardCommunityManagerBadge ()', function () {
     {
       message: 'A user who has the role of the community manager should be awarded community manager badge.',
       method: 'awardCommunityManagerBadge',
-      args: [{ community_user_id: 1, community_users: [
-        { user_id: 1, is_manager: true},       
-      ] }],
+      args: [1, { communityUserId: 1, isManager:true }],
       expected: 'community manager',
     },
     

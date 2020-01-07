@@ -45,16 +45,15 @@ module.exports = {
    * @param { Object } user
    * @param { object } opts - optional
    */
-  awardCommunityManagerBadge: (communityUser, opts) => {  
+  awardCommunityManagerBadge: (user,communityUser, opts) => {  
     var badge ={     
-      user: communityUser.community_user_id,      
+      user: user,      
       silent: (opts && !_.isUndefined(opts.silent)) ? opts.silent : false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     
-    var isCommunityManager = _.find(communityUser.community_users, { is_manager: true });
-    if (isCommunityManager ) {
+    if (communityUser.isManager== true ) {
       badge.type = 'community manager';   
     }
     return badge.type ? badge : null;
