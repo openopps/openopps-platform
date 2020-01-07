@@ -43,11 +43,7 @@ global.addFiltersToURL = function () {
  */
 global.parseURLToFilters = function () {
   _.each(_.omit(this.queryParams, 'search'), function (value, key) {
-    if (_.isArray(value)) {
-      values = value;
-    } else {
-      values = value.split(';');
-    }
+    var values = _.isArray(value) ? value : value.split(';');
     if (key == 'term') {
       this.filters.term = value;
     } else if (key == 'page') {

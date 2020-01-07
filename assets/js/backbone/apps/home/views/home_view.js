@@ -26,13 +26,12 @@ var HomeView = Backbone.View.extend({
   },
 
   render: function () {
-    var compiledTemplate;
     var data = {
       hostname: window.location.hostname,
       user: window.cache.currentUser || {},
     };
     this.$el.addClass('home');
-    compiledTemplate = _.template(HomeTemplate)(data);
+    var compiledTemplate = _.template(HomeTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(compiledTemplate);
     this.$el.localize();
