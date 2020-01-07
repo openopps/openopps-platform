@@ -130,7 +130,7 @@ var TaskShowController = BaseView.extend({
   },
 
   initializeVolunteers: function () {
-    obj = _.find(this.model.attributes.volunteers, function (obj) { return obj.userId == window.cache.currentUser.id; });
+    var obj = _.find(this.model.attributes.volunteers, function (obj) { return obj.userId == window.cache.currentUser.id; });
     if (obj) {
       $('.volunteer-true').show();
       $('.volunteer-false').hide();

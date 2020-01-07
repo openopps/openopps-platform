@@ -118,7 +118,6 @@ var TaskEditFormView = Backbone.View.extend({
   },
   
   render: function () {
-    var compiledTemplate;
     this.loadAudienceCommunityData();
     this.data = {
       data: this.model.toJSON(),
@@ -142,7 +141,7 @@ var TaskEditFormView = Backbone.View.extend({
       },
     };
 
-    compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
+    var compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();
 

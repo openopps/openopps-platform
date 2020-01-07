@@ -120,7 +120,7 @@ var PeopleListView = Backbone.View.extend({
     var settings = {
       ui: UIConfig,
     };
-    compiledTemplate = _.template(NoResults)(settings);
+    var compiledTemplate = _.template(NoResults)(settings);
     $('#people-list').append(compiledTemplate);
     $('#people-page').hide();
     $('#profile-search-controls').hide();
@@ -133,7 +133,7 @@ var PeopleListView = Backbone.View.extend({
         appliedFilterCount += (_.isArray(value) ? value.length : 1);
       }
     });
-    compiledTemplate = _.template(SearchPills)({
+    var compiledTemplate = _.template(SearchPills)({
       filters: this.filters,
       appliedFilterCount: appliedFilterCount,
     });
