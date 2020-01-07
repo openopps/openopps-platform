@@ -60,11 +60,7 @@ router.get('/api/task/communitylist', async (ctx, next) => {
     federal: _.filter(communities, { targetAudience: 1 }),
     student: _.filter(communities, { targetAudience: 2 }),
   };
-  if (communityTypes.federal.length) {
-    ctx.body = communityTypes;
-  } else {
-    ctx.status = 403;
-  }
+  ctx.body = communityTypes;
 });
 
 router.get('/api/task/selections/:id', auth, async (ctx, next) => {
