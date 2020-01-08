@@ -137,6 +137,8 @@ const volunteerListQuery = 'select midas_user.username, midas_user.government_ur
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';
 
+const lookUpVanityURLQuery = 'select community_id from community where lower(vanity_url) = lower(?)';
+
 const options = {
   task: {
     fetch: {
@@ -245,6 +247,7 @@ module.exports = function (db) {
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,
+      lookUpVanityURLQuery: lookUpVanityURLQuery,
       intern:countryQuery,   
       userTasks: userTasksQuery,
       savedTask: savedTaskQuery,
