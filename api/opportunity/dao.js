@@ -55,8 +55,6 @@ const communitiesQuery = 'SELECT ' +
 
 const usdosSupportEmailQuery = 'select * from community where reference_id = \'dos\'';
 
-const communityVanityUrlQuery = 'select community_id as community from community where vanity_url = ?';
-
 const communityTaskQuery = 'select * from community ' +
 'join task on task.community_id = community.community_id ' + 
 'where task.community_id = ?';
@@ -242,7 +240,6 @@ module.exports = function (db) {
       communityUserQuery: communityUserQuery,
       communityAdminsQuery: communityAdminsQuery,
       communityBureauAdminsQuery: communityBureauAdminsQuery,
-      communityVanityUrlQuery: communityVanityUrlQuery,
       communitiesQuery: communitiesQuery,
       usdosSupportEmailQuery: usdosSupportEmailQuery,
       communityTaskQuery:communityTaskQuery,
