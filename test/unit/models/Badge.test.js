@@ -142,3 +142,21 @@ describe('Testing badge awardForTaskPublish()', function () {
     });
   });
 });
+
+describe('Testing badge awardCommunityManagerBadge ()', function () {
+  var tests = [
+    {
+      message: 'A user who has the role of the community manager should be awarded community manager badge.',
+      method: 'awardCommunityManagerBadge',
+      args: [1, { communityUserId: 1, isManager:true }],
+      expected: 'community manager',
+    },
+    
+  ];
+  tests.forEach(function (test) {
+    it(test.message, function () {
+      var res = Badge[test.method].apply(null, test.args);
+      assert.equal(res ? res.type : res, test.expected);
+    });
+  });
+});

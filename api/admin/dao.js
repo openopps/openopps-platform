@@ -436,6 +436,7 @@ module.exports = function (db) {
     Application: dao({ db: db, table: 'application' }),
     Agency: dao({ db: db, table: 'agency' }),
     Bureau: dao({db:db,table:'bureau'}),
+    Badge: dao({db:db,table:'badge'}),
     Office:dao({db:db,table:'office'}),
     User: dao({ db: db, table: 'midas_user' }),
     Task: dao({ db: db, table: 'task' }),

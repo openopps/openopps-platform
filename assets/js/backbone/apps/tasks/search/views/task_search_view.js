@@ -344,7 +344,7 @@ var TaskListView = Backbone.View.extend({
     var settings = {
       ui: UIConfig,
     };
-    compiledTemplate = _.template(NoListItem)(settings);
+    var compiledTemplate = _.template(NoListItem)(settings);
     $('#task-list').append(compiledTemplate);
     $('#task-page').hide();      
     $('#results-count').hide();
@@ -609,11 +609,7 @@ var TaskListView = Backbone.View.extend({
 
   parseURLToFilters: function () {
     _.each(_.omit(this.queryParams, 'search'), function (value, key) {
-      if (_.isArray(value)) {
-        values = value;
-      } else {
-        values = value.split(';');
-      }
+      var values = _.isArray(value) ? value : value.split(';');
       if (key == 'term') {
         this.filters.term = value;
       } else if (key == 'page') {

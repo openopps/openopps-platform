@@ -31,6 +31,11 @@ router.get('/api/task/search', async (ctx, next) => {
   ctx.body = results;
 });
 
+router.get('/api/vanity/:vanity', async (ctx) => {
+  var data = await service.getVanityURL(ctx.params.vanity); 
+  ctx.body = data;
+});
+
 router.get('/api/task/communities', auth, async (ctx, next) => {
   var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
@@ -60,11 +65,7 @@ router.get('/api/task/communitylist', async (ctx, next) => {
     federal: _.filter(communities, { targetAudience: 1 }),
     student: _.filter(communities, { targetAudience: 2 }),
   };
-  if (communityTypes.federal.length) {
-    ctx.body = communityTypes;
-  } else {
-    ctx.status = 403;
-  }
+  ctx.body = communityTypes;
 });
 
 router.get('/api/task/selections/:id', auth, async (ctx, next) => {

@@ -300,6 +300,7 @@ async function updateOpportunity (ctx, attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
+  attributes.communityId = attributes.communityId == '' ? null : attributes.communityId;
   if ((origTask.communityId != attributes.communityId) && attributes.state !=='draft') {  
     attributes.state = 'submitted';
     attributes.submittedAt = null;
@@ -831,6 +832,11 @@ async function saveOpportunity (user, data, callback) {
   }
 }
 
+async function getVanityURL (vanityURL) {
+  var community = (await db.query(dao.query.lookUpVanityURLQuery, vanityURL)).rows[0];
+  return community;
+}
+
 module.exports = {
   findOne: findOne,
   findById: findById,
@@ -862,6 +868,7 @@ module.exports = {
   getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
+  getVanityURL: getVanityURL,
 };
 
 
