@@ -10,6 +10,7 @@ var NoListItem = require('../templates/no_search_results.html');
 var Pagination = require('../../../../components/pagination.html');
 var TaskFilters = require('../templates/task_filters.html');
 var SearchPills = require('../templates/search_pills.html');
+var TaskSearchBanner = require('../templates/task_search_banner.html');
 
 
 var TaskListView = Backbone.View.extend({
@@ -57,7 +58,6 @@ var TaskListView = Backbone.View.extend({
     $('#search-results-loading').show();
     var template = _.template(TaskListTemplate)({
       placeholder: '',
-
       user: window.cache.currentUser,
       ui: UIConfig,
       agencyName: this.userAgency.name,
@@ -72,6 +72,24 @@ var TaskListView = Backbone.View.extend({
     this.initializeKeywordSearch();
     this.$('.usajobs-open-opps-search__box').show();
     return this;
+  },
+
+  renderCommunitySearchBanner: function () {
+    $('.usajobs-open-opps-search__box').html(_.template(TaskSearchBanner)({
+      placeholder: '',
+      user: window.cache.currentUser,
+      ui: UIConfig,
+      agencyName: this.userAgency.name,
+      term: this.filters.term,
+      filters: this.filters,
+      taskFilteredCount: this.taskFilteredCount,
+      appliedFilterCount: this.appliedFilterCount,
+    }));
+    if (this.filters.community && this.filters.community.banner.color) {
+      $('.usajobs-open-opps-search__box').css('background', this.filters.community.banner.color);
+    } else {
+      $('.usajobs-open-opps-search__box').removeAttr("style");
+    }
   },
 
   initializeKeywordSearch: function () {
@@ -167,29 +185,29 @@ var TaskListView = Backbone.View.extend({
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
         var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
-        this.filters.community = _.pick(c, 'type', 'name', 'id');
+        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner');
       } else {
-        this.filters.community = [];
+        delete this.filters.community;
       }
       this.filters.page = 1;
       this.filter();
     }.bind(this));
   },
 
-  intializeAcquisition: function () {
-    if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
-    _.find(this.filters.series, { name: '1102 (Contracting)' })) {
-      $('.usajobs-open-opps-search__box').addClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
-    } else {
-      $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
-      $('#search-pills-remove-all').attr('title', 'Remove all filters');
-      $('#search-pills-remove-all').children('.text').text('Remove all filters');
-    }
-    $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-    $('#footer').addClass('filter-margin');
-  },
+  // intializeAcquisition: function () {
+  //   if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
+  //   _.find(this.filters.series, { name: '1102 (Contracting)' })) {
+  //     $('.usajobs-open-opps-search__box').addClass('display-acquisition');
+  //     $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
+  //     $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
+  //   } else {
+  //     $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
+  //     $('#search-pills-remove-all').attr('title', 'Remove all filters');
+  //     $('#search-pills-remove-all').children('.text').text('Remove all filters');
+  //   }
+  //   $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
+  //   $('#footer').addClass('filter-margin');
+  // },
 
   initializeCommunityField: function () {
     $.ajax({
@@ -203,7 +221,7 @@ var TaskListView = Backbone.View.extend({
           community.type = "community";
           community.id = community.communityId;
           community.name = community.communityName;
-          this.filterLookup["community"][community.id] = community.name;
+          this.filterLookup["community"][community.id] = community;
         }.bind(this));
       }.bind(this),
     });
@@ -248,7 +266,7 @@ var TaskListView = Backbone.View.extend({
         });
       }
     } else if (_.isEqual(this.filters[type], value)) {
-      this.filters[type] = [];
+      delete this.filters[type];
     }
     this.filters.page = 1;
     this.filter();
@@ -267,7 +285,7 @@ var TaskListView = Backbone.View.extend({
 
   renderFilters: function () {
     if(!_.isEmpty(this.filters.community) && _.isArray(this.filters.community)) {
-      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id');
+      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner');
     }
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
@@ -298,7 +316,6 @@ var TaskListView = Backbone.View.extend({
     setTimeout(function () {
       this.initializeCareerSelect2();
     }.bind(this), 100);
-    this.intializeAcquisition();
   },
 
   renderList: function (searchResults, page) {
@@ -538,6 +555,7 @@ var TaskListView = Backbone.View.extend({
 
   filter: function () {
     this.addFiltersToURL();
+    this.renderCommunitySearchBanner();
     $.ajax({
       url: '/api/task/search' + location.search + '&isInternship=0',
       type: 'GET',
@@ -598,14 +616,12 @@ var TaskListView = Backbone.View.extend({
         if (!isNaN(value)) {
           this.filters.page = parseInt(value);
         }
+      } else if (key == 'community') {
+        this.filters.community = { type: key, name: this.filterLookup[key][value].name, id: value, banner: this.filterLookup[key][value].banner };
       } else {
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {
             return value;
-          } else if (key == "community") {
-            console.log(this.filterLookup);
-            console.log(value);
-            return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == "career") {
               return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == "skill" || key == "series") {
