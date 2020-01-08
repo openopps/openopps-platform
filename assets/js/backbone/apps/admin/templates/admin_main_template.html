@@ -4,7 +4,7 @@
     <nav class="usajobs-nav-secondary" role="navigation" data-object="nav-secondary" data-target="#usajobs-nav-secondary-menu--administration">
       <div class="usajobs-nav-secondary__body" id="usajobs-menu-administration">
         <ul class="usajobs-nav-secondary__menu">
-          <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isApprover)) { %>
           <li class="usajobs-nav-secondary__container">
             <a class="usajobs-nav-secondary__item is-active" href="/admin/sitewide" data-target="sitewide">
               Sitewide

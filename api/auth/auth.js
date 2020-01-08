@@ -42,6 +42,18 @@ module.exports.isAdmin = async (ctx, next) => {
   });
 };
 
+module.exports.isApprover = async (ctx, next) => {
+  await baseAuth(ctx, async () => {
+    ctx.state.user.isApprover ? await next() : await forbidden(ctx);
+  });
+};
+
+module.exports.isAdminOrApprover = async (ctx, next) => {
+  await baseAuth(ctx, async () => {
+    ctx.state.user.isAdmin || ctx.state.user.isApprover ? await next() : await forbidden(ctx);
+  });
+};
+
 module.exports.isAgencyAdmin = async (ctx, next) => {
   await baseAuth(ctx, async () => {
     ctx.state.user.isAgencyAdmin ? await next() : await forbidden(ctx);
