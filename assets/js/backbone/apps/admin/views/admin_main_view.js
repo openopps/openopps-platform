@@ -68,7 +68,7 @@ var AdminMainView = Backbone.View.extend({
       this.hideDashboardMenu();
       agencyId = this.userAgencyId();   // restrict access to User agency
       target = 'agency';
-    } else if (target == 'sitewide' && !this.isAdmin() && this.isCommunityAdmin()) {
+    } else if (target == 'sitewide' && !this.isAdmin() && (this.isCommunityAdmin() || this.isCommunityApprover())) {
       this.hideDashboardMenu();
       target = 'community';
     }
