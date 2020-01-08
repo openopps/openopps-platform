@@ -51,6 +51,7 @@ var TaskListView = Backbone.View.extend({
     this.parseURLToFilters();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
+
   },
 
   render: function () {
@@ -153,7 +154,8 @@ var TaskListView = Backbone.View.extend({
     }.bind(this));
     if(!_.contains(this.filters.locationType, 'in person')) {
       $('#location').siblings('.select2-container').hide();
-    }  
+    }
+    
   },
 
   initializeCareerSelect2: function () {
@@ -191,6 +193,21 @@ var TaskListView = Backbone.View.extend({
       this.filter();
     }.bind(this));
   },
+
+  // intializeAcquisition: function () {
+  //   if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
+  //   _.find(this.filters.series, { name: '1102 (Contracting)' })) {
+  //     $('.usajobs-open-opps-search__box').addClass('display-acquisition');
+  //     $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
+  //     $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
+  //   } else {
+  //     $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
+  //     $('#search-pills-remove-all').attr('title', 'Remove all filters');
+  //     $('#search-pills-remove-all').children('.text').text('Remove all filters');
+  //   }
+  //   $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
+  //   $('#footer').addClass('filter-margin');
+  // },
 
   initializeCommunityField: function () {
     $.ajax({
@@ -626,6 +643,7 @@ function formatObjectForURL (value) {
   if (value.type == "career") {
     return value.id;
   } else if (value.type == "community") {
+    //may need to change
     return value.id;
   }
   return value.name;
@@ -640,5 +658,6 @@ function getAppliedFiltersCount (filters, agency) {
   });
   return count + (_.isEqual(agency, { data: {} }) ? 0 : 1);
 }
+
 
 module.exports = TaskListView;
