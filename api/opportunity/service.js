@@ -832,6 +832,11 @@ async function saveOpportunity (user, data, callback) {
   }
 }
 
+async function getVanityURL (vanityURL) {
+  var community = (await db.query(dao.query.lookUpVanityURLQuery, vanityURL)).rows[0];
+  return community;
+}
+
 module.exports = {
   findOne: findOne,
   findById: findById,
@@ -863,6 +868,7 @@ module.exports = {
   getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
+  getVanityURL: getVanityURL,
 };
 
 

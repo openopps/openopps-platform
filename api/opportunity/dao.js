@@ -55,6 +55,8 @@ const communitiesQuery = 'SELECT ' +
 
 const usdosSupportEmailQuery = 'select * from community where reference_id = \'dos\'';
 
+const communityVanityUrlQuery = 'select community_id as community from community where vanity_url = ?';
+
 const communityTaskQuery = 'select * from community ' +
 'join task on task.community_id = community.community_id ' + 
 'where task.community_id = ?';
@@ -136,6 +138,8 @@ const volunteerListQuery = 'select midas_user.username, midas_user.government_ur
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
   'where volunteer."taskId" = ? and volunteer.assigned = true';
+
+const lookUpVanityURLQuery = 'select community_id from community where lower(vanity_url) = lower(?)';
 
 const options = {
   task: {
@@ -238,6 +242,7 @@ module.exports = function (db) {
       communityUserQuery: communityUserQuery,
       communityAdminsQuery: communityAdminsQuery,
       communityBureauAdminsQuery: communityBureauAdminsQuery,
+      communityVanityUrlQuery: communityVanityUrlQuery,
       communitiesQuery: communitiesQuery,
       usdosSupportEmailQuery: usdosSupportEmailQuery,
       communityTaskQuery:communityTaskQuery,
@@ -245,6 +250,7 @@ module.exports = function (db) {
       countrySubdivision:countrySubdivisionQuery,
       deleteTaskTags: deleteTaskTags,
       languageList:languageListQuery,
+      lookUpVanityURLQuery: lookUpVanityURLQuery,
       intern:countryQuery,   
       userTasks: userTasksQuery,
       savedTask: savedTaskQuery,

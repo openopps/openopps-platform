@@ -31,6 +31,11 @@ router.get('/api/task/search', async (ctx, next) => {
   ctx.body = results;
 });
 
+router.get('/api/vanity/:vanity', async (ctx) => {
+  var data = await service.getVanityURL(ctx.params.vanity); 
+  ctx.body = data;
+});
+
 router.get('/api/task/communities', auth, async (ctx, next) => {
   var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
