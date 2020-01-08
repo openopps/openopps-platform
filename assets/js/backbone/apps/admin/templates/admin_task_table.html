@@ -58,16 +58,16 @@
           <th id="publishId" class="center" data-target="publish-delete">Approve</th>
         <% } %>
       <% } %>
-      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) { %>
+      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
         <th class="center" data-target="publish-delete">Delete</th>
       <% } %>
-      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) { %>
+      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
         <th class="center" data-target="change-add">Change<br/> owner</th>
       <% } %>
       <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
         <th class="center" data-target="change-add">Add<br/> participant</th>
       <% } %>
-      <% if (_.contains(['open','in progress'], status.toLowerCase()) && window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin) && target != 'community' && targetAudience !== 'Students') { %>
+      <% if (_.contains(['open','in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) && targetAudience !== 'Students') { %>
         <th class="center" data-target="applicant-delete">Delete<br/>applicant/participant</th>
       <% } %>
     </tr>
@@ -172,7 +172,7 @@
               </a>
             <% } %>
           </td>
-        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id }))) { %>
+        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
           <td class="metrics-table__button">
             <a href="#change-owner/<%- task.id %>"
               data-task-id="<%- task.id %>"
@@ -186,7 +186,7 @@
           </td>
         <% } %>
 
-        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (target != 'community' || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id }))) { %>
+        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
           <td class="metrics-table__button">
             <a href="#delete/<%- task.id %>"
               data-task-id="<%- task.id %>"
@@ -214,7 +214,7 @@
           <% } %>
         <% } %>   
       <% if (_.contains(['open', 'in progress'], status.toLowerCase())) { %>
-            <% if ((window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin) && target != 'community') && targetAudience !== 'Students') { %>
+            <% if ((window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) && targetAudience !== 'Students') { %>
               <td class="metrics-table__button">
                 <a href="#delete/<%- task.id %>"
                   data-task-id="<%- task.id %>"
@@ -223,7 +223,7 @@
                   alt="Delete applicant/participant"
                   title="Delete applicant/participant">
                   <span class='fa fa-user-times'></span>
-                  <span class="usa-sr-only">Delete Opportunity</span>
+                  <span class="usa-sr-only">Delete participant</span>
                 </a>
               </td>
             <% } %>

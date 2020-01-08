@@ -163,7 +163,7 @@ router.put('/api/task/:id', auth, async (ctx, next) => {
 });
 
 router.put('/api/publishTask/:id', auth, async (ctx, next) => {
-  if (await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
+  if (ctx.state.user.isAdmin || ctx.state.user.isApprover || await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
     await service.publishTask(ctx.request.body, function (done) {
       ctx.body = { success: true };
@@ -242,7 +242,7 @@ function checkTaskState (stateChange, user, task) {
 }
 
 router.delete('/api/task/:id', auth, async (ctx) => {
-  if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
+  if (ctx.state.user.isAdmin || await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
       if (['draft', 'submitted'].indexOf(task.state) != -1) {
         ctx.body = await service.deleteTask(ctx, task);

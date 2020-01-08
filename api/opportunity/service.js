@@ -203,8 +203,7 @@ async function canAdministerTask (user, id) {
   var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
   if (!task) {
     return false;
-  } else if (user.isAdmin
-    || (user.isAgencyAdmin && user.agencyId == task.agencyId)
+  } else if ((user.isAgencyAdmin && user.agencyId == task.agencyId)
     || await isCommunityAdmin(user, task) || await isCommunityApprover(user, task)) {
     return true;
   } else {
