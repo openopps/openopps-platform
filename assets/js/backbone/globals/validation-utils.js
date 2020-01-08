@@ -140,7 +140,7 @@ global.validate = function (e) {
         bits = val.split('@');
         var addrBits = bits[1].split('.');
         if ( addrBits.length >=2 ) {
-          for (i=0; i<addrBits.length; i++ ){
+          for (var i=0; i<addrBits.length; i++ ){
             if ( addrBits[i].length < 2 ){
               correctLength = false;
               break;

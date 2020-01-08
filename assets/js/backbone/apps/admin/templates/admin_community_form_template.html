@@ -100,7 +100,7 @@
     </div>
     <div class="form-group required-input">
       <label for="description">Description<span class="usa-input-optional"></span></label>
-      <span class="field-validation-error error-count2500" style="display:none;">The description must be no more than 500 characters.</span>
+      <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
       <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
       <textarea id="description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
       <p class="usajobs-form__help-brief" id="description-count">
@@ -117,16 +117,10 @@
       <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid email address.</span>
       <span class="field-validation-error error-empty" style="display:none;">You must enter a support contact Email.</span>
       <input type="text" id="community-support-email" class="fullwidth form-control validate"  data-validate="empty,email" />
-    </div>
-    <div class="form-group required-input">
-      <label for="application-process">Application process</label>
-      <span class="field-validation-error error-empty" style="display:none;">You must enter an application process.</span>
-      <input type="text" id="application-process" class="fullwidth form-control validate"  data-validate="empty" />
-    </div>
-    <div class="form-group required-input">
-      <label for="microsite-url">Microsite URL</label>
-      <span class="field-validation-error error-empty" style="display:none;">You must enter a microsite URL.</span>
-      <input type="text" id="microsite-url" class="fullwidth form-control validate"  data-validate="empty" />
+    </div>  
+    <div class="form-group ">
+      <label for="microsite-url">Microsite URL</label>     
+      <input type="text" id="microsite-url" class="fullwidth form-control"/>
     </div>
     <div class="form-group required-input">
       <label for="community-mgr-name">Manager name</label>
@@ -137,7 +131,7 @@
       <label for="community-mgr-email">Manager email</label>
       <span class="field-validation-error error-email" style="display:none;">The email address provided is not a valid email address.</span>
       <span class="field-validation-error error-empty" style="display:none;">You must enter a manager email.</span>
-      <input type="text" id="community-mgr-email" class="fullwidth form-control validate"  data-validate="empty,email" />
+      <input type="text" id="community-mgr-email" class="fullwidth form-control validate" data-validate="empty,email"/>
     </div>
     
     <% if(communityId){ %>
