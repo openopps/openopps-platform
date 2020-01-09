@@ -19,7 +19,7 @@
         <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
         <option value="last_login" <% if (sort == 'last_login') { %>selected<% } %>>Last login</option>
         <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
-        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>     
+        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>    
       </select>
       <% } %>
     <% if (target === 'agency') { %>
@@ -59,6 +59,9 @@
       <% } %>
       <% if (user.isAdmin || user.isAgencyAdmin) { %>
         <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
+      <% } %>
+      <% if (target == 'sitewide') { %>
+        <th class="approver-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> approver</th>
       <% } %>
     </tr>
   </thead>
@@ -137,6 +140,13 @@
             <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           <% } %>
         </td>
+        <% if (target == 'sitewide') { %>
+          <td>
+            <input class="assign-approver" id="assign-approver-<%- u.id %>" type="checkbox" data-action='<%- target %>-approver' <% if (isApprover(u, target)) { %> checked <% } %> />
+            <label class="no-label" for="assign-approver-<%- u.id %>"><span class="sr-only">Assign approver</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          </td>
+        <% } %>
       </tr>
     <% }); %>
   </tbody>

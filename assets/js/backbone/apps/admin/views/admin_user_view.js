@@ -299,6 +299,8 @@ var AdminUserView = Backbone.View.extend({
         return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
       case 'sitewide':
         return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
+      case 'sitewide-approver':
+        return '/api/admin/approver/' + id + '?action=' + elem.prop('checked');
       case 'agency':
         return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
       case 'community':
@@ -358,7 +360,7 @@ var AdminUserView = Backbone.View.extend({
   },
 
   isApprover: function (user, target) {
-    return (target == 'community' && user.is_approver);
+    return (target == 'sitewide' && user.is_approver) || (target == 'community' && user.is_approver);
   },
 
   updateUser: function (t, data) {
@@ -406,9 +408,9 @@ var AdminUserView = Backbone.View.extend({
   confirmApproverAssign: function (t, data) {
     this.modal = new Modal({
       id: 'confirm-assign',
-      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' BIC',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' ' + (this.data.target == 'community' ? 'BIC' : 'approver'),
       modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
-                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' BIC</strong>?',
+                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' ' + (this.data.target == 'community' ? ' BIC' : 'approver') + '</strong>?',
       primary: {
         text: (data.checked ? 'Assign' : 'Remove'),
         action: function () {
