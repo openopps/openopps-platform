@@ -16,15 +16,15 @@ exports.setup = function(options, seedLink) {
 
 exports.up = function (db, callback) {
   db.runSql(`
-    update community set banner = '{"title": "Acquisition Open Opportunities", "subtitle": "You''re now viewing Acquisition opportunities only.", "color": "#046b99"}' where "community_name" = 'Federal Acquisition Professionals'`,
+    update community set banner = '{"title": "Cyber Open Opportunities", "subtitle": "You''re now viewing Cyber opportunities only.", "color": "#046b99"}' where "community_name" = 'Cyber Reskilling Academy Graduates'`,
     callback);
-  };
+};
 
 exports.down = function (db) {
   db.runSql(`
-    update community set banner = '{}' where "community_name" = 'Federal Acquisition Professionals'`,
+    update community set banner = '{}' where "community_name" = 'Cyber Reskilling Academy Graduates'`,
     callback);
-  };
+};
 
 exports._meta = {
   'version': 1,
