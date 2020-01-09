@@ -268,6 +268,22 @@ router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
   });
 });
 
+router.get('/api/admin/approver/:id', auth.isAdmin, async (ctx, next) => {
+  var user = await service.getProfile(ctx.params.id);
+  user.isApprover = ctx.query.action === 'true' ? 't' : 'f';
+  await service.updateProfile(user, function (error) {
+    if (error) {
+      log.info(error);
+    }
+    service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+      userId: user.id,
+      action: (ctx.query.action === 'true' ? 'Sitewide approver permission added' : 'Sitewide approver permission removed'),
+      status: (error ? 'failed' : 'successful'),
+    });
+    ctx.body = { user };
+  });
+});
+
 router.get('/api/admin/agencyAdmin/:id', auth, async (ctx, next) => {
   if (await service.canAdministerAccount(ctx.state.user, ctx.params.id)) {
     var user = await service.getProfile(ctx.params.id);
