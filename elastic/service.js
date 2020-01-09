@@ -261,7 +261,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     request.addTerms(query.state, 'state', 'open');
     request.addTerms(query.location, 'locations.name');
   }
-  request.addTerms(query.community, 'communities.id');
+  request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');
   request.addTerms(query.skill, 'skills.name');
   request.addTerms(query.career, 'careers.id');
