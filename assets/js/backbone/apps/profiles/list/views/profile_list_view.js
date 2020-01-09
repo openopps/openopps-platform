@@ -127,7 +127,7 @@ var PeopleListView = Backbone.View.extend({
   },
 
   renderPills: function () {
-    appliedFilterCount = 0;
+    var appliedFilterCount = 0;
     _.each(this.filters, function ( value, key ) {
       if (key != 'term' && key != 'page' && key != 'sort') {
         appliedFilterCount += (_.isArray(value) ? value.length : 1);
