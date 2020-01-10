@@ -16,12 +16,11 @@ var User = require('../../../../utils/user');
 
 var NavView = Backbone.View.extend({
   events: {
-    'click .navbar-brand'                           : linkBackbone,
-    'click .nav-link'                               : linkBackbone,
-    'click .toggle-one'                             : 'menuClick',
-    'click .toggle-two'                             : 'menuClick2',
-    'click .subnav-link'                            : 'subMenuClick',
-    'click .usajobs-nav-login-gov-banner__dismiss'  : 'dismissLoginGovBanner',
+    'click .navbar-brand'   : linkBackbone,
+    'click .nav-link'       : linkBackbone,
+    'click .toggle-one'     : 'menuClick',
+    'click .toggle-two'     : 'menuClick2',
+    'click .subnav-link'    : 'subMenuClick',
   },
 
   initialize: function (options) {
@@ -112,9 +111,6 @@ var NavView = Backbone.View.extend({
     setTimeout(function () {
       this.activePage();
     }.bind(this), 100);
-    if (sessionStorage.dismissLoginGovBanner) {
-      $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
-    }
   },
 
   activePage: function () {
@@ -283,14 +279,6 @@ var NavView = Backbone.View.extend({
     var link = $(s.currentTarget).attr('href');
     Backbone.history.navigate(link, {trigger: true});
     this.activeSubPage();
-  },
-
-  dismissLoginGovBanner: function () {
-    if(typeof(Storage) !== 'undefined') {
-      sessionStorage.setItem('dismissLoginGovBanner', 'true');
-      document.getElementById('usajobs-nav-login-gov-banner').innerHTML = sessionStorage.getItem('dismissLoginGovBanner');
-    }
-    $('.usajobs-nav-login-gov-banner').attr('aria-hidden', 'true');
   },
 
   cleanup: function () {
