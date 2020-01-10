@@ -45,15 +45,23 @@
             </div>
         </div>
 
+        <h4 class="usajobs-search-filters__title community">Community</h4>
+        <select id="community" class="dropdown">
+            <option value=""></option>
+            <% _.each(tagTypes['community'], function (c) { %>
+                <option value=<%- c.id %> <% if (filters.community && c.id == filters.community.id) { %>selected<% } %>><%- c.name %></option>
+            <% }); %>
+        </select>
+
         <h4 class="usajobs-search-filters__title skill">Skill</h4>
         <input type="text" id="skill" title="Skill" />
 
         <h4 class="usajobs-search-filters__title career">Career field</h4>
         <select id="career" class="dropdown">
             <option></option>
-        <% _.each(tagTypes['career'], function (t) { %>
+            <% _.each(tagTypes['career'], function (t) { %>
             <option value=<%- t.id %> <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
-        <% }); %>
+            <% }); %>
         </select>
 
         <h4 class="usajobs-search-filters__title">Series</h4>
