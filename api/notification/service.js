@@ -183,7 +183,12 @@ function insertAWSNotification (notification) {
   });
 }
 
-function runSchedule (scheduledJob) {
+function runSchedule (scheduleRequest) {
+  if(scheduleRequest.type.toLowerCase() == 'all') {
+    // get list of all notification types
+  } else {
+    // get list of notification of specified type
+  }
   return true;
 }
 

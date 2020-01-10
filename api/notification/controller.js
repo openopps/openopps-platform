@@ -41,6 +41,7 @@ router.post('/api/notifications', async (ctx, next) => {
 router.post('/api/notifications/run-schedule', async (ctx, next) => {
   ctx.request.body = ctx.request.body || ctx.request.fields;
   if(_.includes(ctx.request.header['openopps-notification-key'], openopps.NOTIFICATION_API_KEY)) {
+    service.runSchedule(ctx.request.body);
     ctx.status = 202;
   } else {
     ctx.status = 400;
