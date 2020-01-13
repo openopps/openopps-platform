@@ -10,6 +10,7 @@ var TaskFormViewHelper = require('../../task-form-view-helper');
 var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TaskPreviewTemplate = require('../templates/task_preview_template.html');
 var ModalComponent = require('../../../../components/modal');
+var charcounter = require('../../../../../vendor/jquery.charcounter');
 
 var TaskEditFormView = Backbone.View.extend({
 
@@ -152,6 +153,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaSkills();
     this.initializeTextAreaTeam();
     this.initializeCommunityDropDown();
+    this.characterCount();
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
       $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
@@ -262,7 +264,7 @@ var TaskEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'Introduction',
       rows: 6,
-      validate: ['empty','html'],
+      validate: ['empty','html','count1500'],
     }).render();
   },
 
@@ -275,7 +277,7 @@ var TaskEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'What you\'ll do',
       rows: 6,
-      validate: ['empty','html'],
+      validate: ['empty','html','count5000'],
     }).render();
   },
 
@@ -288,7 +290,7 @@ var TaskEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'What you\'ll learn',
       rows: 6,
-      validate: ['html'],
+      validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().outcome) {
       $('#skills').siblings('.expandorama-button').attr('aria-expanded', true);
@@ -305,13 +307,36 @@ var TaskEditFormView = Backbone.View.extend({
       placeholder: '',
       title: 'Who we are',
       rows: 6,
-      validate: ['html'],
+      validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().about) {
       $('#team').siblings('.expandorama-button').attr('aria-expanded', true);
       $('#team').attr('aria-hidden', false);
     }
   },
+
+  characterCount: function () {
+    $('.markdown-edit-introduction .usajobs-form__help-brief').append('  <span id="opportunity-introduction-count">(1500 characters remaining)</span>');
+    $('.markdown-edit-details .usajobs-form__help-brief').append('  <span id="opportunity-details-count">(5000 characters remaining)</span>');
+    $('.markdown-edit-skills .usajobs-form__help-brief').append('  <span id="opportunity-skills-count">(5000 characters remaining)</span>');
+    $('.markdown-edit-team .usajobs-form__help-brief').append('  <span id="opportunity-team-count">(5000 characters remaining)</span>');
+    $('#task-title').charCounter(100, {
+      container: '#opportunity-title-count',
+    });
+    $('#opportunity-introduction').charCounter(1500, {
+      container: '#opportunity-introduction-count',
+    });
+    $('#opportunity-details').charCounter(5000, {
+      container: '#opportunity-details-count',
+    });
+    $('#opportunity-skills').charCounter(5000, {
+      container: '#opportunity-skills-count',
+    });
+    $('#opportunity-team').charCounter(5000, {
+      container: '#opportunity-team-count',
+    });
+  },
+  
   initializeCommunityDropDown: function (){
     var communityId= this.model.toJSON().communityId;
     // eslint-disable-next-line no-empty
