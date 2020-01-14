@@ -33,13 +33,14 @@ var BrowseRouter = Backbone.Router.extend({
     ''                                              : 'showLanding',
     'home'                                          : 'showHome',
     'tasks/create'                                  : 'createTask',
-    'admin/community/create'                        :'createCommunity',
+    'admin/community/create'                        : 'createCommunity',
     'tasks/new(?*queryString)'                      : 'newTask',
     'tasks(/)(?:queryStr)'                          : 'searchTasks',
     'search(/:action)(/)(?:queryStr)'               : 'searchTasks',
+    'community(/:vanity)(/)'                        : 'lookUpVanityURL',
     //'tasks/:id(/)'                                  : 'showTask',
     'tasks/:id(/:action)(/)(?:queryStr)'            : 'showTask',
-    'internships/new'                                :'newInternship',
+    'internships/new'                               : 'newInternship',
     'internships/:id(/)(:action)(/)'                : 'showInternship',
     'profiles(/)(?:queryStr)'                       : 'listProfiles',
     'profile/:id(/)'                                : 'showProfile',
@@ -53,14 +54,14 @@ var BrowseRouter = Backbone.Router.extend({
     'apply/congratulations'                         : 'showApplyCongratulations',
     'apply/:id(/)'                                  : 'showApply',
     'application/:id(/)'                            : 'showApply',
-    'applicant/submitted'                           :'showApplicantSubmittedInternships',
+    'applicant/submitted'                           : 'showApplicantSubmittedInternships',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'welcome(/)'                                    : 'showWelcome',
     'expired(/)'                                    : 'showExpired',
     'logout'                                        : 'logout',
     'loggedOut'                                     : 'showLogout',
     'whoops'                                        : 'showWhoops',
-    '*notFound'                                     : 'notFound',  
+    '*notFound'                                     : 'notFound',
   },
 
   data: { saved: false },
@@ -263,6 +264,20 @@ var BrowseRouter = Backbone.Router.extend({
       action: action,
       queryParams: this.parseQueryParams(queryStr),
       data: this.data,
+    });
+  },
+
+  lookUpVanityURL: function (vanity) {
+    $.ajax({
+      url: '/api/vanity/' + vanity,
+      type: 'GET',
+      success: function (data) {
+        if(data) {
+          Backbone.history.navigate('/search?community=' + data.community_id, { trigger: true, replace: true });
+        } else {
+          this.notFound();
+        }
+      }.bind(this),
     });
   },
 

@@ -65,7 +65,7 @@ var HomeView = Backbone.View.extend({
       url: '/api/announcement',
       dataType: 'json',
       success: function (announcementInfo) {
-        announcementHtml = templates.announcement(announcementInfo);
+        var announcementHtml = templates.announcement(announcementInfo);
         this.setTarget('announcement-feed', announcementHtml);
       }.bind(this),
     });

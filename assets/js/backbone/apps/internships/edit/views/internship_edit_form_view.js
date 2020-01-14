@@ -104,8 +104,6 @@ var InternshipEditFormView = Backbone.View.extend({
  
 
   render: function () {
-    var compiledTemplate;
-    
     this.initializeBureaus();
     this.initializeSuggestedClearance();
     this.getSupportEmail();
@@ -123,9 +121,9 @@ var InternshipEditFormView = Backbone.View.extend({
       cycles: this.cycles, 
       bureaus: this.bureaus,
       supportEmail: this.supportEmail,
-    },
+    };
    
-    compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
+    var compiledTemplate = _.template(InternshipEditFormTemplate)(this.data);      
     this.$el.html(compiledTemplate);
     this.$el.localize(); 
     this.loadAudienceCommunityData();
@@ -248,12 +246,10 @@ var InternshipEditFormView = Backbone.View.extend({
 
   renderCommunity:function (){
     this.loadAudienceCommunityData();
-    var compiledTemplate;
-    var communityData;
-    communityData ={
-      communities:this.communities,
-    },
-    compiledTemplate = _.template(InternshipCommunityTemplate)(communityData);  
+    var communityData = {
+      communities: this.communities,
+    };
+    var compiledTemplate = _.template(InternshipCommunityTemplate)(communityData);  
     $('#community-preview-id').html(compiledTemplate);    
     setTimeout(function () {
       $('#search-results-loading').hide();

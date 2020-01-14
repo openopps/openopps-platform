@@ -8,11 +8,11 @@ const systemSetting = require('./systemSetting');
 
 var router = new Router();
 
-router.get('/api/admin/metrics', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/metrics', auth.isAdminOrApprover, async (ctx, next) => {
   ctx.body = await service.getMetrics();
 });
 
-router.get('/api/admin/activities', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/activities', auth.isAdminOrApprover, async (ctx, next) => {
   ctx.body = await service.getActivities();
 });
 
@@ -24,11 +24,11 @@ router.get('/api/admin/community/:id/activities', auth, async (ctx, next) => {
   ctx.body = await service.getCommunityActivities(ctx.params.id);
 });
 
-router.get('/api/admin/interactions', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/interactions', auth.isAdminOrApprover, async (ctx, next) => {
   ctx.body = await service.getInteractions();
 });
 
-router.get('/api/admin/taskmetrics', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/taskmetrics', auth.isAdminOrApprover, async (ctx, next) => {
   var group = ctx.query.group;
   var filter = ctx.query.filter;
   ctx.body = await service.getDashboardTaskMetrics(group, filter);
@@ -38,7 +38,7 @@ router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getUsers(ctx.query.page, ctx.query.filter, ctx.query.sort);
 });
 
-router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/contributors', auth.isAdminOrApprover, async (ctx, next) => {
   await service.getTopContributors().then(results => {
     ctx.body = results;
   }).catch(err => {
@@ -46,7 +46,7 @@ router.get('/api/admin/contributors', auth.isAdmin, async (ctx, next) => {
   });
 });
 
-router.get('/api/admin/settings', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/settings', auth.isAdminOrApprover, async (ctx, next) => {
   await systemSetting.getAll().then(settings => {
     ctx.body = settings;
   }).catch(err => {
@@ -83,7 +83,7 @@ router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, asyn
   });
 });
 
-router.get('/api/admin/tasks', auth.isAdmin, async (ctx, next) => {
+router.get('/api/admin/tasks', auth.isAdminOrApprover, async (ctx, next) => {
   //ctx.body = await service.getTaskStateMetrics();
   await service.getTaskStateMetrics(ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
     ctx.body = {
@@ -262,6 +262,22 @@ router.get('/api/admin/admin/:id', auth.isAdmin, async (ctx, next) => {
     service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
       userId: user.id,
       action: (ctx.query.action === 'true' ? 'Admin permission added' : 'Admin permission removed'),
+      status: (error ? 'failed' : 'successful'),
+    });
+    ctx.body = { user };
+  });
+});
+
+router.get('/api/admin/approver/:id', auth.isAdmin, async (ctx, next) => {
+  var user = await service.getProfile(ctx.params.id);
+  user.isApprover = ctx.query.action === 'true' ? 't' : 'f';
+  await service.updateProfile(user, function (error) {
+    if (error) {
+      log.info(error);
+    }
+    service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+      userId: user.id,
+      action: (ctx.query.action === 'true' ? 'Sitewide approver permission added' : 'Sitewide approver permission removed'),
       status: (error ? 'failed' : 'successful'),
     });
     ctx.body = { user };

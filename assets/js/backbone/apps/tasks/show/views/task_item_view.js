@@ -161,7 +161,7 @@ var TaskItemView = BaseView.extend({
   },
 
   updateTaskEmail: function () {
-    var subject = 'Take A Look At This Opportunity',
+    var subject = 'Take a look at this opportunity',
         data = {
           opportunityTitle: this.model.get('title'),
           opportunityLink: window.location.protocol +
@@ -170,6 +170,7 @@ var TaskItemView = BaseView.extend({
           opportunityMadlibs: $('<div />', {
             html: this.$('#task-show-madlib-description').html(),
           }).text().replace(/\s+/g, ' '),
+          opportunityWhatYoullDo: this.model.get('details'),
         },
         body = _.template(ShareTemplate)(data),
         link = 'mailto:?subject=' + encodeURIComponent(subject) +
@@ -507,10 +508,9 @@ var TaskItemView = BaseView.extend({
       } else if(location.length == 0 || !window.cache.currentUser.agency) {
         this.completeProfile(location, window.cache.currentUser.agency);
       } else {
-        var skill = _.find(window.cache.currentUser.tags,
-          function (tag) {
-            return tag.type == 'skill';
-          });
+        var skill = _.find(window.cache.currentUser.tags, function (tag) {
+          return tag.type == 'skill';
+        });
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
           modalBody: _.template(ParticipateCheckList)({e, skill}),

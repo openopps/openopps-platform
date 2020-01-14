@@ -203,8 +203,7 @@ async function canAdministerTask (user, id) {
   var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
   if (!task) {
     return false;
-  } else if (user.isAdmin
-    || (user.isAgencyAdmin && user.agencyId == task.agencyId)
+  } else if ((user.isAgencyAdmin && user.agencyId == task.agencyId)
     || await isCommunityAdmin(user, task) || await isCommunityApprover(user, task)) {
     return true;
   } else {
@@ -300,6 +299,7 @@ async function updateOpportunity (ctx, attributes, done) {
   }
   var origTask = await dao.Task.findOne('id = ?', attributes.id);
   var tags = attributes.tags || attributes['tags[]'] || [];
+  attributes.communityId = attributes.communityId == '' ? null : attributes.communityId;
   if ((origTask.communityId != attributes.communityId) && attributes.state !=='draft') {  
     attributes.state = 'submitted';
     attributes.submittedAt = null;
@@ -831,6 +831,11 @@ async function saveOpportunity (user, data, callback) {
   }
 }
 
+async function getVanityURL (vanityURL) {
+  var community = (await db.query(dao.query.lookUpVanityURLQuery, vanityURL)).rows[0];
+  return community;
+}
+
 module.exports = {
   findOne: findOne,
   findById: findById,
@@ -862,6 +867,7 @@ module.exports = {
   getUsdosSupportEmail: getUsdosSupportEmail,
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
+  getVanityURL: getVanityURL,
 };
 
 
@@ -891,4 +897,9 @@ module.exports.getSelectionsForTask = async (user, taskId) => {
       reject({ status: 401 });
     });
   });
+};
+
+
+module.exports.getCommunityList = async () => {
+  return await dao.Community.find();
 };

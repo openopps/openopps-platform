@@ -1,20 +1,15 @@
 <section class="usajobs-canvas">
   <div class="usajobs-content-gutter usajobs-open-opps-search">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
-      <div class="usajobs-grid usajobs-open-opps-search__box">
+      <div class="usajobs-grid usajobs-open-opps-search__box" <% if(filters.community && filters.community.banner.color) { %>style="background:<%- filters.community.banner.color %>"<% } %>>
         <div class="usa-width-one-whole">
           <div class="search__box-search">
-            <h1>Search for opportunities</h1>
+            <h1><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
+            <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle"><%- filters.community.banner.subtitle %></h3><% } %>
             <p class="search__box-content">Gain experience with hands-on training, share your expertise and work with others across the government.</p>
             <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
           </div>
-          <div class="search__box-acquisition">
-            <h1>Acquisition Open Opportunities</h1>
-            <h3 id="search__box-subtitle">You're now viewing Acquisition opportunities only.</h3>
-            <p class="search__box-content">Gain experience with hands-on training, share your expertise and work with others across the government.</p>
-            <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
-          </div>
-            <label for="search" class="search__box-label">
+          <label for="search" class="search__box-label">
             <span class="fas fa-search search-icon"></span>
             Keywords
           </label>

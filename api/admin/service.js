@@ -10,6 +10,9 @@ const volunteerService = require('../volunteer/service');
 const opportunityService = require('../opportunity/service');
 const elasticService = require('../../elastic/service');
 const communityService = require('../community/service');
+const notification = require('../notification/service');
+const badgeService = require('../badge/service')(notification);
+const Badge = require('../model/Badge');
 
 function getWhereClauseForTaskState (state) {
   if (state == 'open') {
@@ -569,7 +572,19 @@ module.exports.updateProfile = async function (user, done) {
 module.exports.updateCommunityAdmin = async function (user, communityId, done) {
   var communityUser = await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, communityId);
   communityUser.isManager = user.isCommunityAdmin;
-  await dao.CommunityUser.update(communityUser).then(async () => {
+  var existUserBadge = await dao.Badge.findOne('"user"= ? and "type"= ?', user.id,'community manager').catch((err) => { 
+    return undefined;
+  });
+  
+  await dao.CommunityUser.update(communityUser).then(async () => { 
+    if(_.isUndefined(existUserBadge) && communityUser.isManager){
+      var badge = Badge.awardCommunityManagerBadge(user.id,communityUser);
+      if(badge) {
+        badgeService.save(badge).catch(err => {
+          log.info('Error saving badge', badge, err);
+        });
+      }
+    }   
     return done(null);
   }).catch (err => {
     return done(err);

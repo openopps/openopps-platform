@@ -40,6 +40,10 @@ var AdminMainView = Backbone.View.extend({
     return !!(window.cache.currentUser && window.cache.currentUser.isAdmin);
   },
 
+  isApprover: function () {
+    return !!(window.cache.currentUser && window.cache.currentUser.isApprover);
+  },
+
   isAgencyAdmin: function () {
     return !!(window.cache.currentUser && window.cache.currentUser.isAgencyAdmin);
   },
@@ -64,11 +68,11 @@ var AdminMainView = Backbone.View.extend({
     }
 
     // If agency admin, display My Agency page
-    if (target == 'sitewide' && !this.isAdmin() && this.isAgencyAdmin()) {
+    if (target == 'sitewide' && !this.isAdmin() && !this.isApprover() && this.isAgencyAdmin()) {
       this.hideDashboardMenu();
       agencyId = this.userAgencyId();   // restrict access to User agency
       target = 'agency';
-    } else if (target == 'sitewide' && !this.isAdmin() && (this.isCommunityAdmin() || this.isCommunityApprover())) {
+    } else if (target == 'sitewide' && !this.isAdmin() && !this.isApprover() && (this.isCommunityAdmin() || this.isCommunityApprover())) {
       this.hideDashboardMenu();
       target = 'community';
     }
@@ -232,7 +236,7 @@ var AdminMainView = Backbone.View.extend({
         success: callback.bind(this),
       });
     } else {
-      callback();
+      callback.bind(this)();
     }
   },
 
