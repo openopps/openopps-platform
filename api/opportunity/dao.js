@@ -130,7 +130,7 @@ const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assig
   'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.government_uri as "governmentUri", midas_user.bounced, midas_user."photoId" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
-  'where volunteer."taskId" = ?';
+  'where midas_user.disabled = false and volunteer."taskId" = ?';
 
 const volunteerListQuery = 'select midas_user.username, midas_user.government_uri as "governmentUri", midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
   'from volunteer ' +

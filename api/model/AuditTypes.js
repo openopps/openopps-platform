@@ -104,6 +104,14 @@ module.exports = {
     severity: 'info',
     data: ['taskId','title','user', 'taskCreator'],
   },
+  //Volunteer events
+  'VOLUNTEER_DELETED': {
+    action: 'VOLUNTEER_DELETED',
+    description: 'A user has removed a volunteer',
+    severity: 'info',
+    data: ['volunteerId','taskId','user','volunteer','reason'],
+  },
+
   //Application events
   'APPLICATION_SUBMITTED': {
     action: 'APPLICATION_SUBMITTED',

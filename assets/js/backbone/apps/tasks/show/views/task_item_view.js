@@ -513,7 +513,7 @@ var TaskItemView = BaseView.extend({
           });
         var options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
-          modalBody: ParticipateCheckList,
+          modalBody: _.template(ParticipateCheckList)({e, skill}),
           primary: {
             text: 'Yes, submit my name',
             action: this.volunteer.bind(this),

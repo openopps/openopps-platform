@@ -9,10 +9,11 @@ var ModalComponent = require('../../../components/modal');
 var AdminCommunityCycleEditView = Backbone.View.extend({
 
   events: {
-    'click #cycle-cancel': 'cancel',
-    'click #cycle-save'  : 'save',
-    'blur .validate'     : 'validateField',
-    'change .validate'   : 'validateField',
+    'click #cycle-cancel'             : 'cancel',
+    'click #cycle-save'               : 'save',
+    'blur #secondary-application-url' : 'displayDate',
+    'blur .validate'                  : 'validateField',
+    'change .validate'                : 'validateField',
   },
 
   initialize: function (options) {
@@ -24,6 +25,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     };
     this.cycle = new CycleModel(this.data.cycle);
     this.initializeListeners();
+    
   },
 
   initializeListeners: function () {
@@ -59,7 +61,24 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     this.$el.show();
     var template = _.template(AdminCommunityCycleTemplate)(this.data);
     this.$el.html(template);
+    if (this.data.cycle.secondaryApplicationUrl) {
+      this.$('#exclusive-end-date').show();
+    }
     return this;
+  },
+
+  displayDate: function(e) {
+    e.preventDefault && e.preventDefault(); 
+    var link = e.currentTarget.value;
+    if((link).length > 0) {
+      $('#exclusive-end-date').show();
+    } else {
+      $('#exclusive-end-date-1').val('');
+      $('#exclusive-end-date-2').val('');
+      $('#exclusive-end-date-3').val('');
+      this.data.cycle.exclusivePostingEndDate = null;
+      $('#exclusive-end-date').hide(); 
+    }
   },
 
   cancel: function (e) {
@@ -86,6 +105,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         cycleStartDate: this.getDateFromFormGroup('start-internship-date'),
         cycleEndDate: this.getDateFromFormGroup('stop-internship-date'),
         secondaryApplicationUrl: $('#secondary-application-url').val(),
+        exclusivePostingEndDate: this.getExclusiveDate('exclusive-end-date'),
         updatedAt: this.cycle.get('updatedAt'),
       };
       if(new Date(data.postingEndDate)>new Date(data.applyEndDate)){ 
@@ -115,6 +135,16 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
         $('#end-review-date').removeClass('usa-input-error');  
         $('#end-review-date>.exceed-date-error').hide(); 
       }
+      if(($('#secondary-application-url').val().length > 0) && (this.validDateGroup('exclusive-end-date') === false)) {
+        //require exclusive date
+        $('#exclusive-end-date').addClass('usa-input-error');  
+        $('#exclusive-end-date>.require-error-date').show(); 
+        abort=true;
+      } else {
+        $('#exclusive-end-date').removeClass('usa-input-error');  
+        $('#exclusive-end-date>.require-error-date').hide(); 
+      }
+
       if(!abort){
         this.cycle.trigger('cycle:save', data);
       }
@@ -130,6 +160,14 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
       $('#' + formGroup + '-2').val(),
       $('#' + formGroup + '-3').val(),
     ].join('/');
+  },
+
+  getExclusiveDate: function (formGroup) {
+    var dateValue = this.getDateFromFormGroup(formGroup);
+    if(dateValue === '//') {
+      return '';
+    }
+    return dateValue;
   },
 
   validateField: function (e) {

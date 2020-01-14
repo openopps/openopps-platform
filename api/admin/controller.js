@@ -62,6 +62,19 @@ router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {
   })
 });
 
+router.delete('/api/admin/volunteer/:taskId/user/:userId',auth, async (ctx,next) =>{ 
+  ctx.body = await service.deleteApplicantOrParticipant(ctx,ctx.params.taskId,ctx.params.userId,ctx.query.reason);
+});
+
+router.get('/api/admin/task/volunteer/:taskId', auth, async (ctx, next) => {
+  await service.getTaskVolunteers(ctx.params.taskId).then(volunteers => {
+    ctx.status = 200;
+    ctx.body = volunteers;
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
+
 router.get('/api/admin/agency/:id/contributors', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   await service.getTopAgencyContributors(ctx.params.id).then(results => {
     ctx.body = results;
@@ -119,38 +132,31 @@ router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async
   var agencyId= ctx.params.id;
   ctx.body = await service.getDashboardAgencyTaskMetrics(group, filter,agencyId);
 });
-router.get('/api/admin/community/:id/tasks', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    //ctx.body = await service.getCommunityTaskStateMetrics(ctx.params.id);
-    await service.getCommunityTaskStateMetrics(ctx.params.id,ctx.query.cycle, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
-      ctx.body = {
-        totals: results[0].rows,
-        tasks: results[1].rows,
-      };
-    }).catch(err => {
-      ctx.status = 400;
-    });
-  } else {
-    ctx.status = 403;
-  }
+
+router.get('/api/admin/community/:id/tasks', auth.isCommunityApprover, async (ctx, next) => {
+  await service.getCommunityTaskStateMetrics(ctx.params.id, ctx.query.cycle, ctx.query.status, ctx.query.page, ctx.query.sort, ctx.query.filter).then(results => {
+    ctx.body = {
+      totals: results[0].rows,
+      tasks: results[1].rows,
+    };
+  }).catch(err => {
+    ctx.status = 400;
+  });
 });
 
-
-router.get('/api/admin/community/:id/cyclical/:cycleId', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    ctx.body = await service.getCommunityCycle(ctx.params.id,ctx.params.cycleId);
-  } else {
-    ctx.status = 403;
-  }
+router.get('/api/admin/community/:id/cyclical/:cycleId', auth.isCommunityApprover, async (ctx, next) => {
+  ctx.body = await service.getCommunityCycle(ctx.params.id,ctx.params.cycleId);
 });
-router.get('/api/admin/community/:id/applicants/:cycleId', auth, async (ctx, next) => {
-  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId,ctx.query.sort,ctx.query.filter).then(results => {
+
+router.get('/api/admin/community/:id/applicants/:cycleId', auth.isCommunityAdmin, async (ctx, next) => {
+  await service.getApplicantsForCycle(ctx.params.id, ctx.params.cycleId, ctx.query.sort, ctx.query.filter).then(results => {
     ctx.status = 200;
     ctx.body = results;
   }).catch(err => {
     ctx.status = 403;
   });
 });
+
 router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, async (ctx, next) => {
   await service.getApplicantsInternships(ctx.params.userId, ctx.params.cycleId).then(results => {
     ctx.status = 200;
@@ -160,12 +166,8 @@ router.get('/api/admin/community/applicant/:userId/submitted/:cycleId', auth, as
   });
 });
 
-router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    ctx.body = await service.getInteractionsForCommunityCyclical(ctx.params.id,ctx.params.cycleId);
-  } else {
-    ctx.status = 403;
-  }
+router.get('/api/admin/community/interactions/:id/cyclical/:cycleId', auth.isCommunityApprover, async (ctx, next) => {
+  ctx.body = await service.getInteractionsForCommunityCyclical(ctx.params.id,ctx.params.cycleId);
 });
 
 router.get('/api/admin/communities', auth, async (ctx, next) => {
@@ -177,23 +179,15 @@ router.get('/api/admin/communities', auth, async (ctx, next) => {
   }
 });
 
-router.get('/api/admin/community/:id', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    ctx.body = await service.getCommunity(ctx.params.id);
-  } else {
-    ctx.status = 403;
-  }
+router.get('/api/admin/community/:id', auth.isCommunityApprover, async (ctx, next) => {
+  ctx.body = await service.getCommunity(ctx.params.id);
 });
 
-router.get('/api/admin/community/interactions/:id', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
-  } else {
-    ctx.status = 403;
-  }
+router.get('/api/admin/community/interactions/:id', auth.isCommunityApprover, async (ctx, next) => {
+  ctx.body = await service.getInteractionsForCommunity(ctx.params.id);
 });
 
-router.put('/api/admin/community/:id/bureau-office', auth, async (ctx, next) => {
+router.put('/api/admin/community/:id/bureau-office', auth.isCommunityAdmin, async (ctx, next) => {
   await service.saveBureauOffice(ctx,ctx.request.body, async (errors, result) => {    
     if (errors) {
       ctx.status = 400;
@@ -205,7 +199,7 @@ router.put('/api/admin/community/:id/bureau-office', auth, async (ctx, next) => 
   }); 
 });
 
-router.delete('/api/admin/community/:id/bureau/:bureauId', auth, async (ctx, next) => {
+router.delete('/api/admin/community/:id/bureau/:bureauId', auth.isCommunityAdmin, async (ctx, next) => {
   await service.deleteBureauOffice(ctx, async (errors, result) => {    
     if (errors) {
       ctx.status = 400;
@@ -217,7 +211,7 @@ router.delete('/api/admin/community/:id/bureau/:bureauId', auth, async (ctx, nex
   }); 
 });
 
-router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth, async (ctx, next) => {
+router.delete('/api/admin/community/:id/bureau/:bureauId/office/:officeId', auth.isCommunityAdmin, async (ctx, next) => {
   await service.deleteOffice(ctx, async (errors, result) => {    
     if (errors) {
       ctx.status = 400;
@@ -247,13 +241,10 @@ router.get('/api/admin/bureau/:bureauId/office/:officeId', auth, async (ctx, nex
   }
 });
 
-router.get('/api/admin/community/:id/users', auth, async (ctx, next) => {
-  if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
-    ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.filter, ctx.query.sort, ctx.params.id);
-  } else {
-    ctx.status = 403;
-  }
+router.get('/api/admin/community/:id/users', auth.isCommunityApprover, async (ctx, next) => {
+  ctx.body = await service.getUsersForCommunity(ctx.query.page, ctx.query.filter, ctx.query.sort, ctx.params.id);
 });
+
 router.get('/api/admin/community/taskmetrics/:id', auth, async (ctx, next) => {
   var group = ctx.query.group;
   var filter = ctx.query.filter;
@@ -332,6 +323,23 @@ router.get('/api/admin/community/:communityId/member/:userId', auth, async (ctx,
   } else {
     ctx.status = 403;
   }
+});
+
+router.get('/api/admin/community/:id/approver/:userId', auth.isCommunityAdmin, async (ctx, next) => {
+  var user = await service.getProfile(ctx.params.userId);
+  user.isCommunityApprover = ctx.query.action === 'true' ? true : false;
+  await service.updateCommunityApprover(user, ctx.params.id, function (done, error) {
+    if (error) {
+      log.info(error);
+    }
+    service.createAuditLog('ACCOUNT_PERMISSION_UPDATED', ctx, {
+      userId: user.id,
+      action: (ctx.query.action === 'true' ? 'Community approver permission added' : 'Community approver permission removed'),
+      status: (error ? 'failed' : 'successful'),
+    });
+    ctx.status = error ? 400 : 200;
+    ctx.body = { message: (error ? 'failed' : 'success') };
+  });
 });
 
 router.get('/api/admin/changeOwner/:taskId', auth.isAdminOrAgencyAdmin, async (ctx, next) => {

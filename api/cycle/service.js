@@ -37,6 +37,7 @@ module.exports.addCycle = async function (data, callback) {
   if (cycleOverlap) {
     callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycleOverlap.name + '</b>'});
   } else {
+    if (_.isEmpty(data.secondaryApplicationUrl)) { data.exclusivePostingEndDate = undefined; }
     await dao.Cycle.insert(_.extend(data, {
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -87,6 +88,7 @@ module.exports.updateCycle = async (data, callback) => {
     if (cycleOverlap) {
       callback(null, { message: 'The apply dates for cycle <b>' + data.name + '</b> overlap with the apply dates for cycle <b>' + cycleOverlap.name + '</b>'});
     } else {
+      if (_.isEmpty(data.secondaryApplicationUrl)) { data.exclusivePostingEndDate = undefined; }
       await dao.Cycle.update(data).then((cycle) => {
         callback(cycle);
       }).catch((err) => {

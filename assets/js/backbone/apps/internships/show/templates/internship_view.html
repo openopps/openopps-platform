@@ -26,9 +26,15 @@
             <h1 class="usajobs-open-opps-opportunity-item__title"><%- model.title %></h1>
             <div class="skills">
               <div>Desired skills:</div>
-              <% _.each(madlibTags['skill'], function (t) { %>
-                <a class="skill-label" href="/search/internships?skill=<%= t.name %>"><%= t.name %></a>
-              <% }) %>
+              <% if (new Date(model.cycle.applyEndDate) < new Date()) { %>
+                <% _.each(madlibTags['skill'], function (t) { %>
+                  <a class="skill-label" href="javascript:void(0)"><%= t.name %></a>
+                <% }) %>
+                <% } else { %>
+                  <% _.each(madlibTags['skill'], function (t) { %>
+                    <a class="skill-label" href="/search/internships?skill=<%= t.name %>"><%= t.name %></a>
+                  <% }) %>
+                  <% } %>    
             </div>
           </div>
 
@@ -55,14 +61,22 @@
         <div><a class="usajobs-opop-actions__duplicate" href="#duplicate" id="internship-copy"><i class="fa fa-copy"></i> Duplicate</a></div>
            <% } %>
          <% } %>
-              <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
+         <% if (new Date(model.cycle.applyEndDate) < new Date()) { %>
+          <div></div>
+          <% } else { %>
+            <div><a class="usajobs-opop-actions__share usajobs-opop-actions-share" href="#" id="email"><i class="fa fa-share-alt"></i> Share</a></div>
+            <% } %>
               <% if (model.canEditTask && model.state != 'completed') { %>
                 <div><a class="usajobs-opop-actions__edit" href="/internships/<%- model.id %>/edit" id="internship-edit"><i class="fas fa-edit"></i> <% if (model.state != 'canceled') { %>Edit<% } else { %>Reopen<% } %></a></div>
               <% } else { %>
                 <% if (model.saved) { %>
                   <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='unsave'><i class="fa fa-star"></i> Saved</a></div>
                 <% } else { %>
-                  <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='save'><i class="far fa-star"></i> Save</a></div>
+                  <% if (new Date(model.cycle.applyEndDate) < new Date()) { %>
+                    <div></div>
+                    <% } else { %>
+                      <div><a class="usajobs-opop-actions__save usajobs-opop-actions-save" href="#" id="save" data-action='save'><i class="far fa-star"></i> Save</a></div>
+                      <% } %>   
                 <% } %>
               <% } %>
             </div>
@@ -110,6 +124,14 @@
               <h4>Number of interns</h4>
               <div>
                 <%- model.interns %>
+              </div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (model.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- model.suggestedSecurityClearance %>
+                <% } %>
               </div>
             </div>
           </div>
@@ -188,6 +210,14 @@
               <h4>Number of interns</h4>
               <div>
                 <%- model.interns %>
+              </div>
+              <h4>Required security level</h4>
+              <div>
+                <% if (model.suggestedSecurityClearance == 'None') { %>
+                  None (Low Risk Public Trust Certificate)
+                <% } else { %>
+                  <%- model.suggestedSecurityClearance %>
+                <% } %>
               </div>
             </div>
           </div>

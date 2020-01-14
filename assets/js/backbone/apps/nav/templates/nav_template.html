@@ -103,7 +103,7 @@
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
         <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
       </li>
-      <% if (user.isAdmin || user.isAgencyAdmin || user.isCommunityAdmin) { %>
+      <% if (user.isAdmin || user.isAgencyAdmin || user.isCommunityAdmin || user.isCommunityApprover) { %>
       <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
       <% } %>
     </ul>

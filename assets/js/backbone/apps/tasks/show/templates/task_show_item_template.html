@@ -96,8 +96,8 @@
             <div class="usajobs-opop__task-intro">
               <h4>Personnel needed</h4>
               <div>
-                <% if (madlibTags['task-people']) { %>
-                  <%= madlibTags['task-people'][0].name %>
+                <% if (model.peopleNeeded) { %>
+                  <%= model.peopleNeeded %>
                 <% } else { %>
                   None
                 <% } %>
@@ -182,8 +182,8 @@
             <div class="usajobs-opop__task-intro">
               <h4>Personnel needed</h4>
               <div>
-                <% if (madlibTags['task-people']) { %>
-                  <%= madlibTags['task-people'][0].name %>
+                <% if (model.peopleNeeded) { %>
+                  <%= model.peopleNeeded %>
                 <% } else { %>
                   None
                 <% } %>
