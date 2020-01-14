@@ -60,13 +60,25 @@
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-name-role">
               <h3 class="usajobs-opop-profile-name"><% if (data.givenName && data.lastName) { %><%- data.givenName + ' ' + data.lastName %><% } else { %><%- data.username %><% } %></h3>
-              <% if (data.isAdmin || data.isAgencyAdmin) { %>
-              <span class="role-label"><% if (user.isAgencyAdmin) { %> Agency <% } %> Administrator</span>
-               <% }
-              else if(data.isCommunityApprover) { %>
-                <span class="role-label"> <% if (user.isAdmin) { %> Bureau Internship Coordinator <% } %></span>
+              <% if (user.isAdmin) { %>
+                <% if (data.isAdmin) { %>
+                  <span class="role-label">Administrator</span>
+                <% } else if (data.isAgencyAdmin) { %>
+                  <span class="role-label">Agency Administrator</span>
+                <% } else if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
+              <% } else if (user.isAgencyAdmin) { %>
+                <% if (data.isAgencyAdmin) { %>
+                  <span class="role-label">Agency Administrator</span>
+                <% } else if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
+              <% } else if (user.isCommunityApprover) { %>
+                <% if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
               <% } %>
-                
             </div>
             <div class="profile-jobtitle">
               <% if (data.title) { %>
