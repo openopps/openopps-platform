@@ -390,7 +390,12 @@
 .usajobs-open-opps-opportunity .usajobs-opop-profile-details .profile-share {
   margin-bottom: $size-default;
 }
-
+.remove-bureau-office {
+  color: #CD2026;
+  &:hover {
+    color: $color-secondary;
+  }
+}
 .profile-badges {
   list-style-type: none;
   padding: 0;

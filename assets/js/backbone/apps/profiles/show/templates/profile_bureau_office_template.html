@@ -1,0 +1,19 @@
+   
+              <form action="javascript:void(0)" class="usa-form-xl " role="form"  >            
+                  <div class="form-group profile_tag_bureau">
+                        <label for="bureau">Bureau</label>                 
+                        <select id="profile_tag_bureau" name="bureau_id" class="dropdown validate" data-validate="empty">
+                          <option></option>
+                          <% if (bureaus.length) { %>
+                            <% _(bureaus).forEach(function (bureau, i) { %>
+                              <option value="<%= bureau.bureauId %>" data-offices="<%= JSON.stringify(bureau.offices) %>"><%= bureau.name %></option>
+                            <% }); %>
+                          <% } %>
+                        </select>
+                      </div>
+                      <div class="required-input profile_tag_office" style="display: none;">
+                        <label for="office">Office/post</label>                     
+                        <input type="hidden" id="profile_tag_office" name="office_id" class="dropdown " data-validate="empty">
+                      </div>        
+              </form>
+           

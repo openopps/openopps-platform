@@ -3,6 +3,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var marked = require('marked');
+var ModalComponent = require('../../../../components/modal');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
@@ -20,6 +21,9 @@ var CreatedTemplate = require('../../home/templates/home_created_template.html')
 var ParticipatedTemplate = require('../../home/templates/home_participated_template.html');
 var AppliedTemplate = require('../../home/internships/templates/internships_applied_template.html');
 var SavedTemplate = require('../../home/internships/templates/internships_saved_template.html');
+var ProfileBureauOfficeTemplate = require('../templates/profile_bureau_office_template.html');
+var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_office_preview_template.html');
+var ProfileBureauOfficeMessageTemplate = require('../templates/profile_bureau_office_message_template.html');
 
 var ProfileShowView = Backbone.View.extend({
   events: {
@@ -36,6 +40,8 @@ var ProfileShowView = Backbone.View.extend({
     'click .saved-show-all'         : 'showAllInternships',
     'change #sort-applied'          : 'sortInternships',
     'change #sort-saved'            : 'sortInternships',
+    'click #add-bureau-office'      : 'addbureauOfficeDisplay',
+    'click #remove-bureau-office'     :'removeBureauOfficeDisplay',
   },
 
   initialize: function (options) {
@@ -43,6 +49,9 @@ var ProfileShowView = Backbone.View.extend({
     this.data = options.data;
     this.tagFactory = new TagFactory();
     this.data.newItemTags = [];
+    this.bureaus                = [];
+    this.offices                = {};
+    this.dataBureauOffice   =[];
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -120,7 +129,8 @@ var ProfileShowView = Backbone.View.extend({
     data.loginGovEmail = data.data.username;
     data.fedEmail = data.data.governmentUri;
     data.career = this.getTags(['career'])[0];
-
+    data.bureauOffice= data.data.bureauOffice;
+    
     if (data.data.bio) {
       data.data.bioHtml = marked(data.data.bio);
     }
@@ -134,6 +144,8 @@ var ProfileShowView = Backbone.View.extend({
     this.initializeTags();
     this.initializePhoto();
     this.shareProfileEmail();
+    this.dataBureauOffice = data.bureauOffice;
+    this.renderBureauOffices();
     if (data.user.id !== data.data.id) {
       if (data.data.hiringPath != 'student') {
         this.renderOpportunities(data.data.id);
@@ -365,7 +377,7 @@ var ProfileShowView = Backbone.View.extend({
     });
     this.photoView.render();
   },
-
+ 
   initializeTags: function () {
     var showTags = true;
     if (this.tagView) { this.tagView.cleanup(); }
@@ -384,7 +396,7 @@ var ProfileShowView = Backbone.View.extend({
     });
     this.tagView.render();
   },
-
+  
   shareProfileEmail: function (){
     var subject = 'Take A Look At This Profile',
         data = {
@@ -403,6 +415,211 @@ var ProfileShowView = Backbone.View.extend({
 
     this.$('#email').attr('href', link);
   },
+
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        for (var i = 0; i < data.length; i++) {
+          this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+        }
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        });
+      }.bind(this),
+    });
+  },
+
+  saveBureauOffice: function (data,self) {   
+    if(!this.checkBureauOfficeExist(data,self)){
+      $.ajax({
+        url: '/api/user/bureau-office/' + data.userId, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {        
+          this.dataBureauOffice=data.bureauOffice;
+          self.modalComponent.cleanup();
+          window.cache.currentUser.bureauOffice= this.dataBureauOffice;
+          this.renderBureauOffices();
+          this.renderBureausOfficesMessages(data,self);
+        }.bind(this),
+      });
+    }
+    else{
+      self.modalComponent.cleanup();
+    }
+  },
+    
+  showOfficeDropdown: function () {
+    if($('#profile_tag_bureau').select2('data')) {
+      $('#profile_tag_office').select2('data', null);
+      var selectData = $('#profile_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length) {
+        $('.profile_tag_office').show();
+        $('#profile_tag_office').removeAttr('disabled', true);
+      } else {
+        $('#profile_tag_office').attr('disabled', true).select2('data', null);    
+      }
+    } else {
+      $('.profile_tag_office').hide();  
+      $('#profile_tag_office').select2('data', null);  
+    }
+  },
+
+  initializeSelect2: function () {
+    $('#profile_tag_bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });
+   
+    $('#profile_tag_office').select2({
+      placeholder: 'Select an office',
+      width: '100%',
+      allowClear: true,
+      data: function () { 
+        return {results: this.currentOffices}; 
+      }.bind(this),
+    });
+    $('#profile_tag_bureau').on('change', function (e) {    
+      this.showOfficeDropdown();   
+    }.bind(this));
+  },
+
+  renderBureausOfficesMessages: function (data,self) {   
+    var bureauOfficeMessageTemplate = _.template(ProfileBureauOfficeMessageTemplate)({   
+      insertSuccess:data.insertSuccess,  
+      bureau:data.bureau,
+      office:data.office,
+      user: data.user,
+      removeSuccess :data.removeSuccess,
+    });
+   
+    $('#bureau-office-message').html(bureauOfficeMessageTemplate);
+    window.scrollTo(0, 0);
+  },
+
+  addbureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    self.initializeBureaus();
+    self.initializeSelect2();
+    if (this.modalComponent) { this.modalComponent.cleanup(); } 
+    var data = { 
+      bureaus: self.bureaus,    
+    };  
+  
+    var modalContent = _.template(ProfileBureauOfficeTemplate)(data);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-bureau-office',
+      modalTitle: 'Bureau and Office/post',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Save',
+        action: function (){
+          var data={
+            bureauId : $('#profile_tag_bureau').select2('data')? $('#profile_tag_bureau').select2('data').id : null,
+            officeId : $('#profile_tag_office').select2('data') ? $('#profile_tag_office').select2('data').id : null,
+            userId: $(event.currentTarget ).data('userid'),
+          };        
+          self.saveBureauOffice(data,self);
+        },
+      },      
+    }).render();  
+     
+    $('#profile_tag_bureau').on('change', function (e) {
+      self.showOfficeDropdown();      
+    }.bind(this));
+
+    self.initializeSelect2();
+    
+    //adding this to show select2 data in modal
+    $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
+  },
+
+  checkBureauOfficeExist : function (data,self){
+    var exist = _.findIndex(this.dataBureauOffice, { bureau_id : data.bureauId,office_id: data.officeId});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
+
+  removeBureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+    var bureauName=$(event.currentTarget ).data('bureau-name');
+    var officeName=$(event.currentTarget ).data('office-name');
+  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-bureau-office',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Confirm remove bureau and office/post',
+      modalBody:  'Are you sure you want to remove ' + window.cache.currentUser.name + ' from the <strong>' + bureauName + (officeName?'/':'') + officeName + '</strong>?',        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var data={
+            userBureauOfficeId : $(event.currentTarget ).data('user-bureau-office-id'),      
+            userId: $(event.currentTarget ).data('user-id'),
+            bureau: $(event.currentTarget ).data('bureau-name'),
+            office: $(event.currentTarget ).data('office-name'),
+          };        
+          self.deleteBureauOffice(data,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBureauOffice : function (userBureauOfficeData,self){
+    $.ajax({
+      url: '/api/user/bureau-office/' + userBureauOfficeData.userId +'?' + $.param({
+        userBureauOfficeId: userBureauOfficeData.userBureauOfficeId,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        userBureauOfficeData.removeSuccess= true;      
+        this.dataBureauOffice=_.reject(this.dataBureauOffice,function (d){
+          return d.userBureauOfficeId== userBureauOfficeData.userBureauOfficeId;
+        });
+        window.cache.currentUser.bureauOffice = this.dataBureauOffice;     
+        self.modalComponent.cleanup();
+        this.renderBureauOffices();
+        this.renderBureausOfficesMessages(userBureauOfficeData,self);
+      }.bind(this),
+    });
+  },
+
+  renderBureauOffices: function () {
+    var bureauOfficeTemplate = _.template(ProfileBureauOfficePreviewTemplate)({
+      data: this.dataBureauOffice,     
+    }); 
+    $('#bureau-office-preview').html(bureauOfficeTemplate);
+  }, 
 
   cleanup: function () {
     if (this.md) { this.md.cleanup(); }

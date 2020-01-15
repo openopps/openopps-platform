@@ -162,8 +162,9 @@ router.put('/api/user/skills/:id', auth, async (ctx, next) => {
   }
 });
 
-router.put('/api/user/bureau-office/:id', auth, async (ctx, next) => {
-  await service.updateProfileBureauOffice(ctx.request.body, async (errors, result) => {    
+
+router.post('/api/user/bureau-office/:id', auth, async (ctx, next) => {
+  await service.saveUserBureauOffice(ctx.params.id,ctx.request.body, function (errors,result)  {
     if (errors) {
       ctx.status = 400;
       ctx.body = errors;
@@ -171,7 +172,11 @@ router.put('/api/user/bureau-office/:id', auth, async (ctx, next) => {
       ctx.status = 200;
       ctx.body = result;
     }
-  }); 
+  });
+});
+
+router.delete('/api/user/bureau-office/:id', auth, async (ctx, next) => {
+  ctx.body = await service.deleteUserBureauOffice(ctx.params.id,ctx.query.userBureauOfficeId);
 });
 
 router.put('/api/user/:id', auth, async (ctx, next) => {

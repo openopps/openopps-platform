@@ -67,6 +67,19 @@ const savedTaskQuery = 'select ' +
   'left join country_subdivision csub on csub.country_subdivision_id = task.country_subdivision_id ' +
   'left join country on country.country_id = task.country_id ' +
   'where saved_task.deleted_at is null and saved_task.user_id = ? and cycle.apply_end_date > now()::date';
+  
+var userBureauOfficeQuery= 'SELECT  m_user.name, m_user.id as "userId", user_bureau_office.user_bureau_office_id as "userBureauOfficeId", user_bureau_office.bureau_id,user_bureau_office.office_id, ' +   
+  '('+
+' select bureau.name ' +
+    'from bureau where bureau.bureau_id = user_bureau_office.bureau_id ' +
+  ') as bureau,' + 
+  '('+
+ 'select office.name ' +
+    'from office where office.office_id = user_bureau_office.office_id ' + 
+  ') as office ' + 
+  'FROM midas_user m_user ' +  
+  'JOIN user_bureau_office ON user_bureau_office.user_id = m_user.id ' +
+  'where m_user.id = ?';
 
 const options = {
   user: {
@@ -121,17 +134,20 @@ module.exports = function (db) {
     Agency: dao({ db: db, table: 'agency' }),
     Application: dao({ db: db, table: 'application'}),
     AuditLog: dao({ db: db, table: 'audit_log'}),
-    User: dao({ db: db, table: 'midas_user' }),
-    TagEntity: dao({ db: db, table: 'tagentity' }),
-    UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
+    Bureau: dao({ db: db, table: 'bureau'}),
     Badge: dao({ db: db, table: 'badge'}),
-    Task: dao({ db: db, table: 'task' }),
-    SavedTask: dao({ db: db, table: 'saved_task' }),
-    Passport: dao({ db: db, table: 'passport' }),
     Cycle: dao({ db: db, table: 'cycle' }),
     Country: dao({ db: db, table: 'country' }),
     CountrySubdivision: dao({ db: db, table: 'country_subdivision' }),
     CommunityUser: dao({ db: db, table: 'community_user' }),
+    Office: dao({ db: db, table: 'office'}),
+    Passport: dao({ db: db, table: 'passport' }),
+    SavedTask: dao({ db: db, table: 'saved_task' }),    
+    TagEntity: dao({ db: db, table: 'tagentity' }), 
+    Task: dao({ db: db, table: 'task' }),  
+    User: dao({ db: db, table: 'midas_user' }),
+    UserBureauOffice: dao({ db: db, table: 'user_bureau_office' }),
+    UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
     query: {
       tag: tagQuery,
       participated: taskParticipatedQuery,
@@ -140,6 +156,8 @@ module.exports = function (db) {
       deleteSkillTags: deleteSkillTags,
       applicationStatus: applicationStatusQuery,
       savedTask: savedTaskQuery,
+      userBureauOffice:userBureauOfficeQuery,
+      
     },
     options: options,
     clean: clean,
