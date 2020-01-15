@@ -54,7 +54,7 @@ async function getActivities (id) {
   };
 }
 
-async function getCompletedInternship(userId) {
+async function getCompletedInternship (userId) {
   return (await dao.Application.find('internship_completed_at is not null and user_id = ?', userId).catch(() => { return []; })).length;
 }
 
@@ -125,20 +125,35 @@ async function updateProfile (attributes, done) {
   }).catch (err => { return done({'message':'Error updating profile.'}); });
 }
 
-async function updateProfileBureauOffice (attributes, done) {
-  attributes.updatedAt =new Date();
-  return await dao.User.findOne('id = ?', attributes.id).then(async (e) => { 
-    return await dao.User.update(attributes).then((user) => {
-      return done(!user, user);
-    }).catch((err) => {
-      log.error(err);
+
+async function saveUserBureauOffice (userId,attributes,done) {   
+  attributes.createdAt= new Date();
+  attributes.updatedAt = new Date();
+  await dao.UserBureauOffice.insert(attributes).then(async (data) => {
+    data.bureauOffice= (await db.query(dao.query.userBureauOffice, userId)).rows;  
+    data.bureau = await dao.Bureau.findOne('bureau_id = ?', data.bureauId).catch(() => { return {}; });
+    data.office =await dao.Office.findOne('office_id = ?', data.officeId).catch(() => { return {}; }); 
+    data.user =await dao.User.findOne('id = ?', userId).catch(() => { return {}; }); 
+    data.insertSuccess= true; 
+    return done(null, data);
+  }).catch(err => {
+    return done(true);
+  });
+  
+}
+async function deleteUserBureauOffice (userId,userBureauOfficeId){
+  return await dao.UserBureauOffice.findOne('user_id = ? and user_bureau_office_id = ? ', userId,userBureauOfficeId).then(async (e) => { 
+    return await dao.UserBureauOffice.delete('user_id = ? and user_bureau_office_id = ? ', userId,userBureauOfficeId).then(async (data) => {         
+      return data;
+    }).catch(err => {
+      log.info('delete: failed to delete UserBureauOffice ', err);
       return false;
     });
   }).catch((err) => {
     log.error(err);
     return false;
   });
-} 
+}
 
 async function updateSkills (attributes, done) {
   attributes.tags=JSON.parse(attributes.tags);
@@ -209,7 +224,7 @@ async function canAdministerAccount (user, attributes) {
 }
 
 async function checkAgency (agencyAdmin, attributes) {
-  var user = await dao.User.findOne('id = ?', attributes.id).catch(() => { return {}});
+  var user = await dao.User.findOne('id = ?', attributes.id).catch(() => { return {};});
   return !user.isAdmin && agencyAdmin.agencyId == user.agencyId;
 }
 
@@ -257,5 +272,6 @@ module.exports = {
   canAdministerAccount: canAdministerAccount,
   canUpdateProfile: canUpdateProfile,
   updatePhotoId: updatePhotoId,
-  updateProfileBureauOffice:updateProfileBureauOffice,
+  saveUserBureauOffice :saveUserBureauOffice,  
+  deleteUserBureauOffice : deleteUserBureauOffice,
 };
