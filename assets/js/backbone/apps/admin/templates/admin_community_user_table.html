@@ -71,7 +71,7 @@
           data-admin="<%- u.isAdmin %>"
           data-agency-admin="<%- u.isCommunityAdmin %>">
         <td class="admin-table-name">
-          <%- u.name %>
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.name %></a>
         </td>
         <td class="admin-table-username">
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
