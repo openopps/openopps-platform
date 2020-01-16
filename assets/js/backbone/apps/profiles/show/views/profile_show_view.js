@@ -52,6 +52,7 @@ var ProfileShowView = Backbone.View.extend({
     this.bureaus                = [];
     this.offices                = {};
     this.dataBureauOffice   =[];
+    this.currentOffices =[];
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -434,8 +435,8 @@ var ProfileShowView = Backbone.View.extend({
     });
   },
 
-  saveBureauOffice: function (data,self) {   
-    if(!this.checkBureauOfficeExist(data,self)){
+  saveBureauOffice: function (data,self) { 
+    if(!this.checkBureauOfficeExist(data,self) && !this.validateBureau() && !this.validateOffice()){
       $.ajax({
         url: '/api/user/bureau-office/' + data.userId, 
         type: 'POST',
@@ -449,8 +450,13 @@ var ProfileShowView = Backbone.View.extend({
         }.bind(this),
       });
     }
-    else{
-      self.modalComponent.cleanup();
+    else{   
+      if(this.validateBureau() && this.validateOffice()){
+        $('.usa-input-error').get(0).scrollIntoView();
+      }
+      if(this.checkBureauOfficeExist(data,self)){
+        self.modalComponent.cleanup();
+      }     
     }
   },
     
@@ -461,9 +467,10 @@ var ProfileShowView = Backbone.View.extend({
       this.currentOffices = this.offices[selectData.id];
       if (this.currentOffices.length) {
         $('.profile_tag_office').show();
-        $('#profile_tag_office').removeAttr('disabled', true);
+        $('#profile_tag_office').removeAttr('disabled', true);     
       } else {
-        $('#profile_tag_office').attr('disabled', true).select2('data', null);    
+        $('#profile_tag_office').select2('data', null);        
+     
       }
     } else {
       $('.profile_tag_office').hide();  
@@ -544,9 +551,71 @@ var ProfileShowView = Backbone.View.extend({
     }.bind(this));
 
     self.initializeSelect2();
+    $('.validateBureau').on('blur', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateBureau').on('change', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateOffice').on('change', function (e) {
+      self.validateOffice();
+    }.bind(this));
+
+    $('.validateOffice').on('blur', function (e) {
+      self.validateOffice();
+    }.bind(this));
     
     //adding this to show select2 data in modal
     $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
+  },
+
+  validateBureau : function (){
+    var abort= false;
+     
+    if($('#profile_tag_bureau').select2('data') ==null){
+      $('#profile_valid_bureau').addClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').show();
+      abort=true;
+    }
+   
+    else{
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+   
+      abort= false;
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
+  },
+
+  validateOffice : function (){
+    var abort= false;
+    var selectData= $('#profile_tag_bureau').select2('data');
+    var selectOfficeData= $('#profile_tag_office').select2('data');
+    if(selectData != null){
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+      abort= false;
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length && selectOfficeData ==null) {   
+        $('#profile_valid_office').addClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').show();
+        abort= true;
+      } 
+      else{
+        $('#profile_valid_office').removeClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').hide();
+        abort= false;
+      }
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
   },
 
   checkBureauOfficeExist : function (data,self){
