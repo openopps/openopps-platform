@@ -55,11 +55,37 @@ var submittedApplication = {
         primary: {
           text: 'Withdraw',
           action: function () {
-            submittedApplication.submitDelete.bind(this)(this.data.applicationId, this.data.userId);
+            submittedApplication.submitWithdraw.bind(this)(this.data.applicationId, this.data.userId);
           }.bind(this),
         },
       }).render();
     }
+  },
+
+  submitWithdraw: function (applicationId, userId) {
+    $.ajax({
+      url: '/api/application/' + applicationId,
+      type: 'PUT',
+      data: {
+        applicationId: applicationId,
+        cycleId: this.data.cycleId,
+        withdrawn: true,
+        withdrawnAt: (new Date()).toISOString(),
+        updatedAt: this.data.updatedAt,
+      },
+    }).done(function ( model, response, options ) {
+      this.modalComponent.cleanup();
+      Backbone.history.navigate('/home', { trigger: true });
+      $('.usajobs-alert--success').show();
+      window.scrollTo(0,0);
+      $('.toggle-one').attr('data-state', 'is-open');
+      $('#section-one').attr('aria-expanded', true);
+      $('a[title="Account"]').addClass('is-active');
+      $('a[title="Account"] > span').removeClass('usajobs-nav--openopps__section');
+      $('a[title="Account"] > span').addClass('usajobs-nav--openopps__section-active');
+    }.bind(this)).fail(function (error) {
+      this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
+    }.bind(this));
   },
 
   submitDelete: function (applicationId, userId) {

@@ -18,9 +18,12 @@
           <p>You have submitted the following application to the <%= communityName.community_name %> for <%= cycle.name %>.</p>
           <% if (new Date(cycle.apply_end_date) > new Date()) { %>
             <button class="usa-button usa-button-primary update-application">Update</button>
+          <% } %>
+          <% if (new Date(cycle.apply_end_date) > new Date() && cycle.closed_date === null) { %>
             <button class="usa-button usa-button-secondary-alert-outline withdraw-application">Withdraw</button>
           <% } %>
-          <h3 class="usajobs-profile-home-section__sub-section">
+          <h3 class="usa
+          jobs-profile-home-section__sub-section">
             Applied to these internship opportunities
           </h3>
         </div>
