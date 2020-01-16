@@ -56,7 +56,7 @@ const applicationStatusQuery = 'SELECT app.application_id AS "id", app.submitted
   'INNER JOIN community comm ON app.community_id = comm.community_id ' +
   'INNER JOIN cycle c ON app.cycle_id = c.cycle_id ' +
   'LEFT JOIN phase ON c.phase_id = phase.phase_id ' +
-  'WHERE app.user_id = ? ';
+  'WHERE app.user_id = ? and app.withdrawn = false';
 
 const savedTaskQuery = 'select ' +
   'task.id, task.title, task.state, task.community_id as "communityId", task."updatedAt", ' +
