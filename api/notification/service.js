@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
+const schedules = require('./schedules');
 const systemSetting = require('../admin/systemSetting');
 const protocol = openopps.emailProtocol || '';
 var transportConfig = openopps[protocol.toLowerCase()] || {};
@@ -187,9 +188,13 @@ function runSchedule (scheduleRequest) {
   if(scheduleRequest.type.toLowerCase() == 'all') {
     // get list of all notification types
   } else {
-    // get list of notification of specified type
+    var job = schedules.getJob(scheduleRequest.job);
   }
   return true;
+}
+
+function listSchedules () {
+  return schedules.listJobs();
 }
 
 module.exports = {
@@ -197,4 +202,5 @@ module.exports = {
   processNotification: processNotification,
   insertAWSNotification: insertAWSNotification,
   runSchedule: runSchedule,
+  listSchedules: listSchedules,
 };
