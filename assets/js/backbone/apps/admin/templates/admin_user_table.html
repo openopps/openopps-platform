@@ -79,7 +79,7 @@
           data-admin="<%- u.isAdmin %>"
           data-agency-admin="<%- u.isAgencyAdmin %>">
         <td class="admin-table-name">
-          <%- u.name %>
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.name %></a>
         </td>      
         <% if (target == 'sitewide') { %>
           <% if (u.agency) { %>
