@@ -284,7 +284,9 @@ CREATE TABLE application (
     internship_completed bigint,
     internship_completed_at timestamp with time zone,
     internship_updated_by bigint,
-    decline_experience boolean
+    decline_experience boolean,
+    withdrawn boolean NOT NULL DEFAULT false,
+    withdrawn_at timestamp with time zone
 );
 
 

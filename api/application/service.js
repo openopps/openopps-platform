@@ -419,7 +419,7 @@ module.exports.swapExperiences = async function (userId, applicationId, data) {
 module.exports.updateApplication = async function (ctx, userId, applicationId, data) {
   return await dao.Application.findOne('application_id = ? and user_id = ?', applicationId, userId).then(async () => {
     return await dao.Application.update(data).then(async (application) => {
-      if (application.submittedAt) {
+      if (application.submittedAt && !application.withdrawn) {
         sendApplicationNotification(userId, applicationId, 'state.department/internship.application.received');
         var audit = Audit.createAudit('APPLICATION_SUBMITTED', ctx, {
           applicationId: application.applicationId,
@@ -430,6 +430,23 @@ module.exports.updateApplication = async function (ctx, userId, applicationId, d
         await dao.AuditLog.insert(audit).catch((err) => {
           log.error(err);
         });
+      } else if (application.withdrawn) {
+        var audit = Audit.createAudit('APPLICATION_WITHDRAWN', ctx, {
+          applicationId: application.applicationId,
+          cycleId: application.cycleId,
+          userId: ctx.state.user.id,
+          withdrawnAt: application.withdrawnAt,
+        });
+        await dao.AuditLog.insert(audit).catch((err) => {
+          log.error(err);
+        });
+        var applicationNotificationData= await getNotificationApplicationData(userId, applicationId ); 
+        if(applicationNotificationData) {
+          var notificationData = await getNotificationTemplateData(applicationNotificationData, 'state.department/internship.application.withdraw');
+          if(!notificationData.model.user.bounced) {
+            notification.createNotification(notificationData);
+          }     
+        }   
       } else {
         var audit = Audit.createAudit('APPLICATION_UPDATED', ctx, {
           applicationId: application.applicationId,
