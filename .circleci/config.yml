@@ -7,7 +7,7 @@ jobs:
     environment:
       CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:10.18.0
       - image: circleci/postgres:9.6-alpine
         environment:
           POSTGRES_USER: midas
@@ -32,7 +32,7 @@ jobs:
     working_directory: ~/openopps/openopps-platform
     parallelism: 1
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:10.18.0
     steps:
       - add_ssh_keys:
           fingerprints:

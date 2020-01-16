@@ -531,7 +531,7 @@ var InternshipEditFormView = Backbone.View.extend({
   },
 
   checkDosBureau: function () {
-    if(window.cache.currentUser && window.cache.currentUser.bureau.bureauId) {
+    if(window.cache.currentUser && window.cache.currentUser.bureauOffice.length>0) {
       return false;
     } else {
       return true;
