@@ -263,7 +263,7 @@ async function isCommunityApprover (user, task) {
       return undefined;
     });
     // If community is DoS then must check same bureau
-    if(!community || (community.referenceId == 'dos' && task.bureauId != user.bureauId)) {
+    if(!community || (community.referenceId == 'dos' && !_.find(user.bureauOffice, { bureau_id: task.bureauId }) )) {
       return false;
     } else {
       return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
