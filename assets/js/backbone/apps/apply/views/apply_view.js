@@ -333,6 +333,7 @@ var ApplyView = Backbone.View.extend({
   },
 
   historyApplicationStep: function (e) {
+    var step;
     step = e.currentTarget.getAttribute('data-step');
     this.data.selectedStep = step;
     Backbone.history.navigate(window.location.pathname + '?step=' + step, { trigger: false });
