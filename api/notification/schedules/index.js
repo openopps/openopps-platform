@@ -6,13 +6,15 @@ const undefinedJob = {
   name: 'JOB NOT FOUND',
   description: 'JOB NOT FOUND',
   run: function () {},
-  status: function () {},
+  status: function () {
+    return this.name;
+  },
 }
 
 module.exports = {
   /**
    * @param {string} key
-   * @return {Object} a job for running or scheduling
+   * @returns {Object} a job for running or scheduling
    */
   getJob: function (key) {
     return jobs[key] || undefinedJob;

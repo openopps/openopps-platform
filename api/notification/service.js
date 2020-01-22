@@ -188,7 +188,7 @@ function runSchedule (scheduleRequest) {
   if(scheduleRequest.type.toLowerCase() == 'all') {
     // get list of all notification types
   } else {
-    var job = schedules.getJob(scheduleRequest.job);
+    schedules.getJob(scheduleRequest.job).run();
   }
   return true;
 }
