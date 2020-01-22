@@ -23,7 +23,10 @@ var AppliedTemplate = require('../../home/internships/templates/internships_appl
 var SavedTemplate = require('../../home/internships/templates/internships_saved_template.html');
 var ProfileBureauOfficeTemplate = require('../templates/profile_bureau_office_template.html');
 var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_office_preview_template.html');
-var ProfileBureauOfficeMessageTemplate = require('../templates/profile_bureau_office_message_template.html');
+var ProfileAlertMessageTemplate = require('../templates/profile_alert_message_template.html');
+var ProfileBadgePreviewTemplate = require('../templates/profile_badge_preview_template.html');
+var ProfileBadgeDetailsTemplate = require('../templates/profile_badge_details_template.html');
+
 
 var ProfileShowView = Backbone.View.extend({
   events: {
@@ -41,7 +44,9 @@ var ProfileShowView = Backbone.View.extend({
     'change #sort-applied'          : 'sortInternships',
     'change #sort-saved'            : 'sortInternships',
     'click #add-bureau-office'      : 'addbureauOfficeDisplay',
-    'click #remove-bureau-office'     :'removeBureauOfficeDisplay',
+    'click #remove-bureau-office'   :'removeBureauOfficeDisplay',
+    'click #add-badge'              : 'addBadges',
+    'click #remove-badge'           :'removeBadge',
   },
 
   initialize: function (options) {
@@ -53,6 +58,7 @@ var ProfileShowView = Backbone.View.extend({
     this.offices                = {};
     this.dataBureauOffice   =[];
     this.currentOffices =[];
+    this.userData ={};
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -124,7 +130,7 @@ var ProfileShowView = Backbone.View.extend({
       saved: this.saved,
       ui: UIConfig,
     };
-  
+    
     data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
     data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
     data.loginGovEmail = data.data.username;
@@ -135,7 +141,7 @@ var ProfileShowView = Backbone.View.extend({
     if (data.data.bio) {
       data.data.bioHtml = marked(data.data.bio);
     }
-
+    this.userData= data; 
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
@@ -147,6 +153,7 @@ var ProfileShowView = Backbone.View.extend({
     this.shareProfileEmail();
     this.dataBureauOffice = data.bureauOffice;
     this.renderBureauOffices();
+    this.renderBadges(data);
     if (data.user.id !== data.data.id) {
       if (data.data.hiringPath != 'student') {
         this.renderOpportunities(data.data.id);
@@ -165,6 +172,11 @@ var ProfileShowView = Backbone.View.extend({
     } else {
       return !_.contains(['draft', 'submitted', 'canceled', 'archived'], item.state);
     }
+  },
+  
+  renderBadges: function (data){
+    var badgesPreviewTemplate = _.template(ProfileBadgePreviewTemplate)(data);   
+    $('#profile_badge_preview').html(badgesPreviewTemplate);
   },
 
   renderOpportunities: function (id) {
@@ -446,7 +458,7 @@ var ProfileShowView = Backbone.View.extend({
           self.modalComponent.cleanup();
           window.cache.currentUser.bureauOffice= this.dataBureauOffice;
           this.renderBureauOffices();
-          this.renderBureausOfficesMessages(data,self);
+          this.renderAlertMessages(data,self);
         }.bind(this),
       });
     }
@@ -498,16 +510,19 @@ var ProfileShowView = Backbone.View.extend({
     }.bind(this));
   },
 
-  renderBureausOfficesMessages: function (data,self) {   
-    var bureauOfficeMessageTemplate = _.template(ProfileBureauOfficeMessageTemplate)({   
-      insertSuccess:data.insertSuccess,  
+  renderAlertMessages: function (data,self) {   
+    var alertMessageTemplate = _.template(ProfileAlertMessageTemplate)({   
+      insertSuccess:data.insertSuccess,
+      insertBadgeSuccess:data.insertBadgeSuccess,  
       bureau:data.bureau,
       office:data.office,
       user: data.user,
       removeSuccess :data.removeSuccess,
+      removeBadgeSuccess:data.removeBadgeSuccess,
+      username: this.userData.data.name,
     });
    
-    $('#bureau-office-message').html(bureauOfficeMessageTemplate);
+    $('#alert-message').html(alertMessageTemplate);
     window.scrollTo(0, 0);
   },
 
@@ -678,7 +693,7 @@ var ProfileShowView = Backbone.View.extend({
         window.cache.currentUser.bureauOffice = this.dataBureauOffice;     
         self.modalComponent.cleanup();
         this.renderBureauOffices();
-        this.renderBureausOfficesMessages(userBureauOfficeData,self);
+        this.renderAlertMessages(userBureauOfficeData,self);
       }.bind(this),
     });
   },
@@ -689,6 +704,116 @@ var ProfileShowView = Backbone.View.extend({
     }); 
     $('#bureau-office-preview').html(bureauOfficeTemplate);
   }, 
+
+  addBadges: function (event){
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }   
+    var modalContent = _.template(ProfileBadgeDetailsTemplate)(this.userData);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-badge',
+      modalTitle: 'Add badge',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add',
+        action: function (){
+          var data={
+            type :$('#badge-name').val(),                 
+          };        
+          self.saveBadge(data,self);
+        },
+      },      
+    }).render();        
+  },
+
+  saveBadge: function (data,self) { 
+    if(!this.checkBadgeExist()){ 
+      $.ajax({
+        url: '/api/user/badge/' + this.userData.data.id, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {
+          this.userData.data.badges.push(data);            
+          self.modalComponent.cleanup();
+          this.renderBadges(this.userData);
+          this.renderAlertMessages(data,self);    
+        }.bind(this),
+      });
+    }
+    else{
+      self.modalComponent.cleanup();
+    }
+  },
+
+  removeBadge:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+   
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-badge',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Remove badge',
+      modalBody:  'Are you sure you want to remove the <strong>Community Manager </strong> badge from ' + this.userData.data.name + ' profile? ' ,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var badgeData = {         
+            userId: $(event.currentTarget ).data('user-id'),
+            type: $(event.currentTarget ).data('badge-type'), 
+            badgeId : $(event.currentTarget ).data('badge-id'),    
+          };        
+          self.deleteBadge(badgeData,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBadge : function (badgeData,self){  
+    $.ajax({
+      url: '/api/user/badge/' + badgeData.userId +'?' + $.param({
+        type: badgeData.type,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        badgeData.removeBadgeSuccess= true;      
+        this.userData.data.badges=_.reject(this.userData.data.badges,function (d){
+          return d.id== badgeData.badgeId;
+        });
+        
+        self.modalComponent.cleanup();
+        this.renderBadges(this.userData);  
+        this.renderAlertMessages(badgeData,self);  
+      }.bind(this),
+    });
+    
+  },
+  checkBadgeExist : function (data,self){
+    var exist = _.findIndex(this.userData.data.badges, { type:'community manager'});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
 
   cleanup: function () {
     if (this.md) { this.md.cleanup(); }

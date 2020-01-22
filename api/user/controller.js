@@ -179,6 +179,23 @@ router.delete('/api/user/bureau-office/:id', auth, async (ctx, next) => {
   ctx.body = await service.deleteUserBureauOffice(ctx.params.id,ctx.query.userBureauOfficeId);
 });
 
+
+router.post('/api/user/badge/:id', auth.isAdmin, async (ctx, next) => {
+  await service.saveUserBadge(ctx,ctx.params.id,ctx.request.body, function (errors,result)  {
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  });
+});
+
+router.delete('/api/user/badge/:id', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.deleteUserBadge(ctx,ctx.params.id,ctx.query.type);
+});
+
 router.put('/api/user/:id', auth, async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     ctx.status = 200;
