@@ -19,7 +19,7 @@
           <% if (new Date(cycle.apply_end_date) > new Date()) { %>
             <button class="usa-button usa-button-primary update-application">Update</button>
           <% } %>
-          <% if (new Date(cycle.apply_end_date) > new Date() && cycle.closed_date === null) { %>
+          <% if (new Date(cycle.review_end_date) > new Date() && cycle.closed_date === null) { %>
             <button class="usa-button usa-button-secondary-alert-outline withdraw-application">Withdraw</button>
           <% } %>
           <h3 class="usa
