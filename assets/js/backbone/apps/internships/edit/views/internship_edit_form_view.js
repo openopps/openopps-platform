@@ -147,6 +147,7 @@ var InternshipEditFormView = Backbone.View.extend({
     this.initializeTextAreaSkills();
     this.initializeTextAreaTeam();
     this.initializeCommunityDropDown();
+    this.characterCount();
      
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
@@ -484,6 +485,7 @@ var InternshipEditFormView = Backbone.View.extend({
       validate: ['empty','html'],
     }).render();
   },
+
   initializeCommunityDropDown: function (){
     var communityId= this.model.toJSON().communityId;
     
@@ -491,8 +493,24 @@ var InternshipEditFormView = Backbone.View.extend({
       $('#student-programs').val(communityId);
     }
   },
+
+  
+
+  characterCount: function () {
+    $('.markdown-edit-details .usajobs-form__help-brief').append('  <span id="opportunity-details-count">(5000 characters remaining)</span>');
+    $('.markdown-edit-team .usajobs-form__help-brief').append('  <span id="opportunity-team-count">(5000 characters remaining)</span>');
+    $('#intern-title').charCounter(5000, {
+      container: '#opportunity-title-count',
+    });
+    $('#opportunity-details').charCounter(5000, {
+      container: '#opportunity-details-count',
+    });
+    $('#opportunity-team').charCounter(5000, {
+      container: '#opportunity-team-count',
+    });
+  },
+
   initializeCycle: function (communityId) {
-    
     $.ajax({
       url: '/api/community/' + communityId + '/cycles', 
       type: 'GET',
@@ -524,10 +542,7 @@ var InternshipEditFormView = Backbone.View.extend({
           this.$('#internship-edit').hide();
         }       
       }.bind(this),
-       
     });
-    
-   
   },
 
   checkDosBureau: function () {
