@@ -155,6 +155,42 @@ async function deleteUserBureauOffice (userId,userBureauOfficeId){
   });
 }
 
+async function saveUserBadge (ctx,userId,attributes,done) {   
+  attributes.createdAt= new Date();
+  attributes.updatedAt = new Date();
+  attributes.user = userId;
+  await dao.Badge.insert(attributes).then(async (data) => {  
+    data.insertBadgeSuccess= true;
+    await createAudit('BADGE_ADDED', ctx, {      
+      badgeType: data.type,
+      badgeUser :_.pick(await dao.User.findOne('id = ?', data.user), 'id', 'name', 'username'),
+      user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),     
+    });    
+    return done(null, data);
+  }).catch(err => {
+    return done(true);
+  });  
+}
+
+async function deleteUserBadge (ctx,userId,type){
+  return await dao.Badge.findOne('"user"= ? and "type"= ?', userId,type).then(async (e) => { 
+    return await dao.Badge.delete('"user"= ? and "type"= ?', userId,type).then(async (data) => { 
+      await createAudit('BADGE_DELETED', ctx, {      
+        badgeType: type,
+        badgeUser :_.pick(await dao.User.findOne('id = ?', userId), 'id', 'name', 'username'),
+        user: _.pick(await dao.User.findOne('id = ?', ctx.state.user.id), 'id', 'name', 'username'),     
+      });          
+      return data;
+    }).catch(err => {
+      log.info('delete: failed to delete Badge ', err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
 async function updateSkills (attributes, done) {
   attributes.tags=JSON.parse(attributes.tags);
   var errors = User.validateTags({ invalidAttributes: {} }, attributes);
@@ -274,4 +310,6 @@ module.exports = {
   updatePhotoId: updatePhotoId,
   saveUserBureauOffice :saveUserBureauOffice,  
   deleteUserBureauOffice : deleteUserBureauOffice,
+  saveUserBadge :saveUserBadge,
+  deleteUserBadge: deleteUserBadge,
 };

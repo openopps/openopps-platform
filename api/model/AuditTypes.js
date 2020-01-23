@@ -190,6 +190,21 @@ module.exports = {
     severity: 'info',
     data: ['bureauId','officeId', 'user','officeName'],
   },
+  //Badge events
+  'BADGE_DELETED': {
+    action:'BADGE_DELETED',
+    description:'A badge is deleted.',
+    severity:'info',
+    data:['badgeType','badgeUser','user'],
+  },
+
+  'BADGE_ADDED': {
+    action:'BADGE_ADDED',
+    description:'A badge is added.',
+    severity:'info',
+    data:['badgeType','badgeUser','user'],
+
+  },
   // API events
   'PHASE_STARTED': {
     action: 'PHASE_STARTED',
