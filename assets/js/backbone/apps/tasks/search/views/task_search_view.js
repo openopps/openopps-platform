@@ -390,7 +390,7 @@ var TaskListView = Backbone.View.extend({
  
     if (searchResult.description) {
       item.item.descriptionHtml = marked(searchResult.description).replace(/<\/?a(|\s+[^>]+)>/g, '');
-      item.item.descriptionHtml = removeMd(item.item.descriptionHtml, {stripListLeaders: false });
+      item.item.descriptionHtml = removeMd(item.item.descriptionHtml);
     }
     return _.template(TaskListItem)(item);
   },
