@@ -499,7 +499,7 @@ var InternshipEditFormView = Backbone.View.extend({
   characterCount: function () {
     $('.markdown-edit-details .usajobs-form__help-brief').append('  <span id="opportunity-details-count">(5000 characters remaining)</span>');
     $('.markdown-edit-team .usajobs-form__help-brief').append('  <span id="opportunity-team-count">(5000 characters remaining)</span>');
-    $('#intern-title').charCounter(5000, {
+    $('#intern-title').charCounter(100, {
       container: '#opportunity-title-count',
     });
     $('#opportunity-details').charCounter(5000, {
