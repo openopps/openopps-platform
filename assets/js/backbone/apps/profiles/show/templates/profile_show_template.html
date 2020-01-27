@@ -18,6 +18,9 @@
         </div>
       <% } %>
     <% } %>
+    
+    <div id="alert-message"></div>
+    
     <div class="usa-alert usajobs-alert usajobs-alert--error" id="file-upload-alert" role="alert" data-object="alert" style="display:none;">
       <div class="usajobs-alert__figure">
         <div class="usajobs-alert__icon">
@@ -47,7 +50,7 @@
           <% if (data.isOwner || (!loginGov && data.canEditProfile)) { %>
           <div class="usajobs-opop-section-edit">             
             <% if (loginGov) { %>
-              <a href="<%- data.editURL %>" class="usa-button usa-button-secondary">Edit at USAJOBS.gov</a>
+              <a href="<%- data.editURL %>" class="usa-button usa-button-secondary">Edit at USAJOBS</a>
             <% } else { %>
               <a href="/profile/edit/<%- data.id %>" class="link-backbone">Edit</a>
             <% } %>
@@ -60,13 +63,25 @@
           <div class="usajobs-opop-profile-details usa-width-three-fourths">
             <div class="profile-name-role">
               <h3 class="usajobs-opop-profile-name"><% if (data.givenName && data.lastName) { %><%- data.givenName + ' ' + data.lastName %><% } else { %><%- data.username %><% } %></h3>
-              <% if (data.isAdmin || data.isAgencyAdmin) { %>
-              <span class="role-label"><% if (user.isAgencyAdmin) { %> Agency <% } %> Administrator</span>
-               <% }
-              else if(data.isCommunityApprover) { %>
-                <span class="role-label"> <% if (user.isAdmin) { %> Bureau Internship Coordinator <% } %></span>
+              <% if (user.isAdmin) { %>
+                <% if (data.isAdmin) { %>
+                  <span class="role-label">Administrator</span>
+                <% } else if (data.isAgencyAdmin) { %>
+                  <span class="role-label">Agency Administrator</span>
+                <% } else if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
+              <% } else if (user.isAgencyAdmin) { %>
+                <% if (data.isAgencyAdmin) { %>
+                  <span class="role-label">Agency Administrator</span>
+                <% } else if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
+              <% } else if (user.isCommunityApprover) { %>
+                <% if (data.isCommunityApprover) { %>
+                  <span class="role-label">Bureau Internship Coordinator</span>
+                <% } %>
               <% } %>
-                
             </div>
             <div class="profile-jobtitle">
               <% if (data.title) { %>
@@ -127,35 +142,21 @@
         </div>
       </div>
 
-  
-    <% if (dos) { %>
-    <div class="usajobs-opop-skill__body">
-      <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
-        <div class="usajobs-grid-full">
-          <% if (data.isOwner || data.canEditProfile) { %>
-          <div class="usajobs-opop-section-edit skills-edit">
-            <a href="/profile/edit/bureau_office/<%- data.id %>/">Edit</a>
-          </div>
-          <% } %>
-          <h2><span class="usa-input-optional">Bureau and Office/post</span></h2>
-          <div class="usajobs-opop-profile-details usa-width-three-fourths">
-            <div class="profile-bureau">
-              <% if(!_.isEmpty(data.bureau)) { %>
-              <div class="usajobs-profile-home-section__field-label">Bureau</div>
-              <span><%- data.bureau.name %></span>
-              <% } %>
-            </div>
-            <div class="profile-office">
-              <% if(!_.isEmpty(data.office)) { %>
-              <div class="usajobs-profile-home-section__field-label">Office/post</div>
-              <span><%- data.office.name %></span>
-              <% } %>
-            </div>
-          </div>
+   
+ <% if (dos) { %>
+  <div class="usajobs-opop-skill__body">
+    <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
+      <div class="usajobs-grid-full">
+        <% if (data.isOwner || data.canEditProfile) { %>
+        <div class="usajobs-opop-section-edit skills-edit">       
+          <a id="add-bureau-office" class="usa-button usa-button-secondary" data-userid="<%- data.id %>" href="javascript:void(0)"><i class="fas fa-plus"></i> Add </a>
         </div>
+        <% } %>
+      <div id="bureau-office-preview"></div>
       </div>
     </div>
-    <% } %>
+  </div>
+  <% } %>
       <div class="usajobs-opop-skill__body">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
           <div class="usajobs-grid-full">
@@ -221,22 +222,7 @@
       <% } %>
     </main>
     <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
-      <aside class="usajobs-rightrail" id="rightrail">
-        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-          <h2>Badges</h2>
-          <% if (data.badges.length > 0) { %>
-          <ul class="profile-badges">
-            <% _.map(data.badges, function (b) { %>
-            <li class="profile-badge">
-              <% var filename = b.type.replace(' ', '-'); %>
-              <img src="/images/badges/<%- filename %>.png" alt="The <%- b.type %> badge is awarded when you <%- b.description %>" title="The <%- b.type %> badge is awarded when you <%- b.description %>">
-              <p><%- b.type %></p>
-            </li>
-            <% }); %>
-          </ul>
-          <% } %>
-        </div>
-      </aside>
+       <div id="profile_badge_preview"></div>
     <% } else if (data.hiringPath == 'student') { %>
       <aside class="usajobs-rightrail" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">

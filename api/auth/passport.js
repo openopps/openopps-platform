@@ -33,8 +33,8 @@ async function fetchUser (id) {
       user.badges = await dao.Badge.find('"user" = ?', user.id, dao.options.badge);
       var GetCommunities = require('../opportunity/service').getCommunities;
       user.communities = await GetCommunities(user.id);
-      user.bureau = await dao.Bureau.findOne('bureau_id = ?', user.bureauId).catch(() => { return {}; });
-      user.office =await dao.Office.findOne('office_id = ?', user.officeId).catch(() => { return {}; });
+      user.bureauOffice= (await db.query(dao.query.userBureauOffice, user.id)).rows;   
+      
       user = dao.clean.user(user);
       var GetInternshipsCompleted = require('../user/service').getCompletedInternship;
       user.internshipsCompleted = await GetInternshipsCompleted(user.id);

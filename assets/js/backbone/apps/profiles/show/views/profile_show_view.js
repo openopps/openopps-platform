@@ -3,6 +3,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var marked = require('marked');
+var ModalComponent = require('../../../../components/modal');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');
@@ -20,6 +21,12 @@ var CreatedTemplate = require('../../home/templates/home_created_template.html')
 var ParticipatedTemplate = require('../../home/templates/home_participated_template.html');
 var AppliedTemplate = require('../../home/internships/templates/internships_applied_template.html');
 var SavedTemplate = require('../../home/internships/templates/internships_saved_template.html');
+var ProfileBureauOfficeTemplate = require('../templates/profile_bureau_office_template.html');
+var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_office_preview_template.html');
+var ProfileAlertMessageTemplate = require('../templates/profile_alert_message_template.html');
+var ProfileBadgePreviewTemplate = require('../templates/profile_badge_preview_template.html');
+var ProfileBadgeDetailsTemplate = require('../templates/profile_badge_details_template.html');
+
 
 var ProfileShowView = Backbone.View.extend({
   events: {
@@ -36,6 +43,10 @@ var ProfileShowView = Backbone.View.extend({
     'click .saved-show-all'         : 'showAllInternships',
     'change #sort-applied'          : 'sortInternships',
     'change #sort-saved'            : 'sortInternships',
+    'click #add-bureau-office'      : 'addbureauOfficeDisplay',
+    'click #remove-bureau-office'   :'removeBureauOfficeDisplay',
+    'click #add-badge'              : 'addBadges',
+    'click #remove-badge'           :'removeBadge',
   },
 
   initialize: function (options) {
@@ -43,6 +54,11 @@ var ProfileShowView = Backbone.View.extend({
     this.data = options.data;
     this.tagFactory = new TagFactory();
     this.data.newItemTags = [];
+    this.bureaus                = [];
+    this.offices                = {};
+    this.dataBureauOffice   =[];
+    this.currentOffices =[];
+    this.userData ={};
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -114,17 +130,18 @@ var ProfileShowView = Backbone.View.extend({
       saved: this.saved,
       ui: UIConfig,
     };
-  
+    
     data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
     data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
     data.loginGovEmail = data.data.username;
     data.fedEmail = data.data.governmentUri;
     data.career = this.getTags(['career'])[0];
-
+    data.bureauOffice= data.data.bureauOffice;
+    
     if (data.data.bio) {
       data.data.bioHtml = marked(data.data.bio);
     }
-
+    this.userData= data; 
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
@@ -134,6 +151,9 @@ var ProfileShowView = Backbone.View.extend({
     this.initializeTags();
     this.initializePhoto();
     this.shareProfileEmail();
+    this.dataBureauOffice = data.bureauOffice;
+    this.renderBureauOffices();
+    this.renderBadges(data);
     if (data.user.id !== data.data.id) {
       if (data.data.hiringPath != 'student') {
         this.renderOpportunities(data.data.id);
@@ -152,6 +172,11 @@ var ProfileShowView = Backbone.View.extend({
     } else {
       return !_.contains(['draft', 'submitted', 'canceled', 'archived'], item.state);
     }
+  },
+  
+  renderBadges: function (data){
+    var badgesPreviewTemplate = _.template(ProfileBadgePreviewTemplate)(data);   
+    $('#profile_badge_preview').html(badgesPreviewTemplate);
   },
 
   renderOpportunities: function (id) {
@@ -365,7 +390,7 @@ var ProfileShowView = Backbone.View.extend({
     });
     this.photoView.render();
   },
-
+ 
   initializeTags: function () {
     var showTags = true;
     if (this.tagView) { this.tagView.cleanup(); }
@@ -384,7 +409,7 @@ var ProfileShowView = Backbone.View.extend({
     });
     this.tagView.render();
   },
-
+  
   shareProfileEmail: function (){
     var subject = 'Take A Look At This Profile',
         data = {
@@ -402,6 +427,392 @@ var ProfileShowView = Backbone.View.extend({
           '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
+  },
+
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        for (var i = 0; i < data.length; i++) {
+          this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+        }
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        });
+      }.bind(this),
+    });
+  },
+
+  saveBureauOffice: function (data,self) { 
+    if(!this.checkBureauOfficeExist(data,self) && !this.validateBureau() && !this.validateOffice()){
+      $.ajax({
+        url: '/api/user/bureau-office/' + data.userId, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {        
+          this.dataBureauOffice=data.bureauOffice;
+          self.modalComponent.cleanup();
+          window.cache.currentUser.bureauOffice= this.dataBureauOffice;
+          this.renderBureauOffices();
+          this.renderAlertMessages(data,self);
+        }.bind(this),
+      });
+    }
+    else{   
+      if(this.validateBureau() && this.validateOffice()){
+        $('.usa-input-error').get(0).scrollIntoView();
+      }
+      if(this.checkBureauOfficeExist(data,self)){
+        self.modalComponent.cleanup();
+      }     
+    }
+  },
+    
+  showOfficeDropdown: function () {
+    if($('#profile_tag_bureau').select2('data')) {
+      $('#profile_tag_office').select2('data', null);
+      var selectData = $('#profile_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length) {
+        $('.profile_tag_office').show();
+        $('#profile_tag_office').removeAttr('disabled', true);     
+      } else {
+        $('#profile_tag_office').select2('data', null);        
+     
+      }
+    } else {
+      $('.profile_tag_office').hide();  
+      $('#profile_tag_office').select2('data', null);  
+    }
+  },
+
+  initializeSelect2: function () {
+    $('#profile_tag_bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });
+   
+    $('#profile_tag_office').select2({
+      placeholder: 'Select an office',
+      width: '100%',
+      allowClear: true,
+      data: function () { 
+        return {results: this.currentOffices}; 
+      }.bind(this),
+    });
+    $('#profile_tag_bureau').on('change', function (e) {    
+      this.showOfficeDropdown();   
+    }.bind(this));
+  },
+
+  renderAlertMessages: function (data,self) {   
+    var alertMessageTemplate = _.template(ProfileAlertMessageTemplate)({   
+      insertSuccess:data.insertSuccess,
+      insertBadgeSuccess:data.insertBadgeSuccess,  
+      bureau:data.bureau,
+      office:data.office,
+      user: data.user,
+      removeSuccess :data.removeSuccess,
+      removeBadgeSuccess:data.removeBadgeSuccess,
+      username: this.userData.data.name,
+    });
+   
+    $('#alert-message').html(alertMessageTemplate);
+    window.scrollTo(0, 0);
+  },
+
+  addbureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    self.initializeBureaus();
+    self.initializeSelect2();
+    if (this.modalComponent) { this.modalComponent.cleanup(); } 
+    var data = { 
+      bureaus: self.bureaus,    
+    };  
+  
+    var modalContent = _.template(ProfileBureauOfficeTemplate)(data);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-bureau-office',
+      modalTitle: 'Bureau and Office/post',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Save',
+        action: function (){
+          var data={
+            bureauId : $('#profile_tag_bureau').select2('data')? $('#profile_tag_bureau').select2('data').id : null,
+            officeId : $('#profile_tag_office').select2('data') ? $('#profile_tag_office').select2('data').id : null,
+            userId: $(event.currentTarget ).data('userid'),
+          };        
+          self.saveBureauOffice(data,self);
+        },
+      },      
+    }).render();  
+     
+    $('#profile_tag_bureau').on('change', function (e) {
+      self.showOfficeDropdown();      
+    }.bind(this));
+
+    self.initializeSelect2();
+    $('.validateBureau').on('blur', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateBureau').on('change', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateOffice').on('change', function (e) {
+      self.validateOffice();
+    }.bind(this));
+
+    $('.validateOffice').on('blur', function (e) {
+      self.validateOffice();
+    }.bind(this));
+    
+    //adding this to show select2 data in modal
+    $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
+  },
+
+  validateBureau : function (){
+    var abort= false;
+     
+    if($('#profile_tag_bureau').select2('data') ==null){
+      $('#profile_valid_bureau').addClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').show();
+      abort=true;
+    }
+   
+    else{
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+   
+      abort= false;
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
+  },
+
+  validateOffice : function (){
+    var abort= false;
+    var selectData= $('#profile_tag_bureau').select2('data');
+    var selectOfficeData= $('#profile_tag_office').select2('data');
+    if(selectData != null){
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+      abort= false;
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length && selectOfficeData ==null) {   
+        $('#profile_valid_office').addClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').show();
+        abort= true;
+      } 
+      else{
+        $('#profile_valid_office').removeClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').hide();
+        abort= false;
+      }
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
+  },
+
+  checkBureauOfficeExist : function (data,self){
+    var exist = _.findIndex(this.dataBureauOffice, { bureau_id : data.bureauId,office_id: data.officeId});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
+
+  removeBureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+    var bureauName=$(event.currentTarget ).data('bureau-name');
+    var officeName=$(event.currentTarget ).data('office-name');
+  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-bureau-office',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Confirm remove bureau and office/post',
+      modalBody:  'Are you sure you want to remove ' + window.cache.currentUser.name + ' from the <strong>' + bureauName + (officeName?'/':'') + officeName + '</strong>?',        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var data={
+            userBureauOfficeId : $(event.currentTarget ).data('user-bureau-office-id'),      
+            userId: $(event.currentTarget ).data('user-id'),
+            bureau: $(event.currentTarget ).data('bureau-name'),
+            office: $(event.currentTarget ).data('office-name'),
+          };        
+          self.deleteBureauOffice(data,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBureauOffice : function (userBureauOfficeData,self){
+    $.ajax({
+      url: '/api/user/bureau-office/' + userBureauOfficeData.userId +'?' + $.param({
+        userBureauOfficeId: userBureauOfficeData.userBureauOfficeId,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        userBureauOfficeData.removeSuccess= true;      
+        this.dataBureauOffice=_.reject(this.dataBureauOffice,function (d){
+          return d.userBureauOfficeId== userBureauOfficeData.userBureauOfficeId;
+        });
+        window.cache.currentUser.bureauOffice = this.dataBureauOffice;     
+        self.modalComponent.cleanup();
+        this.renderBureauOffices();
+        this.renderAlertMessages(userBureauOfficeData,self);
+      }.bind(this),
+    });
+  },
+
+  renderBureauOffices: function () {
+    var bureauOfficeTemplate = _.template(ProfileBureauOfficePreviewTemplate)({
+      data: this.dataBureauOffice,     
+    }); 
+    $('#bureau-office-preview').html(bureauOfficeTemplate);
+  }, 
+
+  addBadges: function (event){
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }   
+    var modalContent = _.template(ProfileBadgeDetailsTemplate)(this.userData);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-badge',
+      modalTitle: 'Add badge',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add',
+        action: function (){
+          var data={
+            type :$('#badge-name').val(),                 
+          };        
+          self.saveBadge(data,self);
+        },
+      },      
+    }).render();        
+  },
+
+  saveBadge: function (data,self) { 
+    if(!this.checkBadgeExist()){ 
+      $.ajax({
+        url: '/api/user/badge/' + this.userData.data.id, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {
+          this.userData.data.badges.push(data);            
+          self.modalComponent.cleanup();
+          this.renderBadges(this.userData);
+          this.renderAlertMessages(data,self);    
+        }.bind(this),
+      });
+    }
+    else{
+      self.modalComponent.cleanup();
+    }
+  },
+
+  removeBadge:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+   
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-badge',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Remove badge',
+      modalBody:  'Are you sure you want to remove the <strong>Community Manager </strong> badge from ' + this.userData.data.name + ' profile? ' ,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var badgeData = {         
+            userId: $(event.currentTarget ).data('user-id'),
+            type: $(event.currentTarget ).data('badge-type'), 
+            badgeId : $(event.currentTarget ).data('badge-id'),    
+          };        
+          self.deleteBadge(badgeData,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBadge : function (badgeData,self){  
+    $.ajax({
+      url: '/api/user/badge/' + badgeData.userId +'?' + $.param({
+        type: badgeData.type,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        badgeData.removeBadgeSuccess= true;      
+        this.userData.data.badges=_.reject(this.userData.data.badges,function (d){
+          return d.id== badgeData.badgeId;
+        });
+        
+        self.modalComponent.cleanup();
+        this.renderBadges(this.userData);  
+        this.renderAlertMessages(badgeData,self);  
+      }.bind(this),
+    });
+    
+  },
+  checkBadgeExist : function (data,self){
+    var exist = _.findIndex(this.userData.data.badges, { type:'community manager'});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
   },
 
   cleanup: function () {

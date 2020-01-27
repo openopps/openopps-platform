@@ -1,0 +1,69 @@
+<% if(insertSuccess) { %>
+    <div id="add-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+      </div>
+      <div class="usajobs-alert__body">
+        <h3 class="usa-alert-heading">
+        Bureau and Office/post added
+        </h3>
+        <p class="usa-alert-text">You have successfully added <%- user.name %> to the <%- bureau.name %><% if(!_.isEmpty(office)) { %>, <%- office.name %> <% } %>.</p>
+      </div>
+      <button class="usajobs-alert__close" data-behavior="alert.close">
+        <span class="usajobs-assistive-text">Close</span>
+      </button>
+    </div>
+    <% } %>
+    <% if(removeSuccess) { %>
+      <div id="remove-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert" >
+        <div class="usajobs-alert__figure">
+          <div class="usajobs-alert__icon">
+          </div>
+        </div>
+        <div class="usajobs-alert__body">
+          <h3 class="usa-alert-heading">
+          Bureau and Office/post removed
+          </h3>
+          <p class="usa-alert-text">You have successfully removed <%- window.cache.currentUser.name %> from the <%- bureau %><% if(!_.isEmpty(office)) { %>, <%- office %> <% } %>.
+        <button class="usajobs-alert__close" data-behavior="alert.close">
+          <span class="usajobs-assistive-text">Close</span>
+        </button>
+      </div>
+      <% } %>
+
+      <% if(insertBadgeSuccess) { %>
+        <div id="add-badge-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
+            <div class="usajobs-alert__figure">
+                <div class="usajobs-alert__icon">
+                </div>
+            </div>
+            <div class="usajobs-alert__body">
+                <h3 class="usa-alert-heading">
+                    Badge added
+                </h3>
+                <p class="usa-alert-text">You have successfully added the <strong>Community Manager</strong> badge to <%- username %>'s profile.</p>
+            </div>
+            <button class="usajobs-alert__close" data-behavior="alert.close">
+                <span class="usajobs-assistive-text">Close</span>
+            </button>
+        </div>
+        <% } %>
+
+        <% if(removeBadgeSuccess) { %>
+        <div id="remove-badge-success" class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
+            <div class="usajobs-alert__figure">
+                <div class="usajobs-alert__icon">
+                </div>
+            </div>
+            <div class="usajobs-alert__body">
+                <h3 class="usa-alert-heading">
+                    Badge removed
+                </h3>
+                <p class="usa-alert-text">You have successfully removed the <strong>Community Manager</strong> badge from <%- username %>'s profile.</p>
+            </div>
+            <button class="usajobs-alert__close" data-behavior="alert.close">
+                <span class="usajobs-assistive-text">Close</span>
+            </button>
+        </div>
+        <% } %>
