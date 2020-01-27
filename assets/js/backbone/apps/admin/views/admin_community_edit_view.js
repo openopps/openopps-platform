@@ -98,8 +98,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
     $('#community-name').val(community.communityName);
     $('#description').val(community.description);
-    $('#community-support-email').val(community.supportEmail);
-    $('#application-process').val(community.applicationProcess);
+    $('#community-support-email').val(community.supportEmail);  
     $('#microsite-url').val(community.micrositeUrl);
     $('#community-mgr-name').val(community.communityManagerName);
     $('#community-mgr-email').val(community.communityManagerEmail);
@@ -115,8 +114,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       isClosedGroup: $("input[name='community-group']:checked").val(),            
       communityName: $('#community-name').val(),
       description: $('#description').val(),
-      supportEmail: $('#community-support-email').val(),
-      applicationProcess:$('#application-process').val(),
+      supportEmail: $('#community-support-email').val(),     
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),

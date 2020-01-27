@@ -181,7 +181,7 @@ service.sendPrimaryPhaseStartedCommunityNotification = async function (cycleId) 
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/reviews/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',
         },
         layout: 'state.department/layout.html',
       };
@@ -202,7 +202,7 @@ service.sendPrimaryPhaseStartedNotification = async function (user, boardsPopula
       emailsqueued: 'success',
       systemname: 'USAJOBS Agency Talent Portal',
       urlprefix: openopps.agencyportalURL,
-      logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
+      logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',
     },
     layout: 'state.department/layout.html',
   };
@@ -223,7 +223,7 @@ service.sendAlternatePhaseStartedNotification = async function (cycleId) {
           reviewboardlink: process.env.AGENCYPORTAL_URL + '/review/' + results[i].task_id,
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',
         },
         layout: 'state.department/layout.html',
       };
@@ -274,7 +274,7 @@ service.sendCloseCyclePhaseNotSelectedNotification = async function (cycleId) {
           applicationsCount: numOfApplicants,
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',       
         },
         layout: 'state.department/layout.html',
       };
@@ -329,7 +329,7 @@ service.sendCloseCyclePhaseCreatorNotification = async function (cycleId) {
           archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',       
         },
         layout: 'state.department/layout.html',
       };
@@ -352,7 +352,7 @@ service.sendCloseCyclePhaseCommunityUserNotification = async function (cycleId) 
           archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',       
         },
         layout: 'state.department/layout.html',
       };
@@ -375,7 +375,7 @@ service.sendCloseCyclePhaseCommunityManagerNotification = async function (cycleI
           archivelink: process.env.AGENCYPORTAL_URL + '/reviews/',
           systemname: 'USAJOBS Agency Talent Portal',
           urlprefix: openopps.agencyportalURL,
-          logo: '/Content/usaj-design-system/img/logo/png/red-2x.png',       
+          logo: '/Content/usaj-design-system/img/logo/png/red-2x-email.png',       
         },
         layout: 'state.department/layout.html',
       };

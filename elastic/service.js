@@ -188,7 +188,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
   
-  var formatParamTypes = ['skill', 'career', 'series', 'location', 'keywords', 'language', 'agency'];
+  var formatParamTypes = ['community', 'skill', 'career', 'series', 'location', 'keywords', 'language', 'agency'];
 
   var seriesList = [];
   if (query.series && _.isArray(query.series)) {
@@ -261,7 +261,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     request.addTerms(query.state, 'state', 'open');
     request.addTerms(query.location, 'locations.name');
   }
-  
+  request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');
   request.addTerms(query.skill, 'skills.name');
   request.addTerms(query.career, 'careers.id');

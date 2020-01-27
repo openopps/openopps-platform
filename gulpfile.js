@@ -8,7 +8,7 @@ var eslint = require('gulp-eslint');
 var sass = require('gulp-sass');
 var bro = require('gulp-bro');
 var stringify = require('stringify');
-var babel = require('gulp-babel');
+var babelify = require('babelify');
 var uglify = require('gulp-uglify-es').default;
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
@@ -53,8 +53,11 @@ gulp.task('sass', function () {
 // Concatenate & Minify JS
 gulp.task('scripts', function () {
   return gulp.src('assets/js/backbone/app.js')
-    .pipe(babel())
-    .pipe(bro({ transform: stringify }))
+    .pipe(bro({ transform: [ 
+      babelify.configure({ presets: ['@babel/env'] }),
+      stringify
+    ]}))
+    //.pipe(babel({ presets: ['@babel/env'] }))
     .pipe(rename('bundle.min.js'))
     .pipe(sourcemaps.init())
     .pipe(uglify())

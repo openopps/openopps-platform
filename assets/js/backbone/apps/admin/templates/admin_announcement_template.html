@@ -43,11 +43,13 @@
       </div>
     </div>
   </fieldset>
-  <div class="usajobs-button_bar--slim">
-    <div class="usajobs-button_bar__body">
-      <button id="preview-btn" class="usa-button">Preview Changes</button>
-      <button id="edit-btn" class="usa-button" style="display:none;">Make Changes</button>
-      <button id="save-btn" class="usa-button" style="display:none;">Save Changes</button>
+  <% if (window.cache.currentUser.isAdmin) { %>
+    <div class="usajobs-button_bar--slim">
+      <div class="usajobs-button_bar__body">
+        <button id="preview-btn" class="usa-button">Preview Changes</button>
+        <button id="edit-btn" class="usa-button" style="display:none;">Make Changes</button>
+        <button id="save-btn" class="usa-button" style="display:none;">Save Changes</button>
+      </div>
     </div>
-  </div>
+  <% } %>
 </form>

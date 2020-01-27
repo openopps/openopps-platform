@@ -31,6 +31,11 @@ router.get('/api/task/search', async (ctx, next) => {
   ctx.body = results;
 });
 
+router.get('/api/vanity/:vanity', async (ctx) => {
+  var data = await service.getVanityURL(ctx.params.vanity); 
+  ctx.body = data;
+});
+
 router.get('/api/task/communities', auth, async (ctx, next) => {
   var data = await service.getCommunities(ctx.state.user.id); 
   ctx.body = data;
@@ -52,6 +57,15 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
   }).catch(err => {
     ctx.status = err.status;
   })
+});
+
+router.get('/api/task/communitylist', async (ctx, next) => {
+  var communities =  await service.getCommunityList();
+  var communityTypes = {
+    federal: _.filter(communities, { targetAudience: 1 }),
+    student: _.filter(communities, { targetAudience: 2 }),
+  };
+  ctx.body = communityTypes;
 });
 
 router.get('/api/task/selections/:id', auth, async (ctx, next) => {
@@ -154,7 +168,7 @@ router.put('/api/task/:id', auth, async (ctx, next) => {
 });
 
 router.put('/api/publishTask/:id', auth, async (ctx, next) => {
-  if (await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
+  if (ctx.state.user.isAdmin || ctx.state.user.isApprover || await service.canAdministerTask(ctx.state.user, ctx.request.body.id)) {
     ctx.request.body.updatedBy = ctx.state.user.id;
     await service.publishTask(ctx.request.body, function (done) {
       ctx.body = { success: true };
@@ -200,6 +214,7 @@ router.get('/api/task/community/communityManager/:id', auth, async (ctx, next) =
     ctx.status = err.status;
   });
 });
+
 router.post('/api/task/copy', auth, async (ctx, next) => {
   ctx.request.body.updatedBy = ctx.state.user.id;
   await service.copyOpportunity(ctx.request.body, ctx.state.user, function (error, task) {
@@ -232,7 +247,7 @@ function checkTaskState (stateChange, user, task) {
 }
 
 router.delete('/api/task/:id', auth, async (ctx) => {
-  if (await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
+  if (ctx.state.user.isAdmin || await service.canAdministerTask(ctx.state.user, ctx.params.id)) {
     await service.findOne(ctx.params.id).then(async task => {
       if (['draft', 'submitted'].indexOf(task.state) != -1) {
         ctx.body = await service.deleteTask(ctx, task);

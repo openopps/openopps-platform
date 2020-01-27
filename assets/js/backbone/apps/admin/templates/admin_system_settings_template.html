@@ -5,7 +5,9 @@
       <th>Name</th>
       <th>Value</th>
       <th>Updated date</th>
-      <th class="center">Edit</th>
+      <% if (window.cache.currentUser.isAdmin) { %>
+        <th class="center">Edit</th>
+      <% } %>
     </tr>
   </thead>
   <tbody>
@@ -14,12 +16,14 @@
         <td><%- systemSetting.display %></td>
         <td><%- systemSetting.value %></td>
         <td><%- moment(systemSetting.updated_at).format('MM/DD/YYYY hh:mma') %></td>
-        <td class="metrics-table__button">
-          <a href="/admin/sitewide?editSetting" data-key="<%- systemSetting.key %>" data-value="<%- systemSetting.value %>" data-display="<%- systemSetting.display %>" class="edit-system-setting" alt="Edit <%- systemSetting.display %>" title="Edit <%- systemSetting.display %>">
-            <span class='fas fa-edit'></span>
-            <span class="usa-sr-only">Edit <%- systemSetting.display %></span>
-          </a>
-        </td>
+        <% if (window.cache.currentUser.isAdmin) { %>
+          <td class="metrics-table__button">
+            <a href="/admin/sitewide?editSetting" data-key="<%- systemSetting.key %>" data-value="<%- systemSetting.value %>" data-display="<%- systemSetting.display %>" class="edit-system-setting" alt="Edit <%- systemSetting.display %>" title="Edit <%- systemSetting.display %>">
+              <span class='fas fa-edit'></span>
+              <span class="usa-sr-only">Edit <%- systemSetting.display %></span>
+            </a>
+          </td>
+        <% } %>
       </tr>
     <% }); %>
   </tbody>

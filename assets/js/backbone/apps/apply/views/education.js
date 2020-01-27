@@ -30,7 +30,7 @@ function getDataFromAddEducationPage (){
     schoolName: $('#school-name').val(),
     countryId: $('#apply_country').val(),
     postalCode:$('#postal-code').val(),
-    cityName: this.$('#city').val(),
+    cityName: $('#city').val(),
     countrySubdivisionId: $('#apply_countrySubdivision').val(),
     degreeLevelId :$('#degree').val(),
     completionMonth: $('#completion-month').val(),
@@ -54,11 +54,11 @@ function getDataFromAddEducationPage (){
 function getDataFromEducationPage (){
   var selectedTranscript = $('input[name=transcripts]:checked').val();  
   var modelData = {
-    isCurrentlyEnrolled:this.$('input[name=Enrolled]:checked').val(),
-    isMinimumCompleted:this.$('input[name=Junior]:checked').val(),
-    isEducationContinued: this.$('input[name=ContinueEducation]:checked').val(),
-    isAbleToWork: this.$('input[name=InternshipAvailability]:checked').val(),
-    cumulativeGpa: this.$('#cumulative-gpa').val(),
+    isCurrentlyEnrolled:$('input[name=Enrolled]:checked').val(),
+    isMinimumCompleted:$('input[name=Junior]:checked').val(),
+    isEducationContinued: $('input[name=ContinueEducation]:checked').val(),
+    isAbleToWork: $('input[name=InternshipAvailability]:checked').val(),
+    cumulativeGpa: $('#cumulative-gpa').val(),
     transcriptId:selectedTranscript ?selectedTranscript.split('|')[0]:null,
   };
   return modelData;
