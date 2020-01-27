@@ -86,6 +86,7 @@
     "pg-promise": "^6.5.4",
     "postgres-gen": "^0.10.0",
     "postgres-gen-dao": "^0.18.2",
+    "remove-markdown": "^0.3.0",
     "request": "^2.87.0",
     "select2": "3.5.2-browserify",
     "stringify": "^5.2.0",
