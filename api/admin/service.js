@@ -819,9 +819,9 @@ module.exports.getCommunities = async function (user) {
 };
 module.exports.saveBureauOffice = async function (ctx,attributes,done) { 
   if(attributes.officeId && attributes.bureauId){
-    var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId);
+    var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.dataBureauId);
     attributes.lastModified = new Date();
-    return await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.bureauId).then(async (e) => { 
+    return await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.dataBureauId).then(async (e) => { 
       return await dao.Office.update(attributes).then(async (office) => {
         var audit = module.exports.createAuditLog('OFFICE_UPDATED', ctx, {      
           officeId: office.officeId,
