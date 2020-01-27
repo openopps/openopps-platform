@@ -53,16 +53,15 @@ gulp.task('sass', function () {
 // Concatenate & Minify JS
 gulp.task('scripts', function () {
   return gulp.src('assets/js/backbone/app.js')
-    .pipe(bro({ transform: [ 
+    .pipe(bro({ error: 'emit', transform: [ 
       babelify.configure({ presets: ['@babel/env'] }),
       stringify
     ]}))
-    //.pipe(babel({ presets: ['@babel/env'] }))
     .pipe(rename('bundle.min.js'))
     .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('dist/js'));
+    .pipe(gulp.dest('dist/js'))
 });
 
 // Move additional resources
