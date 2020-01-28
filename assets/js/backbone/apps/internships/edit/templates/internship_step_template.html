@@ -74,7 +74,7 @@
               < ' or '>' are not allowed</span>
             <p>Write a catchy, but descriptive title to entice participants to click on the internship.</p>
             <input type="text" id="intern-title" class="fullwidth form-control validate" value="<%- data.title %>" data-validate="empty,count100,html" />
-            <p class="usajobs-form__help-brief">Maximum of 100 characters</p>
+            <p class="usajobs-form__help-brief">Maximum of 100 characters.  <span id="opportunity-title-count">(100 characters remaining)</span></p>
           </div>
           <div class="form-group required-input" id="details">
             <label for="opportunity-details">

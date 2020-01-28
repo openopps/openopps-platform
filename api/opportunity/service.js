@@ -263,7 +263,7 @@ async function isCommunityApprover (user, task) {
       return undefined;
     });
     // If community is DoS then must check same bureau
-    if(!community || (community.referenceId == 'dos' && task.bureauId != user.bureauId)) {
+    if(!community || (community.referenceId == 'dos' && !_.find(user.bureauOffice, { bureau_id: task.bureauId }) )) {
       return false;
     } else {
       return (await dao.CommunityUser.findOne('user_id = ? and community_id = ?', user.id, task.communityId).catch(() => {
@@ -565,6 +565,7 @@ async function sendTaskAppliedNotification (user, task) {
 
 async function sendTaskSubmittedNotification (user, task) {
   var baseData = await getNotificationTemplateData(user, task, 'task.update.submitted.admin');
+
   var updateBaseData = (admin) => {
     var data = _.cloneDeep(baseData);
     data.model.admin = admin;
@@ -578,7 +579,7 @@ async function sendTaskSubmittedNotification (user, task) {
   } else if (task.communityId) {
     _.forEach((await dao.User.query(dao.query.communityAdminsQuery, task.communityId)), updateBaseData);
   } else {
-    _.forEach(await dao.User.find('"isAdmin" = true and disabled = false'), updateBaseData);
+    _.forEach(await dao.User.find('"is_approver" = true and disabled = false'), updateBaseData);
   }
 }
 

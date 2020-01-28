@@ -207,7 +207,7 @@ $color-completed: $color-primary-alt;
 .usajobs-pill--opportunity-status {
   margin-bottom: $size-S;
   padding: 0 $size-S;
-  max-width: 12rem;
+  max-width: 14.5rem;
   background-color: $color-gray-light;
   border: 1px solid $color-gray-light;
   border-radius: 1.15rem;
@@ -222,7 +222,9 @@ $color-completed: $color-primary-alt;
     color: $color-white;
   }
 
-  &.status-open {
+  &.status-open,                                                                          // Opportunity/internship states
+  &.status-applied, &.status-assigned, &.status-complete,                                 // Non-state applicant statuses
+  &.dos-status-applied, &.dos-status-primary-select, &.dos-status-alternate-select, &.dos-status-completed {    // State applicant statuses
     background-color: $color-advancing;
     border-color: $color-advancing;
     color: $color-white;
@@ -246,7 +248,8 @@ $color-completed: $color-primary-alt;
     color: $color-white;
   }
 
-  &.status-in-progress {
+  &.status-in-progress,         // Opportunity/internship states
+  &.dos-status-in-progress {    // State applicant statuses
     background-color: $color-paused;
     border-color: $color-paused;
   }
@@ -256,7 +259,9 @@ $color-completed: $color-primary-alt;
     border-color: $color-completed;
   }
 
-  &.status-canceled {
+  &.status-canceled,                                                                    // Opportunity/internship states
+  &.status-not-assigned,                                                                // Non-state applicant statuses
+  &.dos-status-not-submitted, &.dos-status-not-selected, &.dos-status-not-completed {   // State applicant statuses
     color: $color-white;
     background-color: $color-secondary;
     border-color: $color-secondary;
