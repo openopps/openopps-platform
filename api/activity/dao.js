@@ -42,6 +42,12 @@ const badgeQuery = 'select badge.*, @user.* ' +
 'from badge inner join @midas_user "user" on badge.user = "user".id ' +
 'where badge.task = ? ';
 
+const communitiesTasksQuery = 'SELECT community.community_id, community.community_name, community.target_audience ,community.reference_id, COUNT(task.id) as taskCount ' + 
+'FROM community JOIN task  ON community.community_id = task.community_id where community.reference_id is null and  task."publishedAt" is not null ' +
+'group by community.community_name, community.community_id ' +
+'order by taskCount desc ' +
+'limit 5 ' ;
+
 const options = {
   user: {
     fetch: {
@@ -94,6 +100,7 @@ module.exports = function (db) {
     User: dao({ db: db, table: 'midas_user' }),
     Badge: dao({ db: db, table: 'badge'}),
     Task: dao({ db: db, table: 'task' }),
+    Community : dao({ db: db, table: 'community' }),
     query: {
       userByAgency: userByAgencyQuery,
       userByTitle: userByTitleQuery,
@@ -102,6 +109,7 @@ module.exports = function (db) {
       participantsQuery: participantsQuery,
       badgeQuery: badgeQuery,
       taskByType: taskByTypeQuery,
+      communitiesTasks :communitiesTasksQuery,
     },
     options: options,
     clean: clean,
