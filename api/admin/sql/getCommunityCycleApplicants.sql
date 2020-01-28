@@ -3,7 +3,7 @@ SELECT
 midas_user.id As "applicantId", midas_user.name as "applicantName", midas_user.username,app.cycle_id,task.state,task_list.title,
  coalesce(midas_user.given_name, (string_to_array(trim(midas_user.name), ' '))[array_lower(string_to_array(trim(midas_user.name), ' '), 1)]) as given_name,
 coalesce(midas_user.last_name, (string_to_array(trim(midas_user.name), ' '))[array_upper(string_to_array(trim(midas_user.name), ' '), 1)]) as last_name, 
-app.application_id AS "id", app.submitted_at AS "submittedAt", app.community_id,
+app.application_id AS "id", app.submitted_at AS "submittedAt", app.community_id, app.withdrawn,
   comm.community_name AS "communityName", c.name AS "cycleName", c.cycle_start_date AS "cycleStartDate",
   c.apply_end_date AS "applyEndDate", app.updated_at AS "updatedAt", phase."name", phase."sequence", 
   case when app.internship_completed_at is not null then true else false end AS "internshipComplete",
@@ -48,7 +48,7 @@ app.application_id AS "id", app.submitted_at AS "submittedAt", app.community_id,
 
 select applications.* 
 from applications
- where applications.community_id = ? and applications.cycle_id= ? [filter clause]
+ where applications.withdrawn <> true and applications.community_id = ? and applications.cycle_id= ? [filter clause]
 order by [order by]
 
 
