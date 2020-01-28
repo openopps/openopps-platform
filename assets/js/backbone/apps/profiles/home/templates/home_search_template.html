@@ -12,6 +12,16 @@
     </div>
     <div class="usajobs-grid-full">
         <div class="usa-width-one-fourth">
+            <h3>Community</h3>
+            <ul class="usa-unstyled-list">          
+                <% _.forEach(search.communities, function(community) { %>
+                <li class="usajobs-open-opps-search_item">
+                    <a href="/search?community=<%- community.community_id %>"><%- community.community_name %></a>
+                </li>
+                <% }); %>
+            </ul>
+        </div>
+        <div class="usa-width-one-fourth">
             <h3>Career field</h3>
             <ul class="usa-unstyled-list">
                 <li class="usajobs-open-opps-search_item">
