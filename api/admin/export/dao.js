@@ -42,7 +42,7 @@ const exportUserCommunityData = 'SELECT ' +
     'from office where office.office_id = m_user.office_id ' +
   ') as office, ' +
   'concat_ws(\', \', m_user.city_name, country_subdivision.value, country.value) as location, ' +
-  'm_user.bio, community_user.is_manager as "isAdmin", m_user.disabled ' +
+  'm_user.bio, community_user.is_manager as "isAdmin", community_user.is_approver as "isBIC", community_user.disabled ' +
   'FROM midas_user m_user ' +
   'LEFT JOIN agency ON agency.agency_id = m_user.agency_id ' +
   'LEFT JOIN tagentity_users__user_tags ON tagentity_users__user_tags.user_tags = m_user.id ' +
@@ -193,6 +193,7 @@ var exportUserFormat = {
   'location': {field: 'location', filter: nullToEmptyString},
   'bio': {field: 'bio', filter: nullToEmptyString},
   'admin': 'isAdmin',
+  'BIC': 'isBIC',
   'disabled': 'disabled',
 };
 
