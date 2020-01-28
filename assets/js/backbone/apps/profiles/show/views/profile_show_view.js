@@ -765,7 +765,7 @@ var ProfileShowView = Backbone.View.extend({
       alert: 'error',  
       action: 'delete',   
       modalTitle: 'Remove badge',
-      modalBody:  'Are you sure you want to remove the <strong>Community Manager </strong> badge from ' + this.userData.data.name + ' profile? ' ,        
+      modalBody:  'Are you sure you want to remove the <strong>Community Manager </strong> badge from ' + this.userData.data.name + '\'s profile? ',       
       secondary: {
         text: 'Cancel',
         action: function () {          
