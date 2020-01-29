@@ -110,6 +110,23 @@ var submittedApplication = {
       this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
     }.bind(this));
   },
+
+  toggleAccordion: function (e) {
+    var element = $(e.currentTarget);
+    var target = element.siblings('.usa-accordion-content');
+    var otherElements = element.parent('li').siblings('li').find('.usa-accordion-button');
+    var otherTargets = element.parent('li').siblings('li').find('.usa-accordion-content');
+    var open = element.attr('aria-expanded') == 'true';
+    if (!open) {
+      otherElements.attr('aria-expanded', false);
+      otherTargets.attr('aria-hidden', true);
+      element.attr('aria-expanded', true);
+      target.attr('aria-hidden', false);
+    } else {
+      element.attr('aria-expanded', false);
+      target.attr('aria-hidden', true);
+    }
+  },
 };
 
 module.exports = submittedApplication;

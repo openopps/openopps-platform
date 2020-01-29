@@ -103,6 +103,7 @@ var ApplyView = Backbone.View.extend({
     //submitted_application events
     'click .update-application'                                   : function (e) { this.callMethod(SubmittedApplication.updateApplication, e); },
     'click .withdraw-application'                                 : function (e) { this.callMethod(SubmittedApplication.withdrawApplication, e); },
+    'click .accordion-1'                                          : function (e) { this.callMethod(SubmittedApplication.toggleAccordion, e); },
   },
 
   // initialize components and global functions
