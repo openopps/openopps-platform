@@ -16,23 +16,105 @@
       <fieldset class="usajobs-fieldset">
         <div class="usajobs-profile-home-section__body">
           <p>You have submitted the following application to the <%= communityName.community_name %> for <%= cycle.name %>.</p>
+          <p><strong>Application received:</strong> 12/15/2019</p>
           <% if (new Date(cycle.apply_end_date) > new Date()) { %>
             <button class="usa-button usa-button-primary update-application">Update</button>
           <% } %>
           <% if (new Date(cycle.review_end_date) > new Date() && cycle.closed_date === null) { %>
             <button class="usa-button usa-button-secondary-alert-outline withdraw-application">Withdraw</button>
           <% } %>
-          <h3 class="usa
-          jobs-profile-home-section__sub-section">
+          <h3 class="usajobs-profile-home-section__sub-section">
             Applied to these internship opportunities
           </h3>
         </div>
         <% if (new Date(cycle.apply_end_date) < new Date()) { %>
-          <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
-            <% if (firstChoice) { %>
-              <a href="/internships/<%- firstChoice.taskId %>">
-              <div class="usajobs-card--large review-application">
-                <h4>1st choice</h4>
+        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers submitted-application">
+          <% if (firstChoice) { %>
+          <a href="/internships/<%- firstChoice.taskId %>">
+            <div class="usajobs-card--large review-application">
+              <h4>1st choice</h4>
+              <div class="usajobs-grid-full">
+                <div class="usa-width-three-fourths">
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- firstChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+                <div class="usa-width-one-fourth application-status">
+                  <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                  <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+                </div>
+              </div>                
+            </div>
+          </a>
+          <% } %>
+          <% if (secondChoice) { %>
+          <a href="/internships/<%- secondChoice.taskId %>">
+            <div class="usajobs-card--large review-application">
+              <h4>2nd choice</h4>
+              <div class="usajobs-grid-full">
+                <div class="usa-width-three-fourths">
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- secondChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+                <div class="usa-width-one-fourth application-status">
+                  <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                  <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+                </div>
+              </div>                
+            </div>
+          </a>
+          <% } %>
+          <% if (thirdChoice) { %>
+          <a href="/internships/<%- thirdChoice.taskId %>">
+            <div class="usajobs-card--large review-application">
+              <h4>3rd choice</h4>
+              <div class="usajobs-grid-full">
+                <div class="usa-width-three-fourths">
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- thirdChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+                <div class="usa-width-one-fourth application-status">
+                  <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                  <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+                </div>
+              </div>                
+            </div>
+          </a>
+          <% } %>
+        </div>
+        <% } else { %>
+        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers submitted-application">
+          <% if (firstChoice) { %>
+          <div class="usajobs-card--large review-application">
+            <h4>1st choice</h4>
+            <div class="usajobs-grid-full">
+              <div class="usa-width-three-fourths">
                 <h3 class="usajobs-card__title" itemprop="title">
                   <%- firstChoice.title %>
                 </h3>
@@ -45,100 +127,135 @@
                   </p>
                 </div>
               </div>
-            </a>
-            <% } %>
-            <% if (secondChoice) { %>
-              <a href="/internships/<%- secondChoice.taskId %>">
-              <div class="usajobs-card--large review-application">
-                <h4>2nd choice</h4>
-                <h3 class="usajobs-card__title" itemprop="title">
-                  <%- secondChoice.title %>
-                </h3>
-                <div class="usajobs-card__body">
-                  <h5 class="program-label">
-                    Bureau/Office
-                  </h5>
-                  <p>
-                    <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
-                  </p>
-                </div>
+              <div class="usa-width-one-fourth application-status">
+                <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
               </div>
-              </a>
-            <% } %>
-
-            <% if (thirdChoice) { %>
-              <a href="/internships/<%- thirdChoice.taskId %>">
-              <div class="usajobs-card--large review-application">
-                <h4>3rd choice</h4>
-                <h3 class="usajobs-card__title" itemprop="title">
-                  <%- thirdChoice.title %>
-                </h3>
-                <div class="usajobs-card__body">
-                  <h5 class="program-label">
-                    Bureau/Office
-                  </h5>
-                  <p>
-                    <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
-                  </p>
-                </div>
-              </div>
-              </a>
-            <% } %>
-          </div>
-          <% } else { %>
-          <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
-            <% if (firstChoice) { %>          
-              <div class="usajobs-card--large review-application">
-                <h4>1st choice</h4>
-                <h3 class="usajobs-card__title" itemprop="title">
-                  <%- firstChoice.title %>
-                </h3>
-                <div class="usajobs-card__body">
-                  <h5 class="program-label">
-                    Bureau/Office
-                  </h5>
-                  <p>
-                    <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
-                  </p>
-                </div>
-              </div>
-            
-            <% } %>
-            <% if (secondChoice) { %>
-              <div class="usajobs-card--large review-application">
-                <h4>2nd choice</h4>
-                <h3 class="usajobs-card__title" itemprop="title">
-                  <%- secondChoice.title %>
-                </h3>
-                <div class="usajobs-card__body">
-                  <h5 class="program-label">
-                    Bureau/Office
-                  </h5>
-                  <p>
-                    <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
-                  </p>
-                </div>
-              </div>
-            <% }%> 
-         
-            <% if (thirdChoice) { %>
-              <div class="usajobs-card--large review-application">
-                <h4>3rd choice</h4>
-                <h3 class="usajobs-card__title" itemprop="title">
-                  <%- thirdChoice.title %>
-                </h3>
-                <div class="usajobs-card__body">
-                  <h5 class="program-label">
-                    Bureau/Office
-                  </h5>
-                  <p>
-                    <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
-                  </p>
-                </div>
-              </div>
-            <% } %>
+            </div>                
           </div>
           <% } %>
+          <% if (secondChoice) { %>
+          <div class="usajobs-card--large review-application">
+            <h4>2nd choice</h4>
+            <div class="usajobs-grid-full">
+              <div class="usa-width-three-fourths">
+                <h3 class="usajobs-card__title" itemprop="title">
+                  <%- secondChoice.title %>
+                </h3>
+                <div class="usajobs-card__body">
+                  <h5 class="program-label">
+                    Bureau/Office
+                  </h5>
+                  <p>
+                    <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+                  </p>
+                </div>
+              </div>
+              <div class="usa-width-one-fourth application-status">
+                <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+              </div>
+            </div>                
+          </div>
+          <% }%>
+          <% if (thirdChoice) { %>
+          <div class="usajobs-card--large review-application">
+            <h4>3rd choice</h4>
+            <div class="usajobs-grid-full">
+              <div class="usa-width-three-fourths">
+                <h3 class="usajobs-card__title" itemprop="title">
+                  <%- thirdChoice.title %>
+                </h3>
+                <div class="usajobs-card__body">
+                  <h5 class="program-label">
+                    Bureau/Office
+                  </h5>
+                  <p>
+                    <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+                  </p>
+                </div>
+              </div>
+              <div class="usa-width-one-fourth application-status">
+                <span class="usajobs-pill--opportunity-status dos-status-in-progress">In progress</span>
+                <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+              </div>
+            </div>                
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+      </fieldset>
+      <fieldset class="usajobs-fieldset">
+        <div class="usajobs-profile-home-section__body">
+          <h3 class="usajobs-profile-home-section__sub-section">
+            Selected for this internship
+          </h3>
+        </div>
+        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers submitted-application">
+          <div class="usajobs-card--large review-application">
+            <div class="usajobs-grid-full">
+              <div class="usa-width-three-fourths">
+                <h3 class="usajobs-card__title" itemprop="title">
+                  Selected Internship Title Here
+                </h3>
+                <div class="usajobs-card__body">
+                  <h5 class="program-label">
+                    Bureau/Office
+                  </h5>
+                  <p>
+                    Bureau Name/Office Name
+                  </p>
+                </div>
+              </div>
+              <div class="usa-width-one-fourth application-status">
+                <span class="usajobs-pill--opportunity-status dos-status-alternate-select">Alternate</span>
+                <p class="usajobs-form__help-brief">Last updated: 12/2/2019</p>
+              </div>
+            </div>                
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="usajobs-fieldset">
+        <div class="usajobs-profile-home-section__body">
+          <h3 class="usajobs-profile-home-section__sub-section">
+            Messages
+          </h3>
+        </div>
+        <div class="usajobs-profile-home-section__body">
+          <ul class="usa-accordion">
+            <li>
+              <button class="usa-accordion-button" aria-expanded="true" aria-controls="a1">
+                Application received
+              </button>
+              <div id="a1" class="usa-accordion-content">
+                Some text here
+              </div>
+            </li>
+            <li>
+              <button class="usa-accordion-button" aria-expanded="true" aria-controls="a2">
+                Selection decision
+              </button>
+              <div id="a2" class="usa-accordion-content">
+                Email body here.
+                Thanks,
+                The U.S.Department of State, Student Internship Program (Unpaid)
+              </div>
+            </li>
+          </ul>
+        </div>
+      </fieldset>
+      <fieldset class="usajobs-fieldset">
+        <div class="usajobs-profile-home-section__body">
+          <h3 class="usajobs-profile-home-section__sub-section">
+            Questions?
+          </h3>
+        </div>
+        <div class="usajobs-profile-home-section__body">
+          <p>If you have any questions about your application or status, please contatct the U.S. Department of State 
+            Student Internship Program (Unpaid) at <a href="mailto:studentinternship@state.gov">studentinternship@state.gov</a></p>
+        </div>
+      </fieldset>
+      <fieldset class="usajobs-fieldset">
         <div class="usajobs-profile-home-section__body submitted-application-last">       
         </div>
       </fieldset>

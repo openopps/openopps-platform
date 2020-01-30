@@ -988,6 +988,47 @@
 
       &-has-drawers {
         padding: $size-default 0 0 0;
+
+        &.submitted-application {
+          a {
+            text-decoration: none;
+
+            &:visited {
+              color: $color-primary;
+            }
+
+            h4, p {
+              color: $color-black;
+            }
+          }
+
+          & a:first-child .usajobs-card--large.review-application {
+            border-top: 0.1rem solid $color-gray-light;
+          }
+
+          & a .usajobs-card--large.review-application {
+            border-top: none;
+          }
+          
+          .application-status {
+            margin-top: $size-default;
+
+            .usajobs-form__help-brief {
+              margin-bottom: 0;
+            }
+
+            @include media($L) {
+              text-align: center;
+              margin-top: initial;
+
+              .usajobs-pill--opportunity-status {
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: $size-base;
+              }
+            }
+          }
+        }
       }
 
       p:last-child {
