@@ -21,6 +21,7 @@
     "LOGINGOV": false,
     "LOGOUT_URL": "",
     "NODE_ENV": "production",
+    "NOTIFICATION_API_KEY": "",
     "NOTIFICATIONS_BCC": "",
     "NOTIFICATIONS_CC": "",
     "PROFILE_URL": "",
