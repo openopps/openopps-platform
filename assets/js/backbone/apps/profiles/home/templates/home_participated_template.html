@@ -39,7 +39,7 @@
               <% for (var i in data) { %>
                 <tr class="usajobs-grid open-opps-row" data-id="<%- data[i].id %>">
                   <td class="your-status">
-                    <span class="usajobs-pill--opportunity-status status-<%= getStatus(data[i]).charAt(0).toLowerCase() + getStatus(data[i]).slice(1).replace(' ', '-') %>">
+                    <span class="usajobs-pill--opportunity-status status-<%= getStatus(data[i]).charAt(0).toLowerCase() + getStatus(data[i]).slice(1).replace(' ', '-').toLowerCase() %>">
                       <%= getStatus(data[i]).charAt(0).toUpperCase() + getStatus(data[i]).slice(1) %>
                     </span>
                   </td>
