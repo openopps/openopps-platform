@@ -55,7 +55,12 @@ var submittedApplication = {
         primary: {
           text: 'Withdraw',
           action: function () {
-            submittedApplication.submitWithdraw.bind(this)(this.data.applicationId, this.data.userId);
+            if(new Date(this.data.cycle.apply_end_date) > new Date()){
+              submittedApplication.submitDelete.bind(this)(this.data.applicationId, this.data.userId);
+            }
+            else{
+              submittedApplication.submitWithdraw.bind(this)(this.data.applicationId, this.data.userId);
+            }
           }.bind(this),
         },
       }).render();
