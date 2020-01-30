@@ -1,0 +1,11 @@
+<p>Hello <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>The application period for the U.S. Department of State Student Internship Program (Unpaid) will close on <%- moment(applyEndDate).format('MMMM DD, YYYY') %> at 11:59 p.m. EST.</p>
+
+<p>It looks like you have started an application, but have not submitted it. If you're still interested in applying to the internship program, click the link below to submit your application before the application period closes.</p>
+
+<p align="left" class="about-message" style="font-size: 19px; font-weight: 700; color: #212121; letter-spacing: 0px; font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif'; text-align: left; line-height: 24px; margin: 0;">Can I update my application?</p>
+
+<p><a href="<%- globals.urlPrefix %>/application/<%- applicationId %>">Sign into Open Opportunities to submit your application</a></p>
+
+<p>Did you already submit your application? Great! You can check the status of your application on your <a href="<%- globals.urlPrefix %>/home">Open Opportunities dashboard</a>. If you need to make an update, don't forget to submit your application again.</p>

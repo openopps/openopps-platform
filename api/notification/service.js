@@ -17,6 +17,16 @@ if (protocol == '') {
   };
 }
 
+function checkEmailThrottle (index, limit) {
+  return new Promise(resolve => {
+    if((index + 1) % limit == 0) {
+      setTimeout(resolve, 1500);
+    } else {
+      resolve();
+    }
+  });
+}
+
 function createNotification (notification) {
   var path = __dirname + '/' + notification.action + '/template';
   var template = require(path);
@@ -185,12 +195,14 @@ function insertAWSNotification (notification) {
 }
 
 function runSchedule (scheduleRequest) {
-  if(scheduleRequest.type.toLowerCase() == 'all') {
-    // get list of all notification types
-  } else {
-    schedules.getJob(scheduleRequest.job).run();
-  }
-  return true;
+  schedules.getJob(scheduleRequest.job).getNotificationData().then(async results => {
+    for(let i = 0; i < results.length; i++) {
+      createNotification(results[i]);
+      await checkEmailThrottle(i, 20);
+    }
+  }).catch(err => {
+    log.error(err);
+  });
 }
 
 function listSchedules () {
@@ -198,6 +210,7 @@ function listSchedules () {
 }
 
 module.exports = {
+  checkEmailThrottle: checkEmailThrottle,
   createNotification: createNotification,
   processNotification: processNotification,
   insertAWSNotification: insertAWSNotification,

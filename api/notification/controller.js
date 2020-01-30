@@ -40,7 +40,7 @@ router.post('/api/notifications', async (ctx, next) => {
 
 router.post('/api/notifications/schedule/run', async (ctx, next) => {
   ctx.request.body = ctx.request.body || ctx.request.fields;
-  if(_.includes(ctx.request.header['openopps-notification-key'], openopps.NOTIFICATION_API_KEY)) {
+  if(openopps.NOTIFICATION_API_KEY && _.includes(ctx.request.header['openopps-notification-key'], openopps.NOTIFICATION_API_KEY)) {
     service.runSchedule(ctx.request.body);
     ctx.status = 202;
   } else {
@@ -50,7 +50,7 @@ router.post('/api/notifications/schedule/run', async (ctx, next) => {
 
 router.post('/api/notifications/schedule/list', async (ctx, next) => {
   ctx.request.body = ctx.request.body || ctx.request.fields;
-  if(_.includes(ctx.request.header['openopps-notification-key'], openopps.NOTIFICATION_API_KEY)) {
+  if(openopps.NOTIFICATION_API_KEY && _.includes(ctx.request.header['openopps-notification-key'], openopps.NOTIFICATION_API_KEY)) {
     ctx.status = 200;
     ctx.body = service.listSchedules();
   } else {

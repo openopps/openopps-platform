@@ -5,7 +5,7 @@ const jobs = {
 const undefinedJob = {
   name: 'JOB NOT FOUND',
   description: 'JOB NOT FOUND',
-  run: function () {},
+  getNotificationData: function () {},
   status: function () {
     return this.name;
   },
@@ -14,7 +14,7 @@ const undefinedJob = {
 module.exports = {
   /**
    * @param {string} key
-   * @returns {Object} a job for running or scheduling
+   * @returns {Object} a job
    */
   getJob: function (key) {
     return jobs[key] || undefinedJob;
