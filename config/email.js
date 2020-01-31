@@ -12,6 +12,8 @@ const isSecure = function () {
 module.exports = {
   AWS_ACCOUNT: process.env.AWS_ACCOUNT || '',
 
+  NOTIFICATION_API_KEY: process.env.NOTIFICATION_API_KEY,
+
   // Email dispatch protocol
   // (for now only SMTP, but NodeMailer supports other transports with plugins)
   // easy to create additional configurations
