@@ -3,6 +3,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
+var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
@@ -27,9 +28,9 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   initialize: function (options) {
     this.options = options; 
-    this.departments={};  
-    this.communityInfo={};
-    this.bureaus                = [];
+    this.departments = {};  
+    this.communityInfo = {};
+    this.bureaus = [];
     this.params = new URLSearchParams(window.location.search);   
     return this;
   },
@@ -39,9 +40,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.initializeBureaus(); 
     this.initializeAgencySelect();
     this.loadDepartments();  
+
     if(this.options.communityId){
-      this.loadCommunity(); 
-           
+      this.loadCommunity();     
     }
     else{
       var data = {
@@ -49,7 +50,8 @@ var AdminCommunityEditView = Backbone.View.extend({
         departments : this.departments,         
       };   
         
-      this.$el.html(_.template(AdminCommunityFormTemplate)(data));   
+      this.$el.html(_.template(AdminCommunityFormTemplate)(data));
+      this.renderCustomize();   
       this.$el.localize(); 
       this.initializeCounts();
       $('#search-results-loading').hide();   
@@ -104,6 +106,17 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#community-mgr-email').val(community.communityManagerEmail);
   },
 
+  initializeDisplayFormFields: function (community) {
+    $('#display-title').val(community.banner.title);
+    $('#display-title-color').val(community.banner.titleColor);
+    $('#display-subtitle').val(community.banner.subtitle);
+    $('#display-subtitle-color').val(community.banner.subtitleColor);
+    $('#display-description').val(community.banner.description);
+    $('#display-description-color').val(community.banner.descriptionColor);
+    $('#display-banner-color').val(community.banner.bannerColor);
+    $('#vanityURL').val(community.vanityURL);
+  },
+
   getDataFromPage: function (){
     var modelData = {
       communityId: this.options ? this.options.communityId: null,
@@ -121,6 +134,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     };
     return modelData;
   },
+
   loadCommunity: function () {
     $.ajax({
       url: '/api/admin/community/' + this.options.communityId,
@@ -133,11 +147,15 @@ var AdminCommunityEditView = Backbone.View.extend({
         if(community.referenceId=='dos'){
           this.renderBureausAndOffices();
         }
+        this.renderCustomize();
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
+        if (window.cache.currentUser.isAdmin) {
+          this.initializeDisplayFormFields(community);
+        };
         $('#search-results-loading').hide();
        
       }.bind(this),
@@ -146,6 +164,14 @@ var AdminCommunityEditView = Backbone.View.extend({
         showWhoopsPage();
       },
     });
+  },
+
+  renderCustomize: function () {
+    var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
+      imageId: this.community.imageId,
+      communityId:this.options.communityId,     
+    });
+    $('#custom-display').html(customizeTemplate);
   },
 
   renderBureausAndOffices: function () {
@@ -176,6 +202,15 @@ var AdminCommunityEditView = Backbone.View.extend({
     [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}].forEach(function (item) {
       $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
     });
+  },
+
+  initializePhoto: function () {
+    if (this.photoView) { this.photoView.cleanup(); }
+    this.photoView = new ProfilePhotoView({
+      data: this.model,
+      el: '.profile-photo',
+    });
+    this.photoView.render();
   },
 
   validateField: function (e) {
