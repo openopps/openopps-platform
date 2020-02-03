@@ -729,3 +729,32 @@
   margin-left: 1.5rem;
 }
 
+.color-button { 
+  padding: 0 0.5em;
+}
+
+.display-subtitle-color-group {
+  max-width: 46rem;
+  margin-left: 0;
+}
+
+#community-preview .search__box-search {
+  position: relative;
+
+  .community-logo-preview {
+    width: 11rem;
+    height: 11rem;
+  }
+
+  @include media($M) {
+    h1, h3, p.description {
+      width: calc(100% - 13.5rem);
+    }
+
+    .community-logo-preview {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+}
