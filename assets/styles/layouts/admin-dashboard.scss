@@ -698,6 +698,22 @@
   margin-bottom: $size-M;
 }
 
+.usajobs-open-opps-admin-dashboard .usa-width-one-half #s2id_agencies {
+  @include media($M) {
+    display: block;
+    max-width: 22.8rem;
+  }
+
+  @media screen and (min-width: 700px) {
+    max-width: 27.6rem;
+  }
+
+  @include media($ML) {
+    display: inline-block;
+    max-width: 46rem;
+  }
+}
+
 .label-brief {
   margin-top: $size-XS;
   margin-bottom: $size-XS;
