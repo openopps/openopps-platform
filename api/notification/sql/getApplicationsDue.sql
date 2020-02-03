@@ -4,4 +4,4 @@ select
 from application
 join cycle on "cycle".cycle_id = application.cycle_id
 join midas_user on midas_user.id = application.user_id
-where DATE_PART('day', cycle.apply_end_date - current_date) = 3
+where DATE_PART('day', cycle.apply_end_date - current_date) = 3 and application.submitted_at is null
