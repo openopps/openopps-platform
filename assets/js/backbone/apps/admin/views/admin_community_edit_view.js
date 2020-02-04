@@ -7,6 +7,7 @@ var AdminCommunityCustomFormTemplate = require('../templates/admin_community_cus
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
+var AdminCommunityPreviewTemplate = require('../templates/admin_community_preview_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
 var Modal = require('../../../components/modal');
@@ -30,6 +31,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-subtitle-color-text'   : 'updateColorField',
     'change #display-description-color-text': 'updateColorField',
     'change #display-banner-color-text'     : 'updateColorField',
+    'click #community-preview'              : 'preview',
   },
 
   initialize: function (options) {
@@ -731,6 +733,20 @@ var AdminCommunityEditView = Backbone.View.extend({
       allowClear: true,
       width:'100%',  
     });  
+  },
+
+  preview: function (e) {
+    var data = {'title':'Department of State', 'titleColor': '#F6B73C', 'subtitle': 'DoS', 'subtitleColor': '#F6B73C', 'description': 'Here we go!', 'descriptionColor': '#F6B73C', 'bannerColor': '#112e51'};
+    var modalContent = _.template(AdminCommunityPreviewTemplate)(data);
+    if (e.preventDefault) e.preventDefault();
+    if (this.modalComponent) { this.modalComponent.cleanup(); }
+    this.modalComponent = new ModalComponent({
+      el: '#site-modal',
+      id: 'community-preview',
+      modalTitle: 'Community search banner preview',
+      modalBody: modalContent,
+      primary: {},
+    }).render();
   },
 
   cleanup: function () {
