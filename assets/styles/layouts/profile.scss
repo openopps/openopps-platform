@@ -604,10 +604,11 @@ form [type=submit] {
 
   .fileinput-button {
       font-size: 1.4rem;
-      margin: 0.5rem;
+      margin: 0.5rem 0;
 
-      a, a:hover, a:visited {
+      span, span:hover {
         color: #2574B6;
+        text-decoration: underline;
       }
 
       #photo-remove {
