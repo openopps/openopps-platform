@@ -14,16 +14,22 @@ var Modal = require('../../../components/modal');
 var AdminCommunityEditView = Backbone.View.extend({
 
   events: {
-    'click #community-edit-cancel': 'cancel',
-    'click #community-edit-save'  : 'save',
-    'blur .validate'     : 'validateField',
-    'change .validate'   : 'validateField',
-    'click #add-bureau-office':'addbureauOfficeDisplay',
-    'click .edit-bureau-office':'addbureauOfficeDisplay',
-    'click .delete-bureau' :'deleteBureau',
-    'click .delete-office' :'deleteOffice',
-    
-   
+    'click #community-edit-cancel'          : 'cancel',
+    'click #community-edit-save'            : 'save',
+    'blur .validate'                        : 'validateField',
+    'change .validate'                      : 'validateField',
+    'click #add-bureau-office'              : 'addbureauOfficeDisplay',
+    'click .edit-bureau-office'             : 'addbureauOfficeDisplay',
+    'click .delete-bureau'                  : 'deleteBureau',
+    'click .delete-office'                  : 'deleteOffice',
+    'change #display-title-color'           : 'updateColorTextField',
+    'change #display-subtitle-color'        : 'updateColorTextField',
+    'change #display-description-color'     : 'updateColorTextField',
+    'change #display-banner-color'          : 'updateColorTextField',
+    'change #display-title-color-text'      : 'updateColorField',
+    'change #display-subtitle-color-text'   : 'updateColorField',
+    'change #display-description-color-text': 'updateColorField',
+    'change #display-banner-color-text'     : 'updateColorField',
   },
 
   initialize: function (options) {
@@ -31,9 +37,11 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.departments = {};  
     this.communityInfo = {};
     this.bureaus = [];
+
     this.params = new URLSearchParams(window.location.search);   
     return this;
   },
+  
 
   render: function () {
     $('#search-results-loading').show();
@@ -108,13 +116,30 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   initializeDisplayFormFields: function (community) {
     $('#display-title').val(community.banner.title);
+    $('#display-title-color-text').val(community.banner.titleColor);
     $('#display-title-color').val(community.banner.titleColor);
     $('#display-subtitle').val(community.banner.subtitle);
+    $('#display-subtitle-color-text').val(community.banner.subtitleColor);
     $('#display-subtitle-color').val(community.banner.subtitleColor);
     $('#display-description').val(community.banner.description);
+    $('#display-description-color-text').val(community.banner.descriptionColor);
     $('#display-description-color').val(community.banner.descriptionColor);
+    $('#display-banner-color-text').val(community.banner.bannerColor);
     $('#display-banner-color').val(community.banner.bannerColor);
     $('#vanityURL').val(community.vanityURL);
+  },
+
+  updateColorTextField: function (e) {
+    var theInput = e.currentTarget;
+    var textName = '#' + e.currentTarget.id + '-text';
+    $(textName).val(theInput.value);
+  },
+
+  updateColorField: function (e) {
+    var theInput = e.currentTarget;
+    var colorName = '#' + e.currentTarget.id;
+    colorName = colorName.replace('-text', '');
+    $(colorName).val(theInput.value);
   },
 
   getDataFromPage: function (){
@@ -131,6 +156,14 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
+      banner: { title: $('#display-title').val(),
+                titleColor: $('#display-title-color-text').val(),
+                subtitle: $('#display-title-color').val(),
+                subtitleColor: $().val(),
+                description: $().val(),
+                descriptionColor: $().val(),
+                bannerColor: $().val(),
+              }
     };
     return modelData;
   },
