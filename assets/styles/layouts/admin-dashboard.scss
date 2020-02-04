@@ -310,10 +310,6 @@
   .admin-table-usertype {
     span {
       display: block;
-
-      @include media($XL) {
-        padding-left: 2rem;
-      }
     }
 
     img {
