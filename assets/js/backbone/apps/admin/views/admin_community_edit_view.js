@@ -160,12 +160,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerEmail: $('#community-mgr-email').val(),
       banner: { title: $('#display-title').val(),
                 titleColor: $('#display-title-color-text').val(),
-                subtitle: $('#display-title-color').val(),
-                subtitleColor: $().val(),
-                description: $().val(),
-                descriptionColor: $().val(),
-                bannerColor: $().val(),
-              }
+                subtitle: $('#display-subtitle').val(),
+                subtitleColor: $('#display-subtitle-color-text').val(),
+                description: $('#display-description').val(),
+                descriptionColor: $('#display-description-color-text').val(),
+                bannerColor: $('#display-banner-color-text').val(),
+              },
     };
     return modelData;
   },
@@ -190,7 +190,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
           this.initializeDisplayFormFields(community);
-        };
+        }
         $('#search-results-loading').hide();
        
       }.bind(this),
