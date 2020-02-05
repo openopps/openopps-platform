@@ -101,7 +101,7 @@
           </td>
         <% } %>
         <td class="admin-table-federalEmail">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a>
+          <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
         </td>
         <% if (target == 'sitewide') { %>
         <td class="admin-table-username">
