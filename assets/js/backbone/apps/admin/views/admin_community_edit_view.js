@@ -128,7 +128,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#display-description-color').val(community.banner.descriptionColor);
     $('#display-banner-color-text').val(community.banner.bannerColor);
     $('#display-banner-color').val(community.banner.bannerColor);
-    $('#vanityURL').val(community.vanityURL);
+    $('#vanityURL').val(community.vanityUrl);
   },
 
   updateColorTextField: function (e) {
@@ -144,7 +144,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $(colorName).val(theInput.value);
   },
 
-  getDataFromPage: function (){
+  getDataFromPage: function () {
     var modelData = {
       communityId: this.options ? this.options.communityId: null,
       communityType: $('#communityType').val(),
@@ -165,7 +165,8 @@ var AdminCommunityEditView = Backbone.View.extend({
                 description: $('#display-description').val(),
                 descriptionColor: $('#display-description-color').val(),
                 bannerColor: $('#display-banner-color').val(),
-              }
+              },
+      vanityUrl: $('#vanityURL').val(),
     };
     return modelData;
   },
