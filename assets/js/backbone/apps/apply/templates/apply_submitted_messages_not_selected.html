@@ -1,0 +1,15 @@
+<p><strong>Date</strong>: <%-moment(closedDate).format('MMMM DD, YYYY') %></p>
+<p><strong>Subject</strong>: U.S. Department of State Student Internship Program (Unpaid)—Thank you for your interest.</p>
+<p>Hello <% if (given_name) { %><%- given_name %><% } %>,</p>
+
+<p>Thank you for applying to the U.S. Department of State Student Internship Program (Unpaid), <%- session %>.
+  We received over <%- applicationsCount %> applications, resulting in a very competitive process. We regret 
+  to inform you that you were not selected for an internship. This could be due to project availability, office 
+  needs that vary from year-to-year, office space or the large volume of applicants.
+</p>
+<p>We encourage you to explore other opportunities at the Department of State by visiting <a href="https://careers.state.gov">www.careers.state.gov</a>. 
+  We also encourage you to reach out to our <a href="https://careers.state.gov/connect/dir/">Diplomats in Residence (DIR)</a>, 
+  senior employees working in regional offices throughout the U.S., who assist college students with professional guidance 
+  regarding State Department careers.
+</p>
+<p >Best wishes in your future endeavors!</p>

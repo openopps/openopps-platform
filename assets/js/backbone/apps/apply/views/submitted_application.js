@@ -4,6 +4,7 @@ const Backbone = require('backbone');
 var $ = require('jquery');
 var ModalComponent = require('../../../components/modal');
 const moment = require('moment-timezone');
+const templates = require('./templates');
 
 var submittedApplication = {
   updateApplication: function (e) {
@@ -132,6 +133,30 @@ var submittedApplication = {
       target.attr('aria-hidden', true);
     }
   },
+  
+  renderApplicationReceived : function () {    
+    $('#application-received').html(templates.applySubmittedApplicationReceived(this.data));
+    
+  },
+  renderSelectedMessages : function () {    
+    $('#selected-messages').html(templates.applySubmittedSelected(this.data.selectedApplicant));
+    
+  },
+  renderAlternateMessages : function () {    
+    $('#alternate-messages').html(templates.applySubmittedAlternate(this.data.alternateApplicant));
+    
+  },
+  renderNotSelectedMessages : function () {  
+    var data= _.extend(this.data.notSelectedApplicant, {applicationsCount : this.data.applicantCount.applicant_count });  
+    $('#not-selected-messages').html(templates.applySubmittedNotSelected(data));
+    
+  },
+  renderSelectedInternship : function () {  
+    
+    $('#selected-internship').html(templates.applySubmittedSelectedInternship(this.data.selectedInternship));
+    
+  },
+  
 };
 
 module.exports = submittedApplication;
