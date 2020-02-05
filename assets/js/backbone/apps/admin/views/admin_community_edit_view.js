@@ -736,7 +736,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   preview: function (e) {
-    var data = {'title':'Department of State', 'titleColor': '#F6B73C', 'subtitle': 'DoS', 'subtitleColor': '#F6B73C', 'description': 'Here we go!', 'descriptionColor': '#F6B73C', 'bannerColor': '#112e51'};
+    var data = this.getDataFromPage();
     var modalContent = _.template(AdminCommunityPreviewTemplate)(data);
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
@@ -746,6 +746,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       modalTitle: 'Community search banner preview',
       modalBody: modalContent,
       primary: {},
+      secondary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
     }).render();
   },
 
