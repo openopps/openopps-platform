@@ -1021,7 +1021,7 @@
               text-align: center;
               margin-top: initial;
 
-              .usajobs-pill--opportunity-status {
+              .usajobs-pill--opportunity-status, .usajobs-pill--application-status {
                 margin-left: auto;
                 margin-right: auto;
                 margin-top: $size-base;
@@ -1584,5 +1584,12 @@
 
   .submitted-application-last {
     padding: $size-SM;
+  }
+
+  .application-messages {
+    .usa-accordion-content:not([aria-hidden]) {
+      position: absolute;
+      top: -99999em;
+    }
   }
 }
