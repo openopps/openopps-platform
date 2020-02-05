@@ -315,7 +315,7 @@ var AdminAgenciesView = Backbone.View.extend({
       activity.createdAtFormatted = $.timeago(activity.createdAt);
       var template = self.$('#' + activity.type).text(),
           content = _.template(template, { interpolate: /\{\{(.+?)\}\}/g })(activity);
-      self.$('.activity-block .activity-feed').append(content);
+      self.$('.activity-block .activity-feed ul').append(content);
     });
 
     this.$el.localize();
