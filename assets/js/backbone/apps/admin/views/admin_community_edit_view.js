@@ -746,6 +746,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       modalTitle: 'Community search banner preview',
       modalBody: modalContent,
       primary: {},
+      secondary: {
+        text: 'Close',
+        action: function () {
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
     }).render();
   },
 
