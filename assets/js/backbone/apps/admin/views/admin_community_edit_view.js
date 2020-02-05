@@ -159,12 +159,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
       banner: { title: $('#display-title').val(),
-                titleColor: $('#display-title-color-text').val(),
-                subtitle: $('#display-title-color').val(),
-                subtitleColor: $().val(),
-                description: $().val(),
-                descriptionColor: $().val(),
-                bannerColor: $().val(),
+                titleColor: $('#display-title-color').val(),
+                subtitle: $('#display-subtitle').val(),
+                subtitleColor: $('#display-subtitle-color').val(),
+                description: $('#display-description').val(),
+                descriptionColor: $('#display-description-color').val(),
+                bannerColor: $('#display-banner-color').val(),
               }
     };
     return modelData;
