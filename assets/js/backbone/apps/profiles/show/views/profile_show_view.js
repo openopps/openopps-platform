@@ -44,9 +44,9 @@ var ProfileShowView = Backbone.View.extend({
     'change #sort-applied'          : 'sortInternships',
     'change #sort-saved'            : 'sortInternships',
     'click #add-bureau-office'      : 'addbureauOfficeDisplay',
-    'click #remove-bureau-office'   :'removeBureauOfficeDisplay',
+    'click .remove-bureau-office'   : 'removeBureauOfficeDisplay',
     'click #add-badge'              : 'addBadges',
-    'click #remove-badge'           :'removeBadge',
+    'click #remove-badge'           : 'removeBadge',
   },
 
   initialize: function (options) {
