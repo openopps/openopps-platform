@@ -119,7 +119,7 @@ global.initializeKeywordSearch = function (element) {
       $(element).val('');
     }.bind(this),
   });
-}
+};
 
 /**
  * Initializes a jQuery autocomplete field for location search
@@ -208,7 +208,7 @@ function formatObjectForURL (value) {
 function parseKeywordAutocompleteResults (term, results, filters) {
   var pattern = new RegExp('(' + term + ')', 'ig');
   var data = Object.keys(results).map(function (key) { 
-    return results[key].map(function(item) {
+    return results[key].map(function (item) {
       var label = item.name;
       if (key == 'agencies' && item.abbr) {
         label += ' (' + item.abbr + ')';
@@ -216,7 +216,7 @@ function parseKeywordAutocompleteResults (term, results, filters) {
       return _.extend(item, {
         type: key.replace(/_/g, ' '),
         label: label.replace(pattern, '<strong>$1</strong>'),
-        value: item.name
+        value: item.name,
       });
     });
   }).reduce(function (a, b) { 

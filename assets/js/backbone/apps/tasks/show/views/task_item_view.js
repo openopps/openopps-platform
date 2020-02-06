@@ -495,8 +495,9 @@ var TaskItemView = BaseView.extend({
       //window.cache.userEvents.trigger('user:request:login');
     } else {
       var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
+      var options = {};
       if (window.cache.currentUser.hiringPath == 'contractor') {
-        var options = _.extend(_.clone(this.modalOptions), {
+        options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Sorry you are not eligble to apply.',
           modalBody: ContractorCheckList,
           primary: {
@@ -511,7 +512,7 @@ var TaskItemView = BaseView.extend({
         var skill = _.find(window.cache.currentUser.tags, function (tag) {
           return tag.type == 'skill';
         });
-        var options = _.extend(_.clone(this.modalOptions), {
+        options = _.extend(_.clone(this.modalOptions), {
           modalTitle: 'Do you want to participate?',
           modalBody: _.template(ParticipateCheckList)({e, skill}),
           primary: {

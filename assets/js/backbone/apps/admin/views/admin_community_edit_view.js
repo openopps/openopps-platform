@@ -158,14 +158,15 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
-      banner: { title: $('#display-title').val(),
-                titleColor: $('#display-title-color-text').val(),
-                subtitle: $('#display-title-color').val(),
-                subtitleColor: $().val(),
-                description: $().val(),
-                descriptionColor: $().val(),
-                bannerColor: $().val(),
-              }
+      banner: {
+        title: $('#display-title').val(),
+        titleColor: $('#display-title-color-text').val(),
+        subtitle: $('#display-title-color').val(),
+        subtitleColor: $().val(),
+        description: $().val(),
+        descriptionColor: $().val(),
+        bannerColor: $().val(),
+      },
     };
     return modelData;
   },
@@ -190,7 +191,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
           this.initializeDisplayFormFields(community);
-        };
+        }
         $('#search-results-loading').hide();
        
       }.bind(this),

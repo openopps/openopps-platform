@@ -108,7 +108,7 @@ var LoginCreateView = Backbone.View.extend({
       terms: (this.$('#rterms').val() === 'on'),
       tags: [
         this.$('#ragency').select2('data'),
-        this.$('#rlocation').select2('data')
+        this.$('#rlocation').select2('data'),
       ],
       json: true,
     };

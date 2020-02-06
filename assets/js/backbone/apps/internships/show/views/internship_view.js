@@ -272,7 +272,7 @@ var InternshipView = BaseView.extend({
             },
             error: function (error, status) {
               this.modalComponent.displayError(error.responseText, 'Copy this opportunity');
-            }.bind(this)
+            }.bind(this),
           });
         }.bind(this),
       },
