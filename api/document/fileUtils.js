@@ -79,7 +79,7 @@ function getImageSize (data) {
 function rotateIfNeeded (data) {
   return new Promise(async (resolve) => {
     // Read first 64K of image file (EXIF data located here)
-    var exifData = data.subarray(0, 65536)
+    var exifData = data.subarray(0, 65536);
     var parser = exifParser.create(exifData);
     var exifResult = parser.parse();
     if (exifResult.tags && exifResult.tags.Orientation >= 2 && exifResult.tags.Orientation <= 8) {
@@ -151,17 +151,17 @@ module.exports = {};
 module.exports.store = (name, data, cb) => {
   var service = config.service || 'local';
   storageTypes[service].store(name, data, cb);
-}
+};
 
 module.exports.get = (name, cb) => {
   var service = (config.service || 'local');
   storageTypes[service].get(name, cb);
-}
+};
 
 module.exports.remove = (name, cb) => {
   var service = (config.service || 'local');
   storageTypes[service].remove(name, cb);
-}
+};
 
 module.exports.validType = (imageType, fileType) => {
   var expectedImageTypes = ['image_square', 'image'];
@@ -175,7 +175,7 @@ module.exports.validType = (imageType, fileType) => {
   }
   // we didn't find anything bad so we'll generously accept any other file
   return true;
-}
+};
 
 module.exports.processFile = (type, file) => {
   log.info('Processing file => ', file.name);
@@ -217,4 +217,4 @@ module.exports.processFile = (type, file) => {
       }
     });
   });
-}
+};

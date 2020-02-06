@@ -5,20 +5,20 @@ var Backbone = require('backbone');
 var SearchModel = Backbone.Model.extend({
 
   defaults: {
-    keyword : "",
+    keyword : '',
     status : [],
-    career : "",
+    career : '',
     series : [],
     skill : [],
     timerequired : [],
     location: [],
     locationtype : [],
-    restrictedtoagency : 'false'
+    restrictedtoagency : 'false',
   },
 
   initialize: function () {
 
-  }
+  },
 });
 
 module.exports = SearchModel;

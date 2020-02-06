@@ -19,6 +19,11 @@ const SubmittedApplicationTemplate = require('../templates/submitted_application
 var ApplyEducationPreviewTemplate = require('../templates/apply_education_preview_template.html');
 const ApplyTranscriptTemplate=require('../templates/apply_transcript_template.html');
 const ApplyExperiencePreviewTemplate = require('../templates/apply_experience_preview_template.html');
+const ApplySubmittedMessagesAplicationReceivedTemplate =require('../templates/apply_submitted_messages_application_received.html');
+const ApplySubmittedMessagesSelectedTemplate = require('../templates/apply_submitted_messages_selected.html');
+const ApplySubmittedMessagesAlternateTemplate = require('../templates/apply_submitted_messages_alternate.html');
+const ApplySubmittedMessagesNotSelectedTemplate = require('../templates/apply_submitted_messages_not_selected.html');
+const ApplySubmittedSelectedInternshipTemplate = require('../templates/apply_submitted_selected_internship.html');
 
 var templates = {
   main: _.template(ApplyTemplate),
@@ -40,6 +45,11 @@ var templates = {
   applyeducationPreview:_.template(ApplyEducationPreviewTemplate),
   applyTranscript:_.template(ApplyTranscriptTemplate),
   applyExperiencePreview:_.template(ApplyExperiencePreviewTemplate),
+  applySubmittedApplicationReceived :_.template(ApplySubmittedMessagesAplicationReceivedTemplate),
+  applySubmittedSelected :_.template(ApplySubmittedMessagesSelectedTemplate),
+  applySubmittedAlternate :_.template(ApplySubmittedMessagesAlternateTemplate),
+  applySubmittedNotSelected :_.template(ApplySubmittedMessagesNotSelectedTemplate),
+  applySubmittedSelectedInternship : _.template(ApplySubmittedSelectedInternshipTemplate),
 };
 
 templates.getTemplateForStep = function (step) {

@@ -90,7 +90,7 @@ var TaskListView = Backbone.View.extend({
     if (this.filters.community && this.filters.community.banner.color) {
       $('.usajobs-open-opps-search__box').css('background', this.filters.community.banner.color);
     } else {
-      $('.usajobs-open-opps-search__box').removeAttr("style");
+      $('.usajobs-open-opps-search__box').removeAttr('style');
     }
   },
 
@@ -196,21 +196,6 @@ var TaskListView = Backbone.View.extend({
     }.bind(this));
   },
 
-  // intializeAcquisition: function () {
-  //   if((!_.isEmpty(this.filters.career) && this.filters.career.name.toLowerCase() == 'acquisition') || 
-  //   _.find(this.filters.series, { name: '1102 (Contracting)' })) {
-  //     $('.usajobs-open-opps-search__box').addClass('display-acquisition');
-  //     $('#search-pills-remove-all').attr('title', 'Remove all filters to see all opportunities');
-  //     $('#search-pills-remove-all').children('.text').text('Remove all filters to see all opportunities');
-  //   } else {
-  //     $('.usajobs-open-opps-search__box').removeClass('display-acquisition');
-  //     $('#search-pills-remove-all').attr('title', 'Remove all filters');
-  //     $('#search-pills-remove-all').children('.text').text('Remove all filters');
-  //   }
-  //   $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-  //   $('#footer').addClass('filter-margin');
-  // },
-
   initializeCommunityField: function () {
     $.ajax({
       url: '/api/task/communitylist',
@@ -218,12 +203,12 @@ var TaskListView = Backbone.View.extend({
       async: false,
       success: function (data) {
         this.communities = data.federal;
-        this.filterLookup["community"] = {};
+        this.filterLookup['community'] = {};
         this.communities.forEach(function (community) {
-          community.type = "community";
+          community.type = 'community';
           community.id = community.communityId;
           community.name = community.communityName;
-          this.filterLookup["community"][community.id] = community;
+          this.filterLookup['community'][community.id] = community;
         }.bind(this));
       }.bind(this),
     });
@@ -236,9 +221,9 @@ var TaskListView = Backbone.View.extend({
       async: false,
       success: function (data) {
         this.careers = data;
-        this.filterLookup["career"] = {};
+        this.filterLookup['career'] = {};
         data.forEach(function (career) {
-          this.filterLookup["career"][career.id] = career.name;
+          this.filterLookup['career'][career.id] = career.name;
         }.bind(this));
       }.bind(this),
     });
@@ -325,7 +310,7 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    this.tagTypes = { career: this.careers, community: this.communities, };
+    this.tagTypes = { career: this.careers, community: this.communities };
     this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
@@ -625,9 +610,9 @@ var TaskListView = Backbone.View.extend({
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {
             return value;
-          } else if (key == "career") {
-              return { type: key, name: this.filterLookup[key][value], id: value };
-          } else if (key == "skill" || key == "series") {
+          } else if (key == 'career') {
+            return { type: key, name: this.filterLookup[key][value], id: value };
+          } else if (key == 'skill' || key == 'series') {
             return { type: key, name: value };
           } else {
             return value;
@@ -639,9 +624,9 @@ var TaskListView = Backbone.View.extend({
 });
 
 function formatObjectForURL (value) {
-  if (value.type == "career") {
+  if (value.type == 'career') {
     return value.id;
-  } else if (value.type == "community") {
+  } else if (value.type == 'community') {
     //may need to change
     return value.id;
   }
