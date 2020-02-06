@@ -4,13 +4,13 @@ var Backbone = require('backbone');
 
 
 var BaseController = Backbone.View.extend({
-  initialize: function() {},
+  initialize: function () {},
 
   // ------------
   //= Class Methods available for other views
   // ------------
 
-  initializeViewSafely: function(viewName) {
+  initializeViewSafely: function (viewName) {
     if (this.view) {
       this.view.initialize();
     } else {
@@ -18,9 +18,9 @@ var BaseController = Backbone.View.extend({
     }
   },
 
-  cleanup: function() {
+  cleanup: function () {
     $(this).remove();
-  }
+  },
 });
 
 module.exports = BaseController;

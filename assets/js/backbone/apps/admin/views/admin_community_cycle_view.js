@@ -10,7 +10,7 @@ var AdminCommunityCycleView = Backbone.View.extend({
 
   events: {
     'click #create-cycle': 'initializeCycleEditView',
-    'click .delete-cycle': 'deleteCycle'
+    'click .delete-cycle': 'deleteCycle',
   },
 
   initialize: function (options) {
@@ -56,7 +56,7 @@ var AdminCommunityCycleView = Backbone.View.extend({
       data: {
         communityId: this.community.communityId,
         cycleId: cycleId,
-      }
+      },
     }).done(function ( model, response, options ) {
       this.deleteModal.cleanup();
       this.render();

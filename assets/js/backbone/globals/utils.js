@@ -118,7 +118,7 @@ global.getInitialsColor = function (id) {
  * Helper function to get values from query string
  */
 global.getUrlParameter = function (name) {
-  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
   var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
   var results = regex.exec(location.search);
   return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
@@ -162,4 +162,4 @@ global.getPaginationData = function (totalResults, resultsPerPage, currentPage) 
     data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
   }
   return data;
-}
+};

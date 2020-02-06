@@ -25,7 +25,7 @@ var CommentCollection = Backbone.Collection.extend({
       parentId  : data['parentId'],
       value     : data['comment'],
       taskId    : data['taskId'],
-      topic     : data['topic']
+      topic     : data['topic'],
     });
 
     self.add(comment);

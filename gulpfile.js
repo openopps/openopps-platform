@@ -36,7 +36,7 @@ var versionBumps = {
 
 // Lint Task
 gulp.task('lint', function () {
-  return gulp.src('js/*.js')
+  return gulp.src('assets/js/backbone/**/*.js')
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
@@ -56,13 +56,13 @@ gulp.task('scripts', function () {
   return gulp.src('assets/js/backbone/app.js')
     .pipe(bro({ error: 'emit', transform: [ 
       babelify.configure({ presets: ['@babel/env'] }),
-      stringify
+      stringify,
     ]}))
     .pipe(rename('bundle.min.js'))
     .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('dist/js'))
+    .pipe(gulp.dest('dist/js'));
 });
 
 // Move additional resources
@@ -133,13 +133,13 @@ gulp.task('create-release', function (done) {
     if (err) {
       throw(err);
     } else if (branch != 'dev') {
-      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'))
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'));
     } else {
       git.status({args: '--ahead-behind'}, function (err, stdout) {
         if (err) {
           throw(err);
         } else if (stdout.indexOf('Your branch is up to date') < 0) {
-          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'))
+          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'));
         } else {
           git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
             if(err) { throw(err); }
@@ -199,13 +199,13 @@ gulp.task('patch-release', function (done) {
     if (err) {
       throw(err);
     } else if (branch != 'staging') {
-      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the staging branch.'))
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the staging branch.'));
     } else {
       git.status({args: '--ahead-behind'}, function (err, stdout) {
         if (err) {
           throw(err);
         } else if (stdout.indexOf('Your branch is up to date') < 0) {
-          throw(new Error('Your copy of the staging branch is not current. Please pull latest version and try again.'))
+          throw(new Error('Your copy of the staging branch is not current. Please pull latest version and try again.'));
         } else {
           git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
             if(err) { throw(err); }
