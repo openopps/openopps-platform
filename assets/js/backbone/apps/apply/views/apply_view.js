@@ -116,7 +116,7 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
       overseasExperienceLengthHtml: marked(this.data.overseasExperienceLength),
-      overseasExperienceOtherHtml: marked(this.data.overseasExperienceOther),
+      overseasExperienceOtherHtml: marked(this.data.overseasExperienceOther),  
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
@@ -136,6 +136,24 @@ var ApplyView = Backbone.View.extend({
   render: function () {
     if (this.data.submittedAt !== null) {
       this.$el.html(templates.submittedApplication(this.data));
+   
+      SubmittedApplication.renderApplicationReceived.bind(this)();
+     
+      if(this.data.cycle.closed_date !== null ){
+        if(this.data.selectedApplicant) {
+          SubmittedApplication.renderSelectedMessages.bind(this)();
+        }
+        if(this.data.alternateApplicant){
+          SubmittedApplication.renderAlternateMessages.bind(this)();
+        }
+        if(this.data.notSelectedApplicant){
+          SubmittedApplication.renderNotSelectedMessages.bind(this)();
+        }
+        if(this.data.selectedInternship){
+          SubmittedApplication.renderSelectedInternship.bind(this)();
+        }
+      }
+
       this.$el.localize();
       window.scrollTo(0, 0);
     } else if (new Date(this.data.cycle.apply_end_date) < new Date()) {
