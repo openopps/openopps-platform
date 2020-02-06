@@ -1,6 +1,6 @@
 
 <div>
-<p><strong>Date Received</strong>: <%-moment(submittedAt).format('MMMM DD, YYYY') %></p>
+<p><strong>Date Received</strong>: <%-moment(submittedAt).format('MM/DD/YYYY hh:mma') %></p>
 <p><strong>Subject</strong>: U.S. Department of State Student Internship Program (Unpaid) - Thank you for your application</p>
 <p>Hello <% if (user.name) { %><%- user.name %><% } %>,</p>
 <p>Thank you for submitting your application to the U.S. Department of State Student Internship Program (Unpaid) through Open 
