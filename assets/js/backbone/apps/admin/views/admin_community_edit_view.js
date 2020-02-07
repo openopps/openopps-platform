@@ -32,6 +32,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-description-color-text': 'updateColorField',
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
+    
   },
 
   initialize: function (options) {
@@ -159,14 +160,15 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
       banner: { title: $('#display-title').val(),
-                titleColor: $('#display-title-color').val(),
-                subtitle: $('#display-subtitle').val(),
-                subtitleColor: $('#display-subtitle-color').val(),
-                description: $('#display-description').val(),
-                descriptionColor: $('#display-description-color').val(),
-                bannerColor: $('#display-banner-color').val(),
-              },
+        titleColor: $('#display-title-color').val(),
+        subtitle: $('#display-subtitle').val(),
+        subtitleColor: $('#display-subtitle-color').val(),
+        description: $('#display-description').val(),
+        descriptionColor: $('#display-description-color').val(),
+        bannerColor: $('#display-banner-color').val(),
+      },
       vanityUrl: $('#vanityURL').val(),
+      imageId: this.options.imageId,
     };
     return modelData;
   },
@@ -191,6 +193,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
           this.initializeDisplayFormFields(community);
+          this.initializeFileUpload();
         }
         $('#search-results-loading').hide();
        
@@ -240,17 +243,34 @@ var AdminCommunityEditView = Backbone.View.extend({
     });
   },
 
-  initializePhoto: function () {
-    if (this.photoView) { this.photoView.cleanup(); }
-    this.photoView = new ProfilePhotoView({
-      data: this.model,
-      el: '.profile-photo',
+  initializeFileUpload: function () {
+    $('#fileupload').fileupload({
+      url: '/api/upload/create',
+      dataType: 'text',
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      formData: { 'type': 'image_square' },
+      add: function (e, data) {
+        $('#file-upload-progress-container').show();
+        data.submit();
+      }.bind(this),
+      progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('#file-upload-progress').css('width', progress + '%');
+      }.bind(this),
+      done: function (e, data) {
+        this.options.imageId = JSON.parse($(data.result).text())[0].id,
+        $('#file-upload-alert').hide();
+      }.bind(this),
+      fail: function (e, data) {
+        var message = data.jqXHR.responseText || data.errorThrown;
+        $('#file-upload-progress-container').hide();
+        if (data.jqXHR.status == 413) {
+          message = 'The uploaded file exceeds the maximum file size.';
+        }
+        $('#file-upload-alert-message').html(message);
+        $('#file-upload-alert').show();
+      }.bind(this),
     });
-    this.photoView.render();
-  },
-
-  validateField: function (e) {
-    return validate(e);
   },
 
   validateFields: function () {
@@ -503,10 +523,6 @@ var AdminCommunityEditView = Backbone.View.extend({
               self.modalComponent.cleanup();
             }.bind(this));
           }
-          // eslint-disable-next-line no-empty
-          else{
-            
-          }  
         },
       },      
     }).render();  

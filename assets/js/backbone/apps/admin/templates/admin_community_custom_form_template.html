@@ -71,10 +71,10 @@
         <input type="text" id="vanityURL" class="fullwidth form-control validate" />
     </div>
     <div class="fileinput-button">
-        <a href=#><%- imageId ? 'Update logo' : 'Upload logo' %>
+        <span><%- imageId ? 'Update logo' : 'Upload logo' %>
           <label class="sr-only" for="fileupload">Upload logo</label>
           <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
-        </a>
+        </span>
       </div>
       <div class="fileinput-button">
         <% if (imageId) { %>
