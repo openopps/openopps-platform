@@ -15,6 +15,9 @@ const applicationTasksQuery = 'SELECT ' +
 'JOIN task ON task.id = task_list.task_id )and (task."state"<>\'completed\' or task."state" is null) and task_list.title=\'Primary\' then ' +
 '\'Primary select\' ' +
 
+'when app.submitted_at is not null and (phase.sequence <> 3 or phase.sequence is null) ' +
+    'then \'Applied\' ' +
+
  'when application_task.task_id in (select  task_list.task_id as "taskId" from task_list_application ' + 
 'inner join task_list on task_list_application.task_list_id = task_list.task_list_id ' + 
 'inner join application on task_list_application.application_id = application.application_id ' +
@@ -24,7 +27,7 @@ const applicationTasksQuery = 'SELECT ' +
  'when application_task.task_id in (select  task_list.task_id as "taskId" from task_list_application ' +
 'inner join task_list on task_list_application.task_list_id = task_list.task_list_id ' + 
 'inner join application on task_list_application.application_id = application.application_id ' + 
-'JOIN task ON task.id = task_list.task_id ) and (task."state"=\'completed\' ) and app.internship_completed_at is not null then ' +
+'JOIN task ON task.id = task_list.task_id ) and (task."state"=\'completed\' ) and app.internship_completed_at is not null and app.internship_completed = application_task.task_id  then ' +
  '\'Completed\' ' +
 
  'when application_task.task_id in (select  task_list.task_id as "taskId" from task_list_application ' +
@@ -46,6 +49,8 @@ const applicationTasksQuery = 'SELECT ' +
   'task.title, bureau.name AS bureau, office.name AS office ' +
   'FROM application_task ' +
   'join application app on app.application_id= application_task.application_id ' +
+  'inner join cycle on app.cycle_id = cycle.cycle_id ' +
+'left join phase on cycle.phase_id = phase.phase_id ' +
   'JOIN task ON task.id = application_task.task_id ' +
   'left join task_list_application on application_task.application_id = task_list_application.application_id ' +
   'left join task_list on task_list_application.task_list_id = task_list.task_list_id ' +
@@ -176,7 +181,7 @@ const selectedInternshipQuery = 'select ' +
   'LEFT JOIN bureau ON bureau.bureau_id = task.bureau_id ' +
   'LEFT JOIN office ON office.office_id = task.office_id ' +
   'where task_list.title in (\'Primary\', \'Alternate\') and ' +
-  'task_list.task_id not in (select task_id from application_task where application_task.application_id = ?) ' + 
+  'task_list.task_id not in (select task_id from application_task where application_task.application_id = ? and application_task.sort_order > 0) ' + 
   'and task_list_application.application_id = ? ';
 
   
