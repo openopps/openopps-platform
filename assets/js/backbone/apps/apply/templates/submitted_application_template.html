@@ -47,19 +47,16 @@
                     </p>
                   </div>
                 </div>
-                <% if (cycle.closed_date) { %>
+                
                 <div class="usa-width-one-fourth application-status">
                   <span class="usajobs-pill--application-status status-<%- firstChoice.status.charAt(0).toLowerCase() + firstChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- firstChoice.status %></span>
+                  <% if (cycle.closed_date) { %>
                   <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
-                </div>
-                <% } else { %>
-                  <div class="usa-width-one-fourth application-status">
-                    <span class="usajobs-pill--application-status status-applied">
-                      Applied
-                    </span>
+                  <% } else { %>
                     <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
-                  </div>
-                  <% } %>
+                    <% } %>
+                </div>
+                         
               </div>                
             </div>
           </a>
@@ -82,19 +79,14 @@
                     </p>
                   </div>
                 </div>
-                <% if (cycle.closed_date) { %>
                 <div class="usa-width-one-fourth application-status">
-                  <span class="usajobs-pill--application-status status-<%= secondChoice.status.charAt(0).toLowerCase() + secondChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- secondChoice.status %></span>
-                  <p class="usajobs-form__help-brief">Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
-                </div>
-                <% } else { %>
-                  <div class="usa-width-one-fourth application-status">
-                    <span class="usajobs-pill--application-status status-applied">
-                      Applied
-                    </span>
+                  <span class="usajobs-pill--application-status status-<%- secondChoice.status.charAt(0).toLowerCase() + secondChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- secondChoice.status %></span>
+                  <% if (cycle.closed_date) { %>
+                  <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
+                  <% } else { %>
                     <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
-                  </div>
-                  <% } %>
+                    <% } %>
+                </div>
               </div>                
             </div>
           </a>
@@ -117,19 +109,14 @@
                     </p>
                   </div>
                 </div>
-                <% if (cycle.closed_date) { %>
                 <div class="usa-width-one-fourth application-status">
-                  <span class="usajobs-pill--application-status status-<%= thirdChoice.status.charAt(0).toLowerCase() + thirdChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- thirdChoice.status %></span>
-                  <p class="usajobs-form__help-brief">Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
-                </div>
-                <% } else { %>
-                  <div class="usa-width-one-fourth application-status">
-                    <span class="usajobs-pill--application-status status-applied">
-                      Applied
-                    </span>
+                  <span class="usajobs-pill--application-status status-<%- thirdChoice.status.charAt(0).toLowerCase() + thirdChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- thirdChoice.status %></span>
+                  <% if (cycle.closed_date) { %>
+                  <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
+                  <% } else { %>
                     <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
-                  </div>
-                  <% } %>
+                    <% } %>
+                </div>
               </div>                
             </div>
           </a>
@@ -155,10 +142,12 @@
                 </div>
               </div>
               <div class="usa-width-one-fourth application-status">
-                <span class="usajobs-pill--application-status status-applied">
-                  Applied
-                </span>
-                <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                <span class="usajobs-pill--application-status status-<%- firstChoice.status.charAt(0).toLowerCase() + firstChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- firstChoice.status %></span>
+                <% if (cycle.closed_date) { %>
+                <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
+                <% } else { %>
+                  <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                  <% } %>
               </div>
             </div>                
           </div>
@@ -181,10 +170,12 @@
                 </div>
               </div>
               <div class="usa-width-one-fourth application-status">
-                <span class="usajobs-pill--application-status status-applied">
-                  Applied
-                </span>
-                <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                <span class="usajobs-pill--application-status status-<%- secondChoice.status.charAt(0).toLowerCase() + secondChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- secondChoice.status %></span>
+                <% if (cycle.closed_date) { %>
+                <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
+                <% } else { %>
+                  <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                  <% } %>
               </div>
             </div>                
           </div>
@@ -207,10 +198,12 @@
                 </div>
               </div>
               <div class="usa-width-one-fourth application-status">
-                <span class="usajobs-pill--application-status status-applied">
-                  Applied
-                </span>
-                <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                <span class="usajobs-pill--application-status status-<%- thirdChoice.status.charAt(0).toLowerCase() + thirdChoice.status.slice(1).replace(' ', '-').toLowerCase() %>"><%- thirdChoice.status %></span>
+                <% if (cycle.closed_date) { %>
+                <p class="usajobs-form__help-brief"> Last updated: <%- moment(cycle.closed_date).format('MM/DD/YYYY') %></p>
+                <% } else { %>
+                  <p class="usajobs-form__help-brief">Last updated: <%- moment(submittedAt).format('MM/DD/YYYY') %></p>
+                  <% } %>
               </div>
             </div>                
           </div>
