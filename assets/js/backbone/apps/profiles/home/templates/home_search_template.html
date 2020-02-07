@@ -24,9 +24,11 @@
         <div class="usa-width-one-fourth">
             <h3>Career field</h3>
             <ul class="usa-unstyled-list">
+                <% if (search.acquisition[0]) { %>
                 <li class="usajobs-open-opps-search_item">
                     <a href="/search?career=<%- search.acquisition[0].id %>"><%- search.acquisition[0].name %></a>
                 </li>
+                <% } %>
                 <% _.forEach(search.careers, function(career) { %>
                 <li class="usajobs-open-opps-search_item">
                     <a href="/search?career=<%- career.id %>"><%- career.name %></a>
