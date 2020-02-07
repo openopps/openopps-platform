@@ -1,0 +1,32 @@
+<aside class="usajobs-rightrail profile-edit" role="complementary">
+  <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+    <% if (window.cache.currentUser.isAdmin) { %>
+    <div class="usajobs-opop-section-edit">
+      <a id="add-badge" class="usa-button usa-button-secondary" data-userid="<%- data.id %>"
+        href="javascript:void(0)"><i class="fas fa-plus"></i> Add badge</a>
+    </div>
+    <% } %>
+
+    <h2>Badges</h2>
+
+    <% if (data.badges.length > 0) { %>
+    <ul class="profile-badges">
+      <% _.map(data.badges, function (b) { %>
+      <li class="profile-badge">
+        <% var filename = b.type.replace(' ', '-'); %>
+        <img src="/images/badges/<%- filename %>.png"
+          alt="The <%- b.type %> badge is awarded when you <%- b.description %>"
+          title="The <%- b.type %> badge is awarded when you <%- b.description %>">
+        <p><%- b.type %></p>
+        <% if (b.type=='community manager' && window.cache.currentUser.isAdmin) { %>
+        <div class="remove-badge">
+          <a id="remove-badge" class="remove-badge" data-user-id="<%- b.user %>" data-badge-id="<%- b.id %>"
+            data-badge-type="<%- b.type %>" href="javascript:void(0);">Remove</a>
+        </div>
+        <% } %>
+      </li>
+      <% }); %>
+    </ul>
+    <% } %>
+  </div>
+</aside>

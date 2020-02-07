@@ -391,6 +391,33 @@
   margin-bottom: $size-default;
 }
 
+.remove-bureau-office, .remove-badge {
+  color: #CD2026;
+  &:hover {
+    color: $color-secondary;
+  }
+}
+
+.add-badge  {
+  float: left;
+  text-align: center;
+  margin-top: -1.1em;
+
+  img {
+    min-height: 100px;
+    width: 12.2rem;
+    height: 12.2rem;
+  }
+
+  p {
+    max-width: 12.2rem;
+    margin-top: -1rem;
+    margin-bottom: 0;
+    text-align: center;
+  }
+
+}
+
 .profile-badges {
   list-style-type: none;
   padding: 0;

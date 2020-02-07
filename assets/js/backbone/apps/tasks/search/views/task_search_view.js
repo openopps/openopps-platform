@@ -12,6 +12,8 @@ var TaskFilters = require('../templates/task_filters.html');
 var SearchPills = require('../templates/search_pills.html');
 var TaskSearchBanner = require('../templates/task_search_banner.html');
 
+var removeMd = require('remove-markdown');
+
 
 var TaskListView = Backbone.View.extend({
   events: {
@@ -388,6 +390,7 @@ var TaskListView = Backbone.View.extend({
  
     if (searchResult.description) {
       item.item.descriptionHtml = marked(searchResult.description).replace(/<\/?a(|\s+[^>]+)>/g, '');
+      item.item.descriptionHtml = removeMd(item.item.descriptionHtml);
     }
     return _.template(TaskListItem)(item);
   },

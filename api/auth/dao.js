@@ -18,6 +18,21 @@ const tagEntityQuery = 'select tagentity_users__user_tags.* ' +
   'join tagentity on tagentity.id = tagentity_users ' +
   'where type= ? and user_tags = ?';
 
+var userBureauOfficeQuery= 'SELECT  m_user.name, m_user.id as "userId", user_bureau_office.user_bureau_office_id as "userBureauOfficeId", user_bureau_office.bureau_id,user_bureau_office.office_id, ' +   
+  '('+
+' select bureau.name ' +
+    'from bureau where bureau.bureau_id = user_bureau_office.bureau_id ' +
+  ') as bureau,' + 
+  '('+
+ 'select office.name ' +
+    'from office where office.office_id = user_bureau_office.office_id ' + 
+  ') as office ' + 
+  'FROM midas_user m_user ' +  
+  'JOIN user_bureau_office ON user_bureau_office.user_id = m_user.id ' +
+  'where m_user.id = ?';
+
+
+
 const options = {
   user: {
     fetch: {
@@ -68,6 +83,7 @@ module.exports = function (db) {
       user: userQuery,
       tagEntity: tagEntityQuery,
       updateUser: userUpdateQuery,
+      userBureauOffice :userBureauOfficeQuery,  
     },
     options: options,
     clean: clean,

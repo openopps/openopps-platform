@@ -139,7 +139,8 @@
         </td>
         <% if (_.contains(['submitted'], status.toLowerCase())) { %>
           <td class="metrics-table__button">
-            <% if (target == 'community' && !window.cache.currentUser.isAdmin && task.bureau_id && task.bureau_id != window.cache.currentUser.bureauId && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id })) { %>
+            <% if (target == 'community' && !window.cache.currentUser.isAdmin 
+            && task.bureau_id && !_.findWhere(window.cache.currentUser.bureauOffice, { bureau_id: task.bureau_id }) && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id })) { %>
               &nbsp;
             <% } else if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
               <a href="#open/<%- task.id %>"
