@@ -185,7 +185,7 @@ module.exports.processFile = (type, file) => {
         log.info('Error reading file ', file.name, err);
         resolve(false);
       } else {
-        var rotatedImage = await rotateIfNeeded(data);
+        var rotatedImage = _.includes(['image/jpg', 'image/jpeg'], file.type) ? await rotateIfNeeded(data) : data;
         if(rotatedImage.error) {
           log.info(imageData.message, imageData.error);
           resolve(false);
