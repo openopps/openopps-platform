@@ -135,6 +135,7 @@ var ApplyView = Backbone.View.extend({
 
   render: function () {
     if (this.data.submittedAt !== null) {
+      this.data.tasks= _.sortBy(this.data.tasks, 'sortOrder');
       this.$el.html(templates.submittedApplication(this.data));
    
       SubmittedApplication.renderApplicationReceived.bind(this)();
