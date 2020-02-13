@@ -207,7 +207,7 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   renderCustomize: function () {
     var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
-      imageId: this.community.imageId,
+      imageId: (this.community || {}).imageId,
       communityId:this.options.communityId,     
     });
     $('#custom-display').html(customizeTemplate);

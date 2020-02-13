@@ -11,10 +11,10 @@
       <label for="display-title-color-text" class="usa-input-optional">Title color</label>
       <div class="usajobs-grid-full display-color-group">
         <div class="usa-width-three-fourths">
-          <input type="text" class="color-input" value="#f6b73c" id="display-title-color-text"/>
+          <input type="text" class="color-input" value="" id="display-title-color-text"/>
         </div>
         <div class="usa-width-one-fourth">
-          <input type="color" class="color-button" value="#f6b73c" id="display-title-color"/>
+          <input type="color" class="color-button" value="#ffffff" id="display-title-color"/>
           <label for="display-title-color" class="sr-only">Title color preview</label>
         </div>
       </div>
@@ -29,10 +29,10 @@
       <label for="display-subtitle-color-text" class="usa-input-optional">Subtitle color</label>
       <div class="usajobs-grid-full display-color-group">
         <div class="usa-width-three-fourths">
-          <input type="text" class="color-input" value="#f6b73c" id="display-subtitle-color-text"/>
+          <input type="text" class="color-input" value="" id="display-subtitle-color-text"/>
         </div>
         <div class="usa-width-one-fourth">
-          <input type="color" class="color-button" value="#f6b73c" id="display-subtitle-color"/>
+          <input type="color" class="color-button" value="#ffffff" id="display-subtitle-color"/>
           <label for="display-subtitle-color" class="sr-only">Subtitle color preview</label>
         </div>
       </div>
@@ -48,27 +48,30 @@
         <label for="display-description-color-text" class="usa-input-optional">Description color</label>
         <div class="usajobs-grid-full display-color-group">
           <div class="usa-width-three-fourths">
-            <input type="text" class="color-input" value="#f6b73c" id="display-description-color-text"/>
+            <input type="text" class="color-input" value="" id="display-description-color-text"/>
         </div>
         <div class="usa-width-one-fourth">
-            <input type="color" class="color-button" value="#f6b73c" id="display-description-color"/>
+            <input type="color" class="color-button" value="#ffffff" id="display-description-color"/>
             <label for="display-description-color" class="sr-only">Description color preview</label>
         </div>
     </div>
     <div class="form-group required-input">
-        <label for="display-banner-color-text" class="usa-input-optional">Banner</label>
+        <label for="display-banner-color-text" class="usa-input-optional">Banner color</label>
         <div class="usajobs-grid-full display-color-group">
           <div class="usa-width-three-fourths">
-            <input type="text" class="color-input" value="#f6b73c" id="display-banner-color-text"/>
+            <input type="text" class="color-input" value="" id="display-banner-color-text"/>
           </div>
           <div class="usa-width-one-fourth">
-            <input type="color" class="color-button" value="#f6b73c" id="display-banner-color"/>
+            <input type="color" class="color-button" value="#205493" id="display-banner-color"/>
             <label for="display-banner-color" class="sr-only">Banner color preview</label>
           </div>
         </div>
     <div class="form-group">
         <label for="vanityURL" class="usa-input-optional">Vanity URL</label>
-        <input type="text" id="vanityURL" class="fullwidth form-control validate" />
+        <div class="usajobs-grid-full display-color-group">
+          <span><%- window.location.host %>/community/</span>
+          <input type="text" id="vanityURL" class="fullwidth form-control validate" />
+        </div>
     </div>
     <div class="fileinput-button">
         <span><%- imageId ? 'Update logo' : 'Upload logo' %>
