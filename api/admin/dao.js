@@ -100,7 +100,7 @@ const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 and 
   'count(CASE when submitted_at is not null then 1 ELSE NULL end) as submittedTotal ' +
    'from application app left join task_list_application tla on app.application_id = tla.application_id ' +
    'left join task_list on tla.task_list_id = task_list.task_list_id '+
-   'where app.community_id = ? and app.cycle_id = ? ' ;
+   'where app.withdrawn <> true and  app.community_id = ? and app.cycle_id = ? ' ;
 
 
 const volunteerCountQuery = 'select ' +

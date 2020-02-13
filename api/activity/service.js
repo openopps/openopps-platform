@@ -35,6 +35,7 @@ async function getTaskTypeList (user) {
     skills: (await dao.Task.db.query(dao.query.taskByType, 'skill', 4)).rows,
     locations: (await dao.Task.db.query(dao.query.taskByType, 'location', 3)).rows,
     byProfile: generateByProfileQuery(user),
+    communities : (await dao.Community.db.query(dao.query.communitiesTasks)).rows,
   };
 }
 
@@ -60,4 +61,5 @@ module.exports = {
   usersList: usersList,
   getTaskCount: getTaskCount,
   getTaskTypeList: getTaskTypeList,
+  getCommunities : this.getCommunities,
 };

@@ -13,11 +13,11 @@ var Backbone = require('backbone');
 
 
 var BaseView = Backbone.View.extend({
-  initialize: function() {},
+  initialize: function () {},
 
-  cleanup: function() {
+  cleanup: function () {
     removeView(this);
-  }
+  },
 });
 
 module.exports = BaseView;

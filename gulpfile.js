@@ -12,6 +12,7 @@ var babelify = require('babelify');
 var uglify = require('gulp-uglify-es').default;
 var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
+var merge = require('merge-stream');
 var bourbon 	= require('bourbon').includePaths;
 var neat		= require('bourbon-neat').includePaths;
 
@@ -35,7 +36,7 @@ var versionBumps = {
 
 // Lint Task
 gulp.task('lint', function () {
-  return gulp.src('js/*.js')
+  return gulp.src('assets/js/backbone/**/*.js')
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
@@ -53,11 +54,10 @@ gulp.task('sass', function () {
 // Concatenate & Minify JS
 gulp.task('scripts', function () {
   return gulp.src('assets/js/backbone/app.js')
-    .pipe(bro({ transform: [ 
+    .pipe(bro({ error: 'emit', transform: [ 
       babelify.configure({ presets: ['@babel/env'] }),
-      stringify
+      stringify,
     ]}))
-    //.pipe(babel({ presets: ['@babel/env'] }))
     .pipe(rename('bundle.min.js'))
     .pipe(sourcemaps.init())
     .pipe(uglify())
@@ -66,22 +66,23 @@ gulp.task('scripts', function () {
 });
 
 // Move additional resources
-gulp.task('move', function (done) {
-  gulp.src(['./assets/files/**'])
+gulp.task('move', function () {
+  var files = gulp.src(['./assets/files/**'])
     .pipe(gulp.dest('dist/files'));
-  gulp.src(['./assets/fonts/**'])
+  var fonts = gulp.src(['./assets/fonts/**'])
     .pipe(gulp.dest('dist/fonts'));
-  gulp.src(['./assets/images/**'])
+  var images = gulp.src(['./assets/images/**'])
     .pipe(gulp.dest('dist/images'));
-  gulp.src(['./assets/img/**'])
+  var img = gulp.src(['./assets/img/**'])
     .pipe(gulp.dest('dist/img'));
-  gulp.src(['./assets/locales/**'])
+  var locales = gulp.src(['./assets/locales/**'])
     .pipe(gulp.dest('dist/locales'));
-  gulp.src(['./assets/*.*'])
+  var assets = gulp.src(['./assets/*.*'])
     .pipe(gulp.dest('dist'));
-  gulp.src(['./assets/js/vendor/fontawesome-all.js'])
+  var fontawesome = gulp.src(['./assets/js/vendor/fontawesome-all.js'])
     .pipe(gulp.dest('dist/js'));
-  done();
+  
+  return merge(files, fonts, images, img, locales, assets, fontawesome);
 });
 
 // Watch Files For Changes
@@ -132,13 +133,13 @@ gulp.task('create-release', function (done) {
     if (err) {
       throw(err);
     } else if (branch != 'dev') {
-      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'))
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the dev branch.'));
     } else {
       git.status({args: '--ahead-behind'}, function (err, stdout) {
         if (err) {
           throw(err);
         } else if (stdout.indexOf('Your branch is up to date') < 0) {
-          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'))
+          throw(new Error('Your copy of the dev branch is not current. Please pull latest version and try again.'));
         } else {
           git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
             if(err) { throw(err); }
@@ -198,13 +199,13 @@ gulp.task('patch-release', function (done) {
     if (err) {
       throw(err);
     } else if (branch != 'staging') {
-      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the staging branch.'))
+      throw(new Error('You currently have the ' + branch + ' branch checked out. You must checkout the staging branch.'));
     } else {
       git.status({args: '--ahead-behind'}, function (err, stdout) {
         if (err) {
           throw(err);
         } else if (stdout.indexOf('Your branch is up to date') < 0) {
-          throw(new Error('Your copy of the staging branch is not current. Please pull latest version and try again.'))
+          throw(new Error('Your copy of the staging branch is not current. Please pull latest version and try again.'));
         } else {
           git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
             if(err) { throw(err); }

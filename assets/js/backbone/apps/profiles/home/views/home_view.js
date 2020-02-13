@@ -232,7 +232,7 @@ var HomeView = Backbone.View.extend({
       type: 'DELETE',
       data: {
         opportunityId: opportunityId,
-      }
+      },
     }).done(function ( model, response, options ) {
       this.deleteModal.cleanup();
       this.render();

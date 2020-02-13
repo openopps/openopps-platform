@@ -77,7 +77,8 @@
 </nav>
 
 <% if(!accessForbidden && !welcome) { %>
-<nav class="usajobs-openopps-secondary-nav">
+<nav class="usajobs-openopps-secondary-nav" aria-labelledby="usajobs-openopps-secondary-nav-label">
+  <span class="sr-only" id="usajobs-openopps-secondary-nav-label">Secondary menu</span>
   <div class="usajobs-openopps-secondary-nav__body">
     <% if (user) { %>
     <ul id="section-one" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">

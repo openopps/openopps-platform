@@ -4,6 +4,7 @@ const Backbone = require('backbone');
 var $ = require('jquery');
 var ModalComponent = require('../../../components/modal');
 const moment = require('moment-timezone');
+const templates = require('./templates');
 
 var submittedApplication = {
   updateApplication: function (e) {
@@ -55,7 +56,12 @@ var submittedApplication = {
         primary: {
           text: 'Withdraw',
           action: function () {
-            submittedApplication.submitWithdraw.bind(this)(this.data.applicationId, this.data.userId);
+            if(new Date(this.data.cycle.apply_end_date) > new Date()){
+              submittedApplication.submitDelete.bind(this)(this.data.applicationId, this.data.userId);
+            }
+            else{
+              submittedApplication.submitWithdraw.bind(this)(this.data.applicationId, this.data.userId);
+            }
           }.bind(this),
         },
       }).render();
@@ -110,6 +116,47 @@ var submittedApplication = {
       this.modalComponent.displayError('An unexpected error occured attempting to withdraw this application.', 'Withdraw application error');
     }.bind(this));
   },
+
+  toggleAccordion: function (e) {
+    var element = $(e.currentTarget);
+    var target = element.siblings('.usa-accordion-content');
+    var otherElements = element.parent('li').siblings('li').find('.usa-accordion-button');
+    var otherTargets = element.parent('li').siblings('li').find('.usa-accordion-content');
+    var open = element.attr('aria-expanded') == 'true';
+    if (!open) {
+      otherElements.attr('aria-expanded', false);
+      otherTargets.attr('aria-hidden', true);
+      element.attr('aria-expanded', true);
+      target.attr('aria-hidden', false);
+    } else {
+      element.attr('aria-expanded', false);
+      target.attr('aria-hidden', true);
+    }
+  },
+  
+  renderApplicationReceived : function () {    
+    $('#application-received').html(templates.applySubmittedApplicationReceived(this.data));
+    
+  },
+  renderSelectedMessages : function () {    
+    $('#selected-messages').html(templates.applySubmittedSelected(this.data.selectedApplicant));
+    
+  },
+  renderAlternateMessages : function () {    
+    $('#alternate-messages').html(templates.applySubmittedAlternate(this.data.alternateApplicant));
+    
+  },
+  renderNotSelectedMessages : function () {  
+    var data= _.extend(this.data.notSelectedApplicant, {applicationsCount : this.data.applicantCount.applicant_count });  
+    $('#not-selected-messages').html(templates.applySubmittedNotSelected(data));
+    
+  },
+  renderSelectedInternship : function () {  
+    
+    $('#selected-internship').html(templates.applySubmittedSelectedInternship(this.data.selectedInternship));
+    
+  },
+  
 };
 
 module.exports = submittedApplication;

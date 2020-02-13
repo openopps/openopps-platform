@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
+const schedules = require('./schedules');
 const systemSetting = require('../admin/systemSetting');
 const protocol = openopps.emailProtocol || '';
 var transportConfig = openopps[protocol.toLowerCase()] || {};
@@ -14,6 +15,16 @@ if (protocol == '') {
     newline: 'unix',
     buffer: true,
   };
+}
+
+function checkEmailThrottle (index, limit) {
+  return new Promise(resolve => {
+    if((index + 1) % limit == 0) {
+      setTimeout(resolve, 1500);
+    } else {
+      resolve();
+    }
+  });
 }
 
 function createNotification (notification) {
@@ -183,8 +194,26 @@ function insertAWSNotification (notification) {
   });
 }
 
+function runSchedule (scheduleRequest) {
+  schedules.getJob(scheduleRequest.job).getNotificationData().then(async results => {
+    for(let i = 0; i < results.length; i++) {
+      createNotification(results[i]);
+      await checkEmailThrottle(i, 20);
+    }
+  }).catch(err => {
+    log.error(err);
+  });
+}
+
+function listSchedules () {
+  return schedules.listJobs();
+}
+
 module.exports = {
+  checkEmailThrottle: checkEmailThrottle,
   createNotification: createNotification,
   processNotification: processNotification,
   insertAWSNotification: insertAWSNotification,
+  runSchedule: runSchedule,
+  listSchedules: listSchedules,
 };

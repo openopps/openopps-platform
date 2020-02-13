@@ -67,7 +67,7 @@ var AdminCommunityCycleEditView = Backbone.View.extend({
     return this;
   },
 
-  displayDate: function(e) {
+  displayDate: function (e) {
     e.preventDefault && e.preventDefault(); 
     var link = e.currentTarget.value;
     if((link).length > 0) {
