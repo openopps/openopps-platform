@@ -116,6 +116,25 @@ router.get('/api/user/photo/:id', async (ctx, next) => {
   }
 });
 
+router.get('/api/logo/photo/:id', async (ctx, next) => {
+  var community = await service.findOne(ctx.params.id);
+  if (!community) {
+    ctx.redirect('/images/default-user-icon-profile.png');
+  }
+  if (community.imageId) {
+    ctx.status = 307;
+    ctx.redirect('/api/upload/get/' + community.imageId);
+  }
+  else if (community.photoUrl) {
+    ctx.status = 307;
+    ctx.redirect(community.photoUrl);
+  }
+  else {
+    ctx.status = 307;
+    ctx.redirect('/images/default-user-icon-profile.png');
+  }
+});
+
 router.post('/api/user/photo/remove/:id', async (ctx, next) => {
   if (await service.canUpdateProfile(ctx)) {
     //ctx.status = 200;

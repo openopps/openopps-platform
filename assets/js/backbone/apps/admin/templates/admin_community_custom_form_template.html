@@ -70,6 +70,13 @@
         <label for="vanityURL" class="usa-input-optional">Vanity URL</label>
         <input type="text" id="vanityURL" class="fullwidth form-control validate" />
     </div>
+    <div>
+      <% if (imageId) { %>
+        <img id="profile-picture" src="/api/upload/get/<%- id %>" alt="Banner logo of <%- name %>">
+      <% } else { %>
+        <div></div>
+      <% } %>
+    </div>
     <div class="fileinput-button">
         <span><%- imageId ? 'Update logo' : 'Upload logo' %>
           <label class="sr-only" for="fileupload">Upload logo</label>

@@ -38,7 +38,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options; 
     this.departments = {};  
-    this.communityInfo = {};
+    this.community = {};
     this.bureaus = [];
 
     this.params = new URLSearchParams(window.location.search);   
@@ -103,33 +103,34 @@ var AdminCommunityEditView = Backbone.View.extend({
     });
   },
 
-  initializeformFields: function (community){  
-    $('#communityType option:contains('+ community.communityType +')').attr('selected', true);
-    $('#targetAudience option:contains('+ community.targetAudience +')').attr('selected', true);
-    $('#duration option:contains('+ community.duration +')').attr('selected', true);
-    $('#agencies').val(community.agency.agencyId); 
-    $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
-    $('#community-name').val(community.communityName);
-    $('#description').val(community.description);
-    $('#community-support-email').val(community.supportEmail);  
-    $('#microsite-url').val(community.micrositeUrl);
-    $('#community-mgr-name').val(community.communityManagerName);
-    $('#community-mgr-email').val(community.communityManagerEmail);
+  initializeformFields: function () {  
+    $('#communityType option:contains('+ this.community.attributes.communityType +')').attr('selected', true);
+    $('#targetAudience option:contains('+ this.community.attributes.targetAudience +')').attr('selected', true);
+    $('#duration option:contains('+ this.community.attributes.duration +')').attr('selected', true);
+    $('#agencies').val(this.community.attributes.agency.agencyId); 
+    $('input[name=community-group][value=' + this.community.attributes.isClosedGroup +']').prop('checked', true);
+    $('#community-name').val(this.community.attributes.communityName);
+    $('#description').val(this.community.attributes.description);
+    $('#community-support-email').val(this.community.attributes.supportEmail);  
+    $('#microsite-url').val(this.community.attributes.micrositeUrl);
+    $('#community-mgr-name').val(this.community.attributes.communityManagerName);
+    $('#community-mgr-email').val(this.community.attributes.communityManagerEmail);
   },
 
-  initializeDisplayFormFields: function (community) {
-    $('#display-title').val(community.banner.title);
-    $('#display-title-color-text').val(community.banner.titleColor);
-    $('#display-title-color').val(community.banner.titleColor);
-    $('#display-subtitle').val(community.banner.subtitle);
-    $('#display-subtitle-color-text').val(community.banner.subtitleColor);
-    $('#display-subtitle-color').val(community.banner.subtitleColor);
-    $('#display-description').val(community.banner.description);
-    $('#display-description-color-text').val(community.banner.descriptionColor);
-    $('#display-description-color').val(community.banner.descriptionColor);
-    $('#display-banner-color-text').val(community.banner.bannerColor);
-    $('#display-banner-color').val(community.banner.bannerColor);
-    $('#vanityURL').val(community.vanityUrl);
+  initializeDisplayFormFields: function () {
+    $('#display-title').val(this.community.attributes.banner.title);
+    $('#display-title-color-text').val(this.community.attributes.banner.titleColor);
+    $('#display-title-color').val(this.community.attributes.banner.titleColor);
+    $('#display-subtitle').val(this.community.attributes.banner.subtitle);
+    $('#display-subtitle-color-text').val(this.community.attributes.banner.subtitleColor);
+    $('#display-subtitle-color').val(this.community.attributes.banner.subtitleColor);
+    $('#display-description').val(this.community.attributes.banner.description);
+    $('#display-description-color-text').val(this.community.attributes.banner.descriptionColor);
+    $('#display-description-color').val(this.community.attributes.banner.descriptionColor);
+    $('#display-banner-color-text').val(this.community.attributes.banner.bannerColor);
+    $('#display-banner-color').val(this.community.attributes.banner.bannerColor);
+    $('#vanityURL').val(this.community.attributes.vanityUrl);
+    // $('#fileupload').val(this.community.attributes.imageId);
   },
 
   updateColorTextField: function (e) {
@@ -168,7 +169,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         bannerColor: $('#display-banner-color').val(),
       },
       vanityUrl: $('#vanityURL').val(),
-      imageId: this.options.imageId,
+      imageId: $('#fileupload').val(this.community.attributes.imageId),
     };
     return modelData;
   },
@@ -192,7 +193,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeAgencySelect();    
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
-          this.initializeDisplayFormFields(community);
+          this.initializeDisplayFormFields();
           this.initializeFileUpload();
         }
         $('#search-results-loading').hide();
@@ -208,7 +209,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   renderCustomize: function () {
     var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
       imageId: this.community.imageId,
-      communityId:this.options.communityId,     
+      communityId:this.community.communityId,     
     });
     $('#custom-display').html(customizeTemplate);
   },
@@ -216,7 +217,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   renderBureausAndOffices: function () {
     var bureauOfficeTemplate = _.template(AdminCommunityBureauAndOfficeFormTemplate)({
       bureaus: this.bureaus,
-      communityId:this.options.communityId,     
+      communityId:this.community.communityId,     
     });
     $('#bureau-office').html(bureauOfficeTemplate);
   },
@@ -230,7 +231,6 @@ var AdminCommunityEditView = Backbone.View.extend({
       insertOffice:data.insertOffice,
       deleteBureau: data.deleteBureau,
       deleteOffice: data.deleteOffice,
-     
     });
    
     $('#bureau-office-message').html(bureauOfficeMessageTemplate);
@@ -258,7 +258,11 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        this.options.imageId = JSON.parse($(data.result).text())[0].id,
+        var info = JSON.parse($(data.result).text())[0];
+        this.community.attributes.imageId = info.id;
+        // $('#fileupload').val(this.community.attributes.imageId);
+  
+        this.community.attributes.imageFile = info.fd;
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
@@ -287,14 +291,14 @@ var AdminCommunityEditView = Backbone.View.extend({
   save: function (e) {
     e.preventDefault && e.preventDefault(); 
     var data= this.getDataFromPage();
-    if(this.options.communityId){
+    if(this.community.communityId){
       data.updatedAt=$('#updated-at').val();
     }  
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
-      if(this.options.communityId){
+      if(this.community.communityId){
         this.community.trigger('community:save', data);
       }
       else{
