@@ -2,6 +2,7 @@ const _ = require('lodash');
 const db = require('../db/client');
 const moment = require('moment');
 const util = require('util');
+const Agency = require('../api/model/Agency');
 
 var dao = {}; 
 
@@ -62,7 +63,7 @@ dao.cycleTasksToIndex = async function (cycleId) {
     console.error(error);
     return null;
   }
-}
+};
 
 function toElasticOpportunity (value, index, list) {
   var doc = value.task;
@@ -80,7 +81,7 @@ function toElasticOpportunity (value, index, list) {
     'details': doc.details,
     'outcome': doc.outcome,
     'about': doc.about,
-    'restrictedToAgency': doc.isRestricted === 'true' ? doc.agencyName : 'null',
+    'restrictedToAgency': doc.restricted_to || 'null',
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
@@ -115,6 +116,7 @@ from (
     t.details,
     t.outcome,
     t.about,
+    t.restricted_to,
     a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."publishedAt",

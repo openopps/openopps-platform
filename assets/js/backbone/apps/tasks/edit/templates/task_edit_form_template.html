@@ -131,10 +131,10 @@
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-              <% if (!community && agency ) { %>
-                <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency" value="task-restrict-agency" <% if (data.restrict.projectNetwork ) { %> checked="checked" <% } %> >
-                <label for="task-restrict-agency">Limit participation to <%- agency.abbr ? agency.parentAbbr ? agency.parentAbbr : agency.abbr : agency.name %> employees</label>
-              <% } %>
+              <% _.each(agencies, (agency) => { %>
+                <input type="checkbox" id="task-restrict-agency-<%- agency.agency_id %>" name="task-restrict-agency" value="<%- agency.agency_id %>" <% if (data.restrictedTo == agency.agency_id ) { %> checked="checked" <% } %> >
+                <label for="task-restrict-agency-<%- agency.agency_id %>">Limit participation to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
+              <% }); %>
             </div>
 
             <div class="form-group required-input" id="time-options-time-required">

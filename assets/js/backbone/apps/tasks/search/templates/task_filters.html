@@ -109,10 +109,12 @@
         <% if (!_.isEmpty(userAgency)) { %>
             <h4 class="usajobs-search-filters__title agency">Agency</h4>
             <ul id="agencyFilters" class="usa-unstyled-list">
-                <li>
-                    <input id="js-restrict-task-filter" class="restrict-participation" type="checkbox" name="restrict" value="restrict" <% if (_.contains(filters.restrict, 'true')) { %>checked<% } %>/>
-                    <label for="js-restrict-task-filter">Participation limited to <%- (userAgency.abbr) ? userAgency.parentAbbr ? userAgency.parentAbbr : userAgency.abbr : userAgency.name %> employees</label>
-                </li>
+                <% _.each(agencies, function (agency) { %>
+                    <li>
+                        <input id="js-restrict-agency-<%- agency.agency_id %>" class="restrict-participation" type="checkbox" name="restrict" value="<%- agency.agency_id %>" <% if (_.contains(filters.restrict, agency.agency_id.toString())) { %>checked<% } %>/>
+                        <label for="js-restrict-agency-<%- agency.agency_id %>">Participation limited to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
+                    </li>
+                <% }); %>
             </ul>
         <% } %>
     </div>
