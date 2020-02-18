@@ -44,7 +44,7 @@ async function updateProfileData (user, profile, tokenset) {
   if (agency.agencyId) {
     user.agency = await Agency.fetchAgency(agency.agencyId).catch(() => { return {} });
   }
-  user.agencyId = user.agency.agencyId;
+  user.agencyId = agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
   user.country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
   user.countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, user.country.code).catch(() => { return {}; });
@@ -59,7 +59,7 @@ async function updateProfileData (user, profile, tokenset) {
   } else {
     try {
       elasticService.deleteUser(user.id);
-    }catch (err) {}
+    } catch (err) {}
   }
   return user;
 }
