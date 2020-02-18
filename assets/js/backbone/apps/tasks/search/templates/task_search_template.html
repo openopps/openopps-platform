@@ -4,7 +4,7 @@
       <div class="usajobs-grid usajobs-open-opps-search__box" <% if(filters.community && filters.community.banner.color) { %>style="background:<%- filters.community.banner.color %>"<% } %>>
         <div class="usa-width-one-whole">
           <div class="search__box-search">
-            <h1><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
+            <h1><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1<% if(filters.community && filters.community.banner.title) { %></h1>>
             <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle"><%- filters.community.banner.subtitle %></h3><% } %>
             <p class="search__box-content">Gain experience with hands-on training, share your expertise and work with others across the government.</p>
             <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
