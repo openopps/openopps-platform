@@ -84,7 +84,7 @@ service.deleteOpportunity = async function (taskId) {
 
   await elasticClient.bulk({ body: [{ delete: { _index: 'task', _type: 'task', _id: taskId } }] });
   return true;
-}
+};
 
 service.indexUser =  async function (userId) {
   if (!(await elasticClient.IsAlive()))
@@ -111,7 +111,7 @@ service.deleteUser = async function (userId) {
 
   await elasticClient.bulk({ body: [{ delete: { _index: 'user', _type: 'user', _id: userId } }] });
   return true;
-}
+};
 
 service.searchOpportunities = async function (request) {
   var searchResults = null;

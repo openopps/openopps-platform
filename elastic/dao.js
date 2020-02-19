@@ -70,7 +70,7 @@ function toElasticOpportunity (value, index, list) {
   var locationType = 'Virtual';
   if (Array.isArray(doc.location) && doc.location.length > 0) {
     locationType = 'In Person';
-  } else if (doc.country != null && doc.country != "") {
+  } else if (doc.country != null && doc.country != '') {
     locationType = 'In Person';
   }
   return {
@@ -102,7 +102,7 @@ function toElasticOpportunity (value, index, list) {
     'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo },
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
-    'office': { id: doc.office_id, name: doc.office_name }
+    'office': { id: doc.office_id, name: doc.office_name },
   };
 }
     

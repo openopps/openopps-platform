@@ -42,7 +42,7 @@ async function updateProfileData (user, profile, tokenset) {
   user.bio = profile.Profile.Biography;
   var agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
   if (agency.agencyId) {
-    user.agency = await Agency.fetchAgency(agency.agencyId).catch(() => { return {} });
+    user.agency = await Agency.fetchAgency(agency.agencyId).catch(() => { return {}; });
   }
   user.agencyId = agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
@@ -62,6 +62,42 @@ async function updateProfileData (user, profile, tokenset) {
     } catch (err) {}
   }
   return user;
+}
+
+function syncAutoJoinCommunities (user) {
+  return new Promise(resolve => {
+    var autoJoinCommunityQuery = `
+      select
+        community.community_id, community.agency_id, community.is_closed_group, community_user.community_user_id, community_user.user_id
+      from community
+      left join community_user on community_user.community_id = community.community_id and community_user.user_id = ?
+      where community.is_closed_group = 'true' and auto_join = 'true'`;
+    var agencyIds = Agency.toList(user.agency).map(agency => { return agency.agency_id; });
+    db.query(autoJoinCommunityQuery, user.id).then(result => {
+      Promise.all(result.rows.map(row => {
+        var found = _.find(agencyIds, (id) => { return id == row.agency_id; });
+        if (found && !row.community_user_id) {
+          // Add community user record
+          return dao.CommunityUser.insert({
+            communityId: row.community_id,
+            userId: user.id,
+            isManager: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        } else if (!found && row.community_user_id) {
+          // Remove community user record
+          return dao.CommunityUser.delete('community_user_id = ?', row.community_user_id);
+        }
+      })).then(resolve).catch(err => {
+        log.error(err);
+        resolve();
+      });
+    }).catch(err => {
+      log.error(err);
+      resolve();
+    });
+  });
 }
 
 module.exports = {
@@ -93,6 +129,7 @@ module.exports = {
   sync: async (user, tokenset, callback) => {
     await module.exports.get(tokenset).then(async (profile) => {
       user = await updateProfileData(user, profile, tokenset);
+      await syncAutoJoinCommunities(user);
       callback(null, user);
     }).catch(callback);
   },
