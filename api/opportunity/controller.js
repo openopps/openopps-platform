@@ -56,7 +56,7 @@ router.get('/api/task/applicants/:id', auth, async (ctx, next) => {
     ctx.body = results;
   }).catch(err => {
     ctx.status = err.status;
-  })
+  });
 });
 
 router.get('/api/task/communitylist', async (ctx, next) => {
@@ -75,7 +75,7 @@ router.get('/api/task/selections/:id', auth, async (ctx, next) => {
       ctx.body = results;
     }).catch(err => {
       ctx.status = err.status;
-    })
+    });
   } else {
     ctx.status = 403;
     ctx.body = null;

@@ -50,8 +50,8 @@ module.exports.fetchAgency = function (agencyId) {
             console.log('No parent resolving agency');
             resolve(agency);
           }
-        })
+        });
       }
     }).catch(reject);
   });
-}
+};

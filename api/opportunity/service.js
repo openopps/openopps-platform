@@ -747,8 +747,8 @@ function getRestrictValues (user) {
 
 async function getCurrentCycle (communityId, cycleId) {
   var cycles = await dao.Cycle.find('community_id = ? and posting_start_date <= now() and posting_end_date >= now()', communityId);
-  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId })) {
-    return cycleId
+  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId; })) {
+    return cycleId;
   } else {
     return (_.sortBy(cycles, 'cycleId' )[0] || {}).cycleId;
   }
