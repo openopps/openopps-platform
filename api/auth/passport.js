@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const Profile = require('./profile');
 const Login = require('./login');
+const Agency = require('../model/Agency');
 
 const localStrategyOptions = {
   usernameField: 'identifier',
@@ -33,7 +34,10 @@ async function fetchUser (id) {
       user.badges = await dao.Badge.find('"user" = ?', user.id, dao.options.badge);
       var GetCommunities = require('../opportunity/service').getCommunities;
       user.communities = await GetCommunities(user.id);
-      user.bureauOffice= (await db.query(dao.query.userBureauOffice, user.id)).rows;   
+      user.bureauOffice= (await db.query(dao.query.userBureauOffice, user.id)).rows;
+      if (user.agencyId) {
+        user.agency = await Agency.fetchAgency(user.agencyId).catch(() => { return {}; });
+      }
       
       user = dao.clean.user(user);
       var GetInternshipsCompleted = require('../user/service').getCompletedInternship;

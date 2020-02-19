@@ -4,6 +4,7 @@ const dao = require('./dao')(db);
 const _ = require('lodash');
 const request = require('request');
 const elasticService = require('../../elastic/service');
+const Agency = require('../model/Agency');
 
 const requestOptions = {
   headers: {
@@ -39,8 +40,11 @@ async function updateProfileData (user, profile, tokenset) {
   user.isUsCitizen = profile.Profile.IsUSCitizen;
   user.title = profile.Profile.JobTitle;
   user.bio = profile.Profile.Biography;
-  user.agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
-  user.agencyId = user.agency.agencyId;
+  var agency = await dao.Agency.findOne('code = ?', profile.Profile.OrganizationCPDFCode).catch(() => { return {}; });
+  if (agency.agencyId) {
+    user.agency = await Agency.fetchAgency(agency.agencyId).catch(() => { return {} });
+  }
+  user.agencyId = agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
   user.country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
   user.countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, user.country.code).catch(() => { return {}; });
@@ -55,7 +59,7 @@ async function updateProfileData (user, profile, tokenset) {
   } else {
     try {
       elasticService.deleteUser(user.id);
-    }catch (err) {}
+    } catch (err) {}
   }
   return user;
 }
