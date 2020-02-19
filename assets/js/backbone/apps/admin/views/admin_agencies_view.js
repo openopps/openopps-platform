@@ -23,7 +23,7 @@ var AdminAgenciesView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options;
     this.adminMainView = options.adminMainView;
-    this.agencyId = options.agencyId || window.cache.currentUser.agency.agencyId; 
+    this.agencyId = options.agencyId || window.cache.currentUser.agency.agency_id; 
   },
   render: function (replace) { 
     this.$el.show();
