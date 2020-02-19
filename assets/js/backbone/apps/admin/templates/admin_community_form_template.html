@@ -92,7 +92,16 @@
                 </li>
               </ul>
             </fieldset>
-          </div>  
+          </div>
+          <div id="community-auto-join" class="form-group required-input usa-fieldset-inputs">
+            <h5>Auto-join</h5>
+            <fieldset class="usajobs-fieldset">
+              <legend class="usa-sr-only">Auto-join</legend>
+              <p class="label-brief">Allow new members to automatically join your community?</p>
+              <input class="assign-auto-join" id="community-auto-join-group" type="checkbox" <% if (autoJoin) { %> checked <% } %> />
+              <label class="no-label" for="community-auto-join-group"><span class="sr-only">Allow new members to automatically join your community?</span></label>
+            </fieldset>
+          </div>
         </fieldset>
         <fieldset class="usajobs-fieldset usa-form-xl">
           <legend class="usa-sr-only">Community information</legend>

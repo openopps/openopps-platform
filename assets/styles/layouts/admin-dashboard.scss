@@ -323,7 +323,8 @@
   .user-enable[type=checkbox]:checked,
   .assign-admin[type=checkbox]:checked,
   .member-enable[type=checkbox]:checked,
-  .assign-approver[type=checkbox]:checked {
+  .assign-approver[type=checkbox]:checked,
+  .assign-auto-join[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -340,7 +341,8 @@
   .user-enable[type=checkbox],
   .assign-admin[type=checkbox],
   .member-enable[type=checkbox],
-  .assign-approver[type=checkbox] {
+  .assign-approver[type=checkbox],
+  .assign-auto-join[type=checkbox] {
     border: none;
     height: auto;
 
