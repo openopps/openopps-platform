@@ -27,8 +27,7 @@ var TaskEditFormView = Backbone.View.extend({
     'click .expandorama-button-team'      : 'toggleAccordion2',
     'click .expandorama-button-keywords'  : 'toggleAccordion3',
     'change [name=CareerField]'           : 'toggleCareerField',
-  
-
+    'change [name=task-restrict-agency]'        : 'toggleAgencyRestrict',
   },
 
   initialize: function (options) {
@@ -38,7 +37,8 @@ var TaskEditFormView = Backbone.View.extend({
     this.options                = options;
     this.tagFactory             = new TagFactory();
     this.owner                  = this.model.get( 'owner' );
-    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;  
+    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;
+    this.agencies               = this.model.get('agencies') || this.toList(this.agency);
     this.data                   = {};
     this.data.newTag            = {};
     this.communities            =  {};
@@ -90,6 +90,23 @@ var TaskEditFormView = Backbone.View.extend({
     });
   },
 
+  toList: function (agency) {
+    if(agency && agency.parent) {
+      return [_.pick(agency, ['agency_id', 'abbr', 'name'])].concat(this.toList(agency.parent));
+    } else {
+      return [_.pick(agency, ['agency_id', 'abbr', 'name'])];
+    }
+  },
+
+  toggleAgencyRestrict: function (event) {
+    var value = event.target.value;
+    $('input[name=task-restrict-agency]').filter((index, element) => {
+      return element.value != value;
+    }).each((index, element) => {
+      element.checked = false;
+    });
+  },
+
   /*
    * Render modal for the Task Creation Form ViewController
    */
@@ -130,6 +147,7 @@ var TaskEditFormView = Backbone.View.extend({
       madlibTags: this.options.madlibTags,
       ui: UIConfig,
       agency: this.agency,
+      agencies: this.agencies,
       communities:this.communities,   
       accordion1: {
         open: false,
@@ -552,14 +570,8 @@ var TaskEditFormView = Backbone.View.extend({
         $('#js-time-frequency-estimate').addClass('validate');
         break;
       case 'full-time':
-        $('#task-restrict-agency')[0].checked = true;
         break;
     }
-    if(e && target.id != 'full-time' && $('#task-restrict-agency').attr('disabled')) {
-      $('#task-restrict-agency')[0].checked = false;
-    }
-    $('#task-restrict-agency').attr('disabled', target.id == 'full-time');
-    $('#task-restrict-agency').siblings('label').attr('title', (target.id == 'full-time') ? 'Required for full time detail' : '');
   },
 
   toggleLocationOptions: function (e) {
@@ -638,7 +650,7 @@ var TaskEditFormView = Backbone.View.extend({
     };
     
     if (this.agency) {
-      modelData.restrict.projectNetwork = this.$('#task-restrict-agency').prop('checked');
+      modelData.restrictedTo = _($('input[name=task-restrict-agency]:checked')).pluck('value')[0];
     }
 
     var completedBy    = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null;

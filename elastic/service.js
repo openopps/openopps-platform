@@ -203,13 +203,13 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var agencies = ['null'];
   
   if (ctx.state.user && ctx.state.user.agency) {
-    if (query.restrict == 'true') {
-      agencies = [ctx.state.user.agency.name];
+    if (query.restrict) {
+      agencies = [].concat(query.restrict);
     } else {
       if (ctx.state.user.isAdmin) {
         agencies = [];
       } else {
-        agencies.push(ctx.state.user.agency.name);
+        agencies.push(ctx.state.user.agency.agency_id);
       }
     }
   }

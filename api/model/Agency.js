@@ -3,6 +3,14 @@ const db = require('../../db/client');
 
 module.exports = {};
 
+module.exports.toList = function (agency) {
+  if(agency && agency.parent) {
+    return [_.pick(agency, ['agency_id', 'abbr', 'name'])].concat(this.toList(agency.parent));
+  } else {
+    return [_.pick(agency, ['agency_id', 'abbr', 'name'])];
+  }
+};
+
 module.exports.fetchAgency = function (agencyId) {
   return new Promise(async (resolve, reject) => {
     // TODO: load agency

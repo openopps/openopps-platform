@@ -24,7 +24,7 @@ var TaskListView = Backbone.View.extend({
     'click .stateFilters-toggle'              : 'toggleStateFilters',
     'click .timefilters-toggle'               : 'toggleTimeFilters',
     'click .locationfilters-toggle'           : 'toggleLocationFilters',
-    'change #js-restrict-task-filter'         : 'agencyFilter',
+    'change .restrict-participation'          : 'agencyFilter',
     'click a.page'                            : 'clickPage',
     'click #search-tab-bar-filter'            : 'toggleFilter',
     'click .usajobs-search-filter-nav__back'  : 'toggleFilter',
@@ -43,9 +43,11 @@ var TaskListView = Backbone.View.extend({
     this.filters = { state: 'open', term: this.queryParams.search, page: 1 };
     this.firstFilter = true;
     this.userAgency =  {};
+    this.agencies = [];
     this.filterLookup = {};
     if (window.cache.currentUser && window.cache.currentUser.agency) {
       this.userAgency = window.cache.currentUser.agency;
+      this.loadAgencies(window.cache.currentUser.agency);
     }
     this.initAgencyFilter();
     this.initializeCommunityField();
@@ -54,6 +56,13 @@ var TaskListView = Backbone.View.extend({
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
 
+  },
+
+  loadAgencies: function (agency) {
+    this.agencies.push(agency);
+    if(agency.parent) {
+      this.loadAgencies(agency.parent);
+    }
   },
 
   render: function () {
@@ -239,17 +248,18 @@ var TaskListView = Backbone.View.extend({
     var element = $(event.target).closest('.usajobs-search-pills__item');
     var type = element.data('type');
     var value = element.data('value');
-    if(type == 'agency') {
-      this.agency = { data: {} };
-      delete this.filters.restrict;
-    } else if(_.isArray(this.filters[type])) {
+    // if(type == 'agency') {
+    //   this.agency = { data: {} };
+    //   delete this.filters.restrict;
+    // } else
+    if(_.isArray(this.filters[type])) {
       if(type == 'location' && value == 'in-person') {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
-          return _.isEqual(filter, 'virtual'); // only return virtual if it exist
+          return filter == 'virtual'; // only return virtual if it exist
         });
       } else {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
-          return !_.isEqual(filter, value);
+          return filter != value;
         });
       }
     } else if (_.isEqual(this.filters[type], value)) {
@@ -282,6 +292,7 @@ var TaskListView = Backbone.View.extend({
       user: window.cache.currentUser,
       ui: UIConfig,
       userAgency: this.userAgency,
+      agencies: this.agencies,
       tagTypes: this.tagTypes,
       term: this.filters.term,
       filters: this.filters,
@@ -292,7 +303,7 @@ var TaskListView = Backbone.View.extend({
     $('#task-filters').html(compiledTemplate);
     compiledTemplate = _.template(SearchPills)({
       filters: this.filters,
-      agency: this.agency,
+      agencies: this.agencies,
       appliedFilterCount: this.appliedFilterCount,
     });
     $('#usajobs-search-pills').html(compiledTemplate);
@@ -411,9 +422,9 @@ var TaskListView = Backbone.View.extend({
 
   initAgencyFilter: function () {
     this.agency = { data: {} };
-    if (_.contains(this.filters.restrict, 'true')) {
-      this.agency.data = this.userAgency;
-    }
+    [].concat(this.filters.restrict).forEach((id) => {
+
+    });
   },
 
   toggleFilter: function (e) {
@@ -528,10 +539,7 @@ var TaskListView = Backbone.View.extend({
 
   agencyFilter: function (event) {
     var isChecked = event.target.checked;
-    this.filters.state = _( $( '#stateFilters input:checked' ) ).pluck( 'value' );
-    if (isChecked) {
-      this.filters.restrict = ['true'];
-    } else { delete this.filters.restrict; }
+    this.filters.restrict = _($('#agencyFilters input:checked')).pluck('value');
     
     this.initAgencyFilter();
     if ( isChecked ) {
