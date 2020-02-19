@@ -31,6 +31,9 @@ async function findById (id, user) {
   if (task.agencyId) {
     task.agencies = Agency.toList(await Agency.fetchAgency(task.agencyId));
   }
+  if(task.payLevelId){
+    task.payLevel =await dao.PayPlan.findOne('pay_plan_id = ?', task.payLevelId).catch(() => { return null; });
+  }
   if (user) {
     task.saved = await dao.SavedTask.findOne('deleted_at is null and task_id = ? and user_id = ?', id, user.id).then(() => {
       return true;
