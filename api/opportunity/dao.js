@@ -184,14 +184,16 @@ const options = {
 const clean = {
   tasks: function (records) {
     return records.map(function (record) {
-      var cleaned = _.pickBy(record, _.identity);
+      var cleaned = _.pickBy(record, _.identity);   
       return cleaned;
     });
   },
-  task: function (record) {
-    var cleaned = _.pickBy(record, _.identity);
+
+  task: function (record) { 
+    var cleaned= _.omitBy(record, v => (_.isBoolean(v)||_.isFinite(v)) ? false : _.isEmpty(v)); 
     return cleaned;
   },
+
   user: function (record) {
     var cleaned = _.pickBy(record, _.identity);
     cleaned.agency = _.pickBy(cleaned.agency, _.identity);
@@ -234,6 +236,7 @@ module.exports = function (db) {
     Application: dao({db:db,table:'application'}),
     Phase: dao({ db: db, table: 'phase' }),
     TaskListApplication:dao({ db: db, table:'task_list_application' }),
+    PayPlan: dao({ db: db, table:'pay_plan' }),
     query: {
       applicationTasks:applicationTaskQuery,
       comments: commentsQuery,
