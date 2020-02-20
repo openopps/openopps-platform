@@ -40,6 +40,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.departments = {};  
     this.communityInfo = {};
     this.bureaus = [];
+    this.defaultTextColor = '#ffffff';
+    this.defaultBannerColor = '#205493';
 
     this.params = new URLSearchParams(window.location.search);   
     return this;
@@ -123,15 +125,15 @@ var AdminCommunityEditView = Backbone.View.extend({
   initializeDisplayFormFields: function (community) {
     $('#display-title').val(community.banner.title);
     $('#display-title-color-text').val(community.banner.titleColor);
-    $('#display-title-color').val(community.banner.titleColor);
+    $('#display-title-color').val(community.banner.titleColor || this.defaultTextColor);
     $('#display-subtitle').val(community.banner.subtitle);
     $('#display-subtitle-color-text').val(community.banner.subtitleColor);
-    $('#display-subtitle-color').val(community.banner.subtitleColor);
+    $('#display-subtitle-color').val(community.banner.subtitleColor || this.defaultTextColor);
     $('#display-description').val(community.banner.description);
     $('#display-description-color-text').val(community.banner.descriptionColor);
-    $('#display-description-color').val(community.banner.descriptionColor);
-    $('#display-banner-color-text').val(community.banner.bannerColor);
-    $('#display-banner-color').val(community.banner.bannerColor);
+    $('#display-description-color').val(community.banner.descriptionColor || this.defaultTextColor);
+    $('#display-banner-color-text').val(community.banner.color);
+    $('#display-banner-color').val(community.banner.color || this.defaultBannerColor);
     $('#vanityURL').val(community.vanityUrl);
   },
 
@@ -145,7 +147,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     var theInput = e.currentTarget;
     var colorName = '#' + e.currentTarget.id;
     colorName = colorName.replace('-text', '');
-    $(colorName).val(theInput.value);
+    var colorValue = (theInput.value.match(/^#[0-9A-F]{6}$/i) || [])[0];
+    $(colorName).val(colorValue || (colorName == '#display-banner-color' ? this.defaultBannerColor : this.defaultTextColor));
   },
 
   getDataFromPage: function () {
@@ -163,13 +166,14 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
-      banner: { title: $('#display-title').val(),
-        titleColor: $('#display-title-color').val(),
+      banner: {
+        title: $('#display-title').val(),
+        titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
-        subtitleColor: $('#display-subtitle-color').val(),
+        subtitleColor: $('#display-subtitle-color-text').val(),
         description: $('#display-description').val(),
-        descriptionColor: $('#display-description-color').val(),
-        bannerColor: $('#display-banner-color').val(),
+        descriptionColor: $('#display-description-color-text').val(),
+        color: $('#display-banner-color-text').val(),
       },
       vanityUrl: $('#vanityURL').val(),
       imageId: this.options.imageId,
@@ -210,11 +214,13 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderCustomize: function () {
-    var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
-      imageId: this.community.imageId,
-      communityId:this.options.communityId,     
-    });
-    $('#custom-display').html(customizeTemplate);
+    if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
+      var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
+        imageId: (this.community || {}).imageId,
+        communityId:this.options.communityId,     
+      });
+      $('#custom-display').html(customizeTemplate);
+    }
   },
 
   renderBureausAndOffices: function () {
@@ -322,6 +328,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       }.bind(this),
     });
   },
+
   validatebureau: function (){
     var abort = false; 
     var selectedBureauValue= $('#community_tag_bureau').val();
@@ -553,6 +560,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     //adding this to show select2 data in modal
     $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
   },
+
   checkBureauOfficeExist:function (self,bureauId,officeId,targetBureauName,targetOfficeName){  
     var abort= false;
     var selectedValue=  $('input[name=community-bureau-office-group]:checked').val();
@@ -630,9 +638,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
     // eslint-disable-next-line no-empty
     else{    
-    }
-   
+    } 
   },
+
   deleteBureau: function (event) {
     var data = {
       bureauId: $(event.currentTarget).data('bureau-id'),
@@ -718,7 +726,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   submitOfficeDelete: function (data, deleteModal,communityId) {
-   
     $.ajax({
       url: '/api/admin/community/'+ communityId +'/bureau/'+ data.bureauId + '/office/' + data.officeId,
       type: 'DELETE',    
