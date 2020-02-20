@@ -191,9 +191,14 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaRequirement();
     this.initializeCommunityDropDown();
     this.characterCount();
-    if(this.model.toJSON().payLevelId){
-     
-      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code +'-' + this.model.toJSON().payLevel.value});
+    if(this.model.toJSON().payLevelId){   
+      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code});
+    }
+    else{
+      var defaultData= _.filter(this.payPlans,function (f){
+        return f.code== 'GS';
+      });
+      $('#time-options-pay-scale').select2('data', {id: defaultData[0].id, text:defaultData[0].code});
     }
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
@@ -657,6 +662,8 @@ var TaskEditFormView = Backbone.View.extend({
     $('#apply-participant-area').hide();
     $('#time-estimate').removeClass('validate');
     $('#js-time-frequency-estimate').removeClass('validate');
+    $('#grade').removeClass('validate');
+    $('#time-options-pay-scale').removeClass('validate');
     switch (target.id) {
       case 'one-time':
         $('#time-options-time-required').show();
@@ -672,6 +679,8 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'full-time':
         $('#time-estimate').addClass('validate');
+        $('#grade').addClass('validate');
+        $('#time-options-pay-scale').addClass('validate');
         $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();        
@@ -681,6 +690,8 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'part-time':
         $('#time-estimate').addClass('validate');
+        $('#grade').addClass('validate');
+        $('#time-options-pay-scale').addClass('validate');
         $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();
@@ -789,6 +800,8 @@ var TaskEditFormView = Backbone.View.extend({
       modelData.grade         =this.$('#grade').val();
       modelData.isDetailReimbursable= $("input[name='detail-group']:checked").val();
       modelData.payLevelId =$('#time-options-pay-scale').val();
+      modelData.payPlan = $('#time-options-pay-scale').select2('data').text;
+      modelData.reimbursable= $("input[name='detail-group']:checked").val() =='true' ? 'Yes' :'No';
     }
     else{
       modelData.applyAdditional= '';
@@ -873,7 +886,15 @@ var TaskEditFormView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
-        this.payPlans= data;      
+        this.payPlans= data;  
+        var defaultData= _.filter(this.payPlans,function (f){
+          return f.code=='GS';
+        });      
+        var sortedArray = _.reject(this.payPlans, function (c) {
+          return c.code=='GS';
+        });
+        this.payPlans= (sortedArray.concat(defaultData[0])).reverse(); 
+         
       }.bind(this),
     });
   },

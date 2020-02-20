@@ -1418,33 +1418,17 @@
   margin-bottom: $size-L;
 }
 
-.usajobs-fieldset--horizontal {
-
-.payscale {
-  clear: none;
-  display: block;
-  float: left;
-  margin-right: 1.5rem;
-  width : 40rem;
-
-
-  &:not(:first-child) {
-    width: 32.5rem;
-  }
-  .select2-container {
-    width: 36rem;
-   }
- 
-}
 .grade {
-  display: inline-block;
- 
-  & label.no-margin-top { 
-    margin-top:-2.0rem
-  } 
-}
-}
+    display: inline-block;
+  
+    & label.no-margin-top { 
+      margin-top:-2.0rem
+    }
 
+    &.usa-input-error {
+      margin-left: 2rem;
+    }
+  }
 
 .remove-participant, .confirm-participant, .not-complete-participants {
   display: flex;
