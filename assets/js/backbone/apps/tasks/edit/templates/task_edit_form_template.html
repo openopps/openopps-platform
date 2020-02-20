@@ -139,7 +139,7 @@
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-              <p class="time-required-description" id="part-time-description"><em>Requires upto 50% of a participant's work time until detail has ended</em></p>
+              <p class="time-required-description" id="part-time-description"><em>Requires up to 50% of a participant's work time until detail has ended</em></p>
                  
                 <fieldset class="usajobs-fieldset">
                   <legend class="usa-sr-only">Detail reimbursable </legend>
@@ -167,21 +167,24 @@
            
             <div class="form-group required-input" id="pay-scale-grade">
               <div class="usajobs-grid-full">
-                <div class="usa-width-two-thirds">
-                  <div class=" required-input ">
-                    <label for="payScale" >Pay scale <span class="usa-input-optional"></span></label>           
-                    <select id="time-options-pay-scale" class="dropdown payscale" data-validate="empty">  
-                         <option></option>    
+                <div class="usa-width-one-third">
+                  <div class="form-group required-input">
+                    <label for="payScale">Pay plan</label>  
+                    <span class="field-validation-error error-empty" style="display:none;">You must select pay plan.</span>                         
+                    <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
+                      <option></option>              
                         <% _.each(payPlans, function(p) { %>              
-                          <option value=<%= p.pay_plan_id %>><%= p.code %>-<%= p.value  %></option>
-                        <% }); %>             
+                          <option value=<%= p.pay_plan_id %>><%= p.code %></option>
+                        <% }); %>  
+                                
                     </select>
                   </div>
                 </div>
-                <div class="usa-width-one-third">
-                  <div class="form-group grade">
-                    <label for="grade" >Grade<span class="usa-input-optional no-margin-top"></span></label>    
-                    <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium" value="<%- data.grade %>" onkeypress="if(this.value.length==2) return false;">
+                <div class="usa-width-one-half">
+                  <div class="form-group required-input grade">
+                    <label for="grade" >Grade<span class="no-margin-top"></span></label>  
+                    <span class="field-validation-error error-empty" style="display:none;">You must enter grade.</span>  
+                    <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium " value="<%- data.grade %>" data-validate="empty" onkeypress="if(this.value.length==2) return false;">
                   </div>  
                 </div>
               </div>
