@@ -167,13 +167,13 @@
            
             <div class="form-group required-input" id="pay-scale-grade">
               <div class="usajobs-grid-full">
-                <div class="usa-width-two-thirds">
+                <div class="usa-width-one-third">
                   <div class=" required-input ">
-                    <label for="payScale" >Pay scale <span class="usa-input-optional"></span></label>           
+                    <label for="payScale" >Pay plan <span class="usa-input-optional"></span></label>           
                     <select id="time-options-pay-scale" class="dropdown payscale" data-validate="empty">  
                          <option></option>    
                         <% _.each(payPlans, function(p) { %>              
-                          <option value=<%= p.pay_plan_id %>><%= p.code %>-<%= p.value  %></option>
+                          <option value=<%= p.pay_plan_id %>><%= p.code %></option>
                         <% }); %>             
                     </select>
                   </div>

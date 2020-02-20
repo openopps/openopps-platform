@@ -191,9 +191,8 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaRequirement();
     this.initializeCommunityDropDown();
     this.characterCount();
-    if(this.model.toJSON().payLevelId){
-     
-      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code +'-' + this.model.toJSON().payLevel.value});
+    if(this.model.toJSON().payLevelId){   
+      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code});
     }
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
