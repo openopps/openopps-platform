@@ -45,18 +45,22 @@
             </li>
           <% } %>
         <% } %>
+      <% } else if (key == 'restrict') { %>
+        <% _.each([].concat(value), (v) => { %>
+          <% var agency = _.find(agencies, (a) => { return a.agency_id == v; }); %>
+          <% if (agency) { %>
+            <li class="usajobs-search-pills__item" data-type="restrict" data-value="<%- v %>" data-behavior="search-pills.remove">
+              <a class="usajobs-search-pills__pill" title="Remove restrict agency filter" tabindex="0">
+                <span class="search-pill-name">Participation limited to <%- agency.abbr ? agency.abbr : agency.name %> employees</span>
+                <span class="usajobs-search-pills__remove-icon">
+                  <span class="fas fa-times" title="Remove filter"></span>
+                </span>
+              </a>
+            </li>
+          <% } %>
+        <% }); %>
       <% } %>
     <% }) %>
-    <% if(!_.isEmpty(agency.data)) { %>
-      <li class="usajobs-search-pills__item" data-type="agency" data-value="" data-behavior="search-pills.remove">
-        <a class="usajobs-search-pills__pill" title="Remove restrict agency filter" tabindex="0">
-          <span class="search-pill-name">Participation limited to <%- agency.data.abbr ? agency.data.parentAbbr ? agency.data.parentAbbr : agency.data.abbr : agency.data.name %> employees</span>
-          <span class="usajobs-search-pills__remove-icon">
-            <span class="fas fa-times" title="Remove filter"></span>
-          </span>
-        </a>
-      </li>
-    <% } %>
   </ul>
   <% if(appliedFilterCount) { %>
     <a id="search-pills-remove-all" class="usajobs-search-pills__remove-all" title="Remove all filters" data-behavior="search-pills.remove-all" aria-hidden="false" tabindex="0">

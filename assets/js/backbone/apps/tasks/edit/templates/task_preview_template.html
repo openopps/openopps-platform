@@ -39,11 +39,13 @@
           <h4>Personnel needed</h4>
           <p><%- data.peopleNeeded %></p>
         </div>
+
         <div class="usa-width-one-half">
           <h4>Time commitment</h4>
-          <p><%- madlibTags['task-time-required'][0].name %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
-            <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
+        <p><% if (madlibTags['task-time-required']) { %><%- madlibTags['task-time-required'][0].name %><% } %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
+          <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
         </div>
+        
         <% if (data.completedBy) { %>
           <div class="usa-width-one-half">
             <h4>Due date</h4>

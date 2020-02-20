@@ -117,26 +117,76 @@
                     <span class="opportunity-options__text">Ongoing</span>
                   </button>
                 </li>
-                <% if (!community) { %>
+                
+                  <li>
+                    <button type="button" class="opportunity-options__button time-options-time-required" id="part-time" value="Part Time Detail">
+                      <span class="opportunity-options__icon">
+                        <i class="fas fa-hourglass-half"></i>
+                      </span>
+                      <span class="opportunity-options__text">Part-time detail</span>
+                    </button>
+                  </li>
+                
                   <li>
                     <button type="button" class="opportunity-options__button time-options-time-required" id="full-time" value="Full Time Detail">
                       <span class="opportunity-options__icon">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-hourglass"></i>
                       </span>
-                      <span class="opportunity-options__text">Full time detail</span>
+                      <span class="opportunity-options__text">Full-time detail</span>
                     </button>
-                  </li>
-                <% } %>
+                  </li>               
               </ul>
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-              <% if (!community && agency ) { %>
-                <input type="checkbox" id="task-restrict-agency" name="task-restrict-agency" value="task-restrict-agency" <% if (data.restrict.projectNetwork ) { %> checked="checked" <% } %> >
-                <label for="task-restrict-agency">Limit participation to <%- agency.abbr ? agency.parentAbbr ? agency.parentAbbr : agency.abbr : agency.name %> employees</label>
-              <% } %>
+              <p class="time-required-description" id="part-time-description"><em>Requires upto 50% of a participant's work time until detail has ended</em></p>
+                 
+                <fieldset class="usajobs-fieldset">
+                  <legend class="usa-sr-only">Detail reimbursable </legend>
+                  <div class="form-group required-input usa-fieldset-inputs checkboxes-horizontal-longtitle" id="detail-reimbursable">  
+                  <p class="label-brief">Is this detail reimbursable?</p>
+                  <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
+                  <ul class="usa-unstyled-list" id="detail-reimbursable-group">
+                    <li>
+                      <input id="detail-yes" name="detail-group" type="radio" value="true"  <% if (data.isDetailReimbursable) { %><%= "checked" %><% } %> >
+                      <label for="detail-yes">Yes</label>
+                    </li>
+                    <li>
+                      <input id="detail-no" name="detail-group" type="radio" value="false"  <% if (data.isDetailReimbursable== false  ) { %><%="checked" %><% } %>>
+                      <label for="detail-no">No</label>
+                    </li>
+                  </ul>
+                </div> 
+                </fieldset>              
+                <% _.each(agencies, (agency) => { %>
+                  <input type="checkbox" id="task-restrict-agency-<%- agency.agency_id %>" name="task-restrict-agency" value="<%- agency.agency_id %>" <% if (data.restrictedTo == agency.agency_id ) { %> checked="checked" <% } %> >
+                  <label for="task-restrict-agency-<%- agency.agency_id %>">Limit participation to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
+                <% }); %>
             </div>
 
+           
+            <div class="form-group required-input" id="pay-scale-grade">
+              <div class="usajobs-grid-full">
+                <div class="usa-width-two-thirds">
+                  <div class=" required-input ">
+                    <label for="payScale" >Pay scale <span class="usa-input-optional"></span></label>           
+                    <select id="time-options-pay-scale" class="dropdown payscale" data-validate="empty">  
+                         <option></option>    
+                        <% _.each(payPlans, function(p) { %>              
+                          <option value=<%= p.pay_plan_id %>><%= p.code %>-<%= p.value  %></option>
+                        <% }); %>             
+                    </select>
+                  </div>
+                </div>
+                <div class="usa-width-one-third">
+                  <div class="form-group grade">
+                    <label for="grade" >Grade<span class="usa-input-optional no-margin-top"></span></label>    
+                    <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium" value="<%- data.grade %>" onkeypress="if(this.value.length==2) return false;">
+                  </div>  
+                </div>
+              </div>
+            </div>
+            
             <div class="form-group required-input" id="time-options-time-required">
               <label for="time-estimate">How many hours do you need?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select the number of hours needed for this opportunity.</span>
@@ -149,7 +199,7 @@
               </select>
             </div>
             <div class="form-group" id="time-options-completion-date">
-              <label class="estimated-completion-date-label">What is the estimated due date? <span class="usa-input-optional"></span></label>
+              <label class="estimated-completion-date-label">What is the estimated completion date? <span class="usa-input-optional"></span></label>
               <span class="field-validation-error" style="display:none;" data-valmsg-for="estimated-completion-date" data-valmsg-replace="true">Please enter a valid completion date</span>
               <div class="estimated-completion-date">
                 <div class="usa-form-group usa-form-group-month">
@@ -252,7 +302,7 @@
                   <span class="show-markdown-skills"></span>
                   <div class="markdown-edit markdown-edit-skills"></div>
                 </div>
-              </li>
+              </li>        
               <li>
                 <label for="opportunity-team" class="expandorama-button expandorama-button-team" aria-controls="team">
                   <h3>Who we are <span class="usa-input-optional"></span></h3>
@@ -264,6 +314,31 @@
                   <div class="markdown-edit markdown-edit-team"></div>
                 </div>
               </li>
+
+              <li id="requirement-area" style="display:none;">
+                <label for="opportunity-requirement" class="expandorama-button expandorama-button-requirement" aria-controls="requirement">
+                  <h3>Requirements <span class="usa-input-optional"></span></h3>
+                </label>
+                <div class="required-input expandorama-content" id="requirement">
+                  <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
+                  <p>List any required certifications, training, or qualifications the participant must have to participate.</p>
+                  <span class="show-markdown-requirement"></span>
+                  <div class="markdown-edit markdown-edit-requirement"></div>
+                </div>
+              </li>
+
+              <li id="apply-participant-area" style="display:none;">
+                <label for="opportunity-apply" class="expandorama-button expandorama-button-apply" aria-controls="apply-participant">
+                  <h3>How to apply <span class="usa-input-optional"></span></h3>
+                </label>
+                <div class="required-input expandorama-content" id="apply-participant">
+                  <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
+                  <p>Please provide any additional steps a participant must take to apply.</p>
+                  <span class="show-markdown-apply"></span>
+                  <div class="markdown-edit markdown-edit-apply"></div>
+                </div>
+              </li>
+              
               <li>
                 <label for="task_tag_keywords" class="expandorama-button expandorama-button-keywords" aria-controls="keywords">
                   <h3>Related keyword <span class="usa-input-optional"></span></h3>

@@ -32,7 +32,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-description-color-text': 'updateColorField',
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
-    
+    'change [name=community-group]'         : 'toggleAutoJoinDisplay',
   },
 
   initialize: function (options) {
@@ -40,6 +40,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.departments = {};  
     this.community = {};
     this.bureaus = [];
+    this.defaultTextColor = '#ffffff';
+    this.defaultBannerColor = '#205493';
 
     this.params = new URLSearchParams(window.location.search);   
     return this;
@@ -103,34 +105,36 @@ var AdminCommunityEditView = Backbone.View.extend({
     });
   },
 
-  initializeformFields: function () {  
-    $('#communityType option:contains('+ this.community.attributes.communityType +')').attr('selected', true);
-    $('#targetAudience option:contains('+ this.community.attributes.targetAudience +')').attr('selected', true);
-    $('#duration option:contains('+ this.community.attributes.duration +')').attr('selected', true);
-    $('#agencies').val(this.community.attributes.agency.agencyId); 
-    $('input[name=community-group][value=' + this.community.attributes.isClosedGroup +']').prop('checked', true);
-    $('#community-name').val(this.community.attributes.communityName);
-    $('#description').val(this.community.attributes.description);
-    $('#community-support-email').val(this.community.attributes.supportEmail);  
-    $('#microsite-url').val(this.community.attributes.micrositeUrl);
-    $('#community-mgr-name').val(this.community.attributes.communityManagerName);
-    $('#community-mgr-email').val(this.community.attributes.communityManagerEmail);
+  initializeformFields: function (community){  
+    $('#communityType option:contains('+ community.communityType +')').attr('selected', true);
+    $('#targetAudience option:contains('+ community.targetAudience +')').attr('selected', true);
+    $('#duration option:contains('+ community.duration +')').attr('selected', true);
+    $('#agencies').val(community.agency.agencyId); 
+    $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
+    if (!community.isClosedGroup) {
+      $('#community-auto-join').hide();
+    }
+    $('#community-name').val(community.communityName);
+    $('#description').val(community.description);
+    $('#community-support-email').val(community.supportEmail);  
+    $('#microsite-url').val(community.micrositeUrl);
+    $('#community-mgr-name').val(community.communityManagerName);
+    $('#community-mgr-email').val(community.communityManagerEmail);
   },
 
-  initializeDisplayFormFields: function () {
-    $('#display-title').val(this.community.attributes.banner.title);
-    $('#display-title-color-text').val(this.community.attributes.banner.titleColor);
-    $('#display-title-color').val(this.community.attributes.banner.titleColor);
-    $('#display-subtitle').val(this.community.attributes.banner.subtitle);
-    $('#display-subtitle-color-text').val(this.community.attributes.banner.subtitleColor);
-    $('#display-subtitle-color').val(this.community.attributes.banner.subtitleColor);
-    $('#display-description').val(this.community.attributes.banner.description);
-    $('#display-description-color-text').val(this.community.attributes.banner.descriptionColor);
-    $('#display-description-color').val(this.community.attributes.banner.descriptionColor);
-    $('#display-banner-color-text').val(this.community.attributes.banner.bannerColor);
-    $('#display-banner-color').val(this.community.attributes.banner.bannerColor);
-    $('#vanityURL').val(this.community.attributes.vanityUrl);
-    // $('#fileupload').val(this.community.attributes.imageId);
+  initializeDisplayFormFields: function (community) {
+    $('#display-title').val(community.banner.title);
+    $('#display-title-color-text').val(community.banner.titleColor);
+    $('#display-title-color').val(community.banner.titleColor || this.defaultTextColor);
+    $('#display-subtitle').val(community.banner.subtitle);
+    $('#display-subtitle-color-text').val(community.banner.subtitleColor);
+    $('#display-subtitle-color').val(community.banner.subtitleColor || this.defaultTextColor);
+    $('#display-description').val(community.banner.description);
+    $('#display-description-color-text').val(community.banner.descriptionColor);
+    $('#display-description-color').val(community.banner.descriptionColor || this.defaultTextColor);
+    $('#display-banner-color-text').val(community.banner.color);
+    $('#display-banner-color').val(community.banner.color || this.defaultBannerColor);
+    $('#vanityURL').val(community.vanityUrl);
   },
 
   updateColorTextField: function (e) {
@@ -143,7 +147,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     var theInput = e.currentTarget;
     var colorName = '#' + e.currentTarget.id;
     colorName = colorName.replace('-text', '');
-    $(colorName).val(theInput.value);
+    var colorValue = (theInput.value.match(/^#[0-9A-F]{6}$/i) || [])[0];
+    $(colorName).val(colorValue || (colorName == '#display-banner-color' ? this.defaultBannerColor : this.defaultTextColor));
   },
 
   getDataFromPage: function () {
@@ -153,20 +158,22 @@ var AdminCommunityEditView = Backbone.View.extend({
       targetAudience:$('#targetAudience').val(),
       duration :$('#duration').val(),
       agencyId  : $('#agencies').val(),
-      isClosedGroup: $("input[name='community-group']:checked").val(),            
+      isClosedGroup: $("input[name='community-group']:checked").val(),
+      autoJoin: $('#community-auto-join-group').prop('checked'),
       communityName: $('#community-name').val(),
       description: $('#description').val(),
       supportEmail: $('#community-support-email').val(),     
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
-      banner: { title: $('#display-title').val(),
-        titleColor: $('#display-title-color').val(),
+      banner: {
+        title: $('#display-title').val(),
+        titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
-        subtitleColor: $('#display-subtitle-color').val(),
+        subtitleColor: $('#display-subtitle-color-text').val(),
         description: $('#display-description').val(),
-        descriptionColor: $('#display-description-color').val(),
-        bannerColor: $('#display-banner-color').val(),
+        descriptionColor: $('#display-description-color-text').val(),
+        color: $('#display-banner-color-text').val(),
       },
       vanityUrl: $('#vanityURL').val(),
       imageId: $('#fileupload').val(this.community.attributes.imageId),
@@ -207,11 +214,13 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderCustomize: function () {
-    var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
-      imageId: this.community.imageId,
-      communityId:this.community.communityId,     
-    });
-    $('#custom-display').html(customizeTemplate);
+    if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
+      var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
+        imageId: (this.community || {}).imageId,
+        communityId:this.options.communityId,     
+      });
+      $('#custom-display').html(customizeTemplate);
+    }
   },
 
   renderBureausAndOffices: function () {
@@ -322,6 +331,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       }.bind(this),
     });
   },
+
   validatebureau: function (){
     var abort = false; 
     var selectedBureauValue= $('#community_tag_bureau').val();
@@ -553,6 +563,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     //adding this to show select2 data in modal
     $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
   },
+
   checkBureauOfficeExist:function (self,bureauId,officeId,targetBureauName,targetOfficeName){  
     var abort= false;
     var selectedValue=  $('input[name=community-bureau-office-group]:checked').val();
@@ -630,9 +641,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
     // eslint-disable-next-line no-empty
     else{    
-    }
-   
+    } 
   },
+
   deleteBureau: function (event) {
     var data = {
       bureauId: $(event.currentTarget).data('bureau-id'),
@@ -718,7 +729,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   submitOfficeDelete: function (data, deleteModal,communityId) {
-   
     $.ajax({
       url: '/api/admin/community/'+ communityId +'/bureau/'+ data.bureauId + '/office/' + data.officeId,
       type: 'DELETE',    
@@ -774,6 +784,15 @@ var AdminCommunityEditView = Backbone.View.extend({
         }.bind(this),
       },
     }).render();
+  },
+
+  toggleAutoJoinDisplay: function (e) {
+    if ( $(event.target).val() == 'true' ) {
+      $('#community-auto-join').show();
+    } else {
+      $('#community-auto-join').hide();
+      $('#community-auto-join-group').prop('checked', false);
+    }
   },
 
   cleanup: function () {
