@@ -121,7 +121,7 @@
                 <% } %>
               </div>
               <% if (model.completedBy) { %>
-              <h4>Due date</h4>
+              <h4>Estimated completion date</h4>
               <div>
                   <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
@@ -152,6 +152,28 @@
                   <% }) %>
                 </div>
               <% } %>
+              <% if (model.payLevel) { %>              
+                <h4>Pay plan</h4>
+                <div>
+                  <%- model.payLevel.code %>
+                </div>      
+            <% } %> 
+            <% if (model.grade) { %>            
+                <h4>Grade</h4>
+                <div>
+                  <%- model.grade %>
+                </div>         
+            <% } %> 
+            <% if (model.isDetailReimbursable) { %>           
+                <h4>Reimbursable</h4>
+                <div>
+            <% if (model.isDetailReimbursable==true) { %>
+                  Yes
+             <% } else { %>
+                    No
+                    <% } %>
+                  </div>           
+            <% } %> 
             </div>
           </div>
           <div class="usa-width-two-thirds opportunity-description">
@@ -169,6 +191,16 @@
               <% if (model.about) { %>
                 <h3>Who we are</h3>
                 <%= model.aboutHtml %>
+              <% } %>
+              <% if (model.requirement) { %>
+                <h3>Requirements</h3> 
+                <%= model.requirement %>
+              <% } %>         
+              <% if (model.applyAdditional) { %>     
+                <h3>How to apply</h3>
+                <div>
+                <%= model.applyAdditional %>
+              </div>
               <% } %>
               <% if (madlibTags['keywords']) { %>
                 <h3>Related keywords</h3>
@@ -207,7 +239,7 @@
                 <% } %>
               </div>
               <% if (model.completedBy) { %>
-              <h4>Due date</h4>
+              <h4>Estimation completion date</h4>
               <div>
                   <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
@@ -238,6 +270,30 @@
                   <% }) %>
                 </div>
               <% } %>
+              <% if (model.payLevel) { %>              
+                  <h4>Pay plan</h4>
+                  <div>
+                    <%- model.payLevel.code %>
+                  </div>      
+              <% } %> 
+
+              <% if (model.grade) { %>            
+                  <h4>Grade</h4>
+                  <div>
+                    <%- model.grade %>
+                  </div>         
+              <% } %> 
+
+              <% if (model.isDetailReimbursable) { %>           
+                  <h4>Reimbursable</h4>
+                  <div>
+                   <% if (model.isDetailReimbursable==true) { %>
+                    Yes
+                   <% } else { %>
+                      No
+                      <% } %>
+                    </div>           
+              <% } %> 
             </div>
           </div>
         </div>
