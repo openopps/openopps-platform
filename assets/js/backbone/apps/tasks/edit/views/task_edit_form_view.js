@@ -363,7 +363,7 @@ var TaskEditFormView = Backbone.View.extend({
     }
   },
 
-  initializeTextAreaRequirement: function () {
+  initializeTextAreaRequirement: function () {   
     if (this.md5) { this.md5.cleanup(); }
     this.md5 = new MarkdownEditor({
       data: this.model.toJSON().requirement,
@@ -653,8 +653,8 @@ var TaskEditFormView = Backbone.View.extend({
     $('#time-options-time-frequency').hide();
     $('#pay-scale-grade').hide();
     $('#detail-reimbursable').hide();
-    $('#requirement').hide();
-    $('#apply-participant').hide();
+    $('#requirement-area').hide();
+    $('#apply-participant-area').hide();
     $('#time-estimate').removeClass('validate');
     $('#js-time-frequency-estimate').removeClass('validate');
     switch (target.id) {
@@ -675,17 +675,17 @@ var TaskEditFormView = Backbone.View.extend({
         $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();        
-        $('#requirement').show();
-        $('#apply-participant').show();
+        $('#requirement-area').show();
+        $('#apply-participant-area').show();
+      
         break;
       case 'part-time':
         $('#time-estimate').addClass('validate');
         $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();
-        $('#requirement').show();
-        $('#apply-participant').show();
-       
+        $('#requirement-area').show();
+        $('#apply-participant-area').show();     
         break;
         
     }  
