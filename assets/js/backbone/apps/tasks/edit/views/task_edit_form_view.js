@@ -198,7 +198,7 @@ var TaskEditFormView = Backbone.View.extend({
       var defaultData= _.filter(this.payPlans,function (f){
         return f.code== 'GS';
       });
-      $('#time-options-pay-scale').select2('data', {id: defaultData[0].id, text:defaultData[0].code});
+      $('#time-options-pay-scale').select2('data', {id: defaultData[0].pay_plan_id, text:defaultData[0].code});
     }
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
