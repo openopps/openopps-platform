@@ -51,7 +51,15 @@ const exportUserCommunityData = 'SELECT ' +
   'LEFT JOIN community_user ON community_user.user_id = m_user.id ' + 
   'WHERE community_user.community_id = ? ORDER BY m_user.id desc';
 
-const exportTaskData = 'select task.id, task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskData = 'select task.id, ' +
+  '( ' +
+    'select te."name" ' +
+    'from tagentity te ' +
+    'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+    'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
+    'limit 1 ' +
+  ') as opportunity_type, ' +
+  'task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -76,7 +84,15 @@ const exportTaskData = 'select task.id, task.title, task.description, task."crea
   'left join community on task.community_id = community.community_id ' +
   'where task.state <> \'archived\' and (community.target_audience is null or community.target_audience <> 2) ';
 
-const exportTaskAgencyData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskAgencyData = 'select task.id, ' +
+  '( ' +
+    'select te."name" ' +
+    'from tagentity te ' +
+    'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+    'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
+    'limit 1 ' +
+  ') as opportunity_type, ' +
+  'task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -100,7 +116,15 @@ const exportTaskAgencyData = 'select task.id, task.title, description, task."cre
   'left join agency on task.agency_id = agency.agency_id ' + 
   'where task.state <> \'archived\' and task.community_id is null and task.agency_id = ?';
 
-const exportTaskCommunityData = 'select task.id, task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+const exportTaskCommunityData = 'select task.id, ' +
+  '( ' +
+    'select te."name" ' +
+    'from tagentity te ' +
+    'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+    'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
+    'limit 1 ' +
+  ') as opportunity_type, ' +
+  'task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -223,6 +247,7 @@ var exportTopContributorAgencyParticipantFormat = {
 
 var exportTaskFormat = {
   'task_id': 'id',
+  'opportunity_type': {field: 'opportunity_type', filter: nullToEmptyString},
   'title': {field: 'title', filter: nullToEmptyString},
   'description': {field: 'description', filter: nullToEmptyString},
   'number_of_positions': {field: 'interns', filter: nullToEmptyString},
