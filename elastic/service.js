@@ -212,6 +212,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
         agencies.push(ctx.state.user.agency.agency_id);
       }
     }
+  } else if (query.community) {
+    agencies = [];
   }
   if (agencies.length > 0) {
     request.addTerms(agencies, 'restrictedToAgency');
