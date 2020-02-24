@@ -73,6 +73,9 @@
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
+        <% if (model.communityId && (!user && model.community.is_closed_group)) { %>
+          <p>This opportunity is limited to employees of <%- model.community.community_name %>.</p>
+        <% } %>
         <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
       <% } %>
     <% } %>
