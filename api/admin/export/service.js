@@ -29,6 +29,7 @@ module.exports.getExportData = async function (type, target, id, cycleId) {
       records = (await dao.Task.db.query(dao.query.exportTaskCommunityData, id)).rows;
       if (communityRefId == 'dos') {
         records = (await dao.Task.db.query(dao.query.exportTaskDoSCommunityData, id, cycleId)).rows;
+        var exportTaskFormat = _.omit(dao.exportTaskFormat, ['opportunity_type']);
       }
     } else {
       records = (await dao.Task.db.query(dao.query.exportTaskData)).rows;

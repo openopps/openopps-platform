@@ -73,6 +73,9 @@
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
+        <% if (model.restrictedTo && (_.findWhere(model.agencies, { agency_id: model.restrictedTo }))) { %>
+          <p>This opportunity is limited to employees of <%- _.findWhere(model.agencies, { agency_id: model.restrictedTo }).name %>.</p>
+        <% } %>
         <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
       <% } %>
     <% } %>
