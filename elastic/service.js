@@ -271,7 +271,8 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   request.addTerms(query.time, 'timeRequired');
   request.addTerms(query.locationType, 'locationType');
   request.addTerms(query.language, 'languages.name');
-
+  request.addTerms(query.payPlan, 'payPlan.id');
+  request.addTerms(query.grade, 'grade');
   delete request.addTerms;
   delete request.addLocations;
   delete request.addCycleDate;
@@ -291,6 +292,7 @@ function convertSearchResultsToResultModel (searchResult) {
     details: source.details,
     outcome: source.outcome,
     about: source.about,
+    grade: source.grade,
     restrictedToAgency: source.restrictedToAgency,
     requester: source.requester,
     publishedAt: source.publishedAt,
@@ -311,6 +313,7 @@ function convertSearchResultsToResultModel (searchResult) {
     community: source.community,
     bureau: source.bureau,
     office: source.office,
+    payPlan:source.payPlan,
   };
   removeEmpty(model);
   return model;

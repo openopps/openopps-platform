@@ -44,6 +44,7 @@ var TaskListView = Backbone.View.extend({
     this.firstFilter = true;
     this.userAgency =  {};
     this.agencies = [];
+    this.payPlans =[];
     this.filterLookup = {};
     if (window.cache.currentUser && window.cache.currentUser.agency) {
       this.userAgency = window.cache.currentUser.agency;
@@ -52,6 +53,7 @@ var TaskListView = Backbone.View.extend({
     this.initAgencyFilter();
     this.initializeCommunityField();
     this.initializeCareerField();
+    this.initializePayPlanField();
     this.parseURLToFilters();
     this.taskFilteredCount = 0;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
@@ -95,7 +97,7 @@ var TaskListView = Backbone.View.extend({
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
-    }));
+    })); 
     if (this.filters.community && this.filters.community.banner.color) {
       $('.usajobs-open-opps-search__box').css('background', this.filters.community.banner.color);
     } else {
@@ -228,7 +230,7 @@ var TaskListView = Backbone.View.extend({
       url: '/api/ac/tag?type=career&list',
       type: 'GET',
       async: false,
-      success: function (data) {
+      success: function (data) {  
         this.careers = data;
         this.filterLookup['career'] = {};
         data.forEach(function (career) {
@@ -241,6 +243,57 @@ var TaskListView = Backbone.View.extend({
   loadTask: function (event) {
     event.preventDefault && event.preventDefault();
     Backbone.history.navigate(event.currentTarget.pathname + event.currentTarget.search, { trigger: true });
+  },
+
+  initializePayPlanField: function () {
+    $.ajax({
+      url: '/api/enumerations/payPlans', 
+      type: 'GET',
+      async: false,
+      success: function (data) { 
+        this.payPlans = data;       
+        this.filterLookup['payPlan'] = {};   
+        _.each(this.payPlans, function (payPlan){
+          payPlan.type = 'payPlan';
+          payPlan.id = payPlan.pay_plan_id;
+          payPlan.name = payPlan.code;
+          this.filterLookup['payPlan'][payPlan.id] = payPlan;     
+        }.bind(this));   
+      }.bind(this),
+    });
+  },
+
+  initializePayPlanSelect2: function () {
+    $('#time-options-pay-scale').select2({
+      placeholder: '- Select -',
+      width: '100%',
+      allowClear: true,
+    });
+    $('#time-options-pay-scale').on('change', function (e) {
+      if($('#time-options-pay-scale').select2('data')) {    
+        var selectData = this.$('#time-options-pay-scale').select2('data');  
+        this.filters.payPlan = { type: 'payPlan', id: selectData.id ,name: selectData.text};            
+      }
+      else {
+        delete this.filters.payPlan;
+      }    
+      this.filters.page = 1;
+      this.filter();
+    }.bind(this));
+  },
+
+  initializeInputGrade : function (){
+    $('#grade').change(function () {
+      if($('#grade').val()!=''){
+        this.filters.grade = $('#grade').val();
+      }
+      else{
+        delete this.filters.grade;
+      }
+      this.filters.page = 1;
+      this.filter();
+    }.bind(this));
+    
   },
 
   removeFilter: function (event) {
@@ -287,6 +340,9 @@ var TaskListView = Backbone.View.extend({
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
     }
+    if(!_.isEmpty(this.filters.payPlan) && _.isArray(this.filters.payPlan)) {
+      this.filters.payPlan = _.pick(_.findWhere(this.tagTypes.payPlan, { code: this.filters.payPlan[0].name }), 'type','name','id');
+    }  
     var compiledTemplate = _.template(TaskFilters)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -297,6 +353,7 @@ var TaskListView = Backbone.View.extend({
       term: this.filters.term,
       filters: this.filters,
       agency: this.agency,
+      payPlans:this.payPlans,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
     });
@@ -308,11 +365,15 @@ var TaskListView = Backbone.View.extend({
     });
     $('#usajobs-search-pills').html(compiledTemplate);
     this.initializeSelect2();
+    this.initializeInputGrade();
+    this.initializePayPlanSelect2();
+    this.displayPayPlanGrade();
+
     setTimeout(function () {
       this.initializeCommunitySelect2();
     }.bind(this), 100);
     setTimeout(function () {
-      this.initializeCareerSelect2();
+      this.initializeCareerSelect2();  
     }.bind(this), 100);
   },
 
@@ -321,7 +382,7 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    this.tagTypes = { career: this.careers, community: this.communities };
+    this.tagTypes = { career: this.careers, community: this.communities ,payPlan:this.payPlans };
     this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
@@ -509,11 +570,23 @@ var TaskListView = Backbone.View.extend({
   },
 
   timeFilter: function (event) {
+    this.displayPayPlanGrade(); 
     this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
       return value;
     });
     this.filters.page = 1;
-    this.filter();
+    this.filter(); 
+  },
+
+  displayPayPlanGrade : function (){
+    if($('#part-time').is(':checked') ||$('#full-time').is(':checked')) { 
+      $('#pay-scale-grade').show();  
+    }
+    else {  
+      $('#pay-scale-grade').hide();  
+      delete this.filters.grade;
+      delete this.filters.payPlan;
+    }
   },
 
   locationFilter: function (event) {
@@ -604,7 +677,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   parseURLToFilters: function () {
-    _.each(_.omit(this.queryParams, 'search'), function (value, key) {
+    _.each(_.omit(this.queryParams, 'search'), function (value, key) {  
       var values = _.isArray(value) ? value : value.split(';');
       if (key == 'term') {
         this.filters.term = value;
@@ -620,7 +693,10 @@ var TaskListView = Backbone.View.extend({
             return value;
           } else if (key == 'career') {
             return { type: key, name: this.filterLookup[key][value], id: value };
-          } else if (key == 'skill' || key == 'series') {
+          } else if (key == 'payPlan') {        
+            return { type: key, name: this.filterLookup[key][value].name, id: value };
+          }
+          else if (key == 'skill' || key == 'series') {
             return { type: key, name: value };
           } else {
             return value;
@@ -636,6 +712,9 @@ function formatObjectForURL (value) {
     return value.id;
   } else if (value.type == 'community') {
     //may need to change
+    return value.id;
+  }
+  else if (value.type == 'payPlan') {   
     return value.id;
   }
   return value.name;
