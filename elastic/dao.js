@@ -103,6 +103,8 @@ function toElasticOpportunity (value, index, list) {
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
     'office': { id: doc.office_id, name: doc.office_name },
+    'grade': doc.grade,
+    'payPlan': { id: doc.pay_plan_id, name: doc.code },
   };
 }
     
@@ -116,6 +118,7 @@ from (
     t.details,
     t.outcome,
     t.about,
+    t.grade,
     t.restricted_to,
     a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
@@ -139,6 +142,8 @@ from (
     cy.apply_end_date,
     b.bureau_id,
     b.name as bureau_name,
+    p.pay_plan_id,
+    p.code,
     o.office_id,
     o.name as office_name,
     t.accepting_applicants as "acceptingApplicants",
@@ -316,6 +321,7 @@ from (
   left join cycle cy on cy.cycle_id = t.cycle_id
   left join bureau b on b.bureau_id = t.bureau_id
   left join office o on o.office_id = t.office_id
+  left join pay_plan p on p.pay_plan_id= t.pay_level_id
   %s
 ) row`;
 
