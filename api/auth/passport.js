@@ -37,6 +37,7 @@ async function fetchUser (id) {
       user.bureauOffice= (await db.query(dao.query.userBureauOffice, user.id)).rows;
       if (user.agencyId) {
         user.agency = await Agency.fetchAgency(user.agencyId).catch(() => { return {}; });
+        user.agencies = Agency.toList(user.agency);
       }
       
       user = dao.clean.user(user);
