@@ -12,6 +12,7 @@ const json2csv = require('json2csv');
 const moment = require('moment');
 const Task = require('../model/Task');
 const Audit = require('../model/Audit');
+const Agency = require('../model/Agency');
 
 function findOne (id) {
   return dao.Task.findOne('id = ?', id);
@@ -24,6 +25,15 @@ async function findById (id, user) {
   }
   var task = dao.clean.task(results[0]);
   task.owner = dao.clean.user((await dao.User.query(dao.query.user, task.userId, dao.options.user))[0]);
+  if(task.owner && task.owner.agencyId) {
+    task.owner.agency = await Agency.fetchAgency(task.owner.agencyId);
+  }
+  if (task.agencyId) {
+    task.agencies = Agency.toList(await Agency.fetchAgency(task.agencyId));
+  }
+  if(task.payLevelId){
+    task.payLevel =await dao.PayPlan.findOne('pay_plan_id = ?', task.payLevelId).catch(() => { return null; });
+  }
   if (user) {
     task.saved = await dao.SavedTask.findOne('deleted_at is null and task_id = ? and user_id = ?', id, user.id).then(() => {
       return true;
@@ -737,8 +747,8 @@ function getRestrictValues (user) {
 
 async function getCurrentCycle (communityId, cycleId) {
   var cycles = await dao.Cycle.find('community_id = ? and posting_start_date <= now() and posting_end_date >= now()', communityId);
-  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId })) {
-    return cycleId
+  if (_.find(cycles, (cycle) => { return cycle.cycleId == cycleId; })) {
+    return cycleId;
   } else {
     return (_.sortBy(cycles, 'cycleId' )[0] || {}).cycleId;
   }

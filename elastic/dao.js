@@ -2,6 +2,7 @@ const _ = require('lodash');
 const db = require('../db/client');
 const moment = require('moment');
 const util = require('util');
+const Agency = require('../api/model/Agency');
 
 var dao = {}; 
 
@@ -62,14 +63,14 @@ dao.cycleTasksToIndex = async function (cycleId) {
     console.error(error);
     return null;
   }
-}
+};
 
 function toElasticOpportunity (value, index, list) {
   var doc = value.task;
   var locationType = 'Virtual';
   if (Array.isArray(doc.location) && doc.location.length > 0) {
     locationType = 'In Person';
-  } else if (doc.country != null && doc.country != "") {
+  } else if (doc.country != null && doc.country != '') {
     locationType = 'In Person';
   }
   return {
@@ -80,7 +81,7 @@ function toElasticOpportunity (value, index, list) {
     'details': doc.details,
     'outcome': doc.outcome,
     'about': doc.about,
-    'restrictedToAgency': doc.isRestricted === 'true' ? doc.agencyName : 'null',
+    'restrictedToAgency': doc.restricted_to || 'null',
     'owner': { name: doc.name, id: doc.ownerId, photoId: doc.photoId },
     'publishedAt': doc.publishedAt,
     'postingAgency': doc.agencyName,
@@ -101,7 +102,7 @@ function toElasticOpportunity (value, index, list) {
     'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo },
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
-    'office': { id: doc.office_id, name: doc.office_name }
+    'office': { id: doc.office_id, name: doc.office_name },
   };
 }
     
@@ -115,6 +116,7 @@ from (
     t.details,
     t.outcome,
     t.about,
+    t.restricted_to,
     a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."publishedAt",

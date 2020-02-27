@@ -1418,6 +1418,18 @@
   margin-bottom: $size-L;
 }
 
+.grade {
+    display: inline-block;
+  
+    & label.no-margin-top { 
+      margin-top:-2.0rem
+    }
+
+    &.usa-input-error {
+      margin-left: 2rem;
+    }
+  }
+
 .remove-participant, .confirm-participant, .not-complete-participants {
   display: flex;
   flex-direction: column;

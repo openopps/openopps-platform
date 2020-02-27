@@ -40,3 +40,8 @@ module.exports.getBureausAll = async function () {
 
   return bureaus;
 };
+module.exports.getPayLevelAll = async function () {
+  var payLevelData = await dao.getPayLevelAll();
+  var payLevels = _.extend({},payLevelData); 
+  return payLevels;
+};

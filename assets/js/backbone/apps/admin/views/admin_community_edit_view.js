@@ -32,7 +32,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-description-color-text': 'updateColorField',
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
-    
+    'change [name=community-group]'         : 'toggleAutoJoinDisplay',
   },
 
   initialize: function (options) {
@@ -111,6 +111,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#duration option:contains('+ community.duration +')').attr('selected', true);
     $('#agencies').val(community.agency.agencyId); 
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
+    if (!community.isClosedGroup) {
+      $('#community-auto-join').hide();
+    }
     $('#community-name').val(community.communityName);
     $('#description').val(community.description);
     $('#community-support-email').val(community.supportEmail);  
@@ -155,7 +158,8 @@ var AdminCommunityEditView = Backbone.View.extend({
       targetAudience:$('#targetAudience').val(),
       duration :$('#duration').val(),
       agencyId  : $('#agencies').val(),
-      isClosedGroup: $("input[name='community-group']:checked").val(),            
+      isClosedGroup: $("input[name='community-group']:checked").val(),
+      autoJoin: $('#community-auto-join-group').prop('checked'),
       communityName: $('#community-name').val(),
       description: $('#description').val(),
       supportEmail: $('#community-support-email').val(),     
@@ -777,6 +781,15 @@ var AdminCommunityEditView = Backbone.View.extend({
         }.bind(this),
       },
     }).render();
+  },
+
+  toggleAutoJoinDisplay: function (e) {
+    if ( $(event.target).val() == 'true' ) {
+      $('#community-auto-join').show();
+    } else {
+      $('#community-auto-join').hide();
+      $('#community-auto-join-group').prop('checked', false);
+    }
   },
 
   cleanup: function () {

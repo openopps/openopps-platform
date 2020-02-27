@@ -23,6 +23,17 @@
       <h3>Who we are</h3>
       <%= data.aboutHtml %>
     <% } %>
+
+    <% if (data.requirement) { %>
+      <h3>Requirements</h3> 
+      <p><%= data.requirement %></p>     
+    <% } %>
+
+    <% if (data.applyAdditional) { %>     
+      <h3>How to apply</h3>
+     <p><%= data.applyAdditional %></p>
+    <% } %>
+
     <div class="related-keywords">
       <h3>Related keywords</h3>
       <div class="keywords">
@@ -39,14 +50,16 @@
           <h4>Personnel needed</h4>
           <p><%- data.peopleNeeded %></p>
         </div>
+
         <div class="usa-width-one-half">
           <h4>Time commitment</h4>
-          <p><%- madlibTags['task-time-required'][0].name %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
-            <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
+        <p><% if (madlibTags['task-time-required']) { %><%- madlibTags['task-time-required'][0].name %><% } %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
+          <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
         </div>
+        
         <% if (data.completedBy) { %>
           <div class="usa-width-one-half">
-            <h4>Due date</h4>
+            <h4>Estimated completion date</h4>
             <p><%- moment(data.completedBy).format('MM/DD/YY') %></p>
           </div>
         <% } %>
@@ -79,6 +92,30 @@
               <% _.each(madlibTags['career'], function (career, index) { %>
                 <% if (index > 0) { %>, <% } %><%- career.name %>
               <% }) %>
+            </p>
+          </div>
+        <% } %> 
+        <% if (data.payPlan) { %>
+          <div class="usa-width-one-half">
+            <h4>Pay plan</h4>
+            <p>
+              <%- data.payPlan %>
+            </p>
+          </div>
+        <% } %> 
+        <% if (data.grade) { %>
+          <div class="usa-width-one-half">
+            <h4>Grade</h4>
+            <p>
+              <%- data.grade %>
+            </p>
+          </div>
+        <% } %> 
+        <% if (data.reimbursable) { %>
+          <div class="usa-width-one-half">
+            <h4>Reimbursable</h4>
+            <p>
+              <%- data.reimbursable %>
             </p>
           </div>
         <% } %> 

@@ -26,7 +26,12 @@ var TaskEditFormView = Backbone.View.extend({
     'click .expandorama-button-skills'    : 'toggleAccordion1',
     'click .expandorama-button-team'      : 'toggleAccordion2',
     'click .expandorama-button-keywords'  : 'toggleAccordion3',
+    'click .expandorama-button-requirement': 'toggleAccordion4',
+    'click .expandorama-button-apply'      : 'toggleAccordion5',
     'change [name=CareerField]'           : 'toggleCareerField',
+    'change [name=task-restrict-agency]'        : 'toggleAgencyRestrict',  
+    'change input[name=detail-group]'      : 'changeDetailReimbursable', 
+    
   
 
   },
@@ -38,14 +43,15 @@ var TaskEditFormView = Backbone.View.extend({
     this.options                = options;
     this.tagFactory             = new TagFactory();
     this.owner                  = this.model.get( 'owner' );
-    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;  
+    this.agency                 = this.owner ? this.owner.agency : window.cache.currentUser.agency;
+    this.agencies               = this.model.get('agencies') || this.toList(this.agency);
     this.data                   = {};
     this.data.newTag            = {};
     this.communities            =  {};
+    this.payPlans               = [];
    
     TaskFormViewHelper.annotateTimeRequired(options.tagTypes['task-time-required'], this.agency);
-    this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate
-
+    this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate 
     this.initializeListeners();
 
     this.listenTo(this.options.model, 'task:update:success', function (data) {
@@ -88,7 +94,25 @@ var TaskEditFormView = Backbone.View.extend({
         $(window).animate({ scrollTop: 0 }, 500);
       }
     });
+  }, 
+
+  toList: function (agency) {
+    if(agency && agency.parent) {
+      return [_.pick(agency, ['agency_id', 'abbr', 'name'])].concat(this.toList(agency.parent));
+    } else {
+      return [_.pick(agency, ['agency_id', 'abbr', 'name'])];
+    }
   },
+
+  toggleAgencyRestrict: function (event) {
+    var value = event.target.value;
+    $('input[name=task-restrict-agency]').filter((index, element) => {
+      return element.value != value;
+    }).each((index, element) => {
+      element.checked = false;
+    });
+  },
+
 
   /*
    * Render modal for the Task Creation Form ViewController
@@ -120,6 +144,8 @@ var TaskEditFormView = Backbone.View.extend({
   
   render: function () {
     this.loadAudienceCommunityData();
+    this.initializePayLevel();
+    
     this.data = {
       data: this.model.toJSON(),
       community: this.options.community,
@@ -130,7 +156,9 @@ var TaskEditFormView = Backbone.View.extend({
       madlibTags: this.options.madlibTags,
       ui: UIConfig,
       agency: this.agency,
+      agencies: this.agencies,
       communities:this.communities,   
+      payPlans:this.payPlans, 
       accordion1: {
         open: false,
       },
@@ -138,6 +166,13 @@ var TaskEditFormView = Backbone.View.extend({
         open: false,
       },
       accordion3: {
+        open: false,
+      },
+
+      accordion4: {
+        open: false,
+      },
+      accordion5: {
         open: false,
       },
     };
@@ -152,8 +187,19 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaDetails();
     this.initializeTextAreaSkills();
     this.initializeTextAreaTeam();
+    this.initializeTextAreaApply();
+    this.initializeTextAreaRequirement();
     this.initializeCommunityDropDown();
     this.characterCount();
+    if(this.model.toJSON().payLevelId){   
+      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code});
+    }
+    else{
+      var defaultData= _.filter(this.payPlans,function (f){
+        return f.code== 'GS';
+      });
+      $('#time-options-pay-scale').select2('data', {id: defaultData[0].pay_plan_id, text:defaultData[0].code});
+    }
     
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
       $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
@@ -174,7 +220,7 @@ var TaskEditFormView = Backbone.View.extend({
       url: '/api/task/communities',  
       type: 'GET',
       async: false,
-      success: function (data){       
+      success: function (data){ 
         this.communities= data;      
       }.bind(this),
     });
@@ -253,6 +299,13 @@ var TaskEditFormView = Backbone.View.extend({
       allowClear: true,
     });
 
+    $('#time-options-pay-scale').select2({
+      placeholder: '- Select -',
+      width: '100%',
+      allowClear: true,
+    });
+    
+
   },
 
   initializeTextAreaIntroduction: function () {
@@ -315,11 +368,50 @@ var TaskEditFormView = Backbone.View.extend({
     }
   },
 
+  initializeTextAreaRequirement: function () {   
+    if (this.md5) { this.md5.cleanup(); }
+    this.md5 = new MarkdownEditor({
+      data: this.model.toJSON().requirement,
+      el: '.markdown-edit-requirement',
+      id: 'opportunity-requirement',
+      placeholder: '',
+      title: 'Requirements',
+      rows: 6,
+      validate: ['html','count5000'],
+    }).render();
+    if(this.model.toJSON().requirement) {
+      $('#requirement').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#requirement').attr('aria-hidden', false);
+    }
+  },
+  initializeTextAreaApply: function () {
+    if (this.md6) { this.md6.cleanup(); }
+    this.md6 = new MarkdownEditor({
+      data: this.model.toJSON().applyAdditional,
+      el: '.markdown-edit-apply',
+      id: 'opportunity-apply',
+      placeholder: '',
+      title: 'How to apply',
+      rows: 6,
+      validate: ['html','count5000'],
+    }).render();
+    if(this.model.toJSON().applyAdditional) {
+      $('#apply-participant').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#apply-participant').attr('aria-hidden', false);
+    }
+  },
+
+ 
+ 
+
+
   characterCount: function () {
     $('.markdown-edit-introduction .usajobs-form__help-brief').append('  <span id="opportunity-introduction-count">(1500 characters remaining)</span>');
     $('.markdown-edit-details .usajobs-form__help-brief').append('  <span id="opportunity-details-count">(5000 characters remaining)</span>');
     $('.markdown-edit-skills .usajobs-form__help-brief').append('  <span id="opportunity-skills-count">(5000 characters remaining)</span>');
     $('.markdown-edit-team .usajobs-form__help-brief').append('  <span id="opportunity-team-count">(5000 characters remaining)</span>');
+    $('.markdown-edit-apply .usajobs-form__help-brief').append('  <span id="opportunity-apply-count">(5000 characters remaining)</span>');
+    $('.markdown-edit-requirement .usajobs-form__help-brief').append('  <span id="opportunity-requirement-count">(5000 characters remaining)</span>');
     $('#task-title').charCounter(100, {
       container: '#opportunity-title-count',
     });
@@ -335,11 +427,16 @@ var TaskEditFormView = Backbone.View.extend({
     $('#opportunity-team').charCounter(5000, {
       container: '#opportunity-team-count',
     });
+    $('#opportunity-apply').charCounter(5000, {
+      container: '#opportunity-apply-count',
+    });
+    $('#opportunity-requirement').charCounter(5000, {
+      container: '#opportunity-requirement-count',
+    });
   },
   
   initializeCommunityDropDown: function (){
     var communityId= this.model.toJSON().communityId;
-    // eslint-disable-next-line no-empty
     if(communityId){
       $('#federal-programs').val(communityId);
     }
@@ -390,6 +487,20 @@ var TaskEditFormView = Backbone.View.extend({
     element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
+  toggleAccordion4: function (e) {
+    var element = $(e.currentTarget);
+    this.data.accordion4.open = !this.data.accordion4.open;
+    element.attr('aria-expanded', this.data.accordion4.open);
+    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion4.open);
+  },
+
+  toggleAccordion5: function (e) {
+    var element = $(e.currentTarget);
+    this.data.accordion5.open = !this.data.accordion5.open;
+    element.attr('aria-expanded', this.data.accordion5.open);
+    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion5.open);
+  },
+
   validateFields: function () {
     var tags      = [];
     var oldTags   = [];
@@ -403,6 +514,14 @@ var TaskEditFormView = Backbone.View.extend({
       var iAbort = validate( { currentTarget: child } );
       abort = abort || iAbort;
     } );
+    var target = $('.time-options-time-required.selected')[0] || {};
+
+   
+    if(target.id =='part-time' || target.id =='full-time'){ 
+      if(this.changeDetailReimbursable()==true){
+        abort= true;
+      }
+    }
 
     var completedBy = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null; 
     if(completedBy) {
@@ -532,34 +651,55 @@ var TaskEditFormView = Backbone.View.extend({
         $('[value="One time"]').addClass('selected');
       }
     }
-    var target = $('.time-options-time-required.selected')[0] || {};
+    var target = $('.time-options-time-required.selected')[0] || {}; 
     $('#' + target.id + '-description').show();
     $('#time-options-time-required').hide();
     $('#time-options-completion-date').hide();
     $('#time-options-time-frequency').hide();
+    $('#pay-scale-grade').hide();
+    $('#detail-reimbursable').hide();
+    $('#requirement-area').hide();
+    $('#apply-participant-area').hide();
     $('#time-estimate').removeClass('validate');
     $('#js-time-frequency-estimate').removeClass('validate');
+    $('#grade').removeClass('validate');
+    $('#time-options-pay-scale').removeClass('validate');
     switch (target.id) {
       case 'one-time':
         $('#time-options-time-required').show();
         $('#time-estimate').addClass('validate');
-        $('#time-options-completion-date').show();
+        $('#time-options-completion-date').show();        
         break;
       case 'ongoing':
         $('#time-options-time-required').show();
         $('#time-estimate').addClass('validate');
         $('#time-options-time-frequency').show();
         $('#js-time-frequency-estimate').addClass('validate');
+     
         break;
       case 'full-time':
-        $('#task-restrict-agency')[0].checked = true;
+        $('#time-estimate').addClass('validate');
+        $('#grade').addClass('validate');
+        $('#time-options-pay-scale').addClass('validate');
+        $('#pay-scale-grade').show();
+        $('#detail-reimbursable').show();
+        $('#time-options-time-required').show();        
+        $('#requirement-area').show();
+        $('#apply-participant-area').show();
+      
         break;
-    }
-    if(e && target.id != 'full-time' && $('#task-restrict-agency').attr('disabled')) {
-      $('#task-restrict-agency')[0].checked = false;
-    }
-    $('#task-restrict-agency').attr('disabled', target.id == 'full-time');
-    $('#task-restrict-agency').siblings('label').attr('title', (target.id == 'full-time') ? 'Required for full time detail' : '');
+      case 'part-time':
+        $('#time-estimate').addClass('validate');
+        $('#grade').addClass('validate');
+        $('#time-options-pay-scale').addClass('validate');
+        $('#pay-scale-grade').show();
+        $('#detail-reimbursable').show();
+        $('#time-options-time-required').show();
+        $('#requirement-area').show();
+        $('#apply-participant-area').show();     
+        break;
+        
+    }  
   },
 
   toggleLocationOptions: function (e) {
@@ -579,6 +719,22 @@ var TaskEditFormView = Backbone.View.extend({
     } else {
       $('#s2id_task_tag_location').hide();
     }
+  },
+
+
+  changeDetailReimbursable: function (){
+    var abort= true;
+    if($('[name=detail-group]:checked').length>0){ 
+      $('#detail-reimbursable').removeClass('usa-input-error');       
+      $('#detail-reimbursable>.field-validation-error').hide(); 
+      abort = false;   
+    } 
+    else { 
+      $('#detail-reimbursable').addClass('usa-input-error');   
+      $('#detail-reimbursable>.field-validation-error').show();
+      abort = true;     
+    } 
+    return abort;
   },
 
   toggleCareerField: function (e) {
@@ -635,10 +791,28 @@ var TaskEditFormView = Backbone.View.extend({
       state        : this.model.get('state'),
       restrict     : this.model.get('restrict'),
       peopleNeeded : this.$('.opportunity-people.selected').val(),
-    };
     
+    };
+
+    if( this.$('.time-options-time-required.selected').val() == 'Part Time Detail'|| this.$('.time-options-time-required.selected').val() == 'Full Time Detail'){
+      modelData.applyAdditional=this.$('#opportunity-apply').val();
+      modelData.requirement  =this.$('#opportunity-requirement').val();
+      modelData.grade         =this.$('#grade').val();
+      modelData.isDetailReimbursable= $("input[name='detail-group']:checked").val();
+      modelData.payLevelId =$('#time-options-pay-scale').val();
+      modelData.payPlan = $('#time-options-pay-scale').select2('data').text;
+      modelData.reimbursable= $("input[name='detail-group']:checked").val() =='true' ? 'Yes' :'No';
+    }
+    else{
+      modelData.applyAdditional= '';
+      modelData.requirement  ='';
+      modelData.grade         ='';
+      modelData.isDetailReimbursable= null;
+      modelData.payLevelId =null;
+    }
+ 
     if (this.agency) {
-      modelData.restrict.projectNetwork = this.$('#task-restrict-agency').prop('checked');
+      modelData.restrictedTo = _($('input[name=task-restrict-agency]:checked')).pluck('value')[0];
     }
 
     var completedBy    = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null;
@@ -667,8 +841,7 @@ var TaskEditFormView = Backbone.View.extend({
     var tags = [];
     var taskTimeDescription = $('.time-options-time-required.selected').val();
     var taskTimeTag = _.find(this.tagSources['task-time-required'], { name: taskTimeDescription });
-    var taskPeopleTag = _.find(this.tagSources['task-people'], { id: parseInt($('#people').select2('data').id || '0') });
-
+    var taskPeopleTag = _.find(this.tagSources['task-people'], { id: parseInt($('#people').select2('data').id || '0') });  
     if (taskTimeTag) {
       tags.push.apply(tags, [taskTimeTag]);
     }
@@ -685,14 +858,14 @@ var TaskEditFormView = Backbone.View.extend({
       var taskCareerTag = _.find(this.tagSources['career'], { id: parseInt($('#opportunity-career-field').select2('data').id || '0') });
       tags.push.apply(tags, [taskCareerTag]);
     }
-    if (taskTimeDescription === 'One time' || taskTimeDescription === 'Ongoing') {
+    if (taskTimeDescription === 'One time' || taskTimeDescription === 'Ongoing' || taskTimeDescription === 'Part Time Detail' ||taskTimeDescription === 'Full Time Detail' ) {
       var taskEstimateTag = _.find(this.tagSources['task-time-estimate'], { id: parseInt($('#time-estimate').select2('data').id || '0') });
       tags.push.apply(tags, [taskEstimateTag]);
     }
     if (taskTimeDescription === 'Ongoing') {
       var taskLengthTag = _.find(this.tagSources['task-length'], { id: parseInt($('#js-time-frequency-estimate').select2('data').id || '0') });
       tags.push.apply(tags,[taskLengthTag]);
-    }
+    }    
     return tags;
   },
 
@@ -706,6 +879,24 @@ var TaskEditFormView = Backbone.View.extend({
       });
     }
     return oldTags;
+  },
+  initializePayLevel: function () {
+    $.ajax({
+      url: '/api/enumerations/payPlans', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.payPlans= data;  
+        var defaultData= _.filter(this.payPlans,function (f){
+          return f.code=='GS';
+        });      
+        var sortedArray = _.reject(this.payPlans, function (c) {
+          return c.code=='GS';
+        });
+        this.payPlans= (sortedArray.concat(defaultData[0])).reverse(); 
+         
+      }.bind(this),
+    });
   },
 
   cleanup: function () {
