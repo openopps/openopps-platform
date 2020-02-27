@@ -71,6 +71,21 @@
       <div class="usajobs-grid-full display-color-group">
         <span><%- window.location.host %>/community/</span>
         <input type="text" id="vanityURL" class="fullwidth form-control validate" />
+    </div>
+    <div class="fileinput-button">
+        <span><%- imageId ? 'Update logo' : 'Upload logo' %>
+          <label class="sr-only" for="fileupload">Upload logo</label>
+          <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
+        </span>
+      </div>
+      <div class="fileinput-button">
+        <% if (imageId) { %>
+          <a href=# id="photo-remove">Remove</a>
+        <% } %>
+      </div>
+      <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+        <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+
       </div>
   </div>
 </fieldset>

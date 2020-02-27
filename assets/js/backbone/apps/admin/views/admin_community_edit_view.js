@@ -38,7 +38,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options; 
     this.departments = {};  
-    this.communityInfo = {};
+    this.community = {};
     this.bureaus = [];
     this.defaultTextColor = '#ffffff';
     this.defaultBannerColor = '#205493';
@@ -176,7 +176,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         color: $('#display-banner-color-text').val(),
       },
       vanityUrl: $('#vanityURL').val(),
-      imageId: this.options.imageId,
+      imageId: $('#fileupload').val(this.community.attributes.imageId),
     };
     return modelData;
   },
@@ -200,7 +200,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeAgencySelect();    
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
-          this.initializeDisplayFormFields(community);
+          this.initializeDisplayFormFields();
           this.initializeFileUpload();
         }
         $('#search-results-loading').hide();
@@ -226,7 +226,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   renderBureausAndOffices: function () {
     var bureauOfficeTemplate = _.template(AdminCommunityBureauAndOfficeFormTemplate)({
       bureaus: this.bureaus,
-      communityId:this.options.communityId,     
+      communityId:this.community.communityId,     
     });
     $('#bureau-office').html(bureauOfficeTemplate);
   },
@@ -240,7 +240,6 @@ var AdminCommunityEditView = Backbone.View.extend({
       insertOffice:data.insertOffice,
       deleteBureau: data.deleteBureau,
       deleteOffice: data.deleteOffice,
-     
     });
    
     $('#bureau-office-message').html(bureauOfficeMessageTemplate);
@@ -268,7 +267,11 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        this.options.imageId = JSON.parse($(data.result).text())[0].id,
+        var info = JSON.parse($(data.result).text())[0];
+        this.community.attributes.imageId = info.id;
+        // $('#fileupload').val(this.community.attributes.imageId);
+  
+        this.community.attributes.imageFile = info.fd;
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
@@ -297,14 +300,14 @@ var AdminCommunityEditView = Backbone.View.extend({
   save: function (e) {
     e.preventDefault && e.preventDefault(); 
     var data= this.getDataFromPage();
-    if(this.options.communityId){
+    if(this.community.communityId){
       data.updatedAt=$('#updated-at').val();
     }  
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
-      if(this.options.communityId){
+      if(this.community.communityId){
         this.community.trigger('community:save', data);
       }
       else{
