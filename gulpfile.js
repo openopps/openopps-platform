@@ -117,15 +117,19 @@ gulp.task('clean', function () {
 gulp.task('tfs-build', gulp.series('clean', 'build', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');
   const git = require('gulp-git');
-  git.exec({ args: 'fetch --tags', maxBuffer: Infinity }, (err) => {
-    if(err) { throw(err); }
+  var version = process.argv[4];
+  if (process.argv[3] == '--tag' && version) {
+    gulp.src(releaseFiles)
+      .pipe(octo.pack('zip', { version: version }))
+      .pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+  } else{
     git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
       if(err) { throw(err); }
       gulp.src(releaseFiles)
         .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }))
         .pipe(gulp.dest('./bin').on('finish', done).on('error', done));
     });
-  })
+  }
 }));
 
 // Build an octopus release
