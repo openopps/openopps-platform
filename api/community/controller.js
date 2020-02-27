@@ -3,6 +3,7 @@ const Router = require('koa-router');
 const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
+const documentService = require('../document/service');
 
 function initializeAuditData (ctx) { 
   return {
@@ -61,6 +62,36 @@ router.post('/api/community/:id/member', auth.isCommunityApprover, async (ctx, n
 
 router.get('/api/communities/:audienceType/details', async (ctx, next) => {
   ctx.body = await service.detailsByAudienceType(ctx.params.audienceType);
+});
+
+router.get('/api/community/logo/get/:id', async (ctx, next) => {
+  var community = await service.findById(ctx.params.id);
+  if (!community) {
+    ctx.redirect('');
+  }
+  if (community.imageId) {
+    ctx.status = 307;
+    ctx.redirect('/api/upload/get/' + community.imageId);
+  }
+});
+
+router.post('/api/community/logo/remove/:id', async (ctx, next) => {
+  var result = await documentService.removeFile(ctx.params.id);
+  if(!result) {
+    return ctx.status = 404;
+  }
+  await service.updateCommunity(ctx.request.body, (err, community) => {
+    ctx.status = err ? 400 : 200;
+    ctx.body = err ? '': community;
+  });
+});
+
+router.post('/api/community/logo/update/:id', async (ctx, next) => {
+  var community = await service.findById(ctx.params.id);
+  await service.updateCommunity(ctx.request.body, (err, community) => {
+    ctx.status = err ? 400 : 200;
+    ctx.body = err ? '' : community;
+  });
 });
 
 module.exports = router.routes();

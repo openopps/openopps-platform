@@ -7,6 +7,7 @@ var AdminCommunityCustomFormTemplate = require('../templates/admin_community_cus
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
+var AdminCommunityImageTemplate = require('../templates/admin_community_image_template.html');
 var AdminCommunityPreviewTemplate = require('../templates/admin_community_preview_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
@@ -33,6 +34,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
     'change [name=community-group]'         : 'toggleAutoJoinDisplay',
+    'click #photo-remove'                   : 'removePhoto',
   },
 
   initialize: function (options) {
@@ -176,7 +178,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         color: $('#display-banner-color-text').val(),
       },
       vanityUrl: $('#vanityURL').val(),
-      imageId: $('#fileupload').val(this.community.attributes.imageId),
+      imageId: this.community ? this.community.attributes.imageId: null,
     };
     return modelData;
   },
@@ -187,20 +189,21 @@ var AdminCommunityEditView = Backbone.View.extend({
       dataType: 'json',
       success: function (community) {      
         this.community = new CommunityModel(community);      
-        community.departments=this.departments;     
+        community.departments = this.departments;     
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));
 
         if(community.referenceId=='dos'){
           this.renderBureausAndOffices();
         }
         this.renderCustomize();
+        this.renderImage(community);
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
-          this.initializeDisplayFormFields();
+          this.initializeDisplayFormFields(community);
           this.initializeFileUpload();
         }
         $('#search-results-loading').hide();
@@ -216,17 +219,26 @@ var AdminCommunityEditView = Backbone.View.extend({
   renderCustomize: function () {
     if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
       var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
-        imageId: (this.community || {}).imageId,
+        imageId: this.community ? this.community.get('imageId') : null,
+        name: this.community ? this.community.get('communityName') : null,
         communityId:this.options.communityId,     
       });
       $('#custom-display').html(customizeTemplate);
     }
   },
 
+  renderImage: function (data) {
+    var imageTemplate = _.template(AdminCommunityImageTemplate)(data);   
+    $('#image-logo').html(imageTemplate);
+    setTimeout(() => {
+      this.initializeFileUpload();
+    }, 50);
+  },
+
   renderBureausAndOffices: function () {
     var bureauOfficeTemplate = _.template(AdminCommunityBureauAndOfficeFormTemplate)({
       bureaus: this.bureaus,
-      communityId:this.community.communityId,     
+      communityId: this.community.communityId,     
     });
     $('#bureau-office').html(bureauOfficeTemplate);
   },
@@ -269,9 +281,8 @@ var AdminCommunityEditView = Backbone.View.extend({
       done: function (e, data) {
         var info = JSON.parse($(data.result).text())[0];
         this.community.attributes.imageId = info.id;
-        // $('#fileupload').val(this.community.attributes.imageId);
-  
-        this.community.attributes.imageFile = info.fd;
+        this.updatePhoto();
+        $('#file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
@@ -284,6 +295,40 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-alert').show();
       }.bind(this),
     });
+  },
+
+  updatePhoto: function () {
+    var data = {
+      communityId: this.community.attributes.communityId,
+      imageId: this.community.attributes.imageId,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    $.ajax({
+      url: '/api/community/logo/update/' + this.community.attributes.communityId,
+      type: 'POST',
+      data: data, 
+    }).done(function (data) {
+      this.community.set('imageId', data.imageId);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderImage(this.community.attributes);
+    }.bind(this));
+  },
+
+  removePhoto: function () {
+    var data = {
+      communityId: this.community.attributes.communityId,
+      imageId: null,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    $.ajax({
+      url: '/api/community/logo/remove/' + this.community.attributes.imageId,
+      type: 'POST',
+      data: data, 
+    }).done(function (data) {
+      this.community.set('imageId', null);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderImage(this.community.attributes);
+    }.bind(this));
   },
 
   validateFields: function () {
@@ -300,14 +345,15 @@ var AdminCommunityEditView = Backbone.View.extend({
   save: function (e) {
     e.preventDefault && e.preventDefault(); 
     var data= this.getDataFromPage();
-    if(this.community.communityId){
+    
+    if(this.community.attributes.communityId){
       data.updatedAt=$('#updated-at').val();
     }  
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
-      if(this.community.communityId){
+      if(this.community.attributes.communityId){
         this.community.trigger('community:save', data);
       }
       else{

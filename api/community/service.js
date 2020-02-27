@@ -107,9 +107,8 @@ module.exports.sendCommunityInviteNotification = async function (admin, data) {
 };
 
 module.exports.updateCommunity = async function (data, callback) {
-
-  await dao.Community.update(data).then(() => {
-    callback();
+  await dao.Community.update(data).then(community => {   
+    callback(null, community);
   }).catch((err) => {
     log.error('An error was encountered trying to update a community', err);
     callback({ message: 'An error was encountered trying to update this community.' });
@@ -143,3 +142,19 @@ module.exports.updateCommunityMembership = async function (params, action, callb
     }
   }).catch(callback);
 };
+
+// model.exports.updateImageId = async function (id, callback) {
+//   await dao.Community.findOne('imageId = ?', id).then(async community => {
+//     community.imageId = null;
+//     community.updatedAt = new Date();
+//     await dao.Community.update(community).then(async (community) => {   
+//       callback(null,community);
+//     }).catch(err => {
+//       log.error('An error was encountered trying to update a community', err);
+//       callback({ message: 'An error was encountered trying to update this community.' });
+//     });  
+//   }).catch(err => {
+//     log.error('An error was encountered trying to update a community', err);
+//     callback({ message: 'An error was encountered trying to update this community.' });
+//   });
+// };

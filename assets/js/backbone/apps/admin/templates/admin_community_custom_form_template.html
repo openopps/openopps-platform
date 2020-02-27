@@ -1,6 +1,25 @@
 <fieldset class="usajobs-fieldset usa-form-xl">
   <legend class="usa-sr-only">Search display & Appearance</legend>  
   <h2>Display & Appearance</h2>
+  <div id="image-logo">
+    <% if (imageId) { %>
+        <img id="profile-picture" src="/api/community/logo/get/<%- communityId %>" alt="Banner logo of <%- name %>">
+    <% } %>
+    <div class="fileinput-button">
+    <span><%- imageId ? 'Update logo' : 'Upload logo' %>
+        <label class="sr-only" for="fileupload">Upload logo</label>
+        <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
+    </span>
+    </div>
+    <div class="fileinput-button">
+    <% if (imageId) { %>
+        <a href=# id="photo-remove">Remove</a>
+    <% } %>
+    </div>
+  </div>
+  <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+    <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+  </div>
   <div class="form-group required-input">
       <label for="display-title" class="usa-input-optional">Title</label>
       <span class="field-validation-error error-html" style="display:none;">The special characters '
@@ -67,26 +86,11 @@
         </div>
       </div>
   <div class="form-group">
-      <label for="vanityURL" class="usa-input-optional">Vanity URL</label>
-      <div class="usajobs-grid-full display-color-group">
-        <span><%- window.location.host %>/community/</span>
-        <input type="text" id="vanityURL" class="fullwidth form-control validate" />
+    <label for="vanityURL" class="usa-input-optional">Vanity URL</label>
+    <div class="usajobs-grid-full display-color-group">
+      <span><%- window.location.host %>/community/</span>
+      <input type="text" id="vanityURL" class="fullwidth form-control validate" />
     </div>
-    <div class="fileinput-button">
-        <span><%- imageId ? 'Update logo' : 'Upload logo' %>
-          <label class="sr-only" for="fileupload">Upload logo</label>
-          <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
-        </span>
-      </div>
-      <div class="fileinput-button">
-        <% if (imageId) { %>
-          <a href=# id="photo-remove">Remove</a>
-        <% } %>
-      </div>
-      <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-        <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
-
-      </div>
   </div>
 </fieldset>
 <fieldset class="usajobs-fieldset usa-form-xl">
