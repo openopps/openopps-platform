@@ -60,7 +60,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     else{
       var data = {
         communityId: '', 
-        departments : this.departments,         
+        departments : this.departments,
+        isClosedGroup: false,
+        autoJoin: false,        
       };   
         
       this.$el.html(_.template(AdminCommunityFormTemplate)(data));
