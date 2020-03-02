@@ -46,8 +46,8 @@
           <% } %>
         <% } %>
       <% } else if (key == 'restrict') { %>
-        <% _.each([].concat(value), (v) => { %>
-          <% var agency = _.find(agencies, (a) => { return a.agency_id == v; }); %>
+        <% _.each([].concat(value), function (v) { %>
+          <% var agency = _.find(agencies, function (a) { return a.agency_id == v; }); %>
           <% if (agency) { %>
             <li class="usajobs-search-pills__item" data-type="restrict" data-value="<%- v %>" data-behavior="search-pills.remove">
               <a class="usajobs-search-pills__pill" title="Remove restrict agency filter" tabindex="0">

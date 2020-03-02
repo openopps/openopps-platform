@@ -34,6 +34,24 @@ var versionBumps = {
   '--major': 'major',
 };
 
+function getOptions () {
+  var argList = process.argv.splice(2);
+  var args = {};
+  var curOpt = null;
+  for (i = 0; i < argList.length; i++) {
+    thisOpt = argList[i].trim();
+    opt = thisOpt.replace(/^-+/, '');
+    if (opt === thisOpt) { // argument value
+      if (curOpt) args[curOpt] = opt;
+      curOpt = null;
+    } else { // argument name
+      curOpt = opt;
+      args[curOpt] = true;
+    }
+  }
+  return args;
+}
+
 // Lint Task
 gulp.task('lint', function () {
   return gulp.src('assets/js/backbone/**/*.js')
@@ -113,16 +131,28 @@ gulp.task('clean', function () {
   return gulp.src('./bin', { read: false, allowEmpty: true }).pipe(clean());
 });
 
+gulp.task('args', function (done) {
+  console.log(getOptions());
+  done();
+});
+
 // TFS build task
 gulp.task('tfs-build', gulp.series('clean', 'build', function (done) {
   const octo = require('@octopusdeploy/gulp-octo');
   const git = require('gulp-git');
-  git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
-    if(err) { throw(err); }
+  var options = getOptions();
+  if (options.pkgVersion) {
     gulp.src(releaseFiles)
-      .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }))
+      .pipe(octo.pack('zip', { version: options.pkgVersion }))
       .pipe(gulp.dest('./bin').on('finish', done).on('error', done));
-  });
+  } else {
+    git.exec({ args: 'describe --tags --abbrev=0', maxBuffer: Infinity }, (err, tag) => {
+      if(err) { throw(err); }
+      gulp.src(releaseFiles)
+        .pipe(octo.pack('zip', { version: tag.replace(/\r?\n?/g, '').replace('v', '') }))
+        .pipe(gulp.dest('./bin').on('finish', done).on('error', done));
+    });
+  }
 }));
 
 // Build an octopus release
