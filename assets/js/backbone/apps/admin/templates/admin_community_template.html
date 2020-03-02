@@ -107,11 +107,18 @@
     <div class="usa-width-one-third">
       <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/community/<%=community.communityId %>/tasks" class="admin-manage-link">Manage</a></span></h3>
       <ul class="usajobs-unstyled-list">
-        <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>         
+        <li>Total created: <%- numeral(community.totalTasks).format('0,0') %>
+            <ul class="usajobs-unstyled-list submetrics">
+              <li>One-time: <%- numeral((_.findWhere(community.tasks, { task_state: 'oneTime' }) || {}).count).format('0,0') %></li>
+              <li>Ongoing: <%- numeral((_.findWhere(community.tasks, { task_state: 'onGoing' }) || {}).count).format('0,0') %></li>
+              <li>Part-time detail: <%- numeral((_.findWhere(community.tasks, { task_state: 'partTime' }) || {}).count).format('0,0') %></li>
+              <li>Full-time detail: <%- numeral((_.findWhere(community.tasks, { task_state: 'fullTime' }) || {}).count).format('0,0') %></li>
+            </ul>
+          </li>
           <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
           <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
-          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'not open' }) || {}).count).format('0,0') %></li>
-          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'in progress' }) || {}).count).format('0,0') %></li>
+          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'notOpen' }) || {}).count).format('0,0') %></li>
+          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'inProgress' }) || {}).count).format('0,0') %></li>
           <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
           <li>Canceled: <%- numeral((_.findWhere(community.tasks, { task_state: 'canceled' }) || {}).count).format('0,0') %></li> 
       </ul>

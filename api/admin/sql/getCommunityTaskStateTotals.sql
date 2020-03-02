@@ -1,5 +1,5 @@
 with tasks as (
-	select task.title, task.state, task.community_id, task.agency_id, task.accepting_applicants,
+	select task.title, task.state, tagentity.name, task.community_id, task.agency_id, task.accepting_applicants,
 	(select row_to_json (muser)
 		from (
 			select
@@ -13,17 +13,37 @@ with tasks as (
 		from (
 			select * from agency where task.agency_id = agency.agency_id
 		) agency
-	) as agency		
-	from task
+	) as agency
+	from tagentity_tasks__task_tags as task_tags
+	join tagentity on tagentity.id = task_tags.tagentity_tasks
+	join task on task.id = task_tags.task_tags
+	where tagentity."type" = 'task-time-required' 
+	and task.state in ('submitted','open','not open','in progress','completed','canceled')
+	and task.community_id = ? [filter clause]
 )
-
 select
 	count(*),
 	case
-		when state = 'in progress' and accepting_applicants = false then 'in progress'
-		when state in ('open', 'in progress') and accepting_applicants = true then 'open'
+		when state = 'submitted' then 'submitted'
+		when state in ('open', 'in progress') and "accepting_applicants" = true then 'open'
+		when state = 'not open' then 'notOpen'
+		when state = 'in progress' and "accepting_applicants" = false then 'inProgress'
+		when state = 'completed' then 'completed'
+		when state = 'canceled' then 'canceled'
 		else state
 	end as task_state
 from tasks
-where tasks.state <> 'archived' and tasks.community_id = ? [filter clause]
+where tasks.state <> 'archived' 
+group by task_state
+union
+select
+	count(*),
+	case
+		when tasks.name = 'One time' or tasks.name is null then 'oneTime'
+		when tasks.name = 'Ongoing' then 'onGoing'
+		when tasks.name = 'Part Time Detail' then 'partTime'
+		when tasks.name = 'Full Time Detail' then 'fullTime'
+	end as task_state
+from tasks
+where tasks.state <> 'archived' 
 group by task_state;

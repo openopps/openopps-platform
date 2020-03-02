@@ -41,6 +41,13 @@
     <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/agency/<%=agency.agencyId%>/tasks" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- numeral(agency.tasks.totalCreated).format('0,0') %></li>
+        <ul class="usajobs-unstyled-list submetrics">
+          <li>One-time: <%- numeral(agency.tasks.oneTime).format('0,0') %></li>
+          <li>Ongoing: <%- numeral(agency.tasks.onGoing).format('0,0') %></li>
+          <li>Part-time detail: <%- numeral(agency.tasks.partTime).format('0,0') %></li>
+          <li>Full-time detail: <%- numeral(agency.tasks.fullTime).format('0,0') %></li>
+        </ul>
+      </li>
       <li>Submitted: <%- numeral(agency.tasks.submitted).format('0,0') %></li>
       <li>Open: <%- numeral(agency.tasks.open).format('0,0') %></li>
       <li>Not open: <%- numeral(agency.tasks.notOpen).format('0,0') %></li>
