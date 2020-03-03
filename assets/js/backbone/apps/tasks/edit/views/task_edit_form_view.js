@@ -886,15 +886,7 @@ var TaskEditFormView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
-        this.payPlans= data;  
-        var defaultData= _.filter(this.payPlans,function (f){
-          return f.code=='GS';
-        });      
-        var sortedArray = _.reject(this.payPlans, function (c) {
-          return c.code=='GS';
-        });
-        this.payPlans= (sortedArray.concat(defaultData[0])).reverse(); 
-         
+        this.payPlans= data;             
       }.bind(this),
     });
   },
