@@ -158,7 +158,7 @@
                   </ul>
                 </div> 
                 </fieldset>              
-                <% _.each(agencies, (agency) => { %>
+                <% _.each(agencies, function (agency) { %>
                   <input type="checkbox" id="task-restrict-agency-<%- agency.agency_id %>" name="task-restrict-agency" value="<%- agency.agency_id %>" <% if (data.restrictedTo == agency.agency_id ) { %> checked="checked" <% } %> >
                   <label for="task-restrict-agency-<%- agency.agency_id %>">Limit participation to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
                 <% }); %>
