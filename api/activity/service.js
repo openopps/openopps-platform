@@ -51,7 +51,7 @@ function generateByProfileQuery (user) {
     query += 'location=' + location.name + '&';
   }
   if(!_.isEmpty(skills)) {
-    query += 'skill=' + skills.map((skill) => { return skill.name; }).join(';');
+    query += 'skill=' + skills.map((skill) => { return [skill.name, skill.id].join('|'); }).join(';');
   }
   return query;
 }
