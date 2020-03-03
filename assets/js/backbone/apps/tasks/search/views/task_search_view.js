@@ -300,11 +300,11 @@ var TaskListView = Backbone.View.extend({
     event.preventDefault();
     var element = $(event.target).closest('.usajobs-search-pills__item');
     var type = element.data('type');
-    var value = element.data('value');
-    // if(type == 'agency') {
-    //   this.agency = { data: {} };
-    //   delete this.filters.restrict;
-    // } else
+    var value = element.data('value');   
+    if(type =='grade'){
+      value =value.toString();
+    }
+  
     if(_.isArray(this.filters[type])) {
       if(type == 'location' && value == 'in-person') {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
