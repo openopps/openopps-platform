@@ -202,7 +202,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.initializeAgencySelect();    
         this.initializeformFields(community);
         if (window.cache.currentUser.isAdmin) {
-          this.initializeDisplayFormFields();
+          this.initializeDisplayFormFields(community);
           this.initializeFileUpload();
         }
         $('#search-results-loading').hide();
