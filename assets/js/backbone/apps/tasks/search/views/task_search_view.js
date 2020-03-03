@@ -315,7 +315,7 @@ var TaskListView = Backbone.View.extend({
           }
         });
       }
-    } else if (_.isEqual(this.filters[type], value)) {
+    } else if (_.isEqual(this.filters[type], value) || this.filters[type] == value) {
       delete this.filters[type];
     }
     this.filters.page = 1;
