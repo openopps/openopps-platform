@@ -7,7 +7,7 @@ const queries = {
   findRecords: 'SELECT bureau.bureau_id, office.office_id, office.name as office_name,office.is_disabled as is_disabled,bureau.name as bureau_name ' +
     'FROM bureau left join office on bureau.bureau_id = office.bureau_id where bureau.is_disabled = false order by bureau.bureau_id',
 
-  findPayLevelRecords: 'select pay_plan.pay_plan_id,pay_plan.code,pay_plan.value from pay_plan order by pay_plan.value',
+  findPayLevelRecords: 'select pay_plan.pay_plan_id,pay_plan.code,pay_plan.value from pay_plan order by pay_plan.code',
 };
 module.exports.getBureausAll = function () {
   return new Promise(resolve => {
