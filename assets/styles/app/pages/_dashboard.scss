@@ -317,13 +317,14 @@
   &::before {
     content: '';
     width: 100%;
-    height: 9rem;
+    height: 10.5rem;
     position: absolute;
     left: 0;
     bottom: 0;
     display: block;
     background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 40%);
     transition: height .5s;
+    z-index: 1;
   }
 
   &.show::before {
@@ -344,6 +345,7 @@
     font-weight: bold;
     display: block;
     width: 100%;
+    z-index: 1;
   }
 }
 
