@@ -41,7 +41,7 @@
             <ul class="usa-unstyled-list">
                 <% _.forEach(search.skills, function(skill) { %>
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/search?skill=<%- skill.name %>"><%- skill.name %></a>
+                    <a href="/search?skill=<%- skill.name %>|<%- skill.id %>"><%- skill.name %></a>
                 </li>
                 <% }); %>
             </ul>

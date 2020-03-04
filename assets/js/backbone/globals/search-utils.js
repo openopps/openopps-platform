@@ -202,7 +202,11 @@ global.splitTermHighlighter = function (s, t) {
 };
 
 function formatObjectForURL (value) {
-  return value.name;
+  if (value.type == 'career' || value.type == 'community') {
+    return value.id;
+  } else {
+    return value.name + (value.id ? '|' + value.id : '' );
+  }
 }
 
 function parseKeywordAutocompleteResults (term, results, filters) {

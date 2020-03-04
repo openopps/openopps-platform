@@ -301,10 +301,6 @@ var TaskListView = Backbone.View.extend({
     var element = $(event.target).closest('.usajobs-search-pills__item');
     var type = element.data('type');
     var value = element.data('value');
-    // if(type == 'agency') {
-    //   this.agency = { data: {} };
-    //   delete this.filters.restrict;
-    // } else
     if(_.isArray(this.filters[type])) {
       if(type == 'location' && value == 'in-person') {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
@@ -312,7 +308,11 @@ var TaskListView = Backbone.View.extend({
         });
       } else {
         this.filters[type] = _.filter(this.filters[type], function (filter) {
-          return filter != value;
+          if (_.isObject(value)) {
+            return !_.isEqual(filter, value);
+          } else {
+            return filter != value;
+          }
         });
       }
     } else if (_.isEqual(this.filters[type], value)) {
@@ -695,9 +695,9 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          }
-          else if (key == 'skill' || key == 'series') {
-            return { type: key, name: value };
+          } else if (key == 'skill' || key == 'series') {
+            var parts = value.split('|');
+            return { type: key, name: parts[0], id: parts[1] };
           } else {
             return value;
           }
@@ -708,16 +708,11 @@ var TaskListView = Backbone.View.extend({
 });
 
 function formatObjectForURL (value) {
-  if (value.type == 'career') {
+  if (value.type == 'career' || value.type == 'community' || value.type == 'payPlan') {
     return value.id;
-  } else if (value.type == 'community') {
-    //may need to change
-    return value.id;
+  } else {
+    return value.name + (value.id ? '|' + value.id : '' );
   }
-  else if (value.type == 'payPlan') {   
-    return value.id;
-  }
-  return value.name;
 }
 
 function getAppliedFiltersCount (filters, agency) {

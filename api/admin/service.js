@@ -497,7 +497,8 @@ module.exports.getUsersForCommunity = async function (page, filter, sort, commun
 
 async function getTaskMetrics () {
   var tasks = (await dao.Task.db.query(dao.query.taskStateQuery)).rows[0];
-  tasks.totalCreated = Object.values(tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  var states = ['submitted','open','notOpen','inProgress','completed','canceled'];
+  tasks.totalCreated = Object.values(_.pick(tasks, states)).reduce((a, b) => { return a + parseInt(b); }, 0);
   tasks.withVolunteers = (await dao.Task.db.query(dao.query.volunteerQuery, 'withVolunteers')).rows[0].count;
   return tasks;
 }
@@ -603,8 +604,9 @@ module.exports.updateCommunityApprover = async function (user, communityId, done
 
 module.exports.getAgency = async function (id) {
   var agency = await dao.Agency.findOne('agency_id = ?', id);
+  var states = ['submitted','open','notOpen','inProgress','completed','canceled'];
   agency.tasks = (await dao.Task.db.query(dao.query.agencyTaskStateQuery, id)).rows[0];
-  agency.tasks.totalCreated = Object.values(agency.tasks).reduce((a, b) => { return a + parseInt(b); }, 0);
+  agency.tasks.totalCreated = Object.values(_.pick(agency.tasks, states)).reduce((a, b) => { return a + parseInt(b); }, 0);
   agency.users = (await dao.User.db.query(dao.query.agencyUsersQuery, id)).rows[0];
   return agency;
 };
@@ -617,10 +619,12 @@ module.exports.getCommunity = async function (id) {
   
     var filterState = false;
   } else {
-    var filterState = { task_state: 'draft' };
+    var states = ['submitted','open','notOpen','inProgress','completed','canceled'];
     var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getCommunityTaskStateTotals.sql', 'utf8');
     community.tasks = (await db.query(taskStateTotalsQuery.replace('[filter clause]', ''), id)).rows;
-    community.totalTasks = _.reject(community.tasks, filterState).reduce((a, b) => { return a + parseInt(b.count); }, 0);
+    community.totalTasks = _.filter(community.tasks, task => { 
+      return states.indexOf(task.task_state) > -1;
+    }).reduce((a, b) => { return a + parseInt(b.count); }, 0);
   }
  
   return community;
