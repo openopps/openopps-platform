@@ -94,4 +94,15 @@ router.post('/api/community/logo/update/:id', async (ctx, next) => {
   });
 });
 
+router.get('/api/community/backgroundImage/get/:id', async (ctx, next) => {
+  var community = await service.findById(ctx.params.id);
+  if (!community) {
+    ctx.redirect('');
+  }
+  if (community.banner.backgroundImageId) {
+    ctx.status = 307;
+    ctx.redirect('/api/upload/get/' + community.banner.backgroundImageId);
+  }
+});
+
 module.exports = router.routes();
