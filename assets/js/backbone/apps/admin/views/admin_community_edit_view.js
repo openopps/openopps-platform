@@ -142,7 +142,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#display-banner-color-text').val(community.banner.color);
     $('#display-banner-color').val(community.banner.color || this.defaultBannerColor);
     $('input[name=background-group][value=' + community.banner.hasBackgroundImage +']').prop('checked', true);
-    if (community.banner.hasBackgroundImage == true) {   
+    if (community.banner.hasBackgroundImage == 'true') {   
       $('#background-photo-banner').show();
     } else {
       $('#background-color-banner').show();
@@ -380,7 +380,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     $.ajax({
       url: '/api/community/logo/update/' + this.community.attributes.communityId,
       type: 'POST',
-      data: data, 
+      data: JSON.stringify(data),
+      contentType: 'application/json',
     }).done(function (data) {
       this.community.set('banner', data.banner);
       this.community.set('updatedAt', data.updatedAt);
@@ -407,16 +408,17 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   removeBackgroundImage: function () {
     var backgroundImageId = this.community.attributes.banner.backgroundImageId;
-    delete this.community.attributes.banner[backgroundImageId];
     var data = {
       communityId: this.community.attributes.communityId,
       banner: this.community.attributes.banner,
       updatedAt: this.community.attributes.updatedAt,
     };
+    delete data.banner.backgroundImageId;
     $.ajax({
       url: '/api/community/logo/remove/' + backgroundImageId,
       type: 'POST',
-      data: data, 
+      data: JSON.stringify(data),
+      contentType: 'application/json',
     }).done(function (data) {
       this.community.set('banner', data.banner);
       this.community.set('updatedAt', data.updatedAt);
@@ -440,16 +442,15 @@ var AdminCommunityEditView = Backbone.View.extend({
     var data= this.getDataFromPage();
     
     if(this.community.attributes.communityId){
-      data.updatedAt=$('#updated-at').val();
+      data.updatedAt = this.community.get('updatedAt');
     }  
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
-      if(this.community.attributes.communityId){
+      if(this.community.attributes.communityId) {
         this.community.trigger('community:save', data);
-      }
-      else{
+      } else{
         this.saveCommunity();
       }
     }
