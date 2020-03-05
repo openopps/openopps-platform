@@ -1,4 +1,4 @@
-<div class="usajobs-grid usajobs-open-opps-search__box" style="margin: 0; background-image: <% if (banner.hasBackgroundImage == true) { %> url('/api/community/backgroundImage/get/<%- communityId %>') <% } else { %> none <% } %>; background-color: <%- banner.color %>">
+<div class="usajobs-grid usajobs-open-opps-search__box" style="margin: 0; <% if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) { %> background-image:url('/api/community/backgroundImage/get/<%- communityId %>'); background-size: 100%; background-position: top;<% } else { %>background-color: <%- banner.color %><% } %>">
   <div class="search__box-search">
     <% if (imageId) { %>
     <img src="/api/community/logo/get/<%- communityId %>" alt="<%- banner.title %> community logo" class="community-logo-preview">

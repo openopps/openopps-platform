@@ -98,8 +98,19 @@ var TaskListView = Backbone.View.extend({
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
     })); 
-    if (this.filters.community && this.filters.community.banner.color) {
-      $('.usajobs-open-opps-search__box').css('background', this.filters.community.banner.color);
+    if (this.filters.community) {
+      var banner = this.filters.community.banner;
+      if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) {
+        var url = '/api/community/backgroundImage/get/' + this.filters.community.id;
+        $('.usajobs-open-opps-search__box').css('background-image', "url('" + url + "')");
+        $('.usajobs-open-opps-search__box').css('background-size', '100%');
+        $('.usajobs-open-opps-search__box').css('background-position', 'top');
+        $('.usajobs-open-opps-search__box').css('margin', '3rem 0');
+      } else if (banner.color) {
+        $('.usajobs-open-opps-search__box').css('background', banner.color);
+      } else {
+        $('.usajobs-open-opps-search__box').removeAttr('style');
+      }
     } else {
       $('.usajobs-open-opps-search__box').removeAttr('style');
     }

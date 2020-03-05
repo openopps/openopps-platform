@@ -1,7 +1,7 @@
 <section class="usajobs-canvas">
   <div class="usajobs-content-gutter usajobs-open-opps-search">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
-      <div class="usajobs-grid usajobs-open-opps-search__box" <% if(filters.community && filters.community.banner.color) { %>style="background:<%- filters.community.banner.color %>"<% } %>>
+      <div class="usajobs-grid usajobs-open-opps-search__box" style="<% if (filters.community && filters.community.banner.hasBackgroundImage == 'true' && filters.community.banner.backgroundImageId) { %> background-image:url('/api/community/backgroundImage/get/<%- filters.community.id %>'); background-size: 100%; background-position: top;<% } else if (filters.community && filters.community.banner.color) { %>background-color: <%- filters.community.banner.color %><% } %>">
         <div class="usa-width-one-whole">
           <div class="search__box-search">
             <h1 <% if(filters.community && filters.community.banner.titleColor) { %>style="color:<%- filters.community.banner.titleColor %>"<% } %>><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
