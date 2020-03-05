@@ -43,7 +43,9 @@ var AdminCommunityEditView = Backbone.View.extend({
   initialize: function (options) {
     this.options = options; 
     this.departments = {};  
-    this.community = {};
+    this.community = new CommunityModel({
+      banner: {},
+    });
     this.bureaus = [];
     this.defaultTextColor = '#ffffff';
     this.defaultBannerColor = '#205493';
@@ -179,7 +181,9 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
-      banner: {
+    };
+    if (window.cache.currentUser.isAdmin) {
+      modelData.banner = {
         title: $('#display-title').val(),
         titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
@@ -189,10 +193,10 @@ var AdminCommunityEditView = Backbone.View.extend({
         hasBackgroundImage: $("input[name='background-group']:checked").val(),
         backgroundImageId: this.community ? this.community.attributes.banner.backgroundImageId: null,
         color: $('#display-banner-color-text').val(),
-      },
-      vanityUrl: $('#vanityURL').val(),
-      imageId: this.community ? this.community.attributes.imageId: null,
-    };
+      };
+      modelData.vanityUrl = $('#vanityURL').val();
+      modelData.imageId = this.community ? this.community.attributes.imageId: null;
+    }
     return modelData;
   },
 
@@ -237,7 +241,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         imageId: this.community ? this.community.get('imageId') : null,
         name: this.community ? this.community.get('communityName') : null,
         communityId:this.options.communityId,
-        banner: this.community ? this.community.get('banner') : null,     
+        banner: this.community ? this.community.get('banner') : {},     
       });
       $('#custom-display').html(customizeTemplate);
     }
