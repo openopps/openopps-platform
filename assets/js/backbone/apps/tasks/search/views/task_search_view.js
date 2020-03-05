@@ -88,7 +88,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   renderCommunitySearchBanner: function () {
-    $('.usajobs-open-opps-search__box').html(_.template(TaskSearchBanner)({
+    $('#search-banner').html(_.template(TaskSearchBanner)({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
@@ -98,22 +98,19 @@ var TaskListView = Backbone.View.extend({
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
     })); 
-    if (this.filters.community) {
-      var banner = this.filters.community.banner;
-      if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) {
-        var url = '/api/community/backgroundImage/get/' + this.filters.community.id;
-        $('.usajobs-open-opps-search__box').css('background-image', "url('" + url + "')");
-        $('.usajobs-open-opps-search__box').css('background-size', '100%');
-        $('.usajobs-open-opps-search__box').css('background-position', 'top');
-        $('.usajobs-open-opps-search__box').css('margin', '3rem 0');
-      } else if (banner.color) {
-        $('.usajobs-open-opps-search__box').css('background', banner.color);
-      } else {
-        $('.usajobs-open-opps-search__box').removeAttr('style');
-      }
-    } else {
-      $('.usajobs-open-opps-search__box').removeAttr('style');
-    }
+    // if (this.filters.community) {
+    //   var banner = this.filters.community.banner;
+    //   if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) {
+    //     var url = '/api/community/backgroundImage/get/' + this.filters.community.id;
+    //     $('.usajobs-open-opps-search__box').css('background-image', "url('" + url + "')");
+    //   } else if (banner.color) {
+    //     $('.usajobs-open-opps-search__box').css('background', banner.color);
+    //   } else {
+    //     $('.usajobs-open-opps-search__box').removeAttr('style');
+    //   }
+    // } else {
+    //   $('.usajobs-open-opps-search__box').removeAttr('style');
+    // }
   },
 
   initializeKeywordSearch: function () {
@@ -209,7 +206,7 @@ var TaskListView = Backbone.View.extend({
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
         var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
-        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner');
+        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId');
       } else {
         delete this.filters.community;
       }
@@ -346,7 +343,7 @@ var TaskListView = Backbone.View.extend({
 
   renderFilters: function () {
     if(!_.isEmpty(this.filters.community) && _.isArray(this.filters.community)) {
-      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner');
+      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId');
     }
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
@@ -697,7 +694,13 @@ var TaskListView = Backbone.View.extend({
           this.filters.page = parseInt(value);
         }
       } else if (key == 'community') {
-        this.filters.community = { type: key, name: this.filterLookup[key][value].name, id: value, banner: this.filterLookup[key][value].banner };
+        this.filters.community = {
+          type: key,
+          name: this.filterLookup[key][value].name,
+          id: value,
+          banner: this.filterLookup[key][value].banner,
+          imageId: this.filterLookup[key][value].imageId,
+        };
       } else {
         this.filters[key] = _.map(values, function (value) {
           if (key == 'location' && value == 'virtual') {
