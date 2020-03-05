@@ -132,6 +132,37 @@
   }
 }
 
+.usajobs-open-opps-search__box.background-image {
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.search__box-search {
+  .background-image {
+    background-position: center;
+    background-size: cover;
+  }
+
+  .community-logo {
+    width: 11rem;
+    height: 11rem;
+  }
+
+  @include media($M) {
+    position: relative;
+
+    h1, h3, p.description {
+      width: calc(100% - 13.5rem);
+    }
+
+    .community-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+}
+
 .search__box-acquisition {
   display: none;
 }
