@@ -35,8 +35,8 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
     'change [name=community-group]'         : 'toggleAutoJoinDisplay',
-    'click #photo-remove'                   : 'removePhoto',
-    'click #image-remove'                   : 'removeBackgroundImage',
+    'click #photo-remove'                   : 'removeImage',
+    'click #image-remove'                   : 'removeImage',
     'change [name=background-group]'        : 'toggleBackgroundDisplay',
   },
 
@@ -391,6 +391,28 @@ var AdminCommunityEditView = Backbone.View.extend({
       this.community.set('updatedAt', data.updatedAt);
       this.renderBackgroundImage(this.community.attributes);
     }.bind(this));
+  },
+
+  removeImage: function (event) {
+    var deleteModal = new Modal({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm image removal',
+      modalBody: 'Are you sure you want to remove the ' + (event.currentTarget.id == 'photo-remove' ? 'community logo': ' backgroung image') + '? <strong>This cannot be undone</strong>.',
+      primary: {
+        text: 'Remove',
+        action: function () {
+          if (event.currentTarget.id == 'photo-remove') {
+            this.removePhoto.bind(this)();
+          } else {
+            this.removeBackgroundImage.bind(this)();
+          }
+          deleteModal.cleanup();
+        }.bind(this),
+      },
+    });
+    deleteModal.render();
   },
 
   removePhoto: function () {
