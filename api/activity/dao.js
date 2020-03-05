@@ -43,7 +43,7 @@ const badgeQuery = 'select badge.*, @user.* ' +
 'where badge.task = ? ';
 
 const communitiesTasksQuery = 'SELECT community.community_id, community.community_name, community.target_audience ,community.reference_id, COUNT(task.id) as taskCount ' + 
-'FROM community JOIN task  ON community.community_id = task.community_id where community.target_audience <> 2 and task.state =\'open\' '+
+'FROM community JOIN task  ON community.community_id = task.community_id where community.target_audience <> 2 and (task.state =\'open\' or (task.state = \'in progress\' and task.accepting_applicants)) '+
 'group by community.community_name, community.community_id ' +
 'order by taskCount desc ' +
 'limit 5 ' ;
