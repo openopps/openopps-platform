@@ -326,7 +326,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       url: '/api/upload/create',
       dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-      formData: { 'type': 'image_square' },
+      formData: { 'type': 'image' },
       add: function (e, data) {
         $('#banner-file-upload-progress-container').show();
         data.submit();
