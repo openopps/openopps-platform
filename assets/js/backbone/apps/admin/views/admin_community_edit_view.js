@@ -19,8 +19,8 @@ var AdminCommunityEditView = Backbone.View.extend({
   events: {
     'click #community-edit-cancel'          : 'cancel',
     'click #community-edit-save'            : 'save',
-    'blur .validate'                        : 'validateFields',
-    'change .validate'                      : 'validateFields',
+    'blur .validate'                        : 'validateField',
+    'change .validate'                      : 'validateField',
     'click #add-bureau-office'              : 'addbureauOfficeDisplay',
     'click .edit-bureau-office'             : 'addbureauOfficeDisplay',
     'click .delete-bureau'                  : 'deleteBureau',
@@ -458,6 +458,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     return _.reduce(this.$el.find('.validate'), function (abort, child) {
       return validate({ currentTarget: child }) || abort;
     }, false);
+  },
+  validateField: function (e) {
+    return validate(e);
   },
 
   cancel: function (e) {
