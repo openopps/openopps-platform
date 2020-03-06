@@ -1,6 +1,7 @@
 const log = require('log')('app:document');
 const Router = require('koa-router');
 const _ = require('lodash');
+const auth = require('../auth/auth');
 const service = require('./service');
 const userService = require('../user/service');
 
@@ -16,7 +17,7 @@ router.get('/api/upload/get/:id', async (ctx, next) => {
   }
 });
 
-router.post('/api/upload/create', async (ctx, next) => {
+router.post('/api/upload/create', auth, async (ctx, next) => {
   await service.upload(ctx.state.user.id, ctx.request.body).then((results) => {
     ctx.type = 'text/html';
     // Wrap in HTML so IE8/9 can process it; can't accept json directly

@@ -611,6 +611,12 @@ module.exports.getAgency = async function (id) {
   return agency;
 };
 
+module.exports.updateAgency = function (data) {
+  return new Promise((resolve, reject) => {
+    dao.Agency.update(data).then(resolve).catch(reject);
+  });
+};
+
 module.exports.getCommunity = async function (id) {
   var community = await communityService.findById(id); //await dao.Community.findOne('community_id = ?', id);
   community.users = (await dao.User.db.query(dao.query.communityUsersQuery, id)).rows[0];
