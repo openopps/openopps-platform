@@ -152,6 +152,7 @@ var TaskListView = Backbone.View.extend({
           return _.pick(item, 'type', 'name', 'id');
         });
         if(tag == 'location') {
+          this.filters.locationType = [];
           if($('#virtual').is(':checked')) {
             this.filters.locationType.push('virtual');
           }
@@ -616,11 +617,11 @@ var TaskListView = Backbone.View.extend({
         this.filters.community = { type: key, name: this.filterLookup[key][value].name, id: value, banner: this.filterLookup[key][value].banner };
       } else {
         this.filters[key] = _.map(values, function (value) {
-          if (key == 'location' && value == 'virtual') {
+          if (value == 'virtual') {
             return value;
           } else if (key == 'career') {
             return { type: key, name: this.filterLookup[key][value], id: value };
-          } else if (key == 'skill' || key == 'series') {
+          } else if (key == 'location' || key == 'skill' || key == 'series') {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {
