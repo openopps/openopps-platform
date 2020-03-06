@@ -170,6 +170,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     addTerms (filter, field, defaultFilter) { 
       filter = filter || defaultFilter;
       if((filter && filter !== '_all')){
+        filter = [].concat(filter).map(value => { return value.split('|')[0]; }); // remove ids
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
     },
@@ -180,7 +181,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     addLocations (location) { 
       should_match.push({ multi_match: { 
         fields: ['postingLocation.cityName', 'postingLocation.countrySubdivision', 'postingLocation.country', 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
-        query: location,
+        query: location.split('|')[0], // remove ids,
       }});
     },
   };
