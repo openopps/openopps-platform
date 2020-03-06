@@ -321,6 +321,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         }
         $('#file-upload-alert-message').html(message);
         $('#file-upload-alert').show();
+        window.scrollTo(0, 0);
       }.bind(this),
     });
   },
@@ -344,7 +345,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.community.attributes.banner.backgroundImageId = info.id;
         this.updateBackgroundImage();
         $('#banner-file-upload-progress-container').hide();
-        $('#banner-file-upload-alert').hide();
+        $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
         var message = data.jqXHR.responseText || data.errorThrown;
@@ -352,8 +353,9 @@ var AdminCommunityEditView = Backbone.View.extend({
         if (data.jqXHR.status == 413) {
           message = 'The uploaded file exceeds the maximum file size.';
         }
-        $('#banner-file-upload-alert-message').html(message);
-        $('#banner-file-upload-alert').show();
+        $('#file-upload-alert-message').html(message);
+        $('#file-upload-alert').show();
+        window.scrollTo(0, 0);
       }.bind(this),
     });
   },
