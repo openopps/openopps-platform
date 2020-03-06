@@ -13,7 +13,7 @@ count(CASE when current_step = 1 and submitted_at is null THEN 1 ELSE NULL end) 
  from application app left join task_list_application tla on app.application_id = tla.application_id 
  left join task_list on tla.task_list_id = task_list.task_list_id 
  left join cycle on app.cycle_id = cycle.cycle_id
- where app.community_id = ? group by cycle.cycle_id
+ where app.withdrawn <> true and app.community_id = ? group by cycle.cycle_id
     order by cycle.name
    
 

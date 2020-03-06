@@ -103,6 +103,7 @@ var ApplyView = Backbone.View.extend({
     //submitted_application events
     'click .update-application'                                   : function (e) { this.callMethod(SubmittedApplication.updateApplication, e); },
     'click .withdraw-application'                                 : function (e) { this.callMethod(SubmittedApplication.withdrawApplication, e); },
+    'click .accordion-1'                                          : function (e) { this.callMethod(SubmittedApplication.toggleAccordion, e); },
   },
 
   // initialize components and global functions
@@ -115,7 +116,7 @@ var ApplyView = Backbone.View.extend({
       thirdChoice: _.findWhere(this.data.tasks, { sortOrder: 3 }),
       statementOfInterestHtml: marked(this.data.statementOfInterest),
       overseasExperienceLengthHtml: marked(this.data.overseasExperienceLength),
-      overseasExperienceOtherHtml: marked(this.data.overseasExperienceOther),
+      overseasExperienceOtherHtml: marked(this.data.overseasExperienceOther),  
     });
     //this.data.transcript = _.findWhere(this.data.transcripts, { CandidateDocumentID: parseInt(this.data.transcriptId) });
     this.languageProficiencies = [];
@@ -134,7 +135,26 @@ var ApplyView = Backbone.View.extend({
 
   render: function () {
     if (this.data.submittedAt !== null) {
+      this.data.tasks= _.sortBy(this.data.tasks, 'sortOrder');
       this.$el.html(templates.submittedApplication(this.data));
+   
+      SubmittedApplication.renderApplicationReceived.bind(this)();
+     
+      if(this.data.cycle.closed_date !== null ){
+        if(this.data.selectedApplicant) {
+          SubmittedApplication.renderSelectedMessages.bind(this)();
+        }
+        if(this.data.alternateApplicant){
+          SubmittedApplication.renderAlternateMessages.bind(this)();
+        }
+        if(this.data.notSelectedApplicant){
+          SubmittedApplication.renderNotSelectedMessages.bind(this)();
+        }
+        if(this.data.selectedInternship){
+          SubmittedApplication.renderSelectedInternship.bind(this)();
+        }
+      }
+
       this.$el.localize();
       window.scrollTo(0, 0);
     } else if (new Date(this.data.cycle.apply_end_date) < new Date()) {

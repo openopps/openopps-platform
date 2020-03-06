@@ -77,7 +77,7 @@ var TagFactory = BaseComponent.extend({
     //location tags get special treatment
     var isLocation = (options.type === 'location');
 
-    var url = "";
+    var url = '';
     switch (options.type) {
       case 'agency':
         url = '/api/ac/agency';

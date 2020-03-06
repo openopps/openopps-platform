@@ -1,7 +1,7 @@
 {
   "name": "openopps-platform",
   "private": true,
-  "version": "8.7.0",
+  "version": "8.9.0",
   "description": "platform that creates an empowered network through sharing skills and collaborating on projects",
   "keywords": [],
   "dependencies": {
@@ -68,6 +68,7 @@
     "lodash": "^4.17.15",
     "marked": "^0.3.12",
     "md5-file": "^3.2.3",
+    "merge-stream": "^2.0.0",
     "moment": "^2.20.1",
     "moment-timezone": "^0.5.25",
     "node-sass": "^4.12.0",
@@ -108,6 +109,7 @@
     "gulp-git": "^2.5.2",
     "mocha": "^5.0.0",
     "mocha-junit-reporter": "^1.17.0",
+    "mocha-multi-reporters": "^1.1.7",
     "nodemon": "^1.17.5",
     "npm-run-all": "^4.1.2",
     "nyc": "^14.1.1",
@@ -134,7 +136,7 @@
     "patch": "gulp patch",
     "start": "npm run migrate:up && node app.js",
     "test": "npm run test:unit",
-    "test:unit": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/unit/setup.js test/unit/*.test.js test/unit/**/*.test.js --opts test/test/mocha.opts",
+    "test:unit": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/unit/setup.js test/unit/*.test.js test/unit/**/*.test.js --opts test/mocha.opts --reporter mocha-multi-reporters --reporter-options configFile=test/reporter.config.json",
     "test:integration": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/integration/services/*.test.js",
     "jshint": "find assets/js/backbone -name \\*js -exec ./node_modules/jshint/bin/jshint {} \\;",
     "cover": "nyc --reporter=lcov --reporter=text ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/unit/setup.js test/unit/*.test.js test/unit/**/*.test.js --opts test/test/mocha.opts test/integration/services/*.test.js",

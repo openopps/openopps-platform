@@ -7,8 +7,8 @@
     <span><%- d.bureau %>  <% if(!_.isEmpty(d.office)) { %>/<%- d.office %>  <% } %></span>
     <% } %>
   </div>
-<div class="remove-bureau-office">
-  <a id="remove-bureau-office" class="remove-bureau-office" href="javascript:void(0);" data-user-id="<%- d.userId %>" data-user-bureau-office-id="<%- d.userBureauOfficeId %>"data-bureau-name="<%- d.bureau %>" data-office-name="<%- d.office %>" data-bureauid="<%- d.bureau_id %>" data-officeid="<%- d.office_id %>" >Remove</a>
+<div>
+  <a id="remove-bureau-office-<%- d.userBureauOfficeId %>" class="remove-bureau-office" href="javascript:void(0);" data-user-id="<%- d.userId %>" data-user-bureau-office-id="<%- d.userBureauOfficeId %>" data-bureau-name="<%- d.bureau %>" data-office-name="<%- d.office %>" data-bureauid="<%- d.bureau_id %>" data-officeid="<%- d.office_id %>" >Remove</a>
 </div>
 </div>
 <% }); %>

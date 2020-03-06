@@ -12,6 +12,16 @@
     </div>
     <div class="usajobs-grid-full">
         <div class="usa-width-one-fourth">
+            <h3>Community</h3>
+            <ul class="usa-unstyled-list">          
+                <% _.forEach(search.communities, function(community) { %>
+                <li class="usajobs-open-opps-search_item">
+                    <a href="/search?community=<%- community.community_id %>"><%- community.community_name %></a>
+                </li>
+                <% }); %>
+            </ul>
+        </div>
+        <div class="usa-width-one-fourth">
             <h3>Career field</h3>
             <ul class="usa-unstyled-list">
                 <% if (search.acquisition[0]) { %>
@@ -31,7 +41,7 @@
             <ul class="usa-unstyled-list">
                 <% _.forEach(search.skills, function(skill) { %>
                 <li class="usajobs-open-opps-search_item">
-                    <a href="/search?skill=<%- skill.name %>"><%- skill.name %></a>
+                    <a href="/search?skill=<%- skill.name %>|<%- skill.id %>"><%- skill.name %></a>
                 </li>
                 <% }); %>
             </ul>

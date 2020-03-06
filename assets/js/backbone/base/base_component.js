@@ -3,7 +3,7 @@ var Backbone = require('backbone');
 
 
 var BaseComponent = Backbone.View.extend({
-  initialize: function() {}
+  initialize: function () {},
 });
 
 module.exports = BaseComponent;

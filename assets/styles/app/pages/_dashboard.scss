@@ -410,8 +410,10 @@
   }
 }
 
-.opportunity-created .usajobs-pill--opportunity-status {
-  margin-bottom: 0;
+.opportunity-created, .opportunity-participated {
+  .usajobs-pill--opportunity-status {
+    margin-bottom: 0;
+  }
 }
 
 .opportunity-created {

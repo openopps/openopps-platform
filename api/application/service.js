@@ -338,6 +338,13 @@ module.exports.findById = async function (userId, applicationId) {
         dao.LookUpCode.query(dao.query.securityClearance, applicationId, { fetch: { securityClearance: ''}}),
         db.query(dao.query.submittedApplicationCommunity, applicationId, { fetch: { communityName: ''}}),
         db.query(dao.query.submittedApplicationCycle, applicationId, { fetch: { cycle: '' }}),
+        dao.User.findOne('id = ?', userId),
+        db.query(dao.query.selectedApplicant, applicationId),
+        db.query(dao.query.alternateApplicant, applicationId),
+        db.query(dao.query.notSelectedApplicant, applicationId),
+        db.query(dao.query.applicantCount, application.cycleId),
+        db.query(dao.query.selectedInternship, applicationId,applicationId),
+       
       ]);
       application.tasks = sortApplicationTasks(results[0].rows);
       application.education = results[1];
@@ -348,6 +355,13 @@ module.exports.findById = async function (userId, applicationId) {
       application.securityClearance = results[6];
       application.communityName = results[7].rows[0];
       application.cycle = results[8].rows[0];
+      application.user = results[9];
+      application.selectedApplicant = results[10].rows[0];
+      application.alternateApplicant = results[11].rows[0];
+      application.notSelectedApplicant = results[12].rows[0];
+      application.applicantCount = results[13].rows[0];
+      application.selectedInternship = results[14].rows[0];
+     
       resolve(application);
     }).catch((err) => {
       reject();

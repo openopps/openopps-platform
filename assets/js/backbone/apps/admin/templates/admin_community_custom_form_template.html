@@ -1,0 +1,84 @@
+<fieldset class="usajobs-fieldset usa-form-xl">
+  <legend class="usa-sr-only">Search display & Appearance</legend>  
+  <h2>Display & Appearance</h2>
+  <div class="form-group required-input">
+      <label for="display-title" class="usa-input-optional">Title</label>
+      <span class="field-validation-error error-html" style="display:none;">The special characters '
+        < ' or '>' are not allowed</span>
+      <input type="text" id="display-title" class="fullwidth form-control validate"  data-validate="html" />
+  </div>
+  <div class="form-group required-input">
+    <label for="display-title-color-text" class="usa-input-optional">Title color</label>
+    <div class="usajobs-grid-full display-color-group">
+      <div class="usa-width-three-fourths">
+        <input type="text" class="color-input" value="" id="display-title-color-text"/>
+      </div>
+      <div class="usa-width-one-fourth">
+        <input type="color" class="color-button" value="#ffffff" id="display-title-color"/>
+        <label for="display-title-color" class="sr-only">Title color preview</label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group required-input">
+      <label for="display-subtitle" class="usa-input-optional">Subtitle</label>
+      <span class="field-validation-error error-html" style="display:none;">The special characters '
+        < ' or '>' are not allowed</span>
+      <input type="text" id="display-subtitle" class="fullwidth form-control validate"  data-validate="html" />
+  </div>
+  <div class="form-group required-input">
+    <label for="display-subtitle-color-text" class="usa-input-optional">Subtitle color</label>
+    <div class="usajobs-grid-full display-color-group">
+      <div class="usa-width-three-fourths">
+        <input type="text" class="color-input" value="" id="display-subtitle-color-text"/>
+      </div>
+      <div class="usa-width-one-fourth">
+        <input type="color" class="color-button" value="#ffffff" id="display-subtitle-color"/>
+        <label for="display-subtitle-color" class="sr-only">Subtitle color preview</label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group required-input">
+      <label for="display-description">Description<span class="usa-input-optional"></span></label>
+      <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
+      <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+      <textarea id="display-description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
+      <p class="usajobs-form__help-brief" id="display-description-count">(500 characters remaining)</p>
+  </div>
+  <div class="form-group required-input">
+      <label for="display-description-color-text" class="usa-input-optional">Description color</label>
+      <div class="usajobs-grid-full display-color-group">
+        <div class="usa-width-three-fourths">
+          <input type="text" class="color-input" value="" id="display-description-color-text"/>
+      </div>
+      <div class="usa-width-one-fourth">
+          <input type="color" class="color-button" value="#ffffff" id="display-description-color"/>
+          <label for="display-description-color" class="sr-only">Description color preview</label>
+      </div>
+  </div>
+  <div class="form-group required-input">
+      <label for="display-banner-color-text" class="usa-input-optional">Banner color</label>
+      <div class="usajobs-grid-full display-color-group">
+        <div class="usa-width-three-fourths">
+          <input type="text" class="color-input" value="" id="display-banner-color-text"/>
+        </div>
+        <div class="usa-width-one-fourth">
+          <input type="color" class="color-button" value="#205493" id="display-banner-color"/>
+          <label for="display-banner-color" class="sr-only">Banner color preview</label>
+        </div>
+      </div>
+  <div class="form-group">
+      <label for="vanityURL" class="usa-input-optional">Vanity URL</label>
+      <div class="usajobs-grid-full display-color-group">
+        <span><%- window.location.host %>/community/</span>
+        <input type="text" id="vanityURL" class="fullwidth form-control validate" />
+      </div>
+  </div>
+</fieldset>
+<fieldset class="usajobs-fieldset usa-form-xl">
+    <legend class="usa-sr-only">Preview</legend>
+    <div class="usajobs-button_bar--slim">
+      <div class="usajobs-button_bar__body">
+        <a href="#" class="usa-button usa-button-secondary usa-button-left" id="community-preview">Preview</a>
+      </div>
+    </div>
+  </fieldset>

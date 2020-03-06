@@ -601,18 +601,19 @@ form [type=submit] {
   .center-upload {
       text-align: center;
   }
+}
 
-  .fileinput-button {
-      font-size: 1.4rem;
-      margin: 0.5rem;
+.fileinput-button {
+  font-size: 1.4rem;
+  margin: 0.5rem 0;
 
-      a, a:hover, a:visited {
-        color: #2574B6;
-      }
+  span, span:hover {
+    color: #2574B6;
+    text-decoration: underline;
+  }
 
-      #photo-remove {
-        color: #CD2026;
-      }
+  #photo-remove {
+    color: #CD2026;
   }
 }
 

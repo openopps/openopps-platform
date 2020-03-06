@@ -35,6 +35,7 @@ async function getTaskTypeList (user) {
     skills: (await dao.Task.db.query(dao.query.taskByType, 'skill', 4)).rows,
     locations: (await dao.Task.db.query(dao.query.taskByType, 'location', 3)).rows,
     byProfile: generateByProfileQuery(user),
+    communities : (await dao.Community.db.query(dao.query.communitiesTasks)).rows,
   };
 }
 
@@ -50,7 +51,7 @@ function generateByProfileQuery (user) {
     query += 'location=' + location.name + '&';
   }
   if(!_.isEmpty(skills)) {
-    query += 'skill=' + skills.map((skill) => { return skill.name; }).join(';');
+    query += 'skill=' + skills.map((skill) => { return [skill.name, skill.id].join('|'); }).join(';');
   }
   return query;
 }
@@ -60,4 +61,5 @@ module.exports = {
   usersList: usersList,
   getTaskCount: getTaskCount,
   getTaskTypeList: getTaskTypeList,
+  getCommunities : this.getCommunities,
 };

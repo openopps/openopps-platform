@@ -310,10 +310,6 @@
   .admin-table-usertype {
     span {
       display: block;
-
-      @include media($XL) {
-        padding-left: 2rem;
-      }
     }
 
     img {
@@ -327,7 +323,8 @@
   .user-enable[type=checkbox]:checked,
   .assign-admin[type=checkbox]:checked,
   .member-enable[type=checkbox]:checked,
-  .assign-approver[type=checkbox]:checked {
+  .assign-approver[type=checkbox]:checked,
+  .assign-auto-join[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -344,7 +341,8 @@
   .user-enable[type=checkbox],
   .assign-admin[type=checkbox],
   .member-enable[type=checkbox],
-  .assign-approver[type=checkbox] {
+  .assign-approver[type=checkbox],
+  .assign-auto-join[type=checkbox] {
     border: none;
     height: auto;
 
@@ -698,6 +696,22 @@
   margin-bottom: $size-M;
 }
 
+.usajobs-open-opps-admin-dashboard .usa-width-one-half #s2id_agencies {
+  @include media($M) {
+    display: block;
+    max-width: 22.8rem;
+  }
+
+  @media screen and (min-width: 700px) {
+    max-width: 27.6rem;
+  }
+
+  @include media($ML) {
+    display: inline-block;
+    max-width: 46rem;
+  }
+}
+
 .label-brief {
   margin-top: $size-XS;
   margin-bottom: $size-XS;
@@ -729,3 +743,32 @@
   margin-left: 1.5rem;
 }
 
+.color-button { 
+  padding: 0 0.5em;
+}
+
+.display-color-group {
+  max-width: 46rem;
+  margin-left: 0;
+}
+
+#community-preview .search__box-search {
+  position: relative;
+
+  .community-logo-preview {
+    width: 11rem;
+    height: 11rem;
+  }
+
+  @include media($M) {
+    h1, h3, p.description {
+      width: calc(100% - 13.5rem);
+    }
+
+    .community-logo-preview {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+}

@@ -12,10 +12,10 @@
   </div>
   <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
     <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
-      <a href=#><%- data.photoId ? 'Update photo' : 'Upload photo' %>
+      <span><%- data.photoId ? 'Update photo' : 'Upload photo' %>
         <label class="sr-only" for="fileupload">Upload photo</label>
         <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- data.photoId ? 'Update photo' : 'Upload photo' %>" />
-      </a>
+      </span>
     </div>
     <div class="fileinput-button">
       <% if (data.photoId) { %>

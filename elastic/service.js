@@ -84,7 +84,7 @@ service.deleteOpportunity = async function (taskId) {
 
   await elasticClient.bulk({ body: [{ delete: { _index: 'task', _type: 'task', _id: taskId } }] });
   return true;
-}
+};
 
 service.indexUser =  async function (userId) {
   if (!(await elasticClient.IsAlive()))
@@ -111,7 +111,7 @@ service.deleteUser = async function (userId) {
 
   await elasticClient.bulk({ body: [{ delete: { _index: 'user', _type: 'user', _id: userId } }] });
   return true;
-}
+};
 
 service.searchOpportunities = async function (request) {
   var searchResults = null;
@@ -170,6 +170,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     addTerms (filter, field, defaultFilter) { 
       filter = filter || defaultFilter;
       if((filter && filter !== '_all')){
+        filter = [].concat(filter).map(value => { return value.split('|')[0]; }); // remove ids
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
     },
@@ -180,7 +181,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     addLocations (location) { 
       should_match.push({ multi_match: { 
         fields: ['postingLocation.cityName', 'postingLocation.countrySubdivision', 'postingLocation.country', 'postingLocation.cityCountrySubdivision', 'postingLocation.cityCountry'],
-        query: location,
+        query: location.split('|')[0], // remove ids,
       }});
     },
   };
@@ -203,13 +204,13 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var agencies = ['null'];
   
   if (ctx.state.user && ctx.state.user.agency) {
-    if (query.restrict == 'true') {
-      agencies = [ctx.state.user.agency.name];
+    if (query.restrict) {
+      agencies = [].concat(query.restrict);
     } else {
       if (ctx.state.user.isAdmin) {
         agencies = [];
       } else {
-        agencies.push(ctx.state.user.agency.name);
+        agencies.push(ctx.state.user.agency.agency_id);
       }
     }
   }
