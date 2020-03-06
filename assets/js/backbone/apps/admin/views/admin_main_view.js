@@ -222,7 +222,7 @@ var AdminMainView = Backbone.View.extend({
     this.adminAgenciesView && this.adminAgenciesView.cleanup();
     var callback = function (departments) {
       this.adminAgenciesView = new AdminAgenciesView({
-        el: '#admin-agencies',
+        el: '#admin-main',
         agencyId: agencyId,
         adminMainView: this,
         departments: departments,
@@ -245,7 +245,7 @@ var AdminMainView = Backbone.View.extend({
       this.adminDashboardView.cleanup();
     }
     this.adminDashboardView = new AdminDashboardView({
-      el: '#admin-sitewide',
+      el: '#admin-main',
     });
   },
 
@@ -253,7 +253,7 @@ var AdminMainView = Backbone.View.extend({
     this.adminCommunityView && this.adminCommunityView.cleanup();
     var callback = function (communities) {
       this.adminCommunityView = new AdminCommunityView({
-        el: '#admin-communities',
+        el: '#admin-main',
         communityId: communityId,
         adminMainView: this,
         communities: communities,

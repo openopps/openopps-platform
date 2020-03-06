@@ -73,6 +73,9 @@
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
+        <% if (model.restrictedTo && (_.findWhere(model.agencies, { agency_id: model.restrictedTo }))) { %>
+          <p>This opportunity is limited to employees of <%- _.findWhere(model.agencies, { agency_id: model.restrictedTo }).name %>.</p>
+        <% } %>
         <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
       <% } %>
     <% } %>
@@ -118,29 +121,6 @@
                   </div>
                 </div>
               </a>
-              <!-- <div class="project-people-show-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
-                <img src="/api/user/photo/<%- v.userId %>" alt="<%- v.name %>" class="project-people" />
-                <label class="project-people-show-label"><%- v.name %></label>
-                <% if (model.canEditTask) { %>
-                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                    <button class="project-people__remove" data-volunteerid="<%- v.id %>" data-behavior="remove">
-                      <span class="usajobs-assistive-text">Remove participant</span>
-                    </button>
-                  <% } %>
-                  <% if (state.value == 'in progress') { %>
-                    <% if (v.taskComplete) { %>
-                      <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
-                      <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="undo">Undo</a>
-                    <% } else { %>
-                      <a href="javascript:void(0);" class="task-complete" data-volunteerid="<%- v.id %>" data-behavior="complete">Task complete</a>
-                    <% } %>
-                  <% } else if (v.taskComplete) { %>
-                    <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
-                  <% } %>
-                <% } else if (v.taskComplete) { %>
-                  <span class="task-complete-check"><i class="fa fa-check"></i>Task complete</span>
-                <% } %>
-              </div> -->
             <% }); %>
           <% } else { %>
             <p class="project-people__assign-instruction">

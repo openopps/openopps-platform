@@ -12,6 +12,7 @@
             "requester":             { "type": "keyword", "normalizer": "lowercase" },
             "updatedAt":             { "type": "date", "format": "strict_date_optional_time||epoch_millis"},
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
+            "grade"         :        { "type": "long" },
             "postingLocation":       { 
                 "properties": {
                     "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
@@ -54,6 +55,12 @@
                 }
             },
             "languages": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "payPlan": {
                 "properties": {
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }

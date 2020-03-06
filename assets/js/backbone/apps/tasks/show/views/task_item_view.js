@@ -495,34 +495,41 @@ var TaskItemView = BaseView.extend({
       //window.cache.userEvents.trigger('user:request:login');
     } else {
       var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
-      var options = {};
-      if (window.cache.currentUser.hiringPath == 'contractor') {
-        options = _.extend(_.clone(this.modalOptions), {
-          modalTitle: 'Sorry you are not eligble to apply.',
-          modalBody: ContractorCheckList,
-          primary: {
-            text: 'Close',
-            action: function () { this.modalComponent.cleanup(); }.bind(this),
-          },
-        });
-        this.modalComponent = new ModalComponent(options).render();
-      } else if(location.length == 0 || !window.cache.currentUser.agency) {
+      if(location.length == 0 || !window.cache.currentUser.agency) {
         this.completeProfile(location, window.cache.currentUser.agency);
       } else {
-        var skill = _.find(window.cache.currentUser.tags, function (tag) {
-          return tag.type == 'skill';
-        });
-        options = _.extend(_.clone(this.modalOptions), {
-          modalTitle: 'Do you want to participate?',
-          modalBody: _.template(ParticipateCheckList)({e, skill}),
-          primary: {
-            text: 'Yes, submit my name',
-            action: this.volunteer.bind(this),
-          },
-        });
-        this.modalComponent = new ModalComponent(options).render();
+        this.renderApplyModal(e, location);
       }
     }
+  },
+
+  renderApplyModal: function (e, location) {
+    var skill = _.find(window.cache.currentUser.tags, function (tag) {
+      return tag.type == 'skill';
+    });
+    var options = _.extend(_.clone(this.modalOptions), {
+      modalTitle: 'Do you want to participate?',
+      modalBody: _.template(ParticipateCheckList)({e, skill}),
+      primary: {
+        text: 'Yes, submit my name',
+        action: this.volunteer.bind(this),
+      },
+    });
+    var taskAgencyRestriction = _.findWhere(this.model.get('agencies'), { agency_id: this.model.get('restrictedTo')});
+    var isAgencyEmployee = !_.isEmpty(_.findWhere(window.cache.currentUser.agencies, { agency_id: this.model.get('restrictedTo')}));
+    if (window.cache.currentUser.hiringPath == 'contractor' || (taskAgencyRestriction && !isAgencyEmployee) ) {
+      options.modalTitle = 'Sorry you are not eligble to apply.';
+      options.modalBody = _.template(ContractorCheckList)({
+        hiringPath: window.cache.currentUser.hiringPath,
+        isAgencyEmployee: isAgencyEmployee,
+        agency: taskAgencyRestriction,
+      });
+      options.primary = {
+        text: 'Close',
+        action: function () { this.modalComponent.cleanup(); }.bind(this),
+      };
+    }
+    this.modalComponent = new ModalComponent(options).render();
   },
 
   cancelApply: function (e) {

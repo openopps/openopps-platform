@@ -47,7 +47,7 @@ function upload (userId, data) {
       }
     } else {
       log.info('Invalid file type ', file.type);
-      throw Error('Invalid file type. You may only upload valid image files.');
+      throw Error('Invalid file type. You may only upload png, jpg, jpeg, gif or bmp image files.');
     }
   }));
 }

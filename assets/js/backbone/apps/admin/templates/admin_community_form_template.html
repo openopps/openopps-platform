@@ -7,6 +7,16 @@
     <p class="usa-alert-text">An unexpected error occured trying to save your changes.</p>
   </div>
 </div>
+<div class="usa-alert usajobs-alert usajobs-alert--error" id="file-upload-alert" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text" id="file-upload-alert-message">
+    </p>
+  </div>
+</div>
 <div id="bureau-office-message"></div>
 <div class=" usajobs-canvas usajobs-open-opps-admin-dashboard"> 
   <h1><% if(communityId) { %>Manage<% } else {%>Create<% } %> Community</h1>
@@ -52,9 +62,8 @@
             </div>
         <% if (departments) { %>
           <div class="form-group required-input">
-            <label for="agencies">
-              <h5>Agency</h5>
-            </label>
+            <label for="agencies"><h5>Agency</h5></label>
+            <legend class="usa-sr-only">Select agency</legend>
             <span class="field-validation-error error-empty" style="display:none;">You must select an agency.</span>
             <select id="agencies" class="dropdown validate" data-validate="empty">
                 <option value=""></option>
@@ -78,7 +87,7 @@
           <div class="form-group required-input usa-fieldset-inputs">
             <h5>Closed group</h5>
             <fieldset class="usajobs-fieldset">
-              <legend class="usa-sr-only">Select agency</legend>
+              <legend class="usa-sr-only">Select to join community</legend>
               <p class="label-brief">Require new members to request to join your community?</p>
               <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
               <ul class="usa-unstyled-list" id="community-group">

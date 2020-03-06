@@ -1,0 +1,14 @@
+<% if (banner.backgroundImageId) { %>
+    <img id="profile-picture" src="/api/community/backgroundImage/get/<%- communityId %>" alt="Banner background image of <%- communityName %>">
+<% } %>
+<div class="fileinput-button">
+<span><%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>
+    <label class="sr-only" for="banner-fileupload">Upload image</label>
+    <input id="banner-fileupload" type="file" name="files[]" accept="image/*" title="<%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>" />
+</span>
+</div>
+<div class="fileinput-button">
+<% if (banner.backgroundImageId) { %>
+    <a href=# id="image-remove">Remove</a>
+<% } %>
+</div>

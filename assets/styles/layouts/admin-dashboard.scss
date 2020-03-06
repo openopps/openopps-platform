@@ -194,6 +194,10 @@
       color: $color-primary-darker;
       border-bottom-color: $color-primary-darker;
     }
+
+    .submetrics {
+      padding-left: 1.94em;
+    }
   }
 
   .top-contributors {
@@ -297,6 +301,10 @@
 
   .back-link {
     color: $color-primary;
+
+    a:visited {
+      color: $color-primary;
+    }
 
     .fa-chevron-circle-left {
       margin-right: $size-base;
