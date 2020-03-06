@@ -32,10 +32,12 @@
               <h5>Community types</h5>
             </label>
             <span class="field-validation-error error-empty" style="display:none;">You must select a community type.</span>
-            <select id="communityType" class="dropdown validate" data-validate="empty">
-                <option value="" hidden></option>
-                <option value="1">Career</option>
-                <option value="2">Program</option>
+            <% var communityTypes =[{value:1,text:'Career'},{value:2,text:'Program'},{value:3,text:'Agency'}]; %>       
+            <select id="communityType" class="dropdown validate" data-validate="empty">           
+              <option value="" hidden></option>
+                <% _.each(_.sortBy(communityTypes,'text'), function (d) { %>
+                  <option value=<%- d.value %>><%- d.text %></option>
+                  <% }); %>
               </select>
           </div>
             <div class="form-group required-input">
