@@ -19,8 +19,8 @@ var AdminCommunityEditView = Backbone.View.extend({
   events: {
     'click #community-edit-cancel'          : 'cancel',
     'click #community-edit-save'            : 'save',
-    'blur .validate'                        : 'validateField',
-    'change .validate'                      : 'validateField',
+    'blur .validate'                        : 'validateFields',
+    'change .validate'                      : 'validateFields',
     'click #add-bureau-office'              : 'addbureauOfficeDisplay',
     'click .edit-bureau-office'             : 'addbureauOfficeDisplay',
     'click .delete-bureau'                  : 'deleteBureau',
