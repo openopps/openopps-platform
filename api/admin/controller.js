@@ -5,6 +5,7 @@ const auth = require('../auth/auth');
 const service = require('./service');
 const communityService = require('../community/service');
 const systemSetting = require('./systemSetting');
+const documentService = require('../document/service');
 
 var router = new Router();
 
@@ -131,6 +132,31 @@ router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async
   var filter = ctx.query.filter;
   var agencyId= ctx.params.id;
   ctx.body = await service.getDashboardAgencyTaskMetrics(group, filter,agencyId);
+});
+
+// TODO: Agency logo routes
+router.post('/api/admin/agency/logo/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  await service.updateAgency(ctx.request.body).then(agency => {
+    ctx.status = 200;
+    ctx.body = agency;
+  }).catch(err => {
+    log.error(err);
+    ctx.status = 400;
+  });
+});
+
+router.post('/api/admin/agency/logo/remove/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
+  var result = await documentService.removeFile(ctx.params.id);
+  if(!result) {
+    return ctx.status = 404;
+  }
+  await service.updateAgency(ctx.request.body).then(agency => {
+    ctx.status = 200;
+    ctx.body = agency;
+  }).catch(err => {
+    log.error(err);
+    ctx.status = 400;
+  });
 });
 
 router.get('/api/admin/community/:id/tasks', auth.isCommunityApprover, async (ctx, next) => {

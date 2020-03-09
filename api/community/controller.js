@@ -75,7 +75,7 @@ router.get('/api/community/logo/get/:id', async (ctx, next) => {
   }
 });
 
-router.post('/api/community/logo/remove/:id', async (ctx, next) => {
+router.post('/api/community/logo/remove/:id', auth.isAdmin, async (ctx, next) => {
   var result = await documentService.removeFile(ctx.params.id);
   if(!result) {
     return ctx.status = 404;
@@ -86,7 +86,7 @@ router.post('/api/community/logo/remove/:id', async (ctx, next) => {
   });
 });
 
-router.post('/api/community/logo/update/:id', async (ctx, next) => {
+router.post('/api/community/logo/update/:id', auth.isAdmin, async (ctx, next) => {
   var community = await service.findById(ctx.params.id);
   await service.updateCommunity(ctx.request.body, (err, community) => {
     ctx.status = err ? 400 : 200;
