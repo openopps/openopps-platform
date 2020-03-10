@@ -86,6 +86,7 @@ function renderTemplate (template, data, done) {
         return renderIncludes(include, data);
       });
     }
+    data._emailSignature = data.task && data.task.community && data.task.community.emailSignature ? data.task.community.emailSignature : 'The ' + data.globals.systemName + ' Team';
     data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
       if (err) {

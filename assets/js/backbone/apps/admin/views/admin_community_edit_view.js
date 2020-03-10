@@ -129,6 +129,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#microsite-url').val(community.micrositeUrl);
     $('#community-mgr-name').val(community.communityManagerName);
     $('#community-mgr-email').val(community.communityManagerEmail);
+    $('#community-email-signature').val(community.emailSignature);
   },
 
   initializeDisplayFormFields: function (community) {
@@ -181,6 +182,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
+      emailSignature: $('#community-email-signature').val(),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -287,7 +289,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeCounts: function () {
-    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}].forEach(function (item) {
+    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}, { id: 'community-email-signature', count: 300 }].forEach(function (item) {
       $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
     });
   },
