@@ -161,6 +161,15 @@
             <span class="field-validation-error error-empty" style="display:none;">You must enter a manager email.</span>
             <input type="text" id="community-mgr-email" class="fullwidth form-control validate" data-validate="empty,email"/>
           </div>
+          <div class="form-group required-input">
+            <label for="community-email-signature">Email signature block<span class="usa-input-optional"></span></label>
+            <span class="field-validation-error error-count300" style="display:none;">The description must be no more than 300 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <textarea id="community-email-signature" class="fullwidth form-control validate" name="community-email-signature" data-validate="count300,html"></textarea>
+            <p class="usajobs-form__help-brief" id="community-email-signature-count">
+              (300 characters remaining)
+            </p>
+          </div>
           
           <% if(communityId){ %>
           <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />
