@@ -170,7 +170,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     addTerms (filter, field, defaultFilter) { 
       filter = filter || defaultFilter;
       if((filter && filter !== '_all')){
-        filter = [].concat(filter).map(value => { return value.split('|')[0]; }); // remove ids
+        filter = [].concat(filter).map(value => { 
+          return _.isString(value) ? value.split('|')[0] : value;
+        }); // remove ids
         filter_must.push({terms: { [field] : asArray(filter) }});
       }
     },
