@@ -506,8 +506,8 @@ var TaskEditFormView = Backbone.View.extend({
       abort = abort || iAbort;
     } );
     var target = $('.time-options-time-required.selected')[0] || {};
-  
-    if(target.id =='detail'){ 
+   
+    if(target.id =='detail'){     
       if(this.changeDetailOptions()==true){
         abort= true;
       }
@@ -736,8 +736,7 @@ var TaskEditFormView = Backbone.View.extend({
      
       if ($("input[name='" + item.name + "']:checked").length > 0) {
         $('#' + item.id).removeClass('usa-input-error');    
-        $('#' + item.id + ' > .field-validation-error').hide();
-        abort = false;
+        $('#' + item.id + ' > .field-validation-error').hide();   
       }
       else{
         $('#' + item.id).addClass('usa-input-error');    
