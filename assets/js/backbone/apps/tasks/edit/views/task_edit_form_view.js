@@ -870,6 +870,8 @@ var TaskEditFormView = Backbone.View.extend({
       modelData.grade         ='';
       modelData.isDetailReimbursable= null;
       modelData.payLevelId =null;
+      modelData.detailLength ='';
+      modelData.detailSelection='';
     }
     if (this.agency) {
       modelData.restrictedTo = $('input[name=task-restrict-agency]:checked').val() ? $('input[name=task-restrict-agency]:checked').val(): null;

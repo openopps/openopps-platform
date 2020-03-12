@@ -1,5 +1,5 @@
 with tasks as (
-	select task.title, task.state, tagentity.name, task.community_id, task.agency_id, task.accepting_applicants,
+	select task.title, task.state, tagentity.name, task.community_id, task.agency_id, task.accepting_applicants,task.detail_selection,
 	(select row_to_json (muser)
 		from (
 			select
@@ -41,8 +41,9 @@ select
 	case
 		when tasks.name = 'One time' or tasks.name is null then 'oneTime'
 		when tasks.name = 'Ongoing' then 'onGoing'
-		when tasks.name = 'Part Time Detail' then 'partTime'
-		when tasks.name = 'Full Time Detail' then 'fullTime'
+		when tasks.name = 'Lateral' then 'lateral'
+		when tasks.detail_selection = 'Part-time' then 'partTime'
+		when tasks.detail_selection = 'Full-time' then 'fullTime'		
 	end as task_state
 from tasks
 where tasks.state <> 'archived' 
