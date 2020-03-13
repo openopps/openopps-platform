@@ -863,6 +863,9 @@ var TaskEditFormView = Backbone.View.extend({
       modelData.grade      = this.$('#grade').val();  
       modelData.payLevelId = $('#time-options-pay-scale').val();
       modelData.payPlan = $('#time-options-pay-scale').select2('data')?$('#time-options-pay-scale').select2('data').text: null;
+      modelData.isDetailReimbursable= null;
+      modelData.detailLength ='';
+      modelData.detailSelection='';
     }
     else{
       modelData.applyAdditional= '';
