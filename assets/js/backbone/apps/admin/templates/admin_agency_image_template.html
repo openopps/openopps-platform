@@ -1,0 +1,15 @@
+<h3><i class="fa fa-image"></i><span class="box-icon-text">Logo</h3>
+<% if (agency.imageId) { %>
+  <img id="agency-logo" src="/api/upload/get/<%- agency.imageId %>" alt="<%- agency.name %> logo">
+<% } %>
+<div class="fileinput-button">
+<span><%- agency.imageId ? 'Update logo' : 'Upload logo' %>
+  <label class="sr-only" for="fileupload">Upload logo</label>
+  <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- agency.imageId ? 'Update logo' : 'Upload logo' %>" />
+</span>
+</div>
+<div class="fileinput-button">
+<% if (agency.imageId) { %>
+  <a href=# id="logo-remove">Remove</a>
+<% } %>
+</div>
