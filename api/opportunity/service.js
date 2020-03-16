@@ -99,6 +99,11 @@ async function commentsByTaskId (id) {
   return { comments: dao.clean.comments(comments) };
 }
 
+async function agencyById (id) {
+  var agency = await dao.Agency.findOne('agency_id = ?', id).catch(() => { return null; });
+  return agency;
+}
+
 function processTaskTags (task, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(_.isNumber(tag)) {
@@ -882,6 +887,7 @@ module.exports = {
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
   getVanityURL: getVanityURL,
+  agencyById: agencyById,
 };
 
 

@@ -99,12 +99,14 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'isInternship': doc.target_audience == 2 ? 1 : 0,
     'languages': doc.languages,
-    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo },
+    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo, displayAgencyLogo:doc.display_agency_logo },
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
     'office': { id: doc.office_id, name: doc.office_name },
     'grade': doc.grade,
     'payPlan': { id: doc.pay_plan_id, name: doc.code },
+    'agencyId' : doc.agency_id,
+    'agencyName': doc.agencyName,
   };
 }
     
@@ -120,6 +122,7 @@ from (
     t.about,
     t.grade,
     t.restricted_to,
+    t.agency_id,
     a.name as "agencyName",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."publishedAt",
@@ -131,6 +134,7 @@ from (
     c.community_name,
     c.community_short_name,
     c.community_logo,
+    c.display_agency_logo,
     t.city_name,
     cs.value as "country_subdivision",
     ct.value as "country",
