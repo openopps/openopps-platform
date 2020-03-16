@@ -142,7 +142,7 @@
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-             
+
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Detail part-time or full-time</legend>
                 <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-time" >  
@@ -176,8 +176,21 @@
                   </li>
                 </ul>
               </div> 
-              </fieldset> 
-
+              </fieldset>    
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Hours need</legend>       
+              <div class="form-group required-input" id="time-options-time-required">
+                <label for="time-estimate">How many hours do you need?</label>
+                <span class="field-validation-error error-empty" style="display:none;">You must select the number of hours needed for this opportunity.</span>
+                <select id="time-estimate" class="dropdown validate" data-validate="empty">
+                  <option></option>
+                  <% _.each(tagTypes['task-time-estimate'], function (t) { %>
+                    <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
+                    <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
+                  <% }); %>
+                </select>
+              </div> 
+              </fieldset>
                 <fieldset class="usajobs-fieldset">
                   <legend class="usa-sr-only">Detail reimbursable</legend>
                   <div class="form-group required-input usa-fieldset-inputs checkboxes-horizontal-longtitle detail-section" id="detail-reimbursable">  
@@ -206,7 +219,7 @@
               <div class="usajobs-grid-full">
                 <div class="usa-width-one-third">
                   <div class="form-group">
-                    <label for="payScale">Pay plan <span class="usa-input-optional"></span> </label>                                        
+                    <label for="payScale">Pay scale <span class="usa-input-optional"></span> </label>                                        
                     <select id="time-options-pay-scale" class="dropdown" > 
                       <option></option>              
                         <% _.each(payPlans, function(p) { %>              
@@ -224,17 +237,7 @@
               </div>
             </div>         
             
-            <div class="form-group required-input" id="time-options-time-required">
-              <label for="time-estimate">How many hours do you need?</label>
-              <span class="field-validation-error error-empty" style="display:none;">You must select the number of hours needed for this opportunity.</span>
-              <select id="time-estimate" class="dropdown validate" data-validate="empty">
-                <option></option>
-                <% _.each(tagTypes['task-time-estimate'], function (t) { %>
-                  <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
-                  <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
-                <% }); %>
-              </select>
-            </div>         
+                
             <div class="form-group" id="time-options-completion-date">
               <label class="estimated-completion-date-label">What is the estimated completion date? <span class="usa-input-optional"></span></label>
               <span class="field-validation-error" style="display:none;" data-valmsg-for="estimated-completion-date" data-valmsg-replace="true">Please enter a valid completion date</span>
