@@ -75,7 +75,7 @@ function renderTemplate (template, data, done) {
     bcc: _.template(template.bcc)(data),
     subject: _.template(template.subject)(data),
   };
-  fs.readFile(html, function (err, htmlTemplate) {
+  fs.readFile(html, function (err, htmlTemplate, htmlCommunityLogo) {
     if (err) {
       log.info(err);
       return done(err);
@@ -86,7 +86,13 @@ function renderTemplate (template, data, done) {
         return renderIncludes(include, data);
       });
     }
-    data._emailSignature = data.task && data.task.community && data.task.community.emailSignature ? data.task.community.emailSignature : 'The ' + data.globals.systemName + ' Team';
+    data._communityLogoContent = data.task && data.task.community && (data.task.community.community_type == 3) ? _.template(htmlCommunityLogo)(data) : '';
+    if (!_.isEmpty(template.includes)) {
+      data._content += _.map(template.includes, (include) => {
+        return renderCommunityLogoIncludes(include, data);
+      });
+    }
+    data._emailSignature = data.task && data.task.community && data.task.community.email_signature ? data.task.community.email_signature : 'The ' + data.globals.systemName + ' Team';
     data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
       if (err) {
@@ -107,7 +113,16 @@ function renderIncludes (template, data) {
   } catch (err) {
     return '';
   }
+}
 
+function renderCommunityLogoIncludes (template, data) {
+  try {
+    var html = __dirname + '/communityLogoLayout.html';
+    var htmlTemplate = fs.readFileSync(html);
+    return _.template(htmlTemplate)(data);
+  } catch (err) {
+    return '';
+  }
 }
 
 function sendEmail (mailOptions, done) {
