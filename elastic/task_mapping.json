@@ -13,6 +13,8 @@
             "updatedAt":             { "type": "date", "format": "strict_date_optional_time||epoch_millis"},
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
             "grade"         :        { "type": "long" },
+            "agencyId"       :       { "type": "long" },
+            "agencyName"      :       { "type": "text" },
             "postingLocation":       { 
                 "properties": {
                     "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
@@ -71,7 +73,8 @@
                     "id": { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  },
                     "shortName": { "type": "keyword", "normalizer": "lowercase" },
-                    "communityLogo":{"type": "keyword", "normalizer": "lowercase" }
+                    "communityLogo":{"type": "keyword", "normalizer": "lowercase" },
+                    "displayAgencyLogo":{"type": "keyword", "normalizer": "lowercase" }
                 }
             },
             "cycle": {

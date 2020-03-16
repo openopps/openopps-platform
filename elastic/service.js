@@ -296,6 +296,8 @@ function convertSearchResultsToResultModel (searchResult) {
     outcome: source.outcome,
     about: source.about,
     grade: source.grade,
+    agencyId:source.agencyId,
+    agencyName: source.agencyName,
     restrictedToAgency: source.restrictedToAgency,
     requester: source.requester,
     publishedAt: source.publishedAt,

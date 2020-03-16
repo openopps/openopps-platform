@@ -227,6 +227,16 @@ router.post('/api/task/copy', auth, async (ctx, next) => {
     }
   });
 });
+router.get('/api/task/agency/logo/get/:id', async (ctx, next) => {
+  var agency= await service.agencyById(ctx.params.id);
+  if (!agency) {
+    ctx.redirect('');
+  }
+  if (agency && agency.imageId) {
+    ctx.status = 307;
+    ctx.redirect('/api/upload/get/' + agency.imageId);
+  }
+});
 
 function awardBadge (task) {
   var badge = Badge.awardForTaskPublish(task, task.userId);
