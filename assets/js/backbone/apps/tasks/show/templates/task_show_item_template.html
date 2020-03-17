@@ -104,37 +104,34 @@
                   None
                 <% } %>
               </div>
+              <% if (model.detailSelection) { %>
               <h4>Commitment</h4>
               <div>
-                <% if (madlibTags['task-time-required']) { %>
-                  <%= madlibTags['task-time-required'][0].name %>
-                <% } %>
-                <% if (madlibTags['task-time-estimate'] && !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
+                <%= model.detailSelection %>
+              <% } %>
+              <% if (madlibTags['task-time-estimate'] && (model.detailSelection && model.detailSelection !== 'Full Time')) { %>
                 <br/>
-                  <%- madlibTags['task-time-estimate'][0].name %>
-                <% } %>
+                <%- madlibTags['task-time-estimate'][0].name %>
+              <% } %>
               </div>
+              <% if (model.detailSelection && model.detailLength) { %>
+                <% if (model.detailSelection !== 'Full Time') { %>
+                  <h4>Length</h4>
+                  <div>
+                    <%= model.detailLength %>
+                  </div>
+                <% } %>
+              <% } %>
               <% if (model.completedBy) { %>
               <h4>Estimated completion date</h4>
               <div>
-                  <%= moment(model.completedBy).format('MM/DD/YY') %>
+                <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
               <% } %>
-              
-                
-              <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
-                <h4>Length</h4>
-                <div>
-                  <%- madlibTags['task-length'][0].name.toLowerCase() %>
-                </div>
-                <% } %>
-              <% } %>
-              
               <% if (model.completedBy) { %>
               <h4>Estimated completion date</h4>
               <div>
-                  <%= moment(model.completedBy).format('MM/DD/YY') %>
+                <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
               <% } %>
               <h4>Location</h4>
@@ -164,7 +161,7 @@
                 </div>
               <% } %>
               <% if (model.payLevel) { %>              
-                <h4>Pay plan</h4>
+                <h4>Pay scale</h4>
                 <div>
                   <%- model.payLevel.code %>
                 </div>      
@@ -233,26 +230,24 @@
                   None
                 <% } %>
               </div>
+              <% if (model.detailSelection) { %>
               <h4>Commitment</h4>
               <div>
-                <% if (madlibTags['task-time-required']) { %>
-                  <%= madlibTags['task-time-required'][0].name %>
-                <% } %>
-                <% if (madlibTags['task-time-estimate'] && !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
+                <%= model.detailSelection %>
+              <% } %>
+              <% if (madlibTags['task-time-estimate'] && (model.detailSelection && model.detailSelection !== 'Full Time')) { %>
                 <br/>
-                  <%- madlibTags['task-time-estimate'][0].name %>
-                <% } %>
+                <%- madlibTags['task-time-estimate'][0].name %>
+              <% } %>
               </div>
-              
-              <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
+              <% if (model.detailSelection && model.detailLength) { %>
+                <% if (model.detailSelection !== 'Full Time') { %>
                   <h4>Length</h4>
                   <div>
-                  <%- madlibTags['task-length'][0].name.toLowerCase() %>
+                    <%= model.detailLength %>
                   </div>
                 <% } %>
               <% } %>
-              
               <% if (model.completedBy) { %>
               <h4>Estimation completion date</h4>
               <div>
@@ -286,7 +281,7 @@
                 </div>
               <% } %>
               <% if (model.payLevel) { %>              
-                  <h4>Pay plan</h4>
+                  <h4>Pay scale</h4>
                   <div>
                     <%- model.payLevel.code %>
                   </div>      
