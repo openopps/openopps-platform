@@ -86,13 +86,13 @@ function renderTemplate (template, data, done) {
         return renderIncludes(include, data);
       });
     }
-    data._communityLogoContent = data.task && data.task.community && (data.task.community.community_type == 3) ? _.template(htmlCommunityLogo)(data) : '';
+    data._communityLogoContent = data.community && (data.community.communityType == 3) ? _.template(htmlCommunityLogo)(data) : '';
     if (!_.isEmpty(template.includes)) {
       data._content += _.map(template.includes, (include) => {
         return renderCommunityLogoIncludes(include, data);
       });
     }
-    data._emailSignature = data.task && data.task.community && data.task.community.email_signature ? data.task.community.email_signature : 'The ' + data.globals.systemName + ' Team';
+    data._emailSignature = data.community && data.community.emailSignature ? data.community.emailSignature : 'The ' + data.globals.systemName + ' Team';
     data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
       if (err) {
