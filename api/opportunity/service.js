@@ -99,6 +99,11 @@ async function commentsByTaskId (id) {
   return { comments: dao.clean.comments(comments) };
 }
 
+async function agencyById (id) {
+  var agency = await dao.Agency.findOne('agency_id = ?', id).catch(() => { return null; });
+  return agency;
+}
+
 function processTaskTags (task, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(_.isNumber(tag)) {
@@ -177,6 +182,7 @@ async function createOpportunity (attributes, done) {
       await dao.TaskShare.insert(share);
     }
     
+    task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
     await elasticService.indexOpportunity(task.id);
    
     return done(null, task);
@@ -294,6 +300,7 @@ async function updateOpportunityState (attributes, done) {
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
+    task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
     task.previousState = origTask.state;
     await elasticService.indexOpportunity(task.id);
     return done(task, origTask.state !== task.state);
@@ -375,7 +382,8 @@ async function updateOpportunity (ctx, attributes, done) {
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
         await processTaskTags(task, tags).then(async tags => {
-          task.tags = tags;
+          task.tags = tags;    
+          task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
           await elasticService.indexOpportunity(task.id);
           return done(task, origTask.state !== task.state || origTask.communityId !== task.communityId);
         });
@@ -879,6 +887,7 @@ module.exports = {
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
   getVanityURL: getVanityURL,
+  agencyById: agencyById,
 };
 
 

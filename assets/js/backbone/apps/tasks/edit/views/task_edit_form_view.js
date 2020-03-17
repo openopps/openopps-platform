@@ -145,8 +145,7 @@ var TaskEditFormView = Backbone.View.extend({
   
   render: function () {
     this.loadAudienceCommunityData();
-    this.initializePayLevel();
-    
+    this.initializePayLevel();     
     this.data = {
       data: this.model.toJSON(),
       community: this.options.community,
@@ -670,10 +669,16 @@ var TaskEditFormView = Backbone.View.extend({
      
         break;
       case 'detail':
-        $('#time-estimate').addClass('validate');    
+        if( $('[name=detail-time-group]:checked').val()=='Part-time'){
+          $('#time-estimate').addClass('validate');  
+          $('#time-options-time-required').show();  
+        } 
+        if( $('[name=detail-time-group]:checked').val()=='Full-time'){
+          $('#time-estimate').removeClass('validate');  
+          $('#time-options-time-required').hide();  
+        }    
         $('#pay-scale-grade').show();
-        $('.detail-section').show();
-        $('#time-options-time-required').show();        
+        $('.detail-section').show();       
         $('#requirement-area').show();
         $('#apply-participant-area').show();  
         break;
@@ -764,7 +769,15 @@ var TaskEditFormView = Backbone.View.extend({
 
   changeDetailTime : function (){
     var abort= false;
-    if($('[name=detail-time-group]:checked').length>0){ 
+    if($('[name=detail-time-group]:checked').length>0){
+      if( $('[name=detail-time-group]:checked').val()=='Part-time'){
+        $('#time-estimate').addClass('validate');  
+        $('#time-options-time-required').show();  
+      } 
+      if( $('[name=detail-time-group]:checked').val()=='Full-time'){
+        $('#time-estimate').removeClass('validate');  
+        $('#time-options-time-required').hide();  
+      }   
       $('#detail-time').removeClass('usa-input-error');       
       $('#detail-time>.field-validation-error').hide(); 
       abort = false;   
@@ -922,7 +935,7 @@ var TaskEditFormView = Backbone.View.extend({
       var taskCareerTag = _.find(this.tagSources['career'], { id: parseInt($('#opportunity-career-field').select2('data').id || '0') });
       tags.push.apply(tags, [taskCareerTag]);
     }
-    if (taskTimeDescription === 'One time' || taskTimeDescription === 'Ongoing' || taskTimeDescription === 'Detail') {
+    if (taskTimeDescription === 'One time' || taskTimeDescription === 'Ongoing' || ($('[name=detail-time-group]:checked').val()=='Part-time' && taskTimeDescription !=='Lateral' )) {
       var taskEstimateTag = _.find(this.tagSources['task-time-estimate'], { id: parseInt($('#time-estimate').select2('data').id || '0') });
       tags.push.apply(tags, [taskEstimateTag]);
     }
