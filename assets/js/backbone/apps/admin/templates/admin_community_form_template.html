@@ -81,16 +81,16 @@
               <% }); %>
             </select>
           </div>
-          <% }
-          else { %>
+          <% } else { %>
           <div id="agencies"><%= agency.name %></div>
           <% } %>
-          <div class="form-group required-input">
+          <div class="form-group required-input usa-fieldset-inputs">
             <h5>Display agency logo on opportunity?</h5>
             <fieldset class="usajobs-fieldset">
               <legend class="usa-sr-only">Display agency logo</legend>
               <p class="label-brief">Select to display the agency logo on created opportunities in place of the creator's profile image.</p>
-              <input class="display-agency-logo" id="display-agency-logo-group" type="checkbox" data-action='community' <% if (displayAgencyLogo) { %> checked <% } %> />
+              <span class="field-validation-error" style="display:none;" >Please upload an agency logo.</span>
+              <input class="display-agency-logo" id="display-agency-logo-group" type="checkbox" <% if (displayAgencyLogo) { %> checked <% } %> />
               <label class="no-label" for="display-agency-logo-group"><span class="sr-only">Display agency logo on opportunity?</span></label>
             </fieldset>
           </div>
