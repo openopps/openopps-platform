@@ -99,7 +99,7 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'isInternship': doc.target_audience == 2 ? 1 : 0,
     'languages': doc.languages,
-    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo, displayAgencyLogo:doc.display_agency_logo },
+    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo, displayAgencyLogo:doc.display_agency_logo , imageId: doc.communityImageId},
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
     'office': { id: doc.office_id, name: doc.office_name },
@@ -107,6 +107,7 @@ function toElasticOpportunity (value, index, list) {
     'payPlan': { id: doc.pay_plan_id, name: doc.code },
     'agencyId' : doc.agency_id,
     'agencyName': doc.agencyName,
+    'agency': { id: doc.agency_id, name: doc.agencyName, imageId: doc.agencyImageId },
   };
 }
     
@@ -124,6 +125,7 @@ from (
     t.restricted_to,
     t.agency_id,
     a.name as "agencyName",
+    a.image_id as "agencyImageId",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."publishedAt",
     u.name,
@@ -135,6 +137,7 @@ from (
     c.community_short_name,
     c.community_logo,
     c.display_agency_logo,
+    c.image_id as "communityImageId",
     t.city_name,
     cs.value as "country_subdivision",
     ct.value as "country",

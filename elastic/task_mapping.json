@@ -74,7 +74,8 @@
                     "name": { "type": "keyword", "normalizer": "lowercase"  },
                     "shortName": { "type": "keyword", "normalizer": "lowercase" },
                     "communityLogo":{"type": "keyword", "normalizer": "lowercase" },
-                    "displayAgencyLogo":{"type": "keyword", "normalizer": "lowercase" }
+                    "displayAgencyLogo":{"type": "keyword", "normalizer": "lowercase" },
+                    "imageId" : { "type": "long" }
                 }
             },
             "cycle": {
@@ -95,6 +96,13 @@
                 "properties": {
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
+                }
+            },
+            "agency": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  },
+                    "imageId" :{ "type": "long" }
                 }
             }
         }
