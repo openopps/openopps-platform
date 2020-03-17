@@ -104,22 +104,33 @@
                   None
                 <% } %>
               </div>
-              <h4>Time commitment</h4>
+              <h4>Commitment</h4>
               <div>
                 <% if (madlibTags['task-time-required']) { %>
                   <%= madlibTags['task-time-required'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-estimate'] &&
-                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
-                  &mdash;
+                <% if (madlibTags['task-time-estimate'] && !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
+                <br/>
                   <%- madlibTags['task-time-estimate'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                  <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
-                    <%- madlibTags['task-length'][0].name.toLowerCase() %>
-                  <% } %>
-                <% } %>
               </div>
+              <% if (model.completedBy) { %>
+              <h4>Estimated completion date</h4>
+              <div>
+                  <%= moment(model.completedBy).format('MM/DD/YY') %>
+              </div>
+              <% } %>
+              
+                
+              <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
+                <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
+                <h4>Length</h4>
+                <div>
+                  <%- madlibTags['task-length'][0].name.toLowerCase() %>
+                </div>
+                <% } %>
+              <% } %>
+              
               <% if (model.completedBy) { %>
               <h4>Estimated completion date</h4>
               <div>
@@ -222,22 +233,26 @@
                   None
                 <% } %>
               </div>
-              <h4>Time commitment</h4>
+              <h4>Commitment</h4>
               <div>
                 <% if (madlibTags['task-time-required']) { %>
                   <%= madlibTags['task-time-required'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-estimate'] &&
-                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
-                  &mdash;
+                <% if (madlibTags['task-time-estimate'] && !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
+                <br/>
                   <%- madlibTags['task-time-estimate'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                  <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
-                    <%- madlibTags['task-length'][0].name.toLowerCase() %>
-                  <% } %>
-                <% } %>
               </div>
+              
+              <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
+                <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
+                  <h4>Length</h4>
+                  <div>
+                  <%- madlibTags['task-length'][0].name.toLowerCase() %>
+                  </div>
+                <% } %>
+              <% } %>
+              
               <% if (model.completedBy) { %>
               <h4>Estimation completion date</h4>
               <div>
@@ -292,7 +307,7 @@
                    <% } else { %>
                       No
                       <% } %>
-                    </div>           
+                  </div>           
               <% } %> 
             </div>
           </div>
