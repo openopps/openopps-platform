@@ -64,7 +64,7 @@
               <%- madlibTags['task-time-estimate'][0].name %>
               <% if (madlibTags['task-length'] && madlibTags['task-time-required'][0].name === "Ongoing") { %>
                 <%- madlibTags['task-length'][0].name.toLowerCase() %>
-              <% } else if (model.detailSelection && madlibTags['task-time-estimate']) { %>
+              <% } else if (data.detailSelection && madlibTags['task-time-estimate']) { %>
                 weekly
               <% } %>
             <% } %>
