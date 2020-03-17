@@ -52,24 +52,24 @@
           <p><%- data.peopleNeeded %></p>
         </div>
         <div class="usa-width-one-half">
+          <% if (data.detailSelection) { %>
           <h4>Commitment</h4>
-          <p>
-            <% if (madlibTags['task-time-required']) { %>
-              <%= madlibTags['task-time-required'][0].name %>
-            <% } %>
-            <% if (madlibTags['task-time-estimate'] && !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
+          <div>
+            <%= data.detailSelection %>
+          <% } %>
+          <% if (madlibTags['task-time-estimate'] && (data.detailSelection && data.detailSelection !== 'Full Time')) { %>
             <br/>
-              <%- madlibTags['task-time-estimate'][0].name %>
+            <%- madlibTags['task-time-estimate'][0].name %>
+          <% } %>
+          </div>
+          <% if (data.detailSelection && data.detailLength) { %>
+            <% if (data.detailSelection !== 'Full Time') { %>
+              <h4>Length</h4>
+              <div>
+                <%= data.detailLength %>
+              </div>
             <% } %>
-            </p>
-        </div>
-        <% if (madlibTags['task-length']) { %>
-        <div class="usa-width-one-half">
-          <h4>Length</h4>
-          <p>
-            <%- madlibTags['task-length'][0].name.toLowerCase() %></p>
-        </div>
-        <% } %>
+          <% } %>
         <% if (data.completedBy) { %>
           <div class="usa-width-one-half">
             <h4>Estimated completion date</h4>
@@ -110,7 +110,7 @@
         <% } %> 
         <% if (data.payPlan) { %>
           <div class="usa-width-one-half">
-            <h4>Pay plan</h4>
+            <h4>Pay scale</h4>
             <p>
               <%- data.payPlan %>
             </p>
