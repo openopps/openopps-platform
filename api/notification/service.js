@@ -69,13 +69,14 @@ function createNotification (notification) {
 function renderTemplate (template, data, done) {
   var html = __dirname + '/' + data._action + '/template.html';
   var layout = __dirname + '/' + data._layout;
+  var htmlCommunityLogo = fs.readFileSync(__dirname + '/communityLogoLayout.html');
   var mailOptions = {
     to: _.template(template.to)(data),
     cc: _.template(template.cc)(data),
     bcc: _.template(template.bcc)(data),
     subject: _.template(template.subject)(data),
   };
-  fs.readFile(html, function (err, htmlTemplate, htmlCommunityLogo) {
+  fs.readFile(html, function (err, htmlTemplate) {
     if (err) {
       log.info(err);
       return done(err);
@@ -87,11 +88,6 @@ function renderTemplate (template, data, done) {
       });
     }
     data._communityLogoContent = data.community && (data.community.communityType == 3) ? _.template(htmlCommunityLogo)(data) : '';
-    if (!_.isEmpty(template.includes)) {
-      data._content += _.map(template.includes, (include) => {
-        return renderCommunityLogoIncludes(include, data);
-      });
-    }
     data._emailSignature = data.community && data.community.emailSignature ? data.community.emailSignature : 'The ' + data.globals.systemName + ' Team';
     data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
@@ -108,16 +104,6 @@ function renderTemplate (template, data, done) {
 function renderIncludes (template, data) {
   try {
     var html = __dirname + '/' + template + '/template.html';
-    var htmlTemplate = fs.readFileSync(html);
-    return _.template(htmlTemplate)(data);
-  } catch (err) {
-    return '';
-  }
-}
-
-function renderCommunityLogoIncludes (template, data) {
-  try {
-    var html = __dirname + '/communityLogoLayout.html';
     var htmlTemplate = fs.readFileSync(html);
     return _.template(htmlTemplate)(data);
   } catch (err) {
