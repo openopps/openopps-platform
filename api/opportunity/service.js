@@ -182,7 +182,6 @@ async function createOpportunity (attributes, done) {
       await dao.TaskShare.insert(share);
     }
     
-    task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
     await elasticService.indexOpportunity(task.id);
    
     return done(null, task);
@@ -382,8 +381,7 @@ async function updateOpportunity (ctx, attributes, done) {
     await dao.TaskTags.db.query(dao.query.deleteTaskTags, task.id)
       .then(async () => {
         await processTaskTags(task, tags).then(async tags => {
-          task.tags = tags;    
-          task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
+          task.tags = tags;
           await elasticService.indexOpportunity(task.id);
           return done(task, origTask.state !== task.state || origTask.communityId !== task.communityId);
         });
@@ -553,10 +551,10 @@ async function getNotificationTemplateData (user, task, action) {
       user: user,
     },
   };
-  if (task.communityId) {
-    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
+  if (task.id) {
+    data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', task.id).catch(() => { return null; });
     data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', data.model.community.communityId, action).catch(() => { return null; });
     if (templateOverride) {
       data.action = templateOverride.template,
       data.layout = templateOverride.layout || data.layout;
