@@ -319,6 +319,7 @@ function convertSearchResultsToResultModel (searchResult) {
     bureau: source.bureau,
     office: source.office,
     payPlan:source.payPlan,
+    agency : source.agency,
   };
   removeEmpty(model);
   return model;
