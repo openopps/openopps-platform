@@ -54,8 +54,8 @@
         <div class="usa-width-one-half">
           <h4>Commitment</h4>
           <div>
-            <% if (model.detailSelection) { %>
-              <%= model.detailSelection %> detail
+            <% if (data.detailSelection) { %>
+              <%= data.detailSelection %> detail
             <% } else if (madlibTags['task-time-required']) { %>
               <%= madlibTags['task-time-required'][0].name %>
             <% } %>
