@@ -588,7 +588,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   displayPayPlanGrade : function (){
-    if($('#part-time').is(':checked') ||$('#full-time').is(':checked')) { 
+    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
       $('#pay-scale-grade').show();  
     }
     else {  
