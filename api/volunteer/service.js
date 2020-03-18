@@ -98,6 +98,7 @@ async function sendAddedVolunteerNotification (user, volunteer, action) {
       user: user,
     },
   };
+  data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', notificationInfo[0].id).catch(() => { return null; });
   if(!data.model.user.bounced) {
     notification.createNotification(data);
   }
@@ -112,6 +113,7 @@ async function sendDeletedVolunteerNotification (notificationInfo, action) {
       user: { name: notificationInfo.name, username: notificationInfo.username, governmentUri: notificationInfo.governmentUri},
     },
   };
+  data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', notificationInfo.id).catch(() => { return null; });
   if(!notificationInfo.bounced) {
     notification.createNotification(data);
   }
