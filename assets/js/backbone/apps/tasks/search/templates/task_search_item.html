@@ -71,11 +71,11 @@
           <div class="usajobs-open-opps-opportunity-requestor__figure  <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>         
             <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
               <% if (item.agency.imageId) { %>          
-              <img id="agency_logo" src="/api/upload/get/<%- item.agency.imageId %>" alt="<%- item.agencyName %>">              
+              <img id="agency_logo" src="/api/upload/get/<%- item.agency.imageId %>" alt="<%- item.agency.name %>">              
               <% } else { %>      
-                <img id="agency_logo" src="/api/upload/get/<%- item.community.imageId %>" alt="<%- item.agencyName %>">  
+                <img id="agency_logo" src="/api/upload/get/<%- item.community.imageId %>" alt="<%- item.community.name %>">  
                 <% } %>       
-            <% } else if (!_.isEmpty(item.community) && (item.community.communityLogo)) { %>            
+            <% } else if (!_.isEmpty(item.community) && (item.community.communityLogo)) { %>                      
               <img src="<%- item.community.communityLogo %>" alt="<%- item.community.name %>">
             <% } else if (item.owner.photoId) { %>            
               <img src="/api/user/photo/<%- item.owner.id %>" alt="<%- item.owner.name %>">
@@ -85,7 +85,13 @@
           </div>
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <p class="usajobs-open-opps-opportunity-requestor__name">
-                <% if (item.community && item.community.communityLogo) { %>
+              <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
+                <% if (item.agency.imageId) { %>          
+                  <%- item.agency.name %> 
+                <% } else { %>      
+                  <%- item.community.name %> 
+                  <% } %>       
+              <% } else if (item.community && item.community.communityLogo) { %>
                   <%- item.community.name %>
               <% } else { %>
                 <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %>
