@@ -35,7 +35,40 @@
           <div class="usajobs-width-one-third">
             <div class="usajobs-open-opps-opportunity-requestor__wrapper">
               <div class="usajobs-open-opps-opportunity-requestor">
-                <% if (model.community && model.community.community_logo) { %>
+                
+                <% if (model.agencyId && !_.isEmpty(model.community) && (model.community.display_agency_logo) && (model.agency.imageId || model.community.image_id)) { %>  
+                  <% if (model.agency.imageId) { %> 
+                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                    <div class="usajobs-open-opps-opportunity-requestor__figure">
+                      <img id="agency_logo" src="/api/upload/get/<%- model.agency.imageId %>" alt="">                    
+                    </div>   
+                    <div class="usajobs-open-opps-opportunity-requestor__body">
+                      <a> <%- model.agency.name %></a> 
+                      <% if (model.submittedAt) { %>
+                        <span class="usajobs-open-opps-opportunity-requestor__on">
+                          Posted on
+                          <span><%- model.publishedAt ? moment(model.publishedAt).format('MM/DD/YY') : '-/-/-' %></span>
+                        </span>
+                      <% } %>                 
+                    </div> 
+                  </div>                         
+                  <% } else { %> 
+                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure">     
+                    <img id="agency_logo" src="/api/upload/get/<%- model.community.image_id %>" alt="">
+                  </div> 
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <a> <%- model.community.community_name %></a>
+                    <% if (model.submittedAt) { %>
+                      <span class="usajobs-open-opps-opportunity-requestor__on">
+                        Posted on
+                        <span><%- model.publishedAt ? moment(model.publishedAt).format('MM/DD/YY') : '-/-/-' %></span>
+                      </span>
+                    <% } %>   
+                  </div>
+                 </div>
+                    <% } %>                 
+                <% } else if (model.community && model.community.community_logo) { %>
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure">
                       <img src= "<%-model.community.community_logo %>" alt="">

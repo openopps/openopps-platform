@@ -30,6 +30,7 @@ async function findById (id, user) {
   }
   if (task.agencyId) {
     task.agencies = Agency.toList(await Agency.fetchAgency(task.agencyId));
+    task.agency = await dao.Agency.findOne('agency_id = ?', task.agencyId);
   }
   if(task.payLevelId){
     task.payLevel =await dao.PayPlan.findOne('pay_plan_id = ?', task.payLevelId).catch(() => { return null; });
