@@ -85,11 +85,13 @@
             <li>
                 <input id="detail" class="restrict-participation" type="checkbox" name="time" value="Detail" <% if(_.contains(filters.time, 'Detail' )) { %>checked<% } %> />
                 <label for="detail">Detail</label>
-            </li>            
-            <li>
-                <input id="lateral" class="restrict-participation" type="checkbox" name="time" value="Lateral" <% if(_.contains(filters.time, 'Lateral' )) { %>checked<% } %> />
-                <label for="lateral">Lateral</label>               
-            </li>              
+            </li>
+            <% if (filters.community && filters.community.communityType == 3) { %>            
+                <li>
+                    <input id="lateral" class="restrict-participation" type="checkbox" name="time" value="Lateral" <% if(_.contains(filters.time, 'Lateral' )) { %>checked<% } %> />
+                    <label for="lateral">Lateral</label>               
+                </li>
+            <% } %>           
         </ul>
        
         <div id="pay-scale-grade" style="display: none;" >
