@@ -1,5 +1,5 @@
 <% if (banner.backgroundImageId) { %>
-    <img id="profile-picture" src="/api/community/backgroundImage/get/<%- communityId %>" alt="Banner background image of <%- communityName %>">
+    <img id="profile-picture" src="/api/community/backgroundImage/get/<%- communityId %>?d=<%- new Date().getTime() %>" alt="Banner background image of <%- communityName %>">
 <% } %>
 <div class="fileinput-button">
 <span><%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>
