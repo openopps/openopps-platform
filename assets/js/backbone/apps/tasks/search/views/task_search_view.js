@@ -624,7 +624,7 @@ var TaskListView = Backbone.View.extend({
     if (!this.filters.community || this.filters.community.communityType != 3) {
       if(_.isArray(this.filters.time)) {
         this.filters.time = _.reject(this.filters.time, (value) => { return value.match(/^lateral$/i); });
-      } else if (this.filters.time.match(/^lateral$/i)) {
+      } else if (this.filters.time && this.filters.time.match(/^lateral$/i)) {
         delete this.filters.time;
       }
     }
