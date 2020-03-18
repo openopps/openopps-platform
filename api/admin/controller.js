@@ -6,6 +6,7 @@ const service = require('./service');
 const communityService = require('../community/service');
 const systemSetting = require('./systemSetting');
 const documentService = require('../document/service');
+const elasticService = require('../../elastic/service');
 
 var router = new Router();
 
@@ -137,6 +138,7 @@ router.get('/api/admin/agency/taskmetrics/:id', auth.isAdminOrAgencyAdmin, async
 // TODO: Agency logo routes
 router.post('/api/admin/agency/logo/:id', auth.isAdminOrAgencyAdmin, async (ctx, next) => {
   await service.updateAgency(ctx.request.body).then(agency => {
+    elasticService.reindexAgencyOpportunities(agency.agencyId);
     ctx.status = 200;
     ctx.body = agency;
   }).catch(err => {
@@ -151,6 +153,7 @@ router.post('/api/admin/agency/logo/remove/:id', auth.isAdminOrAgencyAdmin, asyn
     return ctx.status = 404;
   }
   await service.updateAgency(ctx.request.body).then(agency => {
+    elasticService.reindexAgencyOpportunities(agency.agencyId);
     ctx.status = 200;
     ctx.body = agency;
   }).catch(err => {
