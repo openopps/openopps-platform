@@ -97,20 +97,7 @@ var TaskListView = Backbone.View.extend({
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
-    })); 
-    // if (this.filters.community) {
-    //   var banner = this.filters.community.banner;
-    //   if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) {
-    //     var url = '/api/community/backgroundImage/get/' + this.filters.community.id;
-    //     $('.usajobs-open-opps-search__box').css('background-image', "url('" + url + "')");
-    //   } else if (banner.color) {
-    //     $('.usajobs-open-opps-search__box').css('background', banner.color);
-    //   } else {
-    //     $('.usajobs-open-opps-search__box').removeAttr('style');
-    //   }
-    // } else {
-    //   $('.usajobs-open-opps-search__box').removeAttr('style');
-    // }
+    }));
   },
 
   initializeKeywordSearch: function () {
@@ -207,10 +194,11 @@ var TaskListView = Backbone.View.extend({
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
         var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
-        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId');
+        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
       } else {
         delete this.filters.community;
       }
+      
       this.filters.page = 1;
       this.filter();
     }.bind(this));
@@ -344,7 +332,7 @@ var TaskListView = Backbone.View.extend({
 
   renderFilters: function () {
     if(!_.isEmpty(this.filters.community) && _.isArray(this.filters.community)) {
-      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId');
+      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
     }
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
@@ -632,6 +620,14 @@ var TaskListView = Backbone.View.extend({
   },
 
   filter: function () {
+    // Remove lateral from non agency community types
+    if (!this.filters.community || this.filters.community.communityType != 3) {
+      if(_.isArray(this.filters.time)) {
+        this.filters.time = _.reject(this.filters.time, (value) => { return value.match(/^lateral$/i); });
+      } else if (this.filters.time.match(/^lateral$/i)) {
+        delete this.filters.time;
+      }
+    }
     this.addFiltersToURL();
     this.renderCommunitySearchBanner();
     $.ajax({
@@ -701,6 +697,7 @@ var TaskListView = Backbone.View.extend({
           id: value,
           banner: this.filterLookup[key][value].banner,
           imageId: this.filterLookup[key][value].imageId,
+          communityType: this.filterLookup[key][value].communityType,
         };
       } else {
         this.filters[key] = _.map(values, function (value) {
