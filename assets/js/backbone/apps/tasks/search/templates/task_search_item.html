@@ -71,9 +71,9 @@
           <div class="usajobs-open-opps-opportunity-requestor__figure  <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>         
             <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
               <% if (item.agency.imageId) { %>          
-              <img id="agency_logo" src="/api/upload/get/<%- item.agency.imageId %>" alt="<%- item.agency.name %>">              
+              <img class="agency_logo" src="/api/upload/get/<%- item.agency.imageId %>" alt="<%- item.agency.name %>">              
               <% } else { %>      
-                <img id="agency_logo" src="/api/upload/get/<%- item.community.imageId %>" alt="<%- item.community.name %>">  
+                <img class="community_logo" src="/api/upload/get/<%- item.community.imageId %>" alt="<%- item.community.name %>">  
                 <% } %>       
             <% } else if (!_.isEmpty(item.community) && (item.community.communityLogo)) { %>                      
               <img src="<%- item.community.communityLogo %>" alt="<%- item.community.name %>">

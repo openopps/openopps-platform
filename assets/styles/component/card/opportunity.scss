@@ -1334,6 +1334,10 @@
         height: 6.5rem;
       }  
     }
+
+    img#agency_logo {
+      border-radius: unset;
+    }
   }
 
   &__figure.dos {
@@ -1641,6 +1645,10 @@
   border-radius: 50%;
   width: 4.6rem;
   height: 4.6rem;
+}
+
+.usajobs-open-opps-opportunity-requestor__figure img.agency_logo {
+  border-radius: unset;
 }
 
 #results-count {
