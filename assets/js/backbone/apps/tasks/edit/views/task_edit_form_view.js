@@ -873,6 +873,8 @@ var TaskEditFormView = Backbone.View.extend({
       modelData.detailLength = $("input[name='detail-length']:checked").val();
     }
     else if(this.$('.time-options-time-required.selected').val() == 'Lateral'){
+      modelData.applyAdditional=this.$('#opportunity-apply').val();
+      modelData.requirement  =this.$('#opportunity-requirement').val();
       modelData.grade      = this.$('#grade').val();  
       modelData.payLevelId = $('#time-options-pay-scale').val();
       modelData.payPlan = $('#time-options-pay-scale').select2('data')?$('#time-options-pay-scale').select2('data').text: null;
