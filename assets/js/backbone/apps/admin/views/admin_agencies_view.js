@@ -1,8 +1,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
-
 var marked = require('marked');
+var select2Custom = require('../../../../vendor/select2-3.4.6.custom');
 
 var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html');
 var AdminAgencyTasks = require('../templates/admin_agency_task_metrics.html');

@@ -1,7 +1,7 @@
    
               <form action="javascript:void(0)" class="usa-form-xl " role="form"  >            
                   <div class="form-group profile_tag_bureau" id="profile_valid_bureau">
-                        <label for="bureau">Bureau</label> 
+                        <label for="profile_tag_bureau">Bureau</label> 
                         <span class="field-validation-error error-empty" style="display:none;">You must select a bureau.</span>                     
                         <select id="profile_tag_bureau" name="bureau_id" class="dropdown validate validateBureau" data-validate="empty">
                           <option></option>
@@ -13,9 +13,9 @@
                         </select>
                       </div>
                       <div class="required-input profile_tag_office" style="display: none;" id="profile_valid_office">
-                        <label for="office">Office/post</label>        
+                        <label for="profile_tag_office">Office/post</label>        
                         <span class="field-validation-error" style="display:none;">You must select an office.</span>             
-                        <input type="hidden" id="profile_tag_office" name="office_id" class="dropdown validateOffice" data-validate="empty">
+                        <input type="hidden" aria-label="profile_tag_office" id="profile_tag_office" name="office_id" class="dropdown validateOffice" data-validate="empty">
                       </div>        
               </form>
            
