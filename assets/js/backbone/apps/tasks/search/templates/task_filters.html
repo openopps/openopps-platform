@@ -46,6 +46,7 @@
         </div>
 
         <h4 class="usajobs-search-filters__title community">Community</h4>
+        <label for="community" class="usa-sr-only">Select a community</label>
         <select id="community" class="dropdown">
             <option value=""></option>
             <% _.each(tagTypes['community'], function (c) { %>
@@ -54,9 +55,10 @@
         </select>
 
         <h4 class="usajobs-search-filters__title skill">Skill</h4>
-        <input type="text" id="skill" title="Skill" />
+        <input type="hidden" aria-label="skill" id="skill" title="Skill" />
 
         <h4 class="usajobs-search-filters__title career">Career field</h4>
+        <label for="career" class="usa-sr-only">Select a career field</label>
         <select id="career" class="dropdown">
             <option></option>
             <% _.each(tagTypes['career'], function (t) { %>
@@ -65,7 +67,7 @@
         </select>
 
         <h4 class="usajobs-search-filters__title">Series</h4>
-        <input type="text" id="series" title="Series" />
+        <input type="hidden" aria-label="series" id="series" title="Series" />
 
         <h4 class="usajobs-search-filters__title time">Commitment</h4>
         <% if([].concat(filters.time).length == 3) { %>
@@ -97,7 +99,7 @@
         <div id="pay-scale-grade" style="display: none;" >
           <div class="usajobs-grid-full">
             <div class="usa-width-one-third">           
-                <label for="payScale">Pay scale</label>                          
+                <label for="time-options-pay-scale">Pay scale</label>                          
                 <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
                   <option value=""></option>                        
                   <% _.each(tagTypes['payPlan'], function(p) { %>              
@@ -126,7 +128,7 @@
             <li>
                 <input id="in-person" type="checkbox" name="location" value="in person" <% if (_.contains(filters.locationType, 'in person')) { %>checked<% } %>>
                 <label for="in-person">In person</label>
-                <input type="text" id="location" title="Location" />
+                <input type="hidden" aria-label="in-person" id="location" title="Location" />
             </li>
         </ul>
 

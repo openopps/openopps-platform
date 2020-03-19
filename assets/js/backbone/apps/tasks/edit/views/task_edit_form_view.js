@@ -11,6 +11,7 @@ var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TaskPreviewTemplate = require('../templates/task_preview_template.html');
 var ModalComponent = require('../../../../components/modal');
 var charcounter = require('../../../../../vendor/jquery.charcounter');
+var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 
 var TaskEditFormView = Backbone.View.extend({
 

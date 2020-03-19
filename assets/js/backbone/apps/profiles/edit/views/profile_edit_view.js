@@ -4,6 +4,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var marked = require('marked');
 var MarkdownEditor = require('../../../../components/markdown_editor');
+var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 
 // internal dependencies
 var UIConfig = require('../../../../config/ui.json');

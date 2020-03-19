@@ -13,6 +13,7 @@ var SearchPills = require('../templates/search_pills.html');
 var TaskSearchBanner = require('../templates/task_search_banner.html');
 
 var removeMd = require('remove-markdown');
+var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 
 
 var TaskListView = Backbone.View.extend({
