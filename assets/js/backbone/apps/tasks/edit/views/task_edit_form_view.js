@@ -46,7 +46,6 @@ var TaskEditFormView = Backbone.View.extend({
     this.owner                  = this.model.get( 'owner' );
     this.agency                 = this.owner ? this.owner.agency: window.cache.currentUser.agency; 
     this.agencies               = this.model.get('agencies') || this.toList(this.agency);
-    this.agencies               = this.toList(this.agencies[this.agencies.length - 1]);
     this.data                   = {};
     this.data.newTag            = {};
     this.communities            =  {};
@@ -628,7 +627,7 @@ var TaskEditFormView = Backbone.View.extend({
    * Setup Time Options toggling
    */
   toggleTimeOptions: function (e) { 
-    var agencyid= this.agencies[0].agency_id;
+    var agencyid = _.last(this.agencies).agency_id;
     $('.time-options-time-required').removeClass('selected');
     $('.time-required-description').hide();
     if(e) {
@@ -654,7 +653,8 @@ var TaskEditFormView = Backbone.View.extend({
     $('#js-time-frequency-estimate').removeClass('validate');
     $('#grade').removeClass('validate');
     $('#time-options-pay-scale').removeClass('validate');
-    $('#task-restrict-agency-'+ agencyid).attr('disabled',false);  
+    $('[name=task-restrict-agency]').next().show();
+    $('[name=task-restrict-agency]').attr('disabled', false);  
     switch (target.id) {
       case 'one-time':
         $('#time-options-time-required').show();
@@ -685,14 +685,17 @@ var TaskEditFormView = Backbone.View.extend({
       case 'lateral':     
         $('#pay-scale-grade').show();        
         $('#requirement-area').show();
-        $('#apply-participant-area').show();  
-        $('#task-restrict-agency-'+ agencyid)[0].checked = true;
-        $('#task-restrict-agency-'+ agencyid).attr('disabled',true);        
+        $('#apply-participant-area').show();
+        $('[name=task-restrict-agency]').prop('checked', false);
+        $('[name=task-restrict-agency]').next().hide();
+        $('#task-restrict-agency-'+ agencyid).next().show();
+        $('#task-restrict-agency-'+ agencyid).prop('checked', true);
+        $('[name=task-restrict-agency]').attr('disabled', true);      
         break;
         
     }  
     if(e && target.id != 'lateral' &&  _.isUndefined(this.model.toJSON().restrictedTo)) {
-      $('#task-restrict-agency-'+ agencyid)[0].checked = false;    
+      $('#task-restrict-agency-'+ agencyid).prop('checked', false);   
     }
    
   },
