@@ -1,8 +1,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
-
 var marked = require('marked');
+var select2Custom = require('../../../../vendor/select2-3.4.6.custom');
 
 var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html');
 var AdminAgencyTasks = require('../templates/admin_agency_task_metrics.html');
@@ -87,7 +87,7 @@ var AdminAgenciesView = Backbone.View.extend({
       url: '/api/upload/create',
       dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-      formData: { 'type': 'image_square' },
+      formData: { 'type': 'image' },
       add: function (e, data) {
         $('#file-upload-progress-container').show();
         data.submit();

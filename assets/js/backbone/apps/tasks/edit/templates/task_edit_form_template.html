@@ -35,7 +35,7 @@
             <% } %>
                 <div>
             <div class="form-group required-input">
-              <label for="people">How many people do you need?</label>
+              <label for="opportunity-people">How many people do you need?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select the number of people needed for this opportunity.</span>
               <ul class="usa-unstyled-list opportunity-options__list">
                 <li>
@@ -90,12 +90,12 @@
             </div>
             <div class="form-group">
               <label for="opportunity-series">Series <span class="usa-input-optional"></span></label>
-              <input type="text" class="fullwidth form-control" id="opportunity-series" name="opportunity-series">
+              <input type="hidden" aria-label="series" class="fullwidth form-control" id="opportunity-series" name="opportunity-series">
             </div>
             <div id="form-group" class="required-input">
               <label for="skills">What skills are you looking for?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
-              <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
+              <input type="hidden" aria-label="skills" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
             </div>
             <label for="DefineWhen">
               <h3>When</h3>
@@ -219,8 +219,8 @@
               <div class="usajobs-grid-full">
                 <div class="usa-width-one-third">
                   <div class="form-group">
-                    <label for="payScale">Pay scale <span class="usa-input-optional"></span> </label>                                        
-                    <select id="time-options-pay-scale" class="dropdown" > 
+                    <label for="time-options-pay-scale">Pay scale <span class="usa-input-optional"></span> </label>                                        
+                    <select id="time-options-pay-scale" class="dropdown"> 
                       <option></option>              
                         <% _.each(payPlans, function(p) { %>              
                           <option value=<%= p.pay_plan_id %>><%= p.code %></option>

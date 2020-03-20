@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var select2Custom = require('../../../../vendor/select2-3.4.6.custom');
 var AdminCommunityTemplate = require('../templates/admin_community_template.html');
 var AdminCommunityDashboardActivitiesTemplate = require('../templates/admin_community_dashboard_activities_template.html');
 var AdminCommunityTasks = require('../templates/admin_community_task_metrics.html');
