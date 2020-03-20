@@ -392,10 +392,6 @@ var AdminUserView = Backbone.View.extend({
         text: (data.checked ? 'Assign' : 'Remove'),
         action: function () {
           this.updateUser.bind(this)(t, data);
-         
-          if(this.data.target =='sitewide'){
-            window.cache.currentUser.isAdmin = data.checked;
-          }
           this.modal.cleanup();       
         }.bind(this),
       },

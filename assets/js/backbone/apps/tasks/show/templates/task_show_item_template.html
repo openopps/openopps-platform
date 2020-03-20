@@ -35,7 +35,40 @@
           <div class="usajobs-width-one-third">
             <div class="usajobs-open-opps-opportunity-requestor__wrapper">
               <div class="usajobs-open-opps-opportunity-requestor">
-                <% if (model.community && model.community.community_logo) { %>
+                
+                <% if (model.agencyId && !_.isEmpty(model.community) && (model.community.display_agency_logo) && (model.agency.imageId || model.community.image_id)) { %>  
+                  <% if (model.agency.imageId) { %> 
+                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                    <div class="usajobs-open-opps-opportunity-requestor__figure">
+                      <img id="agency_logo" src="/api/upload/get/<%- model.agency.imageId %>" alt="">                    
+                    </div>   
+                    <div class="usajobs-open-opps-opportunity-requestor__body">
+                      <a> <%- model.agency.name %></a> 
+                      <% if (model.submittedAt) { %>
+                        <span class="usajobs-open-opps-opportunity-requestor__on">
+                          Posted on
+                          <span><%- model.publishedAt ? moment(model.publishedAt).format('MM/DD/YY') : '-/-/-' %></span>
+                        </span>
+                      <% } %>                 
+                    </div> 
+                  </div>                         
+                  <% } else { %> 
+                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+                  <div class="usajobs-open-opps-opportunity-requestor__figure">     
+                    <img id="agency_logo" src="/api/upload/get/<%- model.community.image_id %>" alt="">
+                  </div> 
+                  <div class="usajobs-open-opps-opportunity-requestor__body">
+                    <a> <%- model.community.community_name %></a>
+                    <% if (model.submittedAt) { %>
+                      <span class="usajobs-open-opps-opportunity-requestor__on">
+                        Posted on
+                        <span><%- model.publishedAt ? moment(model.publishedAt).format('MM/DD/YY') : '-/-/-' %></span>
+                      </span>
+                    <% } %>   
+                  </div>
+                 </div>
+                    <% } %>                 
+                <% } else if (model.community && model.community.community_logo) { %>
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure">
                       <img src= "<%-model.community.community_logo %>" alt="">
@@ -104,26 +137,39 @@
                   None
                 <% } %>
               </div>
-              <h4>Time commitment</h4>
+              <h4>Commitment</h4>
               <div>
-                <% if (madlibTags['task-time-required']) { %>
+                <% if (model.detailSelection) { %>
+                  <%= model.detailSelection %> detail
+                <% } else if (madlibTags['task-time-required']) { %>
                   <%= madlibTags['task-time-required'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-estimate'] &&
-                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
-                  &mdash;
+                <% if (madlibTags['task-time-estimate']) { %>
+                  <br/>
                   <%- madlibTags['task-time-estimate'][0].name %>
-                <% } %>
-                <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                  <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
+                  <% if (madlibTags['task-length'] && madlibTags['task-time-required'][0].name === "Ongoing") { %>
                     <%- madlibTags['task-length'][0].name.toLowerCase() %>
+                  <% } else if (model.detailSelection && madlibTags['task-time-estimate']) { %>
+                    weekly
                   <% } %>
                 <% } %>
               </div>
+              <% if (model.detailSelection && model.detailLength) { %>
+                <h4>Length</h4>
+                <div>
+                  <%= model.detailLength %>
+                </div>
+              <% } %>
               <% if (model.completedBy) { %>
               <h4>Estimated completion date</h4>
               <div>
-                  <%= moment(model.completedBy).format('MM/DD/YY') %>
+                <%= moment(model.completedBy).format('MM/DD/YY') %>
+              </div>
+              <% } %>
+              <% if (model.completedBy) { %>
+              <h4>Estimated completion date</h4>
+              <div>
+                <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
               <% } %>
               <h4>Location</h4>
@@ -153,7 +199,7 @@
                 </div>
               <% } %>
               <% if (model.payLevel) { %>              
-                <h4>Pay plan</h4>
+                <h4>Pay scale</h4>
                 <div>
                   <%- model.payLevel.code %>
                 </div>      
@@ -222,22 +268,29 @@
                   None
                 <% } %>
               </div>
-              <h4>Time commitment</h4>
+              <h4>Commitment</h4>
               <div>
-                <% if (madlibTags['task-time-required']) { %>
+                <% if (model.detailSelection) { %>
+                  <%= model.detailSelection %> detail
+                <% } else if (madlibTags['task-time-required']) { %>
                   <%= madlibTags['task-time-required'][0].name %>
                 <% } %>
-                <% if (madlibTags['task-time-estimate'] &&
-                      !(madlibTags['task-time-required'] && madlibTags['task-time-required'][0].name === 'Full Time Detail')) { %>
-                  &mdash;
+                <% if (madlibTags['task-time-estimate']) { %>
+                  <br/>
                   <%- madlibTags['task-time-estimate'][0].name %>
-                <% } %>
-                <% if (madlibTags['task-time-required'] && madlibTags['task-length']) { %>
-                  <% if (madlibTags['task-time-required'][0].name === "Ongoing") { %>
+                  <% if (madlibTags['task-length'] && madlibTags['task-time-required'][0].name === "Ongoing") { %>
                     <%- madlibTags['task-length'][0].name.toLowerCase() %>
+                  <% } else if (model.detailSelection && madlibTags['task-time-estimate']) { %>
+                    weekly
                   <% } %>
                 <% } %>
               </div>
+              <% if (model.detailSelection && model.detailLength) { %>
+                <h4>Length</h4>
+                <div>
+                  <%= model.detailLength %>
+                </div>
+              <% } %>
               <% if (model.completedBy) { %>
               <h4>Estimation completion date</h4>
               <div>
@@ -271,7 +324,7 @@
                 </div>
               <% } %>
               <% if (model.payLevel) { %>              
-                  <h4>Pay plan</h4>
+                  <h4>Pay scale</h4>
                   <div>
                     <%- model.payLevel.code %>
                   </div>      
@@ -292,7 +345,7 @@
                    <% } else { %>
                       No
                       <% } %>
-                    </div>           
+                  </div>           
               <% } %> 
             </div>
           </div>

@@ -9,6 +9,7 @@ var TagShowView = require('../../../tag/show/views/tag_show_view');
 var TagFactory = require('../../../../components/tag_factory');
 var Login = require('../../../../config/login.json');
 var UIConfig = require('../../../../config/ui.json');
+var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 
 // templates
 var ProfileSkillsTemplate = require('../templates/profile_skills_template.html');

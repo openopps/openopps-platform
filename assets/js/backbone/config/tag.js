@@ -61,8 +61,8 @@ module.exports = {
       'class': 'task-time-required',
       'id': 'task-time-required',
       'type': 'task-time-required',
-      'name': 'Time commitment',
-      'plural': 'Time commitment',
+      'name': 'Commitment',
+      'plural': 'Commitment',
     },
 
     'task-people': {

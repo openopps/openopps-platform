@@ -5,6 +5,7 @@ module.exports = {
     var data = {
       task: model.task,
       user: model.user,
+      community: model.community,
       survey: openopps.survey,
     };
     done(null, data);

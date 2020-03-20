@@ -4,6 +4,7 @@ const _ = require('lodash');
 const auth = require('../auth/auth');
 const service = require('./service');
 const documentService = require('../document/service');
+const elasticService = require('../../elastic/service');
 
 function initializeAuditData (ctx) { 
   return {
@@ -22,6 +23,9 @@ router.get('/api/community/:id', async (ctx, next) => {
 router.put('/api/community/:id', auth, async (ctx, next) => {
   if(await service.isCommunityManager(ctx.state.user, ctx.request.body.communityId)) {
     await service.updateCommunity(ctx.request.body, (err) => {
+      if (!err) {
+        elasticService.reindexCommunityOpportunities(ctx.request.body.communityId);
+      }
       ctx.status = err ? 400 : 200;
       ctx.body = err ? '': { message: 'success' };
     });
@@ -36,7 +40,7 @@ router.post('/api/community', auth.isAdmin, async (ctx, next) => {
     if (errors) {
       ctx.status = 400;
       ctx.body = errors;
-    } else {     
+    } else {
       ctx.status = 200;
       ctx.body = community;
     }
@@ -75,20 +79,26 @@ router.get('/api/community/logo/get/:id', async (ctx, next) => {
   }
 });
 
-router.post('/api/community/logo/remove/:id', async (ctx, next) => {
+router.post('/api/community/logo/remove/:id', auth.isAdmin, async (ctx, next) => {
   var result = await documentService.removeFile(ctx.params.id);
   if(!result) {
     return ctx.status = 404;
   }
   await service.updateCommunity(ctx.request.body, (err, community) => {
+    if (!err) {
+      elasticService.reindexCommunityOpportunities(community.communityId);
+    }
     ctx.status = err ? 400 : 200;
     ctx.body = err ? '': community;
   });
 });
 
-router.post('/api/community/logo/update/:id', async (ctx, next) => {
+router.post('/api/community/logo/update/:id', auth.isAdmin, async (ctx, next) => {
   var community = await service.findById(ctx.params.id);
   await service.updateCommunity(ctx.request.body, (err, community) => {
+    if (!err) {
+      elasticService.reindexCommunityOpportunities(community.communityId);
+    }
     ctx.status = err ? 400 : 200;
     ctx.body = err ? '' : community;
   });

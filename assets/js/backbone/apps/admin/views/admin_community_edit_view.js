@@ -17,27 +17,27 @@ var Modal = require('../../../components/modal');
 var AdminCommunityEditView = Backbone.View.extend({
 
   events: {
-    'click #community-edit-cancel'          : 'cancel',
-    'click #community-edit-save'            : 'save',
-    'blur .validate'                        : 'validateField',
-    'change .validate'                      : 'validateField',
-    'click #add-bureau-office'              : 'addbureauOfficeDisplay',
-    'click .edit-bureau-office'             : 'addbureauOfficeDisplay',
-    'click .delete-bureau'                  : 'deleteBureau',
-    'click .delete-office'                  : 'deleteOffice',
-    'change #display-title-color'           : 'updateColorTextField',
-    'change #display-subtitle-color'        : 'updateColorTextField',
-    'change #display-description-color'     : 'updateColorTextField',
-    'change #display-banner-color'          : 'updateColorTextField',
-    'change #display-title-color-text'      : 'updateColorField',
-    'change #display-subtitle-color-text'   : 'updateColorField',
-    'change #display-description-color-text': 'updateColorField',
-    'change #display-banner-color-text'     : 'updateColorField',
-    'click #community-preview'              : 'preview',
-    'change [name=community-group]'         : 'toggleAutoJoinDisplay',
-    'click #photo-remove'                   : 'removeImage',
-    'click #image-remove'                   : 'removeImage',
-    'change [name=background-group]'        : 'toggleBackgroundDisplay',
+    'click #community-edit-cancel'            : 'cancel',
+    'click #community-edit-save'              : 'save',
+    'blur .validate'                          : 'validateField',
+    'change .validate'                        : 'validateField',
+    'click #add-bureau-office'                : 'addbureauOfficeDisplay',
+    'click .edit-bureau-office'               : 'addbureauOfficeDisplay',
+    'click .delete-bureau'                    : 'deleteBureau',
+    'click .delete-office'                    : 'deleteOffice',
+    'change #display-title-color'             : 'updateColorTextField',
+    'change #display-subtitle-color'          : 'updateColorTextField',
+    'change #display-description-color'       : 'updateColorTextField',
+    'change #display-banner-color'            : 'updateColorTextField',
+    'change #display-title-color-text'        : 'updateColorField',
+    'change #display-subtitle-color-text'     : 'updateColorField',
+    'change #display-description-color-text'  : 'updateColorField',
+    'change #display-banner-color-text'       : 'updateColorField',
+    'click #community-preview'                : 'preview',
+    'change [name=community-group]'           : 'toggleAutoJoinDisplay',
+    'click #photo-remove'                     : 'removeImage',
+    'click #image-remove'                     : 'removeImage',
+    'change [name=background-group]'          : 'toggleBackgroundDisplay',
   },
 
   initialize: function (options) {
@@ -68,6 +68,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       var data = {
         communityId: '', 
         departments : this.departments,
+        displayAgencyLogo: false,
         isClosedGroup: false,
         autoJoin: false,        
       };   
@@ -119,6 +120,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#targetAudience option:contains('+ community.targetAudience +')').attr('selected', true);
     $('#duration option:contains('+ community.duration +')').attr('selected', true);
     $('#agencies').val(community.agency.agencyId); 
+    $('input[name=display-agency-logo-group][value=' + community.displayAgencyLogo +']').prop('checked', true);
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
     if (!community.isClosedGroup) {
       $('#community-auto-join').hide();
@@ -129,6 +131,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#microsite-url').val(community.micrositeUrl);
     $('#community-mgr-name').val(community.communityManagerName);
     $('#community-mgr-email').val(community.communityManagerEmail);
+    $('#community-email-signature').val(community.emailSignature);
   },
 
   initializeDisplayFormFields: function (community) {
@@ -173,6 +176,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       targetAudience:$('#targetAudience').val(),
       duration :$('#duration').val(),
       agencyId  : $('#agencies').val(),
+      displayAgencyLogo: $('#display-agency-logo-group').prop('checked'),
       isClosedGroup: $("input[name='community-group']:checked").val(),
       autoJoin: $('#community-auto-join-group').prop('checked'),
       communityName: $('#community-name').val(),
@@ -181,6 +185,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
+      emailSignature: $('#community-email-signature').val(),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -287,7 +292,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeCounts: function () {
-    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}].forEach(function (item) {
+    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}, { id: 'community-email-signature', count: 300 }].forEach(function (item) {
       $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
     });
   },
@@ -459,6 +464,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       return validate({ currentTarget: child }) || abort;
     }, false);
   },
+
   validateField: function (e) {
     return validate(e);
   },
@@ -524,7 +530,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   validatebureauOffice: function (bureauId,officeId) {
-
     var selectedValue=  $('input[name=community-bureau-office-group]:checked').val();
     var bureauValue=$('#community-new-bureau').val();
     var officeValue= $('#community-new-office').val();

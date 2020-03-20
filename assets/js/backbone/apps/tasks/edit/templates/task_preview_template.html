@@ -51,13 +51,30 @@
           <h4>Personnel needed</h4>
           <p><%- data.peopleNeeded %></p>
         </div>
-
         <div class="usa-width-one-half">
-          <h4>Time commitment</h4>
-        <p><% if (madlibTags['task-time-required']) { %><%- madlibTags['task-time-required'][0].name %><% } %><% if (madlibTags['task-time-estimate']) { %>/<%- madlibTags['task-time-estimate'][0].name.replace(' - ', '-') %><% } %> 
-          <% if (madlibTags['task-length']) { %><%- madlibTags['task-length'][0].name.toLowerCase() %><% } %></p>
-        </div>
-        
+          <h4>Commitment</h4>
+          <div>
+            <% if (data.detailSelection) { %>
+              <%= data.detailSelection %> detail
+            <% } else if (madlibTags['task-time-required']) { %>
+              <%= madlibTags['task-time-required'][0].name %>
+            <% } %>
+            <% if (madlibTags['task-time-estimate']) { %>
+              <br/>
+              <%- madlibTags['task-time-estimate'][0].name %>
+              <% if (madlibTags['task-length'] && madlibTags['task-time-required'][0].name === "Ongoing") { %>
+                <%- madlibTags['task-length'][0].name.toLowerCase() %>
+              <% } else if (data.detailSelection && madlibTags['task-time-estimate']) { %>
+                weekly
+              <% } %>
+            <% } %>
+          </div>
+          <% if (data.detailSelection && data.detailLength) { %>
+            <h4>Length</h4>
+            <div>
+              <%= data.detailLength %>
+            </div>
+          <% } %>
         <% if (data.completedBy) { %>
           <div class="usa-width-one-half">
             <h4>Estimated completion date</h4>
@@ -98,7 +115,7 @@
         <% } %> 
         <% if (data.payPlan) { %>
           <div class="usa-width-one-half">
-            <h4>Pay plan</h4>
+            <h4>Pay scale</h4>
             <p>
               <%- data.payPlan %>
             </p>

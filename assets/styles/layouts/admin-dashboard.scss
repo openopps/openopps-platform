@@ -332,7 +332,8 @@
   .assign-admin[type=checkbox]:checked,
   .member-enable[type=checkbox]:checked,
   .assign-approver[type=checkbox]:checked,
-  .assign-auto-join[type=checkbox]:checked {
+  .assign-auto-join[type=checkbox]:checked,
+  .display-agency-logo[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -350,7 +351,8 @@
   .assign-admin[type=checkbox],
   .member-enable[type=checkbox],
   .assign-approver[type=checkbox],
-  .assign-auto-join[type=checkbox] {
+  .assign-auto-join[type=checkbox],
+  .display-agency-logo[type=checkbox] {
     border: none;
     height: auto;
 
@@ -779,4 +781,8 @@
       right: 0;
     }
   }
+}
+
+#agency-logo {
+  height: 150px;
 }

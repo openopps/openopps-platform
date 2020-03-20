@@ -68,8 +68,14 @@
     <div class="usajobs-open-opps-opportunity-requestor__wrapper">
       <div class="usajobs-open-opps-opportunity-requestor">
         <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-          <div class="usajobs-open-opps-opportunity-requestor__figure  <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>
-            <% if (item.community && item.community.communityLogo) { %>
+          <div class="usajobs-open-opps-opportunity-requestor__figure  <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>         
+            <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
+              <% if (item.agency.imageId) { %>          
+              <img class="agency_logo" src="/api/upload/get/<%- item.agency.imageId %>" alt="<%- item.agency.name %>">              
+              <% } else { %>      
+                <img class="community_logo" src="/api/upload/get/<%- item.community.imageId %>" alt="<%- item.community.name %>">  
+                <% } %>       
+            <% } else if (!_.isEmpty(item.community) && (item.community.communityLogo)) { %>                      
               <img src="<%- item.community.communityLogo %>" alt="<%- item.community.name %>">
             <% } else if (item.owner.photoId) { %>            
               <img src="/api/user/photo/<%- item.owner.id %>" alt="<%- item.owner.name %>">
@@ -79,11 +85,18 @@
           </div>
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <p class="usajobs-open-opps-opportunity-requestor__name">
-                <% if (item.community && item.community.communityLogo) { %>
+              <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
+                <% if (item.agency.imageId) { %>          
+                  <%- item.agency.name %> 
+                <% } else { %>      
+                  <%- item.community.name %> 
+                  <% } %>       
+              <% } else if (item.community && item.community.communityLogo) { %>
                   <%- item.community.name %>
               <% } else { %>
                 <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %>
                 <% } %>
+                
             </p>
             <% if (item.publishedAt) { %>
             <span class="usajobs-open-opps-opportunity-requestor__on">

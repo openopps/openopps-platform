@@ -228,6 +228,7 @@ router.post('/api/task/copy', auth, async (ctx, next) => {
   });
 });
 
+
 function awardBadge (task) {
   var badge = Badge.awardForTaskPublish(task, task.userId);
   if(badge) {
