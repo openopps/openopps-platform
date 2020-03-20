@@ -822,7 +822,8 @@ module.exports.getAgencies = async function () {
 
 module.exports.getCommunities = async function (user) {
   if(user.isAdmin) {
-    return await dao.Community.find();
+    var communities= await dao.Community.find();
+    return  _.sortBy(communities, 'communityName');
   } else {
     return await dao.Community.query(dao.query.communityListQuery, user.id);
   }
