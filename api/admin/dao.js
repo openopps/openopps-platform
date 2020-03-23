@@ -185,7 +185,8 @@ const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
 
 const communityListQuery = 'select community.* from community ' + 
   'join community_user on community_user.community_id = community.community_id ' +
-  'where (community_user.is_manager = true or community_user.is_approver = true) and community_user.user_id = ?';
+  'where (community_user.is_manager = true or community_user.is_approver = true) and community_user.user_id = ? ' +
+  'order by community.community_name ';
 
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
