@@ -4,6 +4,7 @@ var $ = require('jquery');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
+var AdminCommunityBasicCustomFormTemplate = require('../templates/admin_community_basic_custom_form_template.html');
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
@@ -13,6 +14,7 @@ var AdminCommunityPreviewTemplate = require('../templates/admin_community_previe
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
 var Modal = require('../../../components/modal');
+var charCounter = require('../../../../vendor/jquery.charcounter');
 
 var AdminCommunityEditView = Backbone.View.extend({
 
@@ -186,6 +188,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
       emailSignature: $('#community-email-signature').val(),
+      imageId: this.community.get('imageId'),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -200,7 +203,12 @@ var AdminCommunityEditView = Backbone.View.extend({
         color: $('#display-banner-color-text').val(),
       };
       modelData.vanityUrl = $('#vanityURL').val();
-      modelData.imageId = this.community ? this.community.attributes.imageId: null;
+    } else {
+      modelData.banner = _.extend(this.community.get('banner'), {
+        title: $('#display-title').val(),
+        subtitle: $('#display-subtitle').val(),
+        description: $('#display-description').val(),
+      });
     }
     return modelData;
   },
@@ -241,15 +249,23 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderCustomize: function () {
-    if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
+    if (window.cache.currentUser.isAdmin) {
       var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
         imageId: this.community ? this.community.get('imageId') : null,
         name: this.community ? this.community.get('communityName') : null,
-        communityId:this.options.communityId,
+        communityId: this.options.communityId,
         banner: this.community ? this.community.get('banner') : {},     
       });
       $('#custom-display').html(customizeTemplate);
+    } else {
+      var basicCustomizeTemplate = _.template(AdminCommunityBasicCustomFormTemplate)({
+        banner: this.community ? this.community.get('banner') : {}, 
+      });
+      $('#custom-display').html(basicCustomizeTemplate);
     }
+    $('#display-description').charCounter(500, {
+      container: '#display-description-count',
+    });
   },
 
   renderImage: function (data) {
