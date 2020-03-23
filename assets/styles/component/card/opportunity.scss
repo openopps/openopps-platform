@@ -1641,6 +1641,23 @@
     }
 }
 
+.usajobs-opop-section__edit-help {
+  position: absolute;
+  top: 0.75rem;
+  right: 0;
+  font-size: $small-font-size;
+  text-decoration: none;
+  color: $color-primary;
+
+  &:visited {
+    color: $color-primary;
+  }
+}
+
+label[for="DefineWhen"] {
+  position: relative;
+}
+
 .usajobs-open-opps-opportunity-requestor__figure img {
   border-radius: 50%;
   width: 4.6rem;
