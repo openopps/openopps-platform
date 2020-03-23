@@ -7,6 +7,8 @@ var AdminCommunityCustomFormTemplate = require('../templates/admin_community_cus
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
+var AdminCommunityImageTemplate = require('../templates/admin_community_image_template.html');
+var AdminCommunityImageBackgroundTemplate = require('../templates/admin_community_image_background_template.html');
 var AdminCommunityPreviewTemplate = require('../templates/admin_community_preview_template.html');
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
@@ -17,8 +19,8 @@ var AdminCommunityEditView = Backbone.View.extend({
   events: {
     'click #community-edit-cancel'          : 'cancel',
     'click #community-edit-save'            : 'save',
-    'blur .validate'                        : 'validateFields',
-    'change .validate'                      : 'validateFields',
+    'blur .validate'                        : 'validateField',
+    'change .validate'                      : 'validateField',
     'click #add-bureau-office'              : 'addbureauOfficeDisplay',
     'click .edit-bureau-office'             : 'addbureauOfficeDisplay',
     'click .delete-bureau'                  : 'deleteBureau',
@@ -33,12 +35,17 @@ var AdminCommunityEditView = Backbone.View.extend({
     'change #display-banner-color-text'     : 'updateColorField',
     'click #community-preview'              : 'preview',
     'change [name=community-group]'         : 'toggleAutoJoinDisplay',
+    'click #photo-remove'                   : 'removeImage',
+    'click #image-remove'                   : 'removeImage',
+    'change [name=background-group]'        : 'toggleBackgroundDisplay',
   },
 
   initialize: function (options) {
     this.options = options; 
     this.departments = {};  
-    this.communityInfo = {};
+    this.community = new CommunityModel({
+      banner: {},
+    });
     this.bureaus = [];
     this.defaultTextColor = '#ffffff';
     this.defaultBannerColor = '#205493';
@@ -136,6 +143,12 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#display-description-color').val(community.banner.descriptionColor || this.defaultTextColor);
     $('#display-banner-color-text').val(community.banner.color);
     $('#display-banner-color').val(community.banner.color || this.defaultBannerColor);
+    $('input[name=background-group][value=' + community.banner.hasBackgroundImage +']').prop('checked', true);
+    if (community.banner.hasBackgroundImage == 'true') {   
+      $('#background-photo-banner').show();
+    } else {
+      $('#background-color-banner').show();
+    }
     $('#vanityURL').val(community.vanityUrl);
   },
 
@@ -168,18 +181,22 @@ var AdminCommunityEditView = Backbone.View.extend({
       micrositeUrl: $('#microsite-url').val(),
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
-      banner: {
+    };
+    if (window.cache.currentUser.isAdmin) {
+      modelData.banner = {
         title: $('#display-title').val(),
         titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
         subtitleColor: $('#display-subtitle-color-text').val(),
         description: $('#display-description').val(),
         descriptionColor: $('#display-description-color-text').val(),
+        hasBackgroundImage: $("input[name='background-group']:checked").val(),
+        backgroundImageId: this.community ? this.community.attributes.banner.backgroundImageId: null,
         color: $('#display-banner-color-text').val(),
-      },
-      vanityUrl: $('#vanityURL').val(),
-      imageId: this.options.imageId,
-    };
+      };
+      modelData.vanityUrl = $('#vanityURL').val();
+      modelData.imageId = this.community ? this.community.attributes.imageId: null;
+    }
     return modelData;
   },
 
@@ -189,13 +206,15 @@ var AdminCommunityEditView = Backbone.View.extend({
       dataType: 'json',
       success: function (community) {      
         this.community = new CommunityModel(community);      
-        community.departments=this.departments;     
+        community.departments = this.departments;     
         this.$el.html(_.template(AdminCommunityFormTemplate)(community));
 
         if(community.referenceId=='dos'){
           this.renderBureausAndOffices();
         }
         this.renderCustomize();
+        this.renderImage(community);
+        this.renderBackgroundImage(community);
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
@@ -204,6 +223,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         if (window.cache.currentUser.isAdmin) {
           this.initializeDisplayFormFields(community);
           this.initializeFileUpload();
+          this.initializeBannerFileUpload();
         }
         $('#search-results-loading').hide();
        
@@ -218,17 +238,35 @@ var AdminCommunityEditView = Backbone.View.extend({
   renderCustomize: function () {
     if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
       var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
-        imageId: (this.community || {}).imageId,
-        communityId:this.options.communityId,     
+        imageId: this.community ? this.community.get('imageId') : null,
+        name: this.community ? this.community.get('communityName') : null,
+        communityId:this.options.communityId,
+        banner: this.community ? this.community.get('banner') : {},     
       });
       $('#custom-display').html(customizeTemplate);
     }
   },
 
+  renderImage: function (data) {
+    var imageTemplate = _.template(AdminCommunityImageTemplate)(data);   
+    $('#image-logo').html(imageTemplate);
+    setTimeout(() => {
+      this.initializeFileUpload();
+    }, 50);
+  },
+
+  renderBackgroundImage: function (data) {
+    var imageBackgroundTemplate = _.template(AdminCommunityImageBackgroundTemplate)(data);   
+    $('#image-background').html(imageBackgroundTemplate);
+    setTimeout(() => {
+      this.initializeBannerFileUpload();
+    }, 50);
+  },
+
   renderBureausAndOffices: function () {
     var bureauOfficeTemplate = _.template(AdminCommunityBureauAndOfficeFormTemplate)({
       bureaus: this.bureaus,
-      communityId:this.options.communityId,     
+      communityId: this.community.communityId,     
     });
     $('#bureau-office').html(bureauOfficeTemplate);
   },
@@ -242,7 +280,6 @@ var AdminCommunityEditView = Backbone.View.extend({
       insertOffice:data.insertOffice,
       deleteBureau: data.deleteBureau,
       deleteOffice: data.deleteOffice,
-     
     });
    
     $('#bureau-office-message').html(bureauOfficeMessageTemplate);
@@ -270,7 +307,10 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        this.options.imageId = JSON.parse($(data.result).text())[0].id,
+        var info = JSON.parse($(data.result).text())[0];
+        this.community.attributes.imageId = info.id;
+        this.updatePhoto();
+        $('#file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
@@ -281,14 +321,146 @@ var AdminCommunityEditView = Backbone.View.extend({
         }
         $('#file-upload-alert-message').html(message);
         $('#file-upload-alert').show();
+        window.scrollTo(0, 0);
       }.bind(this),
     });
+  },
+
+  initializeBannerFileUpload: function () {
+    $('#banner-fileupload').fileupload({
+      url: '/api/upload/create',
+      dataType: 'text',
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      formData: { 'type': 'image' },
+      add: function (e, data) {
+        $('#banner-file-upload-progress-container').show();
+        data.submit();
+      }.bind(this),
+      progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('#banner-file-upload-progress').css('width', progress + '%');
+      }.bind(this),
+      done: function (e, data) {
+        var info = JSON.parse($(data.result).text())[0];
+        this.community.attributes.banner.backgroundImageId = info.id;
+        this.updateBackgroundImage();
+        $('#banner-file-upload-progress-container').hide();
+        $('#file-upload-alert').hide();
+      }.bind(this),
+      fail: function (e, data) {
+        var message = data.jqXHR.responseText || data.errorThrown;
+        $('#banner-file-upload-progress-container').hide();
+        if (data.jqXHR.status == 413) {
+          message = 'The uploaded file exceeds the maximum file size.';
+        }
+        $('#file-upload-alert-message').html(message);
+        $('#file-upload-alert').show();
+        window.scrollTo(0, 0);
+      }.bind(this),
+    });
+  },
+
+  updatePhoto: function () {
+    var data = {
+      communityId: this.community.attributes.communityId,
+      imageId: this.community.attributes.imageId,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    $.ajax({
+      url: '/api/community/logo/update/' + this.community.attributes.communityId,
+      type: 'POST',
+      data: data, 
+    }).done(function (data) {
+      this.community.set('imageId', data.imageId);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderImage(this.community.attributes);
+    }.bind(this));
+  },
+
+  updateBackgroundImage: function () {
+    var data = {
+      communityId: this.community.attributes.communityId,
+      banner: this.community.attributes.banner,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    $.ajax({
+      url: '/api/community/logo/update/' + this.community.attributes.communityId,
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+    }).done(function (data) {
+      this.community.set('banner', data.banner);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderBackgroundImage(this.community.attributes);
+    }.bind(this));
+  },
+
+  removeImage: function (event) {
+    var deleteModal = new Modal({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm image removal',
+      modalBody: 'Are you sure you want to remove the ' + (event.currentTarget.id == 'photo-remove' ? 'community logo': ' backgroung image') + '? <strong>This cannot be undone</strong>.',
+      primary: {
+        text: 'Remove',
+        action: function () {
+          if (event.currentTarget.id == 'photo-remove') {
+            this.removePhoto.bind(this)();
+          } else {
+            this.removeBackgroundImage.bind(this)();
+          }
+          deleteModal.cleanup();
+        }.bind(this),
+      },
+    });
+    deleteModal.render();
+  },
+
+  removePhoto: function () {
+    var data = {
+      communityId: this.community.attributes.communityId,
+      imageId: null,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    $.ajax({
+      url: '/api/community/logo/remove/' + this.community.attributes.imageId,
+      type: 'POST',
+      data: data, 
+    }).done(function (data) {
+      this.community.set('imageId', null);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderImage(this.community.attributes);
+    }.bind(this));
+  },
+
+  removeBackgroundImage: function () {
+    var backgroundImageId = this.community.attributes.banner.backgroundImageId;
+    var data = {
+      communityId: this.community.attributes.communityId,
+      banner: this.community.attributes.banner,
+      updatedAt: this.community.attributes.updatedAt,
+    };
+    delete data.banner.backgroundImageId;
+    $.ajax({
+      url: '/api/community/logo/remove/' + backgroundImageId,
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+    }).done(function (data) {
+      this.community.set('banner', data.banner);
+      this.community.set('updatedAt', data.updatedAt);
+      this.renderBackgroundImage(this.community.attributes);
+    }.bind(this));
   },
 
   validateFields: function () {
     return _.reduce(this.$el.find('.validate'), function (abort, child) {
       return validate({ currentTarget: child }) || abort;
     }, false);
+  },
+  validateField: function (e) {
+    return validate(e);
   },
 
   cancel: function (e) {
@@ -299,17 +471,17 @@ var AdminCommunityEditView = Backbone.View.extend({
   save: function (e) {
     e.preventDefault && e.preventDefault(); 
     var data= this.getDataFromPage();
-    if(this.options.communityId){
-      data.updatedAt=$('#updated-at').val();
+    
+    if(this.community.attributes.communityId){
+      data.updatedAt = this.community.get('updatedAt');
     }  
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
-      if(this.options.communityId){
+      if(this.community.attributes.communityId) {
         this.community.trigger('community:save', data);
-      }
-      else{
+      } else{
         this.saveCommunity();
       }
     }
@@ -791,6 +963,17 @@ var AdminCommunityEditView = Backbone.View.extend({
     } else {
       $('#community-auto-join').hide();
       $('#community-auto-join-group').prop('checked', false);
+    }
+  },
+
+  toggleBackgroundDisplay: function (e) {
+    if ( $(event.target).val() == 'true') {
+      $('#background-photo-banner').show();
+      $('#background-color-banner').hide();
+    } else {
+      $('#background-photo-banner').hide();
+      $('#background-color-banner').show();
+      $('#background-group').prop('checked', false);
     }
   },
 

@@ -1,0 +1,14 @@
+<% if (imageId) { %>
+    <img id="profile-picture" src="/api/community/logo/get/<%- communityId %>" alt="Banner logo of <%- communityName %>">
+<% } %>
+<div class="fileinput-button">
+<span><%- imageId ? 'Update logo' : 'Upload logo' %>
+    <label class="sr-only" for="fileupload">Upload logo</label>
+    <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
+</span>
+</div>
+<div class="fileinput-button">
+<% if (imageId) { %>
+    <a href=# id="photo-remove">Remove</a>
+<% } %>
+</div>

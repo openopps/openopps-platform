@@ -3,26 +3,61 @@ const dao = require('postgres-gen-dao');
 
 const taskQuery = 'select count(*) as count from task ';
 
-const taskStateQuery = 'select ' +
-  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
-  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
-  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
-  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
-  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
-  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
-  'from task left join community on task.community_id = community.community_id ' +
-  'where community.target_audience <> 2 or community.target_audience is null';
+const taskStateQuery = `with task_type as (
+  select task.id, tagentity.name
+  from tagentity_tasks__task_tags as task_tags
+  join tagentity on tagentity.id = task_tags.tagentity_tasks
+  join task on task.id = task_tags.task_tags
+  where tagentity."type" = 'task-time-required'
+  and task.state in ('submitted','open','not open','in progress','completed','canceled')
+  order by task.id
+  )
+  select 
+  sum(case when state = 'submitted' then 1 else 0 end) as "submitted", 
+  sum(case when state in ('open', 'in progress') and "accepting_applicants" then 1 else 0 end) as "open", 
+  sum(case when state = 'not open' then 1 else 0 end) as "notOpen", 
+  sum(case when state = 'in progress' and not "accepting_applicants" then 1 else 0 end) as "inProgress", 
+  sum(case when state = 'completed' then 1 else 0 end) as "completed", 
+  sum(case when state = 'canceled' then 1 else 0 end) as "canceled",
+  sum(case when task_type.name = 'One time' or task_type.name is null then 1 else 0 end) as "oneTime", 
+  sum(case when task_type.name = 'Ongoing' then 1 else 0 end) as "onGoing", 
+  sum(case when task_type.name = 'Part Time Detail' then 1 else 0 end) as "partTime", 
+  sum(case when task_type.name = 'Full Time Detail' then 1 else 0 end) as "fullTime"
+  from task
+  left join community on task.community_id = community.community_id
+  left join task_type on task_type.id = task.id
+  where
+  task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and (community.target_audience <> 2 or community.target_audience is null)`;
 
-const agencyTaskStateQuery = 'select ' +
-  'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +
-  'sum(case when state in (\'open\', \'in progress\') and "accepting_applicants" then 1 else 0 end) as "open", ' +
-  'sum(case when state = \'not open\' then 1 else 0 end) as "notOpen", ' +
-  'sum(case when state = \'in progress\' and not "accepting_applicants" then 1 else 0 end) as "inProgress", ' +
-  'sum(case when state = \'completed\' then 1 else 0 end) as "completed", ' +
-  'sum(case when state = \'canceled\' then 1 else 0 end) as "canceled" ' +
-  'from task '  +
-  'where community_id is null ' +
-  'and agency_id = ? ';
+const agencyTaskStateQuery = `with task_type as (
+  select task.id, tagentity.name
+  from tagentity_tasks__task_tags as task_tags
+  join tagentity on tagentity.id = task_tags.tagentity_tasks
+  join task on task.id = task_tags.task_tags
+  where tagentity."type" = 'task-time-required'
+  and task.state in ('submitted','open','not open','in progress','completed','canceled')
+  order by task.id
+  )
+  select 
+  sum(case when state = 'submitted' then 1 else 0 end) as "submitted", 
+  sum(case when state in ('open', 'in progress') and "accepting_applicants" then 1 else 0 end) as "open", 
+  sum(case when state = 'not open' then 1 else 0 end) as "notOpen", 
+  sum(case when state = 'in progress' and not "accepting_applicants" then 1 else 0 end) as "inProgress", 
+  sum(case when state = 'completed' then 1 else 0 end) as "completed", 
+  sum(case when state = 'canceled' then 1 else 0 end) as "canceled",
+  sum(case when task_type.name = 'One time' or task_type.name is null then 1 else 0 end) as "oneTime", 
+  sum(case when task_type.name = 'Ongoing' then 1 else 0 end) as "onGoing", 
+  sum(case when task_type.name = 'Part Time Detail' then 1 else 0 end) as "partTime", 
+  sum(case when task_type.name = 'Full Time Detail' then 1 else 0 end) as "fullTime"
+  from task
+  left join community on task.community_id = community.community_id
+  left join task_type on task_type.id = task.id
+  where
+  task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and (community.target_audience <> 2 or community.target_audience is null)
+  and task.community_id is null
+  and task.agency_id = ?`;
 
 const communityTaskStateQuery = 'select ' +
   'sum(case when state = \'submitted\' then 1 else 0 end) as "submitted", ' +

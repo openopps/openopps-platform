@@ -67,7 +67,7 @@
         <h4 class="usajobs-search-filters__title">Series</h4>
         <input type="text" id="series" title="Series" />
 
-        <h4 class="usajobs-search-filters__title time">Time commitment</h4>
+        <h4 class="usajobs-search-filters__title time">Commitment</h4>
         <% if([].concat(filters.time).length == 3) { %>
           <a class="usajobs-search-filters__select-toggle timefilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
         <% } else { %>
@@ -83,11 +83,33 @@
                 <label for="ongoing">Ongoing</label>
             </li>
             <li>
-                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.contains(filters.time, 'Full Time Detail' )) { %>checked<% } %> />
-                <label for="full-time">Full time detail</label>
+                <input id="part-time" class="restrict-participation" type="checkbox" name="time" value="Part Time Detail" <% if(_.contains(filters.time, 'Part Time Detail' )) { %>checked<% } %> />
+                <label for="part-time">Part time detail</label>
             </li>
+            <li>
+                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.contains(filters.time, 'Full Time Detail' )) { %>checked<% } %> />
+                <label for="full-time">Full time detail</label>               
+            </li>           
         </ul>
-
+       
+        <div id="pay-scale-grade" style="display: none;" >
+          <div class="usajobs-grid-full">
+            <div class="usa-width-one-third">           
+                <label for="payScale">Pay plan</label>                          
+                <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
+                  <option value=""></option>                        
+                  <% _.each(tagTypes['payPlan'], function(p) { %>              
+                    <option value="<%- p.pay_plan_id %>"<% if (filters.payPlan && p.pay_plan_id == filters.payPlan.id) { %>selected<% } %>><%= p.code %></option>
+                  
+                  <% }); %>  
+                </select>          
+            </div>
+            <div class="usa-width-one-half">           
+                <label for="grade" >Grade<span class="no-margin-top"></span></label>                 
+                <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium " value="<% if (filters.grade) { %><%= filters.grade %><% } %>" data-validate="empty" onkeypress="if(this.value.length==2) return false;">              
+            </div>
+          </div>
+        </div>
         <h4 class="usajobs-search-filters__title location">Location</h4>
         <% if(_.contains(filters.locationType, 'virtual') && _.contains(filters.locationType, 'in-person')) { %>
           <a class="usajobs-search-filters__select-toggle locationfilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>

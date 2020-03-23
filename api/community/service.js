@@ -107,9 +107,8 @@ module.exports.sendCommunityInviteNotification = async function (admin, data) {
 };
 
 module.exports.updateCommunity = async function (data, callback) {
-
-  await dao.Community.update(data).then(() => {
-    callback();
+  await dao.Community.update(data).then(community => {   
+    callback(null, community);
   }).catch((err) => {
     log.error('An error was encountered trying to update a community', err);
     callback({ message: 'An error was encountered trying to update this community.' });
