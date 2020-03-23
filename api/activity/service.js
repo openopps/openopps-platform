@@ -34,26 +34,27 @@ async function getTaskTypeList (user) {
     acquisition: _.filter((await dao.Task.db.query(dao.query.taskByType, 'career', 1)).rows, { name: 'Acquisition' }),
     skills: (await dao.Task.db.query(dao.query.taskByType, 'skill', 4)).rows,
     locations: (await dao.Task.db.query(dao.query.taskByType, 'location', 3)).rows,
-    byProfile: generateByProfileQuery(user),
+    byProfile: await generateByProfileQuery(user),
     communities : (await dao.Community.db.query(dao.query.communitiesTasks)).rows,
   };
 }
 
-function generateByProfileQuery (user) {
+async function generateByProfileQuery (user) {
   var career = _.filter(user.tags, { type: 'career' })[0];
-  var location = _.filter(user.tags, { type: 'location' })[0];
+  var userLocation = _.identity([user.cityName, (user.countrySubdivision || {}).value]).join(', ');
+  var location = (await dao.Tagentity.find('type = ? and "name" = ?', ['location', userLocation]).catch(() => { return []; }))[0];
   var skills = _.filter(user.tags, { type: 'skill' }).slice(0, 5);
   var query = '?';
   if(!_.isEmpty(career)) {
     query += 'career=' + career.id + '&';
   }
   if(!_.isEmpty(location)) {
-    query += 'location=' + location.name + '&';
+    query += 'location=' + [location.name, location.id].join('|') + '&locationType=in person&';
   }
   if(!_.isEmpty(skills)) {
     query += 'skill=' + skills.map((skill) => { return [skill.name, skill.id].join('|'); }).join(';');
   }
-  return query;
+  return query.match(/&$/) ? query.slice(0, -1) : query;
 }
 
 module.exports = {

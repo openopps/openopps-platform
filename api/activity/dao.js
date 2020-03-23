@@ -100,6 +100,7 @@ module.exports = function (db) {
     User: dao({ db: db, table: 'midas_user' }),
     Badge: dao({ db: db, table: 'badge'}),
     Task: dao({ db: db, table: 'task' }),
+    Tagentity: dao({ db: db, table: 'tagentity' }),
     Community : dao({ db: db, table: 'community' }),
     query: {
       userByAgency: userByAgencyQuery,
