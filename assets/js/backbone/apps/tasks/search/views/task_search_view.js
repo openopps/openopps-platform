@@ -195,7 +195,7 @@ var TaskListView = Backbone.View.extend({
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
         var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
-        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
+        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId', 'communityType', 'usajobsSearchUrl', 'usajobsSearchUrlLabel');
       } else {
         delete this.filters.community;
       }
@@ -333,7 +333,7 @@ var TaskListView = Backbone.View.extend({
 
   renderFilters: function () {
     if(!_.isEmpty(this.filters.community) && _.isArray(this.filters.community)) {
-      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
+      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId', 'communityType', 'usajobsSearchUrl', 'usajobsSearchUrlLabel');
     }
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
