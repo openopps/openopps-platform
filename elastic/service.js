@@ -301,7 +301,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   request.addTerms(query.locationType, 'locationType');
   request.addTerms(query.language, 'languages.name');
   request.addTerms(query.payPlan, 'payPlan.id');
+  request.addTerms(query.detailSelection, 'detailSelection');
   request.addTerms(query.grade, 'grade');
+  
   delete request.addTerms;
   delete request.addLocations;
   delete request.addCycleDate;
@@ -342,6 +344,7 @@ function convertSearchResultsToResultModel (searchResult) {
     keywords: source.keywords,
     owner: source.owner,
     community: source.community,
+    detailSelection: source.detailSelection,
     bureau: source.bureau,
     office: source.office,
     payPlan:source.payPlan,

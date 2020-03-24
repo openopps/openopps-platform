@@ -21,6 +21,7 @@ var TaskListView = Backbone.View.extend({
     'click #search-button'                    : 'search',
     'change #stateFilters input'              : 'stateFilter',
     'change #timeFilters input'               : 'timeFilter',
+    'change #detailFilters input'             : 'detailFilter',
     'change input[name=location]'             : 'locationFilter',
     'click .stateFilters-toggle'              : 'toggleStateFilters',
     'click .timefilters-toggle'               : 'toggleTimeFilters',
@@ -552,6 +553,9 @@ var TaskListView = Backbone.View.extend({
     var checkBoxes = $('#timeFilters input[type="checkbox"]');
     checkBoxes.prop('checked', behavior == 'select');
     this.timeFilter();
+    var checkBoxes2 = $('#detailFilters input[type="checkbox"]');
+    checkBoxes2.prop('checked', behavior == 'select');
+    this.detailFilter();
   },
 
   toggleLocationFilters: function (event) {
@@ -574,6 +578,14 @@ var TaskListView = Backbone.View.extend({
     });
     this.filters.page = 1;
     this.filter(); 
+  },
+
+  detailFilter: function (event) {
+    this.filters.detailSelection = _($('#detailFilters input:checked')).pluck('value').map(function (value) {
+      return value;
+    });
+    this.filters.page = 1;
+    this.filter();
   },
 
   displayPayPlanGrade : function (){
@@ -708,7 +720,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (key == 'location' || key == 'skill' || key == 'series') {
+          } else if (key == 'location' || key == 'skill' || key == 'series' || key == 'detailSelection') {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {
