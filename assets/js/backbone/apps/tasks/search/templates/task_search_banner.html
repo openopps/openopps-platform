@@ -14,7 +14,7 @@
       <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>
       <p class="search__box-content description" <% if(filters.community && filters.community.banner.descriptionColor) { %>style="color:<%- filters.community.banner.descriptionColor %>"<% } %>><% if(filters.community && filters.community.banner.description) { %><%- filters.community.banner.description %><% } else { %>Gain experience with hands-on training, share your expertise and work with others across the government.<% } %></p>
       <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
-      <% if(filters.community && filters.community.name == 'DOI Career Connection (DCC)') { %>
+      <% if(filters.community && filters.community.usajobsSearchUrl) { %>
         <p>Looking for <a href="<%- filters.community.usajobsSearchUrl %>" target="_blank" rel="noopener noreferrer"><%- filters.community.usajobsSearchUrlLabel %>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
       <% } %>
     </div>
