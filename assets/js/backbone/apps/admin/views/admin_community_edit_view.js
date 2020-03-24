@@ -63,10 +63,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     this.initializeAgencySelect();
     this.loadDepartments();  
 
-    if(this.options.communityId){
+    if(this.options.communityId) {
       this.loadCommunity();     
-    }
-    else{
+    } else {
       var data = {
         communityId: '', 
         departments : this.departments,
@@ -77,7 +76,9 @@ var AdminCommunityEditView = Backbone.View.extend({
         
       this.$el.html(_.template(AdminCommunityFormTemplate)(data));
       this.renderCustomize();   
-      this.$el.localize(); 
+      this.$el.localize();
+      this.initializeFileUpload();
+      this.initializeBannerFileUpload();
       this.initializeCounts();
       $('#search-results-loading').hide();   
     }
@@ -226,13 +227,13 @@ var AdminCommunityEditView = Backbone.View.extend({
           this.renderBureausAndOffices();
         }
         this.renderCustomize();
-        this.renderImage(community);
-        this.renderBackgroundImage(community);
         this.$el.show();
         this.initializeListeners();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
+        this.renderImage(community);
+        this.renderBackgroundImage(community);
         if (window.cache.currentUser.isAdmin) {
           this.initializeDisplayFormFields(community);
           this.initializeFileUpload();
@@ -269,6 +270,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderImage: function (data) {
+    data.communityName = data.communityName || $('#community-name').val();
     var imageTemplate = _.template(AdminCommunityImageTemplate)(data);   
     $('#image-logo').html(imageTemplate);
     setTimeout(() => {
@@ -277,6 +279,7 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderBackgroundImage: function (data) {
+    data.communityName = data.communityName || $('#community-name').val();
     var imageBackgroundTemplate = _.template(AdminCommunityImageBackgroundTemplate)(data);   
     $('#image-background').html(imageBackgroundTemplate);
     setTimeout(() => {
@@ -329,8 +332,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       }.bind(this),
       done: function (e, data) {
         var info = JSON.parse($(data.result).text())[0];
-        this.community.attributes.imageId = info.id;
-        this.updatePhoto();
+        this.community.set('imageId', info.id);
+        if (this.community.get('id')) {
+          this.updatePhoto();
+        } else {
+          this.renderImage(this.community.attributes);
+        }
         $('#file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
@@ -364,7 +371,11 @@ var AdminCommunityEditView = Backbone.View.extend({
       done: function (e, data) {
         var info = JSON.parse($(data.result).text())[0];
         this.community.attributes.banner.backgroundImageId = info.id;
-        this.updateBackgroundImage();
+        if (this.community.get('id')) {
+          this.updateBackgroundImage();
+        } else {
+          this.renderBackgroundImage(this.community.attributes);
+        }
         $('#banner-file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
@@ -492,29 +503,28 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   save: function (e) {
     e.preventDefault && e.preventDefault(); 
-    var data= this.getDataFromPage();
-    
-    if(this.community.attributes.communityId){
+    var data = this.getDataFromPage();
+    if(this.community.attributes.communityId) {
       data.updatedAt = this.community.get('updatedAt');
-    }  
+    }
     if(this.validateFields()) {
       $('.usa-input-error').get(0).scrollIntoView();
     } else {
       $('#community-save-error').hide();
       if(this.community.attributes.communityId) {
         this.community.trigger('community:save', data);
-      } else{
-        this.saveCommunity();
+      } else {
+        this.saveCommunity(data);
       }
     }
   },
 
-  saveCommunity:function (){
-    var data= this.getDataFromPage();
+  saveCommunity: function (data) {
     $.ajax({
       url: '/api/community',
       type: 'POST',
-      data: data,
+      data: JSON.stringify(data),
+      contentType: 'application/json',
       success: function (community) {
         Backbone.history.navigate('/admin/community/' + community.communityId + '?saveSuccess', { trigger: true });
       }.bind(this),
