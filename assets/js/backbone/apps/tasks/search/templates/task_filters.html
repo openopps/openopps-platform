@@ -49,7 +49,7 @@
         <label for="community" class="usa-sr-only">Select a community</label>
         <select id="community" class="dropdown">
             <option value=""></option>      
-         <% var communities = _.sortBy(tagTypes['community'], function (c) { return c.communityName.toLowerCase(); }); %>
+         <% var communities = _.sortBy(tagTypes['community'], function (c) { return c.communityName.toLowerCase().trim(); }); %>
             <% _.each(communities, function (c) { %>
                 <option value=<%- c.id %> <% if (filters.community && c.id == filters.community.id) { %>selected<% } %>><%- c.name %></option>
             <% }); %>

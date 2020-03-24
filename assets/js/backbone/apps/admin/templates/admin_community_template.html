@@ -49,7 +49,7 @@
       <select id="communities" class="dropdown">
         <option value=""></option>
       
-       <% var communities =_.sortBy(communities, function (c) { return c.communityName.toLowerCase(); }); %>
+       <% var communities =_.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
         <% _.each(communities, function (c){ %>
             <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
         <% }); %>
