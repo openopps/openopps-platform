@@ -20,12 +20,13 @@
               <h3>Who</h3>
             </label>
             <div class="form-group required-input">
-            <% if(communities.federal.length > 0) { %>         
+            <% if(communities.federal.length > 0) { %>              
+              <% var communitiesFed = _.sortBy(communities.federal, function (c) { return c.communityName.toLowerCase().trim(); }); %>   
               <label for="federal-programs" class="usa-input-optional no-margin-top">Community</label>            
               <div class="form-group required-input federal-programs">
                 <select id="federal-programs" class="dropdown"> 
                     <option></option>              
-                  <% _(communities.federal).forEach(function (community, i) { %>
+                  <% _(communitiesFed).forEach(function (community, i) { %>
                       <option value=<%- community.communityId %>>
                           <%- community.communityName %>
                     </option>
