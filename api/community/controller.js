@@ -68,17 +68,6 @@ router.get('/api/communities/:audienceType/details', async (ctx, next) => {
   ctx.body = await service.detailsByAudienceType(ctx.params.audienceType);
 });
 
-// router.get('/api/community/logo/get/:id', async (ctx, next) => {
-//   var community = await service.findById(ctx.params.id);
-//   if (!community) {
-//     ctx.redirect('');
-//   }
-//   if (community.imageId) {
-//     ctx.status = 307;
-//     ctx.redirect('/api/upload/get/' + community.imageId);
-//   }
-// });
-
 router.post('/api/community/logo/remove/:id', auth.isAdmin, async (ctx, next) => {
   var result = await documentService.removeFile(ctx.params.id);
   if(!result) {
