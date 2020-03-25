@@ -85,7 +85,6 @@ var AdminAgenciesView = Backbone.View.extend({
   initializeFileUpload: function () {
     $('#fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image' },
       add: function (e, data) {
@@ -97,8 +96,7 @@ var AdminAgenciesView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        var info = JSON.parse($(data.result).text())[0];
-        this.updatePhoto(info.id);
+        this.updatePhoto(data.result.id);
         $('#file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),

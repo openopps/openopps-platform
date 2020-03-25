@@ -319,7 +319,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   initializeFileUpload: function () {
     $('#fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
@@ -331,8 +330,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        var info = JSON.parse($(data.result).text())[0];
-        this.community.set('imageId', info.id);
+        this.community.set('imageId', data.result.id);
         if (this.community.get('id')) {
           this.updatePhoto();
         } else {
@@ -357,7 +355,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   initializeBannerFileUpload: function () {
     $('#banner-fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image' },
       add: function (e, data) {
@@ -369,8 +366,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#banner-file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        var info = JSON.parse($(data.result).text())[0];
-        this.community.attributes.banner.backgroundImageId = info.id;
+        this.community.attributes.banner.backgroundImageId = data.result.id;
         if (this.community.get('id')) {
           this.updateBackgroundImage();
         } else {

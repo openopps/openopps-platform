@@ -1,5 +1,5 @@
 <% if (filters.community && filters.community.banner.hasBackgroundImage == 'true' && filters.community.banner.backgroundImageId) { %>
-  <div class="usajobs-grid usajobs-open-opps-search__box background-image" style="background-image:url('/api/community/backgroundImage/get/<%- filters.community.id %>');">
+  <div class="usajobs-grid usajobs-open-opps-search__box background-image" style="background-image:url('/api/document/image/<%- filters.community.banner.backgroundImageId %>');">
 <% } else if (filters.community && filters.community.banner.color) { %>
   <div class="usajobs-grid usajobs-open-opps-search__box" style="background-color: <%- filters.community.banner.color %>">
 <% } else { %>
@@ -8,7 +8,7 @@
   <div class="usa-width-one-whole">
     <div class="search__box-search">
       <% if (filters.community && filters.community.imageId) { %>
-        <img src="/api/community/logo/get/<%- filters.community.id %>" alt="<%- filters.community.banner.title %> community logo" class="community-logo">
+        <img src="/api/document/image/<%- filters.community.imageId %>" alt="<%- filters.community.banner.title %> community logo" class="community-logo">
       <% } %>
       <h1 <% if(filters.community && filters.community.banner.titleColor) { %>style="color:<%- filters.community.banner.titleColor %>"<% } %>><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
       <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>

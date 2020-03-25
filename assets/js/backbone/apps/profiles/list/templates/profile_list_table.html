@@ -5,7 +5,7 @@
         <div class="people-search-result__figure-body">
           <div class="people-search-result__figure <%- getInitialsColor(person.id) %>">
             <% if (person.photoId) { %>
-              <img src="/api/user/photo/<%- person.id %>" alt="Profile picture of <%- person.name %>">
+              <img src="/api/document/image/<%- person.photoId %>" alt="Profile picture of <%- person.name %>">
             <% } else { %>
               <div class="people-search-result__initials"><%- getInitials(person.name) %></div>
             <% } %>

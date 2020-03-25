@@ -1,6 +1,6 @@
 <h3><i class="fa fa-image"></i><span class="box-icon-text">Logo</h3>
 <% if (agency.imageId) { %>
-  <img id="agency-logo" src="/api/upload/get/<%- agency.imageId %>" alt="<%- agency.name %> logo">
+  <img id="agency-logo" src="/api/document/image/<%- agency.imageId %>" alt="<%- agency.name %> logo">
 <% } %>
 <div class="fileinput-button">
 <span><%- agency.imageId ? 'Update logo' : 'Upload logo' %>
