@@ -3,7 +3,7 @@
   <h2>Display & Appearance</h2>
   <div id="image-logo">
     <% if (imageId) { %>
-        <img id="profile-picture" src="/api/community/logo/get/<%- communityId %>" alt="Banner logo of <%- name %>">
+        <img id="profile-picture" src="/api/document/image/<%- imageId %>" alt="Banner logo of <%- name %>">
     <% } %>
     <div class="fileinput-button">
     <span><%- imageId ? 'Update logo' : 'Upload logo' %>
@@ -112,7 +112,7 @@
     <div id="background-photo-banner" class="form-group required-input hide">
       <div id="image-background">
         <% if (banner.backgroundImageId) { %>
-            <img id="profile-picture" src="/api/community/backgroundImage/get/<%- communityId %>" alt="Banner image of <%- name %>">
+            <img id="profile-picture" src="/api/document/image/<%- banner.backgroundImageId %>" alt="Banner image of <%- name %>">
         <% } %>
         <div class="fileinput-button">
         <span><%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>

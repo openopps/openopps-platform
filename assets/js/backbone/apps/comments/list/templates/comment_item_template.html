@@ -1,15 +1,10 @@
 <li class="comment-item clearfix">
   <div class="comment-content">
   
-    <!-- <div class="comment-image">
-      <div class="project-people-div" data-userid="<%- userId %>">
-        <img src="/api/user/photo/<%- userId %>" alt="<%- user.name %>" class="project-people" />
-      </div>
-    </div> -->
     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
       <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(userId) %>" data-userid="<%- userId %>" data-voluserid="<%- userId %>">
         <% if (user.photoId) { %>
-          <img src="/api/user/photo/<%- userId %>" alt="Profile picture of <%- name %>">
+          <img src="/api/document/image/<%- user.photoId %>" alt="Profile picture of <%- name %>">
         <% } else { %>
           <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(user.name) %></div>
         <% } %>

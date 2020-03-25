@@ -20,7 +20,7 @@
               <a href="/profile/<%- p.id %>">
                 <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(p.id) %> space">
                   <% if (p.photoId) { %>
-                    <img src="/api/user/photo/<%- p.id %>" alt="Profile picture of <%- p.name %>">
+                    <img src="/api/document/image/<%- p.photoId %>" alt="Profile picture of <%- p.name %>">
                   <% } else { %>
                     <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(p.name) %></div>
                   <% } %>

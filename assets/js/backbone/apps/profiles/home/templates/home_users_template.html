@@ -18,7 +18,7 @@
                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                   <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(u.id) %>">
                     <% if (u.photoId) { %>
-                      <img src="/api/user/photo/<%- u.id %>" alt="Profile picture of <%- u.name %>">
+                      <img src="/api/document/image/<%- u.photoId %>" alt="Profile picture of <%- u.name %>">
                     <% } else { %>
                       <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(u.name) %></div>
                     <% } %>
@@ -58,7 +58,7 @@
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(u.id) %>">
                       <% if (u.photoId) { %>
-                        <img src="/api/user/photo/<%- u.id %>" alt="Profile picture of <%- u.name %>">
+                        <img src="/api/document/image/<%- u.photoId %>" alt="Profile picture of <%- u.name %>">
                       <% } else { %>
                         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(u.name) %></div>
                       <% } %>

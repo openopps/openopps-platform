@@ -12,7 +12,7 @@
           <div class="usa-width-one-whole">
             <div class="search__box-search">
               <% if (filters.community && filters.community.imageId) { %>
-                <img src="/api/community/logo/get/<%- filters.community.id %>" alt="<%- filters.community.banner.title %> community logo" class="community-logo">
+                <img src="/api/document/image/<%- filters.community.imageId %>" alt="<%- filters.community.banner.title %> community logo" class="community-logo">
               <% } %>
               <h1 <% if(filters.community && filters.community.banner.titleColor) { %>style="color:<%- filters.community.banner.titleColor %>"<% } %>><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
               <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>

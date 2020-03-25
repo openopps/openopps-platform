@@ -97,18 +97,11 @@
       <div class="usajobs-open-opps-opportunity-requestor__wrapper">
         <div class="usajobs-open-opps-opportunity-requestor">
           <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-            <!-- <div class="usajobs-open-opps-opportunity-requestor__figure <% if (item.owner) { %><%- getInitialsColor(item.owner.id) %><% } %>" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>> -->
             <div class="usajobs-open-opps-opportunity-requestor__figure">
-              <!-- <% if (item.owner.photoId) { %>
-                <img src="/api/user/photo/<%- item.owner.id %>" alt="<%- item.owner.name %>">
-              <% } else { %>
-                <div class="usajobs-open-opps-opportunity-requestor__initials"><%- item.owner.initials %></div>
-              <% } %> -->
               <img src="/img/logo/png/dos-student-internship-program-logo.png" alt="Student Internship Program (Unpaid)">
             </div>
             <div class="usajobs-open-opps-opportunity-requestor__body">
               <p class="usajobs-open-opps-opportunity-requestor__name">
-                <!-- <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %> -->
                 <% if (item.community.shortName == 'Student Internship Program (Unpaid)') { %>
                   U.S. Department of State
                 <% } else { %>
@@ -116,7 +109,6 @@
                 <% } %>
               </p>
               <span class="usajobs-open-opps-opportunity-requestor__on">
-                  <!-- Posted on <%- moment(item.publishedAt).format('MM/DD/YY') %> -->
                 <% if (item.community.shortName) { %>
                   <%- item.community.shortName %>
                 <% } else { %>
@@ -125,11 +117,6 @@
               </span>
             </div>
           </div>
-          <!-- <div class="usajobs-open-opps-opportunity-requestor__status">
-            <div class="usajobs-pill--opportunity-status status-<%= item.status.toLowerCase().replace(' ', '-') %>">
-              <%= item.status.charAt( 0 ).toUpperCase() + item.status.slice( 1 ) %>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
