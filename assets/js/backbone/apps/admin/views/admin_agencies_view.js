@@ -73,9 +73,9 @@ var AdminAgenciesView = Backbone.View.extend({
         }
         var template = _.template(AdminAgencyTasks)(data);
         $('#search-results-loading').hide();
-        self.$('.task-metrics').html(template);
+        self.$('.task-metrics-agency').html(template);
         self.$el.localize();
-        self.$('.task-metrics').show();
+        self.$('.task-metrics-agency').show();
         self.$('.group').val(group);
         self.$('input[name=type][value="' + filter +'"]').prop('checked', true);
       }.bind(this),

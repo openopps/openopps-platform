@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const DateCodeGenerator = require('./dateCodeGenerator');
 
-function VolunteerMetrics (volunteers,tasks, group) {
+function VolunteerMetrics (volunteers,filter,tasks, group) {
   this.volunteers = volunteers;
   this.tasks = tasks;
+  this.filter=filter;
   this.codeGenerator = new DateCodeGenerator(group);
   this.metrics = {};
 }
@@ -23,6 +24,7 @@ _.extend(VolunteerMetrics.prototype, {
   },
   groupVolunteers: function () {
     var codeGenerator = this.codeGenerator;
+    this.volunteers=  this.filterVolunteers(this.volunteers);
     this.groupedVolunteer = _.groupBy(this.volunteers, function (volunteer) {
       return codeGenerator.create(volunteer.completedAt);
     });
@@ -34,6 +36,23 @@ _.extend(VolunteerMetrics.prototype, {
 
     this.metrics.volunteers = volunteerMetrics;
     this.done();
+  },
+
+  filterVolunteers: function (tasks) {
+    if (this.filter) {
+      var filter = this.filter;
+      if(filter == 'Part-time' || filter == 'Full-time'){
+        tasks= _.filter(tasks,function (task){
+          return task.detailSelection == filter;
+        });
+      }  
+      else{
+        tasks = _.filter(tasks, function (task) {
+          return task.tagname=== filter;
+        });
+      }
+    }
+    return tasks;
   },
 });
 

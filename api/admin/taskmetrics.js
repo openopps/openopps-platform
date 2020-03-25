@@ -29,9 +29,16 @@ _.extend(TaskMetrics.prototype, {
   filterTasks: function (tasks) {
     if (this.filter) {
       var filter = this.filter;
-      tasks = _.filter(tasks, function (task) {
-        return _.find(task.tags, { name: filter });
-      });
+      if(filter == 'Part-time' || filter== 'Full-time'){
+        tasks= _.filter(tasks,function (task){
+          return task.detailSelection == filter;
+        });
+      }   
+      else{
+        tasks = _.filter(tasks, function (task) {
+          return _.find(task.tags, { name: filter });
+        });
+      }
     }
     return tasks;
   },
@@ -58,7 +65,7 @@ _.extend(TaskMetrics.prototype, {
   },
 
   generateVolunteerMetrics: function (next) {
-    var generator = new VolunteerMetrics(this.volunteers,this.tasks,this.group); 
+    var generator = new VolunteerMetrics(this.volunteers,this.filter,this.tasks,this.group); 
     generator.calculate(function () {
       _.extend(this.metrics, generator.metrics);
       next();
