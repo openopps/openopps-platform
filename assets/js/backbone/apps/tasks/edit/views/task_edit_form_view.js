@@ -634,7 +634,7 @@ var TaskEditFormView = Backbone.View.extend({
     if(e) {
       $(e.currentTarget).addClass('selected');
     } else {
-      var timeRequired = _.find(this.data.data.tags, { type: 'task-time-required'});
+      var timeRequired = _.find(this.data.data.tags, { type: 'task-time-required'});   
       if(timeRequired) {
         $('[value="' + timeRequired.name + '"]').addClass('selected');
       } else {
@@ -730,7 +730,11 @@ var TaskEditFormView = Backbone.View.extend({
       $('#lateral-section').show(); 
     }
     else{
-      $('#lateral-section').hide(); 
+      $('#lateral-section').hide();    
+      this.data.data.tags = _.reject(this.data.data.tags, function (tag){
+        return tag.name =='Lateral';
+      });
+      this.toggleTimeOptions();    
     } 
   },
 
