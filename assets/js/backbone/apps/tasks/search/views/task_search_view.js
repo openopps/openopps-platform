@@ -313,9 +313,15 @@ var TaskListView = Backbone.View.extend({
             return filter != value;
           }
         });
+        if(type == 'time' && value == 'Detail') {
+          delete this.filters.detailSelection;
+        } 
       }
     } else if (_.isEqual(this.filters[type], value) || this.filters[type] == value) {
       delete this.filters[type];
+      if(type == 'time' && value == 'Detail') {
+        delete this.filters.detailSelection;
+      } 
     }
     this.filters.page = 1;
     this.filter();
@@ -366,7 +372,7 @@ var TaskListView = Backbone.View.extend({
     this.initializeSelect2();
     this.initializeInputGrade();
     this.initializePayPlanSelect2();
-    this.displayPayPlanGrade();
+    this.displayDetails();
 
     setTimeout(function () {
       this.initializeCommunitySelect2();
@@ -572,7 +578,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   timeFilter: function (event) {
-    this.displayPayPlanGrade(); 
+    this.displayDetails(); 
     this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
       return value;
     });
@@ -588,14 +594,17 @@ var TaskListView = Backbone.View.extend({
     this.filter();
   },
 
-  displayPayPlanGrade : function (){
+  displayDetails : function (){
     if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
-      $('#pay-scale-grade').show();  
+      $('#pay-scale-grade').show(); 
     }
     else {  
+      $("input[name='full-time']:checkbox").prop('checked', false);
+      $("input[name='part-time']:checkbox").prop('checked', false);
       $('#pay-scale-grade').hide();  
       delete this.filters.grade;
       delete this.filters.payPlan;
+      delete this.filters.detailSelection;
     }
   },
 
