@@ -7,13 +7,13 @@
     <% } %>
     <div class="fileinput-button">
     <span><%- imageId ? 'Update logo' : 'Upload logo' %>
-        <label class="sr-only" for="fileupload">Upload logo</label>
-        <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
+      <label class="sr-only" for="fileupload">Upload logo</label>
+      <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update logo' : 'Upload logo' %>" />
     </span>
     </div>
     <div class="fileinput-button">
     <% if (imageId) { %>
-        <a href=# id="photo-remove">Remove</a>
+      <a href=# id="photo-remove">Remove</a>
     <% } %>
     </div>
   </div>
@@ -22,10 +22,10 @@
   </div>
   
   <div class="form-group required-input">
-      <label for="display-title" class="usa-input-optional">Title</label>
-      <span class="field-validation-error error-html" style="display:none;">The special characters '
-        < ' or '>' are not allowed</span>
-      <input type="text" id="display-title" class="fullwidth form-control validate"  data-validate="html" />
+    <label for="display-title" class="usa-input-optional">Title</label>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '
+      < ' or '>' are not allowed</span>
+    <input type="text" id="display-title" class="fullwidth form-control validate"  data-validate="html" />
   </div>
   <div class="form-group required-input">
     <label for="display-title-color-text" class="usa-input-optional">Title color</label>
@@ -40,10 +40,10 @@
     </div>
   </div>
   <div class="form-group required-input">
-      <label for="display-subtitle" class="usa-input-optional">Subtitle</label>
-      <span class="field-validation-error error-html" style="display:none;">The special characters '
-        < ' or '>' are not allowed</span>
-      <input type="text" id="display-subtitle" class="fullwidth form-control validate"  data-validate="html" />
+    <label for="display-subtitle" class="usa-input-optional">Subtitle</label>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '
+      < ' or '>' are not allowed</span>
+    <input type="text" id="display-subtitle" class="fullwidth form-control validate"  data-validate="html" />
   </div>
   <div class="form-group required-input">
     <label for="display-subtitle-color-text" class="usa-input-optional">Subtitle color</label>
@@ -58,23 +58,23 @@
     </div>
   </div>
   <div class="form-group required-input">
-      <label for="display-description">Description<span class="usa-input-optional"></span></label>
-      <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
-      <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-      <textarea id="display-description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
-      <p class="usajobs-form__help-brief" id="display-description-count">(500 characters remaining)</p>
+    <label for="display-description">Description<span class="usa-input-optional"></span></label>
+    <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+    <textarea id="display-description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
+    <p class="usajobs-form__help-brief" id="display-description-count">(500 characters remaining)</p>
   </div>
   <div class="form-group required-input">
-      <label for="display-description-color-text" class="usa-input-optional">Description color</label>
-      <div class="usajobs-grid-full display-color-group">
-        <div class="usa-width-three-fourths">
-          <input type="text" class="color-input" value="" id="display-description-color-text"/>
-        </div>
-        <div class="usa-width-one-fourth">
-            <input type="color" class="color-button" value="#ffffff" id="display-description-color"/>
-            <label for="display-description-color" class="sr-only">Description color preview</label>
-        </div>
+    <label for="display-description-color-text" class="usa-input-optional">Description color</label>
+    <div class="usajobs-grid-full display-color-group">
+      <div class="usa-width-three-fourths">
+        <input type="text" class="color-input" value="" id="display-description-color-text"/>
       </div>
+      <div class="usa-width-one-fourth">
+          <input type="color" class="color-button" value="#ffffff" id="display-description-color"/>
+          <label for="display-description-color" class="sr-only">Description color preview</label>
+      </div>
+    </div>
   </div>
 
   <div class="form-group required-input usa-fieldset-inputs">
@@ -112,17 +112,17 @@
     <div id="background-photo-banner" class="form-group required-input hide">
       <div id="image-background">
         <% if (banner.backgroundImageId) { %>
-            <img id="profile-picture" src="/api/document/image/<%- banner.backgroundImageId %>" alt="Banner image of <%- name %>">
+          <img id="profile-picture" src="/api/document/image/<%- banner.backgroundImageId %>" alt="Banner image of <%- name %>">
         <% } %>
         <div class="fileinput-button">
         <span><%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>
-            <label class="sr-only" for="banner-fileupload">Upload image</label>
-            <input id="banner-fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update image' : 'Upload image' %>" />
+          <label class="sr-only" for="banner-fileupload">Upload image</label>
+          <input id="banner-fileupload" type="file" name="files[]" accept="image/*" title="<%- imageId ? 'Update image' : 'Upload image' %>" />
         </span>
         </div>
         <div class="fileinput-button">
         <% if (banner.backgroundImageId) { %>
-            <a href=# id="photo-remove">Remove</a>
+          <a href=# id="photo-remove">Remove</a>
         <% } %>
         </div>
       </div>
@@ -139,12 +139,29 @@
       <input type="text" id="vanityURL" class="fullwidth form-control validate" />
     </div>
   </div>
+
+  <div class="form-group" id="usajobsSearchUrlFormGroup">
+    <label for="usajobsSearchUrl" class="usa-input-optional">USAJOBS search URL</label>
+    <span class="field-validation-error" style="display:none;">You must enter a valid URL.</span>
+    <div class="usajobs-grid-full display-color-group">
+      <input type="text" id="usajobsSearchUrl" class="fullwidth form-control" />
+    </div>
+  </div>
+
+  <div class="form-group" id="usajobsSearchUrlLinkText">
+    <label for="usajobsSearchUrlLabel" class="usa-input">USAJOBS search URL link text</label>
+    <span class="field-validation-error error-empty" style="display:none;">You must enter link text.</span>
+    <div class="usajobs-grid-full display-color-group">
+      <input type="text" id="usajobsSearchUrlLabel" class="fullwidth form-control" data-validate="empty,html" />
+    </div>
+    <span class="usajobs-form__help-brief">Looking for [link text]?</span>
+  </div>
 </fieldset>
 <fieldset class="usajobs-fieldset usa-form-xl">
-    <legend class="usa-sr-only">Preview</legend>
-    <div class="usajobs-button_bar--slim">
-      <div class="usajobs-button_bar__body">
-        <a href="#" class="usa-button usa-button-secondary usa-button-left" id="community-preview">Preview</a>
-      </div>
+  <legend class="usa-sr-only">Preview</legend>
+  <div class="usajobs-button_bar--slim">
+    <div class="usajobs-button_bar__body">
+      <a href="#" class="usa-button usa-button-secondary usa-button-left" id="community-preview">Preview</a>
     </div>
-  </fieldset>
+  </div>
+</fieldset>

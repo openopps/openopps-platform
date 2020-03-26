@@ -6,7 +6,10 @@
     <h1 style="color: <%- banner.titleColor %>"><%- banner.title %></h1>
     <h3 id="search__box-subtitle" style="color: <%- banner.subtitleColor %>"><%- banner.subtitle %></h3>
     <p class="search__box-content description" style="color: <%- banner.descriptionColor %>"><%- banner.description || 'Gain experience with hands-on training, share your expertise and work with others across the government.' %></p>
-    <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+    <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
+    <% if(banner.usajobsSearchUrl) { %>
+      <p>Looking for <a href="<%- banner.usajobsSearchUrl %>" target="_blank" rel="noopener noreferrer"><%- banner.usajobsSearchUrlLabel %>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
+    <% } %>
   </div>
   <label for="search" class="search__box-label">
     <span class="fas fa-search search-icon" style="color: <%- banner.descriptionColor %>"></span>
