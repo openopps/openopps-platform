@@ -813,9 +813,15 @@ module.exports.assignParticipant = async function (ctx, data, done) {
 };
 
 module.exports.getAgencies = async function () {
-  var departments = await dao.Agency.find('code in (select parent_code from agency where parent_code is not null)');
+  var departments = await dao.Agency.find('code in (select parent_code from agency where parent_code is not null) and is_disabled = false');
+  departments= _.sortBy(departments, function (d){
+    return d.name.toLowerCase().trim();
+  });
   await Promise.all(departments.map(async (department) => {
-    department.agencies = await dao.Agency.find('parent_code = ?', department.code);
+    department.agencies = await dao.Agency.find('parent_code = ? and is_disabled = false', department.code);
+    department.agencies= _.sortBy(department.agencies, function (d){
+      return d.name.toLowerCase().trim();
+    });
   }));
   return departments;
 };
