@@ -75,6 +75,7 @@ var TaskListView = Backbone.View.extend({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
+      marked: marked,
       agencyName: this.userAgency.name,
       term: this.filters.term,
       filters: this.filters,
@@ -94,12 +95,18 @@ var TaskListView = Backbone.View.extend({
       placeholder: '',
       user: window.cache.currentUser,
       ui: UIConfig,
+      marked: marked,
       agencyName: this.userAgency.name,
       term: this.filters.term,
       filters: this.filters,
       taskFilteredCount: this.taskFilteredCount,
       appliedFilterCount: this.appliedFilterCount,
     }));
+    if (this.filters.community) {
+      $('.usajobs-alert--covid19').hide();
+    } else {
+      $('.usajobs-alert--covid19').show();
+    }
   },
 
   initializeKeywordSearch: function () {
