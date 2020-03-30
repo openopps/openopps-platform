@@ -240,12 +240,12 @@
               <% } %>
               <% if (model.requirement) { %>
                 <h3>Requirements</h3> 
-                <%= model.requirement %>
+                <%= model.requirementHtml %>
               <% } %>         
               <% if (model.applyAdditional) { %>     
                 <h3>How to apply</h3>
                 <div>
-                <%= model.applyAdditional %>
+                <%= model.applyAdditionalHtml %>
               </div>
               <% } %>
               <% if (madlibTags['keywords']) { %>
