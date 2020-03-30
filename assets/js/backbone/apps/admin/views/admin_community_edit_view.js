@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var marked = require('marked');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
@@ -981,6 +982,7 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   preview: function (e) {
     var data = this.getDataFromPage();
+    data.marked = marked;
     var modalContent = _.template(AdminCommunityPreviewTemplate)(data);
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
