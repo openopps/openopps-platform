@@ -41,6 +41,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #photo-remove'                     : 'removeImage',
     'click #image-remove'                     : 'removeImage',
     'change [name=background-group]'          : 'toggleBackgroundDisplay',
+    'blur #usajobsSearchUrl'                  : 'validateUsajobsSearchUrlLabel',
   },
 
   initialize: function (options) {
@@ -81,7 +82,10 @@ var AdminCommunityEditView = Backbone.View.extend({
       this.initializeFileUpload();
       this.initializeBannerFileUpload();
       this.initializeCounts();
-      $('#search-results-loading').hide();   
+      $('#search-results-loading').hide();
+      setTimeout(() => {
+        this.showUsajobsSearchUrlLinkText();
+      }, 50);
     }
     return this;
   },
@@ -157,6 +161,11 @@ var AdminCommunityEditView = Backbone.View.extend({
       $('#background-color-banner').show();
     }
     $('#vanityURL').val(community.vanityUrl);
+    $('#usajobsSearchUrl').val(community.usajobsSearchUrl);
+    $('#usajobsSearchUrlLabel').val(community.usajobsSearchUrlLabel);
+    if (!community.usajobsSearchUrl) {
+      $('#usajobsSearchUrlLinkText').hide();
+    }
   },
 
   updateColorTextField: function (e) {
@@ -203,13 +212,19 @@ var AdminCommunityEditView = Backbone.View.extend({
         hasBackgroundImage: $("input[name='background-group']:checked").val(),
         backgroundImageId: this.community ? this.community.attributes.banner.backgroundImageId: null,
         color: $('#display-banner-color-text').val(),
+        usajobsSearchUrl: $('#usajobsSearchUrl').val(),
+        usajobsSearchUrlLabel: $('#usajobsSearchUrlLabel').val(),
       };
       modelData.vanityUrl = $('#vanityURL').val();
+      modelData.usajobsSearchUrl = $('#usajobsSearchUrl').val();
+      modelData.usajobsSearchUrlLabel = $('#usajobsSearchUrlLabel').val();
     } else {
       modelData.banner = _.extend(this.community.get('banner'), {
         title: $('#display-title').val(),
         subtitle: $('#display-subtitle').val(),
         description: $('#display-description').val(),
+        usajobsSearchUrl: $('#usajobsSearchUrl').val(),
+        usajobsSearchUrlLabel: $('#usajobsSearchUrlLabel').val(),
       });
     }
     return modelData;
@@ -1003,6 +1018,39 @@ var AdminCommunityEditView = Backbone.View.extend({
       $('#background-photo-banner').hide();
       $('#background-color-banner').show();
       $('#background-group').prop('checked', false);
+    }
+  },
+
+  showUsajobsSearchUrlLinkText: function () {
+    $('#usajobsSearchUrlLinkText').hide();
+    if ( $('#usajobsSearchUrl').val() ) {
+      $('#usajobsSearchUrlLinkText').show();
+    }
+  },
+
+  validateUsajobsSearchUrlLabel: function (e) {
+    if ( $(event.target).val() ) {
+      $('#usajobsSearchUrlLinkText').show();
+      $('#usajobsSearchUrlLinkText').addClass('required-input');
+      $('#usajobsSearchUrl').addClass('validate');
+      $('#usajobsSearchUrlLabel').addClass('validate');
+    } else {
+      $('#usajobsSearchUrlLinkText').hide();
+      $('#usajobsSearchUrlLinkText').removeClass('required-input');
+      $('#usajobsSearchUrl').removeClass('validate');
+      $('#usajobsSearchUrlLabel').removeClass('validate');
+    }
+    
+    var theInput = e.currentTarget;
+    // var urlValue = (theInput.value.match(/^(http:\/\/|https:\/\/)[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i) || [])[0];
+    var urlValue = (theInput.value.match(/^(http:\/\/|https:\/\/)[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i))[0];
+    if(!urlValue) {
+      $('#usajobsSearchUrlFormGroup').addClass('usa-input-error');
+      $('#usajobsSearchUrlFormGroup .field-validation-error').show();
+      $('#usajobsSearchUrlFormGroup').get(0).scrollIntoView();
+    } else {
+      $('#usajobsSearchUrlFormGroup').removeClass('usa-input-error');
+      $('#usajobsSearchUrlFormGroup .field-validation-error').hide();
     }
   },
 
