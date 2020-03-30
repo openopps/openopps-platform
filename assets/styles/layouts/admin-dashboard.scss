@@ -771,7 +771,7 @@
   }
 
   @include media($M) {
-    h1, h3, p.description {
+    h1, h3, p.description, div.description {
       width: calc(100% - 13.5rem);
     }
 

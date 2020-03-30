@@ -1,4 +1,15 @@
 <section class="usajobs-canvas">
+  <div class="usa-alert usajobs-alert usajobs-alert--covid19" role="alert" data-object="alert" style="margin:0;">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <p class="usa-alert-text">
+        <strong><a style="color:#212121" href="/community/COVID19">COVID-19 Surge Response Community</a></strong> - In response to the National Emergency declared for Coronavirus Disease 2019 (COVID-19), federal agencies can post details, micro-details, and temporary rotational assignments on the platform for federal employees who can support the COVID-19 response.
+      </p>
+    </div>
+  </div>
   <div class="usajobs-content-gutter usajobs-open-opps-search">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
       <div id="search-banner">
@@ -16,7 +27,7 @@
               <% } %>
               <h1 <% if(filters.community && filters.community.banner.titleColor) { %>style="color:<%- filters.community.banner.titleColor %>"<% } %>><% if(filters.community && filters.community.banner.title) { %><%- filters.community.banner.title %><% } else { %>Search for opportunities<% } %></h1>
               <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>
-              <p class="search__box-content description" <% if(filters.community && filters.community.banner.descriptionColor) { %>style="color:<%- filters.community.banner.descriptionColor %>"<% } %>><% if(filters.community && filters.community.banner.description) { %><%- filters.community.banner.description %><% } else { %>Gain experience with hands-on training, share your expertise and work with others across the government.<% } %></p>
+              <div class="search__box-content description" <% if(filters.community && filters.community.banner.descriptionColor) { %>style="color:<%- filters.community.banner.descriptionColor %>"<% } %>><% if(filters.community && filters.community.banner.description) { %><%= marked(filters.community.banner.description) %><% } else { %>Gain experience with hands-on training, share your expertise and work with others across the government.<% } %></div>
               <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
             </div>
             <label for="search" class="search__box-label">
