@@ -54,7 +54,7 @@ var TaskEditFormView = Backbone.View.extend({
     TaskFormViewHelper.annotateTimeRequired(options.tagTypes['task-time-required'], this.agency);
     this.tagSources = options.tagTypes;  // align with naming in TaskFormView, so we can share completionDate 
     this.initializeListeners();
-
+    
     this.listenTo(this.options.model, 'task:update:success', function (data) {
       Backbone.history.navigate('tasks/' + data.attributes.id, { trigger: true });
       if(data.attributes.state == 'submitted') {
@@ -567,7 +567,7 @@ var TaskEditFormView = Backbone.View.extend({
     if(showPreview) {
       $('#search-results-loading').show();
       var data = this.getDataFromPage();
-      _.each(['description', 'details', 'outcome', 'about'], function (part) {
+      _.each(['description', 'details', 'outcome', 'about', 'applyAdditional', 'requirement'], function (part) {
         if(data[part]) {
           data[part + 'Html'] = marked(data[part]);
         }
@@ -724,9 +724,9 @@ var TaskEditFormView = Backbone.View.extend({
     var selectedCommunity = $('#federal-programs').val(); 
     var agencyCommunity =_.filter(this.communities.federal, function (community){
       return community.communityId == selectedCommunity;
-    });
+    });  
     if(agencyCommunity.length && agencyCommunity[0].communityType == 3)
-    {
+    {        
       $('#lateral-section').show(); 
     }
     else{
