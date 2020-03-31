@@ -77,6 +77,38 @@
     </div>
   </div>
 
+  <div class="form-group required-input">
+    <label for="display-button-color-text" class="usa-input-optional">Search button color</label>
+    <div class="usajobs-grid-full display-color-group">
+      <div class="usa-width-three-fourths">
+        <input type="text" class="color-input" value="" id="display-button-color-text"/>
+      </div>
+      <div class="usa-width-one-fourth">
+        <input type="color" class="color-button" value="#ffffff" id="display-button-color"/>
+        <label for="display-button-color" class="sr-only">Search button color preview</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group required-input usa-fieldset-inputs">
+    <h5 class="usa-input-optional">Search button text color</h5>
+    <fieldset class="usajobs-fieldset">
+      <legend class="usa-sr-only">Select Search button text color</legend>
+      <p class="label-brief">Which color do you want to use for the text of the Search button?</p>
+      <span class="field-validation-error" style="display:none;" >Please select Black or White.</span>
+      <ul class="usa-unstyled-list" id="background-group">
+        <li>
+          <input id="button-text-color" name="button-text-group" type="radio" value="black"/>
+          <label for="button-text-color">Black</label>
+        </li>
+        <li>
+          <input id="button-text-photo" name="button-text-group" type="radio" value="white"/>
+          <label for="button-text-photo">White</label>
+        </li>
+      </ul>
+    </fieldset>
+  </div>
+
   <div class="form-group required-input usa-fieldset-inputs">
     <h5 class="usa-input-optional">Background type</h5>
     <fieldset class="usajobs-fieldset">

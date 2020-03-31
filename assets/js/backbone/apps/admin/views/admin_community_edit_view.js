@@ -29,10 +29,12 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click .delete-office'                    : 'deleteOffice',
     'change #display-title-color'             : 'updateColorTextField',
     'change #display-subtitle-color'          : 'updateColorTextField',
+    'change #display-button-color'            : 'updateColorTextField',
     'change #display-description-color'       : 'updateColorTextField',
     'change #display-banner-color'            : 'updateColorTextField',
     'change #display-title-color-text'        : 'updateColorField',
     'change #display-subtitle-color-text'     : 'updateColorField',
+    'change #display-button-color-text'       : 'updateColorField',
     'change #display-description-color-text'  : 'updateColorField',
     'change #display-banner-color-text'       : 'updateColorField',
     'click #community-preview'                : 'preview',
@@ -148,6 +150,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#display-subtitle').val(community.banner.subtitle);
     $('#display-subtitle-color-text').val(community.banner.subtitleColor);
     $('#display-subtitle-color').val(community.banner.subtitleColor || this.defaultTextColor);
+    $('#display-button-color-text').val(community.banner.buttonColor);
+    $('#display-button-color').val(community.banner.buttonColor || this.defaultTextColor);
+    $('input[name=button-text-group][value=' + community.banner.buttonTextColor +']').prop('checked', true);
     $('#display-description').val(community.banner.description);
     $('#display-description-color-text').val(community.banner.descriptionColor);
     $('#display-description-color').val(community.banner.descriptionColor || this.defaultTextColor);
@@ -206,6 +211,8 @@ var AdminCommunityEditView = Backbone.View.extend({
         titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
         subtitleColor: $('#display-subtitle-color-text').val(),
+        buttonColor: $('#display-button-color-text').val(),
+        buttonTextColor: $("input[name='button-text-group']:checked").val(),
         description: $('#display-description').val(),
         descriptionColor: $('#display-description-color-text').val(),
         hasBackgroundImage: $("input[name='background-group']:checked").val(),
