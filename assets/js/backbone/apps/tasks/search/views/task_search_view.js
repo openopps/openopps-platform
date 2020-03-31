@@ -20,7 +20,7 @@ var TaskListView = Backbone.View.extend({
   events: {
     'click #search-button'                    : 'search',
     'change #stateFilters input'              : 'stateFilter',
-    'change #timeFilters input'               : 'timeFilter',
+    'change #timeFilters > li > input'        : 'timeFilter',
     'change #detailFilters input'             : 'detailFilter',
     'change input[name=location]'             : 'locationFilter',
     'click .stateFilters-toggle'              : 'toggleStateFilters',
@@ -354,7 +354,7 @@ var TaskListView = Backbone.View.extend({
     }
     if(!_.isEmpty(this.filters.payPlan) && _.isArray(this.filters.payPlan)) {
       this.filters.payPlan = _.pick(_.findWhere(this.tagTypes.payPlan, { code: this.filters.payPlan[0].name }), 'type','name','id');
-    }  
+    }    
     var compiledTemplate = _.template(TaskFilters)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -563,7 +563,7 @@ var TaskListView = Backbone.View.extend({
 
   toggleTimeFilters: function (event) {
     var behavior = $(event.currentTarget).data('behavior');
-    var checkBoxes = $('#timeFilters input[type="checkbox"]');
+    var checkBoxes = $('#timeFilters > li > input[type="checkbox"]');
     checkBoxes.prop('checked', behavior == 'select');
     this.timeFilter();
     var checkBoxes2 = $('#detailFilters input[type="checkbox"]');
@@ -585,12 +585,12 @@ var TaskListView = Backbone.View.extend({
   },
 
   timeFilter: function (event) {
-    this.displayDetails(); 
-    this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
+    this.filters.time = _($('#timeFilters > li > input:checked')).pluck('value').map(function (value) {
       return value;
     });
+    this.displayDetails(); 
     this.filters.page = 1;
-    this.filter(); 
+    this.filter();
   },
 
   detailFilter: function (event) {
@@ -602,16 +602,20 @@ var TaskListView = Backbone.View.extend({
   },
 
   displayDetails : function (){
-    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
-      $('#pay-scale-grade').show(); 
-    }
-    else {  
+    if($('#detail').is(':checked')) { 
+      $('#detailFilters').show();
+    } else {  
       $("input[name='full-time']:checkbox").prop('checked', false);
       $("input[name='part-time']:checkbox").prop('checked', false);
+      $('#detailFilters').hide();  
+      delete this.filters.detailSelection;
+    }
+    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
+      $('#pay-scale-grade').show(); 
+    } else {  
       $('#pay-scale-grade').hide();  
       delete this.filters.grade;
       delete this.filters.payPlan;
-      delete this.filters.detailSelection;
     }
   },
 
@@ -736,7 +740,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (key == 'location' || key == 'skill' || key == 'series' || key == 'detailSelection') {
+          } else if (key == 'location' || key == 'skill' || key == 'series') {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {
