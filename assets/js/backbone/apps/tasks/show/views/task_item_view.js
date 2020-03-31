@@ -85,7 +85,7 @@ var TaskItemView = BaseView.extend({
     }
 
     this.data['madlibTags'] = organizeTags(this.data.tags);
-    _.each(['description', 'details', 'outcome', 'about'], function (part) {
+    _.each(['description', 'details', 'outcome', 'about','applyAdditional','requirement'], function (part) {
       if(this.data.model[part]) {
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }

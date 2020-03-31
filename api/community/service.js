@@ -6,7 +6,7 @@ const Audit = require('../model/Audit');
 const Notification = require('../notification/service');
 const moment = require('moment-timezone');
 
-const communityTypes = [ 'Career', 'Program' ];
+const communityTypes = [ 'Career', 'Program','Agency' ];
 const durationTypes = [ 'Ad Hoc', 'Cyclical' ];
 const audienceTypes = [ 'Federal Employees', 'Students' ];
 

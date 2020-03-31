@@ -1,13 +1,14 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
-
 var marked = require('marked');
+var select2Custom = require('../../../../vendor/select2-3.4.6.custom');
 
 var AdminAgenciesTemplate = require('../templates/admin_agencies_template.html');
 var AdminAgencyTasks = require('../templates/admin_agency_task_metrics.html');
 var AdminAgenciesDashboardActivitiesTemplate = require('../templates/admin_agencies_dashboard_activities_template.html');
-
+var AdminAgencyImageTemplate = require('../templates/admin_agency_image_template.html');
+var Modal = require('../../../components/modal');
 var AdminTopContributorsView = require('./admin_top_contributors_view');
 
 var AdminAgenciesView = Backbone.View.extend({
@@ -18,6 +19,7 @@ var AdminAgenciesView = Backbone.View.extend({
     'change #agencies'        : 'changeAgency',
     'change .group'           : 'renderTasks', 
     'change input[name=type]' : 'renderTasks',
+    'click #logo-remove'      : 'removeLogo',
   },
 
   initialize: function (options) {
@@ -25,6 +27,7 @@ var AdminAgenciesView = Backbone.View.extend({
     this.adminMainView = options.adminMainView;
     this.agencyId = options.agencyId || window.cache.currentUser.agency.agency_id; 
   },
+
   render: function (replace) { 
     this.$el.show();
     this.loadAgencyData();
@@ -77,6 +80,94 @@ var AdminAgenciesView = Backbone.View.extend({
         self.$('input[name=type][value="' + filter +'"]').prop('checked', true);
       }.bind(this),
     });
+  },
+
+  initializeFileUpload: function () {
+    $('#fileupload').fileupload({
+      url: '/api/upload/create',
+      dataType: 'text',
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      formData: { 'type': 'image' },
+      add: function (e, data) {
+        $('#file-upload-progress-container').show();
+        data.submit();
+      }.bind(this),
+      progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('#file-upload-progress').css('width', progress + '%');
+      }.bind(this),
+      done: function (e, data) {
+        var info = JSON.parse($(data.result).text())[0];
+        this.updatePhoto(info.id);
+        $('#file-upload-progress-container').hide();
+        $('#file-upload-alert').hide();
+      }.bind(this),
+      fail: function (e, data) {
+        var message = data.jqXHR.responseText || data.errorThrown;
+        $('#file-upload-progress-container').hide();
+        if (data.jqXHR.status == 413) {
+          message = 'The uploaded file exceeds the maximum file size.';
+        }
+        $('#file-upload-alert-message').html(message);
+        $('#file-upload-alert').show();
+        window.scrollTo(0, 0);
+      }.bind(this),
+    });
+  },
+
+  renderLogoTemplate: function () {
+    var imageTemplate = _.template(AdminAgencyImageTemplate)({ agency: this.agency });   
+    $('#image-logo').html(imageTemplate);
+    setTimeout(() => {
+      this.initializeFileUpload();
+    }, 50);
+  },
+
+  updatePhoto: function (imageId) {
+    // TODO: Update agency record
+    $.ajax({
+      url: '/api/admin/agency/logo/' + this.agency.agencyId,
+      type: 'POST',
+      data: {
+        imageId: imageId,
+        agencyId: this.agency.agencyId,
+        updatedAt: this.agency.updatedAt,
+      }, 
+    }).done(function (data) {
+      this.agency.imageId = imageId;
+      this.agency.updatedAt = data.updatedAt;
+      this.renderLogoTemplate();
+    }.bind(this));
+  },
+
+  removeLogo: function (event) {
+    var deleteModal = new Modal({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Confirm image removal',
+      modalBody: 'Are you sure you want to remove the agency logo? <strong>This cannot be undone</strong>.',
+      primary: {
+        text: 'Remove',
+        action: function () {
+          $.ajax({
+            url: '/api/admin/agency/logo/remove/' + this.agency.imageId,
+            type: 'POST',
+            data: {
+              imageId: null,
+              agencyId: this.agency.agencyId,
+              updatedAt: this.agency.updatedAt,
+            }, 
+          }).done(function (data) {
+            this.agency.imageId = null;
+            this.agency.updatedAt = data.updatedAt;
+            this.renderLogoTemplate();
+          }.bind(this));
+          deleteModal.cleanup();
+        }.bind(this),
+      },
+    });
+    deleteModal.render();
   },
 
   quarter: function () {
@@ -205,12 +296,14 @@ var AdminAgenciesView = Backbone.View.extend({
         this.loadInteractionsData(function (interactions) {
           agencyInfo.interactions = interactions;
           agencyInfo.slug = (agencyInfo.abbr || '').toLowerCase();
+          this.agency = agencyInfo;
           var template = _.template(AdminAgenciesTemplate)({
             agency: agencyInfo,
             departments: this.options.departments,
           });
           this.$el.html(template);
           setTimeout(function () {
+            this.initializeFileUpload();
             this.fetchData(this);
             this.renderTasks();
           }.bind(this), 50);

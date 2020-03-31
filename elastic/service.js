@@ -48,14 +48,46 @@ service.remapUsers = async function () {
 
 service.reindexCycleOpportunities = async function (cycleId) {
   var records = await dao.cycleTasksToIndex(cycleId);
-  var bulk_request = [];
-  
-  for(i=0; i<records.length; i++){
-    bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
-    bulk_request.push(records[i]);
+  if (records.length) {
+    var bulk_request = [];
+    
+    for(i=0; i<records.length; i++){
+      bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
+      bulk_request.push(records[i]);
+    }
+    
+    await elasticClient.bulk({ body: bulk_request });
   }
-  
-  await elasticClient.bulk({ body: bulk_request });
+  return records;
+};
+
+service.reindexAgencyOpportunities = async function (agencyId) {
+  var records = await dao.agencyTasksToIndex(agencyId);
+  if (records.length) {
+    var bulk_request = [];
+    
+    for(i=0; i<records.length; i++){
+      bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
+      bulk_request.push(records[i]);
+    }
+    
+    await elasticClient.bulk({ body: bulk_request });
+  }
+  return records;
+};
+
+service.reindexCommunityOpportunities = async function (communityId) {
+  var records = await dao.communityTasksToIndex(communityId);
+  if (records.length) {
+    var bulk_request = [];
+    
+    for(i=0; i<records.length; i++){
+      bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
+      bulk_request.push(records[i]);
+    }
+    
+    await elasticClient.bulk({ body: bulk_request });
+  }
   return records;
 };
 
@@ -296,6 +328,8 @@ function convertSearchResultsToResultModel (searchResult) {
     outcome: source.outcome,
     about: source.about,
     grade: source.grade,
+    agencyId:source.agencyId,
+    agencyName: source.agencyName,
     restrictedToAgency: source.restrictedToAgency,
     requester: source.requester,
     publishedAt: source.publishedAt,
@@ -317,6 +351,7 @@ function convertSearchResultsToResultModel (searchResult) {
     bureau: source.bureau,
     office: source.office,
     payPlan:source.payPlan,
+    agency : source.agency,
   };
   removeEmpty(model);
   return model;

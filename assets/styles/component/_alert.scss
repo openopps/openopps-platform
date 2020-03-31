@@ -122,6 +122,10 @@
   @include alert($color-gold, $color-gold-lightest, 'warning');
 }
 
+.usajobs-alert--covid19 {
+  @include alert($color-gold, $color-gold, 'info');
+}
+
 .usajobs-alert--error {
   @include alert($color-secondary-dark, $color-secondary-lightest, 'error');
 }

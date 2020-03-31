@@ -12,6 +12,7 @@ var NoCurrentCycle = require('../templates/no_internship_search_results.html');
 var Pagination = require('../../../../components/pagination.html');
 var InternshipFilters = require('../templates/internship_filters.html');
 var InternshipCycle = require('../templates/internship_search_cycle_box.html');
+var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 
 var InternshipListView = Backbone.View.extend({
   events: {

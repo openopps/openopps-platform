@@ -14,7 +14,7 @@
         <span class="sr-only">Opens in a new window</span>
         </a>
         <h3>Filters</h3>
-        <h4 class="usajobs-search-filters__title">Status</h4>
+        <h4 class="usajobs-search-filters__title">Status</h4>               
         <% var numOfStates = _.filter(ui.states, function(state) { return (!state.hide || (user && user.isAdmin)) }).length; %>
         <% if(numOfStates == [].concat(filters.state).length) { %>
           <a class="usajobs-search-filters__select-toggle stateFilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
@@ -46,6 +46,7 @@
         </div>
 
         <h4 class="usajobs-search-filters__title community">Community</h4>
+        <label for="community" class="usa-sr-only">Select a community</label>
         <select id="community" class="dropdown">
             <option value=""></option>
             <% _.each(tagTypes['community'], function (c) { %>
@@ -54,9 +55,10 @@
         </select>
 
         <h4 class="usajobs-search-filters__title skill">Skill</h4>
-        <input type="text" id="skill" title="Skill" />
+        <input type="hidden" aria-label="skill" id="skill" title="Skill" />
 
         <h4 class="usajobs-search-filters__title career">Career field</h4>
+        <label for="career" class="usa-sr-only">Select a career field</label>
         <select id="career" class="dropdown">
             <option></option>
             <% _.each(tagTypes['career'], function (t) { %>
@@ -65,7 +67,7 @@
         </select>
 
         <h4 class="usajobs-search-filters__title">Series</h4>
-        <input type="text" id="series" title="Series" />
+        <input type="hidden" aria-label="series" id="series" title="Series" />
 
         <h4 class="usajobs-search-filters__title time">Commitment</h4>
         <% if([].concat(filters.time).length == 3) { %>
@@ -83,19 +85,21 @@
                 <label for="ongoing">Ongoing</label>
             </li>
             <li>
-                <input id="part-time" class="restrict-participation" type="checkbox" name="time" value="Part Time Detail" <% if(_.contains(filters.time, 'Part Time Detail' )) { %>checked<% } %> />
-                <label for="part-time">Part time detail</label>
+                <input id="detail" class="restrict-participation" type="checkbox" name="time" value="Detail" <% if(_.contains(filters.time, 'Detail' )) { %>checked<% } %> />
+                <label for="detail">Detail</label>
             </li>
-            <li>
-                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.contains(filters.time, 'Full Time Detail' )) { %>checked<% } %> />
-                <label for="full-time">Full time detail</label>               
-            </li>           
+            <% if (filters.community && filters.community.communityType == 3) { %>            
+                <li>
+                    <input id="lateral" class="restrict-participation" type="checkbox" name="time" value="Lateral" <% if(_.contains(filters.time, 'Lateral' )) { %>checked<% } %> />
+                    <label for="lateral">Lateral</label>               
+                </li>
+            <% } %>           
         </ul>
        
         <div id="pay-scale-grade" style="display: none;" >
           <div class="usajobs-grid-full">
             <div class="usa-width-one-third">           
-                <label for="payScale">Pay plan</label>                          
+                <label for="time-options-pay-scale">Pay scale</label>                          
                 <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
                   <option value=""></option>                        
                   <% _.each(tagTypes['payPlan'], function(p) { %>              
@@ -124,7 +128,7 @@
             <li>
                 <input id="in-person" type="checkbox" name="location" value="in person" <% if (_.contains(filters.locationType, 'in person')) { %>checked<% } %>>
                 <label for="in-person">In person</label>
-                <input type="text" id="location" title="Location" />
+                <input type="hidden" aria-label="in-person" id="location" title="Location" />
             </li>
         </ul>
 

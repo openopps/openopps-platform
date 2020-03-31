@@ -40,6 +40,7 @@ const options = {
 module.exports = function (db) {
   return {
     Agency: dao({ db: db, table: 'agency '}),
+    Community: dao({ db: db, table: 'community' }),
     Task: dao({ db: db, table: 'task' }),
     User: dao({ db: db, table: 'midas_user '}),
     Volunteer: dao({ db: db, table: 'volunteer' }),

@@ -6,6 +6,7 @@ module.exports = {
     var data = {
       task: model.task,
       user: model.user,
+      community: model.community,
     };
     done( null, data );
   },

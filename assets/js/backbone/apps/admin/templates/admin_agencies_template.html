@@ -7,6 +7,16 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
+<div class="usa-alert usajobs-alert usajobs-alert--error" id="file-upload-alert" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text" id="file-upload-alert-message">
+    </p>
+  </div>
+</div>
 <% if (departments) { %>
   <div class="usajobs-grid-full">
     <div class="usa-width-one-whole">
@@ -29,7 +39,24 @@
   <h2 class="admin-agency-name"><%= agency.name %></h2>
 <% } %>
 <div class="usajobs-grid-full">
-  <div class="usa-width-one-third">
+  <div id="image-logo" class="usa-width-one-fourth">
+    <h3><i class="fa fa-image"></i><span class="box-icon-text">Logo</h3>
+    <% if (agency.imageId) { %>
+        <img id="agency-logo" src="/api/upload/get/<%- agency.imageId %>" alt="<%- agency.name %> logo">
+    <% } %>
+    <div class="fileinput-button">
+    <span><%- agency.imageId ? 'Update logo' : 'Upload logo' %>
+        <label class="sr-only" for="fileupload">Upload logo</label>
+        <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- agency.imageId ? 'Update logo' : 'Upload logo' %>" />
+    </span>
+    </div>
+    <div class="fileinput-button">
+    <% if (agency.imageId) { %>
+        <a href=# id="logo-remove">Remove</a>
+    <% } %>
+    </div>
+  </div>
+  <div class="usa-width-one-fourth">
     <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/agency/<%=agency.agencyId%>/users" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total users: <%- numeral(agency.users.total).format('0,0') %></li>
@@ -37,7 +64,7 @@
       <li>Admins: <%- numeral(agency.users.admins).format('0,0') %></li>
     </ul>
   </div>
-  <div class="usa-width-one-third">
+  <div class="usa-width-one-fourth">
     <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/agency/<%=agency.agencyId%>/tasks" class="admin-manage-link">Manage</a></span></h3>
     <ul class="usajobs-unstyled-list">
       <li>Total created: <%- numeral(agency.tasks.totalCreated).format('0,0') %></li>
@@ -56,7 +83,7 @@
       <li>Canceled: <%- numeral(agency.tasks.canceled).format('0,0') %></li>
     </ul>
   </div>
-  <div class="usa-width-one-third">
+  <div class="usa-width-one-fourth">
     <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
     <ul class="usajobs-unstyled-list">
         <li>Total applications: <%- numeral(agency.interactions.signups).format('0,0') %></li>

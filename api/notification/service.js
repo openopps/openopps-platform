@@ -69,6 +69,7 @@ function createNotification (notification) {
 function renderTemplate (template, data, done) {
   var html = __dirname + '/' + data._action + '/template.html';
   var layout = __dirname + '/' + data._layout;
+  var htmlCommunityLogo = fs.readFileSync(__dirname + '/communityLogoLayout.html');
   var mailOptions = {
     to: _.template(template.to)(data),
     cc: _.template(template.cc)(data),
@@ -86,6 +87,8 @@ function renderTemplate (template, data, done) {
         return renderIncludes(include, data);
       });
     }
+    data._communityLogoContent = data.community && (data.community.communityType == 3) ? _.template(htmlCommunityLogo)(data) : '';
+    data._emailSignature = data.community && data.community.emailSignature ? data.community.emailSignature : 'The ' + data.globals.systemName + ' Team';
     data._logo = data.globals && data.globals.logo || '/img/logo/png/open-opportunities-email.png';
     fs.readFile(layout, function (err, layout) {
       if (err) {
@@ -106,7 +109,6 @@ function renderIncludes (template, data) {
   } catch (err) {
     return '';
   }
-
 }
 
 function sendEmail (mailOptions, done) {

@@ -30,6 +30,7 @@ async function findById (id, user) {
   }
   if (task.agencyId) {
     task.agencies = Agency.toList(await Agency.fetchAgency(task.agencyId));
+    task.agency = await dao.Agency.findOne('agency_id = ?', task.agencyId);
   }
   if(task.payLevelId){
     task.payLevel =await dao.PayPlan.findOne('pay_plan_id = ?', task.payLevelId).catch(() => { return null; });
@@ -294,6 +295,7 @@ async function updateOpportunityState (attributes, done) {
   attributes.canceledAt = attributes.state === 'canceled' && origTask.state !== 'canceled' ? new Date : origTask.canceledAt;
   await dao.Task.update(attributes).then(async (t) => {
     var task = await findById(t.id, true);
+    task.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return undefined; });
     task.previousState = origTask.state;
     await elasticService.indexOpportunity(task.id);
     return done(task, origTask.state !== task.state);
@@ -545,10 +547,10 @@ async function getNotificationTemplateData (user, task, action) {
       user: user,
     },
   };
-  if (task.communityId) {
-    data.model.community = await dao.Community.findOne('community_id = ?', task.communityId).catch(() => { return null; });
+  if (task.id) {
+    data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', task.id).catch(() => { return null; });
     data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', task.communityId, action).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', data.model.community.communityId, action).catch(() => { return null; });
     if (templateOverride) {
       data.action = templateOverride.template,
       data.layout = templateOverride.layout || data.layout;
@@ -879,6 +881,7 @@ module.exports = {
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
   getVanityURL: getVanityURL,
+  
 };
 
 

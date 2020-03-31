@@ -35,7 +35,7 @@
             <% } %>
                 <div>
             <div class="form-group required-input">
-              <label for="people">How many people do you need?</label>
+              <label for="opportunity-people">How many people do you need?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select the number of people needed for this opportunity.</span>
               <ul class="usa-unstyled-list opportunity-options__list">
                 <li>
@@ -90,18 +90,18 @@
             </div>
             <div class="form-group">
               <label for="opportunity-series">Series <span class="usa-input-optional"></span></label>
-              <input type="text" class="fullwidth form-control" id="opportunity-series" name="opportunity-series">
+              <input type="hidden" aria-label="series" class="fullwidth form-control" id="opportunity-series" name="opportunity-series">
             </div>
             <div id="form-group" class="required-input">
               <label for="skills">What skills are you looking for?</label>
               <span class="field-validation-error error-empty" style="display:none;">You must select at least one skill for this opportunity.</span>
-              <input type="hidden" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
+              <input type="hidden" aria-label="skills" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
             </div>
             <label for="DefineWhen">
               <h3>When</h3>
             </label>
             <div class="form-group">
-              <label for="time-required" class="no-margin-top">What is the time commitment?</label>
+              <label for="time-required" class="no-margin-top">What is the commitment?</label>
               <ul class="usa-unstyled-list opportunity-options__list">
                 <li>
                   <button type="button" class="opportunity-options__button time-options-time-required" id="one-time" value="One time">
@@ -121,31 +121,79 @@
                 </li>
                 
                   <li>
-                    <button type="button" class="opportunity-options__button time-options-time-required" id="part-time" value="Part Time Detail">
+                    <button type="button" class="opportunity-options__button time-options-time-required" id="detail" value="Detail">
                       <span class="opportunity-options__icon">
-                        <i class="fas fa-hourglass-half"></i>
+                        <i class="far fa-clock"></i>            
                       </span>
-                      <span class="opportunity-options__text">Part-time detail</span>
+                      <span class="opportunity-options__text">Detail</span>
                     </button>
                   </li>
-                
-                  <li>
-                    <button type="button" class="opportunity-options__button time-options-time-required" id="full-time" value="Full Time Detail">
+                     
+                  <li id ="lateral-section" style="display: none;">
+                    <button type="button" class="opportunity-options__button time-options-time-required" id="lateral" value="Lateral" >
                       <span class="opportunity-options__icon">
-                        <i class="fas fa-hourglass"></i>
-                      </span>
-                      <span class="opportunity-options__text">Full-time detail</span>
+                        <i class="fas fa-exchange-alt"></i>
+                      </span>                
+                      <span class="opportunity-options__text">Lateral</span>
                     </button>
-                  </li>               
+                  </li>    
+                          
               </ul>
               <p class="time-required-description" id="one-time-description"><em>A one time task with a defined timeline</em></p>
               <p class="time-required-description" id="ongoing-description"><em>Requires up to 20% of a participant's work time until goal is reached</em></p>
               <p class="time-required-description" id="full-time-description"><em>Restricted to opportunity creator's agency</em></p>
-              <p class="time-required-description" id="part-time-description"><em>Requires up to 50% of a participant's work time until detail has ended</em></p>
-                 
+
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Detail part-time or full-time</legend>
+                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-time" >  
+                <p class="label-brief">Is this detail part-time or full-time?</p>
+                <span class="field-validation-error" style="display:none;">Please select full-time or part-time.</span>
+                <ul class="usa-unstyled-list" id="detail-time-group">
+                  <li>
+                    <input id="detail-full-time" name="detail-time-group" type="radio" value="Full-time" <% if (data.detailSelection=='Full-time') { %><%= "checked" %><% } %>  >
+                    <label for="detail-full-time">Full-time</label>                
+                  </li>
+                  <li>
+                    <input id="detail-part-time" name="detail-time-group" type="radio" value="Part-time" <% if (data.detailSelection=='Part-time') { %><%= "checked" %><% } %> >
+                    <label for="detail-part-time">Part-time</label>
+                  </li>
+                </ul>
+              </div> 
+              </fieldset> 
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Length of the detail</legend>
+                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-length-type" >  
+                <p class="label-brief">What is the length of the detail?</p>
+                <span class="field-validation-error" style="display:none;">Please select any choice.</span>
+                <ul class="usa-unstyled-list" id="detail-length">
+                  <li>
+                    <input id="up-to-90" name="detail-length" type="radio" value="Up to 90 days"  <% if (data.detailLength=='Up to 90 days') { %><%= "checked" %><% } %>>
+                    <label for="up-to-90">Up to 90 days</label>
+                  </li>
+                  <li>
+                    <input id="more-than-90" name="detail-length" type="radio" value="More than 90 days" <% if (data.detailLength == 'More than 90 days' ) { %><%= "checked" %><% } %>>
+                    <label for="more-than-90">More than 90 days</label>
+                  </li>
+                </ul>
+              </div> 
+              </fieldset>    
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Hours need</legend>       
+              <div class="form-group required-input" id="time-options-time-required">
+                <label for="time-estimate">How many hours do you need?</label>
+                <span class="field-validation-error error-empty" style="display:none;">You must select the number of hours needed for this opportunity.</span>
+                <select id="time-estimate" class="dropdown validate" data-validate="empty">
+                  <option></option>
+                  <% _.each(tagTypes['task-time-estimate'], function (t) { %>
+                    <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
+                    <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
+                  <% }); %>
+                </select>
+              </div> 
+              </fieldset>
                 <fieldset class="usajobs-fieldset">
                   <legend class="usa-sr-only">Detail reimbursable</legend>
-                  <div class="form-group required-input usa-fieldset-inputs checkboxes-horizontal-longtitle" id="detail-reimbursable">  
+                  <div class="form-group required-input usa-fieldset-inputs checkboxes-horizontal-longtitle detail-section" id="detail-reimbursable">  
                   <p class="label-brief">Is this detail reimbursable?</p>
                   <span class="field-validation-error" style="display:none;" >Please select Yes or No.</span>
                   <ul class="usa-unstyled-list" id="detail-reimbursable-group">
@@ -159,50 +207,37 @@
                     </li>
                   </ul>
                 </div> 
-                </fieldset>              
-                <% _.each(agencies, function (agency) { %>
-                  <input type="checkbox" id="task-restrict-agency-<%- agency.agency_id %>" name="task-restrict-agency" value="<%- agency.agency_id %>" <% if (data.restrictedTo == agency.agency_id ) { %> checked="checked" <% } %> >
+                </fieldset>  
+                              
+                <% _.each(agencies, function (agency) { %>            
+                  <input type="checkbox" id="task-restrict-agency-<%- agency.agency_id %>" name="task-restrict-agency"  value="<%- agency.agency_id %>" <% if (data.restrictedTo == agency.agency_id ) { %> checked="checked" <% } %> >
                   <label for="task-restrict-agency-<%- agency.agency_id %>">Limit participation to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
                 <% }); %>
             </div>
-
-           
-            <div class="form-group required-input" id="pay-scale-grade">
+          
+            <div class="form-group" id="pay-scale-grade">
               <div class="usajobs-grid-full">
                 <div class="usa-width-one-third">
-                  <div class="form-group required-input">
-                    <label for="payScale">Pay plan</label>  
-                    <span class="field-validation-error error-empty" style="display:none;">You must select pay plan.</span>                         
-                    <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
+                  <div class="form-group">
+                    <label for="time-options-pay-scale">Pay scale <span class="usa-input-optional"></span> </label>                                        
+                    <select id="time-options-pay-scale" class="dropdown"> 
                       <option></option>              
                         <% _.each(payPlans, function(p) { %>              
                           <option value=<%= p.pay_plan_id %>><%= p.code %></option>
-                        <% }); %>  
-                                
+                        <% }); %>                              
                     </select>
                   </div>
                 </div>
                 <div class="usa-width-one-half">
-                  <div class="form-group required-input grade">
-                    <label for="grade" >Grade<span class="no-margin-top"></span></label>  
-                    <span class="field-validation-error error-empty" style="display:none;">You must enter grade.</span>  
-                    <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium " value="<%- data.grade %>" data-validate="empty" onkeypress="if(this.value.length==2) return false;">
+                  <div class="form-group grade">
+                    <label for="grade" >Grade<span class="no-margin-top usa-input-optional"></span></label>                    
+                    <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium " value="<%- data.grade %>"  onkeypress="if(this.value.length==2) return false;">
                   </div>  
                 </div>
               </div>
-            </div>
+            </div>         
             
-            <div class="form-group required-input" id="time-options-time-required">
-              <label for="time-estimate">How many hours do you need?</label>
-              <span class="field-validation-error error-empty" style="display:none;">You must select the number of hours needed for this opportunity.</span>
-              <select id="time-estimate" class="dropdown validate" data-validate="empty">
-                <option></option>
-                <% _.each(tagTypes['task-time-estimate'], function (t) { %>
-                  <% var selected = madlibTags['task-time-estimate'] && (madlibTags['task-time-estimate'][0].id == t.id); %>
-                  <option value=<%- t.id %> <% if (selected) { %>selected<% } %>><%- t.name %></option>
-                <% }); %>
-              </select>
-            </div>
+                
             <div class="form-group" id="time-options-completion-date">
               <label class="estimated-completion-date-label">What is the estimated completion date? <span class="usa-input-optional"></span></label>
               <span class="field-validation-error" style="display:none;" data-valmsg-for="estimated-completion-date" data-valmsg-replace="true">Please enter a valid completion date</span>
