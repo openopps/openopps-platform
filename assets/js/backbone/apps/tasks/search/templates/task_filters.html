@@ -88,6 +88,16 @@
             <li>
                 <input id="detail" class="restrict-participation" type="checkbox" name="time" value="Detail" <% if(_.contains(filters.time, 'Detail' )) { %>checked<% } %> />
                 <label for="detail">Detail</label>
+                <ul id="detailFilters" class="usa-unstyled-list__indent" style="display:none;">
+                    <li>
+                        <input id="full-time" type="checkbox" name="full-time" value="Full-time"  <% if(_.contains(filters.detailSelection, 'Full-time' )) { %>checked<% } %> />
+                        <label for="full-time">Full-time detail</label>   
+                    </li>
+                    <li>
+                        <input id="part-time" type="checkbox" name="part-time" value="Part-time" <% if(_.contains(filters.detailSelection, 'Part-time' )) { %>checked<% } %> />
+                        <label for="part-time">Part-time detail</label>
+                    </li>
+                </ul>
             </li>
             <% if (filters.community && filters.community.communityType == 3) { %>            
                 <li>
@@ -97,16 +107,6 @@
             <% } %>           
         </ul>
         <div id="pay-scale-grade" style="display: none;" >
-            <ul id="detailFilters" class="usa-unstyled-list__indent">
-                <li>
-                    <input id="full-time" type="checkbox" name="full-time" value="Full-time"  <% if(_.contains(filters.detailSelection, 'Full-time' )) { %>checked<% } %> />
-                    <label for="full-time">Full-time detail</label>   
-                </li>
-                <li>
-                    <input id="part-time" class="restrict-participation" type="checkbox" name="part-time" value="Part-time" <% if(_.contains(filters.detailSelection, 'Part-time' )) { %>checked<% } %> />
-                    <label for="part-time">Part-time detail</label>
-                </li>
-            </ul>
             <div class="usajobs-grid-full">
             <div class="usa-width-one-third">           
                 <label for="time-options-pay-scale">Pay scale</label>                          

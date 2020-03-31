@@ -347,7 +347,7 @@ var TaskListView = Backbone.View.extend({
     }
     if(!_.isEmpty(this.filters.payPlan) && _.isArray(this.filters.payPlan)) {
       this.filters.payPlan = _.pick(_.findWhere(this.tagTypes.payPlan, { code: this.filters.payPlan[0].name }), 'type','name','id');
-    }  
+    }    
     var compiledTemplate = _.template(TaskFilters)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -578,7 +578,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   timeFilter: function (event) {
-    this.displayDetails(); 
+    // this.displayDetails(); 
     this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
       return value;
     });
@@ -595,16 +595,22 @@ var TaskListView = Backbone.View.extend({
   },
 
   displayDetails : function (){
-    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
-      $('#pay-scale-grade').show(); 
+    if($('#detail').is(':checked')) { 
+      $('#detailFilters').show();
     }
     else {  
       $("input[name='full-time']:checkbox").prop('checked', false);
       $("input[name='part-time']:checkbox").prop('checked', false);
+      $('#detailFilters').hide();  
+      delete this.filters.detailSelection;
+    }
+    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
+      $('#pay-scale-grade').show(); 
+    }
+    else {  
       $('#pay-scale-grade').hide();  
       delete this.filters.grade;
       delete this.filters.payPlan;
-      delete this.filters.detailSelection;
     }
   },
 
@@ -729,7 +735,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (key == 'location' || key == 'skill' || key == 'series' || key == 'detailSelection') {
+          } else if (key == 'location' || key == 'skill' || key == 'series') {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {
