@@ -85,7 +85,7 @@ var TaskItemView = BaseView.extend({
     }
 
     this.data['madlibTags'] = organizeTags(this.data.tags);
-    _.each(['description', 'details', 'outcome', 'about'], function (part) {
+    _.each(['description', 'details', 'outcome', 'about','applyAdditional','requirement'], function (part) {
       if(this.data.model[part]) {
         this.data.model[part + 'Html'] = marked(this.data.model[part]);
       }
@@ -518,7 +518,7 @@ var TaskItemView = BaseView.extend({
     var taskAgencyRestriction = _.findWhere(this.model.get('agencies'), { agency_id: this.model.get('restrictedTo')});
     var isAgencyEmployee = !_.isEmpty(_.findWhere(window.cache.currentUser.agencies, { agency_id: this.model.get('restrictedTo')}));
     if (window.cache.currentUser.hiringPath == 'contractor' || (taskAgencyRestriction && !isAgencyEmployee) ) {
-      options.modalTitle = 'Sorry you are not eligble to apply.';
+      options.modalTitle = 'Sorry you are not eligible to apply.';
       options.modalBody = _.template(ContractorCheckList)({
         hiringPath: window.cache.currentUser.hiringPath,
         isAgencyEmployee: isAgencyEmployee,

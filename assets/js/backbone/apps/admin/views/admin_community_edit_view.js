@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
+var marked = require('marked');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
@@ -286,9 +287,6 @@ var AdminCommunityEditView = Backbone.View.extend({
       });
       $('#custom-display').html(basicCustomizeTemplate);
     }
-    $('#display-description').charCounter(500, {
-      container: '#display-description-count',
-    });
   },
 
   renderImage: function (data) {
@@ -333,9 +331,18 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeCounts: function () {
-    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}, { id: 'community-email-signature', count: 300 }].forEach(function (item) {
-      $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
-    });
+    setTimeout(() => {
+      [
+        { id: 'community-name', count: 100 },
+        { id: 'community-new-office', count: 100 },
+        { id: 'community-new-bureau', count: 100 },
+        { id: 'description', count: 500 },
+        { id: 'display-description', count: 500 }, 
+        { id: 'community-email-signature', count: 300 },
+      ].forEach(function (item) {
+        $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
+      });
+    }, 50);
   },
 
   initializeFileUpload: function () {
@@ -988,6 +995,7 @@ var AdminCommunityEditView = Backbone.View.extend({
 
   preview: function (e) {
     var data = this.getDataFromPage();
+    data.marked = marked;
     var modalContent = _.template(AdminCommunityPreviewTemplate)(data);
     if (e.preventDefault) e.preventDefault();
     if (this.modalComponent) { this.modalComponent.cleanup(); }
