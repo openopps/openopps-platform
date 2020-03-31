@@ -82,11 +82,11 @@
                 <label for="one-time">One time</label>
             </li>
             <li>
-                <input id="ongoing" class="restrict-participation" type="checkbox" name="time" value="Ongoing" <% if(_.contains(filters.time, 'Ongoing' )) { %>checked<% } %> />
+                <input id="ongoing" type="checkbox" name="time" value="Ongoing" <% if(_.contains(filters.time, 'Ongoing' )) { %>checked<% } %> />
                 <label for="ongoing">Ongoing</label>
             </li>
             <li>
-                <input id="detail" class="restrict-participation" type="checkbox" name="time" value="Detail" <% if(_.contains(filters.time, 'Detail' )) { %>checked<% } %> />
+                <input id="detail" type="checkbox" name="time" value="Detail" <% if(_.contains(filters.time, 'Detail' )) { %>checked<% } %> />
                 <label for="detail">Detail</label>
                 <ul id="detailFilters" class="usa-unstyled-list__indent" style="display:none;">
                     <li>
@@ -101,7 +101,7 @@
             </li>
             <% if (filters.community && filters.community.communityType == 3) { %>            
                 <li>
-                    <input id="lateral" class="restrict-participation" type="checkbox" name="time" value="Lateral" <% if(_.contains(filters.time, 'Lateral' )) { %>checked<% } %> />
+                    <input id="lateral" type="checkbox" name="time" value="Lateral" <% if(_.contains(filters.time, 'Lateral' )) { %>checked<% } %> />
                     <label for="lateral">Lateral</label>               
                 </li>
             <% } %>           
