@@ -9,6 +9,7 @@ var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
 var TaskFormViewHelper = require('../../task-form-view-helper');
 var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TaskPreviewTemplate = require('../templates/task_preview_template.html');
+var TaskPersonnelNeededTemplate = require('../templates/task_personnel_needed_template.html');
 var ModalComponent = require('../../../../components/modal');
 var charcounter = require('../../../../../vendor/jquery.charcounter');
 var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
@@ -580,6 +581,11 @@ var TaskEditFormView = Backbone.View.extend({
         madlibTags: organizeTags(tags),
       });
       $('#step-3').html(compiledTemplate);
+      var compiledTemplate2 = _.template(TaskPersonnelNeededTemplate)({
+        data: data,
+        madlibTags: organizeTags(tags),
+      });
+      $('.personnel-needed').html(compiledTemplate2);
       setTimeout(function () {
         $('#step-wrapper').addClass('preview');
         $('#personnel-needed-desktop').attr('style', '');
