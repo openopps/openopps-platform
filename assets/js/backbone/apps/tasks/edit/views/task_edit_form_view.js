@@ -35,7 +35,6 @@ var TaskEditFormView = Backbone.View.extend({
     'change #detail-length-type'        : 'changeDetailLength',
     'change #detail-time-group'         : 'changeDetailTime',
     'change #federal-programs'          : 'changeCommunity',
-    
   },
 
   initialize: function (options) {
@@ -582,12 +581,16 @@ var TaskEditFormView = Backbone.View.extend({
       });
       $('#step-3').html(compiledTemplate);
       setTimeout(function () {
+        $('#step-wrapper').addClass('preview');
+        $('#personnel-needed-mobile').attr('style', '');
+        $('#personnel-needed-desktop').attr('style', '');
         $('#search-results-loading').hide();
       }, 50);
     }
-    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3'], function (id) {
+    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3', '#happens-next', '#personnel-needed-mobile', '#personnel-needed-desktop'], function (id) {
       $(id).toggle();
     });
+    $('#step-wrapper').removeClass('preview');
     window.scrollTo(0, 0);
   },
 
