@@ -582,15 +582,18 @@ var TaskEditFormView = Backbone.View.extend({
       $('#step-3').html(compiledTemplate);
       setTimeout(function () {
         $('#step-wrapper').addClass('preview');
-        $('#personnel-needed-mobile').attr('style', '');
         $('#personnel-needed-desktop').attr('style', '');
+        $('#personnel-needed-mobile').attr('style', '');
         $('#search-results-loading').hide();
       }, 50);
+    } else {
+      $('#step-wrapper').removeClass('preview');
+      $('#personnel-needed-desktop').hide();
+      $('#personnel-needed-mobile').hide();
     }
-    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3', '#happens-next', '#personnel-needed-mobile', '#personnel-needed-desktop'], function (id) {
+    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3', '#happens-next'], function (id) {
       $(id).toggle();
     });
-    $('#step-wrapper').removeClass('preview');
     window.scrollTo(0, 0);
   },
 
