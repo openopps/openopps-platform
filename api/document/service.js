@@ -102,8 +102,8 @@ module.exports.taskAttachments = function (taskId) {
 
 module.exports.upload = function (userId, data) {
   return Promise.all((data['files[]'] || []).map((file) => {
-    if(fileUtils.validType(data.type, file.type)) {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      if(fileUtils.validType(data.type, file.type)) {
         fileUtils.processFile(data.type, file).then(fdata => {
           if(fdata) {
             db.query({
@@ -114,14 +114,14 @@ module.exports.upload = function (userId, data) {
               resolve(queryResult.rows[0]);
             }).catch(err => {
               log.info('Error uploading file', err);
-              reject('An unexpected error occured trying to process your upload.');
+              reject({ message: 'An unexpected error occured trying to process your upload.'});
             });
           }
         }).catch(reject);
-      });
-    } else {
-      log.info('Invalid file type ', file.type);
-      throw Error('Invalid file type. You may only upload png, jpg, jpeg, gif or bmp image files.');
-    }
+      } else {
+        log.info('Invalid file type ', file.type);
+        reject({ message: 'Invalid file type. You may only upload png, jpg, jpeg, gif or bmp image files.'});
+      }
+    });
   }));
 };
