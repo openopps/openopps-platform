@@ -3,16 +3,25 @@
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
-        <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
-          <fieldset class="usajobs-fieldset">
-            <legend class="usa-sr-only">Tips</legend>
-            <div class="tips">
-              First time creating an opportunity? Read our
-              <a href="https://usajobs.github.io/openopps-help/getting-started/top-10-tips/"
-                target="_blank">
-                Top 10 tips for creating an ideal opportunity<span class="sr-only">Opens in a new window</span></a>.
+          <div class="usajobs-grid-full">
+            <div class="usa-width-two-thirds tips-wrapper">
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Tips</legend>
+                <div class="tips">
+                  First time creating an opportunity? Read our
+                  <a href="https://usajobs.github.io/openopps-help/getting-started/top-10-tips/"
+                    target="_blank">
+                    Top 10 tips for creating an ideal opportunity<span class="sr-only">Opens in a new window</span></a>.
+                </div>
+              </fieldset>
             </div>
-          </fieldset>
+          </div>
+          <div id="step-wrapper" class="usajobs-grid-full overview">
+            <div id="personnel-needed-mobile" class="usa-width-one-third personnel-needed preview mobile" style="display:none">
+              <div class="personnel-needed"></div>
+            </div>
+            <div class="usa-width-two-thirds opportunity-description">
+          <form id="task-edit-form" class="usa-form-xl" action="javascript:void(0)">
           <fieldset id="step-1" class="usajobs-fieldset">
             <legend class="usa-sr-only">Step 1 - Define who, when, and where</legend>
             <h2>Step 1 - Define who, when, and where</h2>
@@ -20,12 +29,13 @@
               <h3>Who</h3>
             </label>
             <div class="form-group required-input">
-            <% if(communities.federal.length > 0) { %>         
+            <% if(communities.federal.length > 0) { %>              
+              <% var communitiesFed = _.sortBy(communities.federal, function (c) { return c.communityName.toLowerCase().trim(); }); %>   
               <label for="federal-programs" class="usa-input-optional no-margin-top">Community</label>            
               <div class="form-group required-input federal-programs">
                 <select id="federal-programs" class="dropdown"> 
                     <option></option>              
-                  <% _(communities.federal).forEach(function (community, i) { %>
+                  <% _(communitiesFed).forEach(function (community, i) { %>
                       <option value=<%- community.communityId %>>
                           <%- community.communityName %>
                     </option>
@@ -98,6 +108,10 @@
               <input type="hidden" aria-label="skills" id="task_tag_skills" name="skills" class="fullwidth validate" data-validate="empty" />
             </div>
             <label for="DefineWhen">
+              <a href="https://usajobs.github.io/openopps-help/opportunity/commitment" class="usajobs-opop-section__edit-help" target="_blank">
+                <span class="fas fa-question-circle" title="Help"></span> Help
+                <span class="sr-only">Opens in a new window</span>
+              </a>
               <h3>When</h3>
             </label>
             <div class="form-group">
@@ -302,7 +316,7 @@
               <label for="task-title">
                 <h3>Title</h3>
               </label>
-              <span class="field-validation-error error-empty" style="display:none;">You must enter a headline for this opportunity.</span>
+              <span class="field-validation-error error-empty" style="display:none;">You must enter a title for this opportunity.</span>
               <span class="field-validation-error error-count100" style="display:none;">The headline must be no more than 100 characters.</span>
               <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
               <p>Write a catchy, but descriptive title. Include a specific skill or outcome to entice participants to click
@@ -396,6 +410,11 @@
           <fieldset class="usajobs-fieldset">
             <legend class="usa-sr-only">Button bar</legend>
             <div class="usajobs-button_bar--slim task-footer">
+              <aside id="happens-next" class="step-3-flex__item happens-next tips-left" style="display:none;">
+                <h4>What happens next?</h4>
+                <p>Once you submit your opportunity, we'll review it. We'll email you within <strong>two business days</strong> with recommended edits or approval.</p>
+                <p>Read our <a href="https://usajobs.github.io/openopps-help/opportunity/" target="_blank">step-by-step process<span class="sr-only">Opens in a new window</span></a> to learn more about creating an opportunity.</p>
+              </aside>
               <div class="usajobs-button_bar__body">
                 <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
                 <button class="usa-button usa-button-secondary usa-button-left" data-state="edit" id="edit" style="display:none">Make changes</button>
@@ -412,6 +431,11 @@
             </div>
           </fieldset>
         </form>
+      </div> <!-- .usa-width-two-thirds -->
+      <div id="personnel-needed-desktop" class="usa-width-one-third personnel-needed preview desktop" style="display:none">
+        <div class="personnel-needed"></div>
+      </div>
+      </div> <!-- .usajobs-grid-full -->
       </div>
     </main>
   </div>

@@ -48,7 +48,6 @@ var ProfilePhotoView = Backbone.View.extend({
   initializeFileUpload: function () {
     $('#fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
@@ -60,7 +59,7 @@ var ProfilePhotoView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        this.model.trigger('profile:updateWithPhotoId', JSON.parse($(data.result).text())[0]);
+        this.model.trigger('profile:updateWithPhotoId', data.result);
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {

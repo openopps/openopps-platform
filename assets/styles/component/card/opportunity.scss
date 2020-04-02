@@ -1597,19 +1597,35 @@
     }
   }
 
-  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile {
+  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile, #step-wrapper .personnel-needed.mobile {
     width: 100%;
     margin-bottom: $size-M;
     float: none;
+    display: block;
 
     @include media($ML) {
       display: none;
     }
   }
 
-  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop {
+  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop, #step-wrapper .personnel-needed.desktop {
     @include media($ML-down) {
       display: none;
+    }
+  }
+
+  #personnel-needed-desktop {
+    @include media($ML) {
+      margin-top: 14.2rem;
+    }
+    @include media(861px) {
+      margin-top: 9.9rem;
+    }
+    @include media($L) {
+      margin-top: 14.2rem;
+    }
+    @include media(1262px) {
+      margin-top: 9.9rem;
     }
   }
 
@@ -1639,6 +1655,23 @@
     &:visited {
       color: $color-primary;
     }
+}
+
+.usajobs-opop-section__edit-help {
+  position: absolute;
+  top: 0.75rem;
+  right: 0;
+  font-size: $small-font-size;
+  text-decoration: none;
+  color: $color-primary;
+
+  &:visited {
+    color: $color-primary;
+  }
+}
+
+label[for="DefineWhen"] {
+  position: relative;
 }
 
 .usajobs-open-opps-opportunity-requestor__figure img {

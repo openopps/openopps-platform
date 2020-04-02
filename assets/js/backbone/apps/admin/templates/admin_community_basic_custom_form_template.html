@@ -1,0 +1,31 @@
+<fieldset class="usajobs-fieldset usa-form-xl">
+  <legend class="usa-sr-only">Search display & Appearance</legend>  
+  <h2>Display & Appearance</h2>
+  <div class="form-group required-input">
+    <label for="display-title" class="usa-input-optional">Title</label>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '
+      < ' or '>' are not allowed</span>
+    <input type="text" id="display-title" class="fullwidth form-control validate" data-validate="html" value="<%- banner.title %>"/>
+  </div>
+  <div class="form-group required-input">
+    <label for="display-subtitle" class="usa-input-optional">Subtitle</label>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '
+      < ' or '>' are not allowed</span>
+    <input type="text" id="display-subtitle" class="fullwidth form-control validate"  data-validate="html" value="<%- banner.subtitle %>"/>
+  </div>
+  <div class="form-group required-input">
+    <label for="display-description">Description<span class="usa-input-optional"></span></label>
+    <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
+    <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+    <textarea id="display-description" class="fullwidth form-control validate" name="description" data-validate="count500,html"><%- banner.description %></textarea>
+    <p class="usajobs-form__help-brief" id="display-description-count">(500 characters remaining)</p>
+  </div>
+</fieldset>
+<fieldset class="usajobs-fieldset usa-form-xl">
+  <legend class="usa-sr-only">Preview</legend>
+  <div class="usajobs-button_bar--slim">
+    <div class="usajobs-button_bar__body">
+      <a href="#" class="usa-button usa-button-secondary usa-button-left" id="community-preview">Preview</a>
+    </div>
+  </div>
+</fieldset>

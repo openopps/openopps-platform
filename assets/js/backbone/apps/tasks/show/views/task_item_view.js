@@ -518,7 +518,7 @@ var TaskItemView = BaseView.extend({
     var taskAgencyRestriction = _.findWhere(this.model.get('agencies'), { agency_id: this.model.get('restrictedTo')});
     var isAgencyEmployee = !_.isEmpty(_.findWhere(window.cache.currentUser.agencies, { agency_id: this.model.get('restrictedTo')}));
     if (window.cache.currentUser.hiringPath == 'contractor' || (taskAgencyRestriction && !isAgencyEmployee) ) {
-      options.modalTitle = 'Sorry you are not eligble to apply.';
+      options.modalTitle = 'Sorry you are not eligible to apply.';
       options.modalBody = _.template(ContractorCheckList)({
         hiringPath: window.cache.currentUser.hiringPath,
         isAgencyEmployee: isAgencyEmployee,

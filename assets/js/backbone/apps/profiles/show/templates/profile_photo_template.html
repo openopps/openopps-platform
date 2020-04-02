@@ -3,7 +3,7 @@
     <div class="usajobs-open-opps-opportunity-requestor__figure-body-wrap">
       <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(data.id) %>">
         <% if ((data.hiringPath == 'fed' || data.hiringPath == 'contractor') && data.photoId) { %>
-          <img id="profile-picture" src="/api/user/photo/<%- data.id %>?d=<%- new Date().getTime() %>" alt="Profile picture of <%- data.name %>">
+          <img id="profile-picture" src="/api/document/image/<%- data.photoId %>" alt="Profile picture of <%- data.name %>">
         <% } else { %>
           <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(data.name) %></div>
         <% } %>

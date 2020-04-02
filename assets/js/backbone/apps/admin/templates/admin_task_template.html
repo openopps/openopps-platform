@@ -88,21 +88,29 @@
 <div id="task-page"></div>
 
 <% if(!community.communityName || window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
-  <div class="export-button tip" data-toggle="tooltip" data-placement="bottom"
-    title="Download list of tasks as a comma-separated file ready for import into Excel">
+  <% if (community.applicationProcess == "dos") { %>
+    <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" 
+    title="Download list of internships as a comma-separated file ready for import into Excel">   
+      <a href="/api/admin/task/export/community/<%- community.communityId %>/cycle/<%- cycle %>">
+      <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
+    </a>
+    </div>
+    <% } else { %>
+      <div class="export-button tip" data-toggle="tooltip" data-placement="bottom" 
+    title="Download list of opportunities as a comma-separated file ready for import into Excel">  
     <% if (community.communityName) { %>
-      <a href="/api/admin/task/export/community/<%- community.communityId %>"</a>
-      <% if (community.applicationProcess == "dos") { %>
-        <a href="/api/admin/task/export/community/<%- community.communityId %>/cycle/<%- cycle %>"</a>
-      <% } %>
+      <a href="/api/admin/task/export/community/<%- community.communityId %>">
     <% } else if (agency.name) { %>
-      <a href="/api/admin/task/export/agency/<%- agency.agencyId %>"</a>
+      <a href="/api/admin/task/export/agency/<%- agency.agencyId %>">
     <% } else { %>
       <a href="/api/admin/task/export" >
     <% } %>
       <i class="fa fa-download"></i><span class="box-icon-text">Download list (.csv)</span>
     </a>
+    </a>
+    </a>
   </div>
+  <% } %>
 <% } %>
 
 

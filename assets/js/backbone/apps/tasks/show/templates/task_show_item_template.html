@@ -40,7 +40,7 @@
                   <% if (model.agency.imageId) { %> 
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure">
-                      <img id="agency_logo" src="/api/upload/get/<%- model.agency.imageId %>" alt="">                    
+                      <img id="agency_logo" src="/api/document/image/<%- model.agency.imageId %>" alt="">                    
                     </div>   
                     <div class="usajobs-open-opps-opportunity-requestor__body">
                       <a> <%- model.agency.name %></a> 
@@ -55,7 +55,7 @@
                   <% } else { %> 
                  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                   <div class="usajobs-open-opps-opportunity-requestor__figure">     
-                    <img id="agency_logo" src="/api/upload/get/<%- model.community.image_id %>" alt="">
+                    <img id="agency_logo" src="/api/document/image/<%- model.community.image_id %>" alt="">
                   </div> 
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <a> <%- model.community.community_name %></a>
@@ -88,7 +88,7 @@
                     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                       <div class="usajobs-open-opps-opportunity-requestor__figure <% if (user) { %><%- getInitialsColor(model.owner.id) %><% } %>" <% if (user) { %> data-userid="<%- model.userId %>" <% } %>>
                         <% if (model.owner.photoId) { %>
-                          <img src="/api/user/photo/<%- model.owner.id %>" alt="Profile picture of <%- model.owner.name %>">
+                          <img src="/api/document/image/<%- model.owner.photoId %>" alt="Profile picture of <%- model.owner.name %>">
                         <% } else { %>
                           <div class="usajobs-open-opps-opportunity-requestor__initials" title="<%- model.owner.name %>"><%- getInitials(model.owner.name) %></div>
                         <% } %>

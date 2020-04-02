@@ -670,6 +670,10 @@ async function copyOpportunity (attributes, user, done) {
     return {};
   }
   var task = {
+    about: results.about,
+    agencyId: user.agencyId,
+    applyAdditional: results.applyAdditional,
+    communityId: results.communityId,
     createdAt: new Date(),
     updatedAt: new Date(),
     title: attributes.title,
@@ -678,10 +682,14 @@ async function copyOpportunity (attributes, user, done) {
     state: 'draft',
     description: results.description,
     details: results.details,
+    detailLength: results.detailLength,
+    detailSelection: results.detailSelection,
     outcome: results.outcome,
-    about: results.about,
-    agencyId: user.agencyId,
-    communityId: results.communityId,
+    payLevelId: results.payLevelId,
+    grade: results.grade,
+    requirement: results.requirement,
+    restrictedTo: results.restrictedTo,
+    isDetailReimbursable: results.isDetailReimbursable,
   };
   if(await isStudent(results.userId,results.id)) {
     var cycleId = await getCurrentCycle(results.communityId, results.cycleId);

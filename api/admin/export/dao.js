@@ -72,11 +72,17 @@ const exportTaskData = 'select task.id, ' +
     'where "taskId" = task.id ' +
   ') as selected_participants, ' +
   '(' +
+    'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id ) ' +
+   'as selected_count, ' +
+  '(' +
     'select string_agg(midas_user.name, \', \') ' +
     'from volunteer ' +
     'inner join midas_user on midas_user.id = volunteer."userId" ' +
     'where "taskId" = task.id and volunteer."taskComplete" = true ' +
   ') as completed_participants, ' +
+  '(' +
+    'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id and volunteer."taskComplete" = true) ' +
+  'as completed_count, ' +
   'task.state, ' +
   'agency.name as agency_name, community.community_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
@@ -105,11 +111,17 @@ const exportTaskAgencyData = 'select task.id, ' +
     'where "taskId" = task.id ' +
   ') as selected_participants, ' +
   '(' +
+    'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id ) ' +
+   'as selected_count, ' +
+  '(' +
     'select string_agg(midas_user.name, \', \') ' +
     'from volunteer ' +
     'inner join midas_user on midas_user.id = volunteer."userId" ' +
     'where "taskId" = task.id and volunteer."taskComplete" = true ' +
   ') as completed_participants, ' +
+  '(' +
+  'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id and volunteer."taskComplete" = true) ' +
+'as completed_count, ' +
   'task.state, ' +
   'agency.name as agency_name, task."completedAt" ' +
   'from task inner join midas_user on task."userId" = midas_user.id ' +
@@ -137,11 +149,17 @@ const exportTaskCommunityData = 'select task.id, ' +
     'where "taskId" = task.id ' +
   ') as selected_participants, ' +
   '(' +
+    'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id ) ' +
+   'as selected_count, ' +
+  '(' +
     'select string_agg(midas_user.name, \', \') ' +
     'from volunteer ' +
     'inner join midas_user on midas_user.id = volunteer."userId" ' +
     'where "taskId" = task.id and volunteer."taskComplete" = true ' +
   ') as completed_participants,  ' +
+  '(' +
+  'select count(*) from volunteer inner join midas_user on midas_user.id = volunteer."userId" where "taskId" = task.id and volunteer."taskComplete" = true) ' +
+'as completed_count, ' +
   'task.state,  ' +
   'agency.name as agency_name, ' +
   '(' +
@@ -175,11 +193,25 @@ const exportTaskDoSCommunityData = 'select task.id, task.title, description, tas
     'where task_list.task_id = task.id and task_list.title in (\'Primary\', \'Alternate\') ' +
   ') as selected_participants, ' +
   '(' +
+    'select count(*) ' +
+    'from application ' +
+    'inner join task_list_application tla on application.application_id = tla.application_id ' +
+    'inner join task_list on tla.task_list_id = task_list.task_list_id ' +
+    'inner join midas_user on application.user_id = midas_user.id ' +
+    'where task_list.task_id = task.id and task_list.title in (\'Primary\', \'Alternate\') ' +
+  ') as selected_count, ' +
+  '(' +
     'select string_agg(trim(midas_user.given_name || \' \' || midas_user.last_name), \', \') ' +
     'from application ' +
     'inner join midas_user on application.user_id = midas_user.id ' +
     'where application.internship_completed = task.id ' +
   ') as completed_participants, ' +
+  '(' +
+  'select count(*) ' +
+  'from application ' +
+  'inner join midas_user on application.user_id = midas_user.id ' +
+  'where application.internship_completed = task.id ' +
+') as completed_count, ' +
   'task.state,  ' +
   'agency.name as agency_name, ' +
   '(' +
@@ -258,7 +290,9 @@ var exportTaskFormat = {
   'creator_name': {field: 'creator_name', filter: nullToEmptyString},
   'applicants': 'applicants',
   'selected_participants': {field: 'selected_participants', filter: nullToEmptyString},
+  'No of selectees': {field: 'selected_count', filter: nullToEmptyString},
   'completed_participants': {field: 'completed_participants', filter: nullToEmptyString},
+  'No of completed': {field: 'completed_count', filter: nullToEmptyString},
   'task_state': 'state',
   'bureau': {field: 'bureau', filter: nullToEmptyString},
   'office': {field: 'office', filter: nullToEmptyString},

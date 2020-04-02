@@ -157,9 +157,9 @@ var AdminCommunityView = Backbone.View.extend({
         if(data.community.duration=='Ad Hoc'){
           var template = _.template(AdminCommunityTasks)(data);
           $('#search-results-loading').hide();     
-          self.$('.task-metrics').html(template);
+          self.$('.task-metrics-community').html(template);
           self.$el.localize();
-          self.$('.task-metrics').show();
+          self.$('.task-metrics-community').show();
           self.$('.group').val(group);  
           self.$('input[name=type][value="' + filter +'"]').prop('checked', true); 
         }       
