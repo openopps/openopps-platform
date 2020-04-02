@@ -1614,6 +1614,21 @@
     }
   }
 
+  #personnel-needed-desktop {
+    @include media($ML) {
+      margin-top: 14.2rem;
+    }
+    @include media(861px) {
+      margin-top: 9.9rem;
+    }
+    @include media($L) {
+      margin-top: 12.7rem;
+    }
+    @include media(1262px) {
+      margin-top: 9.9rem;
+    }
+  }
+
   .skills {
     margin-bottom: $size-M;
 
