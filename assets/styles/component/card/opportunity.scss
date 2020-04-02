@@ -1597,17 +1597,18 @@
     }
   }
 
-  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile {
+  .overview .personnel-needed.mobile, .preview .personnel-needed.mobile, #step-wrapper .personnel-needed.mobile {
     width: 100%;
     margin-bottom: $size-M;
     float: none;
+    display: block;
 
     @include media($ML) {
       display: none;
     }
   }
 
-  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop {
+  .overview .personnel-needed.desktop, .preview .personnel-needed.desktop, #step-wrapper .personnel-needed.desktop {
     @include media($ML-down) {
       display: none;
     }

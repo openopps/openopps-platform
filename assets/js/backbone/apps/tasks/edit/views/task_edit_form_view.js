@@ -9,6 +9,7 @@ var ShowMarkdownMixin = require('../../../../components/show_markdown_mixin');
 var TaskFormViewHelper = require('../../task-form-view-helper');
 var TaskEditFormTemplate = require('../templates/task_edit_form_template.html');
 var TaskPreviewTemplate = require('../templates/task_preview_template.html');
+var TaskPersonnelNeededTemplate = require('../templates/task_personnel_needed_template.html');
 var ModalComponent = require('../../../../components/modal');
 var charcounter = require('../../../../../vendor/jquery.charcounter');
 var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
@@ -35,7 +36,6 @@ var TaskEditFormView = Backbone.View.extend({
     'change #detail-length-type'        : 'changeDetailLength',
     'change #detail-time-group'         : 'changeDetailTime',
     'change #federal-programs'          : 'changeCommunity',
-    
   },
 
   initialize: function (options) {
@@ -581,11 +581,23 @@ var TaskEditFormView = Backbone.View.extend({
         madlibTags: organizeTags(tags),
       });
       $('#step-3').html(compiledTemplate);
+      var compiledTemplate2 = _.template(TaskPersonnelNeededTemplate)({
+        data: data,
+        madlibTags: organizeTags(tags),
+      });
+      $('.personnel-needed').html(compiledTemplate2);
       setTimeout(function () {
+        $('#step-wrapper').addClass('preview');
+        $('#personnel-needed-desktop').attr('style', '');
+        $('#personnel-needed-mobile').attr('style', '');
         $('#search-results-loading').hide();
       }, 50);
+    } else {
+      $('#step-wrapper').removeClass('preview');
+      $('#personnel-needed-desktop').hide();
+      $('#personnel-needed-mobile').hide();
     }
-    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3'], function (id) {
+    _.each(['#cancel', '#edit', '#preview', '#save', '#step-1', '#step-2', '#step-3', '#happens-next'], function (id) {
       $(id).toggle();
     });
     window.scrollTo(0, 0);

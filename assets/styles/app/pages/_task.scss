@@ -11,15 +11,21 @@
   }
 }
 
+.usajobs-content-gutter.opportunity-gutter .tips-wrapper {
+  @include media($ML-down) {
+    width: 100%;
+  }
+}
+
 .tips {
   background-color: #e1f3f8;
   padding: 2rem;
   margin-top: 0;
 
   @include media($ML-down) {
-    margin-right: -$size-default;
+    // width: 100%;
     margin-left: -$size-default;
-    width: initial;
+    margin-right: -$size-default;
   }
 
   a {
@@ -32,6 +38,8 @@
     left: 0;
     bottom: 0;
     position: relative;
+     margin-left: -$size-default;
+      margin-right: -2.5rem;
 
     @include media($ML) {
       margin-top: $size-M;
@@ -40,11 +48,6 @@
     @include media($XXXL) {
       background-color: #e1f3f8;
       padding: 2rem;
-      margin-top: 0;
-      margin-right: 1.5rem;
-      width: 32rem;
-      left: calc(100% + 6rem);
-      position: absolute;
     }
 
     h4 {
@@ -62,6 +65,10 @@
 
 .task-footer {
     margin-top: $size-XL;
+
+    @include media($ML) {
+      width: 100%;
+    }
 }
 
 .usa-unstyled-list__radio {
@@ -625,11 +632,7 @@ button.opportunity-options__button {
   }
 
   .step-3-flex__item.happens-next {
-    order: 2;
-
-    @include media($ML) {
-      order: 3;
-    }
+    order: 3;
   }
 }
 

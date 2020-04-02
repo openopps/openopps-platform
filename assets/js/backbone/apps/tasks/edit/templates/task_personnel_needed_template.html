@@ -1,0 +1,87 @@
+<div class="usajobs-opop__task-intro">
+  <h4>Personnel needed</h4>
+  <div>
+    <% if (data.peopleNeeded) { %>
+      <%= data.peopleNeeded %>
+    <% } else { %>
+      None
+    <% } %>
+  </div>
+  <h4>Commitment</h4>
+  <div>
+    <% if (data.detailSelection) { %>
+      <%= data.detailSelection %> detail
+    <% } else if (madlibTags['task-time-required']) { %>
+      <%= madlibTags['task-time-required'][0].name %>
+    <% } %>
+    <% if (madlibTags['task-time-estimate']) { %>
+      <br/>
+      <%- madlibTags['task-time-estimate'][0].name %>
+      <% if (madlibTags['task-length'] && madlibTags['task-time-required'][0].name === "Ongoing") { %>
+        <%- madlibTags['task-length'][0].name.toLowerCase() %>
+      <% } else if (data.detailSelection && madlibTags['task-time-estimate']) { %>
+        weekly
+      <% } %>
+    <% } %>
+  </div>
+  <% if (data.detailSelection && data.detailLength) { %>
+    <h4>Length</h4>
+    <div>
+      <%= data.detailLength %>
+    </div>
+  <% } %>
+  <% if (data.completedBy) { %>
+  <h4>Estimated completion date</h4>
+  <div>
+    <%= moment(data.completedBy).format('MM/DD/YY') %>
+  </div>
+  <% } %>
+  <h4>Location</h4>
+  <div>
+    <% if (madlibTags.location) { %>
+      <% _.each(madlibTags.location, function (s, i) { %>
+        <% if (i > 0) { %>, <% } %><%- s.name %>
+      <% }) %>
+    <% } else { %>
+      Virtual
+    <% } %>
+  </div>              
+  <% if (madlibTags.career) { %>
+    <h4>Career field</h4>
+    <div>
+      <% _.each(madlibTags.career, function (s, i) { %>
+        <% if (i > 0) { %>, <% } %><%- s.name %>
+      <% }) %>
+    </div>
+  <% } %>
+  <% if (madlibTags.series) { %>
+    <h4>Series</h4>
+    <div>
+      <% _.each(madlibTags.series, function (s, i) { %>
+        <% if (i > 0) { %>, <% } %><%- s.name %>
+      <% }) %>
+    </div>
+  <% } %>
+  <% if (data.payLevel) { %>              
+    <h4>Pay scale</h4>
+    <div>
+      <%- data.payLevel.code %>
+    </div>      
+  <% } %> 
+  <% if (data.grade) { %>            
+      <h4>Grade</h4>
+      <div>
+        <%- data.grade %>
+      </div>         
+  <% } %> 
+  <% if (data.isDetailReimbursable) { %>           
+      <h4>Reimbursable</h4>
+      <div>
+  <% if (data.isDetailReimbursable==true) { %>
+        Yes
+  <% } else { %>
+          No
+          <% } %>
+        </div>           
+  <% } %> 
+</div>
