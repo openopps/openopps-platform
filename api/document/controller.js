@@ -32,7 +32,7 @@ router.post('/api/upload/create', auth, async (ctx, next) => {
     ctx.body = results[0] ? results[0] : 'An unexpected error occured trying to process your upload.';
   }).catch((err) => {
     ctx.status = 400;
-    ctx.body = err.message;
+    ctx.body = err.message ? err.message : err;
   });
 });
 
