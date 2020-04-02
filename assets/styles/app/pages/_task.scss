@@ -183,6 +183,10 @@ ul.opportunity-options__list {
     display: block;
     clear: both;
   }
+
+  li:last-child button.opportunity-options__button {
+    margin-right: 0;
+  }
 }
 
 button.opportunity-options__button {
@@ -192,21 +196,21 @@ button.opportunity-options__button {
   color: $color-green-light;
   padding: 0 $size-SM $size-S $size-SM;
   float: left;
-  margin: 0 $size-default $size-default 0;
-  min-width: 130px;
+  margin: 0 0.6rem 0.6rem 0;
+  min-width: 110px;
   min-height: 98px;
   text-align: center;
   width: initial;
 
-  @include media($SM) {
-    min-width: 136px;
-    margin: 0 $size-default $size-default 0;
-  }
+  // @include media($SM) {
+  //   min-width: 136px;
+  //   margin: 0 $size-default $size-default 0;
+  // }
 
-  @include media($L) {
-    min-width: 126px;
-    margin: 0 $size-S $size-S 0;
-  }
+  // @include media($L) {
+  //   min-width: 126px;
+  //   margin: 0 $size-S $size-S 0;
+  // }
 
   &:hover {
     background-color: $color-gray-lighter;
