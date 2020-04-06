@@ -2,6 +2,8 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 var marked = require('marked');
+var MarkdownEditor = require('../../../components/markdown_editor');
+var ShowMarkdownMixin = require('../../../components/show_markdown_mixin');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
@@ -47,6 +49,8 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initialize: function (options) {
+    _.extend(this, Backbone.Events);
+
     this.options = options; 
     this.departments = {};  
     this.community = new CommunityModel({
@@ -83,6 +87,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       this.$el.localize();
       this.initializeFileUpload();
       this.initializeBannerFileUpload();
+      this.initializeTextAreaBannerDescription();
       this.initializeCounts();
       $('#search-results-loading').hide();
       setTimeout(() => {
@@ -252,6 +257,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.renderCustomize();
         this.$el.show();
         this.initializeListeners();
+        this.initializeTextAreaBannerDescription();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
@@ -1067,10 +1073,26 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
   },
 
+  initializeTextAreaBannerDescription: function () {
+    if (this.md1) { this.md1.cleanup(); }
+    this.md1 = new MarkdownEditor({
+      data: this.community.get('banner').description,
+      el: '.markdown-edit-display-description',
+      id: 'display-description',
+      placeholder: '',
+      title: 'Description',
+      rows: 6,
+      validate: ['html','count500'],
+    }).render();
+  },
+
   cleanup: function () {
+    if (this.md1) { this.md1.cleanup(); }
     removeView(this);
   },
 
 });
+
+_.extend(AdminCommunityEditView.prototype, ShowMarkdownMixin);
 
 module.exports = AdminCommunityEditView;
