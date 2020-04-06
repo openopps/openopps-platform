@@ -126,6 +126,15 @@
   @include alert($color-gold, $color-gold, 'info');
 }
 
+.openopps-system-alert {
+  @include alert($color-gold, $color-gold, 'info');
+  margin: 0;
+
+  .usajobs-alert__body {
+    min-height: 0;
+  }
+}
+
 .usajobs-alert--error {
   @include alert($color-secondary-dark, $color-secondary-lightest, 'error');
 }

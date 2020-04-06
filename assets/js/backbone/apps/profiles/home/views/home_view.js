@@ -47,7 +47,7 @@ var HomeView = Backbone.View.extend({
     this.$el.html(templates.main({ checkDosBureau: this.checkDosBureau() }));
     $('#search-results-loading').hide();
     this.$el.localize();
-
+    renderSystemAlerts('home');
     // initialize sub components
     this.initializeParticipatedCreated();
     this.initializeSearchUsers();

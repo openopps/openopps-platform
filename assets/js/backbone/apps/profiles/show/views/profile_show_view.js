@@ -147,7 +147,7 @@ var ProfileShowView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
-
+    renderSystemAlerts('profile');
     // initialize sub components
     this.initializeTags();
     this.initializePhoto();
