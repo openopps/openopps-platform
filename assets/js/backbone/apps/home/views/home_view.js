@@ -35,6 +35,7 @@ var HomeView = Backbone.View.extend({
     $('#search-results-loading').hide();
     this.$el.html(compiledTemplate);
     this.$el.localize();
+    renderSystemAlerts('index');
     return this;
   },
 

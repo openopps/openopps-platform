@@ -25,7 +25,7 @@
     "csvtojson": "^1.1.9",
     "d3": "^4.13.0",
     "db-migrate": "^0.11.6",
-    "db-migrate-pg": "^0.4.0",
+    "db-migrate-pg": "^1.0.0",
     "ejs": "^2.5.7",
     "elasticsearch": "^15.1.1",
     "exif-parser": "^0.1.12",

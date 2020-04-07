@@ -84,6 +84,11 @@ var TaskListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
+    renderSystemAlerts('search', () => {
+      if (this.filters.community) {
+        $('.openopps-system-alert.community-' + this.filters.community.id).hide();
+      }
+    });
     this.filter();
     this.initializeKeywordSearch();
     this.$('.usajobs-open-opps-search__box').show();
@@ -103,9 +108,9 @@ var TaskListView = Backbone.View.extend({
       appliedFilterCount: this.appliedFilterCount,
     }));
     if (this.filters.community) {
-      $('.usajobs-alert--covid19').hide();
+      $('.openopps-system-alert.community-' + this.filters.community.id).hide();
     } else {
-      $('.usajobs-alert--covid19').show();
+      $('[class*="openopps-system-alert community-"]').show();
     }
   },
 
