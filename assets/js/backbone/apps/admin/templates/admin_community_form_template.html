@@ -95,6 +95,15 @@
             </fieldset>
           </div>
           <div class="form-group required-input usa-fieldset-inputs">
+            <h5>Display community name on opportunities?</h5>
+            <fieldset class="usajobs-fieldset">
+              <legend class="usa-sr-only">Display community name</legend>
+              <p class="label-brief">Select to display the community name on created opportunities instead of the creator's name.</p>
+              <input class="display-community-name" id="display-community-name-group" type="checkbox" <% if (displayCommunityName) { %> checked <% } %> />
+              <label class="no-label" for="display-community-name-group"><span class="sr-only">Display community name on opportunities?</span></label>
+            </fieldset>
+          </div>
+          <div class="form-group required-input usa-fieldset-inputs">
             <h5>Closed group</h5>
             <fieldset class="usajobs-fieldset">
               <legend class="usa-sr-only">Select to join community</legend>

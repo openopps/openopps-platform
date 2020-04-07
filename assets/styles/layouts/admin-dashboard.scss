@@ -334,6 +334,7 @@
   .assign-approver[type=checkbox]:checked,
   .assign-auto-join[type=checkbox]:checked,
   .display-agency-logo[type=checkbox]:checked,
+  .display-community-name[type=checkbox]:checked,
   .disable-community[type=checkbox]:checked {
     border: none;
     height: auto;
@@ -354,6 +355,7 @@
   .assign-approver[type=checkbox],
   .assign-auto-join[type=checkbox],
   .display-agency-logo[type=checkbox],
+  .display-community-name[type=checkbox],
   .disable-community[type=checkbox] {
     border: none;
     height: auto;
