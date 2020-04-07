@@ -46,6 +46,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #image-remove'                     : 'removeImage',
     'change [name=background-group]'          : 'toggleBackgroundDisplay',
     'blur #usajobsSearchUrl'                  : 'validateUsajobsSearchUrlLabel',
+    'change #disable-community-group'         : 'disableCommunity',
   },
 
   initialize: function (options) {
@@ -147,6 +148,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#community-mgr-name').val(community.communityManagerName);
     $('#community-mgr-email').val(community.communityManagerEmail);
     $('#community-email-signature').val(community.emailSignature);
+    $('input[name=disable-community-group][value=' + community.isDisabled +']').prop('checked', true);
   },
 
   initializeDisplayFormFields: function (community) {
@@ -210,6 +212,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerEmail: $('#community-mgr-email').val(),
       emailSignature: $('#community-email-signature').val(),
       imageId: this.community.get('imageId'),
+      isDisabled: $('#disable-community-group').prop('checked'),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -1084,6 +1087,36 @@ var AdminCommunityEditView = Backbone.View.extend({
       rows: 6,
       validate: ['html','count500'],
     }).render();
+  },
+
+  disableCommunity: function (e) {
+    if ($(event.target).prop('checked')) {
+      $('#disable-community-group').prop('checked', false);
+      var disableCommunityModal = new Modal({
+        id: 'confirm-disable',
+        alert: 'error',
+        action: 'delete',
+        modalTitle: 'Are you sure?',
+        modalBody: 'You\'re about to disable <strong>' + this.community.attributes.communityName + '</strong>. This means this community will become read-only and only visible to Sitewide Admins and Community Managers. Are you sure you want to proceed?',
+        primary: {
+          text: 'Disable',
+          action: function () {
+            $('#disable-community-group').prop('checked', true);
+            disableCommunityModal.cleanup();
+          }.bind(this),
+        },
+        secondary: {
+          text: 'Cancel',
+          action: function () {
+            $('#disable-community-group').prop('checked', false);
+            disableCommunityModal.cleanup();
+          }.bind(this),
+        },
+      });
+      disableCommunityModal.render();
+    } else {
+      $('#disable-community-group').prop('checked', false);
+    }
   },
 
   cleanup: function () {
