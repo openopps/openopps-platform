@@ -4,6 +4,7 @@ var _ = require('underscore');
 
 const whoopsPage = require('../apps/error/templates/whoops.html');
 const NotFoundPage = require('../apps/error/templates/not-found.html');
+const systemAlertTemplate = require('../components/system_alert_template.html');
 
 // import URLSearchParams polyfill
 require('url-search-params-polyfill');
@@ -162,4 +163,24 @@ global.getPaginationData = function (totalResults, resultsPerPage, currentPage) 
     data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
   }
   return data;
+};
+
+/**
+ * Helper function to display system alerts on the given page
+ * @param {string} page current page application is displaying
+ * @param {function} [callback] optional callback function
+ */
+global.renderSystemAlerts = function (page, callback) {
+  $.ajax({
+    url: '/api/alerts/' + page,
+    dataType: 'json',
+    success: function (alerts) {
+      alerts.forEach(alert => {
+        $('#openopps-system-alerts').append(_.template(systemAlertTemplate)(alert));
+      });
+    },
+    complete: function () {
+      callback && callback();
+    },
+  });
 };

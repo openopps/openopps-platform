@@ -66,6 +66,7 @@ var InternshipListView = Backbone.View.extend({
     });
     this.$el.html(template);
     this.$el.localize();
+    renderSystemAlerts('internships');
     this.renderCycle();
     this.initializeKeywordSearch();
     initializeLocationSearch.bind(this)('#nav-location');

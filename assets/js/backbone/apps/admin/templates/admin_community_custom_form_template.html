@@ -57,11 +57,12 @@
       </div>
     </div>
   </div>
-  <div class="form-group required-input">
+  <div class="form-group">
     <label for="display-description">Description<span class="usa-input-optional"></span></label>
     <span class="field-validation-error error-count500" style="display:none;">The description must be no more than 500 characters.</span>
     <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-    <textarea id="display-description" class="fullwidth form-control validate" name="description" data-validate="count500,html"></textarea>
+    <span class="show-markdown-display-description"></span>
+    <div class="markdown-edit markdown-edit-display-description"></div>
     <p class="usajobs-form__help-brief" id="display-description-count">(500 characters remaining)</p>
   </div>
   <div class="form-group required-input">

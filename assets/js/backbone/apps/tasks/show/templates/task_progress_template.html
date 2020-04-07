@@ -91,7 +91,7 @@
               <a href="/profile/<%- v.userId %>">
                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                   <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
-                    <% if (v.photoId) { %>
+                    <% if (v.photoId && (!model.tags.some(function(o) {return o.name === 'Detail'})) && (!model.tags.some(function(o) {return o.name === 'Lateral'}))) { %>
                       <img src="/api/document/image/<%- v.photoId %>" alt="Profile picture of <%- v.name %>">
                     <% } else { %>
                       <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
@@ -164,7 +164,7 @@
                 <a href="/profile/<%- v.userId %>">
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
-                      <% if (v.photoId) { %>
+                      <% if (v.photoId && (!model.tags.some(function(o) {return o.name === 'Detail'})) && (!model.tags.some(function(o) {return o.name === 'Lateral'}))) { %>
                         <img src="/api/document/image/<%- v.photoId %>" alt="Profile picture of <%- v.name %>">
                       <% } else { %>
                         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
