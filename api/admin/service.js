@@ -829,7 +829,7 @@ module.exports.getAgencies = async function () {
 module.exports.getCommunities = async function (user) {
   if(user.isAdmin) {
     var communities= await dao.Community.find();
-    communities= _.sortBy(communities, function (community){
+    communities= _.sortBy(communities, 'isDisabled', function (community){
       return community.communityName.toLowerCase().trim();
     });
     return communities;
@@ -837,6 +837,7 @@ module.exports.getCommunities = async function (user) {
     return await dao.Community.query(dao.query.communityListQuery, user.id);
   }
 };
+
 module.exports.saveBureauOffice = async function (ctx,attributes,done) { 
   if(attributes.officeId && attributes.bureauId){
     var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.dataBureauId);

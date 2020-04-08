@@ -187,6 +187,17 @@
               (300 characters remaining)
             </p>
           </div>
+          <% if(window.cache.currentUser.isAdmin) { %>
+          <div class="form-group required-input usa-fieldset-inputs">
+            <h5>Disable</h5>
+            <fieldset class="usajobs-fieldset">
+              <legend class="usa-sr-only">Disable</legend>
+              <p class="label-brief">Disable your community?</p>
+              <input class="disable-community" id="disable-community-group" type="checkbox" <% if (isDisabled) { %> checked <% } %> />
+              <label class="no-label" for="disable-community-group"><span class="sr-only">Disable your community?</span></label>
+            </fieldset>
+          </div>
+          <% } %>
           
           <% if(communityId){ %>
           <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />
