@@ -78,6 +78,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         communityId: '', 
         departments : this.departments,
         displayAgencyLogo: false,
+        displayCommunityname: false,
         isClosedGroup: false,
         autoJoin: false,        
       };   
@@ -136,6 +137,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#duration option:contains('+ community.duration +')').attr('selected', true);
     $('#agencies').val(community.agency.agencyId); 
     $('input[name=display-agency-logo-group][value=' + community.displayAgencyLogo +']').prop('checked', true);
+    $('input[name=display-community-name-group][value=' + community.displayCommunityName +']').prop('checked', true);
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
     if (!community.isClosedGroup) {
       $('#community-auto-join').hide();
@@ -200,6 +202,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       duration :$('#duration').val(),
       agencyId  : $('#agencies').val(),
       displayAgencyLogo: $('#display-agency-logo-group').prop('checked'),
+      displayCommunityName: $('#display-community-name-group').prop('checked'),
       isClosedGroup: $("input[name='community-group']:checked").val(),
       autoJoin: $('#community-auto-join-group').prop('checked'),
       communityName: $('#community-name').val(),

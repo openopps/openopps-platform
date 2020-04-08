@@ -121,7 +121,7 @@ function toElasticOpportunity (value, index, list) {
     'keywords': _.map(doc.keywords, (item) => item.name),
     'isInternship': doc.target_audience == 2 ? 1 : 0,
     'languages': doc.languages,
-    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo, displayAgencyLogo:doc.display_agency_logo , imageId: doc.communityImageId},
+    'community': { id: doc.community_id,name: doc.community_name, shortName: doc.community_short_name, communityLogo: doc.community_logo, displayAgencyLogo:doc.display_agency_logo, displayCommunityName:doc.display_community_name, imageId: doc.communityImageId},
     'cycle': { id: doc.cycle_id, name: doc.cycle_name, applyStartDate: doc.apply_start_date, applyEndDate: doc.apply_end_date },
     'bureau': { id: doc.bureau_id, name: doc.bureau_name },
     'office': { id: doc.office_id, name: doc.office_name },
