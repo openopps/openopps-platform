@@ -160,6 +160,7 @@ from (
     c.community_short_name,
     c.community_logo,
     c.display_agency_logo,
+    c.display_community_name,
     c.image_id as "communityImageId",
     t.city_name,
     cs.value as "country_subdivision",

@@ -1,6 +1,7 @@
 const elasticClient = require('./index');
 const dao = require('./dao');
 const _ = require('lodash');
+const fs = require('fs');
 
 var service = {};
 
@@ -19,7 +20,11 @@ service.reindexOpportunities = async function () {
 
 service.remapOpportunities = async function () {
   if (await elasticClient.indices.exists({ index: 'task'})) {
-    await elasticClient.indices.delete({ index: 'task' });
+    await elasticClient.indices.putMapping({
+      index: 'task',
+      type: 'task',
+      body: JSON.parse(fs.readFileSync('./elastic/task_mapping.json')).task,
+    });
   }
 
   return service.reindexOpportunities();
@@ -40,7 +45,11 @@ service.reindexUsers = async function () {
 
 service.remapUsers = async function () {
   if (await elasticClient.indices.exists({ index: 'user'})) {
-    await elasticClient.indices.delete({ index: 'user' });
+    await elasticClient.indices.putMapping({
+      index: 'user',
+      type: 'user',
+      body: JSON.parse(fs.readFileSync('./elastic/user_mapping.json')).user,
+    });
   }
 
   return service.reindexUsers();
