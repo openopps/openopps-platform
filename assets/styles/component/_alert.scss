@@ -53,6 +53,10 @@
   &__footer {
     margin-top: $size-default;
     text-align: right;
+
+    a.usa-button-primary[href^="mailto:"] {
+      color: $color-white;
+    }
   }
 
   &__close {
