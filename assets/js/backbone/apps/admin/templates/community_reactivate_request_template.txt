@@ -1,0 +1,5 @@
+Community name: <%= communityName %>
+
+Requester: <%= currentUserName %>
+
+Reason: 
