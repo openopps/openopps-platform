@@ -8,6 +8,20 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
+<% if (community.isDisabled) { %>
+  <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <p class="usa-alert-text">This community is currently inactive.</p>
+      <div class="usajobs-alert__footer">
+        <a href="mailto:<%= community.communityManagerEmail %>" class="usa-button usa-button-primary">Request reactivation</a>
+      </div>
+    </div>
+  </div>
+<% } %>
 <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
 <a href="create" id="add-community" class="usa-button usa-button-secondary add-community "><i class="fa fa-plus"></i> <span>Add Community</span></a>
 <% } %>
