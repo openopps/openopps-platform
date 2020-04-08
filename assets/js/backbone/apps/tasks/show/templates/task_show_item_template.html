@@ -16,7 +16,7 @@
       </button>
       <% } %>
     </div>
-    <% if (fromSearch) { %>
+    <% if (fromSearch && history.length > 1) { %>
       <div class="back-link" role="navigation" aria-label="Back to results"><a href="javascript:history.back()"><i class="fas fa-chevron-left"></i> Back to results</a></div>
     <% } %>
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">

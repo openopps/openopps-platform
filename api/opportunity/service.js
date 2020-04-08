@@ -550,7 +550,7 @@ async function getNotificationTemplateData (user, task, action) {
   if (task.id) {
     data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', task.id).catch(() => { return null; });
     data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', data.model.community.communityId, action).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', (data.model.community || {}).communityId, action).catch(() => { return null; });
     if (templateOverride) {
       data.action = templateOverride.template,
       data.layout = templateOverride.layout || data.layout;

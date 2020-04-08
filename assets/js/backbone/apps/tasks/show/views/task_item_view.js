@@ -161,20 +161,21 @@ var TaskItemView = BaseView.extend({
   },
 
   updateTaskEmail: function () {
-    var subject = 'Take a look at this opportunity',
-        data = {
-          opportunityTitle: this.model.get('title'),
-          opportunityLink: window.location.protocol +
-          '//' + window.location.host + '' + window.location.pathname,
-          opportunityDescription: this.model.get('description'),
-          opportunityMadlibs: $('<div />', {
-            html: this.$('#task-show-madlib-description').html(),
-          }).text().replace(/\s+/g, ' '),
-          opportunityWhatYoullDo: this.model.get('details'),
-        },
-        body = _.template(ShareTemplate)(data),
-        link = 'mailto:?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
+    var subject = 'Take a look at this opportunity';
+    var data = {
+      opportunityTitle: this.model.get('title'),
+      opportunityLink: window.location.protocol +
+      '//' + window.location.host + '' + window.location.pathname,
+      opportunityDescription: this.model.get('description'),
+      opportunityMadlibs: $('<div />', {
+        html: this.$('#task-show-madlib-description').html(),
+      }).text().replace(/\s+/g, ' '),
+    };
+    if (data.opportunityTitle.length + data.opportunityDescription.length > 1200) {
+      data.opportunityDescription = data.opportunityDescription.substr(0, data.opportunityDescription.substring(0, 1200 - data.opportunityTitle.length).lastIndexOf('.') + 1);
+    }
+    var body = _.template(ShareTemplate)(data);
+    var link = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
   },
