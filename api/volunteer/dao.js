@@ -11,7 +11,7 @@ const volunteerQuery = 'select ' +
 'where volunteer.id = ? ';
 
 const assignedVolunteerQuery = 'select ' +
-'volunteer."userId", midas_user.name, midas_user.bounced, midas_user.username, midas_user.government_uri as "governmentUri" ' +
+'volunteer."userId",volunteer.selected,volunteer."taskId", midas_user.name, midas_user.bounced, midas_user.username, midas_user.government_uri as "governmentUri" ' +
 'from volunteer ' +
 'inner join midas_user on midas_user.id = volunteer."userId" ' +
 'where volunteer.id = ? ';

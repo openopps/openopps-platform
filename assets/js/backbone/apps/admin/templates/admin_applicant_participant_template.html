@@ -1,8 +1,8 @@
 
 <% if (volunteers.length > 0) { %>
-  <% if (_.where(volunteers, { assigned: false }).length > 0) { %>
+  <% if (_.where(volunteers, { selected: null }).length > 0) { %>
     <h3>Applicants</h3>       
-    <% _.each(_.where(volunteers, { assigned: false }), function (v) { %>
+    <% _.each(_.where(volunteers, { selected: null }), function (v) { %>
       <div class="internship-participant ">       
         <div class="usajobs-open-opps-opportunity-requestor__figure-body">
           <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>"> 
@@ -21,9 +21,9 @@
     <% }); %>
     <% } %>
 
-    <% if (_.where(volunteers, { assigned: true }).length > 0) { %>
+    <% if (_.where(volunteers, { selected: true }).length > 0) { %>
     <h3>Participants</h3>   
-    <% _.each(_.where(volunteers, { assigned: true }), function (v) { %>
+    <% _.each(_.where(volunteers, { selected: true }), function (v) { %>
       <div class="internship-participant">        
         <div class="usajobs-open-opps-opportunity-requestor__figure-body">
           <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
