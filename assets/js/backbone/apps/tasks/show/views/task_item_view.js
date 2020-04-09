@@ -135,10 +135,12 @@ var TaskItemView = BaseView.extend({
     if(this.data.model.canEditTask) {
       $('#nextstep').hide();
       $('#complete').hide();
+      $('#nextStepText').hide();
       switch (this.model.attributes.state.toLowerCase()) {
         case 'open':
         case 'not open':
           $('#nextstep').show();
+          $('#nextStepText').show();
           break;
         case 'in progress':
           $('#complete').show();
@@ -295,7 +297,7 @@ var TaskItemView = BaseView.extend({
         assign: assign,
       },
       success: function (data) {
-        _.findWhere(this.data.model.volunteers, { id: data.id }).assigned = assign;
+        _.findWhere(this.data.model.volunteers, { id: data.id }).selected = assign;
         this.initializeProgress();
       }.bind(this),
       error: function (err) {
@@ -368,7 +370,7 @@ var TaskItemView = BaseView.extend({
 
   complete: function (e) {   
     var btnDisable=$('#complete').hasClass('disabled');  
-    var notComplete = _.where(this.data.model.volunteers, { assigned: true, taskComplete: false });
+    var notComplete = _.where(this.data.model.volunteers, { selected: true, taskComplete: false });
     if(notComplete.length > 0 && !btnDisable) {
       var options = _.extend(_.clone(this.modalOptions), {
         modalTitle: 'Not complete',

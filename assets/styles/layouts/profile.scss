@@ -398,6 +398,23 @@
   }
 }
 
+#applicant-no-select {
+  background-color: #CD2026;  
+}
+
+#applicant-select, #applicant-no-select {
+ 
+  &.disabled {
+    background-color: $color-gray-lightest;
+    color: $color-gray-light;
+    cursor: default;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
 .add-badge  {
   float: left;
   text-align: center;

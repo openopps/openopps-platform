@@ -122,16 +122,16 @@ var HomeView = Backbone.View.extend({
     }.bind(this));
   },
 
-  getStatus: function (task) {
+  getStatus: function (task) { 
     switch (task.state) {
       case 'completed':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
+        return (task.selected ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
       case 'in progress':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
+        return (task.selected ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
       case 'canceled':
         return 'Canceled';
       default:
-        return (task.assigned ? 'Assigned' : 'Applied');
+        return (task.selected ? 'Assigned' : 'Applied');
     }
   },
 
