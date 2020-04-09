@@ -506,7 +506,7 @@ var TaskListView = Backbone.View.extend({
   },
 
   toggleFilter: function (e) {
-    var filterTab = this.$('#search-tab-bar-filter');
+    var filterTab = this.$('#search-tab-bar-filter-button');
     if (filterTab.attr('aria-expanded') === 'true') {
       setTimeout(function () {
         $('#task-filters').css('display', 'none');
@@ -674,7 +674,7 @@ var TaskListView = Backbone.View.extend({
       async: true,
       success: function (data) {
         this.renderList(data, this.filters.page || 1);
-        if ($('#search-tab-bar-filter').attr('aria-expanded') === 'true') {
+        if ($('#search-tab-bar-filter-button').attr('aria-expanded') === 'true') {
           $('.usajobs-search-filter-nav').attr('aria-hidden', 'false');
         }
       }.bind(this),

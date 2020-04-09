@@ -800,7 +800,12 @@
     margin-bottom: $size-XXL;
     text-align: center;
   }
+  .warning {
+    margin-right: $size-S;
+    color: $color-gold;
+  }
 
+ 
   .assigned-participants-wrapper {
 
     .project-people__assign-instruction {

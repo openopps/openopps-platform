@@ -64,6 +64,26 @@ router.post('/api/volunteer/assign', auth, async (ctx, next) => {
   }
 });
 
+router.post('/api/volunteer/select', auth, async (ctx, next) => {
+  var task = await opportunityService.findById(ctx.request.body.taskId);
+  if (await service.canManageVolunteers(ctx.request.body.taskId, ctx.state.user)) {
+    await service.selectVolunteer(+ctx.request.body.volunteerId,ctx.request.body.taskId, ctx.request.body.select, function (err, volunteer) {
+      if (err) {
+        ctx.status = 400;
+        return ctx.body = err;
+      }
+      if (ctx.request.body.select == 'true' && task.state == 'in progress') {
+        opportunityService.sendTaskAssignedNotification(volunteer.assignedVolunteer, task);
+      }
+      ctx.status = 200;
+      return ctx.body = volunteer;
+    });
+  } else {
+    ctx.status = 401;
+    return ctx.body = null;
+  }
+});
+
 router.post('/api/volunteer/complete', auth, async (ctx, next) => {
   if (await service.canManageVolunteers(ctx.request.body.taskId, ctx.state.user)) {
     await service.volunteerComplete(+ctx.request.body.volunteerId, ctx.request.body.complete, function (err, volunteer) {
