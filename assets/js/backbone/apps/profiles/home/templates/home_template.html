@@ -21,6 +21,19 @@
         </div>
         <% } %>
     <h1>Welcome <%- window.cache.currentUser.givenName %><a href="/logout" class="logout">Sign out</a></h1>
+    <div class="post-next-project">
+      <div class="usajobs-grid-full">
+        <div class="usa-width-two-thirds">
+          <h2>Post your next project</h2>
+          <p class="no-margin-bottom">Current federal employees, and some federal contractors, can create and post opportunities to get help on projects, propose working groups and more. <a href="https://usajobs.github.io/openopps-help/opportunity/" target="_blank" rel="noopener noreferrer nofollow">Learn how. <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+        </div>
+        <div class="usa-width-one-third">
+          <div class="create-opportunity-wrapper">
+            <a href="/tasks/create?target=feds" id="create-opportunity" class="usa-button usa-button-secondary add-opportunity"><i class="fa fa-plus"></i> <span>Create opportunity</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="usajobs-opop-dashboard__body">
       <div class="usajobs-open-opps-participated__body">
         <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/opportunity/application-status/"  target="_blank" rel="noopener noreferrer" title="Help">
@@ -31,8 +44,7 @@
         <h2>Your opportunities</h2>
         <h3>Participated</h3>
         <div class="opportunity-participated"></div>
-        <h3>Created <a href="/tasks/create" id="create-opportunity" class="usa-button usa-button-secondary add-opportunity"><i class="fa fa-plus"></i> <span>Create opportunity</span></a>
-        </h3>
+        <h3>Created</h3>
         <div class="opportunity-created"></div>
       </div>
     </div>
