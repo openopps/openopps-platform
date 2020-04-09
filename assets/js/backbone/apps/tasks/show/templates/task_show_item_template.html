@@ -43,8 +43,8 @@
                       <img id="agency_logo" src="/api/document/image/<%- model.agency.imageId %>" alt="">                    
                     </div>   
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <% if (model.displayCommunityName) { %>
-                        <%- model.community_name %>
+                      <% if (model.community.display_community_name) { %>
+                        <%- model.community.community_name %>
                       <% } else { %>
                         <a href="/profile/<%- model.owner.id %>" title="Profile of the opportunity creator"><%- model.owner.name %></a>
                       <% } %>
@@ -62,7 +62,11 @@
                     <img id="agency_logo" src="/api/document/image/<%- model.community.image_id %>" alt="">
                   </div> 
                   <div class="usajobs-open-opps-opportunity-requestor__body">
-                    <a><%- model.community.community_name %></a>
+                    <% if (model.community.display_community_name) { %>
+                      <%- model.community.community_name %>
+                    <% } else { %>
+                      <a href="/profile/<%- model.owner.id %>" title="Profile of the opportunity creator"><%- model.owner.name %></a>
+                    <% } %>
                     <% if (model.submittedAt) { %>
                       <span class="usajobs-open-opps-opportunity-requestor__on">
                         Posted on
@@ -78,7 +82,11 @@
                       <img src= "<%-model.community.community_logo %>" alt="">
                     </div>
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <a> <%- model.community.community_name %></a>
+                      <% if (model.community.display_community_name) { %>
+                        <%- model.community.community_name %>
+                      <% } else { %>
+                        <a href="/profile/<%- model.owner.id %>" title="Profile of the opportunity creator"><%- model.owner.name %></a>
+                      <% } %>
                       <% if (model.submittedAt) { %>
                         <span class="usajobs-open-opps-opportunity-requestor__on">
                           Posted on
