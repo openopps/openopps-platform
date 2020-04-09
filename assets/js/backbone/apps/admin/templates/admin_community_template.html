@@ -8,6 +8,20 @@
     <p class="usa-alert-text"></p>
   </div>
 </div>
+<% if (community.isDisabled) { %>
+  <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+      <p class="usa-alert-text">This community is currently inactive.</p>
+      <div class="usajobs-alert__footer">
+        <a href="#" class="usa-button usa-button-primary" id="email">Request reactivation</a>
+      </div>
+    </div>
+  </div>
+<% } %>
 <% if (window.cache.currentUser && window.cache.currentUser.isAdmin) { %>
 <a href="create" id="add-community" class="usa-button usa-button-secondary add-community "><i class="fa fa-plus"></i> <span>Add Community</span></a>
 <% } %>
@@ -47,12 +61,22 @@
       <legend class="usa-sr-only">Select community</legend>
       <label for="communities" class="usa-sr-only">Community</label>
       <select id="communities" class="dropdown">
+        <% var communities = _.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
         <option value=""></option>
-      
-       <% var communities =_.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
-        <% _.each(communities, function (c){ %>
+        <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
+          <option value="" disabled>- Active -</option>
+        <% } %>
+        <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %>
+        <% _.each(communitiesEnabled, function (c){ %>
             <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
         <% }); %>
+        <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
+          <option value="" disabled>- Inactive -</option>
+          <% var communitiesDisabled = _.filter(communities, function (c) { return c.isDisabled == true; }); %>
+          <% _.each(communitiesDisabled, function (c){ %>
+              <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
+          <% }); %>
+        <% } %>
       </select>
       <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
         <a href="/admin/community/<%=community.communityId %>/edit" id="community-edit" class="community-header-link">Manage community</a>
