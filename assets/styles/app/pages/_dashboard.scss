@@ -155,6 +155,56 @@
   }
 }
 
+.post-next-project {
+  background-color: $color-cool-blue-lightest;
+  margin: $size-M 0 0 0;
+  padding: $size-S $size-default $size-default $size-default;
+
+  @include media($L) {
+    padding: $size-S $size-M $size-default $size-M;
+  }
+
+  .no-margin-bottom {
+    @include media($L) {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: $color-primary;
+
+    &:visited {
+      color: $color-primary;
+    }
+  }
+
+  .usa-width-one-third .create-opportunity-wrapper {
+    margin-top: 3.42rem;
+    text-align: right;
+    
+    @include media($ML) {
+      margin-top: 4.42rem;
+    }
+
+    @include media(1058px) {
+      margin-top: 3.22rem;
+    }
+  }
+
+  #create-opportunity.usa-button.usa-button-secondary {
+    background: $color-cool-blue-lightest;
+
+    &:hover {
+      background-color: $color-cool-blue-lightest;
+    }
+
+    @include media($L) {
+      margin-bottom: $size-default;
+    }
+  }
+}
+
 .usajobs-open-opps-participated__body {
   margin-top: $size-default;
   margin-bottom: none;
