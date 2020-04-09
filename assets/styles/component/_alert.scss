@@ -54,7 +54,7 @@
     margin-top: $size-default;
     text-align: right;
 
-    a.usa-button-primary[href^="mailto:"] {
+    a.usa-button-primary[href^="mailto:"], a#email {
       color: $color-white;
     }
   }
