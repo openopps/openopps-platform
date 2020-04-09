@@ -100,6 +100,20 @@ service.reindexCommunityOpportunities = async function (communityId) {
   return records;
 };
 
+service.deleteCommunityOpportunities = async function (communityId) {
+  var records = await dao.communityTasksToIndex(communityId);
+  if (records.length) {
+    var bulk_request = [];
+    
+    for(i=0; i<records.length; i++){
+      bulk_request.push({ delete: { _index: 'task', _type: 'task', _id: records[i].id }});
+    }
+    
+    await elasticClient.bulk({ body: bulk_request });
+  }
+  return records;
+};
+
 service.indexOpportunity =  async function (taskId) {
   if (!(await elasticClient.IsAlive()))
   {
