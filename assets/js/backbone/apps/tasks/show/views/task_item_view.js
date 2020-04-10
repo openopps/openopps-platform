@@ -135,10 +135,12 @@ var TaskItemView = BaseView.extend({
     if(this.data.model.canEditTask) {
       $('#nextstep').hide();
       $('#complete').hide();
+      $('#nextStepText').hide();
       switch (this.model.attributes.state.toLowerCase()) {
         case 'open':
         case 'not open':
           $('#nextstep').show();
+          $('#nextStepText').show();
           break;
         case 'in progress':
           $('#complete').show();
@@ -161,20 +163,21 @@ var TaskItemView = BaseView.extend({
   },
 
   updateTaskEmail: function () {
-    var subject = 'Take a look at this opportunity',
-        data = {
-          opportunityTitle: this.model.get('title'),
-          opportunityLink: window.location.protocol +
-          '//' + window.location.host + '' + window.location.pathname,
-          opportunityDescription: this.model.get('description'),
-          opportunityMadlibs: $('<div />', {
-            html: this.$('#task-show-madlib-description').html(),
-          }).text().replace(/\s+/g, ' '),
-          opportunityWhatYoullDo: this.model.get('details'),
-        },
-        body = _.template(ShareTemplate)(data),
-        link = 'mailto:?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
+    var subject = 'Take a look at this opportunity';
+    var data = {
+      opportunityTitle: this.model.get('title'),
+      opportunityLink: window.location.protocol +
+      '//' + window.location.host + '' + window.location.pathname,
+      opportunityDescription: this.model.get('description'),
+      opportunityMadlibs: $('<div />', {
+        html: this.$('#task-show-madlib-description').html(),
+      }).text().replace(/\s+/g, ' '),
+    };
+    if (data.opportunityTitle.length + data.opportunityDescription.length > 1200) {
+      data.opportunityDescription = data.opportunityDescription.substr(0, data.opportunityDescription.substring(0, 1200 - data.opportunityTitle.length).lastIndexOf('.') + 1);
+    }
+    var body = _.template(ShareTemplate)(data);
+    var link = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
     this.$('#email').attr('href', link);
   },
@@ -294,7 +297,7 @@ var TaskItemView = BaseView.extend({
         assign: assign,
       },
       success: function (data) {
-        _.findWhere(this.data.model.volunteers, { id: data.id }).assigned = assign;
+        _.findWhere(this.data.model.volunteers, { id: data.id }).selected = assign;
         this.initializeProgress();
       }.bind(this),
       error: function (err) {
@@ -367,7 +370,7 @@ var TaskItemView = BaseView.extend({
 
   complete: function (e) {   
     var btnDisable=$('#complete').hasClass('disabled');  
-    var notComplete = _.where(this.data.model.volunteers, { assigned: true, taskComplete: false });
+    var notComplete = _.where(this.data.model.volunteers, { selected: true, taskComplete: false });
     if(notComplete.length > 0 && !btnDisable) {
       var options = _.extend(_.clone(this.modalOptions), {
         modalTitle: 'Not complete',

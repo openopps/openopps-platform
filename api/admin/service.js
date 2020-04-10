@@ -791,7 +791,7 @@ module.exports.assignParticipant = async function (ctx, data, done) {
       createdAt: new Date(),
       updatedAt: new Date(),
       silent: false,
-      assigned: false,
+      selected: null,
       taskComplete: false,
     }).then(async (volunteer) => {
       var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', ctx, {

@@ -16,7 +16,7 @@
       </button>
       <% } %>
     </div>
-    <% if (fromSearch) { %>
+    <% if (fromSearch && history.length > 1) { %>
       <div class="back-link" role="navigation" aria-label="Back to results"><a href="javascript:history.back()"><i class="fas fa-chevron-left"></i> Back to results</a></div>
     <% } %>
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
@@ -98,13 +98,15 @@
                 <% } else { %>
                   <a href="/profile/<%- model.owner.id %>">
                     <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-                      <div class="usajobs-open-opps-opportunity-requestor__figure <% if (user) { %><%- getInitialsColor(model.owner.id) %><% } %>" <% if (user) { %> data-userid="<%- model.userId %>" <% } %>>
-                        <% if (model.owner.photoId) { %>
+                      <% if (model.owner.photoId) { %>
+                        <div class="usajobs-open-opps-opportunity-requestor__figure" data-userid="<%- model.owner.id %>">
                           <img src="/api/document/image/<%- model.owner.photoId %>" alt="Profile picture of <%- model.owner.name %>">
-                        <% } else { %>
+                        </div>
+                      <% } else { %>
+                        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(model.owner.id) %>" data-userid="<%- model.owner.id %>">
                           <div class="usajobs-open-opps-opportunity-requestor__initials" title="<%- model.owner.name %>"><%- getInitials(model.owner.name) %></div>
-                        <% } %>
-                      </div>
+                        </div>
+                      <% } %>
                       <div class="usajobs-open-opps-opportunity-requestor__body">
                         <p class="usajobs-open-opps-opportunity-requestor__name">
                           <%- model.owner.name %> <% if(model.owner.agency && model.owner.agency.abbr) { %>(<%- model.owner.agency.abbr %>)<% } %>

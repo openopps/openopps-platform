@@ -36,6 +36,23 @@ async function assignVolunteer (volunteerId, assign, done) {
   });
 }
 
+async function selectVolunteer (volunteerId,taskId, select, done) {
+  var volunteer = (await dao.Volunteer.db.query(dao.query.assignedVolunteer, volunteerId)).rows[0];
+  volunteer.selected = select;
+  await dao.Volunteer.update({
+    id: volunteerId,
+    taskId:taskId,
+    selected: select,
+    assignedVolunteer: volunteer,
+    updatedAt: new Date(),
+  }).then(async (volunteer) => {
+    return done(null, volunteer);
+  }).catch(err => {
+    log.info('Update: failed to set volunteer selected ' + assign, err);
+    return done({'message':'Unable to complete request'}, null);
+  });
+}
+
 async function volunteerComplete (volunteerId, complete, done) {
   await dao.Volunteer.update({
     id: volunteerId,
@@ -128,4 +145,5 @@ module.exports = {
   canManageVolunteers: canManageVolunteers,
   sendAddedVolunteerNotification: sendAddedVolunteerNotification,
   sendDeletedVolunteerNotification: sendDeletedVolunteerNotification,
+  selectVolunteer: selectVolunteer,
 };

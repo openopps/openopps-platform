@@ -62,9 +62,9 @@
         <h4 class="usajobs-search-filters__title career">Career field</h4>
         <label for="career" class="usa-sr-only">Select a career field</label>
         <select id="career" class="dropdown">
-            <option></option>
+            <option value=""></option>
             <% _.each(tagTypes['career'], function (t) { %>
-            <option value=<%- t.id %> <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
+                <option value="<%- t.id %>" <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
             <% }); %>
         </select>
 

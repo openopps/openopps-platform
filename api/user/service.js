@@ -65,6 +65,10 @@ async function getInternshipsActivities (userId) {
   };
 }
 
+async function getApplicant (volunteerId,taskId) {
+  return (await dao.Volunteer.find('id = ? and "taskId" = ?',volunteerId,taskId).catch(() => { return []; }));
+}
+
 function processUserTags (user, tags) {
   return Promise.all(tags.map(async (tag) => {
     if(!_.isNaN(_.parseInt(tag))) {
@@ -300,6 +304,7 @@ module.exports = {
   getActivities: getActivities,
   getCompletedInternship: getCompletedInternship,
   getInternshipsActivities: getInternshipsActivities,
+  getApplicant:getApplicant,
   updateProfile: updateProfile,
   updateProfileStatus: updateProfileStatus,
   updatePassword: updatePassword,

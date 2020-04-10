@@ -127,10 +127,10 @@ const userTasksQuery = 'select count(*) as "completedTasks", midas_user.id, ' +
   'from midas_user ' +
   'join volunteer v on v."userId" = midas_user.id ' +
   'join task t on t.id = v."taskId" and t."completedAt" is not null ' +
-  'where v.assigned = true and v."taskComplete" = true and midas_user.id in ? ' +
+  'where v.selected = true and v."taskComplete" = true and midas_user.id in ? ' +
   'group by midas_user.id, midas_user.username, midas_user.name';
 
-const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned, ' +
+const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assigned,volunteer."taskId", volunteer.selected, ' +
   'volunteer."taskComplete", midas_user.name, midas_user.username, midas_user.government_uri as "governmentUri", midas_user.bounced, midas_user."photoId" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
@@ -139,7 +139,7 @@ const volunteerQuery = 'select volunteer.id, volunteer."userId", volunteer.assig
 const volunteerListQuery = 'select midas_user.username, midas_user.government_uri as "governmentUri", midas_user."photoId", midas_user.bounced, volunteer."taskComplete" ' +
   'from volunteer ' +
   'join midas_user on midas_user.id = volunteer."userId" ' +
-  'where volunteer."taskId" = ? and volunteer.assigned = true';
+  'where volunteer."taskId" = ? and volunteer.selected = true';
 
 const lookUpVanityURLQuery = 'select community_id from community where lower(vanity_url) = lower(?)';
 
