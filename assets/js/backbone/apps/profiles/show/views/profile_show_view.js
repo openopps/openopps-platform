@@ -849,8 +849,7 @@ var ProfileShowView = Backbone.View.extend({
           volunteerId: volunteerId,
           select: select,
         },
-        success: function (data) {
-        
+        success: function (data) {       
           Backbone.history.navigate('/tasks/' + data.taskId, { trigger: true });       
         }.bind(this),
         error: function (err) {
@@ -870,8 +869,7 @@ var ProfileShowView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
-        this.applicant = data;
-        console.log(data);
+        this.applicant = data;     
       }.bind(this),
     });
   },

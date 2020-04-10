@@ -48,7 +48,7 @@ async function selectVolunteer (volunteerId,taskId, select, done) {
   }).then(async (volunteer) => {
     return done(null, volunteer);
   }).catch(err => {
-    log.info('Update: failed to set volunteer selected ' + assign, err);
+    log.info('Update: failed to set volunteer selected ' + select, err);
     return done({'message':'Unable to complete request'}, null);
   });
 }
