@@ -26,5 +26,5 @@ select
 	end as task_state
 from tasks
 left join community on tasks.community_id = community.community_id
-where tasks.state <> 'archived' and (community.target_audience <> 2 or community.target_audience is null) [filter clause]
+where tasks.state <> 'archived' and community.is_disabled = false and (community.target_audience <> 2 or community.target_audience is null) [filter clause]
 group by task_state;

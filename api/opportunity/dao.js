@@ -35,7 +35,8 @@ const communitiesQuery = 'SELECT ' +
     'community.community_name, ' +
     'community.target_audience, ' +
     'community.reference_id, ' +
-    'community.community_type ' +
+    'community.community_type, ' +
+    'community.is_disabled ' +
   'FROM community ' +
   'WHERE ' +
     'community.is_closed_group = false ' +
@@ -45,7 +46,8 @@ const communitiesQuery = 'SELECT ' +
     'community.community_name, ' +
     'community.target_audience, ' +
     'community.reference_id, ' +
-    'community.community_type ' +
+    'community.community_type, ' +
+    'community.is_disabled ' +
   'FROM community ' +
   'JOIN community_user ' +
     'ON community_user.community_id = community.community_id ' +

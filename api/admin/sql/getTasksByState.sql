@@ -24,6 +24,7 @@ with tasks as (
 	) as agency		
 	from task
 	left join community on task.community_id = community.community_id
+	where community.is_disabled = false
 )
 	
 select * from tasks
