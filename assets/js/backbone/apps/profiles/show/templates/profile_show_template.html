@@ -226,7 +226,7 @@
     <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
       <% if (taskId && volunteerId) { %>
      <div id="applicant-section">
-          <aside class="usajobs-rightrail profile-edit" id="rightrail">
+      <aside class="usajobs-rightrail" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
           <h2>Applicant selection</h2>
         <p>
@@ -238,7 +238,7 @@
           <div id="applicant-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Selected</strong> this applicant.</div>  
             <% } %>    
          <% if (_.where(applicant, { selected: false }).length == 1 ) { %>
-              <div id="applicant-not-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Not Selected</strong> this applicant.</div>  
+            <div id="applicant-not-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Not Selected</strong> this applicant.</div>  
           <% } %>           
         </div>    
       </aside>
