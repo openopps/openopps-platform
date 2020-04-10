@@ -33,13 +33,14 @@
               <h3>Who</h3>
             </label>
             <div class="form-group required-input">
-            <% if(communities.federal.length > 0) { %>              
-              <% var communitiesFed = _.sortBy(communities.federal, function (c) { return c.communityName.toLowerCase().trim(); }); %>   
+            <% if(communities.federal.length > 0) { %>         
+              <% var communities = _.sortBy(communities.federal, function (c) { return c.communityName.toLowerCase().trim(); }); %>   
+              <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %> 
               <label for="federal-programs" class="usa-input-optional no-margin-top">Community</label>            
               <div class="form-group required-input federal-programs">
                 <select id="federal-programs" class="dropdown"> 
                     <option></option>              
-                  <% _(communitiesFed).forEach(function (community, i) { %>
+                  <% _(communitiesEnabled).forEach(function (community, i) { %>
                       <option value=<%- community.communityId %>>
                           <%- community.communityName %>
                     </option>
