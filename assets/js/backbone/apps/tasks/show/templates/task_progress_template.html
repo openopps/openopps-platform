@@ -219,7 +219,7 @@
 
   <% if (model.canEditTask) { %>    
     <a href="javascript:void(0);" id="nextstep" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { selected: true }).length < 1) { %>disabled<% } %>"><span class="box-icon-text">Next step</span></a>    
-     <div id="nextStepText"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>Do not click <strong>Next step</strong> until you have made your final selections. After you click <stong>Next step</strong>, we'll send out emails to your applicants.</div>    
+     <div id="nextStepText"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>Do not click <strong>Next step</strong> until you have made your final selections. After you click <strong>Next step</strong>, we'll send out emails to your applicants.</div>    
     <a href="javascript:void(0);" id="complete" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { taskComplete: true }).length < 1 ) { %>disabled<% } %>"><span class="box-icon-text">Complete opportunity</span></a> 
   <% } %>
 
