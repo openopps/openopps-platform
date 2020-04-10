@@ -67,7 +67,7 @@
     </div>
     <div class="usajobs-open-opps-opportunity-requestor__wrapper">
       <div class="usajobs-open-opps-opportunity-requestor">
-        <div class="usajobs-open-opps-opportunity-requestor__figure-body">         
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body">                
           <% if (item.agencyId && !_.isEmpty(item.community) && (item.community.displayAgencyLogo) && (item.agency.imageId || item.community.imageId)) { %>  
             <% if (item.agency.imageId) { %>       
               <div class="usajobs-open-opps-opportunity-requestor__figure" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>   
@@ -77,7 +77,8 @@
               <div class="usajobs-open-opps-opportunity-requestor__figure" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>
                 <img class="community_logo" src="/api/document/image/<%- item.community.imageId %>" alt="<%- item.community.name %>"> 
               </div> 
-            <% } %>       
+            <% } %>  
+              
           <% } else if (!_.isEmpty(item.community) && (item.community.communityLogo)) { %>
             <div class="usajobs-open-opps-opportunity-requestor__figure" <% if (item.owner) { %> data-userid="<%- item.owner.id %>" <% } %>>                     
               <img src="<%- item.community.communityLogo %>" alt="<%- item.community.name %>">
@@ -93,12 +94,11 @@
           <% } %>
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <p class="usajobs-open-opps-opportunity-requestor__name">                         
-              <% if (item.community && item.community.communityLogo) { %>
+              <% if ((item.community && item.community.communityLogo) || (item.community && item.community.displayCommunityName)) { %>
                   <%- item.community.name %>
               <% } else { %>
                 <%- item.owner.name %> <% if (item.owner.agency && item.owner.agency.abbr) { %>(<%- item.owner.agency.abbr %>)<% } %>
-                <% } %>
-                
+                <% } %>            
             </p>
             <% if (item.publishedAt) { %>
             <span class="usajobs-open-opps-opportunity-requestor__on">

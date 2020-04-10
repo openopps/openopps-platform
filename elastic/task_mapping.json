@@ -76,7 +76,7 @@
                     "shortName": { "type": "keyword", "normalizer": "lowercase" },
                     "communityLogo":{"type": "keyword", "normalizer": "lowercase" },
                     "displayAgencyLogo":{"type": "keyword", "normalizer": "lowercase" },
-                    "displayCommunityName":{"type": "keyword", "normalizer": "lowercase" },
+                    "displayCommunityName":{"type": "boolean"},
                     "imageId" : { "type": "long" }
                 }
             },
