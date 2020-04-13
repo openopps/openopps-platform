@@ -165,6 +165,8 @@
   }
 
   .no-margin-bottom {
+    margin-top: 0;
+
     @include media($L) {
       margin-bottom: 0;
     }
@@ -184,11 +186,11 @@
     text-align: right;
     
     @include media($ML) {
-      margin-top: 4.42rem;
+      margin-top: 3.72rem;
     }
 
     @include media(1058px) {
-      margin-top: 3.22rem;
+      margin-top: 2.52rem;
     }
   }
 
