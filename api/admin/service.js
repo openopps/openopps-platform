@@ -216,7 +216,8 @@ module.exports.getApplicantsInternships = async (userId, cycleId) => {
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
-  var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
+  var whereClause = `(target_audience <> 2 or target_audience is null)
+    and (community_id is null or community_is_disabled = false) and ` + getWhereClauseForTaskState(state);
   if (filter) {
     whereClause += ' and ' + getTaskFilterClause(filter, true);
   }
