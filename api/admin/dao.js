@@ -28,6 +28,7 @@ const taskStateQuery = `with task_type as (
   left join task_type on task_type.id = task.id
   where
   task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and (task.community_id is null or community.is_disabled = false)
   and (community.target_audience <> 2 or community.target_audience is null)`;
 
 const agencyTaskStateQuery = `with task_type as (
