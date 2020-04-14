@@ -506,6 +506,8 @@
 
     .task-open, .delete-task, .task-change-owner, .task-add-participant, .approve-error, .delete-applicant-participant {
       padding: 7px 10px;
+      text-decoration: none;
+      border: 0;
     }
 
     .task-change-owner:visited, .task-add-participant:visited {
