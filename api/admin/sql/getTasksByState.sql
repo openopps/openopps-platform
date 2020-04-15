@@ -1,5 +1,5 @@
 with tasks as (
-	select task.*, community.target_audience,
+	select task.*, community.target_audience, community.is_disabled as community_is_disabled,
 	(select row_to_json (muser)
 		from (
 			select
@@ -24,7 +24,6 @@ with tasks as (
 	) as agency		
 	from task
 	left join community on task.community_id = community.community_id
-	where community.is_disabled = false
 )
 	
 select * from tasks

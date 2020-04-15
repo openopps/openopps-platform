@@ -160,20 +160,19 @@ var TaskEditFormView = Backbone.View.extend({
       communities:this.communities,   
       payPlans:this.payPlans, 
       accordion1: {
-        open: false,
+        open: this.model.toJSON().outcome ? true : false,
       },
       accordion2: {
-        open: false,
+        open: this.model.toJSON().about ? true : false,
       },
       accordion3: {
-        open: false,
+        open: _.findWhere(this.model.toJSON().tags, {type: 'keywords'}) ? true : false,
       },
-
       accordion4: {
-        open: false,
+        open: this.model.toJSON().requirement ? true : false,
       },
       accordion5: {
-        open: false,
+        open: this.model.toJSON().applyAdditional ? true : false,
       },
     };
 
