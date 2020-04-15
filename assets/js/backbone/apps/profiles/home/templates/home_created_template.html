@@ -26,6 +26,7 @@
   <div id="<%- handle %>-tab-open">
     <div style="overflow-x:auto;">
       <% if (data.length > 0) { %>
+        <% var showDelete = (window.cache.currentUser.id == data[0].userId); %>
         <div class="usajobs-show-next" data-object="reveal">
           <table class="usa-table-borderless <% if (!showAll) { %>results-filter<% } %>" role="presentation" id="created-table">
             <thead>
@@ -33,7 +34,7 @@
               <th scope="col">Opportunity status</th>
               <th scope="col">Opportunity</th>
               <th scope="col">Last updated</th>
-              <% if (count.draft > 0) { %>
+              <% if (showDelete && count.draft > 0) { %>
               <th scope="col" class="center" data-target="delete">Delete</th>
               <% } %>
             </tr>
@@ -60,7 +61,7 @@
                     <% var updated = new Date(data[i].updatedAt); %>
                     <%- updated.toLocaleDateString() %>
                   </td>
-                  <% if ('draft' === data[ i ].state) { %>
+                  <% if (showDelete && 'draft' === data[ i ].state) { %>
                     <td class="metrics-table__button">
                       <a href="#delete"
                         data-opportunity-id="<%- data[i].id %>"
