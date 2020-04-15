@@ -56,12 +56,8 @@
 .usajobs-opop-section-edit, .usajobs-opop-section-edit a:visited {
   text-decoration: none;
   color: #0D71B9;
-
-  @include media($ML-down) {
-    padding-bottom: $size-SM;
-  }
-
-  @include media($ML) {
+  
+  @include media($XL) {
     position: absolute;
     right: $size-M;
   }
