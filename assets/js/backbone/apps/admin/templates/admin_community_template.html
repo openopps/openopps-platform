@@ -48,7 +48,9 @@
       <label for="communities" class="usa-sr-only">Community</label>
       <select id="communities" class="dropdown">
         <option value=""></option>
-        <% _.each(communities, function (c) { %>
+      
+       <% var communities =_.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
+        <% _.each(communities, function (c){ %>
             <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
         <% }); %>
       </select>
@@ -138,7 +140,7 @@
   <% } %>
   
 </div>
-<div class="task-metrics"></div>
+<div class="task-metrics-community"></div>
 <div class="activity-block" >
   <h3  class="usajobs-section-header">Recent activity</h3>
   <div class="usajobs-grid-full">

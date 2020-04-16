@@ -185,7 +185,8 @@ const ownerCommunityListQuery ='select midas_user.id,midas_user.name ' +
 
 const communityListQuery = 'select community.* from community ' + 
   'join community_user on community_user.community_id = community.community_id ' +
-  'where (community_user.is_manager = true or community_user.is_approver = true) and community_user.user_id = ?';
+  'where (community_user.is_manager = true or community_user.is_approver = true) and community_user.user_id = ? ' +
+  'order by community.community_name ';
 
 const userListFilteredQuery = 'select midas_user.*, count(*) over() as full_count ' +
   'from midas_user ' +
@@ -334,7 +335,13 @@ const communityTaskMetricsQuery = 'select @task.*, @tags.* ' +
   'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
    'where community.target_audience <> 2 and task.state <> \'archived\' and task.community_id= ? ';
 
-const communityVolunteerTaskQuery='select volunteer.*, task.* ' +
+const communityVolunteerTaskQuery='select volunteer.*, task.* , ' +
+'('+ 
+  'select te.name ' + 
+  'from tagentity te ' +
+  'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+ ' where te.type = \'task-time-required\' and tt.task_tags = task.id  ' +   
+') as tagName ' +
    'from volunteer ' +
    'join task on task.id = volunteer."taskId" ' +
    'where task."completedAt" is not null and task.state <> \'archived\' and task.community_id = ?' ;
@@ -354,17 +361,29 @@ const volunteerDetailsQuery = 'select @m_user.*, @tags.* ' +
   "where tags.type = 'agency' ";
 
 
-const volunteerAgencyTaskQuery='select volunteer.*, task.* ' +
+const volunteerAgencyTaskQuery='select volunteer.*, task.*, ' +
+'('+ 
+  'select te.name ' + 
+  'from tagentity te ' +
+  'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+ ' where te.type = \'task-time-required\' and tt.task_tags = task.id  ' +   
+') as tagName ' +
   'from volunteer ' +
   'join task on task.id = volunteer."taskId" ' +
   'where task.agency_id= ? and task."completedAt" is not null and task.state <> \'archived\' ';
 
-const agencyTaskMetricsQuery = 'select @task.*, @tags.* ' +
+const agencyTaskMetricsQuery = 'select @task.*, @tags.*, ' +
+'('+ 
+  'select te.name ' + 
+  'from tagentity te ' +
+  'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+ ' where te.type = \'task-time-required\' and tt.task_tags = task.id  ' +   
+') as tagName ' +
   'from @task task ' +
    'left join community on task.community_id = community.community_id '+
    'left join tagentity_tasks__task_tags task_tags on task_tags.task_tags = task.id ' +
    'left join @tagentity tags on tags.id = task_tags.tagentity_tasks ' +
-   'where task.agency_id= ? and task.state <> \'archived\' and (community.target_audience <> 2 or community.target_audience is null) ';
+   'where task.agency_id= ? and task.state <> \'archived\' and (community.target_audience <> 2 or community.target_audience is null) and community.community_id is null ';
 
 const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   'from midas_user inner join tagentity_users__user_tags on midas_user.id = tagentity_users__user_tags.user_tags ' +
@@ -374,7 +393,14 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
 
 const userCommunityQuery = '';
 
-const volunteerTaskQuery='select volunteer.*, task.* ' +
+const volunteerTaskQuery='select volunteer.*, task.*, ' +
+'('+ 
+  'select te.name ' + 
+  'from tagentity te ' +
+  'join tagentity_tasks__task_tags tt on te.id = tt.tagentity_tasks ' +
+ ' where te.type = \'task-time-required\' and tt.task_tags = task.id  ' +   
+') as tagName ' +
+
 'from volunteer ' +
 'join task on task.id = volunteer."taskId" ' +
 'where task."completedAt" is not null and task.state <> \'archived\' ' ;

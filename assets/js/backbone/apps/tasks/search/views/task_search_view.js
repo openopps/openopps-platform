@@ -20,7 +20,8 @@ var TaskListView = Backbone.View.extend({
   events: {
     'click #search-button'                    : 'search',
     'change #stateFilters input'              : 'stateFilter',
-    'change #timeFilters input'               : 'timeFilter',
+    'change #timeFilters > li > input'        : 'timeFilter',
+    'change #detailFilters input'             : 'detailFilter',
     'change input[name=location]'             : 'locationFilter',
     'click .stateFilters-toggle'              : 'toggleStateFilters',
     'click .timefilters-toggle'               : 'toggleTimeFilters',
@@ -202,7 +203,7 @@ var TaskListView = Backbone.View.extend({
     $('#community').on('change', function (e) {
       if($('#community').select2('data')) {
         var c = _.findWhere(this.tagTypes['community'], { communityId: $('#community').select2('data').id });
-        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
+        this.filters.community = _.pick(c, 'type', 'name', 'id', 'banner', 'imageId', 'communityType', 'usajobsSearchUrl', 'usajobsSearchUrlLabel');
       } else {
         delete this.filters.community;
       }
@@ -319,9 +320,15 @@ var TaskListView = Backbone.View.extend({
             return filter != value;
           }
         });
+        if(type == 'time' && value == 'Detail') {
+          delete this.filters.detailSelection;
+        } 
       }
     } else if (_.isEqual(this.filters[type], value) || this.filters[type] == value) {
       delete this.filters[type];
+      if(type == 'time' && value == 'Detail') {
+        delete this.filters.detailSelection;
+      } 
     }
     this.filters.page = 1;
     this.filter();
@@ -340,14 +347,14 @@ var TaskListView = Backbone.View.extend({
 
   renderFilters: function () {
     if(!_.isEmpty(this.filters.community) && _.isArray(this.filters.community)) {
-      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId', 'communityType');
+      this.filters.community = _.pick(_.findWhere(this.tagTypes.community, { name: this.filters.community[0].name }), 'type', 'name', 'id', 'banner', 'imageId', 'communityType', 'usajobsSearchUrl', 'usajobsSearchUrlLabel');
     }
     if(!_.isEmpty(this.filters.career) && _.isArray(this.filters.career)) {
       this.filters.career = _.pick(_.findWhere(this.tagTypes.career, { name: this.filters.career[0].name }), 'type', 'name', 'id');
     }
     if(!_.isEmpty(this.filters.payPlan) && _.isArray(this.filters.payPlan)) {
       this.filters.payPlan = _.pick(_.findWhere(this.tagTypes.payPlan, { code: this.filters.payPlan[0].name }), 'type','name','id');
-    }  
+    }    
     var compiledTemplate = _.template(TaskFilters)({
       placeholder: '',
       user: window.cache.currentUser,
@@ -372,7 +379,7 @@ var TaskListView = Backbone.View.extend({
     this.initializeSelect2();
     this.initializeInputGrade();
     this.initializePayPlanSelect2();
-    this.displayPayPlanGrade();
+    this.displayDetails();
 
     setTimeout(function () {
       this.initializeCommunitySelect2();
@@ -556,9 +563,12 @@ var TaskListView = Backbone.View.extend({
 
   toggleTimeFilters: function (event) {
     var behavior = $(event.currentTarget).data('behavior');
-    var checkBoxes = $('#timeFilters input[type="checkbox"]');
+    var checkBoxes = $('#timeFilters > li > input[type="checkbox"]');
     checkBoxes.prop('checked', behavior == 'select');
     this.timeFilter();
+    var checkBoxes2 = $('#detailFilters input[type="checkbox"]');
+    checkBoxes2.prop('checked', behavior == 'select');
+    this.detailFilter();
   },
 
   toggleLocationFilters: function (event) {
@@ -575,19 +585,34 @@ var TaskListView = Backbone.View.extend({
   },
 
   timeFilter: function (event) {
-    this.displayPayPlanGrade(); 
-    this.filters.time = _($('#timeFilters input:checked')).pluck('value').map(function (value) {
+    this.filters.time = _($('#timeFilters > li > input:checked')).pluck('value').map(function (value) {
+      return value;
+    });
+    this.displayDetails(); 
+    this.filters.page = 1;
+    this.filter();
+  },
+
+  detailFilter: function (event) {
+    this.filters.detailSelection = _($('#detailFilters input:checked')).pluck('value').map(function (value) {
       return value;
     });
     this.filters.page = 1;
-    this.filter(); 
+    this.filter();
   },
 
-  displayPayPlanGrade : function (){
-    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
-      $('#pay-scale-grade').show();  
+  displayDetails : function (){
+    if($('#detail').is(':checked')) { 
+      $('#detailFilters').show();
+    } else {  
+      $("input[name='full-time']:checkbox").prop('checked', false);
+      $("input[name='part-time']:checkbox").prop('checked', false);
+      $('#detailFilters').hide();  
+      delete this.filters.detailSelection;
     }
-    else {  
+    if($('#detail').is(':checked') || $('#lateral').is(':checked')) { 
+      $('#pay-scale-grade').show(); 
+    } else {  
       $('#pay-scale-grade').hide();  
       delete this.filters.grade;
       delete this.filters.payPlan;

@@ -92,7 +92,7 @@
                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                   <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
                     <% if (v.photoId) { %>
-                      <img src="/api/user/photo/<%- v.userId %>" alt="Profile picture of <%- v.name %>">
+                      <img src="/api/document/image/<%- v.photoId %>" alt="Profile picture of <%- v.name %>">
                     <% } else { %>
                       <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
                     <% } %>
@@ -165,7 +165,7 @@
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
                       <% if (v.photoId) { %>
-                        <img src="/api/user/photo/<%- v.userId %>" alt="Profile picture of <%- v.name %>">
+                        <img src="/api/document/image/<%- v.photoId %>" alt="Profile picture of <%- v.name %>">
                       <% } else { %>
                         <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
                       <% } %>

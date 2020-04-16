@@ -217,7 +217,7 @@ router.get('/api/admin/task/export', auth.isAdmin, async (ctx, next) => {
   if(ctx.state.user.isAdmin) {
     var exportData = await service.getExportData('task', 'sitewide').then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
-      ctx.response.set('Content-disposition', 'attachment; filename=tasks.csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=opportunities.csv');
       ctx.body = rendered;
       service.createAuditLog('DATA_EXPORTED', ctx, {
         userId: ctx.state.user.id,
@@ -241,7 +241,7 @@ router.get('/api/admin/task/export/agency/:id', auth.isAdminOrAgencyAdmin, async
   if(ctx.state.user.isAdmin || ctx.state.user.agencyId == ctx.params.id) {
     await service.getExportData('task', 'agency', ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
-      ctx.response.set('Content-disposition', 'attachment; filename=agency_tasks.csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=agency_opportunities.csv');
       ctx.body = rendered;
       service.createAuditLog('DATA_EXPORTED', ctx, {
         userId: ctx.state.user.id,
@@ -265,7 +265,7 @@ router.get('/api/admin/task/export/community/:id', auth.isCommunityAdmin, async 
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     await service.getExportData('task', 'community', ctx.params.id).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
-      ctx.response.set('Content-disposition', 'attachment; filename=community_tasks.csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community_opportunities.csv');
       ctx.body = rendered;
       service.createAuditLog('DATA_EXPORTED', ctx, {
         userId: ctx.state.user.id,
@@ -289,7 +289,7 @@ router.get('/api/admin/task/export/community/:id/cycle/:cycleId', auth.isCommuni
   if(await communityService.isCommunityManager(ctx.state.user, ctx.params.id)) {
     await service.getExportData('task', 'community', ctx.params.id, ctx.params.cycleId).then(rendered => {
       ctx.response.set('Content-Type', 'text/csv');
-      ctx.response.set('Content-disposition', 'attachment; filename=community_tasks.csv');
+      ctx.response.set('Content-disposition', 'attachment; filename=community_internships.csv');
       ctx.body = rendered;
       service.createAuditLog('DATA_EXPORTED', ctx, {
         userId: ctx.state.user.id,

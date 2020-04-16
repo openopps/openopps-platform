@@ -13,8 +13,9 @@
             "updatedAt":             { "type": "date", "format": "strict_date_optional_time||epoch_millis"},
             "postingAgency":         { "type": "keyword", "normalizer": "lowercase" },
             "grade"         :        { "type": "long" },
-            "agencyId"       :       { "type": "long" },
-            "agencyName"      :       { "type": "text" },
+            "detailSelection":       { "type": "keyword", "normalizer": "lowercase" },
+            "agencyId"        :      { "type": "long" },
+            "agencyName"      :      { "type": "text" },
             "postingLocation":       { 
                 "properties": {
                     "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },

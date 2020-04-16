@@ -5,6 +5,7 @@ var marked = require('marked');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
+var AdminCommunityBasicCustomFormTemplate = require('../templates/admin_community_basic_custom_form_template.html');
 var AdminCommunityAddBureauOfficeTemplate = require('../templates/admin_community_add_bureau_office_template.html');
 var AdminCommunityBureauAndOfficeFormTemplate = require('../templates/admin_community_bureau_and_office_form_template.html');
 var AdminCommunityBureauOfficeMessageTemplate = require('../templates/add_community_bureau_office_message_template.html');
@@ -14,6 +15,7 @@ var AdminCommunityPreviewTemplate = require('../templates/admin_community_previe
 var CommunityModel = require('../../../entities/community/community_model');
 var ModalComponent = require('../../../components/modal');
 var Modal = require('../../../components/modal');
+var charCounter = require('../../../../vendor/jquery.charcounter');
 
 var AdminCommunityEditView = Backbone.View.extend({
 
@@ -28,10 +30,12 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click .delete-office'                    : 'deleteOffice',
     'change #display-title-color'             : 'updateColorTextField',
     'change #display-subtitle-color'          : 'updateColorTextField',
+    'change #display-button-color'            : 'updateColorTextField',
     'change #display-description-color'       : 'updateColorTextField',
     'change #display-banner-color'            : 'updateColorTextField',
     'change #display-title-color-text'        : 'updateColorField',
     'change #display-subtitle-color-text'     : 'updateColorField',
+    'change #display-button-color-text'       : 'updateColorField',
     'change #display-description-color-text'  : 'updateColorField',
     'change #display-banner-color-text'       : 'updateColorField',
     'click #community-preview'                : 'preview',
@@ -39,6 +43,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #photo-remove'                     : 'removeImage',
     'click #image-remove'                     : 'removeImage',
     'change [name=background-group]'          : 'toggleBackgroundDisplay',
+    'blur #usajobsSearchUrl'                  : 'validateUsajobsSearchUrlLabel',
   },
 
   initialize: function (options) {
@@ -79,7 +84,10 @@ var AdminCommunityEditView = Backbone.View.extend({
       this.initializeFileUpload();
       this.initializeBannerFileUpload();
       this.initializeCounts();
-      $('#search-results-loading').hide();   
+      $('#search-results-loading').hide();
+      setTimeout(() => {
+        this.showUsajobsSearchUrlLinkText();
+      }, 50);
     }
     return this;
   },
@@ -143,6 +151,9 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#display-subtitle').val(community.banner.subtitle);
     $('#display-subtitle-color-text').val(community.banner.subtitleColor);
     $('#display-subtitle-color').val(community.banner.subtitleColor || this.defaultTextColor);
+    $('#display-button-color-text').val(community.banner.buttonColor);
+    $('#display-button-color').val(community.banner.buttonColor || this.defaultTextColor);
+    $('input[name=button-text-group][value=' + community.banner.buttonTextColor +']').prop('checked', true);
     $('#display-description').val(community.banner.description);
     $('#display-description-color-text').val(community.banner.descriptionColor);
     $('#display-description-color').val(community.banner.descriptionColor || this.defaultTextColor);
@@ -155,6 +166,11 @@ var AdminCommunityEditView = Backbone.View.extend({
       $('#background-color-banner').show();
     }
     $('#vanityURL').val(community.vanityUrl);
+    $('#usajobsSearchUrl').val(community.usajobsSearchUrl);
+    $('#usajobsSearchUrlLabel').val(community.usajobsSearchUrlLabel);
+    if (!community.usajobsSearchUrl) {
+      $('#usajobsSearchUrlLinkText').hide();
+    }
   },
 
   updateColorTextField: function (e) {
@@ -188,6 +204,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerName: $('#community-mgr-name').val(),
       communityManagerEmail: $('#community-mgr-email').val(),
       emailSignature: $('#community-email-signature').val(),
+      imageId: this.community.get('imageId'),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -195,14 +212,27 @@ var AdminCommunityEditView = Backbone.View.extend({
         titleColor: $('#display-title-color-text').val(),
         subtitle: $('#display-subtitle').val(),
         subtitleColor: $('#display-subtitle-color-text').val(),
+        buttonColor: $('#display-button-color-text').val(),
+        buttonTextColor: $("input[name='button-text-group']:checked").val(),
         description: $('#display-description').val(),
         descriptionColor: $('#display-description-color-text').val(),
         hasBackgroundImage: $("input[name='background-group']:checked").val(),
         backgroundImageId: this.community ? this.community.attributes.banner.backgroundImageId: null,
         color: $('#display-banner-color-text').val(),
+        usajobsSearchUrl: $('#usajobsSearchUrl').val(),
+        usajobsSearchUrlLabel: $('#usajobsSearchUrlLabel').val(),
       };
       modelData.vanityUrl = $('#vanityURL').val();
-      modelData.imageId = this.community ? this.community.attributes.imageId: null;
+      modelData.usajobsSearchUrl = $('#usajobsSearchUrl').val();
+      modelData.usajobsSearchUrlLabel = $('#usajobsSearchUrlLabel').val();
+    } else {
+      modelData.banner = _.extend(this.community.get('banner'), {
+        title: $('#display-title').val(),
+        subtitle: $('#display-subtitle').val(),
+        description: $('#display-description').val(),
+        usajobsSearchUrl: $('#usajobsSearchUrl').val(),
+        usajobsSearchUrlLabel: $('#usajobsSearchUrlLabel').val(),
+      });
     }
     return modelData;
   },
@@ -243,14 +273,19 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   renderCustomize: function () {
-    if (window.cache.currentUser && window.cache.currentUser.isAdmin) {
+    if (window.cache.currentUser.isAdmin) {
       var customizeTemplate = _.template(AdminCommunityCustomFormTemplate)({
         imageId: this.community ? this.community.get('imageId') : null,
         name: this.community ? this.community.get('communityName') : null,
-        communityId:this.options.communityId,
+        communityId: this.options.communityId,
         banner: this.community ? this.community.get('banner') : {},     
       });
       $('#custom-display').html(customizeTemplate);
+    } else {
+      var basicCustomizeTemplate = _.template(AdminCommunityBasicCustomFormTemplate)({
+        banner: this.community ? this.community.get('banner') : {}, 
+      });
+      $('#custom-display').html(basicCustomizeTemplate);
     }
   },
 
@@ -296,15 +331,23 @@ var AdminCommunityEditView = Backbone.View.extend({
   },
 
   initializeCounts: function () {
-    [{ id: 'community-name', count: 100},{ id: 'community-new-office', count: 100},{ id: 'community-new-bureau', count: 100}, { id: 'description', count: 500}, { id: 'community-email-signature', count: 300 }].forEach(function (item) {
-      $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
-    });
+    setTimeout(() => {
+      [
+        { id: 'community-name', count: 100 },
+        { id: 'community-new-office', count: 100 },
+        { id: 'community-new-bureau', count: 100 },
+        { id: 'description', count: 500 },
+        { id: 'display-description', count: 500 }, 
+        { id: 'community-email-signature', count: 300 },
+      ].forEach(function (item) {
+        $('#' + item.id).charCounter(item.count, { container: '#' + item.id + '-count' });
+      });
+    }, 50);
   },
 
   initializeFileUpload: function () {
     $('#fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
@@ -316,8 +359,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        var info = JSON.parse($(data.result).text())[0];
-        this.community.set('imageId', info.id);
+        this.community.set('imageId', data.result.id);
         if (this.community.get('id')) {
           this.updatePhoto();
         } else {
@@ -342,7 +384,6 @@ var AdminCommunityEditView = Backbone.View.extend({
   initializeBannerFileUpload: function () {
     $('#banner-fileupload').fileupload({
       url: '/api/upload/create',
-      dataType: 'text',
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image' },
       add: function (e, data) {
@@ -354,8 +395,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         $('#banner-file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
-        var info = JSON.parse($(data.result).text())[0];
-        this.community.attributes.banner.backgroundImageId = info.id;
+        this.community.attributes.banner.backgroundImageId = data.result.id;
         if (this.community.get('id')) {
           this.updateBackgroundImage();
         } else {
@@ -991,6 +1031,39 @@ var AdminCommunityEditView = Backbone.View.extend({
       $('#background-photo-banner').hide();
       $('#background-color-banner').show();
       $('#background-group').prop('checked', false);
+    }
+  },
+
+  showUsajobsSearchUrlLinkText: function () {
+    $('#usajobsSearchUrlLinkText').hide();
+    if ( $('#usajobsSearchUrl').val() ) {
+      $('#usajobsSearchUrlLinkText').show();
+    }
+  },
+
+  validateUsajobsSearchUrlLabel: function (e) {
+    if ( $(event.target).val() ) {
+      $('#usajobsSearchUrlLinkText').show();
+      $('#usajobsSearchUrlLinkText').addClass('required-input');
+      $('#usajobsSearchUrl').addClass('validate');
+      $('#usajobsSearchUrlLabel').addClass('validate');
+    } else {
+      $('#usajobsSearchUrlLinkText').hide();
+      $('#usajobsSearchUrlLinkText').removeClass('required-input');
+      $('#usajobsSearchUrl').removeClass('validate');
+      $('#usajobsSearchUrlLabel').removeClass('validate');
+    }
+    
+    var theInput = e.currentTarget;
+    // var urlValue = (theInput.value.match(/^(http:\/\/|https:\/\/)[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i) || [])[0];
+    var urlValue = (theInput.value.match(/^(http:\/\/|https:\/\/)[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i))[0];
+    if(!urlValue) {
+      $('#usajobsSearchUrlFormGroup').addClass('usa-input-error');
+      $('#usajobsSearchUrlFormGroup .field-validation-error').show();
+      $('#usajobsSearchUrlFormGroup').get(0).scrollIntoView();
+    } else {
+      $('#usajobsSearchUrlFormGroup').removeClass('usa-input-error');
+      $('#usajobsSearchUrlFormGroup .field-validation-error').hide();
     }
   },
 

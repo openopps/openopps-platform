@@ -1,7 +1,18 @@
 <div class="usajobs-opop-announcement__body read-less">
   <h2>What's new</h2>
   <div>
+   
+    <% if (title) { %>
     <div class="usajobs-opop-announcement__title"><%= title %></div>
+    <% } else { %>
+      <div class="usajobs-opop-announcement__title">Check back soon for exciting news and more.</div>
+      <% } %>
+      <% if (description) { %>
     <div class="usajobs-opop-announcement__section"><%= description %></div>
+    <% } else { %>
+      <div class="usajobs-opop-announcement__section">
+     <p>Here you'll find all the latest news about Open Opportunities.</p>
+    </div>
+      <% } %>
   </div>
 </div>

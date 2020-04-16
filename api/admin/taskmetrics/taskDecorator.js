@@ -7,29 +7,21 @@ function TaskDecorator (task) {
 }
 
 _.extend(TaskDecorator.prototype, {
-
-
   isAssigned: function () {
     return _.includes(['assigned', 'completed'], this.object.state);
   },
-
-  
 
   isNotArchived: function () {
     return this.object.state != 'archived';
   },
 
-
   decorate: function (group) {
- 
     _.each(['isAssigned', 'isNotArchived'], function (attr) {
       this.object[attr] = this[attr]();
     }.bind(this));
     this.addDateCodes(group);
     return this.object;
   },
-
-  
 
   addDateCodes: function (group) {
     var generator = new DateCodeGenerator(group);

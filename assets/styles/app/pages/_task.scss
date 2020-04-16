@@ -11,15 +11,21 @@
   }
 }
 
+.usajobs-content-gutter.opportunity-gutter .tips-wrapper {
+  @include media($ML-down) {
+    width: 100%;
+  }
+}
+
 .tips {
   background-color: #e1f3f8;
   padding: 2rem;
   margin-top: 0;
 
   @include media($ML-down) {
-    margin-right: -$size-default;
+    // width: 100%;
     margin-left: -$size-default;
-    width: initial;
+    margin-right: -$size-default;
   }
 
   a {
@@ -32,6 +38,8 @@
     left: 0;
     bottom: 0;
     position: relative;
+     margin-left: -$size-default;
+      margin-right: -2.5rem;
 
     @include media($ML) {
       margin-top: $size-M;
@@ -40,11 +48,6 @@
     @include media($XXXL) {
       background-color: #e1f3f8;
       padding: 2rem;
-      margin-top: 0;
-      margin-right: 1.5rem;
-      width: 32rem;
-      left: calc(100% + 6rem);
-      position: absolute;
     }
 
     h4 {
@@ -62,6 +65,10 @@
 
 .task-footer {
     margin-top: $size-XL;
+
+    @include media($ML) {
+      width: 100%;
+    }
 }
 
 .usa-unstyled-list__radio {
@@ -110,6 +117,12 @@
         display: inline-block;
       }
     }
+  }
+  &__indent {
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
   }
 }
 
@@ -170,6 +183,10 @@ ul.opportunity-options__list {
     display: block;
     clear: both;
   }
+
+  li:last-child button.opportunity-options__button {
+    margin-right: 0;
+  }
 }
 
 button.opportunity-options__button {
@@ -179,21 +196,21 @@ button.opportunity-options__button {
   color: $color-green-light;
   padding: 0 $size-SM $size-S $size-SM;
   float: left;
-  margin: 0 $size-default $size-default 0;
-  min-width: 130px;
+  margin: 0 0.6rem 0.6rem 0;
+  min-width: 110px;
   min-height: 98px;
   text-align: center;
   width: initial;
 
-  @include media($SM) {
-    min-width: 136px;
-    margin: 0 $size-default $size-default 0;
-  }
+  // @include media($SM) {
+  //   min-width: 136px;
+  //   margin: 0 $size-default $size-default 0;
+  // }
 
-  @include media($L) {
-    min-width: 126px;
-    margin: 0 $size-S $size-S 0;
-  }
+  // @include media($L) {
+  //   min-width: 126px;
+  //   margin: 0 $size-S $size-S 0;
+  // }
 
   &:hover {
     background-color: $color-gray-lighter;
@@ -619,11 +636,7 @@ button.opportunity-options__button {
   }
 
   .step-3-flex__item.happens-next {
-    order: 2;
-
-    @include media($ML) {
-      order: 3;
-    }
+    order: 3;
   }
 }
 
