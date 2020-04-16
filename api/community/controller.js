@@ -24,7 +24,11 @@ router.put('/api/community/:id', auth, async (ctx, next) => {
   if(await service.isCommunityManager(ctx.state.user, ctx.request.body.communityId)) {
     await service.updateCommunity(ctx.request.body, (err) => {
       if (!err) {
-        elasticService.reindexCommunityOpportunities(ctx.request.body.communityId);
+        if(ctx.request.body.isDisabled) {
+          elasticService.deleteCommunityOpportunities(ctx.request.body.communityId);
+        } else {
+          elasticService.reindexCommunityOpportunities(ctx.request.body.communityId);
+        }
       }
       ctx.status = err ? 400 : 200;
       ctx.body = err ? '': { message: 'success' };

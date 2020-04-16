@@ -95,6 +95,15 @@
             </fieldset>
           </div>
           <div class="form-group required-input usa-fieldset-inputs">
+            <h5>Display community name on opportunities?</h5>
+            <fieldset class="usajobs-fieldset">
+              <legend class="usa-sr-only">Display community name</legend>
+              <p class="label-brief">Select to display the community name on created opportunities instead of the creator's name.</p>
+              <input class="display-community-name" id="display-community-name-group" type="checkbox" <% if (displayCommunityName) { %> checked <% } %> />
+              <label class="no-label" for="display-community-name-group"><span class="sr-only">Display community name on opportunities?</span></label>
+            </fieldset>
+          </div>
+          <div class="form-group required-input usa-fieldset-inputs">
             <h5>Closed group</h5>
             <fieldset class="usajobs-fieldset">
               <legend class="usa-sr-only">Select to join community</legend>
@@ -178,6 +187,17 @@
               (300 characters remaining)
             </p>
           </div>
+          <% if(window.cache.currentUser.isAdmin) { %>
+          <div class="form-group required-input usa-fieldset-inputs">
+            <h5>Disable</h5>
+            <fieldset class="usajobs-fieldset">
+              <legend class="usa-sr-only">Disable</legend>
+              <p class="label-brief">Disable your community?</p>
+              <input class="disable-community" id="disable-community-group" type="checkbox" <% if (isDisabled) { %> checked <% } %> />
+              <label class="no-label" for="disable-community-group"><span class="sr-only">Disable your community?</span></label>
+            </fieldset>
+          </div>
+          <% } %>
           
           <% if(communityId){ %>
           <input type="hidden" name="updated-at" id="updated-at" value="<%= updatedAt %>" />

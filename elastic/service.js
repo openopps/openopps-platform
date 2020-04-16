@@ -1,6 +1,7 @@
 const elasticClient = require('./index');
 const dao = require('./dao');
 const _ = require('lodash');
+const fs = require('fs');
 
 var service = {};
 
@@ -19,7 +20,11 @@ service.reindexOpportunities = async function () {
 
 service.remapOpportunities = async function () {
   if (await elasticClient.indices.exists({ index: 'task'})) {
-    await elasticClient.indices.delete({ index: 'task' });
+    await elasticClient.indices.putMapping({
+      index: 'task',
+      type: 'task',
+      body: JSON.parse(fs.readFileSync('./elastic/task_mapping.json')).task,
+    });
   }
 
   return service.reindexOpportunities();
@@ -40,7 +45,11 @@ service.reindexUsers = async function () {
 
 service.remapUsers = async function () {
   if (await elasticClient.indices.exists({ index: 'user'})) {
-    await elasticClient.indices.delete({ index: 'user' });
+    await elasticClient.indices.putMapping({
+      index: 'user',
+      type: 'user',
+      body: JSON.parse(fs.readFileSync('./elastic/user_mapping.json')).user,
+    });
   }
 
   return service.reindexUsers();
@@ -84,6 +93,20 @@ service.reindexCommunityOpportunities = async function (communityId) {
     for(i=0; i<records.length; i++){
       bulk_request.push({index: { _index: 'task', _type: 'task', _id: records[i].id }});
       bulk_request.push(records[i]);
+    }
+    
+    await elasticClient.bulk({ body: bulk_request });
+  }
+  return records;
+};
+
+service.deleteCommunityOpportunities = async function (communityId) {
+  var records = await dao.communityTasksToIndex(communityId);
+  if (records.length) {
+    var bulk_request = [];
+    
+    for(i=0; i<records.length; i++){
+      bulk_request.push({ delete: { _index: 'task', _type: 'task', _id: records[i].id }});
     }
     
     await elasticClient.bulk({ body: bulk_request });

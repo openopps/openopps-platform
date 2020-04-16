@@ -450,7 +450,7 @@ async function canceledInternship (ctx,attributes, done) {
 }
 
 function volunteersCompleted (task) {
-  dao.Volunteer.find('"taskId" = ? and assigned = true and "taskComplete" = true', task.id).then(volunteers => {
+  dao.Volunteer.find('"taskId" = ? and selected = true and "taskComplete" = true', task.id).then(volunteers => {
     var userIds = volunteers.map(v => { return v.userId; });
     dao.User.db.query(dao.query.userTasks, [userIds]).then(users => {
       users.rows.map(user => {
@@ -478,7 +478,7 @@ function sendTaskStateUpdateNotification (user, task) {
       break;
     case 'completed':
       sendTaskCompletedNotification(user, task);
-      _.forEach(_.filter(task.volunteers, { assigned: true, taskComplete: true }), (volunteer) => {
+      _.forEach(_.filter(task.volunteers, { selected: true, taskComplete: true }), (volunteer) => {
         sendTaskCompletedNotificationParticipant(volunteer, task);
       });
       break;
@@ -498,7 +498,7 @@ function sendTaskStateUpdateNotification (user, task) {
           sendTaskNotification(volunteer, task, 'task.update.canceled');
         });
       } else if (task.previousState == 'in progress') {
-        _.forEach(_.filter(task.volunteers, { assigned: true }), (volunteer) => {
+        _.forEach(_.filter(task.volunteers, { selected: true }), (volunteer) => {
           sendTaskNotification(volunteer, task, 'task.update.canceled');
         });
       }
@@ -550,7 +550,7 @@ async function getNotificationTemplateData (user, task, action) {
   if (task.id) {
     data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', task.id).catch(() => { return null; });
     data.model.cycle = await dao.Cycle.findOne('cycle_id = ?', task.cycleId).catch(() => { return null; });
-    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', data.model.community.communityId, action).catch(() => { return null; });
+    var templateOverride = await dao.CommunityEmailTemplate.findOne('community_id = ? and action = ?', (data.model.community || {}).communityId, action).catch(() => { return null; });
     if (templateOverride) {
       data.action = templateOverride.template,
       data.layout = templateOverride.layout || data.layout;
@@ -560,7 +560,7 @@ async function getNotificationTemplateData (user, task, action) {
 }
 
 async function sendTaskAssignedNotification (user, task) {
-  var template = (user.assigned ? 'task.update.assigned' : 'task.update.not.assigned');
+  var template = (user.selected ? 'task.update.assigned' : 'task.update.not.assigned');
   var data = await getNotificationTemplateData(user, task, template);
   if(!data.model.user.bounced) {
     notification.createNotification(data);

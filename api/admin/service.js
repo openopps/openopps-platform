@@ -216,7 +216,8 @@ module.exports.getApplicantsInternships = async (userId, cycleId) => {
 module.exports.getTaskStateMetrics = async function (state, page, sort, filter) {
   var taskStateTotalsQuery = fs.readFileSync(__dirname + '/sql/getSitewideTaskStateTotals.sql', 'utf8');
   var tasksByStateQuery = fs.readFileSync(__dirname + '/sql/getTasksByState.sql', 'utf8').toString();
-  var whereClause = '(target_audience <> 2 or target_audience is null) and ' + getWhereClauseForTaskState(state);
+  var whereClause = `(target_audience <> 2 or target_audience is null)
+    and (community_id is null or community_is_disabled = false) and ` + getWhereClauseForTaskState(state);
   if (filter) {
     whereClause += ' and ' + getTaskFilterClause(filter, true);
   }
@@ -791,7 +792,7 @@ module.exports.assignParticipant = async function (ctx, data, done) {
       createdAt: new Date(),
       updatedAt: new Date(),
       silent: false,
-      assigned: false,
+      selected: null,
       taskComplete: false,
     }).then(async (volunteer) => {
       var audit = Audit.createAudit('TASK_ADD_PARTICIPANT', ctx, {
@@ -829,7 +830,7 @@ module.exports.getAgencies = async function () {
 module.exports.getCommunities = async function (user) {
   if(user.isAdmin) {
     var communities= await dao.Community.find();
-    communities= _.sortBy(communities, function (community){
+    communities= _.sortBy(communities, 'isDisabled', function (community){
       return community.communityName.toLowerCase().trim();
     });
     return communities;
@@ -837,6 +838,7 @@ module.exports.getCommunities = async function (user) {
     return await dao.Community.query(dao.query.communityListQuery, user.id);
   }
 };
+
 module.exports.saveBureauOffice = async function (ctx,attributes,done) { 
   if(attributes.officeId && attributes.bureauId){
     var origOffice = await dao.Office.findOne('office_id = ? and bureau_id = ?',attributes.officeId,attributes.dataBureauId);

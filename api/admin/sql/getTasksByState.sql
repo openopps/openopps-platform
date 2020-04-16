@@ -1,5 +1,5 @@
 with tasks as (
-	select task.*, community.target_audience,
+	select task.*, community.target_audience, community.is_disabled as community_is_disabled,
 	(select row_to_json (muser)
 		from (
 			select

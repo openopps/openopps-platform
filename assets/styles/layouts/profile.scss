@@ -56,12 +56,8 @@
 .usajobs-opop-section-edit, .usajobs-opop-section-edit a:visited {
   text-decoration: none;
   color: #0D71B9;
-
-  @include media($ML-down) {
-    padding-bottom: $size-SM;
-  }
-
-  @include media($ML) {
+  
+  @include media($XL) {
     position: absolute;
     right: $size-M;
   }
@@ -398,10 +394,24 @@
   }
 }
 
-.add-badge  {
-  float: left;
-  text-align: center;
-  margin-top: -1.1em;
+#applicant-no-select {
+  background-color: #CD2026;  
+}
+
+#applicant-select, #applicant-no-select {
+ 
+  &.disabled {
+    background-color: $color-gray-lightest;
+    color: $color-gray-light;
+    cursor: default;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.add-badge {
 
   img {
     min-height: 100px;
@@ -415,7 +425,6 @@
     margin-bottom: 0;
     text-align: center;
   }
-
 }
 
 .profile-badges {
