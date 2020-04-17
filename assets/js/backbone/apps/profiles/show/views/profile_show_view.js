@@ -49,7 +49,8 @@ var ProfileShowView = Backbone.View.extend({
     'click #add-badge'              : 'addBadges',
     'click #remove-badge'           : 'removeBadge',
     'click .applicant-select'       : 'selectApplicant',
-    'click .applicant-no-select'       : 'selectApplicant',
+    'click .applicant-no-select'    : 'selectApplicant',
+    'click .change-selection'       : 'removeSelections',
   },
 
   initialize: function (options) {
@@ -830,6 +831,28 @@ var ProfileShowView = Backbone.View.extend({
     }
   },
 
+  removeSelections : function (e){
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+    var taskId= this.params.get('tid');
+    var volunteerId= this.params.get('vid');  
+    $.ajax({
+      url: '/api/volunteer/select/remove',
+      type: 'PUT',
+      data: {
+        taskId: taskId,
+        volunteerId: volunteerId,
+        select: null,
+      },
+      success: function (data) {       
+        Backbone.history.navigate('profile/'+ data.assignedVolunteer.userId+'?vid='+data.id+'&tid='+data.taskId, { trigger: true });  
+        Backbone.history.loadUrl(Backbone.history.getFragment()); 
+      }.bind(this),
+      error: function (err) {
+     
+      }.bind(this),
+    });
+  },
   selectApplicant: function (e) {
     if (e.preventDefault) e.preventDefault();
     if (e.stopPropagation) e.stopPropagation();
