@@ -59,7 +59,7 @@ const exportTaskData = 'select task.id, ' +
     'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
     'limit 1 ' +
   ') as opportunity_type, ' +
-  'task.title, task.description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task.title, task.description, task.people_needed, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -282,6 +282,7 @@ var exportTaskFormat = {
   'opportunity_type': {field: 'opportunity_type', filter: nullToEmptyString},
   'title': {field: 'title', filter: nullToEmptyString},
   'description': {field: 'description', filter: nullToEmptyString},
+  'people_needed': {field: 'people_needed', filter: numberFormat},
   'number_of_positions': {field: 'interns', filter: nullToEmptyString},
   'created_date': {field: 'createdAt', filter: excelDateFormat},
   'published_date': {field: 'publishedAt', filter: excelDateFormat},
@@ -344,6 +345,10 @@ function nullToEmptyString (str) {
 
 function excelDateFormat (date) {
   return date != null ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
+}
+
+function numberFormat (str) {
+  return str ? ' ' + str  : ' ';
 }
 
 const options = {
