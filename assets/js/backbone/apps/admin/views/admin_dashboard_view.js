@@ -113,6 +113,7 @@ var AdminDashboardView = Backbone.View.extend({
       },
     });
   },
+
   quarter: function () {
     var today = new Date();
     var year = today.getFullYear();
@@ -243,7 +244,7 @@ var AdminDashboardView = Backbone.View.extend({
     this.$el.localize();
     self.$('.spinner').hide();
     self.$('.activity-block').show();
-    self.renderTasks(self, this.data);
+    //self.renderTasks(self, this.data);
     self.renderAdminAnnouncement();
     self.renderTopContributors();
   },
