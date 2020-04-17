@@ -73,7 +73,7 @@ var AdminCommunityView = Backbone.View.extend({
             this.$el.html(template);
             setTimeout(function () {
               this.fetchData(this);
-              this.renderTasks();
+              //this.renderTasks();
             }.bind(this), 50);
             if(this.options.communities) {
               this.initializeCommunitySelect();
