@@ -14,8 +14,8 @@
       <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>
       <div class="search__box-content description" <% if(filters.community && filters.community.banner.descriptionColor) { %>style="color:<%- filters.community.banner.descriptionColor %>"<% } %>><% if(filters.community && filters.community.banner.description) { %><%= marked(filters.community.banner.description, { breaks: true, gfm: true }) %><% } else { %>Gain experience with hands-on training, share your expertise and work with others across the government.<% } %></div>
       <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
-      <% if(filters.community && filters.community.usajobsSearchUrl) { %>
-        <p>Looking for <a href="<%- filters.community.usajobsSearchUrl %>" target="_blank" rel="noopener noreferrer"><%- filters.community.usajobsSearchUrlLabel %>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
+      <% if(filters.community && filters.community.banner.usajobsSearchUrl) { %>
+        <p>Looking for <a href="<%- filters.community.banner.usajobsSearchUrl %>" target="_blank" rel="noopener noreferrer"><%- filters.community.banner.usajobsSearchUrlLabel %>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
       <% } %>
     </div>
     <label for="search" class="search__box-label">
@@ -24,7 +24,7 @@
     </label>
     <div class="usajobs-grid-full">
       <div class="usa-width-two-thirds">
-        <input type="text" id="search" title="Search" class="usajobs-open-opps-search__input" value="<%- term %>" placeholder="Find opportunities by topic, skill, career field, agency or series">
+        <input type="text" id="search" title="Search" class="usajobs-open-opps-search__input" value="<%- term %>" placeholder="Find opportunities by skill, career field, agency or series">
       </div>
       <div class="usa-width-one-third">
         <button id="search-button" class="usa-button usa-button-primary-alt usajobs-nav__search-button" 
