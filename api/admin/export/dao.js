@@ -98,7 +98,7 @@ const exportTaskAgencyData = 'select task.id, ' +
     'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
     'limit 1 ' +
   ') as opportunity_type, ' +
-  'task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task.title, description, task.people_needed, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
@@ -136,7 +136,7 @@ const exportTaskCommunityData = 'select task.id, ' +
     'where te.type = \'task-time-required\' and tt.task_tags = task.id ' +
     'limit 1 ' +
   ') as opportunity_type, ' +
-  'task.title, description, task."createdAt", task."publishedAt", task."assignedAt", ' +
+  'task.title, description, task.people_needed, task."createdAt", task."publishedAt", task."assignedAt", ' +
   'task."submittedAt", midas_user.name as creator_name, ' +
   '(' +
     'select count(*) ' +
