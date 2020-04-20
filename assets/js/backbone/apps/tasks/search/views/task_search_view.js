@@ -406,7 +406,7 @@ var TaskListView = Backbone.View.extend({
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-      var pageSize = 10;
+      var pageSize = 20;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
         page: page,
