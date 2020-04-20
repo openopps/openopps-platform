@@ -303,7 +303,7 @@ var AdminAgenciesView = Backbone.View.extend({
           setTimeout(function () {
             this.initializeFileUpload();
             this.fetchData(this);
-            this.renderTasks();
+            //this.renderTasks();
           }.bind(this), 50);
           if(this.options.departments) {
             this.initializeAgencySelect();
