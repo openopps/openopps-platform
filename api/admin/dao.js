@@ -9,10 +9,11 @@ const taskStateQuery = `with task_type as (
   join tagentity on tagentity.id = task_tags.tagentity_tasks
   join task on task.id = task_tags.task_tags
   where tagentity."type" = 'task-time-required'
-  and task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
   order by task.id
   )
   select 
+  sum(case when state = 'draft' then 1 else 0 end) as "draft", 
   sum(case when state = 'submitted' then 1 else 0 end) as "submitted", 
   sum(case when state in ('open', 'in progress') and "accepting_applicants" then 1 else 0 end) as "open", 
   sum(case when state = 'not open' then 1 else 0 end) as "notOpen", 
@@ -27,7 +28,7 @@ const taskStateQuery = `with task_type as (
   left join community on task.community_id = community.community_id
   left join task_type on task_type.id = task.id
   where
-  task.state in ('submitted','open','not open','in progress','completed','canceled')
+  task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
   and (task.community_id is null or community.is_disabled = false)
   and (community.target_audience <> 2 or community.target_audience is null)`;
 
@@ -37,10 +38,11 @@ const agencyTaskStateQuery = `with task_type as (
   join tagentity on tagentity.id = task_tags.tagentity_tasks
   join task on task.id = task_tags.task_tags
   where tagentity."type" = 'task-time-required'
-  and task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
   order by task.id
   )
   select 
+  sum(case when state = 'draft' then 1 else 0 end) as "draft", 
   sum(case when state = 'submitted' then 1 else 0 end) as "submitted", 
   sum(case when state in ('open', 'in progress') and "accepting_applicants" then 1 else 0 end) as "open", 
   sum(case when state = 'not open' then 1 else 0 end) as "notOpen", 
@@ -55,7 +57,7 @@ const agencyTaskStateQuery = `with task_type as (
   left join community on task.community_id = community.community_id
   left join task_type on task_type.id = task.id
   where
-  task.state in ('submitted','open','not open','in progress','completed','canceled')
+  task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
   and (community.target_audience <> 2 or community.target_audience is null)
   and task.community_id is null
   and task.agency_id = ?`;
