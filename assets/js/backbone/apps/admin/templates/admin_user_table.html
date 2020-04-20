@@ -49,19 +49,21 @@
       <% } %>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
-      <th>Created</th>
+      <% if (target != 'sitewide') { %><th>Created</th><% } %>
       <% if (target == 'sitewide') { %><th>Last login</th><% } %>
-      <th class="admin-user-checkbox">Account<br />enabled</th>
-      <% if (!loginGov) { %>
-        <% if (login.local.enabled === true) { %>
-          <th class="admin-user-checkbox">Reset<br/>password</th>
+      <% if (target != 'sitewide') { %><th class="admin-user-checkbox">Account<br />enabled</th>><% } %>
+      <% if (target != 'sitewide') { %>
+        <% if (!loginGov) { %>
+          <% if (login.local.enabled === true) { %>
+            <th class="admin-user-checkbox">Reset<br/>password</th>
+          <% } %>
+        <% } %>
+        <% if (user.isAdmin || user.isAgencyAdmin) { %>
+          <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
         <% } %>
       <% } %>
-      <% if (user.isAdmin || user.isAgencyAdmin) { %>
-        <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
-      <% } %>
       <% if (target == 'sitewide') { %>
-        <th class="approver-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> approver</th>
+        <th class="admin-user-checkbox">Account<br />settings</th>
       <% } %>
     </tr>
   </thead>
@@ -100,39 +102,42 @@
             <% } %>
           </td>
         <% } %>
-        <td class="admin-table-federalEmail">
+          <td class="admin-table-federalEmail">
           <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
-        </td>
+          </td>
         <% if (target == 'sitewide') { %>
-        <td class="admin-table-username">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
-        </td>
+          <td class="admin-table-username">
+            <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+          </td>
         <% } %>
-        <td class="admin-table-createdat">
-          <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
-        </td>
+        <% if (target != 'sitewide') { %>
+          <td class="admin-table-createdat">
+            <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
+          </td>
+        <% } %>
         <% if (target == 'sitewide') { %>
-        <td class="admin-table-lastLogin">
-          <%- u.last_login ? moment(u.last_login).format('MM/DD/YYYY hh:mma'):'' %>
-        </td>
+          <td class="admin-table-lastLogin">
+            <%- u.last_login ? moment(u.last_login).format('MM/DD/YYYY hh:mma'):'' %>
+          </td>
         <% } %>
-        <td>
+        <% if (target != 'sitewide') { %>
+          <td>
           <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
             <input class="user-enable" id="user-enable-<%- u.id %>" type="checkbox" data-action='user' <% if (!u.disabled) { %> checked <% } %> />
             <label class="no-label" for="user-enable-<%- u.id %>"><span class="sr-only">Enable</span></label>
             <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           <% } %>
-        </td>
-        <% if (!loginGov) { %>
-          <% if (login.local.enabled === true) { %>
+          </td>
+          <% if (!loginGov) { %>
+            <% if (login.local.enabled === true) { %>
             <td class="pull-center">
               <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
                 <i class="user-reset fa fa-sync-alt"></i>
                 <span class="sr-only">Reset password</span>
               <% } %>
             </td>
+            <% } %>
           <% } %>
-        <% } %>
         <td>
           <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %>
             <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
@@ -140,13 +145,14 @@
             <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           <% } %>
         </td>
-        <% if (target == 'sitewide') { %>
-          <td>
-            <input class="assign-approver" id="assign-approver-<%- u.id %>" type="checkbox" data-action='<%- target %>-approver' <% if (isApprover(u, target)) { %> checked <% } %> />
-            <label class="no-label" for="assign-approver-<%- u.id %>"><span class="sr-only">Assign approver</span></label>
-            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
-          </td>
         <% } %>
+        <td class="pull-center">
+          <% if (target == 'sitewide') { %>
+            <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %> 
+              <a href="<%- u.id %>"><i class="fas fa-cog"></i></a>
+            <% } %>
+          <% } %>
+        </td>
       </tr>
     <% }); %>
   </tbody>
