@@ -83,6 +83,8 @@ function getUserListOrderByClause (sortValue) {
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
       return 'users."isAgencyAdmin" desc';
+    case 'isApprover':
+      return 'users.is_Approver desc';
     case 'is_manager':
       return 'users.is_manager desc';
     case 'agency':
