@@ -75,6 +75,9 @@
           <li>Full-time detail: <%- numeral(agency.tasks.fullTime).format('0,0') %></li>
         </ul>
       </li>
+      <% if (window.cache.currentUser.isAdmin) { %>
+        <li>Draft: <%- numeral(agency.tasks.draft).format('0,0') %></li>
+      <% } %>
       <li>Submitted: <%- numeral(agency.tasks.submitted).format('0,0') %></li>
       <li>Open: <%- numeral(agency.tasks.open).format('0,0') %></li>
       <li>Not open: <%- numeral(agency.tasks.notOpen).format('0,0') %></li>
