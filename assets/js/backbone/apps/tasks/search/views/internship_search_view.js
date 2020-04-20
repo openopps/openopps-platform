@@ -363,7 +363,7 @@ var InternshipListView = Backbone.View.extend({
     } else if (searchResults.totalHits === 0) {
       this.renderNoResults();
     } else {
-      var pageSize = 10;
+      var pageSize = 20;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
         page: page,
