@@ -18,12 +18,13 @@ with tasks as (
 	join tagentity on tagentity.id = task_tags.tagentity_tasks
 	join task on task.id = task_tags.task_tags
 	where tagentity."type" = 'task-time-required' 
-	and task.state in ('submitted','open','not open','in progress','completed','canceled')
+	and task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
 	and task.community_id = ? [filter clause]
 )
 select
 	count(*),
 	case
+		when state = 'draft' then 'draft'
 		when state = 'submitted' then 'submitted'
 		when state in ('open', 'in progress') and "accepting_applicants" = true then 'open'
 		when state = 'not open' then 'notOpen'

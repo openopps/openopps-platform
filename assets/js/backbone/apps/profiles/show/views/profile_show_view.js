@@ -872,8 +872,14 @@ var ProfileShowView = Backbone.View.extend({
           volunteerId: volunteerId,
           select: select,
         },
-        success: function (data) {       
-          Backbone.history.navigate('/tasks/' + data.taskId, { trigger: true });       
+        success: function (data) { 
+         
+          if(data.selected=='true') {  
+            Backbone.history.navigate('/tasks/' + data.taskId + '?saveSelected&selectedName='+data.assignedVolunteer.name, { trigger: true }); 
+          }
+          else{
+            Backbone.history.navigate('/tasks/' + data.taskId + '?saveNotSelected&selectedName='+data.assignedVolunteer.name, { trigger: true }); 
+          }      
         }.bind(this),
         error: function (err) {
        

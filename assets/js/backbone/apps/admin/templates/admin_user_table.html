@@ -19,7 +19,8 @@
         <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
         <option value="last_login" <% if (sort == 'last_login') { %>selected<% } %>>Last login</option>
         <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
-        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option>    
+        <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
+        <option value="isApprover" <% if (sort == 'isApprover') { %>selected<% } %>>Sitewide Approver</option>    
       </select>
       <% } %>
     <% if (target === 'agency') { %>

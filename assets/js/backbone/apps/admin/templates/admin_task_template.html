@@ -41,6 +41,12 @@
           <label for="completed"><span class="usajobs-pill--opportunity-status status-completed">Completed</span> <%- (_.findWhere(totals, { task_state: 'completed' }) || {}).count || 0 %></label>
         </li>
       <% } else { %>
+        <% if(window.cache.currentUser.isAdmin) { %>
+        <li>
+          <input id="draft" name="opp-status" type="radio" class="filter-radio" value="draft" <% if (status == 'draft') { %>checked<% } %>>
+          <label for="draft"><span class="usajobs-pill--opportunity-status status-draft">Draft</span> <%- (_.findWhere(totals, { task_state: 'draft' }) || {}).count || 0 %></label>
+        </li>
+        <% } %>
         <li>
           <input id="submitted" name="opp-status" type="radio" class="filter-radio" value="submitted" <% if (status == 'submitted') { %>checked<% } %>>
           <label for="submitted"><span class="usajobs-pill--opportunity-status status-submitted">Submitted</span> <%- (_.findWhere(totals, { task_state: 'submitted' }) || {}).count || 0 %></label>
