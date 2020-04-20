@@ -199,14 +199,14 @@ service.searchUsers = async function (request) {
 service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   var query = ctx.query;
   var page = query.page || 1;
-  var resultsperpage =  query.resultsperpage || 10;
+  var resultsperpage =  query.resultsperpage || 20;
   var from = (page - 1) * resultsperpage;
   
   var request = {
     index: index || 'task',
     type: 'task',
     from: from > 0 ? from : 0,
-    size: resultsperpage > 0 ? resultsperpage : 10,
+    size: resultsperpage > 0 ? resultsperpage : 20,
     body: {
       sort:[{'publishedAt':'desc'}],
       query : {
