@@ -21,6 +21,7 @@ router.get('/api/ac/keyword', async (ctx, next) => {
       agencies: (results[0] || {}).rows,
       career_fields: (results[1] || {}).rows,
       skills: (results[2] || {}).rows,
+      series: (results[3] || {}).rows,
     }, _.identity);
   }).catch(err => {
     // TODO: Record and swallow the error
