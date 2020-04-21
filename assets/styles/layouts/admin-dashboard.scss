@@ -451,7 +451,11 @@
   .user-details {
     background-color: $color-gray-lightest;
     margin-top: $size-M;
-    padding: $size-M;
+    padding: $size-default;
+
+    @include media($ML) {
+      padding: $size-M;
+    }
 
     h3 img {
       vertical-align: text-bottom;
@@ -468,7 +472,19 @@
 
     .account-settings {
       background-color: $color-cool-blue-lightest;
-      padding: $size-S $size-M $size-M $size-M;
+      padding: $size-base $size-default;
+
+      @include media($M-down) {
+        margin-top: $size-M;
+      }
+
+      @include media($M) {
+        padding: $size-S $size-default $size-default $size-default;
+      }
+
+      @include media($ML) {
+        padding: $size-S $size-M $size-M $size-M;
+      }
 
       .toggle-label {
         margin-bottom: $size-default;
@@ -479,6 +495,26 @@
           top: 0;
           right: 0;
           margin: 0;
+
+          @include media($M) {
+            position: relative;
+          }
+
+          @include media(900px) {
+            position: absolute;
+          }
+
+          @include media($L) {
+            position: relative;
+          }
+
+          @include media(1120px) {
+            position: absolute;
+          }
+
+          &::before {
+            margin-right: 0;
+          }
         }
       }
     }
