@@ -181,20 +181,20 @@
               </fieldset> 
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Length of the detail</legend>
-                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-length-type" >  
-                <p class="label-brief">What is the length of the detail?</p>
-                <span class="field-validation-error" style="display:none;">Please select any choice.</span>
-                <ul class="usa-unstyled-list" id="detail-length">
-                  <li>
-                    <input id="up-to-90" name="detail-length" type="radio" value="Up to 90 days"  <% if (data.detailLength=='Up to 90 days') { %><%= "checked" %><% } %>>
-                    <label for="up-to-90">Up to 90 days</label>
-                  </li>
-                  <li>
-                    <input id="more-than-90" name="detail-length" type="radio" value="More than 90 days" <% if (data.detailLength == 'More than 90 days' ) { %><%= "checked" %><% } %>>
-                    <label for="more-than-90">More than 90 days</label>
-                  </li>
-                </ul>
-              </div> 
+                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-length-type">  
+                  <p class="label-brief">What is the length of the detail?</p>
+                  <span class="field-validation-error" style="display:none;">Please select any choice.</span>
+                  <ul class="usa-unstyled-list" id="detail-length">
+                    <li>
+                      <input id="up-to-120" name="detail-length" type="radio" value="Up to 120 days" <% if (data.detailLength == 'Up to 120 days') { %><%= "checked" %><% } %>>
+                      <label for="up-to-120">Up to 120 days</label>
+                    </li>
+                    <li>
+                      <input id="more-than-120" name="detail-length" type="radio" value="More than 120 days" <% if (data.detailLength == 'More than 120 days') { %><%= "checked" %><% } %>>
+                      <label for="more-than-120">More than 120 days</label>
+                    </li>
+                  </ul>
+                </div>
               </fieldset>    
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Hours need</legend>       
