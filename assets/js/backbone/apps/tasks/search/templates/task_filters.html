@@ -15,7 +15,7 @@
         </a>
         <h3>Filters</h3>
         <h4 class="usajobs-search-filters__title">Status</h4>               
-        <% var numOfStates = _.filter(ui.states, function(state) { return (!state.hide || (user && user.isAdmin)) }).length; %>
+        <% var numOfStates = _.filter(ui.states, function(state) { return (!state.hide) }).length; %>
         <% if(numOfStates == [].concat(filters.state).length) { %>
           <a class="usajobs-search-filters__select-toggle stateFilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
         <% } else { %>
@@ -23,7 +23,7 @@
         <% } %>
         <ul id="stateFilters" class="usa-unstyled-list">
             <% _.each(ui.states, function (t) { %>
-            <% if (!t.hide || (user && user.isAdmin)) { %>
+            <% if (!t.hide) { %>
                 <li>
                 <input type='checkbox' name='state-filter' id='state<%- t.label %>' value='<%- t.value %>' <% if(filters.state.indexOf(t.value) > -1) { %>checked<% } %>>
                 <label for='state<%- t.label %>' class="<%- t.value %>-filter">

@@ -152,6 +152,9 @@
               <% } %>
             </ul>
           </li>
+          <% if (window.cache.currentUser.isAdmin) { %>
+            <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>
+          <% } %>
           <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
           <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
           <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'notOpen' }) || {}).count).format('0,0') %></li>

@@ -18,6 +18,9 @@
           <li>Full-time detail: <%- numeral(tasks.fullTime).format('0,0') %></li>
         </ul>
       </li>
+      <% if (window.cache.currentUser.isAdmin) { %>
+        <li>Draft: <%- numeral(tasks.draft).format('0,0') %></li>
+      <% } %>
       <li>Submitted: <%- numeral(tasks.submitted).format('0,0') %></li>
       <li>Open: <%- numeral(tasks.open).format('0,0') %></li>
       <li>Not open: <%- numeral(tasks.notOpen).format('0,0') %></li>

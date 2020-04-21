@@ -100,8 +100,11 @@ var TaskItemView = BaseView.extend({
     this.data.vol = vol;
     this.data.model.userId = this.data.model.owner.id;
     this.data.model.owner.initials = getInitials(this.data.model.owner.name);
-    var compiledTemplate = _.template(TaskShowTemplate)(this.data);
-
+    this.data.saveSelected=this.params.has('saveSelected');
+    this.data.selectedName= this.params.get('selectedName');
+    this.data.saveNotSelected=this.params.has('saveNotSelected');
+    
+    var compiledTemplate = _.template(TaskShowTemplate)(this.data); 
     this.$el.html(compiledTemplate);
     
     // $('#search-results-loading').hide();
