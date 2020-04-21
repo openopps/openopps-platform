@@ -320,6 +320,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   } else {
     request.addTerms(query.state, 'state', 'open');
     request.addTerms(query.location, 'locations.name');
+    request.addTerms(query.agency, 'agency.name');
   }
   request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');

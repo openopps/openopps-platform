@@ -15,10 +15,14 @@ const queries = {
 
 var getIDs = async function (abbr, agency) {
   var results = await db.any("SELECT id, name FROM tagentity where type = 'agency' and data->>'abbr' = $1", abbr);
-  return [
-    _.findWhere(results, { name: agency }).id,
-    _.reject(results, { name: agency }).map((obj) => { return obj.id; }).join(','),
-  ];
+  if (results.length) {
+    return [
+      _.findWhere(results, { name: agency }).id,
+      _.reject(results, { name: agency }).map((obj) => { return obj.id; }).join(','),
+    ];
+  } else {
+    return [0, 0];
+  }
 };
 
 module.exports = {
