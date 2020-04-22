@@ -57,23 +57,11 @@
         </li>
         <li>
           <input id="notOpen" name="opp-status" type="radio" class="filter-radio" value="not open" <% if (status == 'not open') { %>checked<% } %>>
-          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> 
-            <% if (community.communityId && community.duration != 'Cyclical') { %>
-              <%- (_.findWhere(totals, { task_state: 'notOpen' }) || {}).count || 0 %>
-            <% } else { %>
-              <%- (_.findWhere(totals, { task_state: 'not open' }) || {}).count || 0 %>
-            <% } %>
-          </label>
+          <label for="notOpen"><span class="usajobs-pill--opportunity-status status-not-open">Not open</span> <%- (_.findWhere(totals, { task_state: 'not open' }) || {}).count || 0 %></label>
         </li>
         <li>
           <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="in progress"  <% if (status == 'in progress') { %>checked<% } %>>
-          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> 
-            <% if (community.communityId && community.duration != 'Cyclical') { %>
-              <%- (_.findWhere(totals, { task_state: 'inProgress' }) || {}).count || 0 %>
-              <% } else { %>
-                <%- (_.findWhere(totals, { task_state: 'in progress' }) || {}).count || 0 %>
-              <% } %>
-            </label>
+          <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- (_.findWhere(totals, { task_state: 'in progress' }) || {}).count || 0 %></label>
           </label>
         </li>
         <li>

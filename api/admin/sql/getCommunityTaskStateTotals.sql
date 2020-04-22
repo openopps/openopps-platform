@@ -27,8 +27,8 @@ select
 		when state = 'draft' then 'draft'
 		when state = 'submitted' then 'submitted'
 		when state in ('open', 'in progress') and "accepting_applicants" = true then 'open'
-		when state = 'not open' then 'notOpen'
-		when state = 'in progress' and "accepting_applicants" = false then 'inProgress'
+		when state = 'not open' then 'not open'
+		when state = 'in progress' and "accepting_applicants" = false then 'in progress'
 		when state = 'completed' then 'completed'
 		when state = 'canceled' then 'canceled'
 		else state
