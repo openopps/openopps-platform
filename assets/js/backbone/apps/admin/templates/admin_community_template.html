@@ -157,8 +157,8 @@
           <% } %>
           <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
           <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
-          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'notOpen' }) || {}).count).format('0,0') %></li>
-          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'inProgress' }) || {}).count).format('0,0') %></li>
+          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'not open' }) || {}).count).format('0,0') %></li>
+          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'in progress' }) || {}).count).format('0,0') %></li>
           <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
           <li>Canceled: <%- numeral((_.findWhere(community.tasks, { task_state: 'canceled' }) || {}).count).format('0,0') %></li>       
       </ul>
