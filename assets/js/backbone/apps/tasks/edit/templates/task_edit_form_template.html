@@ -186,12 +186,12 @@
                   <span class="field-validation-error" style="display:none;">Please select any choice.</span>
                   <ul class="usa-unstyled-list" id="detail-length">
                     <li>
-                      <input id="up-to-120" name="detail-length" type="radio" value="Up to 120 days" <% if (data.detailLength == 'Up to 120 days') { %><%= "checked" %><% } %>>
-                      <label for="up-to-120">Up to 120 days</label>
+                      <input id="up-to-120" name="detail-length" type="radio" value="Less than 120 days" <% if (data.detailLength == 'Less than 120 days') { %><%= "checked" %><% } %>>
+                      <label for="up-to-120">Less than 120 days</label>
                     </li>
                     <li>
-                      <input id="more-than-120" name="detail-length" type="radio" value="More than 120 days" <% if (data.detailLength == 'More than 120 days') { %><%= "checked" %><% } %>>
-                      <label for="more-than-120">More than 120 days</label>
+                      <input id="more-than-120" name="detail-length" type="radio" value="120 days or greater" <% if (data.detailLength == '120 days or greater') { %><%= "checked" %><% } %>>
+                      <label for="more-than-120">120 days or greater</label>
                     </li>
                   </ul>
                 </div>
