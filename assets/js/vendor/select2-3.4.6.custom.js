@@ -39,7 +39,7 @@
 
             // Replace the existing aria-labelledby attribute on the primary Select2 element with a custom aria-label
             // Also, inform screen readers that the primary Select2 element is a collapsed combobox that owns the appropriate results list
-            $select2Element.attr({'role': 'combobox', 'aria-label': combinedLabelAndItemText, 'aria-expanded': 'false', 'aria-owns': 'select2-results-' + select2AutoGenNumber});
+            $select2Element.attr({'role': 'combobox', 'aria-label': combinedLabelAndItemText, 'aria-expanded': 'false'});
             $select2Element.removeAttr('aria-labelledby');
 
             // Hide the empty links (for blank selections) from screen readers to prevent accessibility violations
@@ -68,6 +68,7 @@
       if (select2AutoGenNumber !== null) {
         var $select2ResultsList = $('#select2-results-' + select2AutoGenNumber);
         var $select2ResultsSearch = $select2ResultsList.siblings('div.select2-search').find('input.select2-input');
+        $select2Element.attr({'aria-owns': 'select2-results-' + select2AutoGenNumber});
 
         $select2Element.attr('aria-expanded', 'true');
         $select2ResultsList.attr({ 'aria-label': 'Options', 'tabindex': '0' });
@@ -81,6 +82,7 @@
     if (isSingleSelect(e.target)) {
       var $select2Element = getSelect2Element(e.target);
       $select2Element.attr('aria-expanded', 'false');
+      $select2Element.removeAttr('aria-owns');
     }
   });
 
