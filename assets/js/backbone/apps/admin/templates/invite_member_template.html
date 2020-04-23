@@ -1,0 +1,17 @@
+<div class="title-invite-member">
+  <div id="community-add-member-alert" class="usa-alert usajobs-alert usajobs-alert--error" style="display:none;">
+    <div class="usajobs-alert__figure">
+      <div class="usajobs-alert__icon">
+      </div>
+    </div>
+    <div class="usajobs-alert__body">
+        <p id="community-add-member-alert-text" class="usa-alert-text"></p>
+    </div>
+  </div>
+  <div class="form-group required-input">
+      <label for="community-add-member" class="no-margin-top">Select a user to to add as a member of <strong><%- communityName %></strong>.</label>
+      <div class="field-validation-error error-empty" style="display:none;">You must select a user</div>
+      <input type="hidden" id="community-add-member" class="dropdown validate" data-validate="empty" data-communityid="<%- communityId %>" />
+  </div>
+</div>
+  

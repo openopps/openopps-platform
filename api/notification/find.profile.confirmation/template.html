@@ -1,0 +1,8 @@
+<% if (user.linkedId) { %>
+  <p>You recently requested to link your Open Opportunities profile with this email address to your USAJOBS profile, however your Open Opportunities profile is already linked to an existing USAJOBS profile.</p>
+<% }else { %>
+  <p>You recently requested to link your Open Opportunities profile with your USAJOBS profile. Please click the link below to complete the process to link your Open Opportunities profile with your USAJOBS profile.</p>
+  <p>
+    <a href="<%- globals.urlPrefix %><%- link %>"><%- globals.urlPrefix %><%- link %></a>
+  </p>
+<% } %>

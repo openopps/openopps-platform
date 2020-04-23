@@ -1,28 +1,22 @@
-define([
-	'jquery',
-	'underscore',
-	'backbone'
-], function ($, _, Backbone) {
-	
-	Application.AppModule.BaseAppModule = Backbone.View.extend({
+var _ = require('underscore');
+var Backbone = require('backbone');
 
-		initialize: function () {},
-		
-		initializeControllerSafely: function (appModuleRenderState, controllerToRender) {
-			if (appModuleRenderState === true) {
-				if (this.controller) {
-					this.controller.cleanup();
-				} else {
-					this.controller = new controllerToRender();
-				}
-			} else {
-				// Can only load controllers within an application module if the appmod rendered safely.
-				return;
-			}
-		}
 
-	});
+AppModule.BaseAppModule = Backbone.View.extend({
+  initialize: function () {},
 
-	return Application.AppModule.BaseAppModule;
-
+  initializeControllerSafely: function (appModuleRenderState, controllerToRender) {
+    if (appModuleRenderState === true) {
+      if (this.controller) {
+        this.controller.cleanup();
+      } else {
+        this.controller = new controllerToRender();
+      }
+    } else {
+      // Can only load controllers within an application module if the appmod rendered safely.
+      return;
+    }
+  },
 });
+
+module.exports = AppModule.BaseAppModule;

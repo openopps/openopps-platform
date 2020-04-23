@@ -1,288 +1,284 @@
-define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'utilities',
-  'jquery_timeago',
-  'popovers',
-  'comment_collection',
-  'comment_form_view',
-  'comment_item_view',
-  'text!comment_wrapper_template'
-], function ($, _, Backbone, utils, TimeAgo, Popovers, CommentCollection, CommentFormView, CommentItemView, CommentWrapper) {
+var _ = require('underscore');
+var Backbone = require('backbone');
+var $ = require('jquery');
 
-  var popovers = new Popovers();
+var TimeAgo = require('../../../../../vendor/jquery.timeago');
+var Popovers = require('../../../../mixins/popovers');
+var CommentCollection = require('../../../../entities/comments/comment_collection');
+var CommentFormView = require('../../new/views/comment_form_view');
+var CommentItemView = require('../views/comment_item_view');
+var CommentWrapper = require('../templates/comment_wrapper_template.html');
+var marked = require('marked');
+var popovers = new Popovers();
 
-  Application.Controller.Comment = Backbone.View.extend({
+var Comment = Backbone.View.extend({
+  el: '.comment-list-wrapper',
 
-    el: ".comment-list-wrapper",
+  events: {
+    'click .delete-comment'             : 'deleteComment',
+    'mouseenter .comment-user-link'     : popovers.popoverPeopleOn,
+    'click .comment-user-link'          : popovers.popoverClick,
+    'click .link-backbone'              : linkBackbone,
+    "click a[href='#reply-to-comment']" : 'reply',
+  },
 
-    events: {
-      "click .new-topic"                  : "newTopic",
-      "click .comment-expand"             : "topicExpand",
-      "click .comment-contract"           : "topicContract",
-      "mouseenter .comment-user-link"     : popovers.popoverPeopleOn,
-      "click .comment-user-link"          : popovers.popoverClick,
-      "click .link-backbone"              : linkBackbone,
-      "click a[href='#reply-to-comment']" : "reply"
-    },
+  initialize: function (options) {
+    var self = this;
+    this.options = options;
 
-    initialize: function (options) {
-      var self = this;
-      this.options = options;
+    this.initializeRender();
+    this.initializeCommentCollection();
+    this.initializeNewTopic();
+    this.initializeListeners();
 
-      this.initializeRender();
-      this.initializeCommentCollection();
-      this.initializeListeners();
-
-      // Populating the DOM after a comment was created.
-      this.listenTo(this.commentCollection, "comment:save:success", function (model, modelJson, currentTarget) {
-        if (modelJson.topic) {
-          // cleanup the topic form
-          if (this.topicForm) this.topicForm.cleanup();
-        }
-        self.addNewCommentToDom(modelJson, currentTarget);
-      });
-
-    },
-
-    initializeRender: function() {
-      var template = _.template(CommentWrapper, { user: window.cache.currentUser });
-      this.$el.html(template);
-    },
-
-    initializeCommentCollection: function () {
-      var self = this;
-
-      if (this.commentCollection) { this.renderView() }
-      else { this.commentCollection = new CommentCollection(); }
-
-      this.commentCollection.fetch({
-        url: '/api/comment/findAllBy' + this.options.target + 'Id/' + this.options.id,
-        success: function (collection) {
-          self.collection = collection;
-          self.renderView(collection);
-        }
-      });
-    },
-
-    initializeListeners: function() {
-      var self = this;
-
-      this.listenTo(this.commentCollection, "comment:topic:new", function (value) {
-        var data = {
-          value: value,
-          topic: true
-        };
-        data[self.options.target + 'Id'] = self.options.id;
-
-        // TODO: DM: Fix this to add to the collection appropriately,
-        // and fetch/re-render as needed.  This is a hack to get it to work
-        $.ajax({
-          url: '/api/comment',
-          type: 'POST',
-          contentType: 'application/json',
-          processData: false,
-          data: JSON.stringify(data)
-        }).done(function (result) {
-          self.commentCollection.fetch({
-            url: '/api/comment/findAllBy' + self.options.target + 'Id/' + self.options.id,
-            success: function (collection) {
-            }
-          });
-        });
-      });
-    },
-
-    renderView: function (collection) {
-      var self = this;
-      this.parentMap = {};
-      this.topics = [];
-      var data = {
-        comments: collection.toJSON()[0].comments
-      };
-
-      // compute the depth of each comment to use as metadata when rendering
-      // in the process, create a map of the ids of each comment's children
-      var depth = {};
-      if (!data.comments) {
-        data.comments = [];
+    // Populating the DOM after a comment was created.
+    this.listenTo(this.commentCollection, 'comment:save:success', function (model, modelJson, currentTarget) {
+      if (modelJson.topic) {
+        // cleanup the topic form
+        if (this.topicForm) this.topicForm.empty();
       }
-      for (var i = 0; i < data.comments.length; i += 1) {
-        if (data.comments[i].topic === true) {
-          depth[data.comments[i].id] = 0;
-          data.comments[i]['depth'] = depth[data.comments[i].id];
-          this.topics.push(data);
-        } else {
-          depth[data.comments[i].id] = depth[data.comments[i].parentId] + 1;
-          data.comments[i]['depth'] = depth[data.comments[i].id];
-          // augment the parentMap with this comment
-          if (_.isUndefined(this.parentMap[data.comments[i].parentId])) {
-            this.parentMap[data.comments[i].parentId] = [];
+      this.$('[type="submit"]').prop('disabled', false);
+      self.addNewCommentToDom(modelJson, currentTarget);
+    });
+
+    this.listenTo(this.commentCollection, 'comment:save:error', function (model, response, options) {
+      var error = options.xhr.responseJSON;
+      if (error && error.invalidAttributes) {
+        for (var item in error.invalidAttributes) {
+          if (error.invalidAttributes[item]) {
+            message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
+            $('#' + item + '-update-alert').html(message).show();
           }
-          this.parentMap[data.comments[i].parentId].push(data.comments[i].id);
         }
       }
+    });
+  },
 
-      // hide the loading spinner
-      this.$('.comment-spinner').hide();
+  initializeRender: function () {
+    var template = _.template(CommentWrapper)({ 
+      user: window.cache.currentUser,
+      state: this.options.state,
+    });
+    this.$el.html(template);
+  },
 
-      this.commentViews = [];
-      this.commentForms = [];
-      if (data.comments.length == 0) {
-        this.$('#comment-empty').show();
-      }
-      _.each(data.comments, function (comment, i) {
-        self.renderComment(self, comment, collection, self.parentMap);
-      });
+  initializeCommentCollection: function () {
+    var self = this;
 
-      this.initializeCommentUIAdditions();
-    },
-
-    renderComment: function (self, comment, collection, map) {
-      var self = this;
-      // count the number of replies in a topic, recursively
-      var countChildren = function (map, comment) {
-        if (_.isUndefined(map[comment])) {
-          return 0;
-        }
-        var count = map[comment].length;
-        _.each(map[comment], function (c) {
-          count += countChildren(map, c);
-        });
-        return count;
-      };
-      // if this is a topic, count the children for rendering
-      if (comment.topic === true) {
-        comment.numChildren = countChildren(map, comment.id);
-      }
-      // Render the topic view and then in that view spew out all of its children.
-      var commentIV = new CommentItemView({
-        el: "#comment-list-" + (comment.topic ? 'null' : comment.parentId),
-        model: comment,
-        target: this.options.target,
-        projectId: comment.projectId,
-        taskId: comment.taskId,
-        collection: collection
-      }).render();
-      self.commentViews.push(commentIV);
-      if (comment.depth <= 1) {
-        // Place the commentForm at the bottom of the list of comments for that topic.
-        var commentFV = new CommentFormView({
-          el: '#comment-form-' + comment.id,
-          target: this.options.target,
-          projectId: comment.projectId,
-          taskId: comment.taskId,
-          parentId: comment.id,
-          collection: collection,
-          depth: comment['depth']
-        });
-        self.commentForms.push(commentFV);
-      }
-      return $("#comment-list-" + (comment.topic ? 'null' : comment.parentId));
-    },
-
-    initializeCommentUIAdditions: function ($comment) {
-      if (_.isUndefined($comment)) {
-        this.$("time.timeago").timeago();
-      } else {
-        $comment.find("time.timeago").timeago();
-      }
-      popovers.popoverPeopleInit(".comment-user-link");
-      popovers.popoverPeopleInit(".project-people-div");
-    },
-
-    topicExpand: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      // toggle all the sublists
-      var target = $($(e.currentTarget).parents('li')[0])
-      $(e.currentTarget).hide();
-      $(target.find('.comment-contract')[0]).show();
-      $(target.children('.comment-sublist-wrapper')[0]).slideToggle();
-    },
-
-    topicContract: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      // toggle all the sublists
-      var target = $($(e.currentTarget).parents('li')[0])
-      $(e.currentTarget).hide();
-      $(target.find('.comment-expand')[0]).show();
-      $(target.children('.comment-sublist-wrapper')[0]).slideToggle();
-    },
-
-    reply: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      // The comment form is adjacent, not a child of the current target.
-      // so find the li container, and then the form inside
-      var target = $($($(e.currentTarget).parents('li.comment-item')[0]).children('.comment-form')[0]);
-      if (target.data('clicked') == 'true') {
-        target.hide();
-        target.data('clicked', 'false');
-      } else {
-        target.show();
-        target.data('clicked', 'true');
-      }
-    },
-
-    newTopic: function (e) {
-      if (e.preventDefault) e.preventDefault();
-
-      if (this.topicForm) this.topicForm.cleanup();
-      var options = {
-        el: '.topic-form-wrapper',
-        target: this.options.target,
-        collection: this.collection,
-        topic: true,
-        depth: -1
-      }
-      options[this.options.target + 'Id'] = this.options.id;
-      this.topicForm = new CommentFormView(options);
-    },
-
-    addNewCommentToDom: function (modelJson, currentTarget) {
-      var self = this;
-      modelJson['user'] = window.cache.currentUser;
-      // increment the comment counter
-      if ($(currentTarget).data('depth') >= 0) {
-        var itemContainer = $(currentTarget).parents('.comment-item.border-left')[0];
-        var countSpan = $(itemContainer).find('.comment-count-num')[0];
-        $(countSpan).html(parseInt($(countSpan).text()) + 1);
-      }
-      // set the depth based on the position in the tree
-      modelJson['depth'] = $(currentTarget).data('depth') + 1;
-      // update the parentMap for sorting
-      if (!_.isNull(modelJson.parentId)) {
-        if (_.isUndefined(this.parentMap[modelJson.parentId])) {
-          this.parentMap[modelJson.parentId] = [];
-        }
-        this.parentMap[modelJson.parentId].push(modelJson.id);
-      } else {
-        this.topics.push(modelJson);
-      }
-      // hide the empty placeholder, just in case it is still showing
-      $("#comment-empty").hide();
-      // render comment and UI addons
-      var $comment = self.renderComment(self, modelJson, self.collection, self.parentMap);
-      self.initializeCommentUIAdditions($comment);
-
-      // Clear out the current div
-      $(currentTarget).find("div[contentEditable=true]").text("");
-    },
-
-    cleanup: function () {
-      for (var i in this.commentForms.reverse()) {
-        if (this.commentForms[i]) { this.commentForms[i].cleanup(); }
-      }
-      for (var i in this.commentViews.reverse()) {
-        if (this.commentViews[i]) { this.commentViews[i].cleanup(); }
-      }
-      if (this.topicForm) {
-        this.topicForm.cleanup();
-      }
-      removeView(this);
+    if (this.commentCollection && !self.options.recentlyDeleted ) {
+      this.renderView();
+    } else {
+      this.commentCollection = new CommentCollection();
+      self.options.recentlyDeleted = false;
     }
 
-  });
+    this.commentCollection.fetch({
+      url: '/api/comment/findAllBy' + this.options.target + 'Id/' + this.options.id,
+      success: function (collection) {
+        self.collection = collection;
+        self.renderView(collection);
+      },
+    });
+  },
 
-  return Application.Controller.Comment;
+  initializeNewTopic: function () {
+    var options = {
+      el: '#comment-form-target',
+      target: this.options.target,
+      collection: this.commentCollection,
+      topic: true,
+      depth: -1,
+      disable: (!_.contains(['draft', 'submitted'], this.options.state) && window.cache.currentUser) ? false : true,
+    };
+    options[this.options.target + 'Id'] = this.options.id;
+    this.topicForm = new CommentFormView(options);
+  },
+
+  initializeListeners: function () {
+    var self = this;
+
+    this.listenTo(this.commentCollection, 'comment:topic:new', function (value) {
+      var data = {
+        value: value,
+        topic: true,
+      };
+      data[self.options.target + 'Id'] = self.options.id;
+
+      // TODO: DM: Fix this to add to the collection appropriately,
+      // and fetch/re-render as needed.  This is a hack to get it to work
+      $.ajax({
+        url: '/api/comment',
+        type: 'POST',
+        contentType: 'application/json',
+        processData: false,
+        data: JSON.stringify(data),
+      }).done(function (result) {
+        self.commentCollection.fetch({
+          url: '/api/comment/findAllBy' + self.options.target + 'Id/' + self.options.id,
+          success: function (collection) {
+          },
+        });
+      });
+    });
+  },
+
+  renderView: function (collection) {
+    var data;
+    var self = this;
+    this.parentMap = {};
+    this.topics = [];
+    if ( typeof collection != 'undefined' ) {
+      data = {
+        comments: collection.toJSON()[0].comments,
+      };
+    } else {
+      data = {};
+    }
+
+    // compute the depth of each comment to use as metadata when rendering
+    // in the process, create a map of the ids of each comment's children
+    var depth = {};
+    if (!data.comments) {
+      data.comments = [];
+    }
+    for (var i = 0; i < data.comments.length; i += 1) {
+      depth[data.comments[i].id] = 0;
+      //data.comments[i]['depth'] = depth[data.comments[i].id];
+      data.comments[i].depth = 0;
+      this.topics.push(data);
+    }
+
+    // hide the loading spinner
+    this.$('.comment-spinner').hide();
+
+    this.commentViews = [];
+    this.commentForms = [];
+
+    if (data.comments.length === 0) {
+      this.$('#comment-empty').show();
+    }
+    _.each(data.comments, function (comment, i) {
+      self.renderComment(self, comment, collection, self.parentMap);
+    });
+
+    this.initializeCommentUIAdditions();
+  },
+
+  reply: function (e) {
+    if (e.preventDefault) e.preventDefault();
+
+    var inputTarget = $('.comment-input');
+    if ( !this.isElementInViewport(inputTarget) ){
+      $('html,body').animate({scrollTop: inputTarget.offset().top},'slow');
+    }
+
+    var replyto = _.escape($(e.currentTarget).data('commentauthor'));
+    var authorid         = $(e.currentTarget).data('authorid');
+    var replyToCommentId = $(e.currentTarget).data('commentid');
+    var quote            = $('#comment-id-'+replyToCommentId).html();
+    var authorSlug = "<a href='/profile/"+authorid+"'>"+replyto+'</a>';
+
+    $('.comment-input').html('<i>'+authorSlug+' said</i>'+marked('> '+quote, { sanitize: false })+'&nbsp;');
+  },
+
+  isElementInViewport: function (el) {
+    //from SO 123999
+
+    if (typeof jQuery === 'function' && el instanceof jQuery) {
+      el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+      rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+  },
+
+  renderComment: function (unused, comment, collection, map) {
+    var self = this;
+    comment.canEdit = this.options.canEditTask;
+
+    var commentIV = new CommentItemView({
+      el: '#comment-list',
+      model: comment,
+      target: this.options.target,
+      projectId: comment.projectId,
+      taskId: comment.taskId,
+      collection: collection,
+    }).render();
+
+    self.commentViews.push(commentIV);
+
+    return $('#comment-list');
+  },
+
+  initializeCommentUIAdditions: function ($comment) {
+    if (_.isUndefined($comment)) {
+      this.$('time.timeago').timeago();
+    } else {
+      $comment.find('time.timeago').timeago();
+    }
+    popovers.popoverPeopleInit('.comment-user-link');
+    popovers.popoverPeopleInit('.project-people-div');
+  },
+
+  deleteComment: function (e) {
+    var self = this;
+    if (e.preventDefault) e.preventDefault();
+    var id = $(e.currentTarget).data('commentid') || null;
+
+    if ( window.cache.currentUser ) {
+      $.ajax({
+        url: '/api/comment/' + id,
+        type: 'DELETE',
+      }).done( function (data){
+        $(e.currentTarget).parent().parent().remove('li.comment-item');
+        self.options.recentlyDeleted = true;
+        self.initialize(self.options);
+      });
+    }
+  },
+
+  addNewCommentToDom: function (modelJson, currentTarget) {
+    var self = this;
+    modelJson.user = window.cache.currentUser;
+    // increment the comment counter
+    if ($(currentTarget).data('depth') >= 0) {
+      var itemContainer = $(currentTarget).parents('.comment-item.border-left')[0];
+      var countSpan = $(itemContainer).find('.comment-count-num')[0];
+      $(countSpan).html(parseInt($(countSpan).text()) + 1);
+    }
+    // set the depth based on the position in the tree
+    modelJson.depth = $(currentTarget).data('depth') + 1;
+    // update the parentMap for sorting
+    this.topics.push(modelJson);
+    // hide the empty placeholder, just in case it is still showing
+    $('#comment-empty').hide();
+    // render comment and UI addons
+    var $comment = self.renderComment(self, modelJson, self.collection, self.parentMap);
+    self.initializeCommentUIAdditions($comment);
+
+    // Clear out the current div
+    $(currentTarget).find('div[contentEditable=true]').text('');
+  },
+
+  cleanup: function () {
+    for (var i in this.commentForms.reverse()) {
+      if (this.commentForms[i]) { this.commentForms[i].cleanup(); }
+    }
+    for (var j in this.commentViews.reverse()) {
+      if (this.commentViews[j]) { this.commentViews[j].cleanup(); }
+    }
+    if (this.topicForm) {
+      this.topicForm.cleanup();
+    }
+    removeView(this);
+  },
+
 });
+
+module.exports = Comment;

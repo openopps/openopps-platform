@@ -1,0 +1,15 @@
+<div class="confirm-participant">
+  <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+    <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(userId) %>" data-userid="<%- userId %>" data-voluserid="<%- userId %>">
+      <% if (photoId) { %>
+        <img src="/api/user/photo/<%- userId %>" alt="Profile picture of <%- name %>">
+      <% } else { %>
+        <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(name) %></div>
+      <% } %>
+    </div>
+    <div class="usajobs-open-opps-opportunity-requestor__body">
+      <div class="usajobs-open-opps-opportunity-requestor__name"><%- name %></div>
+    </div>
+  </div>
+  <p>This participant will be assigned to this opportunity.</p>
+</div>

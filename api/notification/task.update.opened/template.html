@@ -1,0 +1,12 @@
+<p>Hi <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>We approved your opportunity, <a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a>, and it's now open and accepting applicants.</p>
+
+<p>You'll get a notification each time someone signs up to participate in this opportunity.</p>
+
+<p class="no-margin">What do you do now?</p>
+
+<ol>
+  <li>Start reviewing and assigning participants.</li>
+  <li>Cancel the opportunity if it's no longer needed.</li>
+</ol>

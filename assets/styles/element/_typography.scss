@@ -1,0 +1,69 @@
+// Typography
+// We are using the Source Sans Pro headers and body pairing
+
+body {
+  // Reiterating with a fallback
+  font-size: $base-font-size-px;
+  // font-size: $base-font-size;
+}
+
+.lt-ie9 p,
+.lt-ie9 li {
+  // Reiterating this here to fix a problem where respond.js is
+  // adding an inline style on the body to 100% which borks our lt-ie9 world
+  font-size: 17px !important;
+}
+
+h1 {
+  @include h1();
+}
+
+h2 {
+  @include h2();
+}
+
+h3 {
+  @include h3();
+}
+
+h4 {
+  @include h4();
+}
+
+h5 {
+  @include h5();
+}
+
+h6 {
+  @include h6();
+}
+
+.usajobs-content-well p {
+  @include default-text();
+}
+
+.usajobs-section-header,
+.section-header {
+  margin-top: $size-XXL;
+  margin-bottom: $size-S;
+  padding: 0.5em 0;
+  color: $color-primary-darkest;
+  border-bottom: 1px solid $color-primary-darkest;
+
+  &__link {
+    display: block;
+    padding: $size-base $size-default $size-default 0;
+    font-size: $base-font-size;
+    @include permaLink();
+
+    @include media($M) {
+      display: inline-block;
+      float: right;
+    }
+  }
+}
+
+// Annoying override
+.main-content .usajobs-section-header .usajobs-section-header__link {
+  text-decoration: none;
+}

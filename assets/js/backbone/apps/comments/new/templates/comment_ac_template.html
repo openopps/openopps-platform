@@ -13,6 +13,7 @@
       </div>
       <div class="ac-description">
         <% if ((target == 'project') || (target == 'user')) { %>
+        <% /* Escaped in view and with marked() */ %>
         <%= description %>
         <% } %>
       </div>

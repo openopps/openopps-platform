@@ -1,63 +1,110 @@
-<div id="login-wrapper"></div>
-<div class="navbar navbar-default navbar-static-top">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/" title="<%- systemName %> Home">
-      </a>
-    </div>
-    <div class="navbar-collapse collapse pull-right">
-      <ul class="nav navbar-nav">
 
-        <% if (ui.project.show) { %>
-        <li class="projects">
-          <a href="/projects" class="nav-link">
-            <i class="fa fa-rocket"></i>
-            <span class="navbar-title-small" data-i18n="Browse">Browse</span><br/>
-            <span class="navbar-title-big" data-i18n="ProjectPlural">Projects</span>
-          </a>
-        </li>
-        <% } %>
-        <li class="tasks">
-          <a href="/tasks" class="nav-link">
-            <i class="fa fa-tags"></i>
-            <span class="navbar-title-small" data-i18n="Browse">Browse</span><br/>
-            <span class="navbar-title-big" data-i18n="TaskPlural">Tasks</span>
-          </a>
-        </li>
-
-        <li class="divider-vertical navbar-text"></li>
-        <% if (user) { %>
-          <li class="profile dropdown"><a href="/profile" id="navbar-profile" role="button" class="dropdown-toggle" data-toggle="dropdown">
-            <img src="/api/user/photo/<%- user.id %>" class="navbar-people"/> &nbsp;
-              <% if (user.name) { %><%- user.name %>
-              <% } else { %><%- user.username %>
-              <% } %>
+<nav class="usajobs-nav usajobs-nav--openopps has-secondary-nav" role="navigation" aria-label="main navigation">
+  <div class="usajobs-nav__body usajobs-nav--openopps__body">
+    <div  class="usajobs-nav__header-container">
+      <div class="usajobs-nav__header usajobs-nav--openopps__header">
+        <div class="usajobs-nav__brand-container usajobs-nav--openopps__brand-container">
+          <h1 class="openopps-site-logo">
+            <a class="usajobs-nav__brand usajobs-nav--openopps__brand" href="/" title="Open Opportunities - Home">
+              <img src="/img/logo/svg/openopps_logo.svg" alt="Open Opportunities logo">
             </a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="navbar-profile">
-              <li role="presentation"><a role="menuitem" class="nav-link" tabindex="-1" href="/profile">Profile</a></li>
-              <% if (user.isAdmin === true) { %>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                 tabindex="-1" href="/admin" class="nav-link">Administration</a></li>
+          </h1>
+        </div>
+        <% if(!accessForbidden && !welcome) { %>
+        <div class="usajobs-nav__menu" id="usajobs-menu">
+          <ul>
+            <% if (user) { %>
+              <li class="usajobs-nav__menu-container usajobs-nav__account usajobs-nav--openopps__menu-container" data-state="is-closed">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-one" href="#" title="Account" aria-haspopup="true" aria-controls="section-one">
+                  <span class="usajobs-nav--openopps__section">
+                    <span class="fas fa-user fa-fw" focusable="false"></span>
+                  <% if (user.name) { %>
+                    <span class="usajobs-nav__first_name usajobs-nav--openopps__first-name"><%- user.givenName %></span>
+                    <span class="usajobs-nav__initials usajobs-nav--openopps__initials"><%- getInitials(user.name) %></span>
+                  <% } else { %>
+                    <span class="usajobs-nav__account_name"><%- user.username %></span>
+                  <% } %>
+                  </span>
+                </a>
+              </li>
+            <% } else if (name) { %>
+              <li class="usajobs-nav__menu-container usajobs-nav__account usajobs-nav--openopps__menu-container" data-state="is-closed">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="<%- user.editURL %>" title="Account" aria-haspopup="true" aria-controls="section-one">
+                  <span class="usajobs-nav--openopps__section">
+                    <span class="fas fa-user fa-fw" focusable="false"></span>
+                    <span class="usajobs-nav__first_name usajobs-nav--openopps__first-name"><%- name %></span>
+                    <span class="usajobs-nav__initials usajobs-nav--openopps__initials"><%- name %></span>
+                  </span>
+                </a>
+              </li>
+            <% } else { %>
+              <% if (login.signin !== false) { %>
+              <li class="usajobs-nav__menu-container usajobs-nav__account">
+                <a href="/login" class="usajobs-nav__section-link usajobs-nav--openopps__section-link">
+                  <span class="fas fa-sign-in-alt fa-fw" data-fa-transform="right-6" focusable="false"></span>
+                  Sign In
+                </a>
+              </li>
               <% } %>
-              <% if (login.local.logout) { %>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                 tabindex="-1" href="/auth/logout" class="logout">Logout</a></li>
-              <% } %>
-            </ul>
-          </li>
-        <% } else { %>
-          <% if (login.signin !== false) { %>
-          <li class="navbar-1line"><a href="/auth" class="login"><i class="fa fa-plus-circle"></i> Sign In</a></li>
-          <% } %>
-        <% }; %>
-      </ul>
+            <% } %>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
+                <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link" href="https://usajobs.github.io/openopps-help/"  target="_blank" rel="noopener noreferrer" title="Help">
+                  <span class="usajobs-nav--openopps__section">
+                    <span class="fas fa-question-circle" title="Help"></span>Help
+                  </span>
+                </a>
+              </li>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search desktop">
+              <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="/search" title="Search Opportunities">
+                <span class="usajobs-nav--openopps__section">
+                  <span class="fas fa-search fa-fw" style="margin-top:0.5rem;" focusable="false"></span>Search
+                </span>
+              </a>
+            </li>
+            <li class="usajobs-nav__menu-container usajobs-nav__menu-search usajobs-nav--openopps__menu-container mobile" data-state="is-closed">
+              <a class="usajobs-nav__section-link usajobs-nav--openopps__section-link menu-toggle toggle-two" href="/search" title="Search Opportunities" aria-haspopup="true" aria-controls="section-two">
+                <span class="usajobs-nav--openopps__section">
+                  <span class="fas fa-search fa-fw" focusable="false"></span>Search
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <% } %>
+      </div>
     </div>
   </div>
-</div>
+</nav>
+
+<% if(!accessForbidden && !welcome) { %>
+<nav class="usajobs-openopps-secondary-nav" aria-labelledby="usajobs-openopps-secondary-nav-label">
+  <span class="sr-only" id="usajobs-openopps-secondary-nav-label">Secondary menu</span>
+  <div class="usajobs-openopps-secondary-nav__body">
+    <% if (user) { %>
+    <ul id="section-one" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+        <a href="/home" class="usajobs-openopps-secondary-nav__link subnav-link" title="Home">Home</a>
+      </li>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem">
+        <a href="/profile/<%- user.id %>" class="usajobs-openopps-secondary-nav__link subnav-link" title="Profile" id="profileLink">Profile</a>
+      </li>
+      <% if (user.isAdmin || user.isApprover || user.isAgencyAdmin || user.isCommunityAdmin || user.isCommunityApprover) { %>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/admin" class="usajobs-openopps-secondary-nav__link subnav-link" title="Administration">Administration</a></li>
+      <% } %>
+    </ul>
+    <% } %>
+    <ul id="section-two" class="usajobs-openopps-secondary-nav__menu" aria-expanded="false" aria-label="submenu" role="menu">
+      <% if (!user || user.hiringPath == 'fed' || user.hiringPath == 'contractor') { %>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search" class="usajobs-openopps-secondary-nav__link subnav-link" title="Opportunities">Opportunities</a></li>
+      <% } %>
+      <% if (!user || user.isAdmin || (user.communities && user.communities.student.length > 0) || user.hiringPath == 'student') { %>
+        <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/search/internships" class="usajobs-openopps-secondary-nav__link subnav-link" title="Internships">Internships</a></li>
+        <% } %>
+      <% if (user && (user.hiringPath == 'fed' || user.hiringPath == 'contractor')) { %>
+      <li class="usajobs-openopps-secondary-nav__item" role="menuitem"><a href="/profiles" class="usajobs-openopps-secondary-nav__link subnav-link" title="People">People</a></li>
+      <% } %>
+      <li class="usajobs-openopps-secondary-nav__item mobile" role="menuitem"><a href="https://usajobs.github.io/openopps-help/" class="usajobs-openopps-secondary-nav__link" title="Help">Help</a><span class="sr-only">Opens in a new window</span></li>
+    </ul>
+  </div>
+</nav>
+<% } %>

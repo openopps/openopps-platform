@@ -1,36 +1,49 @@
-<div class="row">
-  <div class="col-sm-3 col-md-3">
-
-    <nav class="navbar admin navbar-default" role="navigation">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <span class="navbar-brand">Administration</span>
-        <!-- <a class="navbar-brand" href="#">Administration</a> -->
-      </div>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav">
-          <li><a href="/admin/dashboard" class="link-admin" data-target="dashboard">Dashboard</a></li>
-          <li><a href="/admin/users" class="link-admin" data-target="user">User Management</a></li>
-          <li><a href="/admin/tags" class="link-admin" data-target="tag">Tag Configuration</a></li>
+<section class="usajobs-canvas usajobs-open-opps-admin-dashboard">
+  <main id="main-content">
+    <h1>Administration</h1>
+    <nav class="usajobs-nav-secondary" role="navigation" data-object="nav-secondary" data-target="#usajobs-nav-secondary-menu--administration">
+      <div class="usajobs-nav-secondary__body" id="usajobs-menu-administration">
+        <ul class="usajobs-nav-secondary__menu">
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isApprover)) { %>
+          <li class="usajobs-nav-secondary__container">
+            <a class="usajobs-nav-secondary__item is-active" href="/admin/sitewide" data-target="sitewide">
+              Sitewide
+            </a>
+          </li>
+          <% } %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isAgencyAdmin)) { %>
+          <li class="usajobs-nav-secondary__container">
+            <a class="usajobs-nav-secondary__item" href="/admin/agency" data-target="agency">
+              Agency
+            </a>
+          </li>
+          <% } %>
+          <% if (window.cache.currentUser && (window.cache.currentUser.isAdmin || window.cache.currentUser.isCommunityAdmin || window.cache.currentUser.isCommunityApprover)) { %>
+          <li class="usajobs-nav-secondary__container">
+            <a class="usajobs-nav-secondary__item" href="/admin/community" data-target="community">
+              Community
+            </a>
+          </li>
+          <% } %>
+          <li class="usajobs-nav-secondary__container more is-hidden" style="display: none;">
+            <a id="more-menu" class="usajobs-nav-secondary__more-toggle" href="javascript:void(0)" data-behavior="nav-secondary.toggle" data-target="#usajobs-nav-secondary-menu--administration">
+              <svg class="svg-inline--fa fa-plus fa-w-14" aria-hidden="true" data-fa-processed="" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M448 294.2v-76.4c0-13.3-10.7-24-24-24H286.2V56c0-13.3-10.7-24-24-24h-76.4c-13.3 0-24 10.7-24 24v137.8H24c-13.3 0-24 10.7-24 24v76.4c0 13.3 10.7 24 24 24h137.8V456c0 13.3 10.7 24 24 24h76.4c13.3 0 24-10.7 24-24V318.2H424c13.3 0 24-10.7 24-24z"></path></svg><!-- <span class="fas fa-plus"></span> -->
+              <span class="usa-sr-only">More</span>
+            </a>
+            <ul class="usajobs-nav-secondary__more-container" id="usajobs-nav-secondary-menu--administration" data-state="is-closed">
+            </ul>
+          </li>
         </ul>
-      </div><!-- /.navbar-collapse -->
+      </div>
     </nav>
-
-  </div>
-  <div class="col-sm-9 col-md-9 sm-nopadding">
-    <div class="admin-container" id="admin-user">
+    <div class="content">
+      <div class="admin-container" id="admin-main"></div>
+      <div class="admin-container" id="admin-user"></div>
+      <div class="admin-container" id="admin-tag"></div>
+      <div class="admin-container" id="admin-task"></div>
+      <div class="admin-container" id="admin-cycle"></div>
+      <div class="admin-container" id="admin-applicant"></div>  
+      </div>
     </div>
-    <div class="admin-container" id="admin-tag">
-    </div>
-    <div class="admin-container" id="admin-dashboard">
-    </div>
-  </div>
-</div>
+  </main>
+</section>

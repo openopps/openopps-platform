@@ -1,0 +1,109 @@
+version: '3'
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules/
+    working_dir: /app
+    command:
+      - /wait-for-migrate-db-container.sh
+      - db
+      - npm run watch
+    ports:
+      - 3000:3000
+    links:
+      - db
+      - mail
+    networks:
+      - mail
+      - backend
+    environment:
+      - PATH=/app/node_modules/.bin:$PATH
+      - DATABASE_URL=postgres://midas@db/midas
+      - DATASTORE=postgresql
+      - LOG_LEVEL=silly
+      - PORT=3000
+      - EMAIL_SYSTEM_ADDRESS=docker@openopps.local
+      - EMAIL_HOST=mail
+      - EMAIL_SSL=false
+      - EMAIL_IGNORE_TLS=true
+      - EMAIL_PORT=25
+      - SAILS_SECRET=just_for_testing_yo
+      - 'VCAP_APPLICATION={ "uris": [ "openopps-test.18f.gov" ] }'
+    depends_on:
+      - db
+      - mail
+      - migrate_db
+      - init_db
+  # README: Migrate the database so that npm run init can write to it.
+  migrate_db:
+    networks:
+      - backend
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: npm run migrate
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules/
+    environment:
+      - PATH=/app/node_modules/.bin:$PATH
+      - DATABASE_URL=postgres://midas@db/midas
+      - DATASTORE=postgresql
+      - LOG_LEVEL=silly
+      - PORT=3002
+    links:
+      - db
+    depends_on:
+      - db
+  mail:
+    image: tophfr/mailcatcher
+    ports:
+      - 8025:80 # for the web UI
+    networks:
+      - mail
+  # README: Initialize the database so that Sails can connect to it.
+  init_db:
+    networks:
+      - backend
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command:
+      - /wait-for-migrate-db-container.sh
+      - db
+      - npm run init
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules/
+    environment:
+      - PATH=/app/node_modules/.bin:$PATH
+      - DATABASE_URL=postgres://midas@db/midas
+      - DATASTORE=postgresql
+      - LOG_LEVEL=silly
+      - PORT=3001
+    links:
+      - db
+    depends_on:
+      - db
+      - migrate_db
+  db:
+    networks:
+      - backend
+    image: postgres:9.3
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=midas
+      - POSTGRES_USER=midas
+volumes:
+  node-modules:
+  pgdata:
+networks:
+  mail:
+    driver: bridge
+  backend:
+    driver: bridge

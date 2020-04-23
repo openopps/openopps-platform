@@ -1,0 +1,27 @@
+{
+    "rules": {
+        "no-unused-vars": [ "off" ],
+        "indent": [
+          "error",
+          2,
+          {
+            "SwitchCase": 1,
+            "VariableDeclarator": 2
+          }
+        ],
+        "quotes": [ "error", "single", { "avoidEscape": true, "allowTemplateLiterals": true } ],
+        "semi": [ "error", "always" ],
+        "comma-dangle": [ "warn", "always-multiline" ],
+        "no-console": [ "off" ],
+        "no-undef": [ "off" ],
+        "space-before-function-paren": [ "error", "always" ]
+    },
+    "parserOptions": {
+      "ecmaVersion": 8
+    },
+    "env": {
+        "node": true,
+        "browser": true
+    },
+    "extends": "eslint:recommended"
+}

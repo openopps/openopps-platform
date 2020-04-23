@@ -1,6 +1,0 @@
-{
-  "run_list": ["midas"],
-  "automatic": {
-    "ipaddress": "ec2-54-85-75-78.compute-1.amazonaws.com"
-  }
-}

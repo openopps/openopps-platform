@@ -1,606 +1,827 @@
-define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'i18n',
-  'utilities',
-  'json!ui_config',
-  'async',
-  'jquery_iframe',
-  'jquery_fileupload',
-  'markdown_editor',
-  'marked',
-  'tag_show_view',
-  'text!profile_show_template',
-  'text!profile_email_template',
-  'json!login_config',
-  'modal_component',
-  'profile_activity_view',
-  'profile_email_view',
-  'tag_factory'
-], function ($,  _, Backbone, i18n, utils, UIConfig, async, jqIframe, jqFU, MarkdownEditor, marked,
-  TagShowView, ProfileTemplate, EmailTemplate, Login, ModalComponent, PAView, EmailFormView, TagFactory) {
+// vendor libraries
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var marked = require('marked');
+var ModalComponent = require('../../../../components/modal');
 
-  var ProfileShowView = Backbone.View.extend({
+// internal dependencies
+var UIConfig = require('../../../../config/ui.json');
+var TagShowView = require('../../../tag/show/views/tag_show_view');
+var Login = require('../../../../config/login.json');
+var TagFactory = require('../../../../components/tag_factory');
+var ProfilePhotoView = require('./profile_photo_view');
+var HomeActivityView = require('../../home/views/home_activity_view');
+var InternshipsActivityView = require('../../home/internships/views/internships_activity_view');
 
-    events: {
-      "submit #profile-form"       : "profileSubmit",
-      "click #profile-save"        : "profileSave",
-      "click .link-backbone"       : linkBackbone,
-      "click #profile-cancel"      : "profileCancel",
-      "click #like-button"         : "like",
-      "keyup #name, #title, #bio"  : "fieldModified",
-      "click #add-email"           : "addEmail",
-      "click .email-remove"        : "removeEmail",
-      "click .removeAuth"          : "removeAuth"
-    },
+// templates
+var ProfileShowTemplate = require('../templates/profile_show_template.html');
+var ShareTemplate = require('../templates/profile_share_template.txt');
+var CreatedTemplate = require('../../home/templates/home_created_template.html');
+var ParticipatedTemplate = require('../../home/templates/home_participated_template.html');
+var AppliedTemplate = require('../../home/internships/templates/internships_applied_template.html');
+var SavedTemplate = require('../../home/internships/templates/internships_saved_template.html');
+var ProfileBureauOfficeTemplate = require('../templates/profile_bureau_office_template.html');
+var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_office_preview_template.html');
+var ProfileAlertMessageTemplate = require('../templates/profile_alert_message_template.html');
+var ProfileBadgePreviewTemplate = require('../templates/profile_badge_preview_template.html');
+var ProfileBadgeDetailsTemplate = require('../templates/profile_badge_details_template.html');
 
-    initialize: function (options) {
-      this.options = options;
-      this.data = options.data;
-      this.tagFactory = new TagFactory();
-      this.data.newItemTags = [];
-      this.edit = false;
-      if (this.options.action == 'edit') {
-        this.edit = true;
+
+var ProfileShowView = Backbone.View.extend({
+  events: {
+    'change .validate'              : 'validateField',
+    'blur .validate'                : 'validateField',
+    'click .link-backbone'          : linkBackbone,
+    'change .form-control'          : 'fieldModified',
+    'blur .form-control'            : 'fieldModified',
+    'click .participated-show-all'  : 'showAllParticipated',
+    'click .created-show-all'       : 'showAllParticipated',
+    'change #sort-participated'     : 'sortTasks',
+    'change #sort-created'          : 'sortTasks',
+    'click .applied-show-all'       : 'showAllInternships',
+    'click .saved-show-all'         : 'showAllInternships',
+    'change #sort-applied'          : 'sortInternships',
+    'change #sort-saved'            : 'sortInternships',
+    'click #add-bureau-office'      : 'addbureauOfficeDisplay',
+    'click .remove-bureau-office'   : 'removeBureauOfficeDisplay',
+    'click #add-badge'              : 'addBadges',
+    'click #remove-badge'           : 'removeBadge',
+  },
+
+  initialize: function (options) {
+    this.options = options;
+    this.data = options.data;
+    this.tagFactory = new TagFactory();
+    this.data.newItemTags = [];
+    this.bureaus                = [];
+    this.offices                = {};
+    this.dataBureauOffice   =[];
+    this.currentOffices =[];
+    this.userData ={};
+
+    this.initializeAction();
+    this.initializeErrorHandling();
+  },
+
+  initializeAction: function () {
+    var model = this.model.toJSON();
+    var currentUser = window.cache.currentUser || {};
+    if (this.options.action === 'edit') {
+      this.edit = true;
+      if (model.id !== currentUser.id && !model.canEditProfile) {
+        this.edit = false;
+        Backbone.history.navigate('profile/' + model.id, {
+          trigger: false,
+          replace: true,
+        });
       }
-      if (this.data.saved) {
-        this.saved = true;
-        this.data.saved = false;
+    } else if (this.options.action === 'skills') {
+      this.skills = true;
+      if (model.id !== currentUser.id && !model.canEditProfile) {
+        this.skills = false;
+        Backbone.history.navigate('profile/' + model.id, {
+          trigger: false,
+          replace: true,
+        });
       }
-    },
+    }
+  },
 
-    render: function () {
-      var data = {
-        login: Login,
-        data: this.model.toJSON(),
-        user: window.cache.currentUser || {},
-        edit: this.edit,
-        saved: this.saved,
-        ui: UIConfig
-      }
-
-      if (data.data.bio) {
-        data.data.bioHtml = marked(data.data.bio);
-      }
-      var template = _.template(ProfileTemplate, data);
-      this.$el.html(template);
-      this.$el.i18n();
-
-      // initialize sub components
-      this.initializeFileUpload();
-      this.initializeForm();
-      this.initializeSelect2();
-      this.initializeLikes();
-      this.initializeTags();
-      this.initializePAView();
-      this.initializeEmail();
-      this.initializeTextArea();
-      this.updatePhoto();
-      this.updateProfileEmail();
-      return this;
-    },
- initializeFileUpload: function () {
-      var self = this;
-
-      $('#fileupload').fileupload({
-          url: "/api/file/create",
-          dataType: 'text',
-          acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-          formData: { 'type': 'image_square' },
-          add: function (e, data) {
-            self.$('#file-upload-progress-container').show();
-            data.submit();
-          },
-          progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            self.$('#file-upload-progress').css(
-              'width',
-              progress + '%'
-            );
-          },
-          done: function (e, data) {
-            // for IE8/9 that use iframe
-            if (data.dataType == 'iframe text') {
-              var result = JSON.parse(data.result);
-            }
-            // for modern XHR browsers
-            else {
-              var result = JSON.parse($(data.result).text());
-            }
-            self.model.trigger("profile:updateWithPhotoId", result[0]);
-          },
-          fail: function (e, data) {
-            // notify the user that the upload failed
-            var message = data.errorThrown;
-            self.$('#file-upload-progress-container').hide();
-            if (data.jqXHR.status == 413) {
-              message = "The uploaded file exceeds the maximum file size.";
-            }
-            self.$("#file-upload-alert").html(message)
-            self.$("#file-upload-alert").show();
+  initializeErrorHandling: function () {
+    // Handle server side errors
+    this.model.on('error', function (model, xhr) {
+      var error = xhr.responseJSON;
+      if (error && error.invalidAttributes) {
+        for (var item in error.invalidAttributes) {
+          if (error.invalidAttributes[item]) {
+            message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
+            $('#' + item + '-update-alert-message').html(message);
+            $('#' + item + '-update-alert').show();
           }
-      });
-
-    },
-
-    updateProfileEmail: function(){
-      var self = this;
-      $.ajax({
-        url: encodeURI('/api/email/makeURL?email=contactUserAboutProfile&subject=Check Out "'+ self.model.attributes.name + '"' +
-        '&profileTitle=' + (self.model.attributes.title || '') +
-        '&profileLink=' + window.location.protocol + "//" + window.location.host + "" + window.location.pathname +
-        '&profileName=' + (self.model.attributes.name || '') +
-        '&profileLocation=' + (self.model.attributes.location ? self.model.attributes.location.tag.name : '') +
-        '&profileAgency=' + (self.model.agency ? self.model.agency.name : '')),
-        type: 'GET'
-      }).done( function (data) {
-        self.$('#email').attr('href', data);
-      });
-    },
-
-    initializeTags: function() {
-      if (this.tagView) { this.tagView.cleanup(); }
-      this.tagView = new TagShowView({
-        model: this.model,
-        el: '.tag-wrapper',
-        target: 'profile',
-        targetId: 'userId',
-        edit: this.edit,
-        url: '/api/tag/findAllByUserId/'
-      });
-      this.tagView.render();
-    },
-
-    initializePAView: function () {
-      if (this.projectView) { this.projectView.cleanup(); }
-      if (this.taskView) { this.taskView.cleanup(); }
-      if (this.volView) { this.volView.cleanup(); }
-      $.ajax('/api/user/activities/' + this.model.attributes.id).done(function (data) {
-        this.projectView = new PAView({
-          model: this.model,
-          el: '.project-activity-wrapper',
-          target: 'project',
-          data: data.projects
-        });
-        this.projectView.render();
-        this.taskView = new PAView({
-          model: this.model,
-          el: '.task-createdactivity-wrapper',
-          target: 'task',
-          data: data.tasks
-        });
-        this.taskView.render();
-        this.volView = new PAView({
-          model: this.model,
-          el: '.task-activity-wrapper',
-          target: 'task',
-          data: data.volTasks
-        });
-        this.volView.render();
-
-      });
-    },
-
-    updatePhoto: function () {
-      var self = this;
-      this.model.on("profile:updatedPhoto", function (data) {
-        var url = '/api/user/photo/' + data.attributes.id;
-        // force the new image to be loaded
-        $.get(url, function (data) {
-          $("#project-header").css('background-image', "url('" + url + "')");
-          $('#file-upload-progress-container').hide();
-          // notify listeners of the new user image, but only for the current user
-          if (self.model.toJSON().id == window.cache.currentUser.id) {
-            window.cache.userEvents.trigger("user:profile:photo:save", url);
-          }
-        });
-      });
-    },
-
-    initializeForm: function() {
-      var self = this;
-
-      $("#topics").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-
-      $("#skills").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-
-      this.listenTo(self.model, "profile:save:success", function (data) {
-        // Bootstrap .button() has execution order issue since it
-        // uses setTimeout to change the text of buttons.
-        // make sure attr() runs last
-        $("#submit").button('success');
-        // notify listeners if the current user has been updated
-        if (self.model.toJSON().id == window.cache.currentUser.id) {
-          window.cache.userEvents.trigger("user:profile:save", data.toJSON());
         }
+      } else if (error) {
+        var alertText = xhr.statusText + '. Please try again.';
+        $('.alert.alert-danger').text(alertText).show();
+        $(window).animate({ scrollTop: 0 }, 500);
+      }
+    }.bind(this));
+  },
 
-        var tags = [
-          $("#company").select2('data'),
-          $("#location").select2('data')
-        ];
-        self.model.trigger("profile:tags:save", tags);
-      });
+  getTags: function (types) {
+    var allTags = this.model.attributes.tags;
+    var result = _.filter(allTags, function (tag) {
+      return _.contains(types, tag.type);
+    });
+    return result;
+  },
 
-      self.on('newTagSaveDone',function (){
+  render: function () {
+    var data = {
+      login: Login,
+      data: this.model.toJSON(),
+      tags: this.getTags(['skill', 'topic']),
+      skillsTags: this.getTags(['skill']),
+      interestsTags: this.getTags(['topic']),
+      tagTypes: this.tagTypes,
+      user: window.cache.currentUser || {},
+      edit: false,
+      skills: false,
+      saved: this.saved,
+      ui: UIConfig,
+    };
+    
+    data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
+    data.internFilename = 'intern' + (data.data.internshipsCompleted <= 3 ? data.data.internshipsCompleted : 3);
+    data.loginGovEmail = data.data.username;
+    data.fedEmail = data.data.governmentUri;
+    data.career = this.getTags(['career'])[0];
+    data.bureauOffice= data.data.bureauOffice;
+    
+    if (data.data.bio) {
+      data.data.bioHtml = marked(data.data.bio);
+    }
+    this.userData= data; 
+    var template = _.template(ProfileShowTemplate)(data);
+    $('#search-results-loading').hide();
+    this.$el.html(template);
+    this.$el.localize();
 
-        tags         = [];
-        var tempTags = [];
-
-        //get newly created tags from big three types
-        _.each(self.data.newItemTags, function(newItemTag){
-          tags.push(newItemTag);
-        });
-
-        tempTags.push.apply(tempTags,self.$("#tag_topic").select2('data'));
-        tempTags.push.apply(tempTags,self.$("#tag_skill").select2('data'));
-        tempTags.push.apply(tempTags,self.$("#tag_location").select2('data'));
-        tempTags.push.apply(tempTags,self.$("#tag_agency").select2('data'));
-
-        //see if there are any previously created big three tags and add them to the tag array
-        _.each(tempTags,function(tempTag){
-            if ( tempTag.id !== tempTag.name ){
-            tags.push(tempTag);
-          }
-        });
-
-        var tagMap = {};
-
-          // if a different profile is being edited, add its userId
-          if (self.model.toJSON().id !== window.cache.currentUser.id) {
-            tagMap.userId = self.model.toJSON().id;
-          }
-
-        async.forEach(
-          tags,
-          function(tag, callback){
-            //diffAdd,self.model.attributes.id,"taskId",callback
-            return self.tagFactory.addTag(tag,tagMap.userId,"userId",callback);
-          },
-          function(err){
-            self.model.trigger("profile:tags:save:success", err);
-          }
-        );
-      });
-
-        this.listenTo(self.model, "profile:tags:save", function (tags) {
-
-        var newTags = [];
-
-        newTags = newTags.concat(self.$("#tag_topic").select2('data'),self.$("#tag_skill").select2('data'),self.$("#tag_location").select2('data'),self.$("#tag_agency").select2('data'));
-
-        async.forEach(
-          newTags,
-          function(newTag, callback) {
-            return self.tagFactory.addTagEntities(newTag,self,callback);
-          },
-          function(err) {
-            if (err) return next(err);
-            self.trigger("newTagSaveDone");
-          }
-        );
-
-
-        var removeTag = function(type, done) {
-          if (self.model[type]) {
-            // delete the existing tag
-            $.ajax({
-              url: '/api/tag/' + self.model[type].tagId,
-              type: 'DELETE',
-            }).done(function (data) {
-              return done();
-            });
-            return;
-          }
-          return done();
-        }
-
-        var addTag = function (tag, done) {
-          // the tag is invalid or hasn't been selected
-          if (!tag || !tag.id) {
-            return done();
-          }
-          // the tag already is stored in the db
-          if (tag.tagId) {
-            return done();
-          }
-          var tagMap = {
-            tagId: tag.id
-          };
-          // if a different profile is being edited, add its userId
-          if (self.model.toJSON().id !== window.cache.currentUser.id) {
-            tagMap.userId = self.model.toJSON().id;
-          }
-          $.ajax({
-            url: '/api/tag',
-            type: 'POST',
-            data: tagMap
-          }).done(function (data) {
-            done();
-          });
-        }
-
-        async.each(['agency','location'], removeTag, function (err) {
-          async.forEach(tags, addTag, function (err) {
-            return self.model.trigger("profile:tags:save:success", err);
-          });
-        });
-      });
-
-      this.listenTo(self.model, "profile:tags:save:success", function (err) {
-        setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") },0);
-        $("#profile-save, #submit").removeClass("btn-primary");
-        $("#profile-save, #submit").addClass("btn-success");
-        self.data.saved = true;
-
-        //despite being wrapped in a event listener, this only "refresh" only seems to reflect the update data with the delay
-        setTimeout(function(){
-          Backbone.history.navigate('profile/' + self.model.toJSON().id, { trigger: true });
-        },50);
-      });
-
-      this.listenTo(self.model, "profile:save:fail", function (data) {
-        $("#submit").button('fail');
-      });
-      this.listenTo(self.model, "profile:removeAuth:success", function (data, id) {
-        self.render();
-      });
-      this.listenTo(self.model, "profile:input:changed", function (e) {
-        $("#profile-save, #submit").button('reset');
-        $("#profile-save, #submit").removeAttr("disabled");
-        $("#profile-save, #submit").removeClass("btn-success");
-        $("#profile-save, #submit").addClass("btn-c2");
-      });
-    },
-
-    initializeLikes: function() {
-      $("#like-number").text(this.model.attributes.likeCount);
-      if (parseInt(this.model.attributes.likeCount) === 1) {
-        $("#like-text").text($("#like-text").data('singular'));
+    // initialize sub components
+    this.initializeTags();
+    this.initializePhoto();
+    this.shareProfileEmail();
+    this.dataBureauOffice = data.bureauOffice;
+    this.renderBureauOffices();
+    this.renderBadges(data);
+    if (data.user.id !== data.data.id) {
+      if (data.data.hiringPath != 'student') {
+        this.renderOpportunities(data.data.id);
       } else {
-        $("#like-text").text($("#like-text").data('plural'));
+        this.renderInternshipOpportunities(data.data.id);
       }
-      if (this.model.attributes.like) {
-        $("#like-button-icon").removeClass('fa fa-star-o');
-        $("#like-button-icon").addClass('fa fa-star');
-      }
-    },
+    }
 
-    initializeSelect2: function () {
-      var self = this;
+    return this;
+  },
 
-      var formatResult = function (object, container, query) {
-        return object.name;
+  filterCreated: function (item) {
+    var user = window.cache.currentUser || {};
+    if (user.isAdmin || user.isAgencyAdmin) {
+      return item.state != 'archived';
+    } else {
+      return !_.contains(['draft', 'submitted', 'canceled', 'archived'], item.state);
+    }
+  },
+  
+  renderBadges: function (data){
+    var badgesPreviewTemplate = _.template(ProfileBadgePreviewTemplate)(data);   
+    $('#profile_badge_preview').html(badgesPreviewTemplate);
+  },
+
+  renderOpportunities: function (id) {
+    if (this.volView) { this.volView.cleanup(); }
+    if (this.taskView) { this.taskView.cleanup(); }
+    $.ajax('/api/user/activities/' + id).done(function (data) {
+      this.data.tasks = {
+        volunteered: _.filter(data.tasks.volunteered, function (item) { return item.state != 'archived'; }),
+        created: _.filter(data.tasks.created, this.filterCreated),
       };
+      this.volView = new HomeActivityView({
+        model: this.model,
+        el: '.opportunity-participated',
+        template: _.template(ParticipatedTemplate),
+        target: 'task',
+        handle: 'volTask',  // used in css id
+        data: _.sortBy(this.data.tasks.volunteered, 'updatedAt').reverse(),
+        getStatus: this.getStatus,
+      });
+      this.volView.render();
 
-      var modelJson = this.model.toJSON();
-      $("#company").select2({
-        placeholder: 'Select an Agency',
-        formatResult: formatResult,
-        formatSelection: formatResult,
-        minimumInputLength: 2,
-        ajax: {
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: function (term) {
-            return {
-              type: 'agency',
-              q: term
-            };
-          },
-          results: function (data) {
-            return { results: data };
-          }
+      this.taskView = new HomeActivityView({
+        model: this.model,
+        el: '.opportunity-created',
+        template: _.template(CreatedTemplate),
+        target: 'task',
+        handle: 'task',  // used in css id
+        data: _.sortBy(this.data.tasks.created, 'updatedAt').reverse(),
+      });
+      this.taskView.render();
+    }.bind(this));
+  },
+
+  showAllParticipated: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('participated-show-all')) {
+      this.volView.options.showAll = true;
+      this.volView.render();
+    } else {
+      this.taskView.options.showAll = true;
+      this.taskView.render();
+    }
+  },
+
+  getStatus: function (task) {
+    switch (task.state) {
+      case 'completed':
+        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
+      case 'in progress':
+        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
+      case 'canceled':
+        return 'Canceled';
+      default:
+        return (task.assigned ? 'Assigned' : 'Applied');
+    }
+  },
+
+  getApplicationStatus: function (application) {
+    if (application.submittedAt == null) {
+      if(new Date(application.applyEndDate) > new Date()) {
+        return 'In progress';
+      } else {
+        return 'Not submitted';
+      }
+    } else if (application.sequence == 3) {
+      if (application.taskState == 'completed') {
+        if (application.internshipComplete) {
+          return 'Completed';
+        } else if (application.reviewProgress == 'Primary' && !application.internshipComplete) {
+          return 'Not completed';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate';
+        } else {
+          return 'Not selected';
         }
-      });
-      if (modelJson.agency) {
-        $("#company").select2('data', modelJson.agency.tag);
-      }
-
-      $("#topics").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-
-      $("#skills").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-
-      $("#company").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-      $("#location").select2({
-        placeholder: 'Select a Location',
-        formatResult: formatResult,
-        formatSelection: formatResult,
-        minimumInputLength: 1,
-        data: [ location ],
-        ajax: {
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: function (term) {
-            return {
-              type: 'location',
-              q: term
-            };
-          },
-          results: function (data) {
-            return { results: data };
-          }
-        }
-      });
-      if (modelJson.location) {
-        $("#location").select2('data', modelJson.location.tag);
-      }
-      $("#location").on('change', function (e) {
-        self.model.trigger("profile:input:changed", e);
-      });
-    },
-
-    initializeEmail: function () {
-      var modelJson = this.model.toJSON();
-      if (this.edit) {
-        for (var i in modelJson.emails) {
-          var template = _.template(EmailTemplate, { email: modelJson.emails[i] });
-          $("#profile-emails").append(template);
+      } else {
+        if (application.reviewProgress == 'Primary') {
+          return 'Primary Select';
+        } else if (application.reviewProgress == 'Alternate') {
+          return 'Alternate Select';
+        } else {
+          return 'Not selected';
         }
       }
-      // New tags added in to the DB via the modal
-      this.model.listenTo(this.model, "profile:email:new", function (data) {
-        // Destory modal
-        $(".modal").modal('hide');
-        // Add tag into the data list
-        var template = _.template(EmailTemplate, { email: data });
-        $("#profile-emails").append(template);
+    } else {
+      return 'Applied';
+    }
+  },
+
+  sortTasks: function (e) {
+    var target = $(e.currentTarget)[0];
+    var data = this.data.tasks[target.id == 'sort-participated' ? 'volunteered' : 'created'];
+    var sortedData = [];
+    if(target.id == 'sort-participated' && target.value == 'state') {
+      sortedData = _.sortBy(data, function (item) {
+        return this.getStatus(item);
+      }.bind(this));
+    } else {
+      sortedData = _.sortBy(data, target.value);
+    }
+    if(target.value == 'updatedAt') {
+      sortedData = sortedData.reverse();
+    }
+    if(target.value == 'title'){
+      sortedData = _.sortBy(data, function (item){
+        return item.title.toLowerCase();
+      });     
+    } 
+    if(target.id == 'sort-participated') {
+      this.volView.options.sort = target.value;
+      this.volView.options.data = sortedData;
+      this.volView.render();
+    } else {
+      this.taskView.options.sort = target.value;
+      this.taskView.options.data = sortedData;
+      this.taskView.render();
+    }
+  },
+
+  renderInternshipOpportunities: function (id) {
+    if (this.appliedView) { this.appliedView.cleanup(); }
+    if (this.savedView) { this.savedView.cleanup(); }
+    $.ajax('/api/user/internship/activities/' + id).done(function (data) {
+      _.extend(this.data, data);
+      this.appliedView = new InternshipsActivityView({
+        model: this.model,
+        el: '.internships-applied',
+        template: _.template(AppliedTemplate),
+        target: 'task',
+        handle: 'appliedInternships',  // used in css and table id
+        data: _.sortBy(data.applications, 'cycleStartDate').reverse(),
+        getStatus: this.getApplicationStatus,
+        displayOnly: true,
+        sort: 'cycleName',
       });
+      this.appliedView.render();
 
-      this.model.listenTo(this.model, "profile:email:error", function (data) {
-        // nothing to be done
+      this.savedView = new InternshipsActivityView({
+        model: this.model,
+        el: '.internships-saved',
+        template: _.template(SavedTemplate),
+        target: 'task',
+        handle: 'savedInternships',  // used in css and in table id
+        data: _.sortBy(data.savedOpportunities, 'applyEndDate').reverse(),
+        sort: 'applyEndDate',
       });
+      this.savedView.render();
+    }.bind(this));
+  },
 
-      this.listenTo(this.model, "profile:email:delete", function (e) {
-        $(e.currentTarget).parents('div.radio').remove();
-      });
-    },
+  showAllInternships: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('applied-show-all')) {
+      this.appliedView.options.showAll = true;
+      this.appliedView.render();
+    } else {
+      this.savedView.options.showAll = true;
+      this.savedView.render();
+    }
+  },
 
-    initializeTextArea: function () {
-      if (this.md) { this.md.cleanup(); }
-      this.md = new MarkdownEditor({
-        data: this.model.toJSON().bio,
-        el: ".markdown-edit",
-        id: 'bio',
-        placeholder: 'A short biography.',
-        title: 'Biography',
-        rows: 6
-      }).render();
-    },
+  sortInternships: function (e) {
+    var target = $(e.currentTarget)[0];
+    var data = this.data[target.id == 'sort-applied' ? 'applications' : 'savedOpportunities'];
+    var sortedData = [];
+    if(target.id == 'sort-applied' && target.value == 'submittedAt') {
+      sortedData = _.sortBy(_.filter(data, this.filterArchived), function (item) {
+        return this.getStatus(item);
+      }.bind(this));
+    } else {
+      sortedData = _.sortBy(_.filter(data, this.filterArchived), target.value);
+    }
+    if(target.value == 'communityName'){
+      sortedData = _.sortBy(data, function (item){
+        return item.communityName.toLowerCase();
+      });     
+    }
+    if(target.value == 'taskLocation'){
+      sortedData = _.sortBy(data, function (item){
+        return item.taskLocation.toLowerCase();
+      });     
+    }
+    if(target.value == 'title'){
+      sortedData = _.sortBy(data, function (item){
+        return item.title.toLowerCase();
+      });     
+    }
+    if(target.value == 'updatedAt' || target.value == 'applyEndDate') {
+      sortedData = sortedData.reverse();
+    }
+    if(target.id == 'sort-applied') {
+      this.appliedView.options.sort = target.value;
+      this.appliedView.options.data = sortedData;
+      this.appliedView.render();
+    } else {
+      this.savedView.options.sort = target.value;
+      this.savedView.options.data = sortedData;
+      this.savedView.render();
+    }
+  },
 
-    fieldModified: function (e) {
-      this.model.trigger("profile:input:changed", e);
-    },
+  initializePhoto: function () {
+    if (this.photoView) { this.photoView.cleanup(); }
+    this.photoView = new ProfilePhotoView({
+      data: this.model,
+      el: '.profile-photo',
+    });
+    this.photoView.render();
+  },
+ 
+  initializeTags: function () {
+    var showTags = true;
+    if (this.tagView) { this.tagView.cleanup(); }
+    if (this.edit) showTags = false;
 
-    profileCancel: function (e) {
-      e.preventDefault();
-      Backbone.history.navigate('profile/' + this.model.toJSON().id, { trigger: true });
-    },
+    // this is only used for edit view now
+    // TODO: refactor / rename, either reuse or simplify
+    this.tagView = new TagShowView({
+      model: this.model,
+      el: '.tag-wrapper',
+      target: 'profile',
+      targetId: 'userId',
+      edit: this.edit,
+      skills: this.skills,
+      showTags: showTags,
+    });
+    this.tagView.render();
+  },
+  
+  shareProfileEmail: function (){
+    var subject = 'Take A Look At This Profile',
+        data = {
+          profileTitle: this.model.get('title'),
+          profileLink: window.location.protocol +
+            '//' + window.location.host + '' + window.location.pathname,
+          profileName: this.model.get('name'),
+          profileLocation: this.model.get('location') ?
+            this.model.get('location').name : '',
+          profileAgency: this.model.get('agency') ?
+            this.model.get('agency').name : '',
+        },
+        body = _.template(ShareTemplate)(data),
+        link = 'mailto:?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
 
-    profileSave: function (e) {
-      e.preventDefault();
-      $("#profile-form").submit();
-    },
+    this.$('#email').attr('href', link);
+  },
 
-    profileSubmit: function (e) {
-      e.preventDefault();
-      $("#profile-save, #submit").button('loading');
-      setTimeout(function() { $("#profile-save, #submit").attr("disabled", "disabled") }, 0);
-      var data = {
-        name: $("#name").val(),
-        title: $("#title").val(),
-        bio: $("#bio").val()
-      };
-      this.model.trigger("profile:save", data);
-      //this.render();
-    },
+  initializeBureaus: function () {
+    $.ajax({
+      url: '/api/enumerations/bureaus', 
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        for (var i = 0; i < data.length; i++) {
+          this.offices[data[i].bureauId] = data[i].offices ? data[i].offices : [];
+        }
+        this.bureaus = data.sort(function (a, b) {
+          if(a.name < b.name ) { return -1; }
+          if(a.name > b.name ) { return 1; }
+          return 0;
+        });
+      }.bind(this),
+    });
+  },
 
-    removeAuth: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var node = $(e.target);
-      // walk up the tree until we get to the marked node
-      while (!(node.hasClass("removeAuth"))) {
-        node = node.parent();
-      }
-      this.model.trigger("profile:removeAuth", node.attr("id"));
-    },
-
-    addEmail: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var self = this;
-
-      // Pop up dialog box to create tag,
-      // then put tag into the select box
-      if (this.emailFormView) this.emailFormView.cleanup();
-      if (this.emailModalComponent) this.emailModalComponent.cleanup();
-      this.emailModalComponent = new ModalComponent({
-        el: "#emailModal",
-        id: "addEmail",
-        modalTitle: "Add Email Address"
-      }).render();
-      this.emailFormView = new EmailFormView({
-        el: "#addEmail .modal-template",
-        model: self.model,
-        target: 'profile'
-      });
-      this.emailFormView.render();
-    },
-
-    removeEmail: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var self = this;
-      // Get the data-id of the currentTarget
-      // and then call HTTP DELETE on that tag id
+  saveBureauOffice: function (data,self) { 
+    if(!this.checkBureauOfficeExist(data,self) && !this.validateBureau() && !this.validateOffice()){
       $.ajax({
-        url: '/api/useremail/' + $(e.currentTarget).data('id'),
-        type: 'DELETE',
-      }).done(function (data) {
-        self.model.trigger("profile:email:delete", e);
+        url: '/api/user/bureau-office/' + data.userId, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {        
+          this.dataBureauOffice=data.bureauOffice;
+          self.modalComponent.cleanup();
+          window.cache.currentUser.bureauOffice= this.dataBureauOffice;
+          this.renderBureauOffices();
+          this.renderAlertMessages(data,self);
+        }.bind(this),
       });
-
-    },
-
-    like: function (e) {
-      e.preventDefault();
-      var self = this;
-      var child = $(e.currentTarget).children("#like-button-icon");
-      var likenumber = $("#like-number");
-      // Not yet liked, initiate like
-      if (child.hasClass('fa-star-o')) {
-        child.removeClass('fa-star-o');
-        child.addClass('fa fa-star');
-        likenumber.text(parseInt(likenumber.text()) + 1);
-        if (parseInt(likenumber.text()) === 1) {
-          $("#like-text").text($("#like-text").data('singular'));
-        } else {
-          $("#like-text").text($("#like-text").data('plural'));
-        }
-        $.ajax({
-          url: '/api/like/likeu/' + self.model.attributes.id
-        }).done( function (data) {
-          // liked!
-          // response should be the like object
-          // console.log(data.id);
-        });
+    }
+    else{   
+      if(this.validateBureau() && this.validateOffice()){
+        $('.usa-input-error').get(0).scrollIntoView();
       }
-      // Liked, initiate unlike
-      else {
-        child.removeClass('fa-star');
-        child.addClass('fa-star-o');
-        likenumber.text(parseInt(likenumber.text()) - 1);
-        if (parseInt(likenumber.text()) === 1) {
-          $("#like-text").text($("#like-text").data('singular'));
-        } else {
-          $("#like-text").text($("#like-text").data('plural'));
-        }
-        $.ajax({
-          url: '/api/like/unlikeu/' + self.model.attributes.id
-        }).done( function (data) {
-          // un-liked!
-          // response should be null (empty)
-        });
+      if(this.checkBureauOfficeExist(data,self)){
+        self.modalComponent.cleanup();
+      }     
+    }
+  },
+    
+  showOfficeDropdown: function () {
+    if($('#profile_tag_bureau').select2('data')) {
+      $('#profile_tag_office').select2('data', null);
+      var selectData = $('#profile_tag_bureau').select2('data');
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length) {
+        $('.profile_tag_office').show();
+        $('#profile_tag_office').removeAttr('disabled', true);     
+      } else {
+        $('#profile_tag_office').select2('data', null);        
+     
       }
-    },
-    cleanup: function () {
-      if (this.md) { this.md.cleanup(); }
-      if (this.tagView) { this.tagView.cleanup(); }
-      if (this.projectView) { this.projectView.cleanup(); }
-      if (this.taskView) { this.taskView.cleanup(); }
-      if (this.volView) { this.volView.cleanup(); }
-      removeView(this);
-    },
+    } else {
+      $('.profile_tag_office').hide();  
+      $('#profile_tag_office').select2('data', null);  
+    }
+  },
 
-  });
+  initializeSelect2: function () {
+    $('#profile_tag_bureau').select2({
+      placeholder: 'Select a bureau',
+      width: '100%',
+      allowClear: true,
+    });
+   
+    $('#profile_tag_office').select2({
+      placeholder: 'Select an office',
+      width: '100%',
+      allowClear: true,
+      data: function () { 
+        return {results: this.currentOffices}; 
+      }.bind(this),
+    });
+    $('#profile_tag_bureau').on('change', function (e) {    
+      this.showOfficeDropdown();   
+    }.bind(this));
+  },
 
-  return ProfileShowView;
+  renderAlertMessages: function (data,self) {   
+    var alertMessageTemplate = _.template(ProfileAlertMessageTemplate)({   
+      insertSuccess:data.insertSuccess,
+      insertBadgeSuccess:data.insertBadgeSuccess,  
+      bureau:data.bureau,
+      office:data.office,
+      user: data.user,
+      removeSuccess :data.removeSuccess,
+      removeBadgeSuccess:data.removeBadgeSuccess,
+      username: this.userData.data.name,
+    });
+   
+    $('#alert-message').html(alertMessageTemplate);
+    window.scrollTo(0, 0);
+  },
+
+  addbureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    self.initializeBureaus();
+    self.initializeSelect2();
+    if (this.modalComponent) { this.modalComponent.cleanup(); } 
+    var data = { 
+      bureaus: self.bureaus,    
+    };  
+  
+    var modalContent = _.template(ProfileBureauOfficeTemplate)(data);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-bureau-office',
+      modalTitle: 'Bureau and Office/post',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Save',
+        action: function (){
+          var data={
+            bureauId : $('#profile_tag_bureau').select2('data')? $('#profile_tag_bureau').select2('data').id : null,
+            officeId : $('#profile_tag_office').select2('data') ? $('#profile_tag_office').select2('data').id : null,
+            userId: $(event.currentTarget ).data('userid'),
+          };        
+          self.saveBureauOffice(data,self);
+        },
+      },      
+    }).render();  
+     
+    $('#profile_tag_bureau').on('change', function (e) {
+      self.showOfficeDropdown();      
+    }.bind(this));
+
+    self.initializeSelect2();
+    $('.validateBureau').on('blur', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateBureau').on('change', function (e) {
+      self.validateBureau();
+    }.bind(this));
+
+    $('.validateOffice').on('change', function (e) {
+      self.validateOffice();
+    }.bind(this));
+
+    $('.validateOffice').on('blur', function (e) {
+      self.validateOffice();
+    }.bind(this));
+    
+    //adding this to show select2 data in modal
+    $('.select2-drop, .select2-drop-mask').css('z-index', '99999');
+  },
+
+  validateBureau : function (){
+    var abort= false;
+     
+    if($('#profile_tag_bureau').select2('data') ==null){
+      $('#profile_valid_bureau').addClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').show();
+      abort=true;
+    }
+   
+    else{
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+   
+      abort= false;
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
+  },
+
+  validateOffice : function (){
+    var abort= false;
+    var selectData= $('#profile_tag_bureau').select2('data');
+    var selectOfficeData= $('#profile_tag_office').select2('data');
+    if(selectData != null){
+      $('#profile_valid_bureau').removeClass('usa-input-error');     
+      $('#profile_valid_bureau>.field-validation-error').hide();
+      abort= false;
+      this.currentOffices = this.offices[selectData.id];
+      if (this.currentOffices.length && selectOfficeData ==null) {   
+        $('#profile_valid_office').addClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').show();
+        abort= true;
+      } 
+      else{
+        $('#profile_valid_office').removeClass('usa-input-error');     
+        $('#profile_valid_office>.field-validation-error').hide();
+        abort= false;
+      }
+    }
+    if(abort) {
+      $('.usa-input-error').get(0).scrollIntoView();
+    }
+    return abort;
+  },
+
+  checkBureauOfficeExist : function (data,self){
+    var exist = _.findIndex(this.dataBureauOffice, { bureau_id : data.bureauId,office_id: data.officeId});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
+
+  removeBureauOfficeDisplay:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+    var bureauName=$(event.currentTarget ).data('bureau-name');
+    var officeName=$(event.currentTarget ).data('office-name');
+  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-bureau-office',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Confirm remove bureau and office/post',
+      modalBody:  'Are you sure you want to remove ' + window.cache.currentUser.name + ' from the <strong>' + bureauName + (officeName?'/':'') + officeName + '</strong>?',        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var data={
+            userBureauOfficeId : $(event.currentTarget ).data('user-bureau-office-id'),      
+            userId: $(event.currentTarget ).data('user-id'),
+            bureau: $(event.currentTarget ).data('bureau-name'),
+            office: $(event.currentTarget ).data('office-name'),
+          };        
+          self.deleteBureauOffice(data,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBureauOffice : function (userBureauOfficeData,self){
+    $.ajax({
+      url: '/api/user/bureau-office/' + userBureauOfficeData.userId +'?' + $.param({
+        userBureauOfficeId: userBureauOfficeData.userBureauOfficeId,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        userBureauOfficeData.removeSuccess= true;      
+        this.dataBureauOffice=_.reject(this.dataBureauOffice,function (d){
+          return d.userBureauOfficeId== userBureauOfficeData.userBureauOfficeId;
+        });
+        window.cache.currentUser.bureauOffice = this.dataBureauOffice;     
+        self.modalComponent.cleanup();
+        this.renderBureauOffices();
+        this.renderAlertMessages(userBureauOfficeData,self);
+      }.bind(this),
+    });
+  },
+
+  renderBureauOffices: function () {
+    var bureauOfficeTemplate = _.template(ProfileBureauOfficePreviewTemplate)({
+      data: this.dataBureauOffice,     
+    }); 
+    $('#bureau-office-preview').html(bureauOfficeTemplate);
+  }, 
+
+  addBadges: function (event){
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+  
+    if (this.modalComponent) { this.modalComponent.cleanup(); }   
+    var modalContent = _.template(ProfileBadgeDetailsTemplate)(this.userData);  
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'add-badge',
+      modalTitle: 'Add badge',
+      modalBody: modalContent,        
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add',
+        action: function (){
+          var data={
+            type :$('#badge-name').val(),                 
+          };        
+          self.saveBadge(data,self);
+        },
+      },      
+    }).render();        
+  },
+
+  saveBadge: function (data,self) { 
+    if(!this.checkBadgeExist()){ 
+      $.ajax({
+        url: '/api/user/badge/' + this.userData.data.id, 
+        type: 'POST',
+        data:data,   
+        success: function (data) {
+          this.userData.data.badges.push(data);            
+          self.modalComponent.cleanup();
+          this.renderBadges(this.userData);
+          this.renderAlertMessages(data,self);    
+        }.bind(this),
+      });
+    }
+    else{
+      self.modalComponent.cleanup();
+    }
+  },
+
+  removeBadge:function (event){ 
+    event.preventDefault && event.preventDefault(); 
+    var self = this;
+    
+    if (this.modalComponent) { this.modalComponent.cleanup(); }    
+   
+    self.modalComponent = new ModalComponent({         
+      el: '#site-modal',
+      id: 'remove-badge',
+      alert: 'error',  
+      action: 'delete',   
+      modalTitle: 'Remove badge',
+      modalBody:  'Are you sure you want to remove the <strong>Community Manager </strong> badge from ' + this.userData.data.name + '\'s profile? ',       
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          self.modalComponent.cleanup();    
+        }.bind(this),
+      },
+      primary: {
+        text: 'Remove',
+        action: function (){
+          var badgeData = {         
+            userId: $(event.currentTarget ).data('user-id'),
+            type: $(event.currentTarget ).data('badge-type'), 
+            badgeId : $(event.currentTarget ).data('badge-id'),    
+          };        
+          self.deleteBadge(badgeData,self);
+        },
+      },      
+    }).render();   
+  },
+
+  deleteBadge : function (badgeData,self){  
+    $.ajax({
+      url: '/api/user/badge/' + badgeData.userId +'?' + $.param({
+        type: badgeData.type,
+      }), 
+      type: 'DELETE',       
+      success: function (data) {     
+        badgeData.removeBadgeSuccess= true;      
+        this.userData.data.badges=_.reject(this.userData.data.badges,function (d){
+          return d.id== badgeData.badgeId;
+        });
+        
+        self.modalComponent.cleanup();
+        this.renderBadges(this.userData);  
+        this.renderAlertMessages(badgeData,self);  
+      }.bind(this),
+    });
+    
+  },
+  checkBadgeExist : function (data,self){
+    var exist = _.findIndex(this.userData.data.badges, { type:'community manager'});
+    if(exist == -1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  },
+
+  cleanup: function () {
+    if (this.md) { this.md.cleanup(); }
+    if (this.tagView) { this.tagView.cleanup(); }
+    if (this.taskView) { this.taskView.cleanup(); }
+    if (this.volView) { this.volView.cleanup(); }
+    removeView(this);
+  },
 });
+
+module.exports = ProfileShowView;

@@ -1,0 +1,81 @@
+// Unique Hiring Paths
+
+svg:not(:root) {
+  width: 100%;
+  // height: auto;
+  // overflow: hidden; This comes from normalize
+}
+
+@mixin usajobsIcon () {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.usajobs-icon {
+  @include usajobsIcon();
+  fill: $color-base;
+}
+
+.usajobs-icon--white {
+  @include usajobsIcon();
+  fill: $color-white;
+  color: $color-white;
+}
+
+.usajobs-icon--primary {
+  @include usajobsIcon();
+  color: $color-primary;
+}
+
+.usajobs-icon__path {
+  fill: currentColor;
+}
+
+.usajobs-icon--center {
+  @include iconCenter();
+}
+
+.usajobs-icon--baseline {
+  display: inline-flex;
+  align-self: center;
+  position: relative;
+  height: 1em;
+  width: 1em;
+
+  svg {
+    position: absolute;
+    bottom: -0.125em;
+    height: 1em;
+    width: 1em;
+  }
+}
+
+.usajobs-unique-hiring-paths {
+  &__list {
+    @include unstyledList();
+    width: 100%;
+
+    .usajobs-unique-hiring-paths__item {
+      display: inline-block;
+      width: 100%;
+    }
+  }
+
+  &__list > &__item {
+    position: relative;
+    margin-bottom: $size-default;
+    vertical-align: middle;
+  }
+
+  &__icon {
+    display: inline-block;
+    text-align: center;
+    margin-right: $size-base;
+
+    svg {
+      width: rem(44px);
+      height: rem(44px);
+      vertical-align: middle;
+    }
+  }
+}

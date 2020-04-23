@@ -1,0 +1,19 @@
+<div class="not-complete-participants">
+  <div class="usajobs-open-opps-opportunity-requestor__figure-wrapper">
+    <% _.each(volunteers, function (v) { %>
+      <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+          <% if (v.photoId) { %>
+            <img src="/api/user/photo/<%- v.userId %>" alt="Profile picture of <%- v.name %>">
+          <% } else { %>
+            <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
+          <% } %>
+        </div>
+        <div class="usajobs-open-opps-opportunity-requestor__body">
+          <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+  <p><% if (volunteers.length > 1) { %>These participants haven't<% } else { %>This participant hasn't<% } %> completed their task and will not get credit. Do you still want to complete the opportunity?</p>
+</div>

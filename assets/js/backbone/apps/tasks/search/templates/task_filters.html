@@ -1,0 +1,143 @@
+<div class="usajobs-open-opps-opportunity ">
+    <div class="usajobs-search-filter-nav" aria-hidden="true">
+        <div class="usajobs-search-filter-nav__body">
+            <span class="fas fa-sliders-h"></span> Filters
+            <span class="usajobs-search-filter-nav__results"><%= taskFilteredCount %> opportunities found</span>
+            <a href="javascript:void(0);" class="usajobs-search-filter-nav__back" title="Filters">
+                <span class="sr-only">Close</span><span class="fas fa-times" title="Close"></span>
+            </a>
+        </div>
+    </div>
+    <div class="usajobs-search-filters__container" id="filters-container">
+        <a href="https://usajobs.github.io/openopps-help/opportunity/search/" class="usajobs-opop-section__help" target="_blank">
+        <span class="fas fa-question-circle" title="Help"></span> Help
+        <span class="sr-only">Opens in a new window</span>
+        </a>
+        <h3>Filters</h3>
+        <h4 class="usajobs-search-filters__title">Status</h4>
+        <% var numOfStates = _.filter(ui.states, function(state) { return (!state.hide || (user && user.isAdmin)) }).length; %>
+        <% if(numOfStates == [].concat(filters.state).length) { %>
+          <a class="usajobs-search-filters__select-toggle stateFilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
+        <% } else { %>
+          <a class="usajobs-search-filters__select-toggle stateFilters-toggle" href="javascript:void(0);" data-behavior="select">Select all</a>
+        <% } %>
+        <ul id="stateFilters" class="usa-unstyled-list">
+            <% _.each(ui.states, function (t) { %>
+            <% if (!t.hide || (user && user.isAdmin)) { %>
+                <li>
+                <input type='checkbox' name='state-filter' id='state<%- t.label %>' value='<%- t.value %>' <% if(filters.state.indexOf(t.value) > -1) { %>checked<% } %>>
+                <label for='state<%- t.label %>' class="<%- t.value %>-filter">
+                    <%- t.label %>
+                </label>
+                </li>
+            <% } %>
+            <% }); %>
+        </ul>
+
+        <ul id="search-projs" class="nav nav-pills nav-stacked nav-search">
+        </ul>
+        <ul id="search-tags" class="nav nav-pills nav-stacked nav-search">
+        </ul>
+
+        <div class="search-clear" style="display: none;">
+            <div class="align-right">
+            <a href="#" id="search-clear" class="btn btn-sm btn-c0"><i class="fa fa-remove"></i> Clear Search Criteria</a>
+            </div>
+        </div>
+
+        <h4 class="usajobs-search-filters__title community">Community</h4>
+        <select id="community" class="dropdown">
+            <option value=""></option>
+            <% _.each(tagTypes['community'], function (c) { %>
+                <option value=<%- c.id %> <% if (filters.community && c.id == filters.community.id) { %>selected<% } %>><%- c.name %></option>
+            <% }); %>
+        </select>
+
+        <h4 class="usajobs-search-filters__title skill">Skill</h4>
+        <input type="text" id="skill" title="Skill" />
+
+        <h4 class="usajobs-search-filters__title career">Career field</h4>
+        <select id="career" class="dropdown">
+            <option></option>
+            <% _.each(tagTypes['career'], function (t) { %>
+            <option value=<%- t.id %> <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
+            <% }); %>
+        </select>
+
+        <h4 class="usajobs-search-filters__title">Series</h4>
+        <input type="text" id="series" title="Series" />
+
+        <h4 class="usajobs-search-filters__title time">Commitment</h4>
+        <% if([].concat(filters.time).length == 3) { %>
+          <a class="usajobs-search-filters__select-toggle timefilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
+        <% } else { %>
+          <a class="usajobs-search-filters__select-toggle timefilters-toggle" href="javascript:void(0);" data-behavior="select">Select all</a>
+        <% } %>
+        <ul id="timeFilters" class="usa-unstyled-list">
+            <li>
+                <input id="one-time" type="checkbox" name="time" value="One time"  <% if(_.contains(filters.time, 'One time' )) { %>checked<% } %> />
+                <label for="one-time">One time</label>
+            </li>
+            <li>
+                <input id="ongoing" class="restrict-participation" type="checkbox" name="time" value="Ongoing" <% if(_.contains(filters.time, 'Ongoing' )) { %>checked<% } %> />
+                <label for="ongoing">Ongoing</label>
+            </li>
+            <li>
+                <input id="part-time" class="restrict-participation" type="checkbox" name="time" value="Part Time Detail" <% if(_.contains(filters.time, 'Part Time Detail' )) { %>checked<% } %> />
+                <label for="part-time">Part time detail</label>
+            </li>
+            <li>
+                <input id="full-time" class="restrict-participation" type="checkbox" name="time" value="Full Time Detail" <% if(_.contains(filters.time, 'Full Time Detail' )) { %>checked<% } %> />
+                <label for="full-time">Full time detail</label>               
+            </li>           
+        </ul>
+       
+        <div id="pay-scale-grade" style="display: none;" >
+          <div class="usajobs-grid-full">
+            <div class="usa-width-one-third">           
+                <label for="payScale">Pay plan</label>                          
+                <select id="time-options-pay-scale" class="dropdown validate" data-validate="empty"> 
+                  <option value=""></option>                        
+                  <% _.each(tagTypes['payPlan'], function(p) { %>              
+                    <option value="<%- p.pay_plan_id %>"<% if (filters.payPlan && p.pay_plan_id == filters.payPlan.id) { %>selected<% } %>><%= p.code %></option>
+                  
+                  <% }); %>  
+                </select>          
+            </div>
+            <div class="usa-width-one-half">           
+                <label for="grade" >Grade<span class="no-margin-top"></span></label>                 
+                <input id="grade" maxlength="2" name="grade" type="number" class="usa-input-medium " value="<% if (filters.grade) { %><%= filters.grade %><% } %>" data-validate="empty" onkeypress="if(this.value.length==2) return false;">              
+            </div>
+          </div>
+        </div>
+        <h4 class="usajobs-search-filters__title location">Location</h4>
+        <% if(_.contains(filters.locationType, 'virtual') && _.contains(filters.locationType, 'in-person')) { %>
+          <a class="usajobs-search-filters__select-toggle locationfilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
+        <% } else { %>
+          <a class="usajobs-search-filters__select-toggle locationfilters-toggle" href="javascript:void(0);" data-behavior="select">Select all</a>
+        <% } %>
+        <ul id="locationFilters" class="usa-unstyled-list">
+            <li>
+                <input id="virtual" type="checkbox" name="location" value="virtual" <% if (_.contains(filters.locationType, 'virtual')) { %>checked<% } %> >
+                <label for="virtual">Virtual</label>
+            </li>
+            <li>
+                <input id="in-person" type="checkbox" name="location" value="in person" <% if (_.contains(filters.locationType, 'in person')) { %>checked<% } %>>
+                <label for="in-person">In person</label>
+                <input type="text" id="location" title="Location" />
+            </li>
+        </ul>
+
+        <% if (!_.isEmpty(userAgency)) { %>
+            <h4 class="usajobs-search-filters__title agency">Agency</h4>
+            <ul id="agencyFilters" class="usa-unstyled-list">
+                <% _.each(agencies, function (agency) { %>
+                    <li>
+                        <input id="js-restrict-agency-<%- agency.agency_id %>" class="restrict-participation" type="checkbox" name="restrict" value="<%- agency.agency_id %>" <% if (_.contains(filters.restrict, agency.agency_id.toString())) { %>checked<% } %>/>
+                        <label for="js-restrict-agency-<%- agency.agency_id %>">Participation limited to <%- agency.abbr ? agency.abbr : agency.name %> employees</label>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+    </div>
+</div>

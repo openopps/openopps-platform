@@ -1,16 +1,58 @@
 {
-  "project": {
-    "show": true
-  },
-  "supervisorEmail": {
-	  "useSupervisorEmail": false
-  },
   "home": {
-    "logged_in_path": "/projects"
+    "logged_in_path": "/home"
+  },
+  "faq" : {
+    "show" : false,
+    "url"  : "/faq"
+  },
+  "systemEmail" : "openopps@usajobs.gov",
+  "contact": {
+    "name": "openopps-platform group",
+    "link": "https://groups.google.com/forum/#!forum/openopps-platform"
   },
   "browse": {
     "pageSize" : 27,
     "useInfiniteScroll" : false
   },
-  "states" : [{"value": "open","label":"Open"},{"value":"assigned","label":"Assigned"},{"value": "completed","label":"Completed"},{"value":"archived","label":"Archived"}]
+  "states" : [
+    {
+      "value": "draft",
+      "label":"Draft",
+      "hide": true
+    },
+    {
+      "value": "submitted",
+      "label":"Submitted",
+      "hide": true
+    },
+    {
+      "value": "open",
+      "label":"Open"
+    },
+    {
+      "value": "not open",
+      "label":"Not open",
+      "hide": true
+    },
+    {
+      "value":"in progress",
+      "label":"In progress"
+    },
+    {
+      "value": "completed",
+      "label":"Completed"
+    },
+    {
+      "value":"canceled",
+      "label":"Canceled",
+      "hide": true
+    }
+  ],
+  "modalHome" : {
+    "show" : false
+  },
+  "fullTimeDetail": {
+    "description": "**Description:**\n\n**Series/Grade (or Unclassified Duties):**\n\n**PD Number (if required):**\n\n**Preferred Start Date:**\n\n**Detail Length (up to 120 days):**\n\n**Skills Required:**\n\n"
+  }
 }

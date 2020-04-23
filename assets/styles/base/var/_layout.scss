@@ -1,0 +1,35 @@
+// Layout variables
+
+// Breakpoints
+$small-screen:       481px;
+$medium-screen:      600px;
+$large-screen:      1201px;
+
+$site-max-width:    160rem;
+$site-max-width-S:  104rem;
+
+// Standards deviation
+// $site-max-width:      1040px !default;
+$lead-max-width:      77rem;
+$input-max-width:     46rem;
+$button-max-width:    30.4rem;
+$article-max-width:   60rem;
+$text-max-width:      62rem;
+// Standards deviation
+// $text-max-width:      53rem !default;
+$nav-width:           951px;
+
+$site-margins:        3rem;
+$site-margins-mobile: 1.5rem;
+$grid-margins:        3rem;
+
+// From the Standards (node_modules/uswds/src/stylesheets/core/_variables.scss)
+// Grid column counts by screen size
+$grid-columns-small: 1 !default;
+$grid-columns-medium: 6 !default;
+$grid-columns-large: 12 !default;
+
+// @media single-keyword helpers
+$small: new-breakpoint(min-width $small-screen $grid-columns-small) !default;
+$medium: new-breakpoint(min-width $medium-screen $grid-columns-medium) !default;
+$large: new-breakpoint(min-width $large-screen $grid-columns-large) !default;

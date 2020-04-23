@@ -1,0 +1,27 @@
+<ul class="usajobs-search-pagination">
+  <% if (page != 1) { %>
+    <li class="usajobs-search-pagination__previous-page-container">
+      <a class="usajobs-search-pagination__previous-page page" data-page="<%- page - 1 %>" href="#<%- page - 1 %>" title="Go To Previous Page">Previous</a>
+    </li>
+  <% } %>
+  <% for (var i = 0; i < pages.length; i++) { %>
+    <% if(pages[i] == 0) { %>
+      <li class="usajobs-search-pagination__page-condensed">…</li>
+    <% } else { %>
+      <% if (pages[i] == page) { %>
+        <li class="usajobs-search-pagination__page is-active">
+            <span><%- pages[i] %></span>
+        </li>
+      <% } else { %>
+        <li class="usajobs-search-pagination__page">
+            <a class="page" data-page="<%- pages[i] %>" href="#<%- pages[i] %>" title="Go To Page <%- pages[i] %>"><%- pages[i] %></a>
+        </li>
+      <% } %>
+    <% } %>
+  <% } %>
+  <% if (page != numberOfPages) { %>
+    <li class="usajobs-search-pagination__next-page-container">
+        <a class="usajobs-search-pagination__next-page page" data-page="<%- page + 1 %>" href="#<%- page + 1 %>" title="Go To Next Page">Next</a>
+    </li>
+  <% } %>
+</ul>

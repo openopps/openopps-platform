@@ -1,0 +1,131 @@
+<div class="usajobs-grid usajobs-search-controls">
+  <div class="usajobs-search-controls__results-count-container no-params">
+    <h4>
+      <% if(countOf) { %>
+        <span id="view-count">Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</span>
+      <% } %>
+      <button id="invite-members" class="usa-button usa-button-secondary"><i class="fas fa-plus"></i><span class="text-content">Add members</span></button>
+    </h4>
+  </div>
+  <% if(countOf) { %>
+  <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+    <label class="usajobs-search-controls__sort-label" for="sort-user-community">
+      Sort by
+    </label>
+    <select name="sort-user-community" id="sort-user-community" class="usajobs-search-controls__sort-control">
+      <option value="" disabled>- Sort By -</option>
+      <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>
+      <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+      <% if (community.referenceId != 'dos') { %>
+        <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+      <% } %>
+      <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Joined date</option>
+      <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+        <option value="is_manager" <% if (sort == 'is_manager') { %>selected<% } %>>Community admin</option>
+      <% } %>
+    </select>
+  </div>
+</div>
+<% } %>
+<table class="usa-table-borderless user-table" role="presentation">
+  <thead>
+    <tr>
+      <th class="admin-table-name">Name</th>
+      <th>Federal email</th>
+
+      <% if (community.referenceId =='dos') { %>
+        <th>Bureau</th>
+        <th>Office/post</th>
+      <% } %>
+      
+      <% if (community.referenceId != 'dos') { %>
+        <th>Agency</th>
+      <% } %>
+
+      <th>Joined date</th>
+      <th>Community<br/>opportunities</th>
+      <% if (community.isClosedGroup) { %>
+        <th class="admin-user-checkbox">Member<br />enabled</th>
+      <% } else if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+        <th class="admin-user-checkbox">Remove<br />member</th>
+      <% } %>
+      <% if (community.referenceId == 'dos' && (window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId }))) { %>
+        <th class="admin-user-checkbox">Community BIC</th>
+      <% } %>
+      <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+        <th class="admin-user-checkbox"><span class="capitalize-target"><%- target %></span><br /> admin</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (users.length === 0) { %>
+      <tr class="empty-row">
+        <td colspan="7">
+          No users found.
+        </td>
+      </tr>
+    <% } %>
+    <% _.each(users, function (u) { %>
+      <tr data-id="<%- u.id %>"
+          data-user-name="<%- u.name %>"
+          data-admin="<%- u.isAdmin %>"
+          data-agency-admin="<%- u.isCommunityAdmin %>">
+        <td class="admin-table-name">
+          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.name %></a>
+        </td>
+        <td class="admin-table-username">
+          <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
+        </td>
+        <% if (community.referenceId=='dos') { %>
+          <td><%- (u.bureau || {}).name %></td>
+          <td><%-(u.office || {}).name %></td>
+          <% } %>
+        <% if (community.referenceId!='dos') { %>
+        <td>
+          <%- (u.agency || {}).name %>
+        </td>
+        <% } %>
+        <td class="admin-table-joineddate">
+          <%- moment(u.joined_date).format('MM/DD/YYYY hh:mma') %>
+        </td>
+        <td>
+          Created: <%- u.communityTaskCreated %> <br/>
+          Participated: <%- u.communityTaskParticipated %>
+        </td>
+        <% if (community.isClosedGroup) { %>
+          <td>
+            <input class="member-enable" id="member-enable-<%- u.id %>" type="checkbox" data-action='member'
+              <% if (!u.disabled) { %> checked <% } %>
+              <% if(!window.cache.currentUser.isAdmin && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %> disabled <% } %>/>
+            <label class="no-label" for="member-enable-<%- u.id %>"
+              <% if(!window.cache.currentUser.isAdmin && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %> title="Insufficient permissions" <% } %>>
+              <span class="sr-only">Enable</span>
+            </label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          </td>
+        <% } else if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+          <td class="admin-user__button">
+            <a href="#remove" data-user-id="<%- u.id %>" class="remove-member" alt="Remove member" title="Remove member">
+              <span class='fa fa-times'></span>
+              <span class="usa-sr-only">Remove member</span>
+            </a>
+          </td>
+        <% } %>
+        <% if (community.referenceId == 'dos' && (window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId }))) { %>
+          <td>
+            <input class="assign-approver" id="assign-approver-<%- u.id %>" type="checkbox" data-action='approver' <% if (isApprover(u, target)) { %> checked <% } %> />
+            <label class="no-label" for="assign-approver-<%- u.id %>"><span class="sr-only">Assign BIC</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          </td>
+        <% } %>
+        <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+          <td>
+            <input class="assign-admin" id="assign-admin-<%- u.id %>" type="checkbox" data-action='<%- target %>' <% if (isAdministrator(u, target)) { %> checked <% } %> />
+            <label class="no-label" for="assign-admin-<%- u.id %>"><span class="sr-only">Assign administrator</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
+          </td>
+        <% } %>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

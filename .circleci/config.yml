@@ -1,0 +1,69 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/openopps/openopps-platform
+    parallelism: 1
+    environment:
+      CC_TEST_REPORTER_ID: 42b393f57b62cc7ac9c7306746e82672ac4ffe1d5a82995fc28f442cf274be28
+    docker:
+      - image: circleci/node:10.18.0
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: midas
+          POSTGRES_PASSWORD: midas
+          POSTGRES_DB: midastest
+    steps:
+      - checkout
+      - run: rm -rvf node_modules
+      - run: npm install
+      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - run: chmod +x ./cc-test-reporter
+      - run: ./cc-test-reporter before-build
+      - run:
+          name: Setup testing database
+          command: npm run init:test-db
+      - run: 
+          name: Runnning tests
+          command: npm run cover
+      - run: ./cc-test-reporter after-build --exit-code $?
+  
+  tag-build:
+    working_directory: ~/openopps/openopps-platform
+    parallelism: 1
+    docker:
+      - image: circleci/node:10.18.0
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "39:a2:09:7b:82:09:ad:3d:f6:bf:01:94:ab:29:e9:6f"
+      - checkout
+      - run:
+          name: 'Generate new tag for build'
+          command: |
+            export PACKAGE_VERSION=$(eval node -p "require\(\'./package.json\'\).version")
+            export NEW_GIT_TAG='v'$PACKAGE_VERSION-$CIRCLE_BUILD_NUM
+            echo 'Verifing custom environment variables'
+            echo -e 'Package version:' $PACKAGE_VERSION '\nGit tag:' $NEW_GIT_TAG
+            echo 'Generate new git tag'
+            git tag $NEW_GIT_TAG
+            echo `git describe --tags --abbrev=0`
+      - run:
+          name: 'Push new git tag'
+          command: 'git push --tags'
+      
+workflows:
+  version: 2
+  openopps-build:
+    jobs:
+      - build
+      - tag-build:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - 'dev'
+                - 'staging'
+                - 'master'
+            

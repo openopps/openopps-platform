@@ -1,5 +1,9 @@
 ## Contributing
 
+We aspire to create a welcoming environment for collaboration on this project.  To that end, we follow the [Code for America Code of Conduct](https://github.com/codeforamerica/codeofconduct) and ask that all contributors do the same.
+
+Note: Open Opps has a defined [governance model](GOVERNANCE.md) to assist with managing the project.  
+
 ### Public domain
 
 This project is in the public domain within the United States, and
@@ -10,14 +14,49 @@ All contributions to this project will be released under the CC0
 dedication. By submitting a pull request, you are agreeing to comply
 with this waiver of copyright interest.
 
+## Communication
+
+Anyone actively contributing to or using OpenOpps should join our [Mailing List](https://groups.google.com/forum/#!forum/openopps-platform).
+We also have a public Slack chat team. If you're interested in following along with the development process or have questions, feel free to [join us](https://openopps.slack.com).
+
+You should be using the master branch for the most stable release; please review [release notes](https://github.com/openopps/openopps-platform/releases) regularly. We do releases every week or two and send out notes. We're generally using [semantic versioning](http://semver.org/), but we're pre-1.0, so the API can change at any time. We use the minor version for changes where there are significant installation process changes or API changes or a database migration is needed.
+
+If you want to keep up with the latest changes, we work in the `dev` branch.  If you are using dev, keep an eagle-eye on commits and/or join our daily standup.
+
+We also have a [wiki](https://github.com/openopps/openopps-platform/wiki) where we keep various development notes. If anything is confusing or your questions are not answered there, please shout out on the [mailing list](https://groups.google.com/forum/#!forum/openopps-platform).
+
 ## Development Process
 
 This project follows the [git flow](http://nvie.com/posts/a-successful-git-branching-model/) branching model of product development.
 
+### Watch command
+
+Use `npm run watch` to automatically regenerate the application after changing files. This command will also source a `.env` file as a bash script if it exists. Use this for setting up environment variables for your development environment, such as:
+
+```sh
+# New Relic settings
+export NEW_RELIC_APP_NAME=midas-local-dev
+export NEW_RELIC_LICENSE_KEY=18956ab3a4d8c772
+
+# LinkedIn auth settings
+export LINKEDIN_CLIENT_ID=77xinrs
+export LINKEDIN_CLIENT_SECRET=11aw6wbHC
+export LINKEDIN_CALLBACK_URL=http://localhost:1337/api/auth/callback/linkedin
+
+# MyUSA auth settings
+export MYUSA_CLIENT_ID=0a33d1c4df848fa1ec666068285e903
+export MYUSA_CLIENT_SECRET=bc4b61e58a579efb8907f5d673cef9f34e
+export MYUSA_CALLBACK_URL=http://localhost:1337/api/auth/callback/myusa
+
+export DATABASE_URL=midas
+```
+
 ### Testing
 
 To run all the tests:
-```make test```
+```
+npm test
+```
 
 For testing in Midas, we are using:
 * [mocha](http://visionmedia.github.io/mocha/) test framework
@@ -25,12 +64,33 @@ For testing in Midas, we are using:
 * [request](https://github.com/mikeal/request) to make http calls for testing API endpoints
 
 The following command will execute a single test file in the application context:
-```NODE_ENV=test ./node_modules/.bin/mocha test/test.upstart.js test/api/sails/tag.test.js```
 
+```
+NODE_ENV=test ./node_modules/.bin/mocha test/test.upstart.js test/api/sails/tag.test.js
+```
+
+Note: there are some methods that use postgres-specific queries.  For ease of development,
+tests for these are marked _pending_. If you are modifying this code, enable these tests
+and make sure they pass.  You will need to have a test database:
+
+```
+psql midas
+CREATE DATABASE midastest WITH TEMPLATE midas;
+```
 
 ### Backbone
 
 - [Midas Backbone Best Practices](https://github.com/Innovation-Toolkit/midas/wiki/Backbone-Best-Practices).  Some basic hints on development in Backbone for Midas.
+
+### Secure templating
+
+Since Midas accepts and displays user-generated content, take care to make sure that is it escaped before displaying it. Otherwise, users may enter potentially harmful JavaScript code.
+
+Escape all content that doesn't need to render as HTML in the client template file with [HTML-escaped filters](http://underscorejs.org/#template) `<%- ... %>`.
+
+Any content that does need to display HTML, such as the user's profile, should be escaped in the view with `_.escape(content)` or by passing markdown content through `marked()`, which will sanitize HTML by default. Also include [a comment](https://github.com/openopps/openopps-platform/blob/dev/assets/js/backbone/apps/profiles/show/templates/profile_show_template.html#L148) about how the content has been escaped so we can easily audit the templates.
+
+Note: server-side templates use [node-ejs](https://github.com/tj/ejs) instead of [underscore](http://underscorejs.org/#template) for templates. The syntax is very similar, but HTML-escaping is done by default with `<%= ... %>` with EJS instead of `<%- ... %>` like underscore.
 
 ### <a name="git-hooks"></a> Git Hooks
 
@@ -40,7 +100,7 @@ When working in the development environment, be sure to install the project spec
 
 ### <a name="code-style"></a> Code Style
 
-Generally try to follow the [Google Javascript Style Guide](http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml).  Spaces should be used instead of tabs, and the tab width should be set to 2 spaces.  No spaces at the end of lines.
+Generally try to follow the [Google Javascript Style Guide](https://google.github.io/styleguide/jsguide.html).  Spaces should be used instead of tabs, and the tab width should be set to 2 spaces.  No spaces at the end of lines.
 
 ### <a name="commit-messages"></a> Commit Messages
 
@@ -60,6 +120,56 @@ longer than 76 characters.
 
 The last part of the commit log should contain all "external
 references", such as which issues were fixed.
+
+### Database changes
+
+The database schema is managed in this repository under `/migrations/`. When
+you first set up Midas and run `npm run init`, all migrations will be run, the
+first of which creates the initial schema.  Each subsequent run of `npm run
+migrate` checks the database version and runs migration scripts to update it if
+the database is out of date.  `npm run check-migrate` can be used to check for
+any pending migrations without applying them.
+
+When running `npm run start` or `npm run watch`, `npm run check-migrate` will
+be run automatically, alerting you to any pending migrations.
+
+Grunt tasks, `grunt db:migrate:up` and `grunt db:migrate:down`, can also be
+used to run specific migration scripts or to downgrade.  See the
+[sails-db-migrate
+documentation](https://github.com/building5/sails-db-migrate#running-migrations)
+or the [db-migrate
+documentation](http://umigrate.readthedocs.org/projects/db-migrate/en/v0.10.x/Getting%20Started/the%20commands/)
+for more details.
+
+Also note that running `npm run init`, `npm run install`, or `npm run demo`
+will automatically run `npm run migrate`, applying any pending migrations
+before continuing.
+
+#### Creating New Migrations
+
+Database migrations are written in javascript as
+[db-migrate](http://umigrate.readthedocs.org/projects/db-migrate/) scripts.
+
+New migrations are created using the `db:migrate:create` grunt task.
+
+```
+$ grunt db:migrate:create --name add-new-feature
++ db-migrate create add-new-feature
+DATABASE_URL=postgres://midas:****@localhost/midas
+[INFO] Created migration at /home/user/git/openopps-platform/migrations/20160316214102-add-new-feature.js
+
+Done, without errors.
+```
+
+Edit the new file created by `grunt db:migrate:create` to add the new migration
+steps needed.  The `up` and `down` functions exported from the new migration
+file will be used to perform the migration.  See the [db-migrate
+documentation](http://umigrate.readthedocs.org/projects/db-migrate/en/latest/Getting%20Started/usage/#creating-migrations)
+for the function signatures, examples, and tips.
+
+Many common SQL statements for manipulating the database schema and data are
+supported by the db-migrate's
+[javascript API](http://umigrate.readthedocs.org/projects/db-migrate/en/latest/API/SQL/).
 
 ## <a name="submit"></a> Submission Guidelines
 
@@ -87,7 +197,7 @@ Before you submit your pull request consider the following guidelines:
 * Make your changes in a new git branch
 
      ```shell
-     git checkout -b my-fix-branch devel
+     git checkout -b my-fix-branch dev
      ```
 
 * Create your patch, **including appropriate test cases**.
@@ -107,7 +217,7 @@ Before you submit your pull request consider the following guidelines:
 * Build your changes locally to ensure all the tests pass
 
     ```shell
-    make test
+    npm test
     ```
 
 * Push your branch to GitHub:
@@ -116,14 +226,14 @@ Before you submit your pull request consider the following guidelines:
     git push origin my-fix-branch
     ```
 
-* In GitHub, send a pull request to `midas:devel`.
+* In GitHub, send a pull request to `midas:dev`.
 * If we suggest changes then:
   * Make the required updates.
   * Re-run the Midas test suite to ensure tests are still passing.
   * Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
 
     ```shell
-    git rebase devel -i
+    git rebase dev -i
     git push -f
     ```
 
@@ -140,10 +250,10 @@ from the main (upstream) repository:
     git push origin --delete my-fix-branch
     ```
 
-* Check out the devel branch:
+* Check out the dev branch:
 
     ```shell
-    git checkout devel -f
+    git checkout dev -f
     ```
 
 * Delete the local branch:
@@ -152,8 +262,17 @@ from the main (upstream) repository:
     git branch -D my-fix-branch
     ```
 
-* Update your devel with the latest upstream version:
+* Update your dev with the latest upstream version:
 
     ```shell
-    git pull --ff upstream devel
+    git pull --ff upstream dev
     ```
+
+### Reviewing Pull Requests
+
+Except for critical, urgent or very small fixes, we try to leave pull requests open for most of the day or overnight if something comes in late in the day, so that multiple people have the chance to review/comment.  Anyone who reviews a pull request should leave a note to let others know that someone has looked at it.  For larger commits, we like to have a +1 from someone else on the core team and/or from other contributor(s).  Please note if you reviewed the code or tested locally -- a +1 by itself will typically be interpreted as your thinking its a good idea, but not having reviewed in detail.
+
+If the PR contains a database migration, please tag it with the `help wanted`. A
+contributor for the project will work with you to get this tested in a staging
+environment along with getting the migration running on the database. These PRs
+will also be code reviewed at this time as well.

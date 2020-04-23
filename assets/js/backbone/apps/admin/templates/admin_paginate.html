@@ -1,22 +1,27 @@
-<ul class="pagination" data-filter="<% q %>">
-  <% if (page > 3) { %>
-  <li><a href="#">&laquo;</a></li>
+<ul class="usajobs-search-pagination" data-filter="<% q %>">
+  <% if (page != 1) { %>
+    <li class="usajobs-search-pagination__previous-page-container">
+      <a class="usajobs-search-pagination__previous-page page" data-page="<%- page - 1 %>" href="<%- urlbase %>?p=<%- page - 1 %>&q=<%- q %>" title="Go To Previous Page">Previous</a>
+    </li>
   <% } %>
-  <%
-  var start = Math.max(1, page-2);
-  var ceil = Math.ceil(count/trueLimit);
-  if (ceil < page + 2) {
-    start = Math.max(1, ceil - 4);
-  }
-  var max = Math.min(page + 2, ceil);
-  if ((ceil > 5) && ((page + 2) < 5)) {
-    max = 5;
-  }
-  %>
-  <% for (var i = start; i <= max; i++) { %>
-  <li <% if (i == page) { %>class="active"<% } %>><a class="page" data-page="<%- i %>" href="<%- urlbase %>?p=<%- i %>&q=<%- q %>"><%- i %> <% if (i == page) { %><span class="sr-only">(current)</span><% } %></a></li>
+  <% for (var i = 0; i < pages.length; i++) { %>
+    <% if(pages[i] == 0) { %>
+      <li class="usajobs-search-pagination__page-condensed">…</li>
+    <% } else { %>
+      <% if (pages[i] == page) { %>
+        <li class="usajobs-search-pagination__page is-active">
+            <span><%- pages[i] %></span>
+        </li>
+      <% } else { %>
+        <li class="usajobs-search-pagination__page">
+            <a class="page" data-page="<%- pages[i] %>" href="<%- urlbase %>?p=<%- pages[i] %>&q=<%- q %>" title="Go To Page <%- pages[i] %>"><%- pages[i] %></a>
+        </li>
+      <% } %>
+    <% } %>
   <% } %>
-  <% if (ceil > (page + 2)) { %>
-  <li><a href="#">&raquo;</a></li>
+  <% if (page != numberOfPages && numberOfPages!=0 ) { %>
+    <li class="usajobs-search-pagination__next-page-container">
+      <a class="usajobs-search-pagination__next-page page" data-page="<%- parseInt(page) + 1 %>" href="<%- urlbase %>?p=<%- parseInt(page) + 1 %>&q=<%- q %>" title="Go To Next Page">Next</a>
+    </li>
   <% } %>
 </ul>

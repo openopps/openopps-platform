@@ -1,13 +1,13 @@
 <% for (var i = 0; i < tags.length; i++) { %>
-<div class="tag-title <%- tags[i]['class'] %>" id="<%- tags[i].id %>">
-  <h2><i class="<%- tags[i].icon %>"></i> <span class="box-icon-text"><%- tags[i].plural %></span></h2>
-  <% if ((data.isOwner || user.isAdmin) && edit) { %>
-  <div style='margin-bottom: 5px'>
-    <input type="text" id="tag_<%- tags[i].id.toLowerCase() %>" class="fullwidth" name="tag_<%- tags[i].name.toLowerCase() %>"/>
+  <div class="tag-title <%- tags[i]['class'] %>" id="<%- tags[i].id %>">
+    <h3>
+      <%- tags[i].profileEdit %>
+      <span class="usajobs-form__legend"></span>
+    </h3>
+    <% if ((data.isOwner || data.canEditProfile) && (edit || skills)) { %>
+      <div>
+        <input type="text" id="tag_<%- tags[i].id.toLowerCase() %>" class="fullwidth" name="tag_<%- tags[i].name.toLowerCase() %>"/>
+      </div>
+    <% } %>
   </div>
-  <% } %>
-  <ul class="tags">
-    <li class="tag-empty" id="<%- tags[i]['class'] %>-empty">None</li>
-  </ul>
-</div>
 <% } %>

@@ -1,0 +1,88 @@
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
+
+<div class="usajobs-content-gutter opportunity-gutter internship">
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+    <div id="apply-language-section" class="usajobs-profile-home-section">
+      <h2 class="usajobs-profile-home-section__title">Languages &amp; Skills</h2>
+      <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Languages</legend>
+        <div class="usajobs-profile-home-section__body">
+          <span class="usajobs-form__legend">All fields are optional</span>
+          <h3 id="languages" class="usajobs-profile-home-section__sub-section">Languages</h3>
+          <p>Please list the foreign languages you can speak, write, or read. Include your level of proficiency with each.</p>
+        </div>
+        <% if (language.length) { %>
+        <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
+          <ul class="usa-accordion-bordered usajobs-drawers" data-multiselectable="true" role="list">
+            <% _.each(language, function (l, index) { %>
+            <li class="usajobs-drawer" data-section="language" data-id="<%- index %>">
+              <button class="usa-accordion-button usajobs-drawer-button has-no-face" aria-controls="lang-<%- index %>"><%- l.details.value %></button>
+              <div id="lang-<%- index %>" class="usa-accordion-content usajobs-drawer-content">
+                <div class="usajobs-grid">
+                  <div class="usajobs-width-one-half">
+                    <ul class="usajobs-drawer-content__list">
+                      <li class="usajobs-drawer-content__item">
+                        <h5 class="usajobs-drawer-content__item-label">Speaking language skill level</h5>
+                        <p><%- l.speakingProficiency.value %></p>
+                      </li>
+                      <li class="usajobs-drawer-content__item">
+                        <h5 class="usajobs-drawer-content__item-label">Read language skill level</h5>
+                        <p><%- l.readingProficiency.value %></p>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="usajobs-width-one-half">
+                    <ul class="usajobs-drawer-content__list">
+                      <li class="usajobs-drawer-content__item">
+                        <h5 class="usajobs-drawer-content__item-label">Written language skill level</h5>
+                        <p><%- l.writingProficiency.value %></p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="usajobs-button-bar--split">
+                  <div class="usajobs-button-bar__body">
+                    <a id="delete-language-<%- index %>" class="usajobs-button-bar__delete delete-record" href="javascript:void(0);" data-object-trigger="modal" data-target="#modal-delete-record"
+                      data-id="<%- l.applicationLanguageSkillId %>" data-section="applicationLanguageSkill" data-name="<%- l.details.value %>">Delete</a>
+                    <a id="edit-language-<%- index %>" class="usa-button usajobs-button-bar__edit edit-language" href="javascript:void(0);"
+                    data-id="<%- l.applicationLanguageSkillId %>" data-section="language" data-action="edit">Edit</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+        <% } %>
+        <div class="usajobs-profile-home-section__body">
+          <p><a href="#" id="add-language" class="add-record">+ Add language</a></p>
+          <h3 class="usajobs-profile-home-section__sub-section">Skills</h3>
+          <% if (skill.length > 0) { %>
+            <div class="usajobs-opop-section-edit skills-edit">
+              <a href="#" id="edit-skill" class="link-backbone" data-action="edit"><span>Edit</span></a>
+            </div>
+            <h3>I have experience with</h3>
+            <div>
+              <% _.each(skill, function (s) { %>
+                <span class="skill-label"><%= s.name %></span>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p>List your relevant skills, competencies and specific knowledge relating to the position for which you are applying.</p>
+            <a class="usajobs-profile-home-section__footer" href="#" id="add-skill">
+              <i class="fas fa-plus-circle"></i> Add skills
+            </a>
+          <% } %>
+        </div>
+        <div class="usajobs-profile-home-section__body">
+          <div class="usajobs-button_bar--slim">
+            <div class="usajobs-button_bar__body">
+              <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
+              <button id="saveLanguageContinue" data-action="saveLanguageContinue" class="usa-button usa-button-primary usajobs-button_bar__save apply-continue">Save and continue</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </main>
+</div>

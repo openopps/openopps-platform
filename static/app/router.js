@@ -1,4 +1,0 @@
-Backbone.router.extend({
-
-
-});

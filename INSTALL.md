@@ -1,41 +1,63 @@
 Installation
 =====
+- [Deploy OpenOpps as a Docker Container from the Docker Hub](#deploy-openopps-as-a-docker-container-from-the-docker-hub-mac-windows-linux)
+- [Step by Step Installation from Source](#step-by-step-installation-from-source)
+    - [Mac OSX](#mac-osx)
+    - [Linux (Ubuntu 12.04 LTS)](#linux-ubuntu-1204-lts)
+    - [Windows](#windows-windows-2008-server)
+    - [All Platforms](#all-platforms)
+- [For development](#for-development)
+- [For production](#for-production)
+- [Host and Configure Application](#host-and-configure-application)
+- [Troubleshooting Cross Platform Issues](#troubleshooting-cross-platform-issues)
 
-## Vagrant
 
-Using vagrant is a quick and easy way to get a local midas instance up and running on a virtual machine. We use [Chef](http://www.getchef.com/chef/) for automated deployment, which can also be used for deploying to cloud servers.
 
-Install:
-* [Vagrant](https://www.vagrantup.com/downloads)
-* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* [Chef Development Kit](http://downloads.getchef.com/chef-dk)
+## Deploy OpenOpps as a Docker Container from the Docker Hub (Mac, Windows, Linux):
 
-Clone the git repository:
+1. Download and install the [Docker Toolbox](https://www.docker.com/toolbox)
+2. Open Kitematic on your Mac (it's installed with the Docker Toolkit), search for "open-opps", and click create:
+  ![screen shot 2015-08-27 at 11 12 21 am](https://cloud.githubusercontent.com/assets/170641/9524361/8e21aba6-4cac-11e5-9e45-07c1d4450d13.png)
+3. You'll see the log of OpenOpps starting up. (You may need to wait a minute for the application to start up.) Click the arrow next to "Web Preview" to open up OpenOpps in your browser:
+  ![screen shot 2015-08-27 at 11 13 27 am](https://cloud.githubusercontent.com/assets/170641/9524382/af4dc864-4cac-11e5-89df-1f4290e6b2fb.png)
+4. You're now running OpenOpps in a local container and you can do all the things you'd usually do with it
+  ![screen shot 2015-08-27 at 11 14 13 am](https://cloud.githubusercontent.com/assets/170641/9524433/f2adb3ee-4cac-11e5-9068-5e2d2de67631.png)
+  ![screen shot 2015-08-27 at 11 14 19 am](https://cloud.githubusercontent.com/assets/170641/9524434/f46fe6a2-4cac-11e5-88fd-cdee0517ed46.png)
+  ![screen shot 2015-08-27 at 11 14 49 am](https://cloud.githubusercontent.com/assets/170641/9524437/f61f4bbe-4cac-11e5-86b4-75b482a462fa.png)
+5. **Bonus:** you can try our other branches of OpenOpps (useful for reviewing pull requests). Get the branch  name from GitHub:
 
-     git clone https://github.com/18F/midas.git
-     cd midas
-     git submodule update --init
+  ![screen shot 2015-08-27 at 11 16 27 am](https://cloud.githubusercontent.com/assets/170641/9524463/180170a4-4cad-11e5-9ed4-d7d3a4a253f2.png)
+6. Go back to "Settings" in Kitematic, set the `BRANCH` environment variable, and click "Save":
+  ![screen shot 2015-08-27 at 11 17 08 am](https://cloud.githubusercontent.com/assets/170641/9524485/2fd9ea94-4cad-11e5-9a8d-09322c46a857.png)
+7. Now on "Home", you'll see the log of OpenOpps rebuilding with the new branch. Give it a chance to build, then relaunch the web preview to try the new branch
 
-Additonal plugins:
+### Docker for Development
 
-     vagrant plugin install vagrant-berkshelf
-     vagrant plugin install vagrant-omnibus
+After installing Docker and Docker Compose, run the following command to bring
+up the database and the application.
 
-Startup the virtual machine:
-
-     vagrant up
-
-If you are modifying vagrant or chef setup, then you can configure to pull from your own repo by overriding attributes in your local `chef/nodes/localhost.json` adding:
+```sh
+npm run docker:up
 ```
-  "midas": {
-    "git_repo": "https://github.com/myrepo/midas.git",
-    "git_revision": "devel-mybranch"
-  }
+
+You can also restart the app container.
+
+```sh
+npm run docker:restart
 ```
 
-go to [http://localhost:8080/](http://localhost:8080/) to see Midas running on your local virtual machine
+When you're down with local development, spin down all the containers.
+```sh
+npm run docker:down
+```
 
-## Step by Step Installation
+Your local code is now running in the Docker container with Mailcatcher for
+reviewing Notifications.
+
+For the application: http://localhost:3000/
+For the mail server: http://localhost:8025/
+
+## Step by Step Installation from Source
 The following installation steps for Mac, Linux, and Windows can be used for setting up a development or production environment manually.
 
 ### Mac OSX
@@ -46,35 +68,42 @@ The instructions have been tested on 10.9.2, but earlier versions likely work.  
 In the Terminal:
 
     brew install postgresql
-    brew install graphicsmagick
 
-When Homebrew is done installing Postgres, follow the instructions at the end
-to start Postgres.
+When Homebrew is done installing Postgres, follow the instructions at the end to start Postgres.
 
 Next, create the `midas` database:
 
     initdb /usr/local/var/postgresql
+
+Once you're done installing you'll see two options:
+    Success. You can now start the database server using:
+
+    postgres -D /usr/local/var/postgresql
+    or
+    pg_ctl -D /usr/local/var/postgresql -l logfile start
+
+When you run either of these commands it will start running the server. It's best to choose the first choice (postgres -D /usr/local/var/postgresql) so if you work on a different tab in your terminal the server will keep running. Next in the Terminal:
+
     createdb midas
 
-Start the postgres console acting on the midas database with: `psql midas`
+Start the postgres console acting on the `midas` database with: `psql midas`
 
     CREATE USER midas WITH PASSWORD 'midas';
     GRANT ALL PRIVILEGES ON DATABASE midas to midas;
     ALTER SCHEMA public OWNER TO midas;
     \q
 
-Then back to the command-line:
+Install node.js. The example commands below use [nvm](https://github.com/creationix/nvm) which is not required, but we find helpful
+to manage Node versions, when working other Node projects.
 
-    brew install nodejs
+So back to the command line. We assume that nvm is installed and set up
+(added to `.bashrc` or equivalent).
 
-    git clone https://github.com/18F/sails-postgresql.git
-    cd sails-postgresql
-    git checkout softdelete
-    npm install
-    npm link
+    nvm install 8.9.0
+    nvm alias default 8.9.0
+    nvm version             # should be v8.9.0
 
 Then follow platform-independent steps below starting at [clone the git repository](#clone-the-git-repository).
-
 
 ### Linux (Ubuntu 12.04 LTS)
 
@@ -131,85 +160,94 @@ AND modify `pg_hba.conf`:
      sudo apt-get update
      sudo apt-get install nodejs
 
-#### Install GraphicsMagick
+### Windows (Windows 2008 Server)
 
-     sudo apt-get install graphicsmagick
+#### Install Visual C++ 2008 x64 or x86 Redistributable Package
 
-#### Clone Forked Libraries
+[Runtime 64](http://www.microsoft.com/en-us/download/details.aspx?id=15336)
+  or
+[Runtime 32](http://www.microsoft.com/en-us/download/details.aspx?id=29)
 
-This project uses a forked version of
-[sails-postgresql](https://github.com/18F/sails-postgresql) to
-provide soft deletes. Clone it and run the commands below to set
-everything up properly.
+Reboot server once finished
 
-     git clone https://github.com/18F/sails-postgresql.git
-     cd sails-postgresql
-     git checkout softdelete
-     npm install
-     sudo npm link
+#### Install/Configure Postgres 9.2+ via windows msi installer
+
+[PostgreSQL](http://www.postgresql.org/download/windows/`)
+
+Establish admin user account during the wizard and verify that PostgreSQL is running as a service
+
+Open pgAdmin
+
+Create database 'midas', user account 'midas' with password 'midas', and assign user 'midas' full rights to administer DB 'midas'
+
+#### Install Node.js via Windows MSI, select all available add-ons
+
+[Node.js](https://nodejs.org/en/download/)
+
+#### Set System Path Variables
+
+Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
+Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
+
+	DRIVE:\Program Files\nodejs\;
+
+Save.
+
+### All Platforms
+
+#### Optional: Installing the Open Opportunities Theme
+
+Typically we do development without the theme.  Tests are designed
+to run without the theme, which sets up alternate configuration.
+
+This theme is contained in [a separate repository] [openopps_theme_repo]. To
+hook into the `npm preinstall` hook's theme copy mechanism, you must have an
+environment variable pointing the Github URL to the `$THEME` variable.
+Here's an example using `export`:
+
+    export THEME="https://github.com/18F/open-opportunities-theme.git" && \
+    npm install
+
+[openopps_theme_repo]: https://github.com/18F/open-opportunities-theme "Open Opportunities Theme"
+
+Note: the tests don't currently pass when the theme is installed since it
+also changes configuration.
 
 #### Clone the git repository.
 
-     git clone https://github.com/18F/midas.git
-     cd midas
-     git submodule update --init
+     git clone https://github.com/18F/openopps-platform.git
+     cd openopps-platform
 
-#### Install global node packages
+#### Install openopps node packages (from the openopps git folder)
 
-     sudo npm install -g grunt-cli
-     sudo npm install -g forever
-
-#### Install midas node packages (from the midas git folder)
-
-Important: first link in the forked sails-postgresql
-
-     npm link sails-postgresql
-
-Then run the normal npm package installer
+Run the Node Package Installer (npm) to fetch dependencies:
 
      npm install
 
-#### Copy the main settings files
-
-From the root of the midas directory:
-
-     cd config
-     cp local.ex.js local.js
-
-#### Copy the backend module configuration files
-
-From the root of the midas directory:
-
-     cd config/settings
-     for file in *.ex.js; do cp "$file" "${file/ex./}"; done
-
-#### Copy the client configuration files
-
-From the root of the midas directory:
-
-     cd assets/js/backbone/config/
-     cp login.ex.json login.json
-
 #### Optional: Edit the configuration files
 
-It is not necessary to edit any config files to run the demo locally.  You may optionally edit the config files that you made copies of above, or the front-end configuration (from the root directory):
-
-     cd assets/js/backbone/config
-     vi tag.js
-     vi login.json
-
-`tag.js` specifies the tags that the frontend understands and stores in the backend.
-
-`login.json` specifies the login options available on the frontend, and must have a corresponding backend component or configuration enabled (see `config/settings/auth.ex.js`).
+See the [Configuration Guide](CONFIG.md)
 
 #### Setup the database
-From the root of the midas directory, initialize the database:
 
-     make init
+From the root of the openopps directory, initialize the database:
 
-If you'd like to include a sample project, also run:
+     npm run migrate:up
+     npm run init
 
-     make demo
+If you'd like to include a sample project and users, also run:
+
+     npm run demo
+
+This also creates a handful of initial users. By default all those users are disabled, and none are admin.
+It's usually helpful to have at least one admin user (we picked "Alan Barret") so these commands are
+helpful:
+
+     psql midas
+     update midas_user set disabled='f';
+     update midas_user set "isAdmin"='t' where username='alan@test.gov';
+
+Note the quotes around "isAdmin". Postgres by default lowercases all non-keywords, which includes column names.
 
 Now you are ready to rock!
 
@@ -219,49 +257,45 @@ Now you are ready to rock!
 
 Run the tests (all should pass)
 
-    make test
+    export VCAP_APPLICATION='{ "uris": [ "openopps-test.18f.gov" ] }'
+    npm test
 
-Run the server
+Run the server (watch client files, compiling if needed)
 
-    sails lift
-
-If you get `command not found: sails`, install sails manually:
-
-    npm install sails -g
-
-Then try running the server:
-
-    sails lift
+    export SAILS_SECRET='RANDOM_BITS_FOR_SAILS_SESSIONS_ID'
+    export VCAP_APPLICATION='{ "uris": [ "openopps-test.18f.gov" ] }'
+    npm run watch
 
 
-Go to [http://localhost:1337](http://localhost:1337) to see the app
+Go to [http://localhost:3000](http://localhost:3000) to see the app
 
 Check out the [Contributor's Guide](CONTRIBUTING.md) for next steps
 
 #### Troubleshooting
+
 On Mac OSX, you may receive a stream of
 
     Error: EMFILE, too many open files
 
-messages after running `sails lift`. This is an issue with OSX and Grunt; there are directions to fix the issue [here](https://github.com/gruntjs/grunt-contrib-copy/issues/21) or [here](http://unix.stackexchange.com/questions/108174/how-to-persist-ulimit-settings-in-osx-mavericks).
+messages after running `npm start`. This is an issue with OSX and Grunt; there are directions to fix the issue [here](https://github.com/gruntjs/grunt-contrib-copy/issues/21) or [here](http://unix.stackexchange.com/questions/108174/how-to-persist-ulimit-settings-in-osx-mavericks).
+
+---------------------------------------
 
 ## For production
 
-#### Compile production JS and CSS (from the midas git folder)
+#### Compile production JS and CSS (from the openopps git folder)
 
-     make build
+     npm run build
 
-Alternatively, you can also run:
+#### Initialize the database (once)
 
-     grunt build
+     npm run init
 
-#### Initialize the database
+### Start the forever server (from the openopps git folder)
 
-The database needs to be populated with the tag defaults for your application's configuration.
+Install forever with from npm:
 
-Edit the configuration file at `test/init/init/config.js` to match your tags in `assets/js/backbone/components/tag.js`
-
-### Start the forever server (from the midas git folder)
+     sudo npm install -g forever
 
 This will run the application server on port 1337
 
@@ -283,48 +317,9 @@ Configure nginx with the files in the tools folder.  Use the SSL config file if 
 
 With the application server running and nginx running, you should now be able to access the application at `http://localhost`
 
-### Windows (Windows 2008 Server)
+---------------------------------------
 
-#### Install Visual C++ 2008 x64 or x86 Redistributable Package
-
-[Runtime 64](http://www.microsoft.com/en-us/download/details.aspx?id=15336)
-     or
-[Runtime 32](http://www.microsoft.com/en-us/download/details.aspx?id=29)
-
-Reboot server once finished
-
-#### Install/Configure Postgres 9.2+ via windows msi installer
-
-[PostgreSQL](http://www.postgresql.org/download/windows/`)
-
-Establish admin user account during the wizard and verify that PostgreSQL is running as a service
-
-Open pgAdmin
-
-     Create database 'midas', user account 'midas' with password 'midas', and assign user 'midas' full rights to administer DB 'midas'
-
-#### Install Node.js via Windows MSI, select all available add-ons
-
-[Node.js](http://nodejs.org/download/`)
-
-#### Install GraphicsMagick
-
-[GraphicsMagick](ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/windows/`)
-
-Select Q8 version along with latest corresponding to 32 bit vs. 64 bit OS
-
-#### Set System Path Variables
-
-Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
-Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
-
-	DRIVE:\program files\graphicsmagick-1.3.18-q8;
-	(or similar, depending on your graphicsmagick version)
-	DRIVE:\Program Files\nodejs\;
-
-Save.
-
-### Host and Configure Application
+## Host and Configure Application
 
 #### If hosting on an on-line server
 
@@ -334,22 +329,49 @@ Install NPM Modules as directed above.
 
 #### If hosting on an off-line server
 
-Retrieve Midas from GitHub as above on an online pc. Install NPM modules as directed. Copy to offline server your local npm_modules directory (in project home) as well as the contents of the directory found in Users/YOUR_USER_NAME/AppData/Roaming/npm to corresponding locations on offline-server.
+Retrieve OpenOpps from GitHub as above on an online pc. Install NPM modules as directed. Copy to offline server your local npm_modules directory (in project home) as well as the contents of the directory found in Users/YOUR_USER_NAME/AppData/Roaming/npm to corresponding locations on offline-server.
 
-#### Starting Midas
+#### Starting OpenOpps
 
-Navigate to Midas directory via windows cmd.exe prompt
+Navigate to OpenOpps directory via windows cmd.exe prompt
 
 Enter the following commands
 
-	npm install sails -g
-	npm install
-	npm link sails-postgresql
-	grunt requirejs
+   npm install
 
-Raise sails with
+Start Midas with
 
-     sails lift
+     npm start
 
 You can now access the server at `http://localhost:1337`
 
+## Troubleshooting Cross Platform Issues
+
+#### `Unable to parse HTTP body- error occurred ::`
+
+Having an error on `npm start` which begins the Sails server with an error along
+the lines of the following:
+
+    error: Unable to parse HTTP body- error occurred :: { [error: relation "<TABLE_NAME>" does not exist] name: 'error',}
+
+Can mean that your database is corrupt or misconfigured. A potential fix is to
+clean your database using the scripts found in `tools/postgres`. **This will
+delete everything in your database**.
+
+    ./tools/postgres/cleandb.sh
+
+Once that's done, you need to run `npm run init` again.
+
+You can also verify that the correct `midas` user exists for the `<TABLE_NAME>`.
+
+```sql
+ALTER TABLE session OWNER TO midas;
+---                          ^^^^^
+```
+
+This should also work if you run into issues with other tables.
+
+```sql
+ALTER TABLE * OWNER TO midas;
+---                    ^^^^^
+```

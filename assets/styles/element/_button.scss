@@ -1,0 +1,150 @@
+// Button
+
+// Replacing some of the secondary buttons that were unceremoniously removed
+.usajobs-button-secondary {
+  @include makeButton($color-secondary, $color-secondary-dark, $color-red-darkest, 'big');
+}
+
+.usajobs-button-secondary-alert {
+  background-color: $color-secondary-darkest;
+
+  &:hover,
+  &.usa-button-hover {
+    background-color: $color-secondary-dark;
+  }
+
+  &:active,
+  &.usa-button-active {
+    background-color: $color-red-darkest;
+  }
+}
+
+// The U.S. Standards disabled button is a little light on the "disabled"
+button:disabled,
+[type="button"]:disabled,
+[type="submit"]:disabled,
+.usa-button-disabled {
+  opacity: $layer-disabled;
+}
+
+
+// In Application Guide, our button bar background matches the disabled state of a button
+// Thus we make the button darker
+
+.usajobs-button_bar,
+.usajobs-button-bar {
+  [type="submit"]:disabled,
+  .usa-button-disabled {
+    background-color: $color-gray-light;
+    color: $color-gray-dark;
+    cursor: default;
+
+    &:hover,
+    &.usa-button-hover,
+    &:active,
+    &.usa-button-active,
+    &:focus {
+      background-color: $color-gray-light;
+      border: 0;
+      box-shadow: none;
+      color: $color-gray-dark;
+    }
+  }
+
+  .usa-button,
+  .usa-button-primary,
+  .usa-button:visited,
+  .usa-button-primary:visited,
+  button,
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  [type="image"] {
+    &.usa-button-gray {
+      background-color: $color-gray;
+
+      &:hover,
+      &.usa-button-hover {
+        background-color: $color-gray-dark;
+      }
+
+      &:active,
+      &.usa-button-active {
+        background-color: $color-base;
+      }
+    }
+  }
+}
+
+.usajobs-button-select {
+  @include makePrimaryButton();
+  width: 100%;
+
+  @include media($SM) {
+    width: 100%;
+  }
+
+  // This component works in concert with the Chosen.js plugin
+  &.chosen-container-active.chosen-with-drop .chosen-single {
+    background-color: inherit;
+    background-image: url('../img/arrow-up-white.svg');
+    background-repeat: no-repeat;
+    background-position: right;
+    box-shadow: inherit;
+  }
+
+  &.chosen-container-single .chosen-single {
+    border: 0;
+    background-color: inherit;
+    color: $color-white;
+    font-weight: bold;
+    background-image: url('../img/arrow-down-white.svg');
+    background-repeat: no-repeat;
+    background-position: right;
+    box-shadow: inherit;
+  }
+}
+
+// Toggle is a setup of two buttons to toggle a view or whatever you like
+.usajobs-toggle {
+  @include clearfix();
+
+  &__button {
+    display: block;
+    float: left;
+    margin: 0;
+    height: 4.4rem; // making them the same height as the select menu
+    border: 1px solid $color-gray;
+
+    &:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &:last-child {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: 0;
+    }
+  }
+
+  &__button[aria-pressed=true] {
+    @include boxShadow(2, inset);
+  }
+
+  &__button[aria-pressed=false] {
+    background-color: $color-white;
+    color: $color-gray;
+
+    &:hover {
+      background-color: $color-white;
+      border-bottom: 1px solid $color-gray;
+      color: $color-gray-dark;
+    }
+  }
+}
+
+// This is an odd place to have to put this but, here it is
+.usajobs-toggle--search-view {
+  float: right;
+}

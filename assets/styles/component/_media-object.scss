@@ -1,0 +1,100 @@
+// Media Object
+
+$icon-width: rem(40px);
+$icon-padding: $size-default;
+$body-padding: $size-M;
+
+@include animateFade();
+
+@mixin mediaObject() {
+  position: relative;
+  margin: $size-M 0;
+  padding: 0;
+  background-color: $color-white;
+  border: 1px solid;
+  border-radius: rem(3px);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  &[aria-hidden=false] {
+    @include animation(fadeIn $duration-slow);
+  }
+
+  &__figure {
+    padding: $size-default $size-M;
+  }
+
+  &__body {
+    min-height: rem(77px);
+    padding: $size-default $body-padding;
+    background-color: $color-white;
+
+    &[aria-hidden=true] {
+      display: none;
+    }
+  }
+
+  &__title {
+    margin: rem(3px) 0; // This is odd but, it matches .usa-alert-heading
+  }
+
+  &__text {
+    margin: 0;
+  }
+
+  &__icon {
+    position: relative;
+    @include makeCircle($icon-width);
+    background-color: $color-white;
+    width: $icon-width;
+    height: $icon-width;
+
+    &::after {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      margin-left: rem(-5px);
+    }
+  }
+
+  &__footer {
+    margin-top: $size-default;
+    text-align: right;
+  }
+
+  &__close {
+    @include makeCloseButton(30px);
+  }
+
+  .no-flexbox & {
+    @include clearfix();
+    display: table;
+
+    &__figure,
+    &__body {
+      display: table-cell;
+    }
+
+    &__body {
+      @include calc(width, '100% - ' ($icon-width + $icon-padding + $body-padding));
+    }
+
+    &__body .lt-ie9 & {
+      width: 75%;
+    }
+  }
+
+  .flexbox & {
+    @include display(flex);
+    @include align-items(center);
+
+    &__figure {
+      @include flex-shrink(0);
+    }
+
+    &__body {
+      @include flex(1);
+      min-width: 0;
+    }
+  }
+}

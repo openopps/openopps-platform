@@ -1,0 +1,23 @@
+<div class="usajobs-grid usajobs-open-opps-search__box" style="margin: 0; <% if (banner.hasBackgroundImage == 'true' && banner.backgroundImageId) { %> background-image:url('/api/community/backgroundImage/get/<%- communityId %>'); background-size: 100%; background-position: top;<% } else { %>background-color: <%- banner.color %><% } %>">
+  <div class="search__box-search">
+    <% if (imageId) { %>
+    <img src="/api/community/logo/get/<%- communityId %>" alt="<%- banner.title %> community logo" class="community-logo-preview">
+    <% } %>
+    <h1 style="color: <%- banner.titleColor %>"><%- banner.title %></h1>
+    <h3 id="search__box-subtitle" style="color: <%- banner.subtitleColor %>"><%- banner.subtitle %></h3>
+    <p class="search__box-content description" style="color: <%- banner.descriptionColor %>"><%- banner.description || 'Gain experience with hands-on training, share your expertise and work with others across the government.' %></p>
+    <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+  </div>
+  <label for="search" class="search__box-label">
+    <span class="fas fa-search search-icon" style="color: <%- banner.descriptionColor %>"></span>
+    Keywords
+  </label>
+  <div class="usajobs-grid-full">
+    <div class="usa-width-two-thirds">
+      <input type="text" id="search" title="Search" class="usajobs-open-opps-search__input" value="" placeholder="Find opportunities by topic, skill, career field, agency or series">
+    </div>
+    <div class="usa-width-one-third">
+      <button id="search-button" class="usa-button usa-button-primary-alt usajobs-nav__search-button" style="background-color: <%- banner.titleColor %>">Search</button>
+    </div>
+  </div>
+</div>

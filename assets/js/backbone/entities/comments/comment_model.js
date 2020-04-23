@@ -1,33 +1,32 @@
-define([
-  'underscore',
-  'backbone'
-], function (_, Backbone) {
+var _ = require('underscore');
+var Backbone = require('backbone');
 
-  var CommentModel = Backbone.Model.extend({
 
-    urlRoot: '/api/comment',
+var CommentModel = Backbone.Model.extend({
 
-    initialize: function () {
-      this.saveComment();
-    },
+  urlRoot: '/api/comment',
 
-    saveComment: function () {
-      var self = this;
+  initialize: function () {
+    this.saveComment();
+  },
 
-      this.listenTo(this, 'comment:save', function (parentId, comment, projectId) {
-        self.save({
-          parentId  : parentId,
-          value     : comment,
-          projectId : projectId
-        }, {
-          success: function (data) {
-            self.trigger("comment:save:success");
-          }
-        })
-      })
-    }
+  saveComment: function () {
+    var self = this;
 
-  });
-
-  return CommentModel;
+    this.listenTo(this, 'comment:save', function (parentId, comment) {
+      self.save({
+        parentId  : parentId,
+        value     : comment,
+      }, {
+        success: function (data) {
+          self.trigger('comment:save:success');
+        },
+        error: function (model, response, options) {
+          self.trigger('comment:save:error', model, response, options);
+        },
+      });
+    });
+  },
 });
+
+module.exports = CommentModel;

@@ -1,3 +1,14 @@
+/**
+ * Default model configuration
+ * (sails.config.models)
+ *
+ * Unless you override them, the following properties will be included
+ * in each of your models.
+ *
+ * For more info on Sails models, see:
+ * http://sailsjs.org/#!/documentation/concepts/ORM
+ */
+
 module.exports.models = {
 
   /***************************************************************************
@@ -6,20 +17,15 @@ module.exports.models = {
   * connections (see `config/connections.js`)                                *
   *                                                                          *
   ***************************************************************************/
-  connection: 'postgresql',
+  connection: process.env.DATASTORE || 'postgresql',
 
   /***************************************************************************
   *                                                                          *
   * How and whether Sails will attempt to automatically rebuild the          *
   * tables/collections/etc. in your schema.                                  *
   *                                                                          *
-  * See http://sailsjs.org/#/documentation/concepts/ORM/model-settings.html  *
+  * See http://sailsjs.org/#!/documentation/concepts/ORM/model-settings.html  *
   *                                                                          *
-  * Midas Note: Due to the implementation details of soft delete in our      * 
-  * fork of the postgres sails adapter                                       * 
-  * (https://github.com/18F/sails-postgresql), the migrate mode must be      *
-  * set to safe. Setting it to a different value will not function or will   *
-  * cause the deletedAt columns to be removed from the database.             *
   ***************************************************************************/
   migrate: 'safe'
 

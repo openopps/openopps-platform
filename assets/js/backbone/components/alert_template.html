@@ -1,6 +1,21 @@
-<div class="alert <% if (alert.type) { %><%= alert.type %><% } else { %>alert-danger<% } %>" id="alert-main">
-  <% if (alert.dismiss) { %>
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-  <% } %>
-  <%= alert.message %>
-</div>
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter">
+    <div class="usa-alert usajobs-alert usajobs-alert--error alert-global <% if (alert.type) { %><%- alert.type %><% } else { %>usajobs-alert--error<% } %>" role="alert" data-object="alert" id="alert-main">
+      <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+      </div>
+      <div class="usajobs-alert__body">
+        <p class="usa-alert-text">
+          <% /* Server-generated error is escaped in the view */ %>
+          <%= alert.message %>
+        </p>
+      </div>
+      <% if (alert.dismiss) { %>
+      <button class="usajobs-alert__close" data-behavior="alert.close">
+        <span class="usajobs-assistive-text">Close</span>
+      </button>
+      <% } %>
+    </div>
+  </div>
+</section>

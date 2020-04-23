@@ -3,10 +3,10 @@
     <span class="file-tag c3-bg white">file</span>
   </td>
   <td class="attachment-name">
-    <a href="/api/file/get/<%= a.file.id %>" class="file-link" data-id="<%= a.file.id %>">
-      <%= a.file.name %>
-      <% if (user && ((a.userId == a.userId) || owner)) { %>
-      <a href="#" class="file-delete" data-id="<%= a.id %>"><i class="fa fa-remove"></i></a>
+    <a href="/api/upload/get/<%- a.file.id %>" class="file-link" data-id="<%- a.file.id %>" download="<%- a.file.name %>">
+      <%- a.file.name %>
+      <% if ((user && user.isAdmin) || owner) { %>
+      <a href="#" class="file-delete" data-id="<%- a.id %>"><i class="fa fa-remove"></i></a>
       <% } %>
       <br/>
       <time class="timeago" datetime="<%- a.createdAt %>"><%- a.createdAt %></time>
@@ -14,7 +14,7 @@
   </td>
   <td class="file-person">
     <div class="project-people-div" data-userid="<%- a.userId %>">
-      <img src="/api/user/photo/<%= a.userId %>" class="project-people" />
+      <img src="/api/user/photo/<%- a.userId %>" class="project-people" />
     </div>
   </td>
 </tr>

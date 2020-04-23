@@ -1,0 +1,15 @@
+---
+applications:
+- name: openopps
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack#v1.7.8
+  command: npm run start
+  stack: cflinuxfs3
+domain: openopps.usajobs.gov
+services:
+- env-openopps
+- psql-openopps
+- redis-openopps
+- s3-midas-assets
+- elastic56-openopps
+env:
+  OPTIMIZE_MEMORY: true

@@ -1,0 +1,82 @@
+full_name: "Open Opportunities"
+name: openopps
+owner_type: project
+github:
+- 18F/openopps-platform
+
+description: >
+  Open Opportunities is creating a network of federal employees that
+  will lead to a more effective, efficient, responsive government by sharing skills
+  and collaborating on projects that support the mission of an agency or the
+  government as a whole. Only 37% of federal employees surveyed believe that
+  creativity & innovation are rewarded. From a total audience of 2.7 million
+  federal employees, the initial target audience are motivated, mission-driven
+  individuals who identify and solve problems for our nation.
+
+
+partners:
+- General Services Administration
+- Department of State
+- Department of Health and Human Services
+
+stage: live
+
+impact: >
+  Amplify the work of 1 million federal employees.
+
+milestones:
+- "September 2014: GSA OHRM signs IAA for GSA Rotational Details and Project Network to move to Open Opportunities"
+- "September 2015: Authority To Operate"
+- "August 2015: Open Opportunities expands beyond DigitalGov tasks, OCSIT & 18F roadmaps converge"
+- "January 2015: HHS transitions FairTrade pilot into Open Opportunities community"
+- "October 2014: GSA hosts Midas open source hack night in DC"
+- "October 2014: DigitalGov Open Opportunities pilot starts"
+- "September 2014: GSA OCSIT signs MOU for Open Opportunities to move to Midas platform"
+- "September 2014: 18F launches https://midas.18f.us for use by early adopters"
+- "June 2014: State Department launches Alpha as Crowdwork"
+- "May 2014: HHS launches Alpha as FairTrade"
+- "January 2014: 18F begins work on project"
+- "June 2013: State Department begins project Discovery stage with Presidential Innovation Fellows"
+
+links:
+- url: https://openopps.digitalgov.gov
+  text: Open Opportunities (live website)
+
+# Email addresses of points-of-contact
+contact:
+- url: mailto:openopps@gsa.gov
+  text: Open Opportunities Team
+
+blog:
+- midas
+status: active
+
+team:
+- github: ultrasaurus
+  role: lead
+- github: rogeruiz
+  role: contributor
+
+services:
+- name: Travis CI
+  category: CI
+  url: https://travis-ci.org/18F/openopps-platform
+  badge: https://travis-ci.org/18F/openopps-platform.png?branch=master
+- name: Gemnasium
+  category: dependency management
+  url: https://gemnasium.com/18F/midas
+  badge: https://gemnasium.com/18F/midas.png
+- name: Code Climate
+  category: code quality
+  url: https://codeclimate.com/github/18F/openopps-platform
+  badge: https://codeclimate.com/github/18F/openopps-platform/badges/gpa.svg
+
+licenses:
+  dashboard:
+    name: CC0-1.0
+    url: https://github.com/18F/openopps-platform/blob/master/LICENSE.md
+
+stack:
+- JavaScript ( Node, Sails, Backbone )
+- Sass
+- Grunt

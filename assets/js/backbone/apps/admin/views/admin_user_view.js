@@ -1,259 +1,502 @@
-define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'i18n',
-  'utilities',
-  'modal_component',
-  'admin_user_password_view',
-  'text!admin_user_template',
-  'text!admin_user_table',
-  'text!admin_paginate',
-  'json!login_config'
-], function ($, _, Backbone, i18n, utils, ModalComponent, AdminUserPasswordView, AdminUserTemplate, AdminUserTable, Paginate, LoginConfig) {
+// vendor libraries
+var _ = require('underscore');
+var Backbone = require('backbone');
+var $ = require('jquery');
 
-  var AdminUserView = Backbone.View.extend({
+// internal dependencies
+var Modal = require('../../../components/modal');
+var LoginConfig = require('../../../config/login.json');
 
-    events: {
-      "click a.page"              : "clickPage",
-      "click .link-backbone"      : linkBackbone,
-      "click .admin-user-mkadmin" : "adminCreate",
-      "click .admin-user-rmadmin" : "adminRemove",
-      "click .admin-user-enable"  : "adminEnable",
-      "click .admin-user-disable" : "adminDisable",
-      "click .admin-user-unlock"  : "adminUnlock",
-      "click .admin-user-resetpw" : "resetPassword",
-      "keyup #user-filter"        : "filter"
-    },
+// templates
+var AdminUserTemplate = require('../templates/admin_user_template.html');
+var AdminCommunityUserTable = require('../templates/admin_community_user_table.html');
+var AdminUserTable = require('../templates/admin_user_table.html');
+var Paginate = require('../templates/admin_paginate.html');
+var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
-    initialize: function (options) {
-      this.options = options;
-      this.data = {
-        page: 1
-      };
-    },
+var AdminUserView = Backbone.View.extend({
+  events: {
+    'click a.page'                : 'clickPage',
+    'click .link-backbone'        : linkBackbone,
+    'click .user-enable'          : 'toggleCheckbox',
+    'click .assign-admin'         : 'toggleCheckbox',
+    'click .assign-approver'      : 'toggleCheckbox',
+    'click .member-enable'        : 'toggleCheckbox',
+    'click .user-reset'           : 'resetPassword',
+    'click #invite-members'       : 'inviteMembers',
+    'click #user-filter-search'   : 'filter',
+    'click .remove-member'        : 'removeMember',
+    'change #sort-user-sitewide'  : 'sortUsers',
+    'change #sort-user-agency'    : 'sortUsers',
+    'change #sort-user-community' : 'sortUsers',
+  },
 
-    render: function () {
-      var self = this;
-      Backbone.history.navigate('/admin/user');
-      this.$el.show();
-      if (this.rendered === true) {
-        return this;
-      }
-      var data = {
-        user: window.cache.currentUser,
-        login: LoginConfig
-      };
-      var template = _.template(AdminUserTemplate, data);
-      this.$el.html(template);
-      this.rendered = true;
-      // fetch user data
-      this.fetchData(self, this.data);
-      return this;
-    },
+  initialize: function (options) {
+    this.options = options;
+    this.params = new URLSearchParams(window.location.search);
+    this.data = {
+      page: this.params.get('p') || 1,
+      filter: this.params.get('f') || '',
+      sort: this.params.get('s') || 'createdAt',
+      returnUrl: '/admin',
+    };
+    if (this.options.target !== 'sitewide') {
+      this.data.returnUrl += '/' + this.options.target + '/' + this.options.targetId;
+    }
+    this.agency = {};
+    this.community = {};
+  },
 
-    renderUsers: function (self, data) {
-      data.urlbase = '/admin/users';
-      data.q = data.q || '';
-      // if the limit of results coming back hasn't been set yet
-      // use the server's default
-      if (!self.limit) {
-        self.limit = data.limit;
-      }
-      data.trueLimit = self.limit;
-      data.login = LoginConfig;
-      data.user = window.cache.currentUser;
-      // render the table
-      var template = _.template(AdminUserTable, data);
-      // render the pagination
-      var paginate = _.template(Paginate, data);
-      self.$("#user-page").html(paginate);
-      self.$(".table-responsive").html(template);
-      self.$(".btn").tooltip();
-      // hide spinner and show results
-      self.$(".spinner").hide();
-      self.$(".table-responsive").show();
-      self.$el.i18n();
-    },
+  render: function () {
+    this.$el.show();
+    $('[data-target=' + (this.options.target).toLowerCase() + ']').addClass('is-active');
 
-    clickPage: function (e) {
-      var self = this;
-      // if meta or control is held, or if the middle mouse button is pressed,
-      // let the link process normally.
-      // eg: open a new tab or window based on the browser prefs
-      if ((e.metaKey === true) || (e.ctrlKey === true) || (e.which == 2)) {
-        return;
-      }
-      if (e.preventDefault) e.preventDefault();
-      // load this page of data
-      this.fetchData(self, {
-        page: $(e.currentTarget).data('page'),
-        q: $($(e.currentTarget).parent('ul')[0]).data('filter'),
-        limit: this.limit
-      });
-    },
+    if (this.options.target !== 'sitewide') {
+      this.loadTargetData();
+    } else {
+      this.loadData();
+    }
+    return this;
+  },
 
-    filter: function (e) {
-      // get the input box value
-      var val = $(e.currentTarget).val().trim();
-      // if the filter is the same, don't do anything
-      if (val == this.q) {
-        return;
-      }
-      this.q = val;
-      // hide the table and show the spinner
-      this.$(".table-responsive").hide();
-      this.$(".spinner").show();
-      // fetch this query, starting from the beginning page
-      this.fetchData(this, {
-        q: val
-      });
-    },
+  loadTargetData: function () {
+    $.ajax({
+      url: '/api/admin/' + this.options.target + '/' + this.options.targetId,
+      dataType: 'json',
+      success: function (targetInfo) {
+        this[this.options.target] = targetInfo;
+        this.data[this.options.target] = targetInfo;
+        this.loadData();
+      }.bind(this),
+    });
+  },
 
-    fetchData: function (self, data) {
-      // perform the ajax request to fetch the user list
-      $.ajax({
-        url: '/api/admin/users',
-        dataType: 'json',
-        data: data,
-        success: function (data) {
-          self.data = data;
-          self.renderUsers(self, data);
-        },
-        error: function (xhr, status, error) {
-          self.handleError(self, xhr, status, error);
-        }
-      });
-    },
+  loadData: function () {
+    var data = {
+      user: window.cache.currentUser,
+      login: LoginConfig,
+      agency: this.agency,
+      community: this.community,
+      target: this.options.target,
+      filter: this.data.filter,
+      returnUrl: this.data.returnUrl,
+    };
 
-    handleError: function (self, xhr, status, error) {
-      // show the alert message and hide the spinner
-      self.$('.alert').html(error.message || error);
-      self.$('.alert').show();
-      self.$('.spinner').hide();
-    },
+    var template = _.template(AdminUserTemplate)(data);
+    this.$el.html(template);
+    this.rendered = true;
+    // fetch user data
+    this.fetchData(this.data);
+    this.data.target = this.options.target;
+    $('#search-results-loading').hide();
+  },
 
-    adminCreate: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var t = $(e.currentTarget);
-      var id = $(t.parents('tr')[0]).data('id');
-      this.updateUser(t, {
-        id: id,
-        isAdmin: true,
-        url: '/api/admin/admin/' + id + '?action=true'
-      });
-    },
-
-    adminRemove: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var t = $(e.currentTarget);
-      var id = $(t.parents('tr')[0]).data('id');
-      this.updateUser(t, {
-        id: id,
-        isAdmin: false,
-        url: '/api/admin/admin/' + id + '?action=false'
-      });
-    },
-
-    adminEnable: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var t = $(e.currentTarget);
-      var id = $(t.parents('tr')[0]).data('id');
-      this.updateUser(t, {
-        id: id,
-        disabled: false,
-        url: '/api/user/enable/' + id
-      });
-    },
-
-    adminDisable: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var t = $(e.currentTarget);
-      var id = $(t.parents('tr')[0]).data('id');
-      this.updateUser(t, {
-        id: id,
-        disabled: true,
-        url: '/api/user/disable/' + id
-      });
-    },
-
-    adminUnlock: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      var t = $(e.currentTarget);
-      var id = $(t.parents('tr')[0]).data('id');
-      this.updateUser(t, {
-        id: id,
-        passwordAttempts: 0,
-        url: '/api/admin/unlock/' + id
-      });
-
-    },
-
-    updateUser: function (t, data) {
-      var self = this;
-      var spinner = $($(t.parent()[0]).children('.btn-spin')[0])
-      spinner.show();
-      t.hide();
-      if (data.url) {
-        $.ajax({
-          url: data.url,
-          dataType: 'json',
-          success: function (d) {
-            // hide the spinner
-            spinner.hide();
-            // show the opposite button
-            if (data.disabled === true) {
-              $(t.siblings(".admin-user-enable")[0]).show();
-            }
-            if (data.disabled === false) {
-              $(t.siblings(".admin-user-disable")[0]).show();
-            }
-            if (data.isAdmin === true) {
-              $(t.siblings(".admin-user-rmadmin")[0]).show();
-            }
-            if (data.isAdmin === false) {
-              $(t.siblings(".admin-user-mkadmin")[0]).show();
-            }
-          },
-          error: function (xhr, status, error) {
-            self.handleError(self, xhr, status, error);
+  inviteMembers: function (e) {
+    e.preventDefault();
+    if (this.modalComponent) this.modalComponent.cleanup();
+    $('body').addClass('modal-is-open');
+    var modalContent = _.template(InviteMembersTemplate)(this.community);
+    this.modalComponent = new Modal({
+      el: '#site-modal',
+      id: 'invite-member-modal',
+      modalTitle: 'Add member to community',
+      modalBody: modalContent,
+      validateBeforeSubmit: true,
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          $('#community-add-member').select2('destroy');
+          this.modalComponent.cleanup();
+        }.bind(this),
+      },
+      primary: {
+        text: 'Add member',
+        action: function () {
+          $('#community-add-member-alert').hide();
+          $('#community-add-member').select2('close');
+          if(!validate( { currentTarget: $('#community-add-member') } )) {
+            var data = {
+              communityId: $('#community-add-member').data('communityid'),
+              userId: $('#community-add-member').select2('data').id,
+            };
+            $.ajax({
+              url: '/api/community/' + data.communityId + '/member',
+              type: 'POST',
+              data: data,
+              success: function () {
+                $('#community-add-member').select2('destroy');
+                this.modalComponent.cleanup();
+                this.fetchData({ page: 1 });
+              }.bind(this),
+              error: function (err) {
+                if(err.status == 403) {
+                  this.modalComponent.cleanup();
+                } else {
+                  this.modalComponent.displayError(err.responseText);
+                }
+              }.bind(this),
+            });
           }
-        });
-      }
-    },
+        }.bind(this),
+      },
+      cleanup: function () {
+        $('#community-add-member').select2('destroy');
+      },
+    }).render();
 
-    resetPassword: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      if (this.passwordView) { this.passwordView.cleanup(); }
-      if (this.modalComponent) this.modalComponent.cleanup();
+    setTimeout(function () {
+      this.initializeInviteMemberSearch();
+    }.bind(this), 100);
+  },
 
-      var tr = $($(e.currentTarget).parents('tr')[0]);
-      var user = {
-        id: tr.data('id'),
-        name: $(tr.find('td.admin-table-name')[0]).text().trim()
-      };
+  initializeInviteMemberSearch: function () {
+    $('#community-add-member').select2({
+      placeholder: 'Search for a user',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/user',
+        dataType: 'json',
+        data: function (term) {
+          return { q: term };
+        },
+        results: function (data) {
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No user found by that name',
+    });
+    $('#community-add-member').on('change', function (e) {
+      validate({ currentTarget: $('#community-add-member') });
+    }.bind(this));
+    $('#community-add-member').focus();
+  },
 
-      // set up the modal
-      this.modalComponent = new ModalComponent({
-        el: "#reset-password-container",
-        id: "reset-password-modal",
-        modalTitle: "Reset Password"
-      }).render();
+  removeMember: function (event) {
+    event.preventDefault && event.preventDefault();
+    $.ajax({
+      url: '/api/admin/community/' + this.community.communityId + '/member/' + $(event.currentTarget).data('userId') + '?action=remove',
+      dataType: 'json',
+      success: function () {
+        $(event.currentTarget).closest('tr').remove();
+      },
+    });
+  },
 
-      // initialize the view inside the modal
-      this.passwordView = new AdminUserPasswordView({
-        el: ".modal-template",
-        user: user
-      }).render();
+  renderUsers: function () {
+    this.data.urlbase = '/admin/users';
+    this.data.q = this.data.filter || '';
+    this.limit = this.limit || this.data.limit;
+    this.data.trueLimit = this.limit;
+    this.data.login = LoginConfig;
+    this.data.user = window.cache.currentUser;
 
-      // render the modal
-      this.$("#reset-password-modal").modal('show');
-    },
+    this.data.firstOf = this.data.page * this.data.limit - this.data.limit + 1;
+    this.data.lastOf = this.data.page * this.data.limit - this.data.limit + this.data.users.length;
+    this.data.countOf = this.data.count;
+    this.data.target = this.options.target;
+    this.data.isAdministrator = this.isAdministrator;
+    this.data.isApprover = this.isApprover;
 
-    cleanup: function () {
-      removeView(this);
-    },
-  });
+    this.renderSelectedUsers();
+  },
 
-  return AdminUserView;
+  renderSelectedUsers: function () {
+    // render the table
+    var template;
+    if (this.options.target === 'community') {
+      template = _.template(AdminCommunityUserTable)(this.data);
+    }  else {
+      template = _.template(AdminUserTable)(this.data);
+    } 
+
+    // render the pagination
+    this.renderPagination(this.data);
+    // this.$('#filter-count').html(this.data.users.length);
+    //this.$('.usajobs-search-controls__sort-control option[value='+ this.data.sort +']').attr('selected', true);
+    this.$('#user-table').html(template);
+    this.$('.btn').tooltip();
+    this.$('#user-table').show();
+    window.scrollTo(0, 0);
+    this.$el.localize();
+  },
+
+  renderPagination: function (data) {
+    data.pages = [];
+    data.numberOfPages = Math.ceil(data.count/data.trueLimit);
+    if(data.numberOfPages < 8) {
+      for (var j = 1; j <= data.numberOfPages; j++)
+        data.pages.push(j);
+    } else if (data.page < 5) {
+      data.pages = [1, 2, 3, 4, 5, 0, data.numberOfPages];
+    } else if (data.page >= data.numberOfPages - 3) {
+      data.pages = [1, 0];
+      for (var i = data.numberOfPages - 4; i <= data.numberOfPages; i++)
+        data.pages.push(i);
+    } else {
+      data.pages = [1, 0, data.page - 1, data.page, data.page + 1, 0, data.numberOfPages];
+    }
+    
+    data.firstOf = data.page * data.trueLimit - data.trueLimit + 1;
+    data.lastOf = data.page * data.trueLimit - data.trueLimit + data.users.length;
+    data.countOf = data.count;
+
+    var paginate = _.template(Paginate)(data);
+    this.$('#user-page').html(paginate);
+  },
+
+  clickPage: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    this.data.page = $(e.currentTarget).data('page');
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
+  },
+
+  filter: function (e) {
+    var val = $('#user-filter').val().trim();
+    if (val == this.data.filter) {
+      return;
+    }
+    this.data.filter = val;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
+  },
+
+  fetchData: function (data) {
+    // perform the ajax request to fetch the user list
+    var url = '/api/admin';
+    if (this.options.target !== 'sitewide') {
+      url += '/' + this.options.target + '/' + this.options.targetId;
+    }
+    url += '/users';
+
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      data: {
+        page: this.data.page,
+        filter: this.data.filter,
+        sort: this.data.sort,
+      },
+      success: function (data) {
+        _.extend(this.data, data);
+        this.renderUsers();
+        $('.tip').tooltip();
+      }.bind(this),
+    });
+  },
+
+  getUrlFor: function (id, elem) {
+    switch (elem.data('action')) {
+      case 'user':
+        return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
+      case 'sitewide':
+        return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
+      case 'sitewide-approver':
+        return '/api/admin/approver/' + id + '?action=' + elem.prop('checked');
+      case 'agency':
+        return '/api/admin/agencyAdmin/' + id + '?action=' + elem.prop('checked');
+      case 'community':
+        return '/api/admin/communityAdmin/' + id + '/' + this.community.communityId + '?action=' + elem.prop('checked');
+      case 'approver':
+        return '/api/admin/community/' + this.community.communityId + '/approver/' + id + '?action=' + elem.prop('checked');
+      case 'member':
+        return '/api/admin/community/' + this.community.communityId + '/member/' + id + '?action=' + elem.prop('checked');
+    }
+  },
+
+  generateURL: function () {
+    var url = window.location.pathname;
+    url += '?p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    if (this.options.target === 'agency') {
+      url +='&id=' + this.agency.agencyId;
+    } else if(this.options.target === 'community') {
+      url +='&id=' + this.community.communityId ;
+    }
+    return url;
+  },
+
+  toggleCheckbox: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    var id = $(t.parents('tr')[0]).data('id');
+    var username = $(t.parents('tr')[0]).data('user-name');
+
+    if (t.hasClass('assign-admin')) { 
+      this.confirmAdminAssign(t, {
+        id: id,
+        name: username,
+        agency: this.agency.name,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else if (t.hasClass('assign-approver')) { 
+      this.confirmApproverAssign(t, {
+        id: id,
+        name: username,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else {
+      this.updateUser(t, {
+        id: id,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    }
+  },
+
+  isAdministrator: function (user, target) {
+    return (target == 'sitewide' && user.isAdmin) ||
+      (target == 'agency' && user.isAgencyAdmin) ||
+      (target == 'community' && user.is_manager);
+  },
+
+  isApprover: function (user, target) {
+    return (target == 'sitewide' && user.is_approver) || (target == 'community' && user.is_approver);
+  },
+
+  updateUser: function (t, data) {
+    var spinner = $($(t.parent()[0]).children('.icon-spin')[0]);
+    // Show spinner and hide checkbox
+    spinner.show();
+    t.siblings('label').hide();
+    if (data.url) {
+      $.ajax({
+        url: data.url,
+        dataType: 'json',
+        success: function (d) {
+          // Hide spinner and show checkbox
+          spinner.hide();
+          t.siblings('label').show();
+          t.prop('checked', data.checked);
+        },
+      });
+    }
+  },
+
+  confirmAdminAssign: function (t, data) {
+    this.modal = new Modal({
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' administrator</strong>?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+         
+          if(this.data.target =='sitewide'){
+            window.cache.currentUser.isAdmin = data.checked;
+          }
+          this.modal.cleanup();       
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.modal.render();
+  },
+
+  confirmApproverAssign: function (t, data) {
+    this.modal = new Modal({
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' ' + (this.data.target == 'community' ? 'BIC' : 'approver'),
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as a <strong>' + (data.agency ? data.agency : this.data.target) + ' ' + (this.data.target == 'community' ? ' BIC' : 'approver') + '</strong>?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.modal.render();
+  },
+
+  resetPassword: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (this.passwordView) { this.passwordView.cleanup(); }
+    if (this.modalComponent) this.modalComponent.cleanup();
+
+    var tr = $($(e.currentTarget).parents('tr')[0]);
+    var user = {
+      id: tr.data('id'),
+      name: $(tr.find('td.admin-table-name')[0]).text().trim(),
+      email: $(tr.find('td.admin-table-username')[0]).text().trim(),
+    };
+
+    $('body').addClass('modal-is-open');
+
+    this.modal = new Modal({
+      el: '#site-modal',
+      id: 'reset-password',
+      modalTitle: 'Reset Password',
+      modalBody: 'Click <strong>Send email</strong> below to send an email to <strong>' + user.name + '</strong> to reset their password.',
+      primary: {
+        text: 'Send email',
+        action: function () {
+          this.submitReset.bind(this)(user.email);
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Close',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    }).render();
+  },
+
+  sortUsers: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.sort = target.value;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.loadData();
+    window.scrollTo(0, 0);
+  },
+
+  submitReset: function (email) {
+    var data = {
+      username: email,
+    };
+    $.ajax({
+      url: '/api/auth/forgot',
+      type: 'POST',
+      data: data,
+    }).done(function (success) {
+      $('.usajobs-modal__canvas-blackout').remove();
+      $('.modal-is-open').removeClass();
+      this.modal.cleanup();
+    }.bind(this)).fail(function (error) {
+      this.displayError('confirm-publish', 'There was an error sending the Reset password email.');
+      $('#primary-btn').hide();
+    }.bind(this));
+  },
+
+  cleanup: function () {
+    removeView(this);
+  },
+
 });
+
+module.exports = AdminUserView;

@@ -1,0 +1,7 @@
+<p>Hi <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>Great news-you’ve been selected to participate in <a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a>!</p>
+
+<p>What happens next?<br/>
+The person who created the opportunity will reach out to you soon to get you started. In the meantime, read the opportunity details:<br/>
+<a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- globals.urlPrefix %>/tasks/<%- task.id %></a></p>

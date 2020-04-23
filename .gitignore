@@ -1,38 +1,44 @@
+# Ignore test results and coverage
+test/results/*
 lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
+coverage/*
+
+# don't want to check it in temporary import data
+tools/import/*
 
 pids
 logs
 results
 
+.env*
+.cf-env
+cf-ssh.yml
+*credentials.json
+
 npm-debug.log
+
+.node_history
+
 # Ignore modules, should be built using `node install`
 node_modules
+
 # Ignore sails.js filesystem database
 .tmp/
 
-# Ignore the configuration files
+# Ignore the local configuration file
 config/local.js
-config/i18next.js
-config/settings/auth.js
-config/settings/sources.js
-config/settings/tags.js
-config/settings/emailTemplates.js
-config/settings/notifications.js
-config/settings/analytics.js
-assets/js/backbone/config/login.json
 
 # Ignore production files
-assets/prod/js
-assets/prod/css
-assets/prod/font
-assets/prod/fonts
+assets/build
+assets/uploads
+assets/js/bundle.js
+assets/styles/main.css
+dist/
+bin/
+
+# Ignore uswds files, these are set up during npm install
+assets/styles/uswds.css
+assets/images/uswds
 
 # Ignore vagrant & chef tmp files
 .vagrant/*
@@ -42,6 +48,10 @@ chef/cookbooks/*
 *~
 *#
 *.bak
+*.swp
+
+# ignore vscode config file
+.vscode/*
 
 .DS_STORE
 .tmp
@@ -50,3 +60,16 @@ chef/cookbooks/*
 # ruby version manager
 .rvmrc
 
+# code coverage
+coverage
+.nyc_output
+
+.python-version
+.sass-cache/*
+npm-debug.log*
+
+# Temporary root directory
+tmp/
+
+# ignore npm audit
+.audit

@@ -1,0 +1,56 @@
+
+<div class="usa-width-one-third admin-dos-interactions ">
+  <h3><i class="fa fa-rocket "></i><span class="box-icon-text">Internships <a href="/admin/community/<%=community.communityId %>/tasks?cid=<%=cycleId %>" class="admin-manage-link">Manage</a></span></h3>
+  <ul class="usajobs-unstyled-list">
+    <li>Total created: <%- numeral(community.totalTasks).format('0,0') %></li>
+    <% if (community.duration == 'Cyclical') { %>
+      <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>         
+      <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
+      <li>Approved: <%- numeral((_.findWhere(community.tasks, { task_state: 'approved' }) || {}).count).format('0,0') %></li>
+      <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
+      <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>    
+    <% } %>
+  </ul>
+  <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+    <div class="export-button tip admin-dos-interactions " data-toggle="tooltip" data-placement="bottom"
+    title="Download list of internships as a comma-separated file ready for import into Excel">        
+      <a href="/api/admin/export/community/internships/<%- community.communityId %>/<%- cycleId %>/">    
+      <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download list (.csv)</span>
+      </a>
+    </div> 
+  <% } %>
+</div>
+<div class="usa-width-one-third admin-dos-interactions ">
+  <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+  <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+    <a href="/admin/community/<%=community.communityId %>/applicants?cid=<%=cycleId %>" class="admin-manage-link">Search applications</a>
+  <% } %>
+  <ul class="usajobs-unstyled-list">
+    <h4>Completed applications</h4>
+    <li>Applications submitted: <%- community.interactions.submittedtotal %></li>             
+  </ul>
+  <ul class="usajobs-unstyled-list">
+    <h4>Incomplete applications</h4>
+    <li>Applications on Next Steps: <%- community.interactions.step0nextsteptotal %></li>
+    <li>Applications on step 1 - Select Internships: <%- community.interactions.step1selectinternshiptotal %></li>
+    <li>Applications on step 2 - Experiences & References: <%- community.interactions.step2expreftotal %></li>
+    <li>Applications on step 3 - Education & Transcript: <%- community.interactions.step3educationtotal %></li>
+    <li>Applications on step 4 - Languages & Skills: <%- community.interactions.step4languagetotal %></li>
+    <li>Applications on step 5 - Statement of interest: <%- community.interactions.step5statementtotal %></li>
+    <li>Applications on step 6 - Review application: <%- community.interactions.step6reviewtotal %></li>
+  </ul>
+  <ul class="usajobs-unstyled-list">
+    <h4>Student interns:</h4>
+    <li>Primary selections: <%- community.interactions.primarycount %></li> 
+    <li>Alternate selections: <%- community.interactions.alternatecount %></li>
+    <li>Successfully completed: <%- community.interactions.internshipcompletetotal %></li>         
+  </ul>
+  <% if(window.cache.currentUser.isAdmin || _.findWhere(window.cache.currentUser.communityAdmin, { communityId: community.communityId })) { %>
+    <div class="export-button tip admin-dos-interactions" data-toggle="tooltip" data-placement="bottom"
+      title="Download list of all interactions as a comma-separated file ready for import into Excel">        
+      <a href="/api/admin/export/community/Interactions/<%- community.communityId %>/<%- cycleId %>/">    
+        <i class="fa fa-download"></i><span class="opportunities-created--download box-icon-text">Download list (.csv)</span>
+      </a>
+    </div>
+  <% } %>
+</div>

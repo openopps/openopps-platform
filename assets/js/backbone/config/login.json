@@ -1,0 +1,23 @@
+{
+  "signin": true,
+  "local": {
+    "enabled": true,
+    "expand": true,
+    "logout": true
+  },
+  "terms": {
+    "enabled": false,
+    "name": "Terms and Conditions",
+    "link": "https://usajobs.github.io/openopps-help/terms-and-conditions/"
+  },
+  "profile": {
+    "edit": true,
+    "editUrl": null
+  },
+  "agency": {
+    "enabled": true
+  },
+  "location": {
+    "enabled": true
+  }
+}

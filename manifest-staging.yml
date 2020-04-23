@@ -1,0 +1,6 @@
+---
+inherit: manifest.yml
+no-hostname: true
+domain: openopps.uat.usajobs.gov
+instances: 1
+memory: 512M

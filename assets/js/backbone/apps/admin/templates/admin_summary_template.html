@@ -1,0 +1,38 @@
+<div class="usajobs-grid-full">
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <% if (window.cache.currentUser.isAdmin) { %><a href="/admin/users" class="admin-manage-link">Manage</a><% } %></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total users: <%- numeral(users.total).format('0,0') %></li>
+      <li>Active users: <%- numeral(users.active).format('0,0') %></li>
+      <li>Admins: <%- numeral(users.admins).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/tasks" class="admin-manage-link">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total created: <%- numeral(tasks.totalCreated).format('0,0') %>
+        <ul class="usajobs-unstyled-list submetrics">
+          <li>One-time: <%- numeral(tasks.oneTime).format('0,0') %></li>
+          <li>Ongoing: <%- numeral(tasks.onGoing).format('0,0') %></li>
+          <li>Part-time detail: <%- numeral(tasks.partTime).format('0,0') %></li>
+          <li>Full-time detail: <%- numeral(tasks.fullTime).format('0,0') %></li>
+        </ul>
+      </li>
+      <li>Submitted: <%- numeral(tasks.submitted).format('0,0') %></li>
+      <li>Open: <%- numeral(tasks.open).format('0,0') %></li>
+      <li>Not open: <%- numeral(tasks.notOpen).format('0,0') %></li>
+      <li>In progress: <%- numeral(tasks.inProgress).format('0,0') %></li>
+      <li>Completed: <%- numeral(tasks.completed).format('0,0') %></li>
+      <li>Canceled: <%- numeral(tasks.canceled).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Total applications: <%- numeral(interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(interactions.posts).format('0,0') %></li>
+    </ul>
+  </div>
+</div>

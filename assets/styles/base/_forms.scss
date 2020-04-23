@@ -1,0 +1,394 @@
+// Forms
+
+.usajobs-form,
+.usajobs-content-well .usajobs-form {
+  max-width: inherit;
+
+  @include media($L) {
+    max-width: inherit;
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    select,
+    textarea,
+    input {
+      font-size: 17px;
+    }
+  }
+
+  legend {
+    width: 100%;
+    font-size: $h3-font-size;
+  }
+
+  &__legend {
+    display: block;
+    font-style: italic;
+    font-size: $base-font-size;
+    font-weight: normal;
+    color: $color-base;
+    line-height: $base-line-height;
+    margin-bottom: $size-S;
+    margin-top: $size-S;
+
+    @include media($M) {
+      display: inline-block;
+      float: right;
+    }
+  }
+
+  .usajobs-fieldset {
+    width: 100%;
+    margin-bottom: $size-L;
+
+    &.first {
+      margin-top: $size-L;
+    }
+
+    legend {
+      @include h3();
+      margin: $size-M 0;
+      padding: 0 0 $size-S;
+      color: $color-primary-darkest;
+      border-bottom: 1px solid $color-primary-darkest;
+
+      & + label,
+      & + p {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .usajobs-fieldset--horizontal {
+    label {
+      @include media($L) {
+        margin-top: 0;
+      }
+    }
+
+    .usa-input-error {
+      padding-top: 0;
+      padding-left: $size-S;
+
+      @include media($L) {
+        margin-top: 0;
+        padding-left: $size-default;
+      }
+    }
+
+    &__col,
+    &__col-right {
+      @include media($ML) {
+        @include span-columns(3, 6);
+      }
+
+      @include media($L) {
+        @include span-columns(6, 12);
+      }
+    }
+
+    &__col-right {
+      @include media($ML) {
+        @include omega();
+      }
+
+      @include media($L) {
+        @include omega();
+      }
+    }
+
+    &__row {
+      margin-top: $size-M;
+      max-width: $input-max-width;
+
+      @include media($ML) {
+        @include row();
+        margin-top: 0;
+        max-width: inherit;
+        text-align: right;
+      }
+
+      @include media($L) {
+        @include span-columns(12, 12);
+        text-align: right;
+      }
+    }
+  }
+
+  &__container {
+    clear: both;
+  }
+
+  &__help-brief {
+    margin-top: $size-base;
+    font-size: $small-font-size;
+    max-width: $input-max-width;
+  }
+
+  &__help-extended {
+    margin: $size-S 0;
+    padding: $size-default;
+    background-color: $color-primary-alt-lightest;
+    max-width: $input-max-width;
+
+    h3,
+    h4,
+    h5 {
+      margin-top: 0;
+    }
+  }
+
+  &__help-detailed {
+    margin-top: $size-default;
+    max-width: $input-max-width;
+
+    .usajobs-form__help-detailed-trigger {
+      background-color: $color-primary-alt-lightest;
+
+      &:hover {
+        background-color: $color-primary-alt-light;
+      }
+    }
+
+    .usajobs-form__help-detailed-content {
+      border-color: $color-primary-alt-lightest;
+    }
+  }
+
+  &__help-details {
+    max-width: $input-max-width;
+    font-size: $small-font-size;
+  }
+
+  .help-icon {
+    padding-left: $size-base;
+    color: $color-primary-darker;
+  }
+
+  &__sub-section {
+    margin-top: $size-L;
+  }
+
+  &__field-group {
+    margin-bottom: $size-XL;
+  }
+
+  // Select menus -- Chosen overrides
+  .chosen-container {
+    font-size: inherit;
+  }
+
+  .chosen-container .chosen-drop {
+    border: 1px solid $color-gray;
+    border-top: 0;
+    background: $color-white;
+    padding: 0 0.7em;
+    border-radius: 0;
+  }
+
+  .chosen-container-single .chosen-single {
+    padding: 0 0.7em;
+    height: 47px;
+    border: 1px solid $color-gray;
+    line-height: 46px;
+    color: $color-base;
+    font-size: $base-font-size;
+    max-width: $input-max-width;
+    width: 100%;
+    background-color: $color-white;
+    background-image: url('../img/arrow-down.png');
+    background-image: url('../img/arrow-down.svg');
+    background-position: right 1.3rem center;
+    background-repeat: no-repeat;
+    background-size: 1.3rem;
+    border-radius: 0;
+  }
+
+  .chosen-container-single .chosen-single abbr {
+    background: url('../img/chosen-sprite.png') -42px 1px no-repeat;
+  }
+
+  .chosen-container-single .chosen-search input[type="text"] {
+    margin: 1rem 0;
+    outline: 0;
+    border: 1px solid $color-gray-medium;
+    background-color: $color-white;
+    font-size: $base-font-size;
+    line-height: $base-line-height;
+    background: url('../img/chosen-sprite.png') no-repeat 100% -20px;
+  }
+
+  .chosen-container .chosen-results {
+    @include unstyledList();
+    display: block;
+    width: 100%;
+    color: $color-gray-dark;
+
+    li {
+      line-height: $base-line-height;
+    }
+  }
+
+  .chosen-container .chosen-results li.highlighted {
+    background-image: none;
+    background-color: $color-primary;
+    color: $color-white;
+  }
+
+  .chosen-container .chosen-results li.no-results {
+    color: $color-base;
+    padding: $size-S;
+  }
+
+  .chosen-container-active .chosen-single {
+    &:focus {
+      box-shadow: $focus-shadow;
+    }
+  }
+
+  .chosen-container-active.chosen-with-drop .chosen-single {
+    background-image: url('../img/arrow-up.png');
+    background-image: url('../img/arrow-up.svg');
+    border: 1px solid $color-gray;
+  }
+
+  .chosen-container-multi .chosen-choices {
+    @include unstyledList();
+    padding: 0 0.7em;
+    border: 1px solid $color-gray;
+    background-image: none;
+    box-shadow: none;
+  }
+
+  .chosen-container-multi .chosen-choices li.search-choice {
+    margin-top: rem(4px);
+    margin-bottom: rem(4px);
+    padding-top: $size-base;
+    padding-bottom: $size-base;
+    line-height: $base-line-height;
+    background-image: none;
+    background-color: $color-gray-lightest;
+  }
+
+  .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+    height: 43px;
+    font-family: $font-sans;
+  }
+
+  .chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+    background: url('../img/chosen-sprite.png') -42px 1px no-repeat;
+  }
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi), only screen and (min-resolution: 1.5dppx) {
+    .chosen-rtl .chosen-search input[type="text"],
+    .chosen-container-single .chosen-single abbr,
+    .chosen-container-single .chosen-single div b,
+    .chosen-container-single .chosen-search input[type="text"],
+    .chosen-container-multi .chosen-choices .search-choice .search-choice-close,
+    .chosen-container .chosen-results-scroll-down span,
+    .chosen-container .chosen-results-scroll-up span {
+      background-image: url('../img/chosen-sprite@2x.png') !important;
+    }
+  }
+}
+
+.usajobs-form-grid {
+  @include outer-container();
+
+  &__col,
+  &__col--right {
+    @include media($L) {
+      @include span-columns(6);
+    }
+  }
+
+  &__col--right {
+    @include media($L) {
+      @include omega();
+    }
+  }
+
+  &__full-col {
+    @include span-columns(12);
+  }
+}
+
+.usajobs-form--narrow,
+.usajobs-content-well .usajobs-form--narrow {
+  max-width: $input-max-width;
+
+  .usajobs-form__legend {
+    margin-bottom: $size-L;
+  }
+}
+
+// Inputs
+input[disabled],
+input[readonly],
+select[disabled] {
+  color: $color-gray;
+  border-color: $color-gray-lighter;
+  cursor: not-allowed;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+ input[type=number]::-webkit-outer-spin-button{
+   -webkit-appearance: none;
+   margin:0;
+ }
+
+ input[type=number] {-moz-appearance: textfield;}
+ 
+.usajobs-input-large {
+  max-width: 100%;
+}
+
+.usajobs-date-group {
+  @include clearfix();
+
+  &__title {
+    margin-bottom: 0;
+  }
+
+  label {
+    margin-top: 0;
+  }
+}
+
+.usa-input-error label {
+  font-weight: 700;
+}
+
+.usa-input-error {
+  .select2-choice, .select2-choices {
+    border: 3px solid #cd2026;
+  }
+}
+
+.usa-input-error .usa-datefield input {
+  width: 100%;
+}
+
+.field-validation-error {
+  color: $color-secondary-dark;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.usajobs-form__title {
+
+  &::after {
+    clear: both;
+    content: "";
+    display: block;
+  }
+}
+
+#form-community-cycles {
+  .usa-form-group-day,
+  .usa-form-group-month,
+  .usa-form-group-year {
+    display: inline-block;
+    float: none;
+  }
+}

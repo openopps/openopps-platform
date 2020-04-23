@@ -1,104 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="flexbox">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Viewport mobile tag for sensible mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title><%=typeof title == 'undefined' ? 'Open Opportunities' : title%></title>
 
-    <title><%- systemName %></title>
-
-    <!-- <script type="text/javascript" src="/js/vendor/sails/socket.io.js"></script> -->
-    <!-- then beef it up with some convenience logic for talking to Sails.js -->
-    <!-- <script type="text/javascript" src="/js/vendor/sails/sails.io.js"></script> -->
-    <!-- listen on socket.io for incoming messages -->
-    <!-- <script type="text/javascript" src="/js/vendor/sails/app.js"></script> -->
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94043649-2"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-94043649-2'); </script>
 
     <script type="text/javascript">
     systemName = <%- JSON.stringify(systemName) %>;
+    loginGov = <%- JSON.parse(loginGov) %>;
+    draftAdminOnly = <%- JSON.parse(draftAdminOnly) %>;
     version = <%- JSON.stringify(version) %>;
-    <% if (req.user) { %>
-    backendUser = <%- JSON.stringify(req.user[0]) %>;
-    <% } else { %>
-    backendUser = null;
-    <% } %>
+    usajobsURL = <%- JSON.stringify(usajobsURL) %>;
+    usajobsDataURL = <%- JSON.stringify(usajobsDataURL) %>;
     </script>
-    <!-- There be dragons here (aka, don't remove and put into require.js flow, as that fails 1/5 times) -->
-    <script type="text/javascript" src="/js/vendor/jquery.js"></script>
+    <script defer src="/js/fontawesome-all.js"></script>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="/js/vendor/html5shiv.js"></script>
-      <script src="/js/vendor/respond.js"></script>
-    <![endif]-->
-
-    <% if (sails.config.environment == 'development') { %>
-
-    <!-- Entry point for our app -->
-    <script type="text/javascript" src="/js/vendor/require.js"></script>
-    <script>
-      require.config({
-        baseUrl: '/js/backbone/apps'
-      })
-      require(['../config/require_config'], function() {
-        require(['app']);
-      });
-    </script>
-    <link rel="stylesheet" type="text/css" href="/styles/bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/font-custom/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="/js/vendor/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css"/>
-    <link rel="stylesheet" type="text/css" href="/js/vendor/jquery-timepicker/jquery.timepicker.css"/>
-    <link rel="stylesheet" type="text/css" href="/js/vendor/jquery-file-upload/css/jquery.fileupload.css"/>
-    <link rel="stylesheet" type="text/css" href="/js/vendor/select2/select2.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/application.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/theme.css" />
-
-    <% } else { %>
-
-    <script type="text/javascript" src="/prod/js/midas-<%= version.version %>.js"></script>
-    <link rel="stylesheet" type="text/css" href="/prod/css/midas-<%= version.version %>.min.css" />
-
-    <% } %>
-
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF token -->
+    <meta name="csrf-token" content="">
+    <link rel="stylesheet" href="/styles/main.css?v=<%- cssHash %>">
   </head>
 
   <body>
-    <div class="navigation">
+    <div class="usajobs-open-opps-search-results__loading" id="search-results-loading" style="-webkit-box-align: start; -moz-box-align: start; box-align: start; -webkit-align-items: flex-start; -moz-align-items: flex-start; -ms-align-items: flex-start; -o-align-items: flex-start; align-items: flex-start; -ms-flex-align: start; -webkit-box-pack: center; -moz-box-pack: center; box-pack: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center; justify-content: center; -ms-flex-pack: center; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(255,255,255,0.8); text-align: center; vertical-align: middle; z-index: 800; display: block;">
+      <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>
+      <span class="sr-only" style="border: 0; clip: rect(0,0,0,0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;">Loading</span>
     </div>
-
-    <%- body %>
-
-    <footer id="footer">
-    </footer>
-  <% if (sails.config.analytics && sails.config.analytics.google && sails.config.analytics.google.enabled == true) { %>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-     ga('create', '<%= sails.config.analytics.google.key %>', 'auto');
-     ga('send', 'pageview');
-   </script>  
-  <% } %>
-
-  <% if (sails.config.analytics && sails.config.analytics.piwik && sails.config.analytics.piwik.enabled == true) { %>
     <script type="text/javascript">
-      var _paq = _paq || [];
-      (function(){ var u=(("https:" == document.location.protocol) ? "https://<%= sails.config.analytics.piwik.host %>/" : "http://<%= sails.config.analytics.piwik.host %>/");
-      _paq.push(['setSiteId', <%= sails.config.analytics.piwik.key %>]);
-      _paq.push(['setTrackerUrl', u+'piwik.php']);
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript'; g.defer=true; g.async=true; g.src=u+'piwik.js';
-      s.parentNode.insertBefore(g,s); })();
+      // this will only return true for IE <= 8.
+      if (window.attachEvent && !window.addEventListener) {
+        document.write('<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert"><div class="usajobs-alert__figure"><div class="usajobs-alert__icon"></div></div><div class="usajobs-alert__body"><p class="usa-alert-text">You are using an old, unsupported version of Internet Explorer. This website may not work correctly in your browser. For the best experience, you should use <a href="http://www.google.com/chrome" class="alert-link">Google Chrome</a> or <a href="http://www.microsoft.com/InternetExplorer" class="alert-link">update Internet Explorer</a>.</p></div></div>');
+      }
     </script>
-  <% } %>
-
-  <% if (sails.config.analytics && sails.config.analytics.dap && sails.config.analytics.dap.enabled == true) { %>
-    <script id="_fed_an_ua_tag" type="text/javascript" src="<%= sails.config.analytics.dap.source%>"></script>
-  <% } %>
+    <header class="usajobs-site-header" aria-label="header" id="title">
+      <div class="usa-banner">
+        <div class="usa-accordion">
+          <div class="usa-banner-header">
+            <div class="usa-grid usa-banner-inner usajobs-nav--full_bleed__banner-inner">
+            <img src="/img/favicons/favicon-57.png" alt="U.S. flag">
+            <p>An official website of the United States government</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div id="site-modal"></div>
+    <div id="login-wrapper"></div>
+    <div class="navigation"></div>
+    <section class="usajobs-shell">
+      <% if (alert) { %>
+      <div class="container">
+        <div class="usa-alert usajobs-alert usajobs-alert--error server-alert" role="alert" data-object="alert">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <p class="usa-alert-text">
+              <%- alert.message %>
+            </p>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <%- body %>
+    </section>
+    <footer id="footer" class="usa-footer usa-footer-big usajobs-footer--openopps" role="contentinfo" aria-label="footer"></footer>
+    <script src="/js/bundle.min.js?v=<%- jsHash %>"></script>
   </body>
-
 </html>

@@ -1,0 +1,140 @@
+.usajobs-grid,
+.usajobs-grid-full {
+  @include outer-container();
+  max-width: $site-max-width;
+
+  @include media($M) {
+    .usa-width-one-whole,
+    .usajobs-width-one-whole {
+      @include span-columns(6);
+    }
+    .usa-width-one-half,
+    .usajobs-width-one-half {
+      @include span-columns(3);
+    }
+    .usa-width-one-third,
+    .usajobs-width-one-third {
+      @include span-columns(2);
+    }
+    .usa-width-two-thirds,
+    .usajobs-width-two-thirds {
+      @include span-columns(4);
+    }
+    .usa-width-one-fourth,
+    .usajobs-width-one-fourth {
+      @include span-columns(3);
+
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+    }
+    .usa-width-three-fourths,
+    .usajobs-width-three-fourths {
+      @include span-columns(6);
+    }
+    .usa-width-one-sixth,
+    .usajobs-width-one-sixth {
+      @include span-columns(2);
+
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+    }
+    .usa-width-five-sixths,
+    .usajobs-width-five-sixths {
+      @include span-columns(5);
+    }
+    .usa-width-one-twelfth,
+    .usajobs-width-one-twelfth {
+      @include span-columns(2);
+
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  @include media($L) {
+    .usa-width-one-whole,
+    .usajobs-width-one-whole {
+      @include span-columns(12);
+    }
+    .usa-width-one-half,
+    .usajobs-width-one-half {
+      @include span-columns(6);
+    }
+    .usa-width-one-third,
+    .usajobs-width-one-third {
+      @include span-columns(4);
+    }
+    .usa-width-two-thirds,
+    .usajobs-width-two-thirds {
+      @include span-columns(8);
+    }
+    .usa-width-one-fourth,
+    .usajobs-width-one-fourth {
+      @include span-columns(3);
+
+      &:nth-child(2n) {
+        @include span-columns(3);
+      }
+
+      &:nth-child(4n) {
+        margin-right: 0;
+      }
+    }
+    .usa-width-three-fourths,
+    .usajobs-width-three-fourths {
+      @include span-columns(9);
+    }
+    .usa-width-one-sixth,
+    .usajobs-width-one-sixth {
+      @include span-columns(2);
+
+      &:nth-child(3n) {
+        @include span-columns(2);
+      }
+
+      &:nth-child(6n) {
+        margin-right: 0;
+      }
+    }
+    .usa-width-five-sixths,
+    .usajobs-width-five-sixths {
+      @include span-columns(10);
+    }
+    .usa-width-one-twelfth,
+    .usajobs-width-one-twelfth {
+      @include span-columns(1);
+
+      &:nth-child(3n) {
+        @include span-columns(1);
+      }
+
+      &:nth-child(12n) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  // Specificies end of a row.
+  // Required if grid-box contains multiple rows.
+  // Required if browser does not support :last-child
+  .usa-end-row,
+  .usajobs-end-row {
+    @include omega();
+  }
+}
+
+.usajobs-grid {
+  padding: 0 $size-default;
+
+  @include media($ML) {
+    padding-left: $size-M;
+    padding-right: $size-M;
+  }
+}
+
+.usajobs-grid-full {
+  padding: 0;
+}

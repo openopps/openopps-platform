@@ -1,0 +1,42 @@
+// Breakpoints
+
+$SM-screen:    30em;      //  480px at 16px base font - USDS standard
+$M-screen:     37.5em;    //  600px at 16px base font - USDS standard
+$ML-screen:    48em;      //  768px at 16px base font
+$MLL-screen:   62em;      //  Alias for L (backward compatibility)
+$L-screen:     62em;      //  992px at 16px base font
+$XL-screen:    75em;      // 1200px at 16px base font - USDS standard
+$XXL-screen:   85.375em;  // 1366px at 16px base font
+$XXXL-screen:  100em;     // 1600px at 16px base font
+$XXXXL-screen: 120em;     // 1920px at 16px base font
+
+// min-width
+$SM:    new-breakpoint(min-width $SM-screen 2);
+$M:     new-breakpoint(min-width $M-screen 6);
+$ML:    new-breakpoint(min-width $ML-screen 6);
+// $MLL is replaced by $L as of 02/2016
+$MLL:   new-breakpoint(min-width $MLL-screen 12);
+$L:     new-breakpoint(min-width $L-screen 12);
+$XL:    new-breakpoint(min-width $XL-screen 12);
+$XXL:   new-breakpoint(min-width $XXL-screen 12);
+$XXXL:  new-breakpoint(min-width $XXXL-screen 16);
+$XXXXL: new-breakpoint(min-width $XXXXL-screen 16);
+
+// max-width
+$SM-down:    new-breakpoint(max-width ($SM-screen - .001em) 2);
+$M-down:     new-breakpoint(max-width ($M-screen - .001em) 6);
+$ML-down:    new-breakpoint(max-width ($ML-screen - .001em) 6);
+$L-down:     new-breakpoint(max-width ($L-screen - .001em) 12);
+$XL-down:    new-breakpoint(max-width ($XL-screen - .001em) 12);
+$XXL-down:   new-breakpoint(max-width ($XXL-screen - .001em) 12);
+$XXXL-down:  new-breakpoint(max-width ($XXXL-screen - .001em) 16);
+$XXXXL-down: new-breakpoint(max-width ($XXXXL-screen - .001em) 16);
+
+// In between points
+$SM-only:   new-breakpoint(min-width $SM-screen max-width ($M-screen - .001em));
+$M-only:    new-breakpoint(min-width $M-screen max-width ($ML-screen - .001em));
+$ML-only:   new-breakpoint(min-width $ML-screen max-width ($L-screen - .001em));
+$L-only:    new-breakpoint(min-width $L-screen max-width ($XL-screen - .001em));
+$XL-only:   new-breakpoint(min-width $XL-screen max-width ($XXL-screen - .001em));
+$XXL-only:  new-breakpoint(min-width $XXL-screen max-width ($XXXL-screen - .001em));
+$XXXL-only: new-breakpoint(min-width $XXXL-screen max-width ($XXXXL-screen - .001em));

@@ -1,0 +1,2 @@
++--timeout 1s
++--slow 500ms

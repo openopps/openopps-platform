@@ -1,0 +1,15 @@
+// Shared libraries and utilities.
+// These are loaded by every component to get at library mixins and design system variables.
+
+@import 'bourbon';
+@import 'neat';
+
+// @import 'core/variables';
+@import 'base/variables';
+@import 'base/utilities';
+@import 'base/accessibility';
+@import 'base/breakpoints';
+
+// NOTE: We deliberately don't include font-awesome in here because
+//       not every component needs it and the Help Center needs a build
+//       that does not include it.

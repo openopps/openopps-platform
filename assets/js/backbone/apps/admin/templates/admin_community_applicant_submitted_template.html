@@ -1,0 +1,67 @@
+<div class="usajobs-content-gutter opportunity-gutter internship">
+<main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+   
+        <div class="usajobs-profile-home-section">     
+          <h2 class="usajobs-profile-home-section__title"><%= studentName %>'s application</h2>
+          <fieldset class="usajobs-fieldset">
+            <div class="usajobs-profile-home-section__body">
+              <h3 class="usajobs-profile-home-section__sub-section">
+                Selected internship opportunities
+              </h3>
+            </div>
+            <div class="usajobs-profile-home-section__body usajobs-profile-home-section__body-has-drawers">
+              <% if (firstChoice) { %>
+                <div class="usajobs-card--large review-application">
+                  <h4>1st choice</h4>
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- firstChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- firstChoice.bureau %><% if (firstChoice.office) { %>/<%- firstChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+              <% } %>
+              <% if (secondChoice) { %>
+                <div class="usajobs-card--large review-application">
+                  <h4>2nd choice</h4>
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- secondChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- secondChoice.bureau %><% if (secondChoice.office) { %>/<%- secondChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+              <% } %>
+              <% if (thirdChoice) { %>
+                <div class="usajobs-card--large review-application">
+                  <h4>3rd choice</h4>
+                  <h3 class="usajobs-card__title" itemprop="title">
+                    <%- thirdChoice.title %>
+                  </h3>
+                  <div class="usajobs-card__body">
+                    <h5 class="program-label">
+                      Bureau/Office
+                    </h5>
+                    <p>
+                      <%- thirdChoice.bureau %><% if (thirdChoice.office) { %>/<%- thirdChoice.office %><% } %>
+                    </p>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+            <div class="usajobs-profile-home-section__body submitted-application-last">        
+            </div>
+          </fieldset>
+        </div>
+      </main>
+    </div>

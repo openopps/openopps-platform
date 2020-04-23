@@ -1,0 +1,73 @@
+<div class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text"></p>
+  </div>
+</div>
+<% if (departments) { %>
+  <div class="usajobs-grid-full">
+    <div class="usa-width-one-whole">
+      <fieldset class="usajobs-fieldset">
+        <legend class="usa-sr-only">Select agency</legend>
+        <label for="agencies" class="usa-sr-only">Agency</label>
+        <select id="agencies" class="dropdown">
+          <% _.each(departments, function (d) { %>
+            <optgroup label="<%- d.name %>">
+              <% _.each(d.agencies, function (a) { %>}
+                <option value=<%- a.agencyId %> <% if (a.agencyId == agency.agencyId) { %>selected<% } %>><%- a.name %></option>
+              <% }); %>
+            </optgroup>
+          <% }); %>
+        </select>
+      </fieldset>
+    </div>
+  </div>
+<% } else { %>
+  <h2 class="admin-agency-name"><%= agency.name %></h2>
+<% } %>
+<div class="usajobs-grid-full">
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-user"></i><span class="box-icon-text">Users <a href="/admin/agency/<%=agency.agencyId%>/users" class="admin-manage-link">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total users: <%- numeral(agency.users.total).format('0,0') %></li>
+      <li>Active users: <%- numeral(agency.users.active).format('0,0') %></li>
+      <li>Admins: <%- numeral(agency.users.admins).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-rocket"></i><span class="box-icon-text">Opportunities <a href="/admin/agency/<%=agency.agencyId%>/tasks" class="admin-manage-link">Manage</a></span></h3>
+    <ul class="usajobs-unstyled-list">
+      <li>Total created: <%- numeral(agency.tasks.totalCreated).format('0,0') %></li>
+        <ul class="usajobs-unstyled-list submetrics">
+          <li>One-time: <%- numeral(agency.tasks.oneTime).format('0,0') %></li>
+          <li>Ongoing: <%- numeral(agency.tasks.onGoing).format('0,0') %></li>
+          <li>Part-time detail: <%- numeral(agency.tasks.partTime).format('0,0') %></li>
+          <li>Full-time detail: <%- numeral(agency.tasks.fullTime).format('0,0') %></li>
+        </ul>
+      </li>
+      <li>Submitted: <%- numeral(agency.tasks.submitted).format('0,0') %></li>
+      <li>Open: <%- numeral(agency.tasks.open).format('0,0') %></li>
+      <li>Not open: <%- numeral(agency.tasks.notOpen).format('0,0') %></li>
+      <li>In progress: <%- numeral(agency.tasks.inProgress).format('0,0') %></li>
+      <li>Completed: <%- numeral(agency.tasks.completed).format('0,0') %></li>
+      <li>Canceled: <%- numeral(agency.tasks.canceled).format('0,0') %></li>
+    </ul>
+  </div>
+  <div class="usa-width-one-third">
+    <h3><i class="fa fa-chart-line"></i><span class="box-icon-text">Interactions</span></h3>
+    <ul class="usajobs-unstyled-list">
+        <li>Total applications: <%- numeral(agency.interactions.signups).format('0,0') %></li>
+        <li>Total assigned: <%- numeral(agency.interactions.assignments).format('0,0') %></li>
+        <li>Total completed: <%- numeral(agency.interactions.completions).format('0,0') %></li>
+        <li>Discussion posts: <%- numeral(agency.interactions.posts).format('0,0') %></li>
+    </ul>
+  </div>
+</div>
+<div class="admin-top-contributors"></div>
+<div class="task-metrics"></div>
+<div class="activity-block"></div>
+</div>
+

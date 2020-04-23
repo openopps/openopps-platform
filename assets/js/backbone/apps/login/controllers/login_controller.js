@@ -1,120 +1,80 @@
-define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'bootstrap',
-  'utilities',
-  'base_controller',
-  'login_view',
-  'json!login_config',
-  'modal_component'
-], function ($, _, Backbone, Bootstrap, utils, BaseController, LoginView, Login, ModalComponent) {
+var $ = require('jquery');
+window.jQuery = $;
 
-  Application.Login = BaseController.extend({
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Bootstrap = require('bootstrap');
+var BaseController = require('../../../base/base_controller');
+var UIConfig = require('../../../config/ui.json');
+var LoginView = require('../views/login_view');
+var LoginCreateView = require('../views/login_create_view');
+var LoginForgotView = require('../views/login_forgot_view');
+var login = require('../../../config/login.json');
 
-    events: {
-      "click #register-cancel"   : "showLogin",
-      "click #login-register"    : "showRegister",
-      "click #forgot-done-cancel": "showLogin",
-      "click #forgot-cancel"     : "showLogin",
-      "click #forgot-password"   : "showForgot"
-    },
+var LoginController = BaseController.extend({
 
-    initialize: function ( options ) {
-      var self = this;
+  events: {
+    'click #register-cancel': 'renderLogin',
+    'click #login-register': 'renderRegister',
+    'click #forgot-done-cancel': 'renderLogin',
+    'click #forgot-cancel': 'renderLogin',
+    'click #forgot-password': 'renderForgot',
+  },
+
+  initialize: function (options) {
+    if(window.cache.currentUser) {
+      Backbone.history.navigate(UIConfig.home.logged_in_path, { trigger: true, replace: true });
+    } else {
       this.options = options;
-      this.initializeView();
-    },
-
-    initializeView: function () {
-      var self = this;
-      if (this.loginView) {
-        this.loginView.cleanup();
-        this.modalComponent.cleanup();
-      }
-
-      // initialize the modal
-      if (!_.isUndefined(this.options.message)) {
-        var disableClose = this.options.message.disableClose || false;
-      }
-      this.modalComponent = new ModalComponent({
-        el: this.el,
-        id: "login",
-        modalTitle: "Login or Register",
-        disableClose: disableClose
-      }).render();
-
-      // put the login view inside the modal
-      this.loginView = new LoginView({
-        el: ".modal-template",
-        login: Login,
-        message: this.options.message
-      }).render();
-      this.$("#registration-view").hide();
-      this.$("#forgot-view").hide();
-      this.$("#forgot-done-view").hide();
-      $("#login").modal('show');
-
-      self.listenTo(window.cache.userEvents, "user:login", function (user) {
-        // hide the modal
-        self.stopListening(window.cache.userEvents);
-        // window.cache.userEvents.stopListening();
-        $('#login').bind('hidden.bs.modal', function() {
-          // reload the page after login
-          Backbone.history.loadUrl();
-          window.cache.userEvents.trigger("user:login:success", user);
-          self.cleanup();
-        }).modal('hide');
-      });
-    },
-
-    showRegister: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      this.$("#login-view").hide();
-      this.$("#login-footer").hide();
-      this.$("#registration-view").show();
-      this.$("#registration-footer").show();
-      this.$("#forgot-view").hide();
-      this.$("#forgot-footer").hide();
-      this.$("#forgot-done-view").hide();
-      this.$("#forgot-done-footer").hide();
-    },
-
-    showLogin: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      this.$("#login-view").show();
-      this.$("#login-footer").show();
-      this.$("#registration-view").hide();
-      this.$("#registration-footer").hide();
-      this.$("#forgot-view").hide();
-      this.$("#forgot-footer").hide();
-      this.$("#forgot-done-view").hide();
-      this.$("#forgot-done-footer").hide();
-    },
-
-    showForgot: function (e) {
-      if (e.preventDefault) e.preventDefault();
-      this.$("#forgot-view").show();
-      this.$("#forgot-footer").show();
-      this.$("#registration-view").hide();
-      this.$("#registration-footer").hide();
-      this.$("#login-view").hide();
-      this.$("#login-footer").hide();
-      this.$("#forgot-done-view").hide();
-      this.$("#forgot-done-footer").hide();
-    },
-
-    // ---------------------
-    //= UTILITY METHODS
-    // ---------------------
-    cleanup: function() {
-      // don't do anything
-      if (this.loginView) { this.loginView.cleanup(); }
-      if (this.modalComponent) { this.modalComponent.cleanup(); }
-      removeView(this);
+      this.cleanupViews();
+      this.renderLogin();
     }
+  },
 
-  });
+  cleanupViews: function () {
+    if (this.loginView) {
+      this.loginView.cleanup();
+    }
+    if (this.loginCreateView) {
+      this.loginCreateView.cleanup();
+    }
+    if (this.loginForgotView) {
+      this.loginForgotView.cleanup();
+    }
+  },
 
-  return Application.Login;
-})
+  renderLogin: function (e) {
+    if (e && e.preventDefault) { e.preventDefault(); }
+    var self = this;
+    this.cleanupViews();
+    this.loginView = new LoginView({
+      el: '#container',
+      login: login,
+      message: this.options.message,
+    }).render();
+  },
+
+  renderRegister: function (e) {
+    if (e && e.preventDefault) { e.preventDefault(); }
+    var self = this;
+    this.cleanupViews();
+    this.loginCreateView = new LoginCreateView({
+      el: '#container',
+      login: login,
+      message: this.options.message,
+    }).render();
+  },
+
+  renderForgot: function (e) {
+    if (e && e.preventDefault) { e.preventDefault(); }
+    var self = this;
+    this.cleanupViews();
+    this.loginForgotView = new LoginForgotView({
+      el: '#container',
+      login: login,
+      message: this.options.message,
+    }).render();
+  },
+});
+
+module.exports = LoginController;

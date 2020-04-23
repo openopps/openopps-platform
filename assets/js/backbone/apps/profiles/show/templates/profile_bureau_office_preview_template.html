@@ -1,0 +1,14 @@
+<h2><span class="usa-input-optional">Bureau and Office/post</span></h2>
+<% _.each(data, function (d,index) { %>
+<div class="usajobs-opop-profile-details usa-width-three-fourths">
+  <div class="profile-bureau">
+    <% if(!_.isEmpty(d.bureau)) { %>
+    <div class="usajobs-profile-home-section__field-label">Bureau <% if(!_.isEmpty(d.office)) { %>/Office/post <% } %></div>
+    <span><%- d.bureau %>  <% if(!_.isEmpty(d.office)) { %>/<%- d.office %>  <% } %></span>
+    <% } %>
+  </div>
+<div>
+  <a id="remove-bureau-office-<%- d.userBureauOfficeId %>" class="remove-bureau-office" href="javascript:void(0);" data-user-id="<%- d.userId %>" data-user-bureau-office-id="<%- d.userBureauOfficeId %>" data-bureau-name="<%- d.bureau %>" data-office-name="<%- d.office %>" data-bureauid="<%- d.bureau_id %>" data-officeid="<%- d.office_id %>" >Remove</a>
+</div>
+</div>
+<% }); %>

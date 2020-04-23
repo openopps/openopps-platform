@@ -1,154 +1,54 @@
-<form role="form" id="login-password-form">
-<div class="modal-body padding-bottom-none" id="login-view">
-
-  <% if (message && !_.isUndefined(message.message)) { %>
-  <div class="alert alert-warning">
-    <%= message.message %>
-  </div>
-  <% } %>
-
-  <% if (login.oauth.length > 0) { %>
-  <div class="login-oauth">Login with
-  <% _.each(login.oauth, function (e) { %>
-  <div class="row">
-    <div class="col-sm-offset-3 col-sm-6">
-      <div class="login-option">
-        <a href="<%= login.config[e].endpoint %>" class="btn btn-c0 btn-login">
-          <img src="<%= login.config[e].image %>" alt="<%= login.config[e].name %>" class="btn-login-responsive"/>
-        </a>
-      </div>
-    </div>
-  </div>
-  <% }); %>
-  </div>
-  <% } %>
-
-  <% if (login.local.enabled === true) { %>
-    <% if (login.oauth.length > 0) { %>
-    <hr/>
-    <% } %>
-    <div class="alert alert-danger" id="login-error" style="display:none;"></div>
-      <div class="form-group">
-        <label for="username" class="control-label" data-i18n="loginModal.emailAddress">Email Address</label>
-        <input type="email" class="form-control" id="username" name="username" placeholder="Email Address"/>
-      </div>
-      <div class="form-group margin-bottom-none">
-        <label for="password" class="control-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password"/>
-      </div>
-  </div>
-  <div class="modal-footer modal-footer-grey" id="login-footer">
-    <div class="row">
-      <div class="col-md-3 col-md-push-9">
-        <button type="submit" class="btn btn-c2 pull-right">Sign in</button>
-      </div>
-      <div class="col-md-9 col-md-pull-3 modal-footer-text">
-        <a href="#forgot-password" id="forgot-password">Forgot your password?</a>
-        <br/>
-        <a href="#login-register" id="login-register">Sign up now</a>
-      </div>
-    </div>
-  </div>
-  <% } else { %>
-  </div>
-  <% } %>
-</form>
-
-<form role="form" id="registration-form">
-<div class="modal-body padding-bottom-none" id="registration-view">
-    <h2>Create a New Account</h2>
-
-    <div class="form-group">
-      <label for="rusername" class="control-label" data-i18n="loginModal.emailAddress">Email Address</label>
-      <div class="input-group">
-        <input type="text" class="form-control validate" id="rusername" name="username" placeholder="Email Address" data-validate="button"/>
-        <span class="input-group-btn">
-          <a href="#" class="btn btn-danger" id="rusername-button" tabindex="-1">
-            <i id="rusername-check" class="fa fa-times"></i>
-          </a>
-        </span>
-      </div>
-      <span class="help-block error-button" style="display:none;">The email address is not valid or is already in use.</span>
-    </div>
-
-    <div class="password-view">
-    </div>
-
-    <div class="checkbox">
-      <label>
-        <% if (login.terms.enabled === true) { %>
-        <input type="checkbox" id="rterms" class="validate" data-validate="checked"> <span data-i18n="loginModal.tosCheckbox">Yes, I agree to the </span><a href="<%= login.terms.link %>"><%= login.terms.name %></a>.
-        <span class="help-block error-checked" style="display:none;">You must accept the <%= login.terms.name %> to register.</span>
-        <% } %>
-      </label>
-    </div>
-
-    <div class="form-group margin-bottom-none">
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="alert alert-danger" id="registration-error" style="display:none;"></div>
+<section class="usajobs-canvas">
+  <div class="usajobs-content-gutter login-gutter">
+    <main id="main-content" role="main" aria-label="Sign In">
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-login">
+        <div class="usa-form-large" id="login-password-form">
+          <fieldset class="usajobs-fieldset" id="login-view">
+            <% if (message && !_.isUndefined(message.message)) { %>
+              <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert" id="file-upload-alert" style="display:none;">
+                  <div class="usajobs-alert__figure">
+                    <div class="usajobs-alert__icon">
+                    </div>
+                  </div>
+                  <div class="usajobs-alert__body">
+                    <p class="usa-alert-text"><%= message.message %></p>
+                  </div>
+              </div>
+            <% } %>
+            <% if (login.local.enabled === true) { %>
+              <div id="login-error" class="usa-alert usajobs-alert usajobs-alert--error" role="alert" data-object="alert" style="display:none;">
+                <div class="usajobs-alert__figure">
+                  <div class="usajobs-alert__icon">
+                  </div>
+                </div>
+                <div class="usajobs-alert__body">
+                  <p class="usa-alert-text" id="login-error-text">
+                  </p>
+                </div>
+              </div>
+              <h2>Sign in</h2>
+              <div class="required-input">
+                <label for="username" class="control-label">Official government email address</label>
+                <label class="field-validation-error error-email" style="display:none;">Invalid email address.</label>
+                <input type="email" class="form-control" id="username" name="identifier" placeholder="Email address"/>
+              </div>
+              <div class="required-input">
+                <label for="password" class="control-label">Password</label>
+                <label class="field-validation-error error-password" style="display:none;">Invalid password.</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password"/>
+              </div>
+              <a href='#forgot-password' id="forgot-password" class="forgot-password">Forgot your password?</a>
+              <div class="usajobs-button_bar--slim">
+                <div class="usajobs-button_bar__body">
+                  <button type="submit" id="submitLogin" class="usa-button usa-button-primary">Sign in</button>
+                </div>
+                <h4>Don't have an Open Opportunities account?</h4>
+                <button id="login-register" class="usa-button usa-button-secondary">Create a new account</button>
+              </div>
+            <% } %>
+          </fieldset>
         </div>
-      </div>
     </div>
-</div>
-<div class="modal-footer modal-footer-grey" id="registration-footer" style="display:none;">
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="pull-right">
-        <button type="button" id="register-cancel" class="btn btn-c0">Cancel</button>
-        <button type="submit" class="btn btn-c2">Register</button>
-      </div>
-    </div>
+    </main>
   </div>
-</div>
-</form>
-
-<form role="form" id="forgot-form">
-<div class="modal-body padding-bottom-none" id="forgot-view">
-    <h2>Reset Your Password</h2>
-
-    <p>Please enter your email address and we'll send you a link to reset your password</p>
-
-    <div class="form-group">
-      <label for="fusername" class="control-label">Email Address</label>
-      <input type="text" class="form-control validate" id="fusername" name="username" placeholder="Email Address" data-validate="button"/>
-    </div>
-    <div class="form-group margin-bottom-none">
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="alert alert-danger" id="forgot-error" style="display:none;"></div>
-        </div>
-      </div>
-    </div>
-</div>
-<div class="modal-footer modal-footer-grey" id="forgot-footer" style="display:none;">
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="pull-right">
-        <button type="button" id="forgot-cancel" class="btn btn-c0">Cancel</button>
-        <button type="submit" class="btn btn-c2">Reset Password</button>
-      </div>
-    </div>
-  </div>
-</div>
-</form>
-
-<div class="modal-body padding-bottom-none" id="forgot-done-view">
-    <h2>Reset Your Password</h2>
-
-    <p>
-      Thank you! An email will arrive shortly with a link to reset your password.
-    </p>
-    <p>
-      If you don't receive an email shortly, check your spam folder.
-    </p>
-</div>
-<div class="modal-footer modal-footer-grey" id="forgot-done-footer" style="display:none;">
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="pull-right">
-        <button type="button" id="forgot-done-cancel" class="btn btn-c2">Return to Login</button>
-      </div>
-    </div>
-  </div>
-</div>
+</section>

@@ -1,0 +1,167 @@
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
+
+<div class="usajobs-content-gutter opportunity-gutter internship education-apply">
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+    <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <h2>Education &amp; Transcript</h2>
+      <form class="usa-form-xl">
+        <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Education</legend>
+          <span class="usajobs-form__legend">All fields are required unless otherwise noted</span>
+          <h3 class="usajobs-profile-home-section__sub-section">Education</h3>
+          <div class="form-group required-input">
+            <label for="school-name" class="no-margin-top">School or Program name</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter School or Program Name</span>
+            <input type="text" class="fullwidth form-control validate" id="school-name" name="school-name" data-validate="empty">
+          </div>
+          <div class="required-input apply_country">
+            <label for="apply_country">Country</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a country.</span>              
+            <input  id="apply_country" class="dropdown validate" data-validate="empty" />
+          </div>
+          
+          <div class="required-input">
+            <label for="postal-code">Postal code</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter Postal code</span>
+            <input type="text" class="usa-input-medium form-control" id="postal-code" autocomplete="new-code" name="postal-code">
+          </div>
+          <div class="form-group required-input">
+            <label for="city">City or Town</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter city</span>
+            <input type="text" class="fullwidth form-control validate" id="city" name="city" autocomplete="new-city" data-validate="empty">
+          </div>
+          <div class="required-input apply_countrySubdivision">
+            <label for="apply_countrySubdivision">State, Territory, or Province</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select a state.</span>
+            <input id="apply_countrySubdivision" class="dropdown" data-validate="empty" disabled /> 
+          </div>
+          <div class="form-group required-input">
+            <label for="degree">Degree or Level attained</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select Degree or Level attained.</span>
+            <select name="degree" id="degree" class="dropdown validate" data-validate="empty">
+              <option value=""></option>
+              <% _.each(degreeLevels, function (d) { %>             
+                <option value=<%- d.lookupCodeId %>> <%- d.value %></option>
+              <% }); %>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset class="usajobs-fieldset--horizontal">
+          <legend class="usa-sr-only">Completion date</legend>
+          <div class="form-group required-input usa-fieldset-inputs">
+            <label for="CompletionDate">
+              <h5 class="usa-input-optional usajobs-form__label-header">Completion date</h5>
+            </label>
+            <div>
+              <div class="usa-datefield usa-form-group-month">
+                <label for="completion-month" class="no-margin-top">Month</label>               
+                <input  class="usa-input-tiny form-control" id="completion-month" name="completion-month"  maxlength="2" type="number" onkeyup="if(this.value>12){this.value='12';}else if(this.value<0){this.value='0';}">
+              </div>
+              <div class="usa-datefield usa-form-group-year completionYear"  id="eduCompletionYear">             
+                <label for="completion-year" class="no-margin-top">Year</label>
+                <span class="field-validation-error completionYear-error" style="display:none;">Completion Year must be valid.</span>
+                <input name="completion-year" class="completionYear-input" id="completion-year"  type="text" maxlength="4" min="1990" max="3000" value="">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Major and minor</legend>
+          <div>
+            <label for="major" class="usa-input-optional">Major</label>
+            <input type="text" class="fullwidth form-control" id="major" name="major">
+          </div>
+          <div>
+            <label for="minor" class="usa-input-optional">Minor</label>
+            <input type="text" class="fullwidth form-control" id="minor" name="minor">
+          </div>
+        </fieldset>
+
+        <fieldset class="usajobs-fieldset--horizontal">
+          <legend class="usa-sr-only">Grade Point Average (GPA)</legend>
+          <label for="GPAverage">
+            <h5 class="usajobs-form__label-header">Grade Point Average (GPA)</h5>
+          </label>
+          <div>
+          <div class="gpa form-group required-input">
+            <label for="GPA" class="no-margin-top">GPA</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select GPA.</span>
+            <input id="GPA" maxlength="6" name="GPAverage" type="text" class="validate" data-validate="empty">
+          </div>
+          <div class="gpa form-group required-input gpa-max">
+            <label for="GPAMax" class="no-margin-top">of GPA Max.</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must select GPA Max.</span>
+            <input id="GPAMax" maxlength="6" name="GPAverage" type="text" class="validate" data-validate="empty">
+          </div>
+        </fieldset>
+
+        <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Total credits earned</legend>
+          <div>
+            <label for="credit-earned" class="usa-input-optional">Total credits earned</label>
+            <input type="text" class="fullwidth form-control" id="credit-earned" name="credits">
+          </div>
+          <fieldset class="usajobs-fieldset">
+            <legend class="usa-sr-only">System for awarded credits</legend>
+            <div class="form-group required-input usa-fieldset-inputs">
+              <label for="CreditSystem">
+                <h5 class="usa-input-optional usajobs-form__label-header">System for awarded credits</h5>
+              </label>
+              <ul class="usa-unstyled-list usa-fieldset-inputs">
+                <li>
+                  <input id="credit-S" name="CreditSystem" type="radio" value="Semester hours">
+                  <label for="credit-S">Semester hours</label>
+                </li>
+                <li>
+                  <input id="credit-Q" name="CreditSystem" type="radio" value="Quarter hours">
+                  <label for="credit-Q">Quarter hours</label>
+                </li>
+                <li>
+                  <input id="credit-C" name="CreditSystem" type="radio" value="Continuing education units">
+                  <label for="credit-C">Continuing education units</label>
+                </li>
+              </ul>
+            </div>
+          </fieldset>
+          <div class="required-input">
+            <label for="honors" class="usa-input-optional">Honors</label>
+            <select id="honors" class="dropdown">
+              <option value=""> </option>
+              <% _.each(honors, function (h) { %>             
+                <option value=<%- h.lookupCodeId %>> <%- h.value %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="required-input">
+            <label for="Coursework" class="usa-input-optional">Relevant coursework, licensures, and certifications</label>
+            <textarea cols="20" id="Coursework" maxlength="2000" name="Coursework" rows="2"></textarea>
+          </div>
+        </fieldset>
+
+        <div class="usajobs-button_bar--slim">
+          <div class="usajobs-button_bar__body">
+            <button class="usa-button usa-button-secondary usa-button-left"data-state="cancel" id="cancel-education">Cancel and return</button>
+            <a href="javascript:void(0)" id="save-education" class="usa-button usa-button-primary usajobs-button_bar__save">Save education</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <aside class="usajobs-rightrail">
+    <div id="help" class="usajobs-profile-help usajobs-profile-help--warning">
+      <i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon"></i>
+      <div class="usa-grid">
+        <p>
+          You must only list degrees from accredited schools or other education programs.
+        </p>
+        <p>
+          <a href="https://www.ed.gov/accreditation" target="_blank" rel="noopen nofollow">
+            <span class="sr-only">Opens in a new window</span>Look up your school</a> at the U.S. Department of Education.
+        </p>
+      </div>
+    </div>
+  </aside>
+</div>

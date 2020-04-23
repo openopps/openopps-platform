@@ -8,7 +8,7 @@
   "project" : "working group",
   "projectPlural" : "working groups",
 
-  "Task" : "Opportunity",
+  "Task" : "Post opportunity",
   "TaskPlural" : "Opportunities",
   "TaskIndefinite" : "an Opportunity",
   "TaskPluralIndefinite": "some Opportunities",
@@ -17,19 +17,26 @@
   "task" : "opportunity",
   "taskPlural" : "opportunities",
 
+  "Profile": "Person",
+  "ProfilePlural": "People",
+  "ProfileIndefinite" : "Someone",
+  "ProfilePluralIndefinite": "Some people",
+  "profile" : "person",
+  "profilePlural" : "people",
+
   "SaveTask"  : "Save Opportunity",
 
   "like" : "like",
   "likePlural" : "likes",
 
-  "volunteer" : "volunteer",
-  "volunteerPlural" : "volunteers",
+  "volunteer" : "participant",
+  "volunteerPlural" : "participants",
 
   "Browse" : "Browse",
 
   "taskPage" : {
-    "volunteerButton" : "Volunteer",
-    "volunteeredButton" : "Volunteered!"
+    "volunteerButton" : "Apply",
+    "volunteeredButton" : "Application received"
   },
 
   "loginModal" : {
@@ -37,18 +44,33 @@
     "emailAddress": "Email Address"
   },
 
+  "volunteerFullTimeModal": {
+    "supervisorApprovalTitle": "Supervisor Approval",
+    "supervisorApproval": "I have my supervisor's approval to apply to this opportunity.",
+    "performanceTitle": "Position/ Performance",
+    "fullTimeRequirement": "I am a GSA employee serving under a permanent appointment and am at the full performance level of my position.",
+    "performanceLevel3": "I have a performance rating of 3 or higher.",
+    "noDisciplinaries": "I have had no formal, documented disciplinary action within the past year (such as a written warning notice, reprimand, or suspension). -I am not participating in a different formal development program.",
+    "gradeTitle": "Grade Level",
+    "grade": "If this opportunity is for a specific grade level (i.e. not to unclassified duties), I am at that grade level or higher.",
+    "title": "Are you eligible to participate?",
+    "cancel": "Cancel",
+    "ok": "I Agree"
+  },
+
   "volunteerModal": {
-    "notifySupervisor": "I understand it is my responsibility to confirm supervisor approval prior to committing to an opportunity.",
-    "cantCancel": "Once you volunteer for an opportunity, you will not be able to cancel your commitment to volunteer.",
-    "title": "Do you want to volunteer?",
+    "supervisorApproval": "I have my supervisor's approval to apply to this opportunity.",
+    "federalEmployee": "I am a federal employee (not a contractor).",
+    "specificLocation": "If this opportunity is for a specific location (i.e. it is not a virtual opportunity), I am located within the same commuting area.",
+    "title": "Are you eligible to participate?",
     "cancel": "Cancel",
     "ok": "I Agree"
   },
 
   "home" : {
-    "headline" : "Hassle Free Collaboration",
-    "subhead" : "Work with other federal employees on projects you are passionate about.",
-    "callToAction" : "Get Started Today"
+    "headline" : "Open Opportunities",
+    "subhead" : "Discover opportunities across government that will help you build and make connections.",
+    "callToAction" : "Find opportunities"
   },
 
   "commonAPI" : {
@@ -70,5 +92,24 @@
       "likes" : "Error looking up $(task) $(likePlural).",
       "volunteers" : "Error looking up $t(task) $t(volunteerPlural)."
     }
+  },
+
+  "noSearchResults": {
+    "text" : "<h2>Oops we didn't find any results</h2><p>Maybe your search was too specific. You could try including more filters like <b>Completed</b> or <b>Archived</b>. Maybe there are too many search terms, try removing some or using more general terms.</p><p>Still not finding what you wanted?</p><p>Did you mean to:</p>"
+  },
+
+  "modalHome" : {
+    "textCrowdWork" : "<section class='current'><h2>Congratulations!</h2><p>You've discovered the Department's own crowdsourcing platform. This platform was developed to facilitate collaborative work worldwide. CrowdWork organizes the work as Projects and Opportunities. Participants are Project Owners, Opportunity Requestors and Volunteers. Users can be any of these. Projects, opened by Project Owners, are the overarching groupings; and Opportunities are where requestors describe the actual work with which they would like assistance.</p><p>Users can find projects and opportunities through keyword searches or by browsing for them. Your profile is imported from Corridor and shows your interest tags, GAL information and projects and opportunities you've worked on.  If you haven’t set up a Corridor profile, start there.</p><p>CrowdWork is built for modern browsers and <i>will not work</i> with the Department installation of Internet Explorer 7. You must use Google Chrome.</p></section><section><h2>If you would like to post a Project or an Opportunity:</h2><p>Click the <span style='text-decoration: underline'>+Project</span> or <span style='text-decoration: underline'>+Opportunity</span> buttons at the top right of the next screen. If you'd like to post multiple similar volunteer opportunites, or one large one that you'd broken down into smaller, distinct parts, your first step should be to open a Project.</p><p>If you have one item to post, that is unrelated to other items, you should add an Opportunity.</p></section><section><h2>If you would like to volunteer for an Opportunity:</h2><p>You cannot volunteer for an entire <b>Project</b>, only for <b>Opportunities</b>. First talk to your supervisor about your interest in assuming the responsibility for additional work. All work performed through CrowdWork must be completed within the normal work day. Your work on CrowdWork must not interfere with your regularly assigned work or cause you to work more than your normal day to complete it. You may not work any additional hours, either compensated or uncompensated, in order to complete a CrowdWork project.</p><p>What's next? Click below to post work that you've been trying to complete for a while now. Or browse CrowdWork to see what <b>Project</b> or <b>Opportunity</b> would interest you.</p><p><input type='checkbox' class='tos-checkbox'/> I agree to the <a href=''>Terms and Conditions<a/> required to use CrowdWork.</p></section>",
+    "text" : "<section class='current'><h2>Congratulations!</h2><p>Welcome to the Midas platform.</p></section><section><h2>Congratulations!</h2><p>Welcome to the Midas platform.</p></section><section><h2>Congratulations!</h2><p>Welcome to the Midas platform.</p><p><input type='checkbox' class='tos-checkbox'/> I agree to the <a href=''>Terms and Conditions<a/> required to use this platform.</p></section>"
+  },
+
+  "tag" : {
+    "Agency": "Agency",
+    "AgencyPlural": "Agencies",
+    "agency": "agency",
+    "agencyPlural": "agencies",
+    "location": "location",
+    "skill": "skill",
+    "topic": "topic"
   }
 }

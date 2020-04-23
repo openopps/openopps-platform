@@ -1,0 +1,30 @@
+<h3 class="usajobs-section-header">System Settings</h3>
+<table class="usa-table-borderless system-settings-table" role="presentation">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Updated date</th>
+      <% if (window.cache.currentUser.isAdmin) { %>
+        <th class="center">Edit</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% _.each(systemSettings, function (systemSetting) { %>
+      <tr id='<%- systemSetting.key %>'>
+        <td><%- systemSetting.display %></td>
+        <td><%- systemSetting.value %></td>
+        <td><%- moment(systemSetting.updated_at).format('MM/DD/YYYY hh:mma') %></td>
+        <% if (window.cache.currentUser.isAdmin) { %>
+          <td class="metrics-table__button">
+            <a href="/admin/sitewide?editSetting" data-key="<%- systemSetting.key %>" data-value="<%- systemSetting.value %>" data-display="<%- systemSetting.display %>" class="edit-system-setting" alt="Edit <%- systemSetting.display %>" title="Edit <%- systemSetting.display %>">
+              <span class='fas fa-edit'></span>
+              <span class="usa-sr-only">Edit <%- systemSetting.display %></span>
+            </a>
+          </td>
+        <% } %>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

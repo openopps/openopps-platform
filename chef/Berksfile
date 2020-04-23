@@ -1,9 +1,0 @@
-source 'https://api.berkshelf.com'
-
-cookbook 'midas', git: 'https://github.com/18F/midas-cookbook.git'
-cookbook 'postgresql', git: 'https://github.com/phlipper/chef-postgresql.git'
-cookbook 'nginx'
-cookbook 'nodejs'
-cookbook 'apt'
-cookbook 'build-essential'
-cookbook 'citadel', git: 'https://github.com/dlapiduz/citadel.git'

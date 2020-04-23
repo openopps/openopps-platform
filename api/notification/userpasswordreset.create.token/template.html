@@ -1,0 +1,6 @@
+<p>Hi <% if (user.name) { %> <%- user.name %><% } %>,</p>
+<p>Forgot your password? Click the link below or copy and paste it into your browser to reset your password.</p>
+<p>
+  <a href="<%- globals.urlPrefix %><%- link %>"><%- globals.urlPrefix %><%- link %></a>
+</p>
+<p>Didn't request a new password? Don't worry, you can just delete this email and your password will remain the same.</p>

@@ -1,0 +1,70 @@
+// Shell
+
+@import 'bourbon';
+@import 'neat';
+
+.usajobs-shell {
+  position: relative;
+  @include outer-container();
+  max-width: 100%;
+}
+
+// Update all usa-grid styles to use our site max width
+.usa-grid,
+.usa-grid-full {
+  max-width: $site-max-width;
+}
+
+.usajobs-content-gutter {
+  padding: 0 $size-default;
+
+  @include media($ML) {
+    padding-left: $size-M;
+    padding-right: $size-M;
+  }
+}
+
+.usajobs-canvas {
+  position: relative;
+  display: block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.usajobs-canvas::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.usajobs-content-well {
+  margin-bottom: 0;
+
+  @include media($L) {
+    margin-bottom: $size-XL;
+    @include span-columns(8);
+  }
+
+  @include media($XL) {
+    @include span-columns(8);
+  }
+}
+
+.usajobs-rightrail {
+  @include media($L) {
+    @include span-columns(4);
+  }
+
+  @include media($XL) {
+    @include span-columns(4);
+  }
+
+  .usajobs-content-gutter {
+    @include media($L) {
+      padding-left: 0;
+    }
+  }
+}

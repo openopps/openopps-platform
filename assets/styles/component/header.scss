@@ -1,0 +1,62 @@
+// Header
+
+@import '../base-shared';
+
+.usajobs-site-header {
+  .usa-disclaimer {
+    @include contentGutter();
+    padding-right: 0;
+    font-size: 1.2rem;
+
+    @include media($SM) {
+      font-size: 1.3rem;
+    }
+  }
+
+  .usajobs-disclaimer-official {
+    display: inline-block;
+    padding: 0;
+    max-width: $site-max-width;
+
+    .usa-flag_icon {
+      float: left;
+      margin-right: 0.7rem;
+      margin-top: 1px;
+      width: 2rem;
+    }
+
+    p {
+      display: inline-block;
+      margin: 3px 0;
+
+      @include media($SM) {
+        margin: 2px 0;
+      }
+    }
+  }
+
+  .usa-banner {
+    font-size: 1.3rem;
+    padding-bottom: 0;
+  }
+
+  .usa-banner-header {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    img {
+      margin-top: 1px;
+      margin-right: 0.7rem;
+      width: 2rem;
+    }
+
+    p {
+      margin-top: 2px;
+      margin-bottom: 2px;
+      vertical-align: middle;
+      display: inline-block;
+      line-height: 1.5;
+      overflow: visible;
+    }
+  }
+}

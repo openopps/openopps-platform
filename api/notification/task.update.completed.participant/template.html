@@ -1,0 +1,7 @@
+<p>Hi <% if (user.name) { %><%- user.name %><% } %>,</p>
+
+<p>Congrats! You have completed your task on Open Opportunities! Click here to review it: <a href="<%- globals.urlPrefix %>/tasks/<%- task.id %>"><%- task.title %></a>. We updated your profile to note your achievement. Thanks for your hard work and we hope you developed some great skills and contacts while completing this opportunity!</p>
+
+<p>Please take a moment to complete this quick survey - your feedback will help us to improve Open Opportunities.</p>
+
+<p><a href="<%- globals.participantSurvey %>"><%- globals.participantSurvey %></a></p>

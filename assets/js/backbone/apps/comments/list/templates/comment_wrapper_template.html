@@ -1,16 +1,22 @@
-<div class="box-pad-lr border-bottom">
-  <h2>Discussion
-  <% if (user) { %>
-  <button class="btn btn-c0 btn-sm file-add new-topic" id="project-topic-new">New Topic</button>
-  <% } %>
-  </h2>
-</div>
-<div class="box-pad-lr box-pad-t topic-form-wrapper"></div>
-<div class="comment-spinner fullwidth text-center">
+<h3>Discussion</h3>
+<div class="comment-spinner center">
   Loading discussion... <i class="fa fa-spinner fa-spin"></i>
 </div>
-<ul id="comment-list-null">
-  <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
-    No discussion yet.  Start a topic!
-  </li>
-</ul>
+<div id="comment-form-target" class="usajobs-grid-full"></div>
+<div class="usajobs-grid-full">
+  <ul id="comment-list" class="usajobs-width-one-whole">
+    <% if (_.contains(['draft', 'submitted'], state)) { %>
+      <li class="comment-item" id="comment-empty" style="display:none;">
+        You can start a discussion once the opportunity has been approved.
+      </li>
+    <% } else if ( user ) { %>
+      <li class="comment-item" id="comment-empty" style="display:none;">
+        No discussion yet.  Start one!
+      </li>
+    <% } else { %>
+      <li class="comment-item clearfix border-left box-pad-lr" id="comment-empty" style="display:none;">
+        Sign in to start the discussion!
+      </li>
+    <% } %>
+  </ul>
+</div>

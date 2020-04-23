@@ -1,0 +1,239 @@
+
+<div id="usajobs-search-controls-participated">
+  <div class="usajobs-grid usajobs-search-controls">
+    <div class="usajobs-search-controls__results-count-container no-params">
+      <% if(countOf) { %>
+        <h4>Viewing <%- numeral(firstOf).format('0,0') %> - <%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> opportunities</h4>
+      <% } %>
+    </div> 
+    <% if (tasks.length > 0) { %>
+      <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+        <label class="usajobs-search-controls__sort-label" for="sort-results">
+          Sort by
+        </label>
+        <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+          <option value="" disabled>- Sort By -</option>
+          <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
+          <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>
+          <% if (referenceId == 'dos') { %>
+          <option value="bureau" <% if (sort == 'bureau') { %>selected<% } %>>Bureau</option>
+          <option value="office" <% if (sort == 'office') { %>selected<% } %>>Office/post</option>
+          <% } %>
+          <% if (target == 'sitewide') { %>
+          <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+          <% } %>
+          <% if (target == 'community') { %>
+            <% if (referenceId !== 'dos') { %>
+              <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+            <% } %>
+          <% } %>
+          <option value="date" <% if (sort == 'date') { %>selected<% } %>>Date</option>
+        </select>
+      </div>
+      <% } %>
+  </div>
+</div>
+<table class="usa-table-borderless task-table" role="presentation">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Creator</th>
+      <% if (referenceId == 'dos') { %>
+      <th>Bureau</th>
+      <th>Office/post</th>
+      <% } %>
+      <% if (target == 'sitewide') { %>
+      <th>Agency</th>
+      <% } %>
+      <% if (target == 'community') { %>
+        <% if (referenceId !== 'dos') { %>
+        <th>Agency</th>
+        <% } %>
+      <% } %>
+      <th class="center">Date</th>
+      <% if (status == 'submitted') { %>
+        <% if (targetAudience !== 'Students') { %>
+          <th id="publishId" class="center" data-target="publish-delete">Publish</th>
+        <% } else { %>
+          <th id="publishId" class="center" data-target="publish-delete">Approve</th>
+        <% } %>
+      <% } %>
+      <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
+        <th class="center" data-target="publish-delete">Delete</th>
+      <% } %>
+      <% if (_.contains(['open','not open', 'in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
+        <th class="center" data-target="change-add">Change<br/> owner</th>
+      <% } %>
+      <% if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && window.cache.currentUser && window.cache.currentUser.isAdmin && targetAudience !== 'Students') { %>
+        <th class="center" data-target="change-add">Add<br/> participant</th>
+      <% } %>
+      <% if (_.contains(['open','in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) && targetAudience !== 'Students') { %>
+        <th class="center" data-target="applicant-delete">Delete<br/>applicant/participant</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (tasks.length === 0) { %>
+      <tr class="empty-row">
+        <% if (referenceId === 'dos') { %>
+        <td colspan="7">No tasks</td>
+        <% } else { %>
+        <td colspan="6">No tasks</td>
+        <% } %>
+      </tr>
+    <% } %>
+    <% _.each(tasks, function (task) { %>
+      <tr>
+        <td class="metrics-table__title">
+          <a href="/tasks/<%- task.id %>"><%- task.title %></a>
+          <% if ( task.volunteers && task.volunteers.length ) { %>
+          <div class="sign-ups">Sign-ups:
+              <% _( task.volunteers ).forEach( function( vol ) { %>
+                <a href="/profile/<%- vol.id %>"><%-vol.name || 'Unnamed'%></a><%-(vol == task.volunteers[task.volunteers.length-1]) ? '' : ', ' %>
+              <% } ); %>
+          </div>
+          <% } else if (task.applicants) { %>
+            <div class="sign-ups">
+              <strong><%- task.applicants %> applicant<% if (task.applicants != 1) { %>s<% } %>:</strong>
+              <% if (task.applicants > 0) { %><a href="/internships/<%- task.id %>#applicants">view</a><% } %>
+            </div>
+          <% } %>
+        </td>
+        <td class="metrics-table__author">
+          <% if (!task.owner) { console.log('no owner for task', task) } else { %>
+          <a href="/profile/<%- task.owner.id %>">
+            <%- task.owner.name || task.owner.username %>
+          </a>
+          <% } %>
+        </td>
+        <% if (referenceId == 'dos') { %>    
+        <td class="metrics-table__agency center">
+          <% if (task.bureau) { %>
+          <%- task.bureau.name %>
+          <% } %> 
+        </td>
+        <td class="metrics-table__agency center">
+          <% if (task.office) { %>
+          <%- task.office.name %>
+          <% } %> 
+        </td>
+        <% } %> 
+        <% if (target == 'sitewide') { %>
+        <td class="metrics-table__agency center">
+            <% if (task.agency) { %>
+            <%- task.agency.name %>
+            <% } %>
+        </td>
+        <% } %>
+        <% if (target == 'community') { %>
+          <% if (referenceId !== 'dos') { %>
+            <td class="metrics-table__agency center">
+              <% if (task.agency) { %>
+              <%- task.agency.name %>
+              <% } %>
+            </td>
+          <% } %>
+        <% } %>
+        <td class="metrics-table__date">
+          <%- moment(task.createdAt).format('MM/DD/YY') %>
+        </td>
+        <% if (_.contains(['submitted'], status.toLowerCase())) { %>
+          <td class="metrics-table__button">
+            <% if (target == 'community' && !window.cache.currentUser.isAdmin 
+            && task.bureau_id && !_.findWhere(window.cache.currentUser.bureauOffice, { bureau_id: task.bureau_id }) && !_.findWhere(window.cache.currentUser.communityAdmin, { communityId: task.community_id })) { %>
+              &nbsp;
+            <% } else if (targetAudience !== 'Students' || (task.cycle_id && new Date((_.find(cycles, function (cycle) { return cycle.cycleId == task.cycle_id; }) || {}).postingEndDate) >= new Date())) { %>
+              <a href="#open/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="task-open"
+                <% if (targetAudience !== 'Students') { %>
+                  alt="Publish Opportunity"
+                  title="Publish Opportunity">
+                <% } else { %>
+                  alt="Approve Opportunity"
+                  title="Approve Opportunity">
+                <% } %>
+                <span class='fa fa-check'></span>
+                <% if (targetAudience !== 'Students') { %>
+                  <span class="usa-sr-only">Publish Opportunity</span>
+                <% } else { %>
+                  <span class="usa-sr-only">Approve Opportunity</span>
+                <% } %>
+              </a>
+            <% } else { %>
+              <a href="#approve/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="approve-error"
+                alt="Cycle posting has ended"
+                title="Cycle posting has ended">
+                <i class="fas fa-ban"></i>
+                <span class="usa-sr-only">Cycle posting has ended</span>
+              </a>
+            <% } %>
+          </td>
+        <% }  else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
+          <td class="metrics-table__button">
+            <a href="#change-owner/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="task-change-owner"
+              alt="Change Owner"
+              title="Change Owner">
+              <i class="fas fa-user-cog"></i>
+              <span class="usa-sr-only">Change Owner</span>
+            </a>
+          </td>
+        <% } %>
+
+        <% if (_.contains(['draft','submitted','approved'], status.toLowerCase()) && (window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId })))) { %>
+          <td class="metrics-table__button">
+            <a href="#delete/<%- task.id %>"
+              data-task-id="<%- task.id %>"
+              data-task-title="<%- task.title %>"
+              class="delete-task"
+              alt="Delete Opportunity"
+              title="Delete Opportunity">
+              <span class='fa fa-times'></span>
+              <span class="usa-sr-only">Delete Opportunity</span>
+            </a>
+          </td>
+        <% } else if (_.contains(['open', 'not open', 'in progress'], status.toLowerCase())) { %>
+          <% if ((window.cache.currentUser && window.cache.currentUser.isAdmin) && targetAudience !== 'Students') { %>
+            <td class="metrics-table__button">
+              <a href="#add-participant/<%- task.id %>"
+                data-task-id="<%- task.id %>"
+                data-task-title="<%- task.title %>"
+                class="task-add-participant"
+                alt="Add participant"
+                title="Add participant">
+                <i class="fas fa-user-plus"></i>
+                <span class="usa-sr-only">Add participant</span>
+              </a>
+            </td>
+          <% } %>
+        <% } %>   
+      <% if (_.contains(['open', 'in progress'], status.toLowerCase())) { %>
+            <% if ((window.cache.currentUser.isAdmin || (target == 'agency' && window.cache.currentUser.isAgencyAdmin) || (target == 'community' && _.findWhere(window.cache.currentUser.communityAdmin, { communityId: communityId }))) && targetAudience !== 'Students') { %>
+              <td class="metrics-table__button">
+                <a href="#delete/<%- task.id %>"
+                  data-task-id="<%- task.id %>"
+                  data-task-title="<%- task.title %>"
+                  class="delete-applicant-participant"
+                  alt="Delete applicant/participant"
+                  title="Delete applicant/participant">
+                  <span class='fa fa-user-times'></span>
+                  <span class="usa-sr-only">Delete participant</span>
+                </a>
+              </td>
+            <% } %>
+          <% }
+        
+        else if (_.contains(['completed', 'canceled'], status.toLowerCase())) { %>
+          <td>&nbsp;</td>
+        <% } %>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>  

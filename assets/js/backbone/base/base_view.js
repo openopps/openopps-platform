@@ -7,23 +7,17 @@
 // or anything that requires a small spinner.  Currently to add a bigger spinner
 // I'd have to exchange the gif currently provided by font-awesome.
 
-define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'utilities'
-], function ($, _, Backbone, utilities) {
 
-  var BaseView = Backbone.View.extend({
+var _ = require('underscore');
+var Backbone = require('backbone');
 
-    initialize: function () {
-    },
 
-    cleanup: function () {
-      removeView(this);
-    }
+var BaseView = Backbone.View.extend({
+  initialize: function () {},
 
-  });
+  cleanup: function () {
+    removeView(this);
+  },
+});
 
-  return BaseView;
-})
+module.exports = BaseView;

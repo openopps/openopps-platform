@@ -1,0 +1,451 @@
+// Footer
+
+@import '../base-shared';
+
+.usajobs-footer--v1,
+.usajobs-footer--v2,
+.usajobs-footer--v3,
+.usajobs-footer--joa,
+.usajobs-footer--openopps {
+  a,
+  a:visited {
+    display: block;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  &__menu-item:last-child {
+    padding-bottom: $size-M;
+  }
+
+  .usa-footer-return-to-top a {
+    color: $color-primary;
+  }
+
+  &__job_applications,
+  &__account,
+  &__help {
+    position: relative;
+  }
+
+  .usa-footer-primary-section .usa-footer-primary-content {
+    padding-left: $size-default;
+    padding-right: $size-default;
+
+    @include media($M) {
+      padding: 0;
+    }
+  }
+
+  .usa-footer-primary-section .usa-footer-primary-content &__menu-item {
+    margin-left: 2.5rem;
+
+    @include media($M) {
+      margin-left: 0;
+    }
+  }
+
+  // Fix headers inside of unordered lists
+  .usa-footer-primary-section .usa-footer-primary-content .usa-footer-primary-link {
+    @include h4();
+    margin: 0;
+    padding-bottom: $size-M;
+    background: none;
+
+    @include media($M) {
+      @include h3();
+      padding: 0;
+    }
+
+    &:hover {
+      cursor: pointer;
+
+      @include media($M) {
+        cursor: inherit;
+      }
+    }
+
+    .usajobs-icon {
+      width: rem(9px);
+      height: rem(28px);
+      margin-right: $size-default;
+      color: $color-base;
+      vertical-align: middle;
+      @include transition(all $duration-fast ease);
+      @include transform-style(preserve-3d);
+
+      @include media($M) {
+        display: none;
+      }
+    }
+  }
+
+  .usa-footer-primary-section .usa-footer-primary-content .usa-footer-primary-link {
+    padding: $size-M 0 $size-S;
+
+    .usajobs-icon {
+      @include transform(rotate(90deg));
+    }
+  }
+
+  .usa-footer-primary-section .usa-footer-primary-content.hidden .usa-footer-primary-link {
+    padding: $size-M 0;
+
+    .usajobs-icon {
+      @include transform(none);
+    }
+  }
+
+  .usajobs-social-link .usajobs-icon {
+    color: $color-white;
+  }
+
+  .usa-footer-primary-content {
+    padding-bottom: 0;
+  }
+
+  .usa-footer-primary-content:last-child.usajobs-footer--v1__account,
+  .usa-footer-primary-content:last-child.usajobs-footer--v2__account,
+  .usa-footer-primary-content:last-child.usajobs-footer--v3__account,
+  .usa-footer-primary-content:last-child.usajobs-footer--joa__account {
+    @include media($L) {
+      // grrr, the Neat grid automatically sets the last child to margin-right: 0
+      // given the way we have split the grid into 2 then 4 columns the work around
+      // is to hard code the margin-right
+      margin-right: 2.3576515979%;
+    }
+  }
+
+  &__subsection {
+    font-size: $small-font-size;
+    margin-bottom: 0;
+  }
+
+  &__subsection-title {
+    a,
+    a:visited {
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .usa-footer-secondary_section {
+    background-color: $color-primary-darkest;
+    border-top: 1px solid $color-base;
+
+    a,
+    a:visited {
+      color: $color-white;
+    }
+
+    .usajobs-social-link,
+    .usajobs-social-link:visited {
+      display: inline-block;
+      padding: 0 $size-base $size-S;
+      color: $color-white;
+      text-decoration: none;
+      font-size: $h3-font-size;
+    }
+  }
+
+  .usa-footer-logo .logo {
+    display: inline-block;
+    height: rem(36px);
+    width: rem(150px);
+    background-image: url('../img/logo/png/white-2x.png');
+    background-image: url('../img/logo/svg/white-2x.svg');
+    background-repeat: no-repeat;
+
+    @include media($ML) {
+      height: rem(45px);
+      width: rem(188px);
+    }
+  }
+
+  &__note {
+    color: $color-white;
+    font-size: $small-font-size;
+
+    a {
+      display: inline;
+    }
+  }
+
+  // Correcting for oddball borders
+  ul:last-child {
+    border-bottom: 0;
+  }
+
+  ul.usajobs-footer--v1__subsection-horizontal,
+  ul.usajobs-footer--v2__subsection-horizontal,
+  ul.usajobs-footer--v3__subsection-horizontal,
+  ul.usajobs-footer--joa__subsection-horizontal,
+  ul.usajobs-footer--openopps__subsection-horizontal {
+    @include clearfix();
+    clear: both;
+    padding-bottom: 0;
+
+    li {
+      margin: $size-XS 0;
+      padding: 0;
+      line-height: 1;
+
+      @include media($SM) {
+        @include span-columns(1);
+        display: inline-block;
+      }
+
+      @include media($ML) {
+        float: none;
+        margin: 0;
+        width: auto;
+      }
+    }
+
+    li:nth-child(2n) {
+      @include media($SM) {
+        @include omega();
+      }
+    }
+
+    li a {
+      display: block;
+      padding: $size-S $size-S $size-S 0;
+      font-size: $xsmall-font-size;
+      line-height: 1.5;
+
+      @include media($SM) {
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.usajobs-footer--v1,
+.usajobs-footer--joa {
+  &__menu-item {
+    a:visited {
+      color: $color-primary;
+    }
+  }
+
+  .usa-footer-logo-heading {
+    margin-top: 0;
+    color: $color-white;
+  }
+
+  .usa-footer-primary-content {
+    @include media($L) {
+      @include span-columns(6, 12);
+    }
+  }
+
+  &__content-container {
+    @include media($M) {
+      @include span-columns(3);
+    }
+
+    @include media($L) {
+      float: none;
+      width: auto;
+      margin: 0;
+    }
+  }
+}
+
+.usajobs-footer--v2,
+.usajobs-footer--v3,
+.usajobs-footer--openopps {
+  a,
+  a:visited {
+    color: $color-primary;
+    text-decoration: none;
+  }
+
+  .usa-footer-primary-section .usa-footer-primary-content .usa-footer-primary-link a,
+  .usa-footer-primary-section .usa-footer-primary-content .usa-footer-primary-link a:visited {
+    color: $color-base;
+    font-weight: bold;
+  }
+
+  .usa-footer-primary-content {
+    @include media($M) {
+      @include span-columns(3, 6);
+    }
+
+    @include media($L) {
+      @include span-columns(4, 12);
+    }
+  }
+
+  .usa-footer-primary-content:nth-child(2n) {
+    @include media($M) {
+      @include omega();
+    }
+
+    @include media($L) {
+      // grrr, the Neat grid automatically sets the last child to margin-right: 0
+      // given the way we have split the grid into 2 then 4 columns the work around
+      // is to hard code the margin-right
+      margin-right: 2.3576515979%;
+    }
+  }
+
+  .usa-footer-primary-content:nth-child(4n) {
+    @include media($L) {
+      @include omega();
+    }
+  }
+
+  &__content-container {
+    @include outer-container();
+    clear: both;
+  }
+}
+
+.usajobs-footer--joa {
+  .usajobs-footer--joa__subsection-title,
+  .usajobs-footer--joa__subsection-title:visited {
+    @include h5();
+    font-size: $base-font-size;
+  }
+}
+
+// Open Opportunities variation ------------------------------------------------
+.usajobs-footer--openopps {
+  &__note {
+    margin-bottom: $size-default;
+
+    @include media($ML) {
+      margin-top: $size-M;
+    }
+  }
+
+  .usa-footer-big-secondary-section {
+    @include media($M) {
+      // Trying to stay consistent with core even though it's an odd size
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+  }
+
+  @media screen and (min-width: 62em) {
+    .usajobs-footer--openopps__container {
+      max-width: 160rem;
+    }
+  }
+
+  @media screen and (min-width: 37.5em) {
+    .usajobs-footer--openopps__container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
+  &__container {
+    padding: 0 $size-default;
+
+    @include media($M) {
+      padding-left: $size-M;
+      padding-right: $size-M;
+    }
+
+    @include media($L) {
+      @include outer-container();
+    }
+  }
+
+  &__col {
+    @include media($L) {
+      @include span-columns(6,12);
+    }
+  }
+
+  &__col.usajobs-footer--openopps__contact {
+    @include media($L) {
+      @include span-columns(3,12);
+      @include omega();
+    }
+  }
+
+  &__col.usajobs-footer--openopps__help {
+    @include media($L) {
+      @include span-columns(3,12);
+      @include omega();
+      margin-right: $size-S;
+    }
+  }
+
+  .usajobs-footer--openopps__contact-link {
+    color: #ffffff;
+    @include media($L) {
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      margin-top: .5rem;
+      font-size: 2.4rem;
+      text-align: right;
+    }
+  }
+
+  .usajobs-footer--openopps__contact-link a {
+    text-decoration: underline;
+    display: inline;
+  }
+
+  &__logo {
+    max-width: 32.0rem;
+    height: 4.3rem;
+    display: block;
+    background-image: url('../../img/logo/svg/open-opportunities-white.svg');
+    background-repeat: no-repeat;
+  }
+
+  &__contact-email {
+    display: block;
+    padding: $size-base 0;
+
+    @include media($L) {
+      @include h3();
+      margin: 0;
+      text-align: right;
+    }
+  }
+
+  ul.usajobs-footer--openopps__subsection-horizontal {
+    @include media($ML) {
+      margin-bottom: $size-default; // Creates a space of 3rem between lines
+    }
+  }
+
+  ul.usajobs-footer--openopps__subsection-large {
+    @include clearfix();
+    clear: both;
+    padding-top: $size-default;
+
+    @include media($L) {
+      margin: 0;
+      padding-top: 0;
+    }
+
+    li {
+      color: $color-white;
+      font-size: $small-font-size;
+
+      @include media($ML) {
+        margin-right: $size-M;
+      }
+    }
+
+    li a {
+      font-size: $small-font-size;
+      line-height: $base-line-height;
+    }
+  }
+}

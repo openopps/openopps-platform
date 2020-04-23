@@ -1,0 +1,5 @@
+Name: <%- profileName %><% if(profileTitle) { %>, <%- profileTitle  %><% } %>
+Agency: <%- profileAgency  %>
+Location: <%- profileLocation  %>
+
+I wanted to let you know about this interesting person. Click on the link to see their profile: <%- profileLink  %>

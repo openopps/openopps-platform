@@ -1,0 +1,179 @@
+// Search - Pagination
+
+@import '../../base-shared';
+
+.usajobs-search-pagination {
+  @include clearfix();
+  width: 100%;
+  margin: $size-M 0;
+  padding: 0;
+  text-align: center;
+
+  &__page,
+  &__page-condensed {
+    display: none;
+
+    @include media($M) {
+      display: inline-block;
+    }
+
+    &::before {
+      content: '';
+      padding: 0;
+    }
+
+    &::after {
+      margin-bottom: 0;
+    }
+  }
+
+  &__page {
+    a {
+      display: block;
+      padding: $size-base $size-default;
+      text-decoration: none;
+      line-height: 1;
+
+      @include media($M) {
+        padding: $size-S $size-SM;
+      }
+
+      @include media($L) {
+        padding: $size-S $size-M;
+      }
+
+      &:hover {
+        color: $color-primary-darker;
+        text-decoration: underline;
+      }
+    }
+
+    &.is-active {
+      span {
+        font-weight: bold;
+        color: $color-white;
+        @include makeCircle(30px, none, $color-primary);
+        margin: $size-base $size-default;
+
+        @include media($M) {
+          margin: $size-S ($size-SM - rem(13px));
+        }
+
+        @include media($L) {
+          margin: $size-S ($size-M - rem(13px));
+        }
+      }
+    }
+  }
+
+  &__previous-page-container,
+  &__next-page-container {
+    display: block;
+    // width: 100%;
+
+    @include media($SM) {
+      @include span-columns(1);
+    }
+
+    @include media($L-down) {
+      margin-left: $size-default;
+      margin-right: $size-default;
+
+      &:last-child {
+        margin-right: $size-default;
+      }
+    }
+
+    @include media($M) {
+      display: inline-block;
+      width: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    &::before {
+      content: '';
+    }
+
+    a {
+      display: block;
+      padding: $size-S $size-M;
+      line-height: 1;
+      background-color: inherit;
+      color: $color-primary;
+      text-decoration: none;
+
+      @include media($M-down) {
+        border-radius: $border-radius;
+        box-shadow: inset 0 0 0 2px $color-primary;
+      }
+
+      @include media($M) {
+        padding: $size-S $size-SM;
+      }
+
+      @include media($L) {
+        padding: $size-S $size-M;
+      }
+
+      &:hover {
+        color: $color-primary-darker;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__previous-page-container,
+  &__next-page-container {
+    a {
+      padding: $size-S;
+    }
+
+    &::before {
+      content: '';
+      padding: 0;
+    }
+
+    &::after {
+      margin-bottom: 0;
+    }
+  }
+
+  &__previous-page-container {
+    @include media($M) {
+      float: none;
+      margin-right: $size-base;
+    }
+  }
+
+  &__next-page-container {
+    @include media($SM) {
+      float: right;
+      @include omega();
+      margin-right: $size-default;
+    }
+
+    @include media($M) {
+      float: none;
+      margin-left: $size-base;
+    }
+  }
+
+  &__previous-page[aria-hidden=true],
+  &__next-page[aria-hidden=true] {
+    display: none;
+  }
+
+  &__previous-page::before {
+    color: $color-primary;
+    @include icon-content("pagination/chevron-left", rem(15px), rem(15px));
+    padding-right: $size-base;
+    vertical-align: middle;
+  }
+
+  &__next-page::after {
+    @include icon-content("pagination/chevron-right", rem(15px), rem(15px));
+    padding-left: $size-base;
+    vertical-align: middle;
+  }
+}

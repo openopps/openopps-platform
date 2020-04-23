@@ -1,35 +1,25 @@
-define([
-  'jquery',
-  'underscore',
-  'async',
-  'backbone',
-  'utilities',
-  'base_controller',
-  'home_view'
-], function ($, _, async, Backbone, utils, BaseController, HomeView) {
+var _ = require('underscore');
+var Backbone = require('backbone');
+var BaseController = require('../../../base/base_controller');
+var HomeView = require('../views/home_view');
 
-  Application.Home = {};
+var HomeController = BaseController.extend({
+  // The initialize method is mainly used for event bindings (for efficiency)
+  initialize: function (options) {
+    var self = this;
+    this.homeView = new HomeView().render();
+    Backbone.history.navigate('/');
+    return this;
+  },
 
-  Application.Home.Controller = BaseController.extend({
+  // ---------------------
+  //= Utility Methods
+  // ---------------------
+  cleanup: function () {
+    if (this.homeView) this.homeView.cleanup();
+    removeView(this);
+  },
 
-    events: {
-    },
-
-    // The initialize method is mainly used for event bindings (for efficiency)
-    initialize: function (options) {
-      var self = this;
-      this.homeView = new HomeView().render();
-    },
-
-    // ---------------------
-    //= Utility Methods
-    // ---------------------
-    cleanup: function() {
-      if (this.homeView) this.homeView.cleanup();
-      removeView(this);
-    }
-
-  });
-
-  return Application.Home.Controller;
 });
+
+module.exports = HomeController;

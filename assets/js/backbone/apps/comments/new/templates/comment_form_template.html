@@ -1,19 +1,44 @@
-<div class="row">
+<div class="usa-alert usajobs-alert usajobs-alert--error comment-alert-empty" role="alert" data-object="alert">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <p class="usa-alert-text">
+      You must enter text before submitting a comment.
+    </p>
+  </div>
+</div>
+
+<!-- <div class="row">
   <div class="col-lg-12 ">
     <div class="alert alert-danger comment-alert-empty">
       You must enter text before submitting a comment.
     </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-lg-12 ">
-    <form action="" class="form-inline comment-submit <% if (form.topic) { %>comment-form-topic<% } %>" role="form" data-depth="<%= form.depth %>">
-      <div class="input-group">
-        <div class="comment-input form-control input-sm" contentEditable="true"></div>
-        <span class="input-group-btn">
-          <input class="btn btn-c2 btn-sm" type="submit" value="<% if (form.topic) { %> Start Topic <% } else if (form.depth == 1) { %> Reply <% } else { %>Add Comment<% } %>" title="<% if (form.topic) { %> Start Topic <% } else if (form.depth == 1) { %> Reply <% } else { %>Add Comment<% } %>">
-        </span>
-      </div>
+</div> -->
+
+  <div class="usajobs-width-one-whole">
+    <% if ( !form.disable ) { %>
+    <form action="" class="usajobs-form comment-submit <% if (form.topic) { %>comment-form-topic<% } %>" role="form" data-depth="<%- form.depth %>">
+      <fieldset class="usajobs-fieldset">
+        <div class="required-input">
+          <div class="comment-form-container">
+            <label for="comment-input" class="sr-only">Comment</label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter text before submitting a comment.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '&lt;' or '&gt;' are not allowed.</span>
+            <!-- <input type="text" class="comment-input form-control validate" placeholder="Leave comments here" id="comment-input" name="comment-input" data-validate="html">
+            <a href="javascript:void(0);" type="submit" class="usa-button">
+              <% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>
+            </a>
+            <br> -->
+            <div class="comment-input form-control validate input-sm" id="comment-input" name="comment-input" contentEditable="true" data-validate="html" data-text="Leave comments here"></div>
+            <button class="usa-button comment-submit" type="submit" value="<% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>" title="<% if (form.topic) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>">
+              <% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %></button>
+            <div id="comment-update-alert" class="alert alert-warning" style="display:none;"></div>
+          </div>
+        </div>
+      </fieldset>
     </form>
+    <% } %>
   </div>
-</div>

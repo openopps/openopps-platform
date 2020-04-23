@@ -1,12 +1,12 @@
-<div class="project-people-div" data-userid="<%= data.userId %>">
-  <img src="/api/user/photo/<%= data.userId %>" class="project-people" alt="<%= data.owner.name %>"/>
+<div class="project-people-div" data-userid="<%- data.userId %>">
+  <img src="/api/user/photo/<%- data.userId %>" class="project-people" alt="<%- data.owner.name %>"/>
 </div>
 <div class="project-people-space">
   <div class="bar"></div>
 </div>
 <% _.each(data.volunteers, function (v) { %>
-  <div class="project-people-div" data-userid="<%= v.userId %>" data-voluserid="<%= v.userId %>">
-    <img src="/api/user/photo/<%= v.userId %>" class="project-people" alt="<%= v.name %>"/>
-    <a href="#" class="delete-volunteer volunteer-delete fa fa-times"  id="delete-volunteer-<%= v.id %>" data-uid="<%= v.userId %>" data-vid="<%= v.id %>"></a>
+  <div class="project-people-div" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
+    <img src="/api/user/photo/<%- v.userId %>" class="project-people" alt="<%- v.name %>"/>
+    <a href="#" class="volunteer-delete fa fa-times" data-uid="<%- v.userId %>" data-vid="<%- v.id %>"></a>
   </div>
 <% }); %>

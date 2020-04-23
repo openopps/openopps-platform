@@ -1,17 +1,18 @@
-<li class="comment-item clearfix <% if (topic) { %>border-left box-pad-lr<% } else { %>border-top<% } %>">
-
+<li class="comment-item clearfix">
   <div class="comment-content">
-    <% if (topic) { %>
-    <div class="comment-expand">
-      <span class="content">expand</span> <i class="fa fa-angle-double-down"></i>
-    </div>
-    <div class="comment-contract">
-      <span class="content">contract</span> <i class="fa fa-angle-double-up"></i>
-    </div>
-    <% } %>
-    <div class="comment-image">
+  
+    <!-- <div class="comment-image">
       <div class="project-people-div" data-userid="<%- userId %>">
-        <img src="/api/user/photo/<%= userId %>" alt="<%- user.name %>" class="project-people" />
+        <img src="/api/user/photo/<%- userId %>" alt="<%- user.name %>" class="project-people" />
+      </div>
+    </div> -->
+    <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+      <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(userId) %>" data-userid="<%- userId %>" data-voluserid="<%- userId %>">
+        <% if (user.photoId) { %>
+          <img src="/api/user/photo/<%- userId %>" alt="Profile picture of <%- name %>">
+        <% } else { %>
+          <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(user.name) %></div>
+        <% } %>
       </div>
     </div>
 
@@ -25,30 +26,21 @@
           <% } %>
         </a>
       </span>
-
-      <%= valueHtml %>
+      <a name="comment-<%- id %>"></a>
+      <% /* Escaped with marked() */ %>
+      <span id="comment-id-<%- id %>"><%= valueHtml %></span>
 
       <div class="comment-metadata">
         <time class="timeago comment-created-at" datetime="<%- createdAt %>"><%- createdAt %></time>
-        <% if (topic) { %>
-        &bull;&nbsp;
-        <span class="comment-count"><i class="fa fa-comments"></i> <span class="comment-count-num"><%- numChildren %></span> comments</span>
-        <% } %>
-        <% if (depth == 1)  { %>
         <% if (currentUser) { %>
         &bull;
-        <a href="#reply-to-comment" class="reply-to-<%= id %>" data-depth="<%= depth %>">Reply</a>
-        <% } %>
+        <a href="#reply-to-comment" class="reply-to-<%- id %>" data-depth="<%- depth %>" data-commentid="<%- id %>" data-authorid="<%- userId %>" data-commentauthor="<% if (user.name) { %><%- user.name %><% } else { %><%- user.username %><% } %>">Reply</a>
         <% } %>
       </div>
+
+      <% if (canEdit || ( currentUser.id === userId )) { %>
+        <a href="#" class="delete-comment" data-commentid="<%- commentId %>"><span class='fa fa-times'></span><span class="sr-only">Delete comment</span></a>
+      <% } %>
     </div>
   </div>
-
-  <div class="comment-sublist-wrapper">
-
-    <ul id="comment-list-<%= id %>"></ul>
-  </div>
-
-  <div class="comment-form" <% if ((depth >= 1) || (!currentUser)) { %>style="display: none;"<% } %> id="comment-form-<%= id %>"></div>
-
 </li>

@@ -1,0 +1,9 @@
+I wanted to let you know about this great opportunity to help a colleague.
+
+Opportunity title: <%= opportunityTitle %>
+
+Introduction: <%= opportunityDescription %>
+
+What you'll do: <%= opportunityWhatYoullDo %>
+
+Click on the link to find out more: <%= opportunityLink %>

@@ -1,0 +1,55 @@
+<div id="process-title-banners" role="navigation" aria-label="Application steps"></div>
+
+<div class="usajobs-content-gutter opportunity-gutter internship">
+  <main class="main-content usajobs-content-well usajobs-opop" id="main-content" role="main">
+    <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+      <h2>Statement of Interest</h2>
+      <div class="usa-form-xl">
+        <fieldset class="usajobs-fieldset">
+          <legend class="usa-sr-only">Statement of interest</legend>
+          <p>
+            Please describe why you're seeking an internship. Include your objectives and how your academic courses and other 
+            experiences relate to the three internship opportunities you're applying to. (2,500 character maximum)
+          </p>
+          <div class="form-group required-input">
+            <label for="statement">
+              <h5 class="usajobs-form__label-header">Paste or type your statement here.</h5>
+            </label>
+            <span class="field-validation-error error-empty" style="display:none;">You must enter a statement for this application.</span>
+            <span class="field-validation-error error-count2500" style="display:none;">The statement must be no more than 2500 characters.</span>
+            <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+            <textarea id="statement" class="fullwidth form-control validate" name="statement" data-validate="empty,count2500,html"><%- statementOfInterest %></textarea>
+            <p class="usajobs-form__help-brief" id="statement-count">
+              (2500 characters remaining)
+            </p>
+          </div>
+        </fieldset>
+
+        <div class="usajobs-button_bar--slim">
+          <div class="usajobs-button_bar__body">
+            <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="back">Back</button>
+            <a class="usa-button usa-button-primary apply-continue" id="statementContinue" data-action="statementContinue">Save and continue</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="usajobs-rightrail">
+    <div id="help" class="usajobs-profile-help">
+      <h3 class="usajobs-profile-help__title">
+          <i class="fas fa-question-circle"></i> Help
+      </h3>
+      <p>
+          Your statement of interest is very important—those reviewing all of the applications rely heavily on these statements 
+          when deciding who will get the internship. Make sure your statement of interest is well written, concise and tells your story.
+      </p>
+      <p>Here are a few things to consider for your statement of interest:</p>
+      <ul>
+        <li>Tell us what you'll bring to the work and what you hope to take away from this experience.</li>
+        <li>Highlight any disadvantages you've overcome or other relevant unique experiences and how it will help you successfully complete the internship.</li>
+        <li>Expand on any of the questions asked in the application, such as your language ability or other special skills.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
