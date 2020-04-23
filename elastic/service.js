@@ -267,7 +267,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       if (ctx.state.user.isAdmin) {
         agencies = [];
       } else {
-        agencies.push(ctx.state.user.agency.agency_id);
+        ctx.state.user.agencies.map(agency => {
+          agencies.push(agency.agency_id);
+        });
       }
     }
   } else if (query.community) {
