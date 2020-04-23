@@ -216,6 +216,10 @@
                 <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
               <% } %>
+              <% if (model.agencyId) { %>
+                <h4>Agency</h4>
+                <div><%- model.agency.name %></div>
+              <% } %>
               <h4>Location</h4>
               <div>
                 <% if (madlibTags.location) { %>
@@ -340,6 +344,10 @@
               <div>
                   <%= moment(model.completedBy).format('MM/DD/YY') %>
               </div>
+              <% } %>
+              <% if (model.agencyId) { %>
+                <h4>Agency</h4>
+                <div><%- model.agency.name %></div>
               <% } %>
               <h4>Location</h4>
               <div>
