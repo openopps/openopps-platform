@@ -3,7 +3,7 @@
   <h2>Display & Appearance</h2>
   <div id="image-logo">
     <% if (imageId) { %>
-        <img id="profile-picture" src="/api/document/image/<%- imageId %>" alt="Banner logo of <%- name %>">
+        <img class="profile-picture" src="/api/document/image/<%- imageId %>" alt="Banner logo of <%- name %>">
     <% } %>
     <div class="fileinput-button">
     <span><%- imageId ? 'Update logo' : 'Upload logo' %>
@@ -17,8 +17,8 @@
     <% } %>
     </div>
   </div>
-  <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-    <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+  <div class="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+    <div class="file-upload-progress progress-bar" style="width: 0"></div>
   </div>
   
   <div class="form-group required-input">
@@ -97,7 +97,7 @@
       <legend class="usa-sr-only">Select Search button text color</legend>
       <p class="label-brief">Which color do you want to use for the text of the Search button?</p>
       <span class="field-validation-error" style="display:none;" >Please select Black or White.</span>
-      <ul class="usa-unstyled-list" id="background-group">
+      <ul class="usa-unstyled-list" id="button-text-group">
         <li>
           <input id="button-text-color" name="button-text-group" type="radio" value="black" checked/>
           <label for="button-text-color">Black</label>
@@ -145,7 +145,7 @@
     <div id="background-photo-banner" class="form-group required-input hide">
       <div id="image-background">
         <% if (banner.backgroundImageId) { %>
-          <img id="profile-picture" src="/api/document/image/<%- banner.backgroundImageId %>" alt="Banner image of <%- name %>">
+          <img class="profile-picture" src="/api/document/image/<%- banner.backgroundImageId %>" alt="Banner image of <%- name %>">
         <% } %>
         <div class="fileinput-button">
         <span><%- banner.backgroundImageId ? 'Update image' : 'Upload image' %>
@@ -159,8 +159,8 @@
         <% } %>
         </div>
       </div>
-      <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
-        <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
+      <div class="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
+        <div class="file-upload-progress progress-bar" style="width: 0"></div>
       </div>
     </div>
   </div>
