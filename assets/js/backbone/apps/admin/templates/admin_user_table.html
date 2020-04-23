@@ -102,11 +102,11 @@
           </td>
         <% } %>
         <td class="admin-table-federalEmail">
-          <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
+          <% if (u.government_uri) { %><a href="mailto:<%- u.government_uri %>"><%- u.government_uri %></a><% } else { %> <% } %>
         </td>
         <% if (target == 'sitewide') { %>
         <td class="admin-table-username">
-          <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+          <a href="mailto:<%- u.username %>"><%- u.username %></a>
         </td>
         <% } %>
         <td class="admin-table-createdat">
