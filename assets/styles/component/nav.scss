@@ -76,6 +76,7 @@ $nav_item_height: 17px + 24px;
     display: block;
     padding: $size-default 0 $size-S $size-default;
     line-height: 1;
+    font-size: 2.5rem;
 
     @include media($ML) {
       padding-left: $size-M;
