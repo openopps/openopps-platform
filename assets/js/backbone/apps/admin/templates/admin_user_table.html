@@ -150,7 +150,7 @@
         <td class="pull-center">
           <% if (target == 'sitewide') { %>
             <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %> 
-              <a href="<%- u.id %>"><i class="fas fa-cog"></i></a>
+              <a href="<%- u.id %>" id="account-settings"><i class="fas fa-cog"></i></a>
             <% } %>
           <% } %>
         </td>

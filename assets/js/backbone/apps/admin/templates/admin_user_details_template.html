@@ -10,15 +10,15 @@
             <div class="field-label">Agency</div>
             <span>Office of Personnel Management</span>
             <div class="field-label">Federal email</div>
-            <span>jim.halpert@opm.gov</span>
+            <span><%- user.government_uri %></span>
             <div class="field-label">Login.gov email</div>
-            <span>jhalpert@dundermifflin.com</span>
+            <span><%- user.username %></span>
           </div>
           <div class="usa-width-one-half">
             <div class="field-label">Last login</div>
-            <span>04/20/20 1:32pm</span>
+            <span><%- user.last_login ? moment(u.last_login).format('MM/DD/YYYY hh:mma'):'' %></span>
             <div class="field-label">Created</div>
-            <span>01/01/19 1:32pm</span>
+            <span><%- moment(user.createdAt).format('MM/DD/YYYY hh:mma') %></span>
           </div>
         </div>
       </div>
@@ -27,18 +27,21 @@
         <ul class="usa-unstyled-list">
           <li class="toggle-label">
             Account enabled
-            <input class="account-enabled" id="account-enabled-group" type="checkbox">
-            <label class="no-label" for="account-enabled-group"><span class="sr-only">Account enabled</span></label>
+            <input class="user-enable" id="user-enable-<%- user.id %>" type="checkbox" data-action='user' <% if (!user.disabled) { %> checked <% } %> />
+            <label class="no-label" for="user-enable-<%- user.id %>"><span class="sr-only">Account enable</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           </li>
           <li class="toggle-label">
             Sitewide approver            
-            <input class="sitewide-approver" id="sitewide-approver-group" type="checkbox">
+            <input class="sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide' <% if (isAdministrator(user, 'sitewide')) { %> checked <% } %>>
             <label class="no-label" for="sitewide-approver-group"><span class="sr-only">Sitewide approver</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           </li>
           <li class="toggle-label">
             Sitewide admin
             <input class="sitewide-admin" id="sitewide-admin-group" type="checkbox">
             <label class="no-label" for="sitewide-admin-group"><span class="sr-only">Sitewide admin</span></label>
+            <div class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></div>
           </li>
         </ul>
       </div>

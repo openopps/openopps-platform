@@ -29,6 +29,7 @@ var AdminUserView = Backbone.View.extend({
     'change #sort-user-sitewide'  : 'sortUsers',
     'change #sort-user-agency'    : 'sortUsers',
     'change #sort-user-community' : 'sortUsers',
+    'click #account-settings'     : 'accountSettings',
   },
 
   initialize: function (options) {
@@ -380,6 +381,17 @@ var AdminUserView = Backbone.View.extend({
         },
       });
     }
+  },
+
+  accountSettings: function (user, target) {
+      if (this.adminCommunityCycleView) {
+        this.adminCommunityCycleView.cleanup();
+      }
+      this.adminCommunityCycleView = new AdminCommunityCycleView({
+        el: '#admin-cycle',
+        target: target,
+        targetId: targetId,
+      });
   },
 
   confirmAdminAssign: function (t, data) {
