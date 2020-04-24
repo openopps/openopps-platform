@@ -39,7 +39,12 @@
         <span class="skill-label">+ <%- _.size(item.skills) - 5 %></span>
       <% } %>
     </div>
-    <div class="career-field-card">
+    <div class="career-field-card">   
+      <% if (!_.isEmpty(item.agency)) { %>
+        <p>Agency:
+          <%- item.agency.name %>
+        </p>
+      <% } %>
       <% if (!_.isEmpty(item.careers)) { %>
         <p>Career field:
         <% _.each(item.careers, function (t, index, list) { %>

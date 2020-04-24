@@ -19,7 +19,7 @@ with tasks as (
 	join task on task.id = task_tags.task_tags
 	where tagentity."type" = 'task-time-required' 
 	and task.state in ('draft','submitted','open','not open','in progress','completed','canceled')
-	and task.community_id = ? [filter clause]
+	and task.community_id = ? 
 )
 select
 	count(*),
@@ -27,8 +27,8 @@ select
 		when state = 'draft' then 'draft'
 		when state = 'submitted' then 'submitted'
 		when state in ('open', 'in progress') and "accepting_applicants" = true then 'open'
-		when state = 'not open' then 'notOpen'
-		when state = 'in progress' and "accepting_applicants" = false then 'inProgress'
+		when state = 'not open' then 'not open'
+		when state = 'in progress' and "accepting_applicants" = false then 'in progress'
 		when state = 'completed' then 'completed'
 		when state = 'canceled' then 'canceled'
 		else state
@@ -47,5 +47,5 @@ select
 		when tasks.detail_selection = 'Full-time' then 'fullTime'		
 	end as task_state
 from tasks
-where tasks.state <> 'archived' 
+where tasks.state <> 'archived' [filter clause]
 group by task_state;

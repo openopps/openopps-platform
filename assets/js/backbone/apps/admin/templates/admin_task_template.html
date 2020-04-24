@@ -62,6 +62,7 @@
         <li>
           <input id="inProgress" name="opp-status" type="radio" class="filter-radio" value="in progress"  <% if (status == 'in progress') { %>checked<% } %>>
           <label for="inProgress"><span class="usajobs-pill--opportunity-status status-in-progress">In progress</span> <%- (_.findWhere(totals, { task_state: 'in progress' }) || {}).count || 0 %></label>
+          </label>
         </li>
         <li>
           <input id="completed" name="opp-status" type="radio" class="filter-radio" value="completed" <% if (status == 'completed') { %>checked<% } %>>

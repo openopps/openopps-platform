@@ -115,6 +115,13 @@
           <td class="admin-table-createdat">
             <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
           </td>
+        <td class="admin-table-federalEmail">
+          <% if (u.government_uri) { %><a href="mailto:<%- u.government_uri %>"><%- u.government_uri %></a><% } else { %> <% } %>
+        </td>
+        <% if (target == 'sitewide') { %>
+        <td class="admin-table-username">
+          <a href="mailto:<%- u.username %>"><%- u.username %></a>
+        </td>
         <% } %>
         <% if (target == 'sitewide') { %>
           <td class="admin-table-lastLogin">

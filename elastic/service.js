@@ -267,7 +267,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       if (ctx.state.user.isAdmin) {
         agencies = [];
       } else {
-        agencies.push(ctx.state.user.agency.agency_id);
+        ctx.state.user.agencies.map(agency => {
+          agencies.push(agency.agency_id);
+        });
       }
     }
   } else if (query.community) {
@@ -320,6 +322,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   } else {
     request.addTerms(query.state, 'state', 'open');
     request.addTerms(query.location, 'locations.name');
+    request.addTerms(query.agency, 'agency.name');
   }
   request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');

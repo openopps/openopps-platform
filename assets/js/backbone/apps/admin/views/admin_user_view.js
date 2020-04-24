@@ -30,6 +30,7 @@ var AdminUserView = Backbone.View.extend({
     'change #sort-user-agency'    : 'sortUsers',
     'change #sort-user-community' : 'sortUsers',
     'click #account-settings'     : 'accountSettings',
+    'keypress #user-filter'       : 'searchOnEnter',
   },
 
   initialize: function (options) {
@@ -189,7 +190,11 @@ var AdminUserView = Backbone.View.extend({
       },
     });
   },
-
+  searchOnEnter : function (event){
+    if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
+      this.filter();
+    }
+  },
   renderUsers: function () {
     this.data.urlbase = '/admin/users';
     this.data.q = this.data.filter || '';

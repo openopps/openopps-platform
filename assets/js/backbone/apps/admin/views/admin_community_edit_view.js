@@ -363,12 +363,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
-        $('#file-upload-progress-container').show();
+        $('.file-upload-progress-container').show();
         data.submit();
       }.bind(this),
       progressall: function (e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#file-upload-progress').css('width', progress + '%');
+        $('.file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
         this.community.set('imageId', data.result.id);
@@ -377,12 +377,12 @@ var AdminCommunityEditView = Backbone.View.extend({
         } else {
           this.renderImage(this.community.attributes);
         }
-        $('#file-upload-progress-container').hide();
+        $('.file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
         var message = data.jqXHR.responseText || data.errorThrown;
-        $('#file-upload-progress-container').hide();
+        $('.file-upload-progress-container').hide();
         if (data.jqXHR.status == 413) {
           message = 'The uploaded file exceeds the maximum file size.';
         }

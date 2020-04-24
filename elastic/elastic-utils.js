@@ -29,6 +29,9 @@ function addTerms (request, filter, field, defaultFilter) {
   var filter_must = request.body.query.bool.filter.bool.must;
   filter = filter || defaultFilter;
   if((filter && filter !== '_all')){
+    filter = [].concat(filter).map(value => { 
+      return _.isString(value) ? value.split('|')[0] : value;
+    }); // remove ids
     filter_must.push({terms: { [field] : asArray(filter) }});
   }
 }
@@ -97,8 +100,8 @@ utils.convertQueryStringToUserSearchRequest = function (ctx) {
     }
   }
   
-  addTerms(request, query.skills, 'skills.name');
-  addTerms(request, query.career, 'career.name');
+  addTerms(request, query.skill, 'skills.name');
+  addTerms(request, query.career, 'career.id');
   addTerms(request, query.agency, 'agency.name');
 
   return request;

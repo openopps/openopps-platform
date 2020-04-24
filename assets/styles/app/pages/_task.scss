@@ -475,6 +475,11 @@ button.opportunity-options__button {
     padding: 0;
     text-align: left;
     -webkit-font-smoothing: auto;
+    background-color: $color-white;
+    background-image: url(../img/plus-circle-green.svg);
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: 2.8rem;
     color: $color-primary;
     cursor: pointer;
     display: inline-block;
@@ -493,42 +498,13 @@ button.opportunity-options__button {
     }
 
     &[aria-expanded=true] {
-
-      h3 {
-  
-        span.icon {
-          background-color: $color-white;
-          background-image: url(../../img/minus-circle-green.png);
-          background-image: url(../../img/minus-circle-green.svg);
-          background-position: left center;
-          background-repeat: no-repeat;
-          background-size: 2.8rem;
-          display: block;
-          width: 2.8rem;
-          height: 3.3rem;
-          position: absolute;
-          left: -4rem;
-        }
-      }
+      background-image: url(../img/minus-circle-green.svg);
+      background-repeat: no-repeat;
+      background-size: 2.8rem;
     }
 
     h3 {
       color: $color-primary;
-      position: relative;
-
-      span.icon {
-        background-color: $color-white;
-        background-image: url(../../img/plus-circle-green.png);
-        background-image: url(../../img/plus-circle-green.svg);
-        background-position: left center;
-        background-repeat: no-repeat;
-        background-size: 2.8rem;
-        display: block;
-        width: 2.8rem;
-        height: 3.3rem;
-        position: absolute;
-        left: -4rem;
-      }
     }
   }
 
