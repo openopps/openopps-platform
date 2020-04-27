@@ -17,25 +17,25 @@ var select2Custom = require('../../../../../vendor/select2-3.4.6.custom');
 var TaskEditFormView = Backbone.View.extend({
 
   events: {
-    'blur .validate'                      : 'validateField',
-    'change .validate'                    : 'validateField',
-    'click #change-owner'                 : 'displayChangeOwner',
-    'click #add-participant'              : 'displayAddParticipant',
-    'click .usa-button'                   : 'submit',
-    'click .opportunity-people'           : 'togglePeopleOptions',
-    'click .time-options-time-required'   : 'toggleTimeOptions',
-    'click .opportunity-location'         : 'toggleLocationOptions',
-    'click .expandorama-button-skills'    : 'toggleAccordion1',
-    'click .expandorama-button-team'      : 'toggleAccordion2',
-    'click .expandorama-button-keywords'  : 'toggleAccordion3',
-    'click .expandorama-button-requirement': 'toggleAccordion4',
-    'click .expandorama-button-apply'      : 'toggleAccordion5',
-    'change [name=CareerField]'           : 'toggleCareerField',
-    'change [name=task-restrict-agency]'   : 'toggleAgencyRestrict',  
-    'change #detail-reimbursable'       : 'changeDetailReimbursable',
-    'change #detail-length-type'        : 'changeDetailLength',
-    'change #detail-time-group'         : 'changeDetailTime',
-    'change #federal-programs'          : 'changeCommunity',
+    'blur .validate'                                : 'validateField',
+    'change .validate'                              : 'validateField',
+    'click #change-owner'                           : 'displayChangeOwner',
+    'click #add-participant'                        : 'displayAddParticipant',
+    'click .usa-button'                             : 'submit',
+    'click .opportunity-people'                     : 'togglePeopleOptions',
+    'click .time-options-time-required'             : 'toggleTimeOptions',
+    'click .opportunity-location'                   : 'toggleLocationOptions',
+    'click .opportunity-drawer-button-skills'       : 'toggleAccordion1',
+    'click .opportunity-drawer-button-team'         : 'toggleAccordion2',
+    'click .opportunity-drawer-button-keywords'     : 'toggleAccordion3',
+    'click .opportunity-drawer-button-requirement'  : 'toggleAccordion4',
+    'click .opportunity-drawer-button-apply'        : 'toggleAccordion5',
+    'change [name=CareerField]'                     : 'toggleCareerField',
+    'change [name=task-restrict-agency]'            : 'toggleAgencyRestrict',  
+    'change #detail-reimbursable'                   : 'changeDetailReimbursable',
+    'change #detail-length-type'                    : 'changeDetailLength',
+    'change #detail-time-group'                     : 'changeDetailTime',
+    'change #federal-programs'                      : 'changeCommunity',
   },
 
   initialize: function (options) {
@@ -194,7 +194,7 @@ var TaskEditFormView = Backbone.View.extend({
       $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code});
     }  
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
-      $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#keywords').siblings('.opportunity-drawer-button').attr('aria-expanded', true);
       $('#keywords').attr('aria-hidden', false);
     }
 
@@ -338,7 +338,7 @@ var TaskEditFormView = Backbone.View.extend({
       validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().outcome) {
-      $('#skills').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#skills').siblings('.opportunity-drawer-button').attr('aria-expanded', true);
       $('#skills').attr('aria-hidden', false);
     }
   },
@@ -355,7 +355,7 @@ var TaskEditFormView = Backbone.View.extend({
       validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().about) {
-      $('#team').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#team').siblings('.opportunity-drawer-button').attr('aria-expanded', true);
       $('#team').attr('aria-hidden', false);
     }
   },
@@ -372,7 +372,7 @@ var TaskEditFormView = Backbone.View.extend({
       validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().requirement) {
-      $('#requirement').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#requirement').siblings('.opportunity-drawer-button').attr('aria-expanded', true);
       $('#requirement').attr('aria-hidden', false);
     }
   },
@@ -388,7 +388,7 @@ var TaskEditFormView = Backbone.View.extend({
       validate: ['html','count5000'],
     }).render();
     if(this.model.toJSON().applyAdditional) {
-      $('#apply-participant').siblings('.expandorama-button').attr('aria-expanded', true);
+      $('#apply-participant').siblings('.opportunity-drawer-button').attr('aria-expanded', true);
       $('#apply-participant').attr('aria-hidden', false);
     }
   },
@@ -459,35 +459,35 @@ var TaskEditFormView = Backbone.View.extend({
     var element = $(e.currentTarget);
     this.data.accordion1.open = !this.data.accordion1.open;
     element.attr('aria-expanded', this.data.accordion1.open);
-    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion1.open);
+    element.siblings('.opportunity-drawer-content').attr('aria-hidden', !this.data.accordion1.open);
   },
 
   toggleAccordion2: function (e) {
     var element = $(e.currentTarget);
     this.data.accordion2.open = !this.data.accordion2.open;
     element.attr('aria-expanded', this.data.accordion2.open);
-    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion2.open);
+    element.siblings('.opportunity-drawer-content').attr('aria-hidden', !this.data.accordion2.open);
   },
 
   toggleAccordion3: function (e) {
     var element = $(e.currentTarget);
     this.data.accordion3.open = !this.data.accordion3.open;
     element.attr('aria-expanded', this.data.accordion3.open);
-    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion3.open);
+    element.siblings('.opportunity-drawer-content').attr('aria-hidden', !this.data.accordion3.open);
   },
 
   toggleAccordion4: function (e) {
     var element = $(e.currentTarget);
     this.data.accordion4.open = !this.data.accordion4.open;
     element.attr('aria-expanded', this.data.accordion4.open);
-    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion4.open);
+    element.siblings('.opportunity-drawer-content').attr('aria-hidden', !this.data.accordion4.open);
   },
 
   toggleAccordion5: function (e) {
     var element = $(e.currentTarget);
     this.data.accordion5.open = !this.data.accordion5.open;
     element.attr('aria-expanded', this.data.accordion5.open);
-    element.siblings('.expandorama-content').attr('aria-hidden', !this.data.accordion5.open);
+    element.siblings('.opportunity-drawer-content').attr('aria-hidden', !this.data.accordion5.open);
   },
 
   validateFields: function () {
