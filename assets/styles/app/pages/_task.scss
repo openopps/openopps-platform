@@ -457,6 +457,62 @@ button.opportunity-options__button {
   margin-left: 2.8rem;
 }
 
+.opportunity-drawers {
+  list-style: none;
+  padding-left: 0;
+
+  .opportunity-drawer {
+    width: 100%;
+    margin-top: $size-default;
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+    background-color: $color-white;
+
+    &-button {
+      display: inline-block;
+      width: 100%;
+      margin: 0;
+      padding: 0 2rem 0 4rem;
+      border: 0;
+      border-radius: 0;
+      background-color: $color-white;
+      background-image: url(../img/plus-circle-green.svg);
+      background-repeat: no-repeat;
+      background-position: 0 0.4rem;
+      background-size: 2.8rem;
+      color: $color-primary;
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: left;
+      -webkit-font-smoothing: auto;
+      cursor: pointer;
+
+      &:hover {
+        color: $color-primary-darker;
+      }
+
+      &[aria-expanded=true] {
+        background-image: url(../img/minus-circle-green.svg);
+      }
+    }
+
+    &-content {
+      background-color: $color-white;
+      padding: 0;
+
+      &[aria-hidden=true] {
+        display: none;
+      }
+      
+      &:not([aria-hidden]) {
+        position: absolute;
+        left: -999em;
+      }
+    }
+  }
+}
+
 .expandorama {
   list-style: none;
   padding-left: 0;
