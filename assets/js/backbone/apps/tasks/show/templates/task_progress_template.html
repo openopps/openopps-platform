@@ -99,14 +99,15 @@
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                      
-                  
-                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>                           
-                    <% } else { %> 
-                      <a href="/profile/<%- v.userId %>">View application</a>     
-                      <% } %>         
+                    <% if (model.canEditTask) { %>
+                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>                           
+                      <% } else { %> 
+                        <a href="/profile/<%- v.userId %>">View application</a>     
+                      <% } %>
+                    <% } %> 
                     <% if (model.canEditTask) { %>
                       <% if (state.value == 'in progress') { %>
                         <% if (v.taskComplete) { %>
@@ -166,10 +167,12 @@
                       <% } %>                    
                     </div>  
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                                       
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>   
+                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                      <% if (model.canEditTask) { %>                                                     
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>
+                      <% } %>
                     </div>              
                   </div>
                        
@@ -201,14 +204,16 @@
                     <% } %>            
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
-                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                                     
-                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>                           
-                    <% } else { %> 
-                      <a href="/profile/<%- v.userId %>">View application</a>     
-                      <% } %>                  
+                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                    <% if (model.canEditTask) { %>                                                     
+                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>                           
+                      <% } else { %> 
+                        <a href="/profile/<%- v.userId %>">View application</a>     
+                      <% } %>
+                    <% } %>
                   </div> 
                 </div>
               
