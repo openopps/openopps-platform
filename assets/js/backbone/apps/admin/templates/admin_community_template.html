@@ -62,18 +62,20 @@
       <legend class="usa-sr-only">Select community</legend>
       <label for="communities" class="usa-sr-only">Community</label>
       <select id="communities" class="dropdown">
-        <% var communities = _.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
+        <% var communities = _.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>      
         <option value=""></option>
         <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
+          <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %>
+          <% if (communitiesEnabled.length > 0) { %>
           <option value="" disabled>- Active -</option>
-        <% } %>
-        <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %>
+          <% } %>       
         <% _.each(communitiesEnabled, function (c){ %>
             <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
-        <% }); %>
-        <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
-          <option value="" disabled>- Inactive -</option>
+        <% }); %>      
           <% var communitiesDisabled = _.filter(communities, function (c) { return c.isDisabled == true; }); %>
+          <% if (communitiesDisabled.length > 0) { %>
+          <option value="" disabled>- Inactive -</option>
+          <% } %>
           <% _.each(communitiesDisabled, function (c){ %>
               <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
           <% }); %>
