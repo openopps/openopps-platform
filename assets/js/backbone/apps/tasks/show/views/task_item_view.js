@@ -188,14 +188,14 @@ var TaskItemView = BaseView.extend({
 
   getEmailApplicants : function (){  
     var applicants= _.where(this.data.model.volunteers, { selected: null });
-    var applicantUsernames= _.pluck(applicants, 'username'); 
+    var applicantUsernames = applicants.map(applicant => { return applicant.governmentUri || applicant.username; });
     var link = 'mailto:' + encodeURIComponent(applicantUsernames) ; 
     this.$('#applicant-email').attr('href', link);
   },
 
   getSelectedApplicantsEmail: function (){
-    var selectedApplicants= _.where(this.data.model.volunteers, { selected: true });
-    var selectedUsernames= _.pluck(selectedApplicants, 'username'); 
+    var selectedApplicants= _.where(this.data.model.volunteers, { selected: true });  
+    var selectedUsernames = selectedApplicants.map(applicant => { return applicant.governmentUri || applicant.username; });
     var link = 'mailto:' + encodeURIComponent(selectedUsernames) ; 
     this.$('#selected-email').attr('href', link);
   },
