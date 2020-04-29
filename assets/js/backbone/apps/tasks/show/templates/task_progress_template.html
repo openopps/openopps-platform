@@ -82,11 +82,16 @@
 
     <% if (model.volunteers) { %>
       <h3>Selected applicants</h3>
+      <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>
+        <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>
+        <a  href="#" id="selected-email"><i class="fas fa-envelope"></i>Email all selected</a>
+        <% } %>
+        <% } %>
       <div class="assigned-participants-wrapper project-people__wrapper<% if (_.contains(['in progress', 'completed'], state.value)) { %> in-progress<% } %>">
         <% if (_.contains(['draft', 'submitted'], state.value)) { %>
           <p class="project-people__not-available">Not available</p>
         <% } else { %>
-          <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>
+          <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>          
             <% _.each(_.where(model.volunteers, { selected: true }), function (v) { %>           
                 <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                   <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
@@ -94,19 +99,19 @@
                       <img src="/api/document/image/<%- v.photoId %>" alt="Profile picture of <%- v.name %>">
                     <% } else { %>
                       <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(v.name) %></div>
-                    <% } %>
-                  
+                    <% } %>                 
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                      
-                  
-                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>                           
-                    <% } else { %> 
-                      <a href="/profile/<%- v.userId %>">View application</a>     
-                      <% } %>         
+                    <% if (model.canEditTask) { %>
+                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>                           
+                      <% } else { %> 
+                        <a href="/profile/<%- v.userId %>">View application</a>     
+                      <% } %>
+                    <% } %> 
                     <% if (model.canEditTask) { %>
                       <% if (state.value == 'in progress') { %>
                         <% if (v.taskComplete) { %>
@@ -140,23 +145,34 @@
           <% } %>
         <% } %>
       </div>
-
-  
+ 
       <% if (accordion.show) { %>
         <div class="usa-accordion">
-          <h3 class="usa-accordion-button" aria-expanded="<%- accordion.open %>">Applicants</h3>
-          <div class="usa-accordion-content project-people__wrapper" aria-hidden="<%- !accordion.open %>">
+          <h3 class="usa-accordion-button" aria-expanded="<%- accordion.open %>">Applicants</h3> 
+        <% if (_.where(model.volunteers, { selected: null }).length > 0 ) { %> 
+            <div class="usa-accordion-content aria-hidden="<%- !accordion.open %>">
+             <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>        
+            <a  href="#" id="applicant-email"><i class="fas fa-envelope"></i>Email all applicants</a>
+            <% } %>  
+          </div>
+        <% } %>  
+          <div class="usa-accordion-content project-people__wrapper" aria-hidden="<%- !accordion.open %>">           
         <% } else { %>
           <div>
             <h3>Applicants</h3>
-            <div class="project-people__wrapper">
-        <% } %>
-     
+          <% if (_.where(model.volunteers, { selected: null }).length > 0 ) { %> 
+            <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>        
+            <a  href="#" id="applicant-email"><i class="fas fa-envelope"></i>Email all applicants</a>
+            <% } %> 
+          <% } %>  
+              <div class="project-people__wrapper">   
+            <% } %>
+            
           <% if (_.contains(['draft', 'submitted'], state.value)) { %>
             <p class="project-people__not-available">Not available</p>
           <% } else { %>
-            <% if (model.volunteers.length > 0) { %>            
-              <% _.each(_.where(model.volunteers, { selected: null }), function (v) { %>                         
+            <% if (model.volunteers.length > 0) { %>                          
+              <% _.each(_.where(model.volunteers, { selected: null }), function (v) { %>                                                     
                   <div class="usajobs-open-opps-opportunity-requestor__figure-body">
                     <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(v.userId) %>" data-userid="<%- v.userId %>" data-voluserid="<%- v.userId %>">
                       <% if (v.photoId && (!model.tags.some(function(o) {return o.name === 'Detail'})) && (!model.tags.some(function(o) {return o.name === 'Lateral'}))) { %>
@@ -166,10 +182,12 @@
                       <% } %>                    
                     </div>  
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                                       
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>   
+                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                      <% if (model.canEditTask) { %>                                                     
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>
+                      <% } %>
                     </div>              
                   </div>
                        
@@ -201,14 +219,16 @@
                     <% } %>            
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
-                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                                     
-                  <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                    <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                      View application
-                      </a>                           
-                    <% } else { %> 
-                      <a href="/profile/<%- v.userId %>">View application</a>     
-                      <% } %>                  
+                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
+                    <% if (model.canEditTask) { %>                                                     
+                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
+                          View application
+                        </a>                           
+                      <% } else { %> 
+                        <a href="/profile/<%- v.userId %>">View application</a>     
+                      <% } %>
+                    <% } %>
                   </div> 
                 </div>
               

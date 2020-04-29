@@ -1099,8 +1099,8 @@ var AdminCommunityEditView = Backbone.View.extend({
         id: 'confirm-disable',
         alert: 'error',
         action: 'delete',
-        modalTitle: 'Are you sure?',
-        modalBody: 'You\'re about to disable <strong>' + this.community.attributes.communityName + '</strong>. This means this community will become read-only and only visible to Sitewide Admins and Community Managers. Are you sure you want to proceed?',
+        modalTitle: 'Are you sure you want to disable this community?',
+        modalBody: 'If you disable this community, you will no longer be able to post opportunities to it, and users will no longer see it. Once disabled, only Sitewide Administrators and Community Managers can see it.',
         primary: {
           text: 'Disable',
           action: function () {
