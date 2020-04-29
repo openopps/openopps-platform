@@ -8,8 +8,9 @@ var Modal = require('../../../components/modal');
 var AdminUserDetailstView = Backbone.View.extend({
 
   events: {
-    'click .link'       : 'link',
-    'click #save-btn'   : 'save',
+    'click .user-enable'          : 'toggleCheckbox',
+    'click .sitewide-admin'         : 'toggleCheckbox',
+    'click .sitewide-approver'      : 'toggleCheckbox',
   },
 
   initialize: function (options) {
@@ -33,6 +34,7 @@ var AdminUserDetailstView = Backbone.View.extend({
         this.user = userInfo.user;
         this.user.isAdministrator = this.isAdministrator;
         this.user.isApprover = this.isApprover;
+        this.user.returnUrl = '/admin/users';
         var template = _.template(AdminUserDetailsTemplate)({ user: this.user }); 
         this.$el.html(template);
       }.bind(this),
@@ -47,6 +49,50 @@ var AdminUserDetailstView = Backbone.View.extend({
 
   isApprover: function (user, target) {
     return (target == 'sitewide' && user.is_approver) || (target == 'community' && user.is_approver);
+  },
+
+  toggleCheckbox: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    var id = this.user.id;
+    var username = this.user.user-name;
+
+    this.updateUser(t, {
+      id: id,
+      checked: t.prop('checked'),
+      url: this.getUrlFor(id, t),
+    });
+    
+  },
+
+  updateUser: function (t, data) {
+    var spinner = $($(t.parent()[0]).children('.icon-spin')[0]);
+    // Show spinner and hide checkbox
+    spinner.show();
+    t.siblings('label').hide();
+    if (data.url) {
+      $.ajax({
+        url: data.url,
+        dataType: 'json',
+        success: function (d) {
+          // Hide spinner and show checkbox
+          spinner.hide();
+          t.siblings('label').show();
+          t.prop('checked', data.checked);
+        },
+      });
+    }
+  },
+
+  getUrlFor: function (id, elem) {
+    switch (elem.data('action')) {
+      case 'user':
+        return '/api/user/' + (elem.prop('checked') ? 'enable' : 'disable') + '/' + id;
+      case 'sitewide-admin':
+        return '/api/admin/admin/' + id + '?action=' + elem.prop('checked');
+      case 'sitewide-approver':
+        return '/api/admin/approver/' + id + '?action=' + elem.prop('checked');
+    }
   },
 
   cleanup: function () {
