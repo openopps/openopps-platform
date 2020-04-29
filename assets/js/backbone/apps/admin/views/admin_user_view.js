@@ -18,9 +18,6 @@ var AdminUserView = Backbone.View.extend({
   events: {
     'click a.page'                : 'clickPage',
     'click .link-backbone'        : linkBackbone,
-    'click .user-enable'          : 'toggleCheckbox',
-    'click .assign-admin'         : 'toggleCheckbox',
-    'click .assign-approver'      : 'toggleCheckbox',
     'click .member-enable'        : 'toggleCheckbox',
     'click .user-reset'           : 'resetPassword',
     'click #invite-members'       : 'inviteMembers',
@@ -29,6 +26,7 @@ var AdminUserView = Backbone.View.extend({
     'change #sort-user-sitewide'  : 'sortUsers',
     'change #sort-user-agency'    : 'sortUsers',
     'change #sort-user-community' : 'sortUsers',
+    'click #user-details'         : 'linkBackbone',
     'keypress #user-filter'       : 'searchOnEnter',
   },
 
@@ -46,6 +44,7 @@ var AdminUserView = Backbone.View.extend({
     }
     this.agency = {};
     this.community = {};
+    this.userId = {};
   },
 
   render: function () {
