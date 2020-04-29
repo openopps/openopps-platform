@@ -40,6 +40,10 @@ router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
   ctx.body = await service.getUsers(ctx.query.page, ctx.query.filter, ctx.query.sort);
 });
 
+router.get('/api/admin/user/:id', auth.isAdmin, async (ctx, next) => {
+  ctx.body = await service.getUserDetails(ctx.params.id);
+});
+
 router.get('/api/admin/contributors', auth.isAdminOrApprover, async (ctx, next) => {
   await service.getTopContributors().then(results => {
     ctx.body = results;

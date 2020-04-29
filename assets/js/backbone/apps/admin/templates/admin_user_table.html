@@ -5,7 +5,7 @@
     <% } %>
   </div>
   <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
-<% if (users.length > 0) { %>
+  <% if (users.length > 0) { %>
   <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
     <% if (target === 'sitewide') { %>
       <label class="usajobs-search-controls__sort-label" for="sort-user-sitewide">
@@ -22,7 +22,7 @@
         <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
         <option value="isApprover" <% if (sort == 'isApprover') { %>selected<% } %>>Sitewide Approver</option>    
       </select>
-      <% } %>
+    <% } %>
     <% if (target === 'agency') { %>
       <label class="usajobs-search-controls__sort-label" for="sort-user-agency">
         Sort by
@@ -45,14 +45,14 @@
     <tr>
       <th class="admin-table-name">Name</th>
       <% if (target == 'sitewide') { %>
-        <th>Agency</th>
-        <th class="admin-table-usertype">User type</th>   
+      <th>Agency</th>
+      <th class="admin-table-usertype">User type</th>   
       <% } %>
       <th>Federal email</th>
       <% if (target == 'sitewide') { %><th>Login.gov email</th><% } %>
       <% if (target != 'sitewide') { %><th>Created</th><% } %>
       <% if (target == 'sitewide') { %><th>Last login</th><% } %>
-      <% if (target != 'sitewide') { %><th class="admin-user-checkbox">Account<br />enabled</th>><% } %>
+      <% if (target != 'sitewide') { %><th class="admin-user-checkbox">Account<br />enabled</th><% } %>
       <% if (target != 'sitewide') { %>
         <% if (!loginGov) { %>
           <% if (login.local.enabled === true) { %>
@@ -86,13 +86,10 @@
         </td>      
         <% if (target == 'sitewide') { %>
           <% if (u.agency) { %>
-            <td >
-              <%- u.agency.name %>
-            </td>
-            <% }else { %>
-              <td> </td>
-              <% } %>
-
+            <td ><%- u.agency.name %></td>
+            <% } else { %>
+            <td></td>
+          <% } %>
           <td class="admin-table-usertype">
             <% if (u.hiring_path == 'fed') { %>
               <span><img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal employee" title="Federal employee"></span>
@@ -104,24 +101,17 @@
           </td>
         <% } %>
           <td class="admin-table-federalEmail">
-          <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
+            <% if (u.government_uri) { %><a href="mailto:<%- u.government_uri %>"><%- u.government_uri %></a><% } else { %> <% } %>
           </td>
         <% if (target == 'sitewide') { %>
           <td class="admin-table-username">
-            <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.username %></a>
+            <a href="mailto:<%- u.username %>"><%- u.username %></a>
           </td>
         <% } %>
         <% if (target != 'sitewide') { %>
           <td class="admin-table-createdat">
             <%- moment(u.createdAt).format('MM/DD/YYYY hh:mma') %>
           </td>
-        <td class="admin-table-federalEmail">
-          <% if (u.government_uri) { %><a href="mailto:<%- u.government_uri %>"><%- u.government_uri %></a><% } else { %> <% } %>
-        </td>
-        <% if (target == 'sitewide') { %>
-        <td class="admin-table-username">
-          <a href="mailto:<%- u.username %>"><%- u.username %></a>
-        </td>
         <% } %>
         <% if (target == 'sitewide') { %>
           <td class="admin-table-lastLogin">
@@ -157,7 +147,7 @@
         <td class="pull-center">
           <% if (target == 'sitewide') { %>
             <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %> 
-              <a href="<%- u.id %>" id="account-settings"><i class="fas fa-cog"></i></a>
+              <a href="/admin/user/<%- u.id %>/user-details" id="user-details" class="link-backbone"><i class="fas fa-cog"></i></a>
             <% } %>
           <% } %>
         </td>

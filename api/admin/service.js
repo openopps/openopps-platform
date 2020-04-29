@@ -472,6 +472,13 @@ module.exports.getUsers = async function (page, filter, sort) {
   return result;
 };
 
+module.exports.getUserDetails = async function (userId) {
+  var result = {};
+  var userDetailsQuery = fs.readFileSync(__dirname + '/sql/getUserDetails.sql', 'utf8').toString();
+  result.user = (await db.query(userDetailsQuery, [userId])).rows[0];
+  return result;
+};
+
 module.exports.getUsersForAgency = async function (page, filter, sort, agencyId) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserAgencyListBySort.sql', 'utf8').toString();
