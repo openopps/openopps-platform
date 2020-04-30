@@ -372,7 +372,7 @@ var BrowseRouter = Backbone.Router.extend({
         el: '#site-modal',
         id: 'create-opp',
         modalTitle: 'Please complete your profile.',
-        modalBody: 'You have not selected your agency on the federal service page of your USAJOBS profile.',
+        modalBody: 'You have not selected your agency in your profile.',
         primary: {
           text: loginGov ? 'Update profile at USAJOBS.gov' : 'Go to profile',
           action: function () {
@@ -429,7 +429,7 @@ var BrowseRouter = Backbone.Router.extend({
     var params = this.parseQueryParams(queryString);
     this.cleanupChildren();
     if (params.cid) {
-      this.renderViewWithCommunity(params.cid, 'Federal Employees', this.renderTaskView);
+      this.renderViewWithCommunity(params.cid, 'California State Employees', this.renderTaskView);
     } else {
       this.renderTaskView(this.initializeTaskModel());
     }

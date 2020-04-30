@@ -60,7 +60,7 @@
 
   "volunteerModal": {
     "supervisorApproval": "I have my supervisor's approval to apply to this opportunity.",
-    "federalEmployee": "I am a federal employee (not a contractor).",
+    "federalEmployee": "I am a California state employee (not a contractor).",
     "specificLocation": "If this opportunity is for a specific location (i.e. it is not a virtual opportunity), I am located within the same commuting area.",
     "title": "Are you eligible to participate?",
     "cancel": "Cancel",
