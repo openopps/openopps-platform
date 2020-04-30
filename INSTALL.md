@@ -1,6 +1,5 @@
 Installation
 =====
-- [Deploy OpenOpps as a Docker Container from the Docker Hub](#deploy-openopps-as-a-docker-container-from-the-docker-hub-mac-windows-linux)
 - [Step by Step Installation from Source](#step-by-step-installation-from-source)
     - [Mac OSX](#mac-osx)
     - [Linux (Ubuntu 12.04 LTS)](#linux-ubuntu-1204-lts)
@@ -11,72 +10,27 @@ Installation
 - [Host and Configure Application](#host-and-configure-application)
 - [Troubleshooting Cross Platform Issues](#troubleshooting-cross-platform-issues)
 
-
-
-## Deploy OpenOpps as a Docker Container from the Docker Hub (Mac, Windows, Linux):
-
-1. Download and install the [Docker Toolbox](https://www.docker.com/toolbox)
-2. Open Kitematic on your Mac (it's installed with the Docker Toolkit), search for "open-opps", and click create:
-  ![screen shot 2015-08-27 at 11 12 21 am](https://cloud.githubusercontent.com/assets/170641/9524361/8e21aba6-4cac-11e5-9e45-07c1d4450d13.png)
-3. You'll see the log of OpenOpps starting up. (You may need to wait a minute for the application to start up.) Click the arrow next to "Web Preview" to open up OpenOpps in your browser:
-  ![screen shot 2015-08-27 at 11 13 27 am](https://cloud.githubusercontent.com/assets/170641/9524382/af4dc864-4cac-11e5-89df-1f4290e6b2fb.png)
-4. You're now running OpenOpps in a local container and you can do all the things you'd usually do with it
-  ![screen shot 2015-08-27 at 11 14 13 am](https://cloud.githubusercontent.com/assets/170641/9524433/f2adb3ee-4cac-11e5-9068-5e2d2de67631.png)
-  ![screen shot 2015-08-27 at 11 14 19 am](https://cloud.githubusercontent.com/assets/170641/9524434/f46fe6a2-4cac-11e5-88fd-cdee0517ed46.png)
-  ![screen shot 2015-08-27 at 11 14 49 am](https://cloud.githubusercontent.com/assets/170641/9524437/f61f4bbe-4cac-11e5-86b4-75b482a462fa.png)
-5. **Bonus:** you can try our other branches of OpenOpps (useful for reviewing pull requests). Get the branch  name from GitHub:
-
-  ![screen shot 2015-08-27 at 11 16 27 am](https://cloud.githubusercontent.com/assets/170641/9524463/180170a4-4cad-11e5-9ed4-d7d3a4a253f2.png)
-6. Go back to "Settings" in Kitematic, set the `BRANCH` environment variable, and click "Save":
-  ![screen shot 2015-08-27 at 11 17 08 am](https://cloud.githubusercontent.com/assets/170641/9524485/2fd9ea94-4cad-11e5-9a8d-09322c46a857.png)
-7. Now on "Home", you'll see the log of OpenOpps rebuilding with the new branch. Give it a chance to build, then relaunch the web preview to try the new branch
-
-### Docker for Development
-
-After installing Docker and Docker Compose, run the following command to bring
-up the database and the application.
-
-```sh
-npm run docker:up
-```
-
-You can also restart the app container.
-
-```sh
-npm run docker:restart
-```
-
-When you're down with local development, spin down all the containers.
-```sh
-npm run docker:down
-```
-
-Your local code is now running in the Docker container with Mailcatcher for
-reviewing Notifications.
-
-For the application: http://localhost:3000/
-For the mail server: http://localhost:8025/
-
 ## Step by Step Installation from Source
 The following installation steps for Mac, Linux, and Windows can be used for setting up a development or production environment manually.
 
 ### Mac OSX
-The instructions have been tested on 10.9.2, but earlier versions likely work.  Also, to follow these steps you will need:
+The instructions have been tested on 10.15.4, but earlier versions likely work.  Also, to follow these steps you will need:
 * the popular [brew](http://brew.sh/) package manager
 * XCode (free via Mac AppStore)
 
 In the Terminal:
 
-    brew install postgresql
+You'll need an older version of ElasticSearch at the moment.
+    brew install elasticsearch@5.6
 
-When Homebrew is done installing Postgres, follow the instructions at the end to start Postgres.
+And PostgreSQL:
+    brew install postgresql
 
 Next, create the `midas` database:
 
     initdb /usr/local/var/postgresql
 
-Once you're done installing you'll see two options:
-    Success. You can now start the database server using:
+Success. You can now start the database server using:
 
     postgres -D /usr/local/var/postgresql
     or
@@ -187,9 +141,9 @@ Create database 'midas', user account 'midas' with password 'midas', and assign 
 #### Set System Path Variables
 
 Go to Control Panel -> System -> Advanced System Settings -> Environment Variables
-Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in 	addition to anything else) separated by a semi-colon.
+Find "Path" Variable in System Variables table and double click to edit it. Make sure it contains all of the following parts (in    addition to anything else) separated by a semi-colon.
 
-	DRIVE:\Program Files\nodejs\;
+    DRIVE:\Program Files\nodejs\;
 
 Save.
 
