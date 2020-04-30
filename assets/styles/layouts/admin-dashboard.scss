@@ -434,6 +434,12 @@
       text-align: center;
     }
 
+    a {
+      &:visited {
+        color: $color-primary;
+      }
+    }
+
     .user-reset {
       cursor: pointer;
     }
