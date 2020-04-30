@@ -335,7 +335,10 @@
   .assign-auto-join[type=checkbox]:checked,
   .display-agency-logo[type=checkbox]:checked,
   .display-community-name[type=checkbox]:checked,
-  .disable-community[type=checkbox]:checked {
+  .disable-community[type=checkbox]:checked,
+  .account-enabled[type=checkbox]:checked,
+  .sitewide-approver[type=checkbox]:checked,
+  .sitewide-admin[type=checkbox]:checked {
     border: none;
     height: auto;
 
@@ -356,7 +359,10 @@
   .assign-auto-join[type=checkbox],
   .display-agency-logo[type=checkbox],
   .display-community-name[type=checkbox],
-  .disable-community[type=checkbox] {
+  .disable-community[type=checkbox],
+  .account-enabled[type=checkbox],
+  .sitewide-approver[type=checkbox],
+  .sitewide-admin[type=checkbox] {
     border: none;
     height: auto;
 
@@ -428,6 +434,12 @@
       text-align: center;
     }
 
+    a {
+      &:visited {
+        color: $color-primary;
+      }
+    }
+
     .user-reset {
       cursor: pointer;
     }
@@ -439,6 +451,107 @@
 
     .remove-member {
       color: #CD2026;
+    }
+  }
+
+  .user-details {
+    background-color: $color-gray-lightest;
+    margin-top: $size-M;
+    padding: $size-default;
+
+    @include media($ML) {
+      padding: $size-M;
+    }
+
+    h3 img {
+      vertical-align: text-bottom;
+      margin-right: $size-S;
+      height: 2.9rem;
+    }
+
+    .field-label {
+      margin-top: $size-default;
+      margin-bottom: 0;
+      font-size: $size-default;
+      font-weight: normal;
+      color: $color-gray;
+    }
+
+    .account-settings {
+      background-color: $color-cool-blue-lightest;
+      padding: $size-base $size-default;
+
+      @include media($M-down) {
+        margin-top: $size-M;
+      }
+
+      @include media($M) {
+        padding: $size-S $size-default $size-default $size-default;
+      }
+
+      @include media($ML) {
+        padding: $size-S $size-M $size-M $size-M;
+      }
+
+      .toggle-label {
+        margin-bottom: $size-default;
+        position: relative;
+
+        label {
+          position: absolute;
+          top: 0;
+          right: 0;
+          margin: 0;
+
+          @include media($M) {
+            position: relative;
+          }
+
+          @include media(900px) {
+            position: absolute;
+          }
+
+          @include media($L) {
+            position: relative;
+          }
+
+          @include media(1120px) {
+            position: absolute;
+          }
+
+          &::before {
+            margin-right: 0;
+          }
+        }
+
+        .icon-spin {
+          position: absolute;
+          top: 0.2rem;
+          right: 0.5rem;
+
+          @include media($M) {
+            position: relative;
+            margin-left: 1rem;
+          }
+
+          @include media(900px) {
+            position: absolute;
+            top: 0.2rem;
+            right: 0.5rem;
+          }
+
+          @include media($L) {
+            position: relative;
+            margin-left: 1rem;
+          }
+
+          @include media(1120px) {
+            position: absolute;
+            top: 0.2rem;
+            right: 0.5rem;
+          }
+        }
+      }
     }
   }
 

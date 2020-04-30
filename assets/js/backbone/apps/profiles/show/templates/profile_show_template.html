@@ -223,26 +223,44 @@
         </div>
       <% } %>
     </main>
-    <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
-      <% if (taskId && volunteerId) { %>
-     <div id="applicant-section">
-      <aside class="usajobs-rightrail" id="rightrail">
+   <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
+    <% if (taskId && volunteerId) { %>
+     
+    <div id="applicant-section">
+      <% if (_.where(applicant, { selected: true }).length == 1 ) { %>
+        <aside class="usajobs-rightrail" id="rightrail">
+          <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+            <h2>Selected <span class="fa fa-check"></span></h2>
+          <p>
+           This applicant has been marked as selected. You can change your selection at any time.
+          </p> 
+          <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-selected" >Change selection</a>                
+          </div>    
+        </aside>           
+        <% } else if (_.where(applicant, { selected: false }).length == 1 ) { %>
+          <aside class="usajobs-rightrail" id="rightrail">
+            <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+              <h2>Not-selected <span class="fa fa-times"></span></h2>
+            <p>
+             This applicant has been marked as not-selected. You can change your selection at any time.
+            </p> 
+            <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-not-selected" >Change selection</a>                        
+            </div>    
+          </aside>  
+        <% } else { %>
+        <aside class="usajobs-rightrail" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
           <h2>Applicant selection</h2>
         <p>
-          Do you want to select this applicant for your opportunity? You can change your selections anytime while your opportunity is in the <strong>Assigning</strong> phase.
+          Do you want to select this applicant for your opportunity? You can change your selection at any time.
         </p>        
-          <a href="javascript:void(0)" class="usa-button applicant-no-select <% if (_.where(applicant, { selected: false }).length == 1 ) { %>disabled<% } %>" id="applicant-no-select" data-behavior="not-select">Don't select</a>
-          <a href="javascript:void(0);" class="usa-button applicant-select <% if (_.where(applicant, { selected: true }).length == 1 ) { %>disabled<% } %>" id="applicant-select" data-behavior="select">Select</a>   
-          <% if (_.where(applicant, { selected: true }).length == 1 ) { %>
-          <div id="applicant-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Selected</strong> this applicant.</div>  
-            <% } %>    
-         <% if (_.where(applicant, { selected: false }).length == 1 ) { %>
-            <div id="applicant-not-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Not Selected</strong> this applicant.</div>  
-          <% } %>           
+          <a href="javascript:void(0);" class="usa-button applicant-no-select <% if (_.where(applicant, { selected: false }).length == 1 ) { %>disabled<% } %>" id="applicant-no-select" data-behavior="not-select">Don't select</a>
+          <a href="javascript:void(0);" class="usa-button applicant-select <% if (_.where(applicant, { selected: true }).length == 1 ) { %>disabled<% } %>" id="applicant-select" data-behavior="select">Select</a>                    
         </div>    
       </aside>
-    </div>  
+      <% } %>
+   </div>  
+
     <% } %>
        <div id="profile_badge_preview"></div>   
     <% } else if (data.hiringPath == 'student') { %>

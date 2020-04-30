@@ -363,12 +363,12 @@ var AdminCommunityEditView = Backbone.View.extend({
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       formData: { 'type': 'image_square' },
       add: function (e, data) {
-        $('#file-upload-progress-container').show();
+        $('.file-upload-progress-container').show();
         data.submit();
       }.bind(this),
       progressall: function (e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#file-upload-progress').css('width', progress + '%');
+        $('.file-upload-progress').css('width', progress + '%');
       }.bind(this),
       done: function (e, data) {
         this.community.set('imageId', data.result.id);
@@ -377,12 +377,12 @@ var AdminCommunityEditView = Backbone.View.extend({
         } else {
           this.renderImage(this.community.attributes);
         }
-        $('#file-upload-progress-container').hide();
+        $('.file-upload-progress-container').hide();
         $('#file-upload-alert').hide();
       }.bind(this),
       fail: function (e, data) {
         var message = data.jqXHR.responseText || data.errorThrown;
-        $('#file-upload-progress-container').hide();
+        $('.file-upload-progress-container').hide();
         if (data.jqXHR.status == 413) {
           message = 'The uploaded file exceeds the maximum file size.';
         }
@@ -1099,8 +1099,8 @@ var AdminCommunityEditView = Backbone.View.extend({
         id: 'confirm-disable',
         alert: 'error',
         action: 'delete',
-        modalTitle: 'Are you sure?',
-        modalBody: 'You\'re about to disable <strong>' + this.community.attributes.communityName + '</strong>. This means this community will become read-only and only visible to Sitewide Admins and Community Managers. Are you sure you want to proceed?',
+        modalTitle: 'Are you sure you want to disable this community?',
+        modalBody: 'If you disable this community, you will no longer be able to post opportunities to it, and users will no longer see it. Once disabled, only Sitewide Administrators and Community Managers can see it.',
         primary: {
           text: 'Disable',
           action: function () {

@@ -24,6 +24,7 @@ with tasks as (
 select
 	count(*),
 	case
+		when state = 'draft' then 'draft'
 		when state = 'submitted' then 'submitted'
 		when state in ('open', 'in progress') and "accepting_applicants" = true then 'open'
 		when state = 'not open' then 'not open'

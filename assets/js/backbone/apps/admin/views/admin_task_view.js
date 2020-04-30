@@ -19,6 +19,7 @@ var AdminTaskView = Backbone.View.extend({
     'click #task-back'          : linkBackbone,
     'click #task-filter-search' : 'filter',
     'change #sort-results'      : 'sortStatus',
+    'keypress #task-filter'     : 'searchOnEnter',
   },
 
   initialize: function (options) {
@@ -213,6 +214,12 @@ var AdminTaskView = Backbone.View.extend({
       title: $( event.currentTarget ).data('task-title'),
       cycleName: cycleName,
     };
+  },
+
+  searchOnEnter : function (event){
+    if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
+      this.filter();
+    }
   },
 
   /*

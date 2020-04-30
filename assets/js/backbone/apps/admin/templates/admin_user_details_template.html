@@ -1,0 +1,71 @@
+<div class="back-link" role="navigation" aria-label="Back to users"><a href="javascript:history.back()"><i class="fas fa-chevron-circle-left"></i>Back</a></div>
+<h2>Account settings</h2>
+
+<div class="usajobs-grid-full">
+  <div class="usa-width-three-fourths user-details">
+    <div class="usajobs-grid-full">
+      <div class="usa-width-two-thirds">
+        <h3><span>
+          <% if (user.hiring_path == 'fed') { %>
+            <img src="/img/icons/hiring-paths/svg/federal-employees.svg" alt="Federal employee" title="Federal employee">
+          <% } else if (user.hiring_path == 'student') { %>
+            <img src="/img/icons/hiring-paths/svg/students.svg" alt="Student" title="Student">
+          <% } else if (user.hiring_path == 'contractor') { %>
+            <img src="/img/icons/hiring-paths/svg/contractors.svg" alt="Contractor" title="Contractor">
+          <% } %>
+          </span>
+        <%-user.name%>
+        </h3>
+        <div class="usajobs-grid-full user-info">
+          <div class="usa-width-one-half">
+            <div class="field-label">User type</div>
+            <span>
+              <% if (user.hiring_path == 'fed') { %>
+                Federal
+              <% } else if (user.hiring_path == 'student') { %>
+                Student
+              <% } else if (user.hiring_path == 'contractor') { %>
+                Contractor
+              <% } %>
+            </span>
+            <div class="field-label">Agency</div>
+            <span><%- (user.agency || {}).name %></span>
+            <div class="field-label">Federal email</div>
+            <span><%- user.government_uri %></span>
+            <div class="field-label">Login.gov email</div>
+            <span><%- user.username %></span>
+          </div>
+          <div class="usa-width-one-half">
+            <div class="field-label">Last login</div>
+            <span><%- user.last_login ? moment(user.last_login).format('MM/DD/YYYY hh:mma'):'' %></span>
+            <div class="field-label">Created</div>
+            <span><%- moment(user.createdAt).format('MM/DD/YYYY hh:mma') %></span>
+          </div>
+        </div>
+      </div>
+      <div class="usa-width-one-third account-settings">
+        <h3>Account settings</h3>
+        <ul class="usa-unstyled-list">
+          <li class="toggle-label">
+            Account enabled
+            <input class="user-enable" id="user-enable-<%- user.id %>" type="checkbox" data-action='user' <% if (!user.disabled) { %> checked <% } %> />
+            <label class="no-label" for="user-enable-<%- user.id %>"><span class="sr-only">Account enable</span></label>
+            <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
+          </li>
+          <li class="toggle-label">
+            Sitewide approver            
+            <input class="assign-approver sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide-approver' <% if (user.isApprover(user, 'sitewide')) { %> checked <% } %>>
+            <label class="no-label" for="sitewide-approver-group"><span class="sr-only">Sitewide approver</span></label>
+            <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
+          </li>
+          <li class="toggle-label">
+            Sitewide admin
+            <input class="assign-admin sitewide-admin" id="sitewide-admin-group" type="checkbox" data-action='sitewide-admin' <% if (user.isAdministrator(user, 'sitewide')) { %> checked <% } %>>
+            <label class="no-label" for="sitewide-admin-group"><span class="sr-only">Sitewide admin</span></label>
+            <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -15,7 +15,8 @@
       </div>
     </div>
     <div class="usajobs-alert__body">
-      <p class="usa-alert-text">This community is currently inactive.</p>
+      <h3 class="usa-alert-heading">This community is currently inactive.</h3>
+      <p class="usa-alert-text">You are viewing historical data. Request reactivation in order to add new members or post opportunities under this community.</p>
       <div class="usajobs-alert__footer">
         <a href="#" class="usa-button usa-button-primary" id="email">Request reactivation</a>
       </div>
@@ -61,18 +62,20 @@
       <legend class="usa-sr-only">Select community</legend>
       <label for="communities" class="usa-sr-only">Community</label>
       <select id="communities" class="dropdown">
-        <% var communities = _.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>
+        <% var communities = _.sortBy(communities, function (c) { return c.communityName.toLowerCase().trim(); }); %>      
         <option value=""></option>
         <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
+          <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %>
+          <% if (communitiesEnabled.length > 0) { %>
           <option value="" disabled>- Active -</option>
-        <% } %>
-        <% var communitiesEnabled = _.filter(communities, function (c) { return c.isDisabled == false; }); %>
+          <% } %>       
         <% _.each(communitiesEnabled, function (c){ %>
             <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
-        <% }); %>
-        <% if (window.cache.currentUser.isAdmin || window.cache.currentUser.communityAdmin) { %>
-          <option value="" disabled>- Inactive -</option>
+        <% }); %>      
           <% var communitiesDisabled = _.filter(communities, function (c) { return c.isDisabled == true; }); %>
+          <% if (communitiesDisabled.length > 0) { %>
+          <option value="" disabled>- Inactive -</option>
+          <% } %>
           <% _.each(communitiesDisabled, function (c){ %>
               <option value=<%- c.communityId %> <% if (c.communityId == community.communityId) { %>selected<% } %>><%- c.communityName %></option>
           <% }); %>
@@ -152,10 +155,13 @@
               <% } %>
             </ul>
           </li>
+          <% if (window.cache.currentUser.isAdmin) { %>
+            <li>Draft: <%- numeral((_.findWhere(community.tasks, { task_state: 'draft' }) || {}).count).format('0,0') %></li>
+          <% } %>
           <li>Submitted: <%- numeral((_.findWhere(community.tasks, { task_state: 'submitted' }) || {}).count).format('0,0') %></li>
           <li>Open: <%- numeral((_.findWhere(community.tasks, { task_state: 'open' }) || {}).count).format('0,0') %></li>
-          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'notOpen' }) || {}).count).format('0,0') %></li>
-          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'inProgress' }) || {}).count).format('0,0') %></li>
+          <li>Not open: <%- numeral((_.findWhere(community.tasks, { task_state: 'not open' }) || {}).count).format('0,0') %></li>
+          <li>In progress: <%- numeral((_.findWhere(community.tasks, { task_state: 'in progress' }) || {}).count).format('0,0') %></li>
           <li>Completed: <%- numeral((_.findWhere(community.tasks, { task_state: 'completed' }) || {}).count).format('0,0') %></li>
           <li>Canceled: <%- numeral((_.findWhere(community.tasks, { task_state: 'canceled' }) || {}).count).format('0,0') %></li>       
       </ul>

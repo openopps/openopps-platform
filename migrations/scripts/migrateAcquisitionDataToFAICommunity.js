@@ -50,8 +50,8 @@ module.exports = {
       });
     }).catch(err => {
       pgp.end();
-      console.log('[ERROR] Error querying for acquisition community', err);
-      callback(err);
+      console.log('[WARNING] Could not find acquisition community', err);
+      callback();
     });
   },
 };

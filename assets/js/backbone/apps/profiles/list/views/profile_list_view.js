@@ -15,6 +15,9 @@ var PeopleListView = Backbone.View.extend({
     'click .usajobs-search-pills__item' : 'removeFilter',
     'click #search-pills-remove-all'    : 'removeAllFilters',
     'click a.page'                      : 'clickPage',
+    'keypress #nav-keyword'             : 'searchOnEnter',
+    'keypress #nav-location'            : 'searchOnEnter',
+
   },
 
   initialize: function (options) {
@@ -154,13 +157,19 @@ var PeopleListView = Backbone.View.extend({
   },
 
   search: function () {
-    this.filters.term = this.$('#nav-keyword').val().trim();
+    this.filters.term = this.$('#nav-keyword').val().trim(); 
     if (this.$('#nav-location').val().trim() != '') {
       addLocation.bind(this)($('#nav-location').val());
     }
     this.$('#nav-location').val('');
     this.filters.page = 1;
     this.filter();
+  },
+
+  searchOnEnter : function (event){
+    if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
+      this.search();
+    }
   },
 
   removeFilter: function (event) {
