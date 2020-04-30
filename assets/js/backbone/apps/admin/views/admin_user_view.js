@@ -18,6 +18,8 @@ var AdminUserView = Backbone.View.extend({
   events: {
     'click a.page'                : 'clickPage',
     'click .link-backbone'        : linkBackbone,
+    'click .assign-admin'         : 'toggleCheckbox',
+    'click .assign-approver'      : 'toggleCheckbox',
     'click .member-enable'        : 'toggleCheckbox',
     'click .user-reset'           : 'resetPassword',
     'click #invite-members'       : 'inviteMembers',
