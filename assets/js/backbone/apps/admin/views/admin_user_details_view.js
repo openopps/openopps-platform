@@ -9,8 +9,8 @@ var AdminUserDetailstView = Backbone.View.extend({
 
   events: {
     'click .user-enable'          : 'toggleCheckbox',
-    'click .sitewide-admin'         : 'toggleCheckbox',
-    'click .sitewide-approver'      : 'toggleCheckbox',
+    'click .sitewide-admin'       : 'toggleCheckbox',
+    'click .sitewide-approver'    : 'toggleCheckbox',
   },
 
   initialize: function (options) {
@@ -37,6 +37,7 @@ var AdminUserDetailstView = Backbone.View.extend({
         this.user.returnUrl = '/admin/users';
         var template = _.template(AdminUserDetailsTemplate)({ user: this.user }); 
         this.$el.html(template);
+        $('#search-results-loading').hide();
       }.bind(this),
     });
   },
@@ -55,14 +56,29 @@ var AdminUserDetailstView = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
     var id = this.user.id;
-    var username = this.user.user-name;
+    var username = this.user.username;
 
-    this.updateUser(t, {
-      id: id,
-      checked: t.prop('checked'),
-      url: this.getUrlFor(id, t),
-    });
-    
+    if (t.hasClass('assign-admin')) { 
+      this.confirmAdminAssign(t, {
+        id: id,
+        name: username,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else if (t.hasClass('assign-approver')) { 
+      this.confirmApproverAssign(t, {
+        id: id,
+        name: username,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    } else {
+      this.updateUser(t, {
+        id: id,
+        checked: t.prop('checked'),
+        url: this.getUrlFor(id, t),
+      });
+    }
   },
 
   updateUser: function (t, data) {
@@ -93,6 +109,52 @@ var AdminUserDetailstView = Backbone.View.extend({
       case 'sitewide-approver':
         return '/api/admin/approver/' + id + '?action=' + elem.prop('checked');
     }
+  },
+
+  confirmAdminAssign: function (t, data) {
+    this.modal = new Modal({
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' administrator',
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as a <strong>sitewide administrator</strong>?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();       
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.modal.render();
+  },
+
+  confirmApproverAssign: function (t, data) {
+    this.modal = new Modal({
+      id: 'confirm-assign',
+      modalTitle: 'Confirm ' + (data.checked ? 'assign' : 'remove') + ' approver',
+      modalBody: 'Are you sure you want to ' + (data.checked ? 'assign' : 'remove') + '<strong> ' 
+                  + data.name + '</strong> as a <strong>sitewide approver</strong>?',
+      primary: {
+        text: (data.checked ? 'Assign' : 'Remove'),
+        action: function () {
+          this.updateUser.bind(this)(t, data);
+          this.modal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.modal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.modal.render();
   },
 
   cleanup: function () {

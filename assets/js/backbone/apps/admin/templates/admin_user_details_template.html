@@ -29,7 +29,7 @@
               <% } %>
             </span>
             <div class="field-label">Agency</div>
-            <span><%- user.agency.name %></span>
+            <span><%- (user.agency || {}).name %></span>
             <div class="field-label">Federal email</div>
             <span><%- user.government_uri %></span>
             <div class="field-label">Login.gov email</div>
@@ -54,13 +54,13 @@
           </li>
           <li class="toggle-label">
             Sitewide approver            
-            <input class="sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide-approver' <% if (user.isApprover(user, 'sitewide')) { %> checked <% } %>>
+            <input class="assign-approver sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide-approver' <% if (user.isApprover(user, 'sitewide')) { %> checked <% } %>>
             <label class="no-label" for="sitewide-approver-group"><span class="sr-only">Sitewide approver</span></label>
             <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
           </li>
           <li class="toggle-label">
             Sitewide admin
-            <input class="sitewide-admin" id="sitewide-admin-group" type="checkbox" data-action='sitewide-admin' <% if (user.isAdministrator(user, 'sitewide')) { %> checked <% } %>>
+            <input class="assign-admin sitewide-admin" id="sitewide-admin-group" type="checkbox" data-action='sitewide-admin' <% if (user.isAdministrator(user, 'sitewide')) { %> checked <% } %>>
             <label class="no-label" for="sitewide-admin-group"><span class="sr-only">Sitewide admin</span></label>
             <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
           </li>
