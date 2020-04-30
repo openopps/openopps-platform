@@ -519,8 +519,31 @@
         }
 
         .icon-spin {
-          position: relative;
-          margin-left: 11.8rem;
+          position: absolute;
+          top: 0.2rem;
+          right: 0.5rem;
+
+          @include media($M) {
+            position: relative;
+            margin-left: 1rem;
+          }
+
+          @include media(900px) {
+            position: absolute;
+            top: 0.2rem;
+            right: 0.5rem;
+          }
+
+          @include media($L) {
+            position: relative;
+            margin-left: 1rem;
+          }
+
+          @include media(1120px) {
+            position: absolute;
+            top: 0.2rem;
+            right: 0.5rem;
+          }
         }
       }
     }
