@@ -28,6 +28,7 @@ const taskStateQuery = `with task_type as (
   left join task_type on task_type.id = task.id
   where
   task.state in ('submitted','open','not open','in progress','completed','canceled')
+  and (task.community_id is null or community.is_disabled = false)
   and (community.target_audience <> 2 or community.target_audience is null)`;
 
 const agencyTaskStateQuery = `with task_type as (
@@ -140,27 +141,27 @@ const communityCyclicalPostQuery = 'select count(CASE when current_step = 0 and 
 
 const volunteerCountQuery = 'select ' +
     'count(*) as signups, ' +
-    'sum(case when assigned then 1 else 0 end) as assignments, ' +
+    'sum(case when selected then 1 else 0 end) as assignments, ' +
     'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer';
 
 const agencyVolunteerCountQuery = 'select ' +
   'count(*) as signups, ' +
-  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when selected then 1 else 0 end) as assignments, ' +
   'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.agency_id = ?';
 
 const communityVolunteerCountQuery = 'select ' +
   'count(*) as signups, ' +
-  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when selected then 1 else 0 end) as assignments, ' +
   'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ?';
 
 const communityVolunteerCyclicalCountQuery = 'select ' +
   'count(*) as signups, ' +
-  'sum(case when assigned then 1 else 0 end) as assignments, ' +
+  'sum(case when selected then 1 else 0 end) as assignments, ' +
   'sum(case when "taskComplete" then 1 else 0 end) as completions ' +
   'from volunteer join task on task.id = volunteer."taskId" ' +
   'where task.community_id = ? and task.cycle_id = ? ';

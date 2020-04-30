@@ -1,0 +1,17 @@
+
+
+
+<div class="usa-alert usajobs-alert openopps-system-alert <% if (community_id) { %>community-<%- community_id %><% } %>" role="alert" data-object="alert">
+  <div class="usajobs-alert__figure">
+    <div class="usajobs-alert__icon">
+    </div>
+  </div>
+  <div class="usajobs-alert__body">
+    <% if (title) { %>
+      <h3 class="usa-alert-heading"><%= title %></h3>
+    <% } %>
+    <p class="usa-alert-text">
+      <%= description %>
+    </p>
+  </div>
+</div>

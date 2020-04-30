@@ -48,6 +48,8 @@ var ProfileShowView = Backbone.View.extend({
     'click .remove-bureau-office'   : 'removeBureauOfficeDisplay',
     'click #add-badge'              : 'addBadges',
     'click #remove-badge'           : 'removeBadge',
+    'click .applicant-select'       : 'selectApplicant',
+    'click .applicant-no-select'       : 'selectApplicant',
   },
 
   initialize: function (options) {
@@ -60,6 +62,8 @@ var ProfileShowView = Backbone.View.extend({
     this.dataBureauOffice   =[];
     this.currentOffices =[];
     this.userData ={};
+    this.params = new URLSearchParams(window.location.search);
+    this.applicant =[];
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -130,6 +134,7 @@ var ProfileShowView = Backbone.View.extend({
       skills: false,
       saved: this.saved,
       ui: UIConfig,
+     
     };
     
     data.dos = data.data.communities && data.data.communities.student? _.findWhere(data.data.communities.student, { referenceId: 'dos' }):'';
@@ -138,16 +143,23 @@ var ProfileShowView = Backbone.View.extend({
     data.fedEmail = data.data.governmentUri;
     data.career = this.getTags(['career'])[0];
     data.bureauOffice= data.data.bureauOffice;
-    
+    data.taskId=this.params.get('tid');
+    data.volunteerId=this.params.get('vid');
+      
     if (data.data.bio) {
       data.data.bioHtml = marked(data.data.bio);
     }
+    if(data.taskId && data.volunteerId){
+      this.getApplicantData();
+      data.applicant= this.applicant;
+    }
+ 
     this.userData= data; 
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
     this.$el.localize();
-
+    renderSystemAlerts('profile');
     // initialize sub components
     this.initializeTags();
     this.initializePhoto();
@@ -155,6 +167,7 @@ var ProfileShowView = Backbone.View.extend({
     this.dataBureauOffice = data.bureauOffice;
     this.renderBureauOffices();
     this.renderBadges(data);
+   
     if (data.user.id !== data.data.id) {
       if (data.data.hiringPath != 'student') {
         this.renderOpportunities(data.data.id);
@@ -225,15 +238,16 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   getStatus: function (task) {
+  
     switch (task.state) {
       case 'completed':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
+        return (task.selected ? (task.taskComplete ? 'Complete' : 'Not complete') : 'Not assigned');
       case 'in progress':
-        return (task.assigned ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
+        return (task.selected ? (task.taskComplete ? 'Complete' : 'Assigned') : 'Not assigned');
       case 'canceled':
         return 'Canceled';
       default:
-        return (task.assigned ? 'Assigned' : 'Applied');
+        return (task.selected ? 'Assigned' : 'Applied');
     }
   },
 
@@ -814,6 +828,50 @@ var ProfileShowView = Backbone.View.extend({
     else{
       return true;
     }
+  },
+
+  selectApplicant: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+    var select = $(e.currentTarget).data('behavior') == 'select';
+   
+    var taskId= this.params.get('tid');
+    var volunteerId= this.params.get('vid');  
+    var selectDisabled = $('#applicant-select').hasClass('disabled'); 
+    var notSelectDisabled=$('#applicant-no-select').hasClass('disabled'); 
+   
+    if((select && !selectDisabled) ||(!select && !notSelectDisabled)){
+      $.ajax({
+        url: '/api/volunteer/select',
+        type: 'POST',
+        data: {
+          taskId: taskId,
+          volunteerId: volunteerId,
+          select: select,
+        },
+        success: function (data) {       
+          Backbone.history.navigate('/tasks/' + data.taskId, { trigger: true });       
+        }.bind(this),
+        error: function (err) {
+       
+        }.bind(this),
+      });
+    }
+  },
+
+  getApplicantData : function (){
+    var taskId= this.params.get('tid');
+    var volunteerId= this.params.get('vid');  
+    $.ajax({
+      url: '/api/user/applicants/' + volunteerId +'?' + $.param({
+        taskId:taskId,
+      }),  
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.applicant = data;     
+      }.bind(this),
+    });
   },
 
   cleanup: function () {

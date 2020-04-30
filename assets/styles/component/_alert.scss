@@ -53,6 +53,10 @@
   &__footer {
     margin-top: $size-default;
     text-align: right;
+
+    a.usa-button-primary[href^="mailto:"], a#email {
+      color: $color-white;
+    }
   }
 
   &__close {
@@ -124,6 +128,15 @@
 
 .usajobs-alert--covid19 {
   @include alert($color-gold, $color-gold, 'info');
+}
+
+.openopps-system-alert {
+  @include alert($color-gold, $color-gold, 'info');
+  margin: 0;
+
+  .usajobs-alert__body {
+    min-height: 0;
+  }
 }
 
 .usajobs-alert--error {

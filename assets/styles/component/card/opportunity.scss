@@ -800,14 +800,18 @@
     margin-bottom: $size-XXL;
     text-align: center;
   }
+  .warning {
+    margin-right: $size-S;
+    color: $color-gold;
+  }
 
+ 
   .assigned-participants-wrapper {
 
     .project-people__assign-instruction {
       color: $color-gray-light;
-      font-size: $lead-font-size;
-      font-style: italic;
-      font-weight: 600;
+      font-size: $lead-font-size;   
+      font-weight: 500;
       margin-top: $size-XXL;
       margin-bottom: $size-XXL;
       text-align: center;
@@ -1670,7 +1674,7 @@
   }
 }
 
-label[for="DefineWhen"] {
+label[for="DefineWhen"], label[for="DefineWho"] {
   position: relative;
 }
 

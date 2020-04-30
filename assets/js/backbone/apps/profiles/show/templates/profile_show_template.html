@@ -1,4 +1,6 @@
 <section class="usajobs-canvas">
+  <div id="openopps-system-alerts">
+  </div>
     <div class="usajobs-content-gutter profile-gutter">
     <% if (user.id !== data.id) { %>
       <% if (user.isAdmin || user.isAgencyAdmin) { %>
@@ -222,7 +224,27 @@
       <% } %>
     </main>
     <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
-       <div id="profile_badge_preview"></div>
+      <% if (taskId && volunteerId) { %>
+     <div id="applicant-section">
+      <aside class="usajobs-rightrail" id="rightrail">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <h2>Applicant selection</h2>
+        <p>
+          Do you want to select this applicant for your opportunity? You can change your selections anytime while your opportunity is in the <strong>Assigning</strong> phase.
+        </p>        
+          <a href="javascript:void(0)" class="usa-button applicant-no-select <% if (_.where(applicant, { selected: false }).length == 1 ) { %>disabled<% } %>" id="applicant-no-select" data-behavior="not-select">Don't select</a>
+          <a href="javascript:void(0);" class="usa-button applicant-select <% if (_.where(applicant, { selected: true }).length == 1 ) { %>disabled<% } %>" id="applicant-select" data-behavior="select">Select</a>   
+          <% if (_.where(applicant, { selected: true }).length == 1 ) { %>
+          <div id="applicant-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Selected</strong> this applicant.</div>  
+            <% } %>    
+         <% if (_.where(applicant, { selected: false }).length == 1 ) { %>
+            <div id="applicant-not-select-warning"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>You have currently <strong>Not Selected</strong> this applicant.</div>  
+          <% } %>           
+        </div>    
+      </aside>
+    </div>  
+    <% } %>
+       <div id="profile_badge_preview"></div>   
     <% } else if (data.hiringPath == 'student') { %>
       <aside class="usajobs-rightrail" id="rightrail">
         <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">

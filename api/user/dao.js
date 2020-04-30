@@ -13,7 +13,7 @@ const userAgencyQuery = 'select tagentity.name, midas_user."isAdmin" ' +
   'where midas_user.id = ? ' +
   "and tagentity.type = 'agency' ";
 
-const taskParticipatedQuery = 'select task.*, volunteer.assigned, volunteer."taskComplete" ' +
+const taskParticipatedQuery = 'select task.*, volunteer.selected, volunteer."taskComplete" ' +
   'from task inner join volunteer on task.id = volunteer."taskId" ' +
   'where volunteer."userId" = ?';
 
@@ -148,6 +148,7 @@ module.exports = function (db) {
     User: dao({ db: db, table: 'midas_user' }),
     UserBureauOffice: dao({ db: db, table: 'user_bureau_office' }),
     UserTags: dao({ db: db, table: 'tagentity_users__user_tags' }),
+    Volunteer: dao({ db: db, table: 'volunteer' }),
     query: {
       tag: tagQuery,
       participated: taskParticipatedQuery,

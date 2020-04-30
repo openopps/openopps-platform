@@ -1,14 +1,5 @@
 <section class="usajobs-canvas">
-  <div class="usa-alert usajobs-alert usajobs-alert--covid19" role="alert" data-object="alert" style="margin:0;">
-    <div class="usajobs-alert__figure">
-      <div class="usajobs-alert__icon">
-      </div>
-    </div>
-    <div class="usajobs-alert__body">
-      <p class="usa-alert-text">
-        <strong><a style="color:#212121" href="/community/COVID19">COVID-19 Response Program</a></strong> - In response to the National Emergency declared for Coronavirus Disease 2019 (COVID-19), federal agencies can post details, micro-details, and temporary rotational assignments on the platform for federal employees who can support the COVID-19 response.
-      </p>
-    </div>
+  <div id="openopps-system-alerts">
   </div>
   <div class="usajobs-content-gutter usajobs-open-opps-search">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Search results" aria-hidden="false">
@@ -29,6 +20,9 @@
               <% if(filters.community && filters.community.banner.subtitle) { %><h3 id="search__box-subtitle" <% if(filters.community && filters.community.banner.subtitleColor) { %>style="color:<%- filters.community.banner.subtitleColor %>"<% } %>><%- filters.community.banner.subtitle %></h3><% } %>
               <div class="search__box-content description" <% if(filters.community && filters.community.banner.descriptionColor) { %>style="color:<%- filters.community.banner.descriptionColor %>"<% } %>><% if(filters.community && filters.community.banner.description) { %><%= marked(filters.community.banner.description) %><% } else { %>Gain experience with hands-on training, share your expertise and work with others across the government.<% } %></div>
               <p class="search__box-content">What is <a href="https://usajobs.github.io/openopps-help/" target="_blank"><span class="underline">Open Opportunities</span>? <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></a></p>
+              <% if(filters.community && filters.community.banner.usajobsSearchUrl) { %>
+                <p>Looking for <a href="<%- filters.community.banner.usajobsSearchUrl %>" target="_blank" rel="noopener noreferrer"><%- filters.community.banner.usajobsSearchUrlLabel %>?</a> <span class="sr-only">Opens in a new window</span><i class="fas fa-external-link-alt"></i></p>
+              <% } %>
             </div>
             <label for="search" class="search__box-label">
               <span class="fas fa-search search-icon" <% if(filters.community && filters.community.banner.titleColor) { %>style="color:<%- filters.community.banner.titleColor %>"<% } %>></span>
@@ -61,17 +55,17 @@
         <span class="sr-only" id="mobile-filter-label">Filters navigation</span>
         <div class="usajobs-search-tab-bar__body" id="search-tab-bar-controls">
           <span id="search-tab-bar-filter" class="usajobs-search-tab-bar__link usajobs-search-tab-bar__filters" data-behavior="search-tab-bar.toggle-filters"
-            aria-controls="task-filters" aria-expanded="false" title="Filter">
-            <button class="usa-button-secondary-inverse usajobs-search-tab-bar__filters-default" aria-hidden="false">
+            aria-controls="task-filters" title="Filter">
+            <button id="search-tab-bar-filter-button" class="usa-button-secondary-inverse usajobs-search-tab-bar__filters-default" aria-expanded="false" aria-hidden="false">
               <span class="usajobs-icon--center">
                 <svg class="fa fa-sliders-h fa-w-18" title="Filter" aria-labelledby="fa-title-16" data-prefix="fas" data-icon="sliders-h"
                 role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"></svg><title id="fa-title-16">Filter</title>
                   <span class="fas fa-sliders-h" title="Filter"></span>
-            </span>
-            <span class="usajobs-filter">Filter</span>
-            <span class="usajobs-search-tab-bar__filter-count-container" aria-hidden="false">
-                <span id="search-tab-bar-filter-count" class="usajobs-search-tab-bar__filter-count"><%= appliedFilterCount %></span>
-            </span>
+              </span>
+              <span class="usajobs-filter">Filter</span>
+              <span class="usajobs-search-tab-bar__filter-count-container" aria-hidden="false">
+                  <span id="search-tab-bar-filter-count" class="usajobs-search-tab-bar__filter-count"><%= appliedFilterCount %></span>
+              </span>
             </button>
             <button class="usa-button-primary usajobs-search-tab-bar__filters-expanded" data-behavior="search-tab-bar.show-results" aria-expanded="false">
                 View results

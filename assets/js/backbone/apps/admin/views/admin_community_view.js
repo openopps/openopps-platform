@@ -2,10 +2,13 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 var select2Custom = require('../../../../vendor/select2-3.4.6.custom');
+
 var AdminCommunityTemplate = require('../templates/admin_community_template.html');
 var AdminCommunityDashboardActivitiesTemplate = require('../templates/admin_community_dashboard_activities_template.html');
 var AdminCommunityTasks = require('../templates/admin_community_task_metrics.html');
 var AdminCommunityCyclicalTasksInteractions = require('../templates/admin_community_cycle_task_interactions.html');
+var RequestTemplate = require('../templates/community_reactivate_request_template.txt');
+
 var AdminCommunityView = Backbone.View.extend({
 
   events: {
@@ -13,9 +16,10 @@ var AdminCommunityView = Backbone.View.extend({
     'click #community-edit'       : linkBackbone,
     'click .usajobs-alert__close' : 'closeAlert',
     'change #sort-user-community' : 'sortUsers',
-    'change .group'         : 'renderTasks', 
-    'change input[name=type]':'renderTasks',
-    'change #cycles'         : 'changeCycles',
+    'change .group'               : 'renderTasks', 
+    'change input[name=type]'     : 'renderTasks',
+    'change #cycles'              : 'changeCycles',
+    'click #email'                : 'requestReactivationEmail',
   },
 
   initialize: function (options) {
@@ -395,6 +399,19 @@ var AdminCommunityView = Backbone.View.extend({
       return c.cycleId== selectedCycle.cycleId;
     });
     this.cycles= (sortedArray.reverse().concat(selectedCycle)).reverse(); 
+  },
+
+  requestReactivationEmail: function () {
+    var subject = 'Request reactivation',
+        data = {
+          communityName: this.community.communityName,
+          currentUserName: window.cache.currentUser.name,
+        },
+        body = _.template(RequestTemplate)(data),
+        link = 'mailto:openopps@usajobs.gov' + 
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    this.$('#email').attr('href', link);
   },
 
   cleanup: function () {

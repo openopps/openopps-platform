@@ -2,6 +2,8 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 var marked = require('marked');
+var MarkdownEditor = require('../../../components/markdown_editor');
+var ShowMarkdownMixin = require('../../../components/show_markdown_mixin');
 
 var AdminCommunityFormTemplate = require('../templates/admin_community_form_template.html');
 var AdminCommunityCustomFormTemplate = require('../templates/admin_community_custom_form_template.html');
@@ -44,9 +46,12 @@ var AdminCommunityEditView = Backbone.View.extend({
     'click #image-remove'                     : 'removeImage',
     'change [name=background-group]'          : 'toggleBackgroundDisplay',
     'blur #usajobsSearchUrl'                  : 'validateUsajobsSearchUrlLabel',
+    'change #disable-community-group'         : 'disableCommunity',
   },
 
   initialize: function (options) {
+    _.extend(this, Backbone.Events);
+
     this.options = options; 
     this.departments = {};  
     this.community = new CommunityModel({
@@ -74,6 +79,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         communityId: '', 
         departments : this.departments,
         displayAgencyLogo: false,
+        displayCommunityname: false,
         isClosedGroup: false,
         autoJoin: false,        
       };   
@@ -83,6 +89,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       this.$el.localize();
       this.initializeFileUpload();
       this.initializeBannerFileUpload();
+      this.initializeTextAreaBannerDescription();
       this.initializeCounts();
       $('#search-results-loading').hide();
       setTimeout(() => {
@@ -131,6 +138,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#duration option:contains('+ community.duration +')').attr('selected', true);
     $('#agencies').val(community.agency.agencyId); 
     $('input[name=display-agency-logo-group][value=' + community.displayAgencyLogo +']').prop('checked', true);
+    $('input[name=display-community-name-group][value=' + community.displayCommunityName +']').prop('checked', true);
     $('input[name=community-group][value=' + community.isClosedGroup +']').prop('checked', true);
     if (!community.isClosedGroup) {
       $('#community-auto-join').hide();
@@ -142,6 +150,7 @@ var AdminCommunityEditView = Backbone.View.extend({
     $('#community-mgr-name').val(community.communityManagerName);
     $('#community-mgr-email').val(community.communityManagerEmail);
     $('#community-email-signature').val(community.emailSignature);
+    $('input[name=disable-community-group][value=' + community.isDisabled +']').prop('checked', true);
   },
 
   initializeDisplayFormFields: function (community) {
@@ -195,6 +204,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       duration :$('#duration').val(),
       agencyId  : $('#agencies').val(),
       displayAgencyLogo: $('#display-agency-logo-group').prop('checked'),
+      displayCommunityName: $('#display-community-name-group').prop('checked'),
       isClosedGroup: $("input[name='community-group']:checked").val(),
       autoJoin: $('#community-auto-join-group').prop('checked'),
       communityName: $('#community-name').val(),
@@ -205,6 +215,7 @@ var AdminCommunityEditView = Backbone.View.extend({
       communityManagerEmail: $('#community-mgr-email').val(),
       emailSignature: $('#community-email-signature').val(),
       imageId: this.community.get('imageId'),
+      isDisabled: $('#disable-community-group').prop('checked'),
     };
     if (window.cache.currentUser.isAdmin) {
       modelData.banner = {
@@ -252,6 +263,7 @@ var AdminCommunityEditView = Backbone.View.extend({
         this.renderCustomize();
         this.$el.show();
         this.initializeListeners();
+        this.initializeTextAreaBannerDescription();
         this.initializeCounts();
         this.initializeAgencySelect();    
         this.initializeformFields(community);
@@ -1067,10 +1079,56 @@ var AdminCommunityEditView = Backbone.View.extend({
     }
   },
 
+  initializeTextAreaBannerDescription: function () {
+    if (this.md1) { this.md1.cleanup(); }
+    this.md1 = new MarkdownEditor({
+      data: this.community.get('banner').description,
+      el: '.markdown-edit-display-description',
+      id: 'display-description',
+      placeholder: '',
+      title: 'Description',
+      rows: 6,
+      validate: ['html','count500'],
+    }).render();
+  },
+
+  disableCommunity: function (e) {
+    if ($(event.target).prop('checked')) {
+      $('#disable-community-group').prop('checked', false);
+      var disableCommunityModal = new Modal({
+        id: 'confirm-disable',
+        alert: 'error',
+        action: 'delete',
+        modalTitle: 'Are you sure?',
+        modalBody: 'You\'re about to disable <strong>' + this.community.attributes.communityName + '</strong>. This means this community will become read-only and only visible to Sitewide Admins and Community Managers. Are you sure you want to proceed?',
+        primary: {
+          text: 'Disable',
+          action: function () {
+            $('#disable-community-group').prop('checked', true);
+            disableCommunityModal.cleanup();
+          }.bind(this),
+        },
+        secondary: {
+          text: 'Cancel',
+          action: function () {
+            $('#disable-community-group').prop('checked', false);
+            disableCommunityModal.cleanup();
+          }.bind(this),
+        },
+      });
+      disableCommunityModal.render();
+    } else {
+      $('#disable-community-group').prop('checked', false);
+    }
+  },
+
   cleanup: function () {
+    if (this.md1) { this.md1.cleanup(); }
     removeView(this);
   },
 
 });
+
+_.extend(AdminCommunityEditView.prototype, ShowMarkdownMixin);
 
 module.exports = AdminCommunityEditView;
