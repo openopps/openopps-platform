@@ -55,28 +55,26 @@ var AdminUserDetailstView = Backbone.View.extend({
   toggleCheckbox: function (e) {
     if (e.preventDefault) e.preventDefault();
     var t = $(e.currentTarget);
-    var id = this.user.id;
-    var username = this.user.username;
 
     if (t.hasClass('assign-admin')) { 
       this.confirmAdminAssign(t, {
-        id: id,
-        name: username,
+        id: this.user.id,
+        name: this.user.name,
         checked: t.prop('checked'),
-        url: this.getUrlFor(id, t),
+        url: this.getUrlFor(this.user.id, t),
       });
     } else if (t.hasClass('assign-approver')) { 
       this.confirmApproverAssign(t, {
-        id: id,
-        name: username,
+        id: this.user.id,
+        name: this.user.name,
         checked: t.prop('checked'),
-        url: this.getUrlFor(id, t),
+        url: this.getUrlFor(this.user.id, t),
       });
     } else {
       this.updateUser(t, {
-        id: id,
+        id: this.user.id,
         checked: t.prop('checked'),
-        url: this.getUrlFor(id, t),
+        url: this.getUrlFor(this.user.id, t),
       });
     }
   },
