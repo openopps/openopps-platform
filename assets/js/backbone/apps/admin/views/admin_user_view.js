@@ -26,7 +26,6 @@ var AdminUserView = Backbone.View.extend({
     'change #sort-user-sitewide'  : 'sortUsers',
     'change #sort-user-agency'    : 'sortUsers',
     'change #sort-user-community' : 'sortUsers',
-    'click #user-details'         : 'linkBackbone',
     'keypress #user-filter'       : 'searchOnEnter',
   },
 

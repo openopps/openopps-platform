@@ -147,7 +147,7 @@
         <td class="pull-center">
           <% if (target == 'sitewide') { %>
             <% if (user.isAdmin || (user.isAgencyAdmin && !u.isAdmin)) { %> 
-              <a href="/admin/user/<%- u.id %>/user-details" id="user-details" class="link-backbone"><i class="fas fa-cog"></i></a>
+              <a href="/admin/user/<%- u.id %>/user-details" class="link-backbone"><i class="fas fa-cog"></i></a>
             <% } %>
           <% } %>
         </td>
