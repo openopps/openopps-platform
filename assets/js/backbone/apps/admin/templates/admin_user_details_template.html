@@ -52,18 +52,20 @@
             <label class="no-label" for="user-enable-<%- user.id %>"><span class="sr-only">Account enable</span></label>
             <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
           </li>
-          <li class="toggle-label">
-            Sitewide approver            
-            <input class="assign-approver sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide-approver' <% if (user.isApprover(user, 'sitewide')) { %> checked <% } %>>
-            <label class="no-label" for="sitewide-approver-group"><span class="sr-only">Sitewide approver</span></label>
-            <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
-          </li>
-          <li class="toggle-label">
-            Sitewide admin
-            <input class="assign-admin sitewide-admin" id="sitewide-admin-group" type="checkbox" data-action='sitewide-admin' <% if (user.isAdministrator(user, 'sitewide')) { %> checked <% } %>>
-            <label class="no-label" for="sitewide-admin-group"><span class="sr-only">Sitewide admin</span></label>
-            <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
-          </li>
+          <% if (user.hiring_path != 'student') { %>
+            <li class="toggle-label">
+              Sitewide approver            
+              <input class="assign-approver sitewide-approver" id="sitewide-approver-group" type="checkbox" data-action='sitewide-approver' <% if (user.isApprover(user, 'sitewide')) { %> checked <% } %>>
+              <label class="no-label" for="sitewide-approver-group"><span class="sr-only">Sitewide approver</span></label>
+              <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
+            </li>
+            <li class="toggle-label">
+              Sitewide admin
+              <input class="assign-admin sitewide-admin" id="sitewide-admin-group" type="checkbox" data-action='sitewide-admin' <% if (user.isAdministrator(user, 'sitewide')) { %> checked <% } %>>
+              <label class="no-label" for="sitewide-admin-group"><span class="sr-only">Sitewide admin</span></label>
+              <span class="icon-spin" style="display:none;"><i class="fa-spin fa fa-spinner"></i></span>
+            </li>
+          <% } %>
         </ul>
       </div>
     </div>
