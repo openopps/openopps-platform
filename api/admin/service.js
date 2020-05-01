@@ -25,11 +25,14 @@ function getWhereClauseForTaskState (state) {
 }
 
 function getWhereClauseForUsers (filter) {
+  var adminTypeString = "";
+  if (filter == 'isAdmin' || filter == 'is_approver') { adminTypeString = ' or "' + filter + '" = true'; };
   if (filter) {
     return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
       '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
-      '%\' or lower(username) like \'%' + filter.toLowerCase() + 
-      '%\' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
+      '%\' or lower(username) like \'%' + filter.toLowerCase()  + '%\'' + 
+      adminTypeString +
+      ' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
   } else {
     return '';
   }

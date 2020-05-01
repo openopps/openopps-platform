@@ -16,19 +16,20 @@ var InviteMembersTemplate = require('../templates/invite_member_template.html');
 
 var AdminUserView = Backbone.View.extend({
   events: {
-    'click a.page'                : 'clickPage',
-    'click .link-backbone'        : linkBackbone,
-    'click .assign-admin'         : 'toggleCheckbox',
-    'click .assign-approver'      : 'toggleCheckbox',
-    'click .member-enable'        : 'toggleCheckbox',
-    'click .user-reset'           : 'resetPassword',
-    'click #invite-members'       : 'inviteMembers',
-    'click #user-filter-search'   : 'filter',
-    'click .remove-member'        : 'removeMember',
-    'change #sort-user-sitewide'  : 'sortUsers',
-    'change #sort-user-agency'    : 'sortUsers',
-    'change #sort-user-community' : 'sortUsers',
-    'keypress #user-filter'       : 'searchOnEnter',
+    'click a.page'                      : 'clickPage',
+    'click .link-backbone'              : linkBackbone,
+    'click .assign-admin'               : 'toggleCheckbox',
+    'click .assign-approver'            : 'toggleCheckbox',
+    'click .member-enable'              : 'toggleCheckbox',
+    'click .user-reset'                 : 'resetPassword',
+    'click #invite-members'             : 'inviteMembers',
+    'click #user-filter-search'         : 'filter',
+    'click .remove-member'              : 'removeMember',
+    'change #filter-admin-type-sitewide': 'filterUsers',
+    'change #sort-user-sitewide'        : 'sortUsers',
+    'change #sort-user-agency'          : 'sortUsers',
+    'change #sort-user-community'       : 'sortUsers',
+    'keypress #user-filter'             : 'searchOnEnter',
   },
 
   initialize: function (options) {
@@ -269,6 +270,14 @@ var AdminUserView = Backbone.View.extend({
       return;
     }
     this.data.filter = val;
+    this.data.page = 1;
+    Backbone.history.navigate(this.generateURL(), { trigger: false });
+    this.fetchData();
+  },
+
+  filterUsers: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.data.filter = target.value;
     this.data.page = 1;
     Backbone.history.navigate(this.generateURL(), { trigger: false });
     this.fetchData();
