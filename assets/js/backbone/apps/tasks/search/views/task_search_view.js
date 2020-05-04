@@ -34,6 +34,7 @@ var TaskListView = Backbone.View.extend({
     'click #search-pills-remove-all'          : 'removeAllFilters',
     'click .task-link'                        : 'loadTask',
     'keypress #search'                        : 'searchOnEnter',
+    'change #sort-results'                    : 'sortStatus',
   },
 
   initialize: function (options) {
@@ -170,6 +171,14 @@ var TaskListView = Backbone.View.extend({
       this.filters.page = 1;
       this.filter();
     }.bind(this));
+  },
+
+  sortStatus: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.filters.sort = target.value;
+    this.filters.page = 1;
+    this.filter();
+    window.scrollTo(0, 0);
   },
 
   initializeCommunitySelect2: function () {
@@ -377,7 +386,9 @@ var TaskListView = Backbone.View.extend({
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
       this.renderNoResults();
+      $('#task-search-sort').hide();
     } else {
+      $('#task-search-sort').show();
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 20;
       this.renderPage(searchResults, page, pageSize);
@@ -396,8 +407,10 @@ var TaskListView = Backbone.View.extend({
     var compiledTemplate = _.template(NoListItem)(settings);
     $('#task-list').append(compiledTemplate);
     $('#task-page').hide();      
-    $('#results-count').hide();
+    $('.task-search-controls #results-count').hide();
   },
+
+
 
   renderPage: function (searchResults, page, pageSize) {
     var self = this;
@@ -412,13 +425,13 @@ var TaskListView = Backbone.View.extend({
 
   renderResultsCount: function (start, stop, pageSize, numResults, pagedNumResults) {
     if (numResults <= pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
+      $('.task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
     } else if (pagedNumResults < pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
+      $('task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
     } else {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
+      $('.task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
     }
-    $('#results-count').show();
+    $('.task-search-controls #results-count').show();
   },
 
   renderItem: function (searchResult) {
