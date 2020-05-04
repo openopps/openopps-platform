@@ -95,6 +95,7 @@ var CommentFormView = Backbone.View.extend({
     // abort if the comment is empty
     if (!commentText) {
       this.$('.comment-alert-empty').show();
+      this.$('[type="submit"]').prop('disabled', false);
       return;
     }
 
@@ -115,10 +116,9 @@ var CommentFormView = Backbone.View.extend({
     } else {
       data.parentId = parentId;
     }
+    
     this.$('.comment-alert-empty').hide();
-
-    var currentTarget = e.currentTarget;
-    this.collection.trigger('comment:save', data, currentTarget);
+    this.collection.trigger('comment:save', data, e.currentTarget);
   },
 
   submitOnEnter: function (e) {
