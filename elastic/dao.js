@@ -131,6 +131,7 @@ function toElasticOpportunity (value, index, list) {
     'agencyId' : doc.agency_id,
     'agencyName': doc.agencyName,
     'agency': { id: doc.agency_id, name: doc.agencyName, imageId: doc.agencyImageId },
+    'ownerName': doc.name,
   };
 }
     
