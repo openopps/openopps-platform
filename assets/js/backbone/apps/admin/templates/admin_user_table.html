@@ -4,10 +4,39 @@
     <h4 class="usajobs-search-controls__results-count">Viewing <%- numeral(firstOf).format('0,0') %>-<%- numeral(lastOf).format('0,0') %> of <%- numeral(countOf).format('0,0') %> users</h4>
     <% } %>
   </div>
-  <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
-  <% if (users.length > 0) { %>
+  
+<% if (users.length > 0) { %>
+  <% if (target === 'agency') { %>
+    <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+      <label class="usajobs-search-controls__sort-label" for="sort-user-agency">
+        Sort by
+      </label>
+        <select name="sort-user-agency" id="sort-user-agency" class="usajobs-search-controls__sort-control">
+          <option value="" disabled>- Sort By -</option>
+          <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>       
+          <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
+          <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
+          <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
+          <option value="isAgencyAdmin" <% if (sort == 'isAgencyAdmin') { %>selected<% } %>>Agency Admin</option>
+        </select>
+    </div>
+  <% } %>
+<% } %>
   <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
     <% if (target === 'sitewide') { %>
+      <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
+        <label class="usajobs-search-controls__sort-label" for="filter-admin-type-sitewide">
+          Filter by
+        </label>
+        <select name="filter-admin-type-sitewide" id="filter-admin-type-sitewide" class="usajobs-search-controls__sort-control">
+          <option value="" disabled>- Filter By -</option> 
+          <option value="" <% if (filter == '') { %>selected<% } %>>All users</option>   
+          <option value="isAdmin" <% if (filter == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
+          <option value="is_approver" <% if (filter == 'is_approver') { %>selected<% } %>>Sitewide Approver</option>    
+        </select>
+      </div>
+    <% if (users.length > 0) { %>
+    <div class="usajobs-search-controls__sort-container no-params show-on-desktop">
       <label class="usajobs-search-controls__sort-label" for="sort-user-sitewide">
         Sort by
       </label>
@@ -22,23 +51,10 @@
         <option value="isAdmin" <% if (sort == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
         <option value="isApprover" <% if (sort == 'isApprover') { %>selected<% } %>>Sitewide Approver</option>    
       </select>
+    </div>
     <% } %>
-    <% if (target === 'agency') { %>
-      <label class="usajobs-search-controls__sort-label" for="sort-user-agency">
-        Sort by
-      </label>
-        <select name="sort-user-agency" id="sort-user-agency" class="usajobs-search-controls__sort-control">
-          <option value="" disabled>- Sort By -</option>
-          <option value="name" <% if (sort == 'name') { %>selected<% } %>>Name</option>       
-          <option value="government_uri" <% if (sort == 'government_uri') { %>selected<% } %>>Federal email</option>
-          <option value="createdAt" <% if (sort == 'createdAt') { %>selected<% } %>>Created</option>
-          <option value="disabled" <% if (sort == 'disabled') { %>selected<% } %>>Enabled</option>
-          <option value="isAgencyAdmin" <% if (sort == 'isAgencyAdmin') { %>selected<% } %>>Agency Admin</option>
-        </select>
     <% } %>
   </div>
-</div>
-<% } %>
 </div>
 <table class="usa-table-borderless user-table" role="presentation">
   <thead>
