@@ -24,15 +24,15 @@ function getWhereClauseForTaskState (state) {
   }
 }
 
-function getWhereClauseForUsers (filter) {
+function getWhereClauseForUsers (filter, filterPermissions) {
   var adminTypeString = "";
-  if (filter == 'isAdmin' || filter == 'is_approver') { adminTypeString = ' or "' + filter + '" = true'; };
-  if (filter) {
-    return 'where lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
+  if (filterPermissions == 'isAdmin' || filterPermissions == 'is_approver') { adminTypeString = '"' + filterPermissions + '" = true and '; };
+  if (filter || filterPermissions) {
+    return 'where ' + adminTypeString + 
+      '(lower(name) like \'%' + filter.replace(/\s+/g, '%').toLowerCase() +
       '%\' or lower(agency->>\'name\') like \'%' + filter.toLowerCase() +
       '%\' or lower(username) like \'%' + filter.toLowerCase()  + '%\'' + 
-      adminTypeString +
-      ' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\'';
+      ' or lower(government_uri) like \'%' + filter.toLowerCase() + '%\')';
   } else {
     return '';
   }
@@ -462,10 +462,10 @@ module.exports.getInteractionsForCommunity = async function (communityId) {
   return interactions;
 };
 
-module.exports.getUsers = async function (page, filter, sort) {
+module.exports.getUsers = async function (page, filter, filterPermissions, sort) {
   var result = {};
   var usersBySortQuery = fs.readFileSync(__dirname + '/sql/getUserListBySort.sql', 'utf8').toString();
-  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter));
+  usersBySortQuery = usersBySortQuery.replace('[where clause]', getWhereClauseForUsers(filter, filterPermissions));
   usersBySortQuery =  usersBySortQuery.replace('[order by]', getUserListOrderByClause(sort));
   result.limit = 25;
   result.page = +page || 1;
