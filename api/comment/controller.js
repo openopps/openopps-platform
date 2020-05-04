@@ -7,16 +7,20 @@ const opportunityService = require('../opportunity/service');
 
 var router = new Router();
 
+router.get('/api/comment/task/:id', auth, async (ctx, next) => {
+  ctx.body = await service.commentsForTask(ctx.params.id);
+});
+
 router.post('/api/comment', auth, async (ctx, next) => {
   var attributes = ctx.request.body;
-  _.extend(attributes, { userId: ctx.state.user.id } );
-  await service.addComment(attributes, function (errors, comment) {
-    if (errors) {
-      ctx.status = 400;
-      return ctx.body = errors;
-    }
-    service.sendCommentNotification(ctx.state.user, comment, 'comment.create.owner');
-    ctx.body = comment;
+  _.extend(attributes, { userId: ctx.state.user.id, topic: _.isNil(attributes.parentId) } );
+  await service.addComment(attributes).then(results => {
+    service.sendCommentNotification(ctx.state.user, results.rows[0], 'comment.create.owner');
+    ctx.body = results.rows[0];
+  }).catch(err => {
+    log.error(err);
+    ctx.status = 400;
+    ctx.body = { message: 'An unexpected error was encountered.'};
   });
 });
 

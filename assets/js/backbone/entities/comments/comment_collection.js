@@ -11,37 +11,33 @@ var CommentCollection = Backbone.Collection.extend({
   model: CommentModel,
 
   initialize: function () {
-    var self = this;
-
     this.listenTo(this, 'comment:save', function (data, currentTarget) {
-      self.addAndSave(data, currentTarget);
-    });
+      this.addAndSave(data, currentTarget);
+    }.bind(this));
   },
 
   addAndSave: function (data, currentTarget) {
-    var self = this, comment;
-
-    comment = new CommentModel({
+    var comment = new CommentModel({
       parentId  : data['parentId'],
       value     : data['comment'],
       taskId    : data['taskId'],
       topic     : data['topic'],
     });
 
-    self.add(comment);
+    this.add(comment);
 
-    self.models.forEach(function (model) {
+    this.models.forEach(function (model) {
       if (model.attributes.value === data['comment']) {
         model.save(null, {
           success: function (modelInstance, response) {
-            self.trigger('comment:save:success', modelInstance, response, currentTarget);
-          },
+            this.trigger('comment:save:success', modelInstance, response, currentTarget);
+          }.bind(this),
           error: function (model, response, options) {
-            self.trigger('comment:save:error', model, response, options);
-          },
+            this.trigger('comment:save:error', model, response, options);
+          }.bind(this),
         });
       }
-    });
+    }.bind(this));
   },
 });
 
