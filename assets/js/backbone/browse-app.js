@@ -374,10 +374,10 @@ var BrowseRouter = Backbone.Router.extend({
         modalTitle: 'Please complete your profile.',
         modalBody: 'You have not selected your agency in your profile.',
         primary: {
-          text: loginGov ? 'Update profile at USAJOBS.gov' : 'Go to profile',
+          text: 'Go to profile',
           action: function () {
             this.modal.cleanup();
-            window.location = usajobsURL + '/Applicant/Profile/';
+            Backbone.history.navigate('/profile/' + window.cache.currentUser.id, { trigger: true });
           }.bind(this),
         },           
         secondary: {
