@@ -38,7 +38,7 @@ var CommentItemView = Backbone.View.extend({
     if (replies.length > 2) {
       var previousReplies = _.initial(replies, 2);
       $(previousReplies).hide();
-      $('#comment-' + commentId + '-replies > .previous-replies > span').text(previousReplies.length + ' previous ' + (previousReplies.length == 1 ? 'reply' : 'replies'));
+      $('#comment-' + commentId + '-replies > .previous-replies > span').text(previousReplies.length + ' ' + (previousReplies.length == 1 ? 'reply' : 'replies'));
       $('#comment-' + commentId + '-replies > .previous-replies').show();
     } else {
       $('#comment-' + commentId + '-replies > .previous-replies').hide();
