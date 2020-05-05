@@ -245,28 +245,28 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   switch (query.sort) {
     case 'relevance':
     case undefined:
-      request.body.sort = ['_score'];
+      request.body.sort.unshift('_score');
       break;
     case 'title':
-      request.body.sort = ['title.keyword'];
+      request.body.sort.unshift('title.keyword');
       break;
     case 'agency':
-      request.body.sort = ['agency.name'];
+      request.body.sort.unshift('agency.name');
       break;  
     case 'posted-date':
-      request.body.sort = ['publishedAt'];
+      // already the base sort for Elastic
       break;
     case 'posted-by':
-      request.body.sort = ['ownerName'];
+      request.body.sort.unshift('ownerName');
       break;
     case 'status':
-      request.body.sort = ['state'];
+      request.body.sort.unshift('state');
       break;
     case 'location': 
-      request.body.sort=['locations.name'];
+      request.body.sort.unshift('locations.name');
       break;
     default:
-      request.body.sort = [query.sort];
+      request.body.sort.unshift(query.sort);
       break;
   }
 
