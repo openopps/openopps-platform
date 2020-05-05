@@ -81,7 +81,9 @@ var AdminCommunityEditView = Backbone.View.extend({
         displayAgencyLogo: false,
         displayCommunityname: false,
         isClosedGroup: false,
-        autoJoin: false,        
+        autoJoin: false,
+        displayCommunityName: false,
+        isDisabled: false,
       };   
         
       this.$el.html(_.template(AdminCommunityFormTemplate)(data));
