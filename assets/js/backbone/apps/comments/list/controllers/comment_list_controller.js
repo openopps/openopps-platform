@@ -275,7 +275,7 @@ var Comment = Backbone.View.extend({
   viewPreviousComments: function (event) {
     event.preventDefault && event.preventDefault();
     $('#previous-comments').hide();
-    $('.comment-item').show();
+    $(event.currentTarget.nextElementSibling.children).filter('.comment-item').show();
   },
 
   viewPreviousReplies: function (event) {
