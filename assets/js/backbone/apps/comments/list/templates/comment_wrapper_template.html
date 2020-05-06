@@ -20,7 +20,9 @@
       </li>
     <% } %>
   </ul>
-  <a href="#refresh-comments" id="refresh-comments">
-    <i class="fas fa-redo-alt"></i><span>Refresh</span>
-  </a>
+  <% if (window.cache.currentUser) { %>
+    <a href="#refresh-comments" id="refresh-comments">
+      <i class="fas fa-redo-alt"></i><span>Refresh</span>
+    </a>
+  <% } %>
 </div>
