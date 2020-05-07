@@ -34,34 +34,38 @@ var Comment = Backbone.View.extend({
     var self = this;
     this.options = options;
 
-    this.initializeRender();
-    this.initializeCommentCollection();
-    this.initializeNewTopic();
-    this.initializeListeners();
+    if (!window.cache.currentUser && location.hash.match(/#comment-id-\d*/)) {
+      Backbone.history.navigate('/login?tasks/' + this.options.id + location.hash, { trigger: true });
+    } else {
+      this.initializeRender();
+      this.initializeCommentCollection(true);
+      this.initializeNewTopic();
+      this.initializeListeners();
 
-    // Populating the DOM after a comment was created.
-    this.listenTo(this.commentCollection, 'comment:save:success', function (model, modelJson, currentTarget) {
-      this.$('[type="submit"]').prop('disabled', false);
-      if (modelJson.topic) {
-        if (this.topicForm) this.topicForm.empty();
-        this.addNewCommentToDom(modelJson, currentTarget);
-      } else { // cleanup the reply form
-        $('.reply-form-container').remove();
-        this.addNewReplyToDom(modelJson, currentTarget);
-      }
-    });
+      // Populating the DOM after a comment was created.
+      this.listenTo(this.commentCollection, 'comment:save:success', function (model, modelJson, currentTarget) {
+        this.$('[type="submit"]').prop('disabled', false);
+        if (modelJson.topic) {
+          if (this.topicForm) this.topicForm.empty();
+          this.addNewCommentToDom(modelJson, currentTarget);
+        } else { // cleanup the reply form
+          $('.reply-form-container').remove();
+          this.addNewReplyToDom(modelJson, currentTarget);
+        }
+      });
 
-    this.listenTo(this.commentCollection, 'comment:save:error', function (model, response, options) {
-      var error = options.xhr.responseJSON;
-      if (error && error.invalidAttributes) {
-        for (var item in error.invalidAttributes) {
-          if (error.invalidAttributes[item]) {
-            message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
-            $('#' + item + '-update-alert').html(message).show();
+      this.listenTo(this.commentCollection, 'comment:save:error', function (model, response, options) {
+        var error = options.xhr.responseJSON;
+        if (error && error.invalidAttributes) {
+          for (var item in error.invalidAttributes) {
+            if (error.invalidAttributes[item]) {
+              message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
+              $('#' + item + '-update-alert').html(message).show();
+            }
           }
         }
-      }
-    });
+      });
+    }
   },
 
   initializeRender: function () {
@@ -72,7 +76,7 @@ var Comment = Backbone.View.extend({
     this.$el.html(template);
   },
 
-  initializeCommentCollection: function () {
+  initializeCommentCollection: function (isPageLoad) {
     if (!this.commentCollection) {
       this.commentCollection = new CommentCollection();
     }
@@ -82,7 +86,7 @@ var Comment = Backbone.View.extend({
         url: '/api/comment/' + this.options.target + '/' + this.options.id,
         success: function (collection) {
           this.collection = collection;
-          this.renderView(collection);
+          this.renderView(collection, isPageLoad);
         }.bind(this),
       });
     } else {
@@ -144,7 +148,7 @@ var Comment = Backbone.View.extend({
     this.initializeCommentCollection();
   },
 
-  renderView: function (collection) {
+  renderView: function (collection, isPageLoad) {
     var data = { comments: [] };
     this.topics = [];
     if ( typeof collection != 'undefined' ) {
@@ -174,7 +178,7 @@ var Comment = Backbone.View.extend({
       this.renderComment(comment, collection);
     }.bind(this));
 
-    this.condenseComments();
+    this.condenseComments(isPageLoad);
     this.initializeCommentUIAdditions();
   },
 
@@ -260,13 +264,22 @@ var Comment = Backbone.View.extend({
     return $('#comment-list');
   },
 
-  condenseComments: function () {
+  condenseComments: function (isPageLoad) {
     var comments = $('#comment-list > .comment-item');
     if (comments.length > 2) {
       var previousComments = _.initial(comments, 2);
-      $(previousComments).hide();
-      $('#previous-comments').text('View previous comment' + (previousComments.length > 1 ? 's (' : ' (') + previousComments.length + ')');
-      $('#previous-comments').show();
+      if (!isPageLoad || !location.hash || !$(previousComments).find(location.hash)) {
+        $(previousComments).hide();
+        $('#previous-comments').text('View previous comment' + (previousComments.length > 1 ? 's (' : ' (') + previousComments.length + ')');
+        $('#previous-comments').show();
+      } else {
+        if(!$(location.hash).is(':visible')) {
+          this.viewPreviousReplies({
+            currentTarget: $(location.hash).closest('.replies-list').siblings('.previous-replies')[0],
+          });
+        }
+        $('html,body').animate({ scrollTop: $(location.hash).closest('.comment-item').offset().top }, 'slow');
+      }
     } else {
       $('#previous-comments').hide();
     }

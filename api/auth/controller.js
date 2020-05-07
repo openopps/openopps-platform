@@ -46,7 +46,7 @@ async function useLocalAuthentication (ctx, next) {
 
 function loginUser (state, user, ctx) {
   ctx.login(user).then(() => {
-    ctx.redirect(state.redirect ? ('/' + state.redirect) : ctx.state.user.hiringPath == 'student' ? '/search': '/home');
+    ctx.redirect(state.redirect ? ('/' + unescape(state.redirect)) : ctx.state.user.hiringPath == 'student' ? '/search': '/home');
     service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'successful' });
   }).catch((err) => {
     service.logAuthenticationError(ctx, 'ACCOUNT_LOGIN', { userId: user.id, status: 'failed' });
