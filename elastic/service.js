@@ -349,6 +349,9 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   } else {
     request.addTerms(query.state, 'state', 'open');
+    if(query.locationType) { 
+      query.location = asArray(query.location || []).concat(query.locationType);
+    }
     request.addTerms(query.location, 'locations.name');
     request.addTerms(query.agency, 'agency.name');
   }
@@ -358,7 +361,6 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   request.addTerms(query.career, 'careers.id');
   request.addTerms(query.series, 'series.code');
   request.addTerms(query.time, 'timeRequired');
-  request.addTerms(query.locationType, 'locationType');
   request.addTerms(query.language, 'languages.name');
   request.addTerms(query.payPlan, 'payPlan.id');
   request.addTerms(query.detailSelection, 'detailSelection');

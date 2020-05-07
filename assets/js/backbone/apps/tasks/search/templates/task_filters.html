@@ -125,20 +125,13 @@
           </div>
         </div>
         <h4 class="usajobs-search-filters__title location">Location</h4>
-        <% if(_.contains(filters.locationType, 'virtual') && _.contains(filters.locationType, 'in-person')) { %>
-          <a class="usajobs-search-filters__select-toggle locationfilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
-        <% } else { %>
-          <a class="usajobs-search-filters__select-toggle locationfilters-toggle" href="javascript:void(0);" data-behavior="select">Select all</a>
-        <% } %>
         <ul id="locationFilters" class="usa-unstyled-list">
             <li>
                 <input id="virtual" type="checkbox" name="location" value="virtual" <% if (_.contains(filters.locationType, 'virtual')) { %>checked<% } %> >
                 <label for="virtual">Virtual</label>
             </li>
             <li>
-                <input id="in-person" type="checkbox" name="location" value="in person" <% if (_.contains(filters.locationType, 'in person')) { %>checked<% } %>>
-                <label for="in-person">In person</label>
-                <input type="hidden" aria-label="in-person" id="location" title="Location" />
+                <input type="text" aria-label="in-person" id="location" class="ui-autocomplete-input usaj-autocomplete-default" title="Location" />
             </li>
         </ul>
 

@@ -25,7 +25,7 @@ var AdminUserView = Backbone.View.extend({
     'click #invite-members'             : 'inviteMembers',
     'click #user-filter-search'         : 'filter',
     'click .remove-member'              : 'removeMember',
-    'change #filter-admin-type-sitewide': 'filterUsers',
+    'change #filter-admin-type-sitewide': 'filterAdminUsers',
     'change #sort-user-sitewide'        : 'sortUsers',
     'change #sort-user-agency'          : 'sortUsers',
     'change #sort-user-community'       : 'sortUsers',
@@ -38,6 +38,7 @@ var AdminUserView = Backbone.View.extend({
     this.data = {
       page: this.params.get('p') || 1,
       filter: this.params.get('f') || '',
+      filterPermissions: this.params.get('fp') || '',
       sort: this.params.get('s') || 'createdAt',
       returnUrl: '/admin',
     };
@@ -81,6 +82,7 @@ var AdminUserView = Backbone.View.extend({
       community: this.community,
       target: this.options.target,
       filter: this.data.filter,
+      filterPermissions: this.filterPermissions,
       returnUrl: this.data.returnUrl,
     };
 
@@ -275,9 +277,9 @@ var AdminUserView = Backbone.View.extend({
     this.fetchData();
   },
 
-  filterUsers: function (e) {
+  filterAdminUsers: function (e) {
     var target = $(e.currentTarget)[0];
-    this.data.filter = target.value;
+    this.data.filterPermissions = target.value;
     this.data.page = 1;
     Backbone.history.navigate(this.generateURL(), { trigger: false });
     this.fetchData();
@@ -297,6 +299,7 @@ var AdminUserView = Backbone.View.extend({
       data: {
         page: this.data.page,
         filter: this.data.filter,
+        filterPermissions: this.data.filterPermissions,
         sort: this.data.sort,
       },
       success: function (data) {
@@ -328,7 +331,7 @@ var AdminUserView = Backbone.View.extend({
 
   generateURL: function () {
     var url = window.location.pathname;
-    url += '?p=' + this.data.page + '&f=' + this.data.filter + '&s=' + this.data.sort;
+    url += '?p=' + this.data.page + '&f=' + this.data.filter + '&fp=' + this.data.filterPermissions + '&s=' + this.data.sort;
     if (this.options.target === 'agency') {
       url +='&id=' + this.agency.agencyId;
     } else if(this.options.target === 'community') {

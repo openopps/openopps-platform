@@ -30,9 +30,9 @@
         </label>
         <select name="filter-admin-type-sitewide" id="filter-admin-type-sitewide" class="usajobs-search-controls__sort-control">
           <option value="" disabled>- Filter By -</option> 
-          <option value="" <% if (filter == '') { %>selected<% } %>>All users</option>   
-          <option value="isAdmin" <% if (filter == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
-          <option value="is_approver" <% if (filter == 'is_approver') { %>selected<% } %>>Sitewide Approver</option>    
+          <option value="" <% if (filterPermissions == '') { %>selected<% } %>>All users</option>   
+          <option value="isAdmin" <% if (filterPermissions == 'isAdmin') { %>selected<% } %>>Sitewide Admin</option> 
+          <option value="is_approver" <% if (filterPermissions == 'is_approver') { %>selected<% } %>>Sitewide Approver</option>    
         </select>
       </div>
     <% if (users.length > 0) { %>
