@@ -28,12 +28,15 @@ var Comment = Backbone.View.extend({
     'focus #comment-input'              : 'hideReplyForm',
     'click .reply-submit'               : 'submitReply',
     'click #refresh-comments'           : 'refreshComments',
+    'click .edit-comment'               : 'editComment',
+    'keydown .comment-edit-input '      :'escComment', 
+    'click .comment-edit'               :'updateComment',
   },
 
   initialize: function (options) {
     var self = this;
     this.options = options;
-
+    this.commentData ={};
     this.initializeRender();
     this.initializeCommentCollection();
     this.initializeNewTopic();
@@ -339,6 +342,7 @@ var Comment = Backbone.View.extend({
     reply.depth = 1;
     var compiledTemplate = _.template(CommentItemTemplate)(reply);
     $('#comment-' + reply.parentId + '-replies > .replies-list').append(compiledTemplate);
+    $('#comment-' + reply.parentId + '-replies').show();
     this.initializeCommentUIAdditions($('#comment-id-' + reply.id).parent());
   },
 
@@ -353,6 +357,63 @@ var Comment = Backbone.View.extend({
       this.topicForm.cleanup();
     }
     removeView(this);
+  },
+
+  editComment : function (e){  
+    if (e.preventDefault) e.preventDefault();
+    var id = $(e.currentTarget).data('commentid') || null;
+    
+    this.getComment(id);
+    $('.text-comment-edit-section-'+ id).show();
+    $('.comment-display-section-'+ id).hide();
+    $('#comment-metadata-'+ id).hide();
+    $('#comment-edit-input-'+ id).text(this.commentData.value);
+    $('#comment-edit-input-'+id).html($('#comment-id-'+ id + '> p').html()); 
+  },
+
+  escComment : function (e){ 
+    var id = $(e.currentTarget).data('commentid') || null;   
+    if (e.keyCode === 27){   
+      $('.text-comment-edit-section-'+ id).hide();
+      $('.comment-display-section-'+ id).show();
+      $('#comment-metadata-'+ id).show();
+      $('#comment-edit-input-'+ id).val(this.commentData.value); 
+    
+    }
+    
+  },
+
+  updateComment: function (e) {
+    var id = $(e.currentTarget).data('commentid') || null;
+    var value = this.$('#comment-edit-input-'+ id).html();  
+    if (window.cache.currentUser ) {
+      $.ajax({
+        url: '/api/comment/' + id,
+        data:{value : value,
+        },
+        type: 'PUT',
+      }).done( function (data){      
+        data.valueHtml = marked(Autolinker.link(data.value), { sanitize: false });   
+        $('.text-comment-edit-section-'+ data.id).hide();
+        $('.comment-display-section-'+ id).show();
+        $('#comment-metadata-'+ id).show();
+        $('#comment-id-' + data.id + '>p').html(data.value);    
+        $('#comment-edit-input-'+ data.id).text(data.value);  
+      });
+    }
+  },
+  
+  getComment: function (id){  
+    $.ajax({
+      url: '/api/comment/'+ id,
+      type: 'GET',
+      async:false,
+      success: function (data) {           
+        this.commentData = data;           
+      }.bind(this),
+      error: function (err) {     
+      }.bind(this),
+    });
   },
 
 });

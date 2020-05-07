@@ -330,7 +330,7 @@
 
     .comment-form-container, .reply-form-container {
 
-      div.comment-input, .reply-input {
+     div.comment-edit-input, div.comment-input, .reply-input {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -368,7 +368,7 @@
         }
       }
 
-      .comment-submit, .reply-submit {
+    .comment-edit, .comment-submit, .reply-submit {
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
         margin: 0.3rem 0 0 0;
