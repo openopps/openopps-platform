@@ -23,15 +23,24 @@
       </span>
       <a name="comment-<%- id %>"></a>
       <% /* Escaped with marked() */ %>
-      <span id="comment-id-<%- id %>"><%= valueHtml %></span>
-
-      <div class="comment-metadata">
+      <span class="comment-display-section-<%- id %>" id="comment-id-<%- id %>"><%= valueHtml %></span>
+      <% if (currentUser.id === userId) { %>
+        <div class="comment-form-container text-comment-edit-section-<%- id %>" style= display:none;>        
+          <div class="comment-edit-input form-control validate input-sm" data-commentid="<%-commentId %>" id="comment-edit-input-<%- id %>" name="comment-edit-input" contentEditable="true" data-validate="html" ></div> 
+          <button class="usa-button comment-edit" data-commentid="<%-commentId %>" type="submit" data-commentid="<%- commentId %>" value="Save comment">Save comment
+           </button>   
+           <span>Press <strong>esc</strong> to cancel </span>   
+        </div>
+        
+      <% } %>
+      <div  id ="comment-metadata-<%- id %>" class="comment-metadata">
         <time class="timeago comment-created-at" datetime="<%- createdAt %>"><%- createdAt %></time>
         <% if (currentUser) { %>
           &bull;<a href="#reply-to-comment" class="reply-to-<%- id %>" data-depth="<%- depth %>" data-commentid="<%- id %>" data-parentid="<%- parentId %>" data-authorid="<%- userId %>" data-commentauthor="<% if (user.name) { %><%- user.name %><% } else { %><%- user.username %><% } %>">Reply</a>
         <% } %>
         <% if (currentUser.id === userId) { %>
-          &bull;<a href="#" class="edit-comment" data-commentid="<%- commentId %>">Edit</a>
+          &bull;<a href="javascript:void(0);" class="edit-comment" data-commentid="<%- commentId %>">Edit</a>
+          
         <% } %>
         <% if (canEdit || (currentUser.id === userId)) { %>
           &bull;<a href="#" class="delete-comment" data-commentid="<%- commentId %>">Delete</a>

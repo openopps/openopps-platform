@@ -57,7 +57,7 @@ router.get('/api/admin/settings', auth.isAdminOrApprover, async (ctx, next) => {
     ctx.body = settings;
   }).catch(err => {
     ctx.status = 400;
-  })
+  });
 });
 
 router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {
