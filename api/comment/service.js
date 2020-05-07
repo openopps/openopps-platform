@@ -50,6 +50,20 @@ module.exports.deleteComment = async function (id) {
   });
 };
 
+module.exports.updateComment = async function (ctx,attributes,done) {  
+  return await dao.Comment.findOne('id = ?', attributes.id).then(async (e) => {  
+    return await dao.Comment.update(attributes).then(async (comment) => {      
+      return done(!comment, comment);
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+};
+
 module.exports.sendCommentNotification = async function (user, comment) {
   db.query({
     text: fs.readFileSync(__dirname + '/sql/getCommentNotificationData.sql', 'utf8'),

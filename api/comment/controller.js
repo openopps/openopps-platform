@@ -24,6 +24,31 @@ router.post('/api/comment', auth, async (ctx, next) => {
   });
 });
 
+router.put('/api/comment/:id', auth, async (ctx, next) => {
+  var attributes = ctx.request.body;
+  attributes.id= ctx.params.id;
+  attributes.updatedAt = new Date();
+  await service.updateComment(ctx,attributes, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+
+router.get('/api/comment/:commentId', auth, async (ctx, next) => {
+  var result = await service.findById(ctx.params.commentId);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
+});
+
 router.delete('/api/comment/:id', auth, async (ctx) => {
   var comment = await service.findById(ctx.params.id);
   var task = (comment ? await opportunityService.findById(comment.taskId) : null);
