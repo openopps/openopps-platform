@@ -91,6 +91,7 @@ var TaskListView = Backbone.View.extend({
         $('.openopps-system-alert.community-' + this.filters.community.id).hide();
       }
     });
+    initializeLocationSearch.bind(this)('#location');
     this.filter();
     initializeKeywordSearch.bind(this)('#search', [{ type: 'skills', limit: 5 }]);
     this.$('.usajobs-open-opps-search__box').show();
@@ -140,19 +141,12 @@ var TaskListView = Backbone.View.extend({
           this.filters.locationType = [];
           if($('#virtual').is(':checked')) {
             this.filters.locationType.push('virtual');
-          }
-          if($('#in-person').is(':checked')) {
-            this.filters.locationType.push('in person');
-          }
+          } 
         }
         this.filters.page = 1;
         this.filter();
       }.bind(this));
-    }.bind(this));
-    if(!_.contains(this.filters.locationType, 'in person')) {
-      $('#location').siblings('.select2-container').hide();
-    }
-    
+    }.bind(this));    
   },
 
   initializeCareerSelect2: function () {
@@ -615,12 +609,9 @@ var TaskListView = Backbone.View.extend({
     }
   },
 
-  locationFilter: function (event) {
-    if(!$('#in-person').is(':checked')) {
-      $('#location').siblings('.select2-container').hide();
-      $('#location').select2('data', null);
-    } else {
-      $('#location').siblings('.select2-container').show();
+  locationFilter: function (event) {    
+    if (this.$('#location').val().trim() != '') {
+      addLocation.bind(this)($('#location').val());
     }
     this.filters.location = _.map($('#location').select2('data'), function (item) {
       return _.pick(item, 'type', 'name', 'id');
@@ -628,9 +619,6 @@ var TaskListView = Backbone.View.extend({
     this.filters.locationType = [];
     if($('#virtual').is(':checked')) {
       this.filters.locationType.push('virtual');
-    }
-    if($('#in-person').is(':checked')) {
-      this.filters.locationType.push('in person');
     }
     this.filters.page = 1;
     this.filter();
