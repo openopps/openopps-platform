@@ -95,6 +95,9 @@ function toElasticOpportunity (value, index, list) {
   } else if (doc.country != null && doc.country != '') {
     locationType = 'In Person';
   }
+  if (locationType == 'Virtual') {
+    doc.location = [{name: 'Virtual'}];
+  }
   return {
     'id': doc.id,
     'title': doc.title,
