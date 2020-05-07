@@ -15,7 +15,7 @@ router.post('/api/comment', auth, async (ctx, next) => {
   var attributes = ctx.request.body;
   _.extend(attributes, { userId: ctx.state.user.id, topic: _.isNil(attributes.parentId) } );
   await service.addComment(attributes).then(results => {
-    service.sendCommentNotification(ctx.state.user, results.rows[0], 'comment.create.owner');
+    service.sendCommentNotification(ctx.state.user, results.rows[0]);
     ctx.body = results.rows[0];
   }).catch(err => {
     log.error(err);
