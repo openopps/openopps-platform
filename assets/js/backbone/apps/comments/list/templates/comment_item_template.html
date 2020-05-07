@@ -28,14 +28,20 @@
       <div class="comment-metadata">
         <time class="timeago comment-created-at" datetime="<%- createdAt %>"><%- createdAt %></time>
         <% if (currentUser) { %>
-        &bull;
-        <a href="#reply-to-comment" class="reply-to-<%- id %>" data-depth="<%- depth %>" data-commentid="<%- id %>" data-authorid="<%- userId %>" data-commentauthor="<% if (user.name) { %><%- user.name %><% } else { %><%- user.username %><% } %>">Reply</a>
+          &bull;<a href="#reply-to-comment" class="reply-to-<%- id %>" data-depth="<%- depth %>" data-commentid="<%- id %>" data-parentid="<%- parentId %>" data-authorid="<%- userId %>" data-commentauthor="<% if (user.name) { %><%- user.name %><% } else { %><%- user.username %><% } %>">Reply</a>
+        <% } %>
+        <% if (currentUser.id === userId) { %>
+          &bull;<a href="#" class="edit-comment" data-commentid="<%- commentId %>">Edit</a>
+        <% } %>
+        <% if (canEdit || (currentUser.id === userId)) { %>
+          &bull;<a href="#" class="delete-comment" data-commentid="<%- commentId %>">Delete</a>
         <% } %>
       </div>
 
-      <% if (canEdit || ( currentUser.id === userId )) { %>
-        <a href="#" class="delete-comment" data-commentid="<%- commentId %>"><span class='fa fa-times'></span><span class="sr-only">Delete comment</span></a>
-      <% } %>
+      <div id="comment-<%- id %>-replies" class="comment-replies" style="display:none;">
+        <a class="previous-replies" href="#previous-replies" style="display:none;"><i class="fas fa-reply"></i><span></span></a>
+        <ul class="usajobs-width-one-whole replies-list"></ul>
+      </div>
     </div>
   </div>
 </li>

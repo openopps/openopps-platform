@@ -242,6 +242,34 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }});
     },
   };
+  switch (query.sort) {
+    case 'relevance':
+    case undefined:
+      request.body.sort.unshift('_score');
+      break;
+    case 'title':
+      request.body.sort.unshift('title.keyword');
+      break;
+    case 'agency':
+      request.body.sort.unshift('agency.name');
+      break;  
+    case 'posted-date':
+      // already the base sort for Elastic
+      break;
+    case 'posted-by':
+      request.body.sort.unshift('ownerName');
+      break;
+    case 'status':
+      request.body.sort.unshift('state');
+      break;
+    case 'location': 
+      request.body.sort.unshift('locations.name');
+      break;
+    default:
+      request.body.sort.unshift(query.sort);
+      break;
+  }
+
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
@@ -383,6 +411,7 @@ function convertSearchResultsToResultModel (searchResult) {
     office: source.office,
     payPlan:source.payPlan,
     agency : source.agency,
+    ownerName:source.ownerName,
   };
   removeEmpty(model);
   return model;

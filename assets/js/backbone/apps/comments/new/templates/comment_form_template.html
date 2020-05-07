@@ -32,7 +32,7 @@
               <% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>
             </a>
             <br> -->
-            <div class="comment-input form-control validate input-sm" id="comment-input" name="comment-input" contentEditable="true" data-validate="html" data-text="Leave comments here"></div>
+            <div class="comment-input form-control validate input-sm" id="comment-input" name="comment-input" contentEditable="true" data-validate="html" data-text="Write a comment..."></div>
             <button class="usa-button comment-submit" type="submit" value="<% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>" title="<% if (form.topic) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %>">
               <% if (form.topic ) { %> Post comment <% } else if (form.depth == 1) { %> Reply <% } else { %>Add comment<% } %></button>
             <div id="comment-update-alert" class="alert alert-warning" style="display:none;"></div>

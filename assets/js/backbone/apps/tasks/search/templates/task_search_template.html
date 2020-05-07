@@ -39,8 +39,29 @@
           </div>
         </div>
       </div>
-      <div id="usajobs-search-pills"></div>
-      <h4 id="results-count"><span class="usa-sr-only">Results: </span></h4>
+      <div id="usajobs-search-pills"></div>  
+      <div id="usajobs-search-controls-participated" class="task-search-controls">
+        <div class="usajobs-grid usajobs-search-controls">
+          <div class="usajobs-search-controls__results-count-container no-params">  
+            <h4 id="results-count"><span class="usa-sr-only">Results: </span></h4>       
+          </div>     
+            <div id="task-search-sort" class="usajobs-search-controls__sort-container no-params show-on-desktop">
+              <label class="usajobs-search-controls__sort-label" for="sort-results">
+                Sort by
+              </label>
+              <select name="sort-results" id="sort-results" class="usajobs-search-controls__sort-control">
+                <option value="" disabled>- Sort By -</option>
+                <option value="relevance" >Relevance</option>
+                <option value="title" >Title</option>
+                <option value="agency" >Agency</option>
+                <option value="posted-date" >Posted date</option>
+                <option value="posted-by" >Posted by</option>
+                <option value="status" >Status</option>
+                <option value="location" >Location</option>
+              </select>
+            </div>        
+        </div>
+      </div>
       <div class="usajobs-open-opps-search-results" id="task-list">
         <div class="usajobs-open-opps-search-results__loading" id="search-results-loading">
           <span class="fas fa-circle-notch fa-spin fa-5x fa-fw"></span>

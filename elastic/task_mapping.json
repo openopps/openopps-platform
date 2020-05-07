@@ -2,7 +2,7 @@
     "task": {
         "properties": {
             "id":                    { "type": "long" },
-            "title":                 { "type": "text",  "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+            "title":                 { "type": "text", "fielddata": true, "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
             "description":           { "type": "text" },
             "state":                 { "type": "keyword", "normalizer": "lowercase" },
             "details":               { "type": "text" },
@@ -16,6 +16,7 @@
             "detailSelection":       { "type": "keyword", "normalizer": "lowercase" },
             "agencyId"        :      { "type": "long" },
             "agencyName"      :      { "type": "text" },
+            "ownerName":             { "type": "keyword", "normalizer": "lowercase" },
             "postingLocation":       { 
                 "properties": {
                     "cityName": { "type": "text", "analyzer": "engram_analyzer", "search_analyzer": "lowercase" },
@@ -68,7 +69,7 @@
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  }
                 }
-            },
+            },         
             "community": {
                 "properties": {
                     "id": { "type": "long" },
