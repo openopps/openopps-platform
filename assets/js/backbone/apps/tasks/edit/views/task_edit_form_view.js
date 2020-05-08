@@ -177,6 +177,7 @@ var TaskEditFormView = Backbone.View.extend({
     };
 
     var compiledTemplate = _.template(TaskEditFormTemplate)(this.data);
+    console.log(this.data);
     this.$el.html(compiledTemplate);
     this.$el.localize();
     // DOM now exists, begin select2 init
