@@ -724,7 +724,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (_.contains(['location', 'skill', 'series', 'agency'], key)) {
+          } else if (_.contains(['location', 'skill', 'series', 'agency', 'department'], key)) {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {

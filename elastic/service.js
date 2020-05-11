@@ -1,4 +1,5 @@
 const elasticClient = require('./index');
+const log = require('log')('elastic:service');
 const dao = require('./dao');
 const _ = require('lodash');
 const fs = require('fs');
@@ -24,6 +25,9 @@ service.remapOpportunities = async function () {
       index: 'task',
       type: 'task',
       body: JSON.parse(fs.readFileSync('./elastic/task_mapping.json')).task,
+    }).catch(async err => {
+      log.error('Error updating mapping. %o', err);
+      await elasticClient.indices.delete({ index: 'task' });
     });
   }
 
@@ -354,6 +358,7 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
     request.addTerms(query.location, 'locations.name');
     request.addTerms(query.agency, 'agency.name');
+    request.addTerms(query.department, 'department.name');
   }
   request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');

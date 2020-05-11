@@ -42,11 +42,16 @@ module.exports.commentsForTask = function (taskId) {
 };
 
 module.exports.deleteComment = async function (id) {
-  await dao.Comment.delete('id = ?', id).then(async (task) => {
-    return id;
-  }).catch(err => {
-    log.info('delete: failed to delete task ', err);
-    return false;
+  return new Promise(resolve => {
+    db.query({
+      text: 'UPDATE comment SET "deletedAt" = $1 WHERE id = $2',
+      values: [new Date(), id],
+    }).then(results => {
+      resolve(id);
+    }).catch(err => {
+      log.error(err);
+      resolve(false);
+    });
   });
 };
 

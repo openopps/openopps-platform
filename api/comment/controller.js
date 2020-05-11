@@ -58,7 +58,7 @@ router.delete('/api/comment/:id', auth, async (ctx) => {
     if (comment.userId === ctx.state.user.id || task.owner.id === ctx.state.user.id ||
       (_.has(ctx.state.user, 'isAdmin') && ctx.state.user.isAdmin) ||
       ((_.has(ctx.state.user, 'isAgencyAdmin') && ctx.state.user.isAgencyAdmin) &&
-        (ctx.state.user.tags && (_.find(ctx.state.user.tags, { 'type': 'agency' }) || {}).name == task.owner.agency.name))) {
+        (ctx.state.user.agencyId == task.agencyId))) {
       ctx.body = await service.deleteComment(ctx.params.id);
     } else {
       ctx.status = 403;
