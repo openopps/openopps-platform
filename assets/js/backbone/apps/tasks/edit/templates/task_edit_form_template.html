@@ -2,7 +2,20 @@
   <div class="usajobs-content-gutter opportunity-gutter">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-        <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>
+        <% if (window.cache.currentUser.isAdmin && window.cache.currentUser.id !== data.userId && data.id) { %>
+        <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert">
+          <div class="usajobs-alert__figure">
+            <div class="usajobs-alert__icon">
+            </div>
+          </div>
+          <div class="usajobs-alert__body">
+            <p class="usa-alert-text">
+              You are an administrator. You are editing another user's opportunity.           
+            </p>
+          </div>
+        </div>
+        <% } %>
+        <h1 class="usajobs-form__title"><% if(data.id) { %>Edit<% } else {%>Create an<% } %> opportunity <span class="usajobs-form__legend">All fields are required unless otherwise noted</span></h1>  
           <div class="usajobs-grid-full">
             <div class="usa-width-two-thirds tips-wrapper">
               <fieldset class="usajobs-fieldset">
@@ -312,6 +325,10 @@
                 </li>
               </ul>
               <input type="hidden" id="task_tag_location" name="location" />
+              <div id="allow-virtual-option" style="display:none;">           
+                <input type="checkbox" id="allow-virtual" name="allow-virtual" value="<%- data.allowVirtual %>" <% if (data.allowVirtual) { %> checked="checked" <% } %>>
+                <label for="allow-virtual" class="no-margin-top">Allow virtual participation</label>
+              </div>
             </div>
           </fieldset>
           <fieldset id="step-2" class="usajobs-fieldset">
