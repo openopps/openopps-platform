@@ -1,6 +1,6 @@
 <p>Hi <% if (recipient.name) { %><%- recipient.name %><% } %>,</p>
 
-<p>There's a new <% if (comment.parentId) { %>reply<% } else { %>comment<% } %> on <%= task.title %>. <% if (commenter.name) { %><a href="<%- globals.urlPrefix %>/profile/<%- commenter.id %>"><%- commenter.name %> </a><% } else { %>Someone<% } %> said:</p>
+<p>There's a new comment on <%= task.title %>. <% if (commenter.name) { %><a href="<%- globals.urlPrefix %>/profile/<%- commenter.id %>"><%- commenter.name %> </a><% } else { %>Someone<% } %> said:</p>
 
 <p>"<%= comment.value %>"</p>
 

@@ -18,10 +18,11 @@ router.get('/api/ac/user', async (ctx, next) => {
 router.get('/api/ac/keyword', async (ctx, next) => {
   await service.keywordAutocomplete(ctx.query.term).then(results => {
     ctx.body = _.pickBy({
-      agencies: (results[0] || {}).rows,
-      career_fields: (results[1] || {}).rows,
-      skills: (results[2] || {}).rows,
-      series: (results[3] || {}).rows,
+      departments: (results[0] || {}).rows,
+      agencies: (results[1] || {}).rows,
+      career_fields: (results[2] || {}).rows,
+      skills: (results[3] || {}).rows,
+      series: (results[4] || {}).rows,
     }, _.identity);
   }).catch(err => {
     // TODO: Record and swallow the error

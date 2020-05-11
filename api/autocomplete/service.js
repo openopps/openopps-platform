@@ -33,6 +33,7 @@ module.exports.userByName =  async function (name) {
 module.exports.keywordAutocomplete = async function (term) {
   var searchString = term ? '%' + term.toLowerCase() + '%' : '';
   return Promise.all([
+    db.query(dao.query.departmentAutocomplete, [searchString, searchString]),
     db.query(dao.query.agencyAutocomplete, [searchString, searchString]),
     db.query(dao.query.tagAutocomplete, ['career', searchString]),
     db.query(dao.query.tagAutocomplete, ['skill', searchString]),

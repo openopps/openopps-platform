@@ -75,9 +75,9 @@
                     "id": { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  },
                     "shortName": { "type": "keyword", "normalizer": "lowercase" },
-                    "communityLogo":{"type": "keyword", "normalizer": "lowercase" },
-                    "displayAgencyLogo":{"type": "keyword", "normalizer": "lowercase" },
-                    "displayCommunityName":{"type": "boolean"},
+                    "communityLogo":{ "type": "keyword", "normalizer": "lowercase" },
+                    "displayAgencyLogo":{ "type": "keyword", "normalizer": "lowercase" },
+                    "displayCommunityName":{ "type": "boolean" },
                     "imageId" : { "type": "long" }
                 }
             },
@@ -106,6 +106,12 @@
                     "id":   { "type": "long" },
                     "name": { "type": "keyword", "normalizer": "lowercase"  },
                     "imageId" :{ "type": "long" }
+                }
+            },
+            "department": {
+                "properties": {
+                    "id":   { "type": "long" },
+                    "name": { "type": "keyword", "normalizer": "lowercase"  }
                 }
             }
         }
