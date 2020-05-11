@@ -2,7 +2,7 @@
   <div class="usajobs-content-gutter opportunity-gutter">
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-        <% if (window.cache.currentUser.isAdmin && window.cache.currentUser.id !== data.userId) { %>
+        <% if (window.cache.currentUser.isAdmin && window.cache.currentUser.id !== data.userId && data.id) { %>
         <div class="usa-alert usajobs-alert usajobs-alert--warning" role="alert" data-object="alert">
           <div class="usajobs-alert__figure">
             <div class="usajobs-alert__icon">
