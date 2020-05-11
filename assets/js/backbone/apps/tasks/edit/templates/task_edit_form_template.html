@@ -325,6 +325,10 @@
                 </li>
               </ul>
               <input type="hidden" id="task_tag_location" name="location" />
+              <div id="allow-virtual-option" style="display:none;">           
+                <input type="checkbox" id="allow-virtual" name="allow-virtual" value="<%- data.allowVirtual %>" <% if (data.allowVirtual) { %> checked="checked" <% } %>>
+                <label for="allow-virtual" class="no-margin-top">Allow virtual participation</label>
+              </div>
             </div>
           </fieldset>
           <fieldset id="step-2" class="usajobs-fieldset">

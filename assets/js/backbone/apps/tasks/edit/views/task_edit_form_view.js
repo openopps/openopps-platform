@@ -726,8 +726,10 @@ var TaskEditFormView = Backbone.View.extend({
     var target = $('.opportunity-location.selected')[0]  || {};
     if(target.id != 'anywhere') {
       $('#s2id_task_tag_location').show();
+      $('#allow-virtual-option').show();
     } else {
       $('#s2id_task_tag_location').hide();
+      $('#allow-virtual-option').hide();
     }
   },
   
@@ -877,7 +879,7 @@ var TaskEditFormView = Backbone.View.extend({
       state        : this.model.get('state'),
       restrict     : this.model.get('restrict'),
       peopleNeeded : this.$('.opportunity-people.selected').val(),
-    
+      allowVirtual : $('#allow-virtual').prop('checked'),
     };
 
     if( this.$('.time-options-time-required.selected').val() == 'Detail'){
@@ -885,7 +887,7 @@ var TaskEditFormView = Backbone.View.extend({
       modelData.requirement  =this.$('#opportunity-requirement').val();
       modelData.grade         =this.$('#grade').val();
       modelData.isDetailReimbursable= $("input[name='detail-group']:checked").val();
-      modelData.payLevelId =$('#time-options-pay-scale').val();
+      modelData.payLevelId = $('#time-options-pay-scale').val();
       modelData.payPlan = $('#time-options-pay-scale').select2('data')?$('#time-options-pay-scale').select2('data').text: null;
       modelData.reimbursable= $("input[name='detail-group']:checked").val() =='true' ? 'Yes' :'No';
       modelData.detailSelection = $("input[name='detail-time-group']:checked").val();
