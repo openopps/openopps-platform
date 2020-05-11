@@ -100,6 +100,7 @@ global.initializeKeywordSearch = function (element, limits) {
     'career fields': 'career',
     'skills': 'skill',
     'agencies': 'agency',
+    'departments': 'department',
   };
   $(element).keywordAC({
     source: function (request, response) {
@@ -224,7 +225,7 @@ function parseKeywordAutocompleteResults (term, results, filters) {
   var data = Object.keys(results).map(function (key) { 
     return results[key].map(function (item) {
       var label = item.name;
-      if (key == 'agencies' && item.abbr) {
+      if ((key == 'agencies' || key == 'departments') && item.abbr) {
         label += ' (' + item.abbr + ')';
       }
       return _.extend(item, {

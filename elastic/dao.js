@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const log = require('log')('elastic:dao');
 const db = require('../db/client');
 const moment = require('moment');
 const util = require('util');
@@ -7,12 +8,12 @@ const Agency = require('../api/model/Agency');
 var dao = {}; 
 
 dao.tasksToIndex = async function (){
-  var query = util.format(tasksToIndexQuery,'order by t.id');
+  var query = util.format(tasksToIndexQuery, 'order by t.id');
   try {
-    var result = await db.query(query);
-    return _.map(result.rows, toElasticOpportunity);
+    var results = await getTasksResults(query);
+    return _.map(results, toElasticOpportunity);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -25,7 +26,7 @@ dao.usersToIndex = async function () {
       return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -38,7 +39,7 @@ dao.userToIndex = async function (id) {
       return _.pickBy(row.user, _.identity);
     });
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -46,10 +47,10 @@ dao.userToIndex = async function (id) {
 dao.taskToIndex = async function (id){
   var query = util.format(tasksToIndexQuery,'where t.id = $1');
   try {
-    var result = await db.query(query, [id]);
-    return _.map(result.rows, toElasticOpportunity);
+    var results = await getTasksResults(query, [id]);
+    return _.map(results, toElasticOpportunity);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -57,10 +58,10 @@ dao.taskToIndex = async function (id){
 dao.cycleTasksToIndex = async function (cycleId) {
   var query = util.format(tasksToIndexQuery,'where cy.cycle_id = $1');
   try {
-    var result = await db.query(query, [cycleId]);
-    return _.map(result.rows, toElasticOpportunity);
+    var results = await getTasksResults(query, [cycleId]);
+    return _.map(results, toElasticOpportunity);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -68,10 +69,10 @@ dao.cycleTasksToIndex = async function (cycleId) {
 dao.agencyTasksToIndex = async function (agencyId) {
   var query = util.format(tasksToIndexQuery,'where t.agency_id = $1');
   try {
-    var result = await db.query(query, [agencyId]);
-    return _.map(result.rows, toElasticOpportunity);
+    var results = await getTasksResults(query, [agencyId]);
+    return _.map(results, toElasticOpportunity);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
@@ -79,13 +80,23 @@ dao.agencyTasksToIndex = async function (agencyId) {
 dao.communityTasksToIndex = async function (communityId) {
   var query = util.format(tasksToIndexQuery, 'where t.community_id = $1');
   try {
-    var result = await db.query(query, [communityId]);
-    return _.map(result.rows, toElasticOpportunity);
+    var results = await getTasksResults(query, [communityId]);
+    return _.map(results, toElasticOpportunity);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     return null;
   }
 };
+
+async function getTasksResults (query, parameters) {
+  var results = await db.query(query, parameters);
+  return Promise.all(_.map(results.rows, async result => {
+    if (result.task.parentCode) {
+      result.task.departments = Agency.toList(await Agency.fetchDepartment(result.task.parentCode));
+    }
+    return result;
+  }));
+}
 
 function toElasticOpportunity (value, index, list) {
   var doc = value.task;
@@ -134,6 +145,7 @@ function toElasticOpportunity (value, index, list) {
     'agencyId' : doc.agency_id,
     'agencyName': doc.agencyName,
     'agency': { id: doc.agency_id, name: doc.agencyName, imageId: doc.agencyImageId },
+    'department': _.map(doc.departments, item => { return { id: item.agency_id, name: item.name }; }),
     'ownerName': doc.name,
   };
 }
@@ -153,6 +165,7 @@ from (
     t.agency_id,
     a.name as "agencyName",
     a.image_id as "agencyImageId",
+    a.parent_code as "parentCode",
     t.restrict ->> 'projectNetwork' as "isRestricted",
     t."publishedAt",
     u.name,
