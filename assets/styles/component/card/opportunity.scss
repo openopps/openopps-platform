@@ -330,7 +330,7 @@
 
     .comment-form-container, .reply-form-container {
 
-      div.comment-input, .reply-input {
+     div.comment-edit-input, div.comment-input, .reply-input {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -346,8 +346,8 @@
         margin: 0.2em 0;
         padding: 1rem 0.7em;
         float: left;
-        width: calc(100% - 15rem);
-        max-width: calc(100% - 15rem);
+        width: calc(100% - 15.1rem);
+        max-width: calc(100% - 15.1rem);
 
         @include media($M-down) {
           width: 100%;
@@ -368,13 +368,13 @@
         }
       }
 
-      .comment-submit, .reply-submit {
+    .comment-edit, .comment-submit, .reply-submit {
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
         margin: 0.3rem 0 0 0;
         padding: 1.3rem 2rem 1.4rem 2rem;
         float: left;
-        width: 15rem;
+        width: 15.1rem;
 
         @include media($M-down) {
           border-bottom-left-radius: $size-base;
@@ -389,7 +389,14 @@
         content: "";
         display: table;
       }
-    }
+      .edit-esc-comment {  
+        margin-right :60px;
+        float:left;
+        @include media($M) {
+          margin-left: 0.85rem;
+        }   
+      }
+  }
 
     #previous-comments {
       text-decoration: none;
@@ -519,8 +526,7 @@
         margin: 0;
       }
 
-      .comment-inner {
-        padding: 5px;
+      .comment-inner {       
         // display: table-cell;
         // width: 100%;
         vertical-align: top;

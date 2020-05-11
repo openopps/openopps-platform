@@ -15,13 +15,38 @@ router.post('/api/comment', auth, async (ctx, next) => {
   var attributes = ctx.request.body;
   _.extend(attributes, { userId: ctx.state.user.id, topic: _.isNil(attributes.parentId) } );
   await service.addComment(attributes).then(results => {
-    service.sendCommentNotification(ctx.state.user, results.rows[0], 'comment.create.owner');
+    service.sendCommentNotification(ctx.state.user, results.rows[0]);
     ctx.body = results.rows[0];
   }).catch(err => {
     log.error(err);
     ctx.status = 400;
     ctx.body = { message: 'An unexpected error was encountered.'};
   });
+});
+
+router.put('/api/comment/:id', auth, async (ctx, next) => {
+  var attributes = ctx.request.body;
+  attributes.id= ctx.params.id;
+  attributes.updatedAt = new Date();
+  await service.updateComment(ctx,attributes, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
+});
+
+router.get('/api/comment/:commentId', auth, async (ctx, next) => {
+  var result = await service.findById(ctx.params.commentId);
+  if (result) {
+    ctx.status = 200;
+    ctx.body = result;
+  } else {
+    ctx.status = 400;
+  }
 });
 
 router.delete('/api/comment/:id', auth, async (ctx) => {

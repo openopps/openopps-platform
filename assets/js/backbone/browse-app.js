@@ -135,7 +135,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   showLogin: function () {
     if(loginGov) {
-      window.location = '/api/auth/oidc' + location.search;
+      window.location = '/api/auth/oidc' + location.search + escape(location.hash);
     } else {
       this.cleanupChildren();
       this.loginController = new LoginController({

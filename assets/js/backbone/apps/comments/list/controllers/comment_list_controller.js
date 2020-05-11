@@ -2,6 +2,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 
+var ModalComponent = require('../../../../components/modal');
 var TimeAgo = require('../../../../../vendor/jquery.timeago');
 var Popovers = require('../../../../mixins/popovers');
 var Autolinker = require('autolinker');
@@ -28,40 +29,48 @@ var Comment = Backbone.View.extend({
     'focus #comment-input'              : 'hideReplyForm',
     'click .reply-submit'               : 'submitReply',
     'click #refresh-comments'           : 'refreshComments',
+    'click .edit-comment'               : 'editComment',
+    'keydown .comment-edit-input '      :'escComment', 
+    'click .comment-edit'               :'updateComment',
   },
 
   initialize: function (options) {
     var self = this;
     this.options = options;
+    this.commentData = {};
 
-    this.initializeRender();
-    this.initializeCommentCollection();
-    this.initializeNewTopic();
-    this.initializeListeners();
+    if (!window.cache.currentUser && location.hash.match(/#comment-id-\d*/)) {
+      Backbone.history.navigate('/login?tasks/' + this.options.id + location.hash, { trigger: true });
+    } else {
+      this.initializeRender();
+      this.initializeCommentCollection(true);
+      this.initializeNewTopic();
+      this.initializeListeners();
 
-    // Populating the DOM after a comment was created.
-    this.listenTo(this.commentCollection, 'comment:save:success', function (model, modelJson, currentTarget) {
-      this.$('[type="submit"]').prop('disabled', false);
-      if (modelJson.topic) {
-        if (this.topicForm) this.topicForm.empty();
-        this.addNewCommentToDom(modelJson, currentTarget);
-      } else { // cleanup the reply form
-        $('.reply-form-container').remove();
-        this.addNewReplyToDom(modelJson, currentTarget);
-      }
-    });
+      // Populating the DOM after a comment was created.
+      this.listenTo(this.commentCollection, 'comment:save:success', function (model, modelJson, currentTarget) {
+        this.$('[type="submit"]').prop('disabled', false);
+        if (modelJson.topic) {
+          if (this.topicForm) this.topicForm.empty();
+          this.addNewCommentToDom(modelJson, currentTarget);
+        } else { // cleanup the reply form
+          $('.reply-form-container').remove();
+          this.addNewReplyToDom(modelJson, currentTarget);
+        }
+      });
 
-    this.listenTo(this.commentCollection, 'comment:save:error', function (model, response, options) {
-      var error = options.xhr.responseJSON;
-      if (error && error.invalidAttributes) {
-        for (var item in error.invalidAttributes) {
-          if (error.invalidAttributes[item]) {
-            message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
-            $('#' + item + '-update-alert').html(message).show();
+      this.listenTo(this.commentCollection, 'comment:save:error', function (model, response, options) {
+        var error = options.xhr.responseJSON;
+        if (error && error.invalidAttributes) {
+          for (var item in error.invalidAttributes) {
+            if (error.invalidAttributes[item]) {
+              message = _(error.invalidAttributes[item]).pluck('message').join(',<br /> ');
+              $('#' + item + '-update-alert').html(message).show();
+            }
           }
         }
-      }
-    });
+      });
+    }
   },
 
   initializeRender: function () {
@@ -72,7 +81,7 @@ var Comment = Backbone.View.extend({
     this.$el.html(template);
   },
 
-  initializeCommentCollection: function () {
+  initializeCommentCollection: function (isPageLoad) {
     if (!this.commentCollection) {
       this.commentCollection = new CommentCollection();
     }
@@ -82,7 +91,7 @@ var Comment = Backbone.View.extend({
         url: '/api/comment/' + this.options.target + '/' + this.options.id,
         success: function (collection) {
           this.collection = collection;
-          this.renderView(collection);
+          this.renderView(collection, isPageLoad);
         }.bind(this),
       });
     } else {
@@ -144,7 +153,7 @@ var Comment = Backbone.View.extend({
     this.initializeCommentCollection();
   },
 
-  renderView: function (collection) {
+  renderView: function (collection, isPageLoad) {
     var data = { comments: [] };
     this.topics = [];
     if ( typeof collection != 'undefined' ) {
@@ -174,7 +183,7 @@ var Comment = Backbone.View.extend({
       this.renderComment(comment, collection);
     }.bind(this));
 
-    this.condenseComments();
+    this.condenseComments(isPageLoad);
     this.initializeCommentUIAdditions();
   },
 
@@ -260,13 +269,22 @@ var Comment = Backbone.View.extend({
     return $('#comment-list');
   },
 
-  condenseComments: function () {
+  condenseComments: function (isPageLoad) {
     var comments = $('#comment-list > .comment-item');
     if (comments.length > 2) {
       var previousComments = _.initial(comments, 2);
-      $(previousComments).hide();
-      $('#previous-comments').text('View previous comment' + (previousComments.length > 1 ? 's (' : ' (') + previousComments.length + ')');
-      $('#previous-comments').show();
+      if (!isPageLoad || !location.hash || !$(previousComments).find(location.hash)) {
+        $(previousComments).hide();
+        $('#previous-comments').text('View previous comment' + (previousComments.length > 1 ? 's (' : ' (') + previousComments.length + ')');
+        $('#previous-comments').show();
+      } else {
+        if(!$(location.hash).is(':visible')) {
+          this.viewPreviousReplies({
+            currentTarget: $(location.hash).closest('.replies-list').siblings('.previous-replies')[0],
+          });
+        }
+        $('html,body').animate({ scrollTop: $(location.hash).closest('.comment-item').offset().top }, 'slow');
+      }
     } else {
       $('#previous-comments').hide();
     }
@@ -298,14 +316,32 @@ var Comment = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var id = $(e.currentTarget).data('commentid') || null;
 
-    if ( window.cache.currentUser ) {
-      $.ajax({
-        url: '/api/comment/' + id,
-        type: 'DELETE',
-      }).done( function (data){
-        $(e.currentTarget).closest('li.comment-item').remove();
-      });
-    }
+    this.deleteModal = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Delete comment',
+      modalBody: 'Are you sure you want to delete this comment?',
+      primary: {
+        text: 'Delete',
+        action: function () {
+          $.ajax({
+            url: '/api/comment/' + id,
+            type: 'DELETE',
+          }).done( function (data){
+            $(e.currentTarget).closest('li.comment-item').remove();
+          });
+          this.deleteModal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.deleteModal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.deleteModal.render();
   },
 
   addNewCommentToDom: function (modelJson, currentTarget) {
@@ -339,6 +375,7 @@ var Comment = Backbone.View.extend({
     reply.depth = 1;
     var compiledTemplate = _.template(CommentItemTemplate)(reply);
     $('#comment-' + reply.parentId + '-replies > .replies-list').append(compiledTemplate);
+    $('#comment-' + reply.parentId + '-replies').show();
     this.initializeCommentUIAdditions($('#comment-id-' + reply.id).parent());
   },
 
@@ -353,6 +390,63 @@ var Comment = Backbone.View.extend({
       this.topicForm.cleanup();
     }
     removeView(this);
+  },
+
+  editComment : function (e){  
+    if (e.preventDefault) e.preventDefault();
+    var id = $(e.currentTarget).data('commentid') || null;
+    
+    this.getComment(id);
+    $('.text-comment-edit-section-'+ id).show();
+    $('.comment-display-section-'+ id).hide();
+    $('#comment-metadata-'+ id).hide();
+    $('#comment-edit-input-'+ id).text(this.commentData.value);
+    $('#comment-edit-input-'+id).html($('#comment-id-'+ id + '> p').html()); 
+  },
+
+  escComment : function (e){ 
+    var id = $(e.currentTarget).data('commentid') || null;   
+    if (e.keyCode === 27){   
+      $('.text-comment-edit-section-'+ id).hide();
+      $('.comment-display-section-'+ id).show();
+      $('#comment-metadata-'+ id).show();
+      $('#comment-edit-input-'+ id).val(this.commentData.value); 
+    
+    }
+    
+  },
+
+  updateComment: function (e) {
+    var id = $(e.currentTarget).data('commentid') || null;
+    var value = this.$('#comment-edit-input-'+ id).html();  
+    if (window.cache.currentUser ) {
+      $.ajax({
+        url: '/api/comment/' + id,
+        data:{value : value,
+        },
+        type: 'PUT',
+      }).done( function (data){      
+        data.valueHtml = marked(Autolinker.link(data.value), { sanitize: false });   
+        $('.text-comment-edit-section-'+ data.id).hide();
+        $('.comment-display-section-'+ id).show();
+        $('#comment-metadata-'+ id).show();
+        $('#comment-id-' + data.id + '>p').html(data.value);    
+        $('#comment-edit-input-'+ data.id).text(data.value);  
+      });
+    }
+  },
+  
+  getComment: function (id){  
+    $.ajax({
+      url: '/api/comment/'+ id,
+      type: 'GET',
+      async:false,
+      success: function (data) {           
+        this.commentData = data;           
+      }.bind(this),
+      error: function (err) {     
+      }.bind(this),
+    });
   },
 
 });
