@@ -2,6 +2,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $ = require('jquery');
 
+var ModalComponent = require('../../../../components/modal');
 var TimeAgo = require('../../../../../vendor/jquery.timeago');
 var Popovers = require('../../../../mixins/popovers');
 var Autolinker = require('autolinker');
@@ -315,14 +316,32 @@ var Comment = Backbone.View.extend({
     if (e.preventDefault) e.preventDefault();
     var id = $(e.currentTarget).data('commentid') || null;
 
-    if ( window.cache.currentUser ) {
-      $.ajax({
-        url: '/api/comment/' + id,
-        type: 'DELETE',
-      }).done( function (data){
-        $(e.currentTarget).closest('li.comment-item').remove();
-      });
-    }
+    this.deleteModal = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Delete comment',
+      modalBody: 'Are you sure you want to delete this comment?',
+      primary: {
+        text: 'Delete',
+        action: function () {
+          $.ajax({
+            url: '/api/comment/' + id,
+            type: 'DELETE',
+          }).done( function (data){
+            $(e.currentTarget).closest('li.comment-item').remove();
+          });
+          this.deleteModal.cleanup();
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {
+          this.deleteModal.cleanup();
+        }.bind(this),
+      },
+    });
+    this.deleteModal.render();
   },
 
   addNewCommentToDom: function (modelJson, currentTarget) {
