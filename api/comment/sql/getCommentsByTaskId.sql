@@ -15,7 +15,7 @@ SELECT
             WHERE id = reply."userId"
           ) midas_user
         ) AS "user"
-      FROM comment reply WHERE reply."parentId" = comment.id ORDER BY "createdAt"
+      FROM comment reply WHERE reply."parentId" = comment.id AND "deletedAt" IS NULL ORDER BY "createdAt"
     ) reply
   ) AS replies,
   (
@@ -29,5 +29,5 @@ SELECT
     ) midas_user
   ) AS "user"
 FROM comment
-WHERE "taskId" = $1 AND "parentId" IS NULL
+WHERE "taskId" = $1 AND "parentId" IS NULL AND "deletedAt" IS NULL
 ORDER BY "createdAt"
