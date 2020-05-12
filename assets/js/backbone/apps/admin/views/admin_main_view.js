@@ -177,7 +177,7 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
-  c: function (target, targetId) {
+  initializeAdminCommunityCycleView: function (target, targetId) {
     if (this.adminCommunityCycleView) {
       this.adminCommunityCycleView.cleanup();
     }
