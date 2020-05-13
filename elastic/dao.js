@@ -103,8 +103,11 @@ function toElasticOpportunity (value, index, list) {
   var locationType = 'Virtual';
   if (Array.isArray(doc.location) && doc.location.length > 0) {
     locationType = 'In Person';
+    if (doc.allow_virtual) {
+      doc.location.push({ name: 'Virtual' });
+    }
   } else if (doc.country != null && doc.country != '') {
-    locationType = 'In Person';
+    locationType = 'In Person'; 
   }
   if (locationType == 'Virtual') {
     doc.location = [{name: 'Virtual'}];
@@ -184,6 +187,7 @@ from (
     ct.value as "country",
     t.city_name || ', ' || cs.value as city_country_subdivision,
     t.city_name || ', ' || ct.value as city_country,
+    t.allow_virtual,
 	  cy.cycle_id,
 	  cy.name as "cycle_name",
 	  cy.apply_start_date,
