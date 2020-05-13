@@ -2,6 +2,6 @@
 
 <p>There's a new comment in your opportunity. <% if (commenter.name) { %><a href="<%- globals.urlPrefix %>/profile/<%- commenter.id %>"><%- commenter.name %> </a><% } else { %>Someone<% } %> said:</p>
 
-<p>"<%= comment.value %>"</p>
+<p>"<%= comment.value.replace(/href="(\/profile\/\d*)"/, 'href="' + globals.urlPrefix + '$1"') %>"</p>
 
 <p><a href="<%- globals.urlPrefix %>/tasks/<%- comment.taskId %>#comment-id-<%- comment.id %>">Take a moment to reply.</a></p>
