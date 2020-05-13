@@ -108,9 +108,6 @@ function toElasticOpportunity (value, index, list) {
     }
   } else if (doc.country != null && doc.country != '') {
     locationType = 'In Person'; 
-    if (doc.allow_virtual) {
-      doc.location.push({ name: 'Virtual' });
-    }
   }
   if (locationType == 'Virtual') {
     doc.location = [{name: 'Virtual'}];
