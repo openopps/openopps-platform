@@ -2,7 +2,7 @@
   acronym: CDA
 - title: 'California Department of Child Support Services'
   acronym: DCSS
-- title: 'California Department of Social Services'
+- title: 'Department of Social Services'
   acronym: DSS
 - title: 'California Department of Community Services & Development'
   acronym: CCSD
@@ -18,8 +18,6 @@
   acronym: CDPH
 - title: 'Department of Rehabilitation'
   acronym: DOR
-- title: 'Department of Social Services'
-  acronym: CDSS
 - title: 'California Department of State Hospitals'
   acronym: DSH
 - title: 'Office of the California Surgeon General'

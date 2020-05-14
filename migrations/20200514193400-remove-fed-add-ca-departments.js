@@ -20,7 +20,7 @@ exports.setup = function(options, seedLink) {
 
 exports.up = function(db, callback) {
   db.runSql(`
-    delete from tagentity where type = 'agency' 
+    delete from agency
   `, callback);
 
   var agencyFile = 'tools/init-tag-data/agency.yml';
