@@ -375,7 +375,7 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    this.tagTypes = { career: this.careers, community: this.communities ,payPlan:this.payPlans };
+    this.tagTypes = { career: this.careers, community: this.communities, payPlan: this.payPlans };
     this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
@@ -403,8 +403,6 @@ var TaskListView = Backbone.View.extend({
     $('#task-page').hide();      
     $('.task-search-controls #results-count').hide();
   },
-
-
 
   renderPage: function (searchResults, page, pageSize) {
     var self = this;
@@ -538,6 +536,7 @@ var TaskListView = Backbone.View.extend({
     this.filters.page = 1;
     this.filter();
   },
+  
   searchOnEnter : function (event){
     if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
       this.search();
