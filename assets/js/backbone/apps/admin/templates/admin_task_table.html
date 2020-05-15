@@ -43,6 +43,7 @@
       <th>Office/post</th>
       <% } %>
       <% if (target == 'sitewide') { %>
+      <th>Community</th>
       <th>Agency</th>
       <% } %>
       <% if (target == 'community') { %>
@@ -109,27 +110,32 @@
         <% if (referenceId == 'dos') { %>    
         <td class="metrics-table__agency center">
           <% if (task.bureau) { %>
-          <%- task.bureau.name %>
+            <%- task.bureau.name %>
           <% } %> 
         </td>
         <td class="metrics-table__agency center">
           <% if (task.office) { %>
-          <%- task.office.name %>
+            <%- task.office.name %>
           <% } %> 
         </td>
         <% } %> 
         <% if (target == 'sitewide') { %>
         <td class="metrics-table__agency center">
-            <% if (task.agency) { %>
+          <% if (task.community_id) { %>
+            <%- task.community_name %>
+          <% } %>
+        </td>
+        <td class="metrics-table__agency center">
+          <% if (task.agency) { %>
             <%- task.agency.name %>
-            <% } %>
+          <% } %>
         </td>
         <% } %>
         <% if (target == 'community') { %>
           <% if (referenceId !== 'dos') { %>
             <td class="metrics-table__agency center">
               <% if (task.agency) { %>
-              <%- task.agency.name %>
+                <%- task.agency.name %>
               <% } %>
             </td>
           <% } %>
