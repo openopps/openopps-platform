@@ -137,11 +137,11 @@ var ProfileShowView = Backbone.View.extend({
     data.fedEmail = data.data.governmentUri;
     data.career = this.getTags(['career'])[0];
     data.bureauOffice= data.data.bureauOffice;
-    
+
     if (data.data.bio) {
       data.data.bioHtml = marked(data.data.bio);
     }
-    this.userData= data; 
+    this.userData = data; 
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);

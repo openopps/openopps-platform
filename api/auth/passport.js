@@ -43,8 +43,6 @@ async function fetchUser (id) {
       user = dao.clean.user(user);
       var GetInternshipsCompleted = require('../user/service').getCompletedInternship;
       user.internshipsCompleted = await GetInternshipsCompleted(user.id);
-      user.countrySubdivision = await dao.CountrySubdivision.findOne('country_subdivision_id = ?', user.countrySubdivisionId).catch(() => { return {}; });
-      user.country = await dao.Country.findOne('country_id = ?', user.countryId).catch(() => { return {}; });
       user.editURL = openopps.usajobsURL + '/Applicant/Profile/ClientRouter?clientID=' + openopps.auth.loginGov.clientID;
       if (user.hiringPath == 'fed' || user.hiringPath == 'contractor') {
         user.editURL += '&rp=government_uri';

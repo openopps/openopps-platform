@@ -37,18 +37,6 @@
                 <h4>Office/post</h4>
                 <div><%- data.officeName %></div>
               <% } %>
-              <h4>Location</h4>
-              <div>
-                <% if (data.countrySubdivision) { %>
-                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
-                <% } else { %>
-                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
-                <% } %>
-              </div>
-              <% if (data.country) { %>
-                <h4>Country</h4>
-                <div><%- data.country %></div>
-              <% } %>
               <h4>Time Commitment</h4>
               <div><%-moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>
               <div>32-40 hrs per week</div>
@@ -112,18 +100,6 @@
               <% if (data.officeName) { %>
                 <h4>Office/post</h4>
                 <div><%- data.officeName %></div>
-              <% } %>
-              <h4>Location</h4>
-              <div>
-                <% if (data.countrySubdivision) { %>
-                  <%= (data.cityName) ? data.cityName + ', ' + data.countrySubdivision : 'Virtual' %>
-                <% } else { %>
-                  <%= (data.cityName) ? data.cityName : 'Virtual' %>
-                <% } %>
-              </div>
-              <% if (data.country) { %>
-                <h4>Country</h4>
-                <div><%- data.country %></div>
               <% } %>
               <h4>Time Commitment</h4>
               <div><%- moment(data.cycleStartDate).format('MMMM YYYY')%> - <%-moment(data.cycleEndDate).format('MMMM YYYY')%></div>

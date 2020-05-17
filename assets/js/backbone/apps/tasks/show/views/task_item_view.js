@@ -492,18 +492,20 @@ var TaskItemView = BaseView.extend({
     if (e.preventDefault) e.preventDefault();
     if (!window.cache.currentUser) {
       Backbone.history.navigate('/login?tasks/' + this.model.attributes.id + '?action=apply', { trigger: true });
-      //window.cache.userEvents.trigger('user:request:login');
     } else {
-      var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
-      if(location.length == 0 || !window.cache.currentUser.agency) {
-        this.completeProfile(location, window.cache.currentUser.agency);
+      var locationTag = window.cache.currentUser.tags.filter(function (t) {
+        return t.type === 'location';
+      });
+      var agency = window.cache.currentUser.agency;
+      if(locationTag.length == 0 || !agency) {
+        this.completeProfile(locationTag, agency);
       } else {
-        this.renderApplyModal(e, location);
+        this.renderApplyModal(e);
       }
     }
   },
 
-  renderApplyModal: function (e, location) {
+  renderApplyModal: function (e) {
     var skill = _.find(window.cache.currentUser.tags, function (tag) {
       return tag.type == 'skill';
     });
