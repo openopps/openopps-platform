@@ -1,0 +1,50 @@
+<section class="usajobs-canvas">
+    <div class="usajobs-content-gutter opportunity-gutter">      
+      <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
+        <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+          <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+            <div class="usajobs-width-two-thirds">
+              <h2 class="usajobs-opportunity-apply-section__apply-header">Apply</h2>
+              <label for="StatementOfInterest">
+                <h3 class="usajobs-opportunity-apply-section__sub-section">Statement of Interest</h3>
+              </label>
+              <fieldset class="usajobs-fieldset">
+                <legend class="usa-sr-only">Statement of interest</legend>
+                <p>
+                  Please describe why you're seeking this detail. Include your objectives and how your 
+                  experiences relate to the opportunity or detail you're applying to. (3,000 character maximum)
+                </p>
+                <div class="form-group required-input">
+                  <label for="statement">
+                    <h5 class="usajobs-form__label-header">Paste or type your statement here.</h5>
+                  </label>
+                  <span class="field-validation-error error-empty" style="display:none;">You must enter a statement.</span>
+                  <span class="field-validation-error error-count2500" style="display:none;">The statement must be no more than 3,000 characters.</span>
+                  <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
+                  <textarea id="statement" class="fullwidth form-control validate" name="statement" data-validate="empty,count2500,html"></textarea>
+                  <p class="usajobs-form__help-brief" id="statement-count">
+                    (3000 characters remaining)
+                  </p>
+                </div>
+              </fieldset> 
+            </div> 
+          </div>    
+       
+     <div id='apply-resume-section'></div>           
+   <div class="usajobs-button_bar--slim">
+       <div class="usajobs-button_bar__body">
+          <button class="usa-button usa-button-secondary usa-button-left" data-state="cancel" id="cancel">Cancel</button>
+          <button class="usa-button usa-button-primary" id="submit" >Submit</button>
+      </div>
+    </div>
+  </div>                  
+    </main>
+      <aside class="usajobs-rightrail" >
+        <div id="help" class="usajobs-apply-resume-info">
+          <h3 class="usajobs-apply-resume-info__title">
+            <i class="fas fa-info-circle"></i> Upload Resume
+          </h3>        
+        </div>
+      </aside>
+    </div>
+  </section>

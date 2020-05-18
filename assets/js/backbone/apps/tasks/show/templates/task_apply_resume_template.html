@@ -1,0 +1,35 @@
+<h3 class="usajobs-opportunity-apply-section__sub-section">Resume</h3>  
+<p>Please select an existing resume from below or upload a new resume.</p>
+<div id="apply-resume">      
+  <span class="field-validation-error upload-error" style="display:none;" >You must select one resume or upload a new one.</span>            
+  <fieldset id="resumes" class="usajobs-fieldset">
+    <legend class="usa-sr-only">Resume</legend>
+    <ul class="resume-card-buttons"> 
+      <% console.log(resumes) %> 
+      <% _.each(resumes, function (resume) { %>
+        <li class="resume-card-button">
+          <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>">          
+          <label for="<%- resume.CandidateDocumentID %>">
+            <div class="usajobs-grid-full">
+              <div class="usa-width-one-twelfth radio-button"></div>
+              <div class="resume-info">
+                <%- resume.CandidateFileName %>
+                <span class="resume-card-button__sub-text">
+                  <a href="<%- decodeURIComponent(resume.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                </span>
+              </div>
+              <div class="usa-width-one-fourth">
+                <span class="resume-icon <%- resume.FileFormat %>">
+                  <h6>Resume</h6>
+                </span>
+              </div>
+            </div>                  
+          </label>            
+        </li>
+      <% }) %>
+    </ul>
+  </fieldset>
+  <a id="upload-resume"  class="usa-button usa-button-secondary">Upload Resume</a>
+  <a id="refresh-resumes" href="#refresh" class="usa-button usa-button-secondary" style="display:none">Refresh resumes</a>
+  <div id="refreshing-resumes" style="display:none"><i class="fas fa-circle-notch fa-spin"></i>Refreshing resumes</div>
+</div>

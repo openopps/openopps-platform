@@ -15,6 +15,7 @@ var TaskSearchController = require('./apps/tasks/search/controllers/task_search_
 var TaskShowController = require('./apps/tasks/show/controllers/task_show_controller');
 var TaskEditFormView = require('./apps/tasks/edit/views/task_edit_form_view');
 var TaskAudienceFormView = require('./apps/tasks/edit/views/task_audience_form_view');
+var TaskApplyView  = require('./apps/tasks/show/views/task_apply_view');
 var InternshipEditFormView = require('./apps/internships/edit/views/internship_edit_form_view');
 var InternshipView = require('./apps/internships/show/views/internship_view');
 var AdminMainController = require('./apps/admin/controllers/admin_main_controller');
@@ -54,6 +55,7 @@ var BrowseRouter = Backbone.Router.extend({
     'apply/congratulations'                         : 'showApplyCongratulations',
     'apply/:id(/)'                                  : 'showApply',
     'application/:id(/)'                            : 'showApply',
+    'apply/task/:id(/)'                             : 'showTaskApply',
     'applicant/submitted'                           : 'showApplicantSubmittedInternships',
     'ineligible_citizenship'                        : 'showIneligibleCitizenship',
     'welcome(/)'                                    : 'showWelcome',
@@ -62,6 +64,7 @@ var BrowseRouter = Backbone.Router.extend({
     'loggedOut'                                     : 'showLogout',
     'whoops'                                        : 'showWhoops',
     '*notFound'                                     : 'notFound',
+   
   },
 
   data: { saved: false },
@@ -116,6 +119,7 @@ var BrowseRouter = Backbone.Router.extend({
     this.applyController && this.applyController.cleanup();
     if (this.adminCommunityEditView) { this.adminCommunityEditView.cleanup(); }
     if (this.adminCommunityApplicantSubmittedView) { this.adminCommunityApplicantSubmittedView.cleanup(); }  
+    if (this.taskApplyView) { this.taskApplyView.cleanup(); }  
     this.applyCongratulationsView && this.applyCongratulationsView.cleanup();
     this.studentHomeController && this.studentHomeController.cleanup();
     this.welcomeView && this.welcomeView.cleanup();
@@ -135,7 +139,7 @@ var BrowseRouter = Backbone.Router.extend({
 
   showLogin: function () {
     if(loginGov) {
-      window.location = '/api/auth/oidc' + location.search + escape(location.hash);
+      window.location = '/api/auth/oidc' + location.search + escape(location.hash);     
     } else {
       this.cleanupChildren();
       this.loginController = new LoginController({
@@ -584,6 +588,14 @@ var BrowseRouter = Backbone.Router.extend({
     this.cleanupChildren();
     this.applyCongratulationsView = new ApplyCongratulationsView({
       el: '#container',
+    }).render();
+  },
+
+  showTaskApply: function (id) {
+    this.cleanupChildren();
+    this.taskApplyView = new TaskApplyView({
+      el: '#container',
+      data: { taskId: id },
     }).render();
   },
 
