@@ -18,8 +18,10 @@ var TaskApplyView = BaseView.extend({
     'change .validate'                : 'validateField',
     'keypress #statement'             :'characterCount',
     'keydown #statement'              :'characterCount',
-    'change input[name=resumes]'     : 'changeResume', 
-    'click #cancel'                   :'cancel',                   
+    'change input[name=resumes]'      : 'changeResume', 
+    'click #cancel'                   :'cancel',  
+    'click #upload-resume'            :'upload',
+    'click #refresh-resumes'          :'refresh' ,  
   },
 
   initialize: function (options) {
@@ -83,6 +85,14 @@ var TaskApplyView = BaseView.extend({
     if ($('input[name=resumes]:checked').length == 0) {
       $('#apply-resume').addClass('usa-input-error');            
       $('#apply-resume >.upload-error').show(); 
+      $('#apply-resume >.refresh-error').hide(); 
+      abort=true;
+    }
+    if($('#refresh-resumes').css('display') != 'none')
+    {
+      $('#apply-resume').addClass('usa-input-error');        
+      $('#apply-resume>.upload-error').hide(); 
+      $('#apply-resume>.refresh-error').show();    
       abort=true;
     }
 
@@ -112,15 +122,27 @@ var TaskApplyView = BaseView.extend({
       $('#apply-resume>.field-validation-error').hide();   
     }
    
-  },
-
+  }, 
   renderResumes: function (){ 
     this.data = { 
       resumes: this.resumes,
     }; 
     var resumeTemplate = _.template(TaskResumeTemplate)(this.data);
-    $('#apply-resume-section').html(resumeTemplate);
-  
+    $('#apply-resume-section').html(resumeTemplate); 
+  },
+
+  upload: function (){
+    window.open(usajobsURL + '/Applicant/ProfileDashboard/Resumes/');          
+    $('#upload-resume').hide();
+    $('#refresh-resumes').show();
+  },
+
+  refresh :function (e) {
+    e.preventDefault && e.preventDefault();
+    $('#refresh-resumes').hide();
+    $('#refreshing-resumes').show();
+    this.getResumes();
+    this.renderResumes();  
   },
 
   cleanup: function () {
