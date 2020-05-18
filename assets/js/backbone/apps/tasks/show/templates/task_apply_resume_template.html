@@ -4,8 +4,7 @@
   <span class="field-validation-error upload-error" style="display:none;" >You must select one resume or upload a new one.</span>            
   <fieldset id="resumes" class="usajobs-fieldset">
     <legend class="usa-sr-only">Resume</legend>
-    <ul class="resume-card-buttons"> 
-      <% console.log(resumes) %> 
+    <ul class="resume-card-buttons">   
       <% _.each(resumes, function (resume) { %>
         <li class="resume-card-button">
           <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>">          
