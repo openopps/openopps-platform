@@ -3,6 +3,7 @@ const log = require('log')('app:volunteer:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
+const Profile = require('../auth/profile');
 
 async function addVolunteer (attributes, done) {
   var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', attributes.taskId, attributes.userId);
@@ -122,6 +123,17 @@ async function sendAddedVolunteerNotification (user, volunteer, action) {
   }
 }
 
+async function getResumes (user) {
+  return new Promise((resolve, reject) => {
+    Profile.getDocuments(user.tokenset, 'secure_resume').then(documents => {
+      resolve(documents);
+    }).catch((err) => {
+      // record error getting USAJOBS profile
+      reject(err);
+    });
+  });
+}
+
 async function sendDeletedVolunteerNotification (notificationInfo, action) {
   var data = {
     action: action,
@@ -134,7 +146,7 @@ async function sendDeletedVolunteerNotification (notificationInfo, action) {
   data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', notificationInfo.id).catch(() => { return null; });
   if(!notificationInfo.bounced) {
     notification.createNotification(data);
-  }
+  } 
 }
 
 module.exports = {
@@ -147,4 +159,5 @@ module.exports = {
   sendAddedVolunteerNotification: sendAddedVolunteerNotification,
   sendDeletedVolunteerNotification: sendDeletedVolunteerNotification,
   selectVolunteer: selectVolunteer,
+  getResumes: getResumes,
 };

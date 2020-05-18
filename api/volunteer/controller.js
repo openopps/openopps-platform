@@ -28,6 +28,14 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
     return ctx.body = null;
   }
 });
+router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, next) => {
+  await service.getResumes(ctx.state.user).then(resumes => {
+    ctx.status = 200;
+    ctx.body = resumes;
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
 
 router.post('/api/volunteer/delete', auth, async (ctx, next) => {
   var attributes = ctx.request.body;
