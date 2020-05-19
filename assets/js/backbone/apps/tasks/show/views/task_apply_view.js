@@ -13,14 +13,18 @@ var TaskApplyNextTempalte = require('../templates/task_apply_next_template.html'
 
 var TaskApplyView = BaseView.extend({
   events: {
-    'click #accept-toggle'            : 'toggleAccept', 
-    'click #submit'                   : 'submitVolunteer',
-    'blur .validate'                  : 'validateField',
-    'change .validate'                : 'validateField',
-    'keypress #statement'             : 'characterCount',
-    'keydown #statement'              : 'characterCount',
-    'change input[name=resumes]'      : 'changeResume', 
-    'click #cancel'                   : 'cancel',                   
+    'click #accept-toggle'            :'toggleAccept', 
+    'click #submit'                   :'submitVolunteer',
+    'blur .validate'                  :'validateField',
+    'change .validate'                :'validateField',
+    'change input[name=resumes]'      :'changeResume', 
+    'click #cancel'                   :'cancel',                   
+    'keypress #statement'             :'characterCount',
+    'keydown #statement'              :'characterCount',
+    'change input[name=resumes]'      :'changeResume', 
+    'click #cancel'                   :'cancel',  
+    'click #upload-resume'            :'upload',
+    'click #refresh-resumes'          :'refresh' ,  
   },
 
   initialize: function (options) {
@@ -84,6 +88,14 @@ var TaskApplyView = BaseView.extend({
     if ($('input[name=resumes]:checked').length == 0) {
       $('#apply-resume').addClass('usa-input-error');            
       $('#apply-resume >.upload-error').show(); 
+      $('#apply-resume >.refresh-error').hide(); 
+      abort=true;
+    }
+    if($('#refresh-resumes').css('display') != 'none')
+    {
+      $('#apply-resume').addClass('usa-input-error');        
+      $('#apply-resume>.upload-error').hide(); 
+      $('#apply-resume>.refresh-error').show();    
       abort=true;
     }
 
@@ -129,7 +141,21 @@ var TaskApplyView = BaseView.extend({
       opportunity: 'Title',
     };
     var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
-    $('#apply-next-section').html(nextTemplate);
+    $('#apply-next-section').html(nextTemplate); 
+  },
+
+  upload: function (){
+    window.open(usajobsURL + '/Applicant/ProfileDashboard/Resumes/');          
+    $('#upload-resume').hide();
+    $('#refresh-resumes').show();
+  },
+
+  refresh :function (e) {
+    e.preventDefault && e.preventDefault();
+    $('#refresh-resumes').hide();
+    $('#refreshing-resumes').show();
+    this.getResumes();
+    this.renderResumes();  
   },
 
   cleanup: function () {

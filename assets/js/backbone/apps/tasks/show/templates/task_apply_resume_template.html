@@ -1,11 +1,11 @@
 <h3 class="usajobs-opportunity-apply-section__sub-section">Resume</h3>  
 <p>Please select an existing resume from below or upload a new resume.</p>
 <div id="apply-resume">      
-  <span class="field-validation-error upload-error" style="display:none;" >You must select one resume or upload a new one.</span>            
+  <span class="field-validation-error upload-error" style="display:none;" >You must select one resume or upload a new one.</span>     
+  <span class="field-validation-error refresh-error" style="display:none;" >You must click the Refresh resumes button to see your changes.</span>                
   <fieldset id="resumes" class="usajobs-fieldset">
     <legend class="usa-sr-only">Resume</legend>
-    <ul class="resume-card-buttons"> 
-      <% console.log(resumes) %> 
+    <ul class="resume-card-buttons">   
       <% _.each(resumes, function (resume) { %>
         <li class="resume-card-button">
           <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>">          
