@@ -8,18 +8,19 @@ var UIConfig = require('../../../../config/ui.json');
 
 var TaskApplyTemplate = require('../templates/task_apply_template.html');
 var TaskResumeTemplate = require('../templates/task_apply_resume_template.html');
+var TaskApplyNextTempalte = require('../templates/task_apply_next_template.html');
 
 
 var TaskApplyView = BaseView.extend({
   events: {
     'click #accept-toggle'            : 'toggleAccept', 
-    'click #submit'                   :'submitVolunteer',
+    'click #submit'                   : 'submitVolunteer',
     'blur .validate'                  : 'validateField',
     'change .validate'                : 'validateField',
-    'keypress #statement'             :'characterCount',
-    'keydown #statement'              :'characterCount',
-    'change input[name=resumes]'     : 'changeResume', 
-    'click #cancel'                   :'cancel',                   
+    'keypress #statement'             : 'characterCount',
+    'keydown #statement'              : 'characterCount',
+    'change input[name=resumes]'      : 'changeResume', 
+    'click #cancel'                   : 'cancel',                   
   },
 
   initialize: function (options) {
@@ -64,9 +65,9 @@ var TaskApplyView = BaseView.extend({
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
-      }).done( function (data) {      
-        Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
-         
+      }).done( function (data) {
+        this.renderNext();      
+        // Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
     }
   },
@@ -114,13 +115,21 @@ var TaskApplyView = BaseView.extend({
    
   },
 
-  renderResumes: function (){ 
+  renderResumes: function () { 
     this.data = { 
       resumes: this.resumes,
     }; 
     var resumeTemplate = _.template(TaskResumeTemplate)(this.data);
-    $('#apply-resume-section').html(resumeTemplate);
-  
+    $('#apply-resume-section').html(resumeTemplate);  
+  },
+
+  renderNext: function () {
+    this.data = {
+      community: 'Need Name',
+      opportunity: 'Title',
+    };
+    var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
+    $('#apply-next-section').html(nextTemplate);
   },
 
   cleanup: function () {
