@@ -47,11 +47,6 @@ async function updateProfileData (user, profile, tokenset) {
   }
   user.agencyId = agency.agencyId;
   await updateProfileTag(user.id, 'career', profile.Profile.CareerField);
-  user.country = await dao.Country.findOne('value = ?', profile.AddressCountry).catch(() => { return {}; });
-  user.countrySubdivision = await dao.CountrySubdivision.findOne('value = ? and parent_code = ?', profile.AddressCountrySubdivision, user.country.code).catch(() => { return {}; });
-  user.countryId = user.country.countryId;
-  user.countrySubdivisionId = user.countrySubdivision.countrySubdivisionId;
-  user.cityName = profile.AddressCity;
   await dao.User.update(user);
   if (user.hiringPath == 'fed' ) {
     try {

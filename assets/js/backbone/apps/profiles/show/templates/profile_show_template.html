@@ -103,8 +103,7 @@
             </div>
             <div class="profile-location">
               <div class="usajobs-profile-home-section__field-label">Location</div>
-              <span>
-                <%= _.filter([data.cityName, data.countrySubdivision.value, data.country.value != 'United States' ? data.country.value : ''], _.identity).join(', ') %>
+                <%- data.location.name %>
               </span>
             </div>
             <div class="profile-email">
