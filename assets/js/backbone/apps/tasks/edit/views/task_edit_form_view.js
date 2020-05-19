@@ -670,9 +670,6 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'full-time':
         $('#time-estimate').addClass('validate');
-        // $('#grade').addClass('validate');
-        // $('#time-options-pay-scale').addClass('validate');
-        // $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();        
         $('#requirement-area').show();
@@ -681,9 +678,6 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'part-time':
         $('#time-estimate').addClass('validate');
-        // $('#grade').addClass('validate');
-        // $('#time-options-pay-scale').addClass('validate');
-        // $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();
         $('#requirement-area').show();
