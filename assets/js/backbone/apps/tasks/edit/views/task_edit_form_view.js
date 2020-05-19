@@ -191,16 +191,7 @@ var TaskEditFormView = Backbone.View.extend({
     this.initializeTextAreaRequirement();
     this.initializeCommunityDropDown();
     this.characterCount();
-    if(this.model.toJSON().payLevelId){   
-      $('#time-options-pay-scale').select2('data', {id: this.model.toJSON().payLevel.payPlanId, text:this.model.toJSON().payLevel.code});
-    }
-    else{
-      var defaultData= _.filter(this.payPlans,function (f){
-        return f.code== 'GS';
-      });
-      $('#time-options-pay-scale').select2('data', {id: defaultData[0].pay_plan_id, text:defaultData[0].code});
-    }
-    
+
     if(!_.isEmpty(this.data['madlibTags'].keywords)) {
       $('#keywords').siblings('.expandorama-button').attr('aria-expanded', true);
       $('#keywords').attr('aria-hidden', false);
@@ -679,9 +670,6 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'full-time':
         $('#time-estimate').addClass('validate');
-        $('#grade').addClass('validate');
-        $('#time-options-pay-scale').addClass('validate');
-        $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();        
         $('#requirement-area').show();
@@ -690,9 +678,6 @@ var TaskEditFormView = Backbone.View.extend({
         break;
       case 'part-time':
         $('#time-estimate').addClass('validate');
-        $('#grade').addClass('validate');
-        $('#time-options-pay-scale').addClass('validate');
-        $('#pay-scale-grade').show();
         $('#detail-reimbursable').show();
         $('#time-options-time-required').show();
         $('#requirement-area').show();
@@ -791,24 +776,20 @@ var TaskEditFormView = Backbone.View.extend({
       state        : this.model.get('state'),
       restrict     : this.model.get('restrict'),
       peopleNeeded : this.$('.opportunity-people.selected').val(),
-    
+      grade: '',
+      payLevelId: null
     };
 
     if( this.$('.time-options-time-required.selected').val() == 'Part Time Detail'|| this.$('.time-options-time-required.selected').val() == 'Full Time Detail'){
       modelData.applyAdditional=this.$('#opportunity-apply').val();
       modelData.requirement  =this.$('#opportunity-requirement').val();
-      modelData.grade         =this.$('#grade').val();
       modelData.isDetailReimbursable= $("input[name='detail-group']:checked").val();
-      modelData.payLevelId =$('#time-options-pay-scale').val();
-      modelData.payPlan = $('#time-options-pay-scale').select2('data').text;
       modelData.reimbursable= $("input[name='detail-group']:checked").val() =='true' ? 'Yes' :'No';
     }
     else{
       modelData.applyAdditional= '';
       modelData.requirement  ='';
-      modelData.grade         ='';
       modelData.isDetailReimbursable= null;
-      modelData.payLevelId =null;
     }
  
     if (this.agency) {
