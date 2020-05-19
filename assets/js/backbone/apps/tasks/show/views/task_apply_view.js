@@ -126,13 +126,14 @@ var TaskApplyView = BaseView.extend({
   renderResumes: function (){ 
     this.data = { 
       resumes: this.resumes,
+      urls: window.cache.currentUser.urls,
     }; 
     var resumeTemplate = _.template(TaskResumeTemplate)(this.data);
     $('#apply-resume-section').html(resumeTemplate); 
   },
 
   upload: function (){
-    window.open(usajobsURL + '/Applicant/ProfileDashboard/Resumes/');          
+    window.open(window.cache.currentUser.urls.profileDocuments);          
     $('#upload-resume').hide();
     $('#refresh-resumes').show();
   },

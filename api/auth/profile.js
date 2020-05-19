@@ -62,6 +62,11 @@ async function updateProfileData (user, profile, tokenset) {
       elasticService.deleteUser(user.id);
     } catch (err) {}
   }
+  user.urls = {
+    profileHome: profile.ProfileHome,
+    profileDocuments: profile.ProfileDocuments,
+    dashboardHome: profile.DashboardHome,
+  };
   return user;
 }
 
