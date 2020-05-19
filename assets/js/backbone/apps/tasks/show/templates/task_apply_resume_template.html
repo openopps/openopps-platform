@@ -6,7 +6,7 @@
   <fieldset id="resumes" class="usajobs-fieldset">
     <legend class="usa-sr-only">Resume</legend>
     <ul class="resume-card-buttons">   
-      <% _.each(resumes, function (resume) { %>
+      <% _.each(resumes, function (resume) { %>     
         <li class="resume-card-button">
           <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>">          
           <label for="<%- resume.CandidateDocumentID %>">
@@ -15,7 +15,11 @@
               <div class="resume-info">
                 <%- resume.CandidateFileName %>
                 <span class="resume-card-button__sub-text">
-                  <a href="<%- decodeURIComponent(resume.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                  <% if (resume.FileFormat=='builder') { %>
+                    <a href="<%- usajobsURL %>/Applicant/ProfileDashboard/Resumes/" target="_blank">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                  <% } else { %>
+                    <a href="<%- decodeURIComponent(resume.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                  <% } %>             
                 </span>
               </div>
               <div class="usa-width-one-fourth">
