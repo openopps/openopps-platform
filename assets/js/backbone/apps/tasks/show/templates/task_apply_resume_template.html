@@ -17,6 +17,8 @@
                 <span class="resume-card-button__sub-text">
                   <% if (resume.FileFormat == 'builder') { %>
                     <a href="<%- urls.profileDocuments %>" target="_blank">View</a> &bull; Built <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
+                  <% } else if (resume.ProfileDocumentURL) { %>
+                    <a class="download-resume" data-docname="<%- resume.CandidateFileName %>.<%- resume.FileFormat %>" href="<%- decodeURIComponent(resume.ProfileDocumentURL) %>">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
                   <% } else { %>
                     <a href="<%- decodeURIComponent(resume.DocumentURL) %>" target="_blank">View</a> &bull; Uploaded <%- moment(resume.DateTimeReceived).format('MMMM DD, YYYY h:mm:ss A') %>
                   <% } %>             
