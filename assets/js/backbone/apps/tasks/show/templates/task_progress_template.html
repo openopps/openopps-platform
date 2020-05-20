@@ -70,12 +70,17 @@
             <h3>Thanks for applying</h3>
             <div>We’ll email you with next steps. You can also check your profile for status updates.</div>
             <a href="javascript:void(0);" id="apply-cancel">Cancel your application</a>
+            <% var detail= _.findWhere(model.tags, {type: 'task-time-required',name:'Detail'});%>
+            <% var lateral=_.findWhere(model.tags, {type: 'task-time-required',name:'Lateral'});%>
+            <% if((!_.isEmpty(detail)|| !_.isEmpty(lateral)) && model.acceptingApplicants){ %>
+              <a href="javascript:void(0);" id="update-application" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update Application</span></a>
+             <% } %>
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
         <% if (model.restrictedTo && (_.findWhere(model.agencies, { agency_id: model.restrictedTo }))) { %>
           <p>This opportunity is limited to employees of <%- _.findWhere(model.agencies, { agency_id: model.restrictedTo }).name %>.</p>
-        <% } %>
+        <% } %>     
         <a href="javascript:void(0);" id="apply" class="usa-button-big usa-button-primary"><span class="box-icon-text">Apply</span></a>
       <% } %>
     <% } %>

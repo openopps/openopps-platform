@@ -37,7 +37,8 @@ var TaskItemView = BaseView.extend({
     'click .project-people__confirm'  : 'confirmParticipant',
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
-    'click .task-complete'            : 'taskComplete',   
+    'click .task-complete'            : 'taskComplete', 
+    'click #update-application'        : 'updateApplication',  
   },
 
   modalOptions: {
@@ -530,6 +531,13 @@ var TaskItemView = BaseView.extend({
         this.renderApplyModal(e, location);
       }
     }
+  },
+
+  updateApplication: function (){   
+    var applicant= _.filter(this.data.model.volunteers,function (v){
+      return v.userId == window.cache.currentUser.id;
+    });
+    Backbone.history.navigate('/apply/task/' + this.model.attributes.id +'?edit=' + applicant[0].id , { trigger: true });
   },
 
   renderApplyModal: function (e, location) {

@@ -133,6 +133,24 @@ async function getResumes (user) {
     });
   });
 }
+async function getVolunteer (volunteerId,taskId) {
+  return (await dao.Volunteer.find('id = ? and "taskId" = ?',volunteerId,taskId).catch(() => { return []; }));
+}
+
+async function updateVolunteer (ctx,attributes,done) {  
+  return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (e) => {  
+    return await dao.Volunteer.update(attributes).then(async (volunteer) => {      
+      return done(!volunteer, volunteer);
+    }).catch((err) => {
+      log.error(err);
+      return false;
+    });
+  }).catch((err) => {
+    log.error(err);
+    return false;
+  });
+}
+
 
 async function sendDeletedVolunteerNotification (notificationInfo, action) {
   var data = {
@@ -160,4 +178,6 @@ module.exports = {
   sendDeletedVolunteerNotification: sendDeletedVolunteerNotification,
   selectVolunteer: selectVolunteer,
   getResumes: getResumes,
+  getVolunteer: getVolunteer,
+  updateVolunteer:updateVolunteer,
 };
