@@ -31,7 +31,10 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
 router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, next) => {
   await service.getResumes(ctx.state.user).then(resumes => {
     ctx.status = 200;
-    ctx.body = resumes;
+    ctx.body = {
+      key: ctx.state.user.tokenset.access_token,
+      resumes: resumes,
+    };
   }).catch(err => {
     ctx.status = 404;
   });

@@ -13,15 +13,16 @@ var TaskResumeTemplate = require('../templates/task_apply_resume_template.html')
 var TaskApplyView = BaseView.extend({
   events: {
     'click #accept-toggle'            : 'toggleAccept', 
-    'click #submit'                   :'submitVolunteer',
+    'click #submit'                   : 'submitVolunteer',
     'blur .validate'                  : 'validateField',
     'change .validate'                : 'validateField',
-    'keypress #statement'             :'characterCount',
-    'keydown #statement'              :'characterCount',
+    'keypress #statement'             : 'characterCount',
+    'keydown #statement'              : 'characterCount',
     'change input[name=resumes]'      : 'changeResume', 
-    'click #cancel'                   :'cancel',  
-    'click #upload-resume'            :'upload',
-    'click #refresh-resumes'          :'refresh' ,  
+    'click #cancel'                   : 'cancel',  
+    'click #upload-resume'            : 'upload',
+    'click #refresh-resumes'          : 'refresh' ,
+    'click .download-resume'        : 'downloadResume',
   },
 
   initialize: function (options) {
@@ -47,11 +48,16 @@ var TaskApplyView = BaseView.extend({
       url: '/api/volunteer/user/resumes' ,
       type: 'GET',
       async: false,
-      success: function (resumes) {      
-        this.resumes = resumes;    
+      success: function (data) {
+        this.key = data.key;      
+        this.resumes = data.resumes;
       }.bind(this),
     });
-     
+  },
+
+  downloadResume: function (event) {
+    event.preventDefault && event.preventDefault();
+    downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'));
   },
 
   submitVolunteer: function () {
@@ -143,7 +149,7 @@ var TaskApplyView = BaseView.extend({
     $('#refresh-resumes').hide();
     $('#refreshing-resumes').show();
     this.getResumes();
-    this.renderResumes();  
+    this.renderResumes();
   },
 
   cleanup: function () {
