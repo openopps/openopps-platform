@@ -102,7 +102,6 @@ var TaskApplyView = BaseView.extend({
           },
         }).done( function (data) {      
           Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
-      
         }.bind(this));
       }
     }

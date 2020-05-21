@@ -2,6 +2,7 @@ const log = require('log')('app:syncProfile');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const _ = require('lodash');
+const util = require('util');
 const request = require('request');
 const elasticService = require('../../elastic/service');
 const Agency = require('../model/Agency');
@@ -106,37 +107,85 @@ function syncAutoJoinCommunities (user) {
   });
 }
 
-module.exports = {
-  get: async (tokenset) => {
-    return new Promise((resolve, reject) => {
-      request(_.extend(requestOptions, { url: openopps.auth.profileURL, auth: { 'bearer': tokenset.access_token } }), async (err, res) => {
-        if(err || res.statusCode !== 200) {
-          reject({ message: 'Error getting user profile.' });
-        } else {
-          resolve(JSON.parse(res.body));
-        }
-      });
+module.exports = {};
+
+module.exports.get = async (tokenset) => {
+  return new Promise((resolve, reject) => {
+    request(_.extend(requestOptions, { 
+      url: openopps.auth.profileURL,
+      method: 'GET',
+      auth: { 'bearer': tokenset.access_token },
+      json: true,
+    }), async (err, res) => {
+      if(err || res.statusCode !== 200) {
+        reject({ message: 'Error getting user profile.' });
+      } else {
+        resolve(res.body);
+      }
     });
-  },
-  getDocuments: async (tokenset, documentType) => {
-    return new Promise((resolve, reject) => {
-      request(_.extend(requestOptions, { 
-        url: openopps.auth.profileDocumentURL + (documentType ? '/' + documentType : ''),
-        auth: { 'bearer': tokenset.access_token },
-      }), async (err, res) => {
-        if(err || res.statusCode !== 200) {
-          reject({ message: 'Error getting user documents.' });
-        } else {
-          resolve(JSON.parse(res.body));
-        }
-      });
+  });
+};
+
+module.exports.getDocuments = async (tokenset, documentType) => {
+  return new Promise((resolve, reject) => {
+    request(_.extend(requestOptions, { 
+      url: openopps.auth.profileDocumentURL + (documentType ? '/' + documentType : ''),
+      method: 'GET',
+      auth: { 'bearer': tokenset.access_token },
+      json: true,
+    }), async (err, res) => {
+      if(err || res.statusCode !== 200) {
+        reject({ message: 'Error getting user documents.' });
+      } else {
+        resolve(res.body);
+      }
     });
-  },
-  sync: async (user, tokenset, callback) => {
-    await module.exports.get(tokenset).then(async (profile) => {
-      user = await updateProfileData(user, profile, tokenset);
-      await syncAutoJoinCommunities(user);
-      callback(null, user);
-    }).catch(callback);
-  },
+  });
+};
+
+module.exports.sync = async (user, tokenset, callback) => {
+  await module.exports.get(tokenset).then(async (profile) => {
+    user = await updateProfileData(user, profile, tokenset);
+    await syncAutoJoinCommunities(user);
+    callback(null, user);
+  }).catch(callback);
+};
+
+module.exports.grantDocumentAccess = async (tokenset, documentId, applicationId) => {
+  return new Promise((resolve, reject) => {
+    request(_.extend(requestOptions, {
+      url: [openopps.auth.profileDocumentURL, documentId, 'grant-access'].join('/'),
+      method: 'POST',
+      auth: { 'bearer': tokenset.access_token },
+      body: applicationId,
+      json: true,
+    }), async (err, res) => {
+      if(err || res.statusCode !== 200) {
+        reject({ message: util.format('Error getting grant token for document %s.', documentId) });
+      } else {
+        resolve(res.body);
+      }
+    });
+  });
+};
+
+module.exports.revokeDocumentAccess = async (tokenset, document, applicationId) => {
+  return new Promise((resolve, reject) => {
+    request(_.extend(requestOptions, { 
+      url: [openopps.auth.profileDocumentURL, document.documentId, 'revoke-grant-access'].join('/'),
+      method: 'POST',
+      auth: { 'bearer': tokenset.access_token },
+      json: true,
+      body: {
+        GrantAccess: document.grantAccess,
+        ApplicationId: applicationId,
+      },
+    }), async (err, res) => {
+      if(err || res.statusCode !== 200) {
+        reject({ message: util.format('Error revoking grant token for document %s.', document.documentId) });
+      } else {
+        resolve();
+      }
+    });
+  });
 };
