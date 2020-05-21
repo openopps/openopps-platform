@@ -21,8 +21,6 @@ var TaskApplyView = BaseView.extend({
     'click #cancel'                   :'cancel',                   
     'keypress #statement'             :'characterCount',
     'keydown #statement'              :'characterCount',
-    'change input[name=resumes]'      :'changeResume', 
-    'click #cancel'                   :'cancel',  
     'click #upload-resume'            :'upload',
     'click #refresh-resumes'          :'refresh' ,  
   },
@@ -141,7 +139,9 @@ var TaskApplyView = BaseView.extend({
       opportunity: 'Title',
     };
     var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
-    $('#apply-next-section').html(nextTemplate); 
+    $('#apply-next-section').append(nextTemplate); 
+    $('#apply-section').hide();      
+    $('#apply-help-section').hide();
   },
 
   upload: function (){
