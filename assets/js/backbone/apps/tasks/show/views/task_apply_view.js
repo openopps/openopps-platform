@@ -13,61 +13,116 @@ var TaskApplyNextTempalte = require('../templates/task_apply_next_template.html'
 
 var TaskApplyView = BaseView.extend({
   events: {
-    'click #accept-toggle'            :'toggleAccept', 
-    'click #submit'                   :'submitVolunteer',
-    'blur .validate'                  :'validateField',
-    'change .validate'                :'validateField',
-    'change input[name=resumes]'      :'changeResume', 
-    'click #cancel'                   :'cancel',                   
-    'keypress #statement'             :'characterCount',
-    'keydown #statement'              :'characterCount',
-    'click #upload-resume'            :'upload',
-    'click #refresh-resumes'          :'refresh' ,  
+    'click #accept-toggle'            : 'toggleAccept', 
+    'click #submit'                   : 'submitVolunteer',
+    'blur .validate'                  : 'validateField',
+    'change .validate'                : 'validateField',
+    'keypress #statement'             : 'characterCount',
+    'keydown #statement'              : 'characterCount',
+    'change input[name=resumes]'      : 'changeResume', 
+    'click #cancel'                   : 'cancel',  
+    'click #upload-resume'            : 'upload',
+    'click #refresh-resumes'          : 'refresh' ,
+    'click .download-resume'        : 'downloadResume',
   },
 
   initialize: function (options) {
     this.options = options;
     this.params = new URLSearchParams(window.location.search);
+    this.edit= this.params.get('edit');
     this.resumes=[];
+    this.volunteer={};
     this.render();
     $('#search-results-loading').hide();
   },
 
   render: function () {
-    this.getResumes();  
-    
-    var compiledTemplate = _.template(TaskApplyTemplate)(); 
-    this.$el.html(compiledTemplate);
+    this.getResumes();   
+    if(this.edit){
+      this.loadApplicant();    
+    }
+    else{
+      var compiledTemplate = _.template(TaskApplyTemplate)({statementOfInterest:''});   
+      this.$el.html(compiledTemplate);
+    }
+    this.characterCount();
     this.renderResumes();
     this.$el.localize();
     $('#search-results-loading').hide();
   },
 
+  loadApplicant : function (){
+    var taskId= this.options.data.taskId;
+    var volunteerId= this.params.get('edit');  
+    $.ajax({
+      url: '/api/volunteer/' + volunteerId +'?' + $.param({
+        taskId:taskId,
+      }),  
+      type: 'GET',
+      async: false,
+      success: function (data) {    
+        this.volunteer=data;
+        this.$el.html(_.template(TaskApplyTemplate)(data));
+      }.bind(this),
+    });
+  },
+
+  
   getResumes: function () {   
     $.ajax({
       url: '/api/volunteer/user/resumes' ,
       type: 'GET',
       async: false,
-      success: function (resumes) {      
-        this.resumes = resumes;    
+      success: function (data) {
+        this.key = data.key;      
+        this.resumes = data.resumes;
       }.bind(this),
     });
-     
+  },
+
+  downloadResume: function (event) {
+    event.preventDefault && event.preventDefault();
+    downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'));
   },
 
   submitVolunteer: function () {
     var statement= $('#statement').val();
     var selectedResume = $('input[name=resumes]:checked').val(); 
     if(!this.validateFields()){
+      if(this.edit){
+        this.updateVolunteer();
+      }
+      else{
+        $.ajax({
+          url: '/api/volunteer/',
+          type: 'POST',
+          data: {
+            taskId: this.options.data.taskId,
+            statementOfInterest:statement,
+            resumeId: selectedResume ? selectedResume.split('|')[0] : null,
+          },
+        }).done( function (data) {      
+          Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
+      
+        }.bind(this));
+      }
+    }
+  },
+
+  updateVolunteer: function (e) {
+    var statement= $('#statement').val();
+    var selectedResume = $('input[name=resumes]:checked').val();
+    var id= this.edit;
+    if (window.cache.currentUser ) {
       $.ajax({
-        url: '/api/volunteer/',
-        type: 'POST',
+        url: '/api/volunteer/' + id,
         data: {
           taskId: this.options.data.taskId,
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
       }).done( function (data) {
+        type: 'PUT',    
         this.renderNext();      
         // Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
@@ -128,6 +183,8 @@ var TaskApplyView = BaseView.extend({
   renderResumes: function () { 
     this.data = { 
       resumes: this.resumes,
+      urls: window.cache.currentUser.urls,
+      resumeId:this.volunteer.resumeId,
     }; 
     var resumeTemplate = _.template(TaskResumeTemplate)(this.data);
     $('#apply-resume-section').html(resumeTemplate);  
@@ -145,7 +202,7 @@ var TaskApplyView = BaseView.extend({
   },
 
   upload: function (){
-    window.open(usajobsURL + '/Applicant/ProfileDashboard/Resumes/');          
+    window.open(window.cache.currentUser.urls.profileDocuments);          
     $('#upload-resume').hide();
     $('#refresh-resumes').show();
   },
@@ -155,7 +212,7 @@ var TaskApplyView = BaseView.extend({
     $('#refresh-resumes').hide();
     $('#refreshing-resumes').show();
     this.getResumes();
-    this.renderResumes();  
+    this.renderResumes();
   },
 
   cleanup: function () {

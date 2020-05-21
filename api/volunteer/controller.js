@@ -31,10 +31,37 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
 router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, next) => {
   await service.getResumes(ctx.state.user).then(resumes => {
     ctx.status = 200;
-    ctx.body = resumes;
+    ctx.body = {
+      key: ctx.state.user.tokenset.access_token,
+      resumes: resumes,
+    };
   }).catch(err => {
     ctx.status = 404;
   });
+});
+
+
+router.get('/api/volunteer/:id', auth, async (ctx, next) => {
+  await service.getVolunteer(ctx.params.id,ctx.query.taskId).then(result => {
+    ctx.body = result[0];
+  }).catch(err => {
+    ctx.status = 400;
+  }); 
+});
+
+router.put('/api/volunteer/:id', auth, async (ctx, next) => {
+  var attributes = ctx.request.body;
+  attributes.id= ctx.params.id;
+  attributes.updatedAt = new Date();
+  await service.updateVolunteer(ctx,attributes, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
 });
 
 router.post('/api/volunteer/delete', auth, async (ctx, next) => {

@@ -21,7 +21,7 @@
                   <span class="field-validation-error error-empty" style="display:none;">You must enter a statement.</span>
                   <span class="field-validation-error error-count2500" style="display:none;">The statement must be no more than 3,000 characters.</span>
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed</span>
-                  <textarea id="statement" class="fullwidth form-control validate" name="statement" data-validate="empty,count2500,html"></textarea>
+                  <textarea id="statement" class="fullwidth form-control validate" name="statement" data-validate="empty,count2500,html"><%- statementOfInterest %></textarea>
                   <p class="usajobs-form__help-brief" id="statement-count">
                     (3000 characters remaining)
                   </p>
@@ -42,19 +42,19 @@
       <aside class="usajobs-rightrail" id="apply-help-section">
         <div id="help" class="usajobs-apply-resume-info">
           <h3 class="usajobs-apply-resume-info__title">
-            <i class="fas fa-info-circle"></i> How to upload a resume
+            <i class="fas fa-info-circle"></i> Upload resume
           </h3>
           <p>To upload a resume, first you need to add it to your USAJOBS profile.</p>
-          <p>Please read the below instructions before clicking <strong>Upload resume</strong>.</p>
+          <p>Please read the below instructions carefully before clicking <strong>Upload resume</strong>.</p>
           <ol>
-            <li>Click <strong>Continue</strong> at the bottom of the pop-up message &mdash; we'll open a new tab in your browser and send you to the resume section of your profile in USAJOBS.</li>
+            <li>Click <strong>Upload resume</strong> at the bottom of this page &mdash; we'll open a new tab in your browser and send you to the resume section of your USAJOBS profile.</li>
             <li>Click <strong>Upload or build resume</strong> &mdash; you'll get another pop-up window. Click <strong>Upload resume</strong>.</li>
             <li>Choose the resume you want to upload and change the name if needed.</li>
             <li>Click <strong>Complete upload</strong> &mdash; you'll see the new resume in the resume portion of the documents section of your USAJOBS profile.</li>
             <li>Go back to the browser tab that says Open Opportunities.</li>
             <li>Go to the <strong>Resume section</strong> and click <strong>Refresh resume</strong> &mdash; you will see the new resume you uploaded.</li>
             <li>Select the resume you want to include in your application.</li>
-            <li>Click <strong>Save and continue</strong> to finish your application.</li>
+            <li>Click <strong>Submit</strong> to finish your application.</li>
           </ol>
         </div>
       </aside>
