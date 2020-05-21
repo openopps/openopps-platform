@@ -36,7 +36,7 @@ var TaskApplyView = BaseView.extend({
   },
 
   render: function () {
-    this.getResumes(); 
+    this.getResumes();   
     if(this.edit){
       this.loadApplicant();    
     }
@@ -44,7 +44,7 @@ var TaskApplyView = BaseView.extend({
       var compiledTemplate = _.template(TaskApplyTemplate)({statementOfInterest:''});   
       this.$el.html(compiledTemplate);
     }
-    
+    this.characterCount();
     this.renderResumes();
     this.$el.localize();
     $('#search-results-loading').hide();
