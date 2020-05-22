@@ -20,6 +20,7 @@
     "HOST": "",
     "LOGINGOV": false,
     "LOGOUT_URL": "",
+    "MASTER_KEY": "",
     "NODE_ENV": "production",
     "NOTIFICATION_API_KEY": "",
     "NOTIFICATIONS_BCC": "",

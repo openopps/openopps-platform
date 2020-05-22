@@ -44,6 +44,9 @@ module.exports = {
   validateDomains: (process.env.VALIDATE_DOMAINS || '').match(/^true$/i) || false,
   requireAgency:   (process.env.REQUIRE_AGENCY || '').match(/^true$/i) || false,
   requireLocation: (process.env.REQUIRE_LOCATION || '').match(/^true$/i) || false,
+
+  // Default encryption key
+  masterKey: process.env.MASTER_KEY,
 };
 
 module.exports.appUrl = module.exports.httpProtocol + '://' + module.exports.hostName;

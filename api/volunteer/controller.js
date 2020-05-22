@@ -12,7 +12,7 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
   if (await service.canAddVolunteer(ctx.request.body, ctx.state.user)) {
     var attributes = ctx.request.body;
     attributes.userId = ctx.state.user.id;
-    await service.addVolunteer(attributes, function (err, volunteer) {
+    await service.addVolunteer(ctx.state.user.tokenset, attributes, function (err, volunteer) {
       if (err) {
         return ctx.body = err;
       }
@@ -53,7 +53,7 @@ router.put('/api/volunteer/:id', auth, async (ctx, next) => {
   var attributes = ctx.request.body;
   attributes.id= ctx.params.id;
   attributes.updatedAt = new Date();
-  await service.updateVolunteer(ctx,attributes, async (errors, result) => {    
+  await service.updateVolunteer(ctx.state.user.tokenset, attributes, async (errors, result) => {    
     if (errors) {
       ctx.status = 400;
       ctx.body = errors;
