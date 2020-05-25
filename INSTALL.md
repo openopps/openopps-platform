@@ -329,3 +329,19 @@ This should also work if you run into issues with other tables.
 ALTER TABLE * OWNER TO midas;
 ---                    ^^^^^
 ```
+
+#### Initialize the Elastic Search Indexes
+
+If the search pages are stuck with a spinning loader, then it is likely that the ElasticSearch index is not up to date. To reindex the data, you will need to send a request to `api/user/re
+index` or `api/task/reindex` while authenticated as an admin user.
+
+The easiest way to do this is:
+1. Log in to the site with an admin user.
+1. Open the browser's developer tools
+1. Open the network tab, and right click on an api request that was sent after the authenticat
+ion was completed.
+1. Copy the request as a cURL command.
+1. Paste the cURL command into a terminal window, updating the path to `api/user/reindex` and
+executing it.
+1. Refresh the browser.
+
