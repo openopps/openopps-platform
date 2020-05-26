@@ -135,10 +135,8 @@ var TaskApplyView = BaseView.extend({
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
-      }).done( function (data) {
-        // type: 'PUT',    
+      }).done( function (data) {   
         this.renderNext(data);      
-        // Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
     }
   },
