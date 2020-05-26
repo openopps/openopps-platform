@@ -95,8 +95,16 @@ var TaskApplyView = BaseView.extend({
   },
 
   downloadResume: function (event) {
+    $('#search-results-loading').show();
     event.preventDefault && event.preventDefault();
-    downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'));
+    try {
+      downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'), () => {
+        $('#search-results-loading').hide();
+      });
+    } catch (err) {
+      window.open($(event.currentTarget).data('althref'), '_blank');
+      $('#search-results-loading').hide();
+    }
   },
 
   submitVolunteer: function () {
@@ -117,7 +125,6 @@ var TaskApplyView = BaseView.extend({
           },
         }).done( function (data) {      
           Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
-      
         }.bind(this));
       }
     }

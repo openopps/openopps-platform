@@ -1,15 +1,23 @@
 const _ = require ('lodash');
+const crypto = require('crypto-wrapper');
 const log = require('log')('app:volunteer:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const Profile = require('../auth/profile');
 
-async function addVolunteer (attributes, done) {
+async function addVolunteer (tokenset, attributes, done) {
   var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', attributes.taskId, attributes.userId);
   if (volunteer.length == 0) {
     attributes.createdAt = new Date();
     attributes.updatedAt = new Date();
+    if (attributes.resumeId) {
+      var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
+      var encryptedKey = crypto.encrypt(grantKey.Key);
+      attributes.grantAccess = encryptedKey.data;
+      attributes.iv = encryptedKey.iv;
+      attributes.nonce = grantKey.Nonce;
+    }
     await dao.Volunteer.insert(attributes).then(async (volunteer) => {
       return done(null, volunteer);
     }).catch(err => {
@@ -133,21 +141,42 @@ async function getResumes (user) {
     });
   });
 }
+
 async function getVolunteer (volunteerId,taskId) {
   return (await dao.Volunteer.find('id = ? and "taskId" = ?',volunteerId,taskId).catch(() => { return []; }));
 }
 
-async function updateVolunteer (ctx,attributes,done) {  
-  return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (e) => {  
+async function updateVolunteer (tokenset, attributes, done) {  
+  return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (vol) => {  
+    if (attributes.resumeId != vol.resumeId) {
+      var document = {
+        documentId: vol.resumeId,
+        grantAccess: {
+          Key: crypto.decrypt(vol.grantAccess, vol.iv),
+          Nonce: vol.nonce,
+        },
+      };
+      await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
+        log.error(err);
+        return done({ message: 'An unexpected error occured trying to update your application.'});
+      });
+      if (attributes.resumeId) {
+        var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
+        var encryptedKey = crypto.encrypt(grantKey.Key);
+        attributes.grantAccess = encryptedKey.data;
+        attributes.iv = encryptedKey.iv;
+        attributes.nonce = grantKey.Nonce;
+      }
+    }
     return await dao.Volunteer.update(attributes).then(async (volunteer) => {      
-      return done(!volunteer, volunteer);
+      return done(null, volunteer);
     }).catch((err) => {
       log.error(err);
-      return false;
+      return done({ message: 'An unexpected error occured trying to update your application.'});
     });
   }).catch((err) => {
     log.error(err);
-    return false;
+    return done({ message: 'An unexpected error occured trying to update your application.'});
   });
 }
 
