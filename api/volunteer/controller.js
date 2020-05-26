@@ -28,6 +28,7 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
     return ctx.body = null;
   }
 });
+
 router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, next) => {
   await service.getResumes(ctx.state.user).then(resumes => {
     ctx.status = 200;
@@ -40,6 +41,17 @@ router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, nex
   });
 });
 
+router.get('/api/volunteer/:id/resume', auth, auth.checkToken, async (ctx, next) => {
+  await service.getVolunteerResumeAccess(ctx.state.user.tokenset, ctx.params.id, ctx.query.taskId).then(result => {
+    ctx.status = 200;
+    ctx.body = {
+      key: ctx.state.user.tokenset.access_token,
+      documentAccess: result,
+    };
+  }).catch(err => {
+    ctx.status = 400;
+  }); 
+});
 
 router.get('/api/volunteer/:id', auth, async (ctx, next) => {
   await service.getVolunteer(ctx.params.id,ctx.query.taskId).then(result => {

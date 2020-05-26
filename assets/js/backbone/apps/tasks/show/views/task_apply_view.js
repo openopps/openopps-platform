@@ -107,6 +107,7 @@ var TaskApplyView = BaseView.extend({
             taskId: this.options.data.taskId,
             statementOfInterest:statement,
             resumeId: selectedResume ? selectedResume.split('|')[0] : null,
+            resumeType: $('input[name=resumes]:checked').data('format'),
           },
         }).done( function (data) {      
           Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
@@ -126,6 +127,7 @@ var TaskApplyView = BaseView.extend({
           taskId: this.options.data.taskId,
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
+          resumeType: $('input[name=resumes]:checked').data('format'),
         },
         type: 'PUT',
       }).done( function (data){      

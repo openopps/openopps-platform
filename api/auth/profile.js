@@ -189,3 +189,24 @@ module.exports.revokeDocumentAccess = async (tokenset, document, applicationId) 
     });
   });
 };
+
+module.exports.getDocumentAccess = async (tokenset, document, applicationId) => {
+  return new Promise((resolve, reject) => {
+    request(_.extend(requestOptions, { 
+      url: [openopps.auth.documentAccessURL, document.documentId, 'document-access'].join('/'),
+      method: 'POST',
+      auth: { 'bearer': tokenset.access_token },
+      json: true,
+      body: {
+        GrantAccess: document.grantAccess,
+        ApplicationId: applicationId,
+      },
+    }), async (err, res) => {
+      if(err || res.statusCode !== 200) {
+        reject({ message: util.format('Error getting document token for document %s.', document.documentId) });
+      } else {
+        resolve();
+      }
+    });
+  });
+};
