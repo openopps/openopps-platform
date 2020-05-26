@@ -23,7 +23,7 @@ var TaskApplyView = BaseView.extend({
     'click #cancel'                   : 'cancel',  
     'click #upload-resume'            : 'upload',
     'click #refresh-resumes'          : 'refresh' ,
-    'click .download-resume'        : 'downloadResume',
+    'click .download-resume'          : 'downloadResume',
   },
 
   initialize: function (options) {
@@ -32,6 +32,7 @@ var TaskApplyView = BaseView.extend({
     this.edit= this.params.get('edit');
     this.resumes=[];
     this.volunteer={};
+    this.task={};
     this.render();
     $('#search-results-loading').hide();
   },
@@ -67,6 +68,19 @@ var TaskApplyView = BaseView.extend({
     });
   },
 
+  getTaskCommunityInfo: function () {
+    var taskId = this.options.data.taskId;
+    $.ajax({
+      url: '/api/task/' + taskId + '?' + $.param({
+        taskId: taskId,
+      }),
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.task = data;
+      }.bind(this),
+    });
+  },
   
   getResumes: function () {   
     $.ajax({
@@ -122,8 +136,8 @@ var TaskApplyView = BaseView.extend({
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
       }).done( function (data) {
-        type: 'PUT',    
-        this.renderNext();      
+        // type: 'PUT',    
+        this.renderNext(data);      
         // Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
     }
@@ -190,10 +204,11 @@ var TaskApplyView = BaseView.extend({
     $('#apply-resume-section').html(resumeTemplate);  
   },
 
-  renderNext: function () {
+  renderNext: function (data) {
+    this.getTaskCommunityInfo();
     this.data = {
-      community: 'Need Name',
-      opportunity: 'Title',
+      community: this.task.community,
+      opportunity: this.task,
     };
     var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
     $('#apply-next-section').append(nextTemplate); 

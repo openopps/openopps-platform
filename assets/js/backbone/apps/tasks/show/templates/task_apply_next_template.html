@@ -9,7 +9,7 @@
         Congratulations! Your application has been submitted.
     </h3>
     <p class="usa-alert-text">
-        Thanks for submitting your application to <% if (community) {%><%- community %> <%} else {%> <%- opportunity %><%}%>.
+        Thanks for submitting your application to <% if (community) {%><%- community.community_name %> <%} else {%> <%- title %><%}%>.
     </p>
     </div>
     </div>
@@ -23,6 +23,6 @@
             <p>They may call or email you with additional questions about your skills, background or interests.</p> 
             <h5>3. Send you an email.</h5>
             <p>You'll get an email letting you know if you're selected or not. If you're selected, the email will include all of the details you'll need to get started.</p> 
-            <a href="/search<% if (community.community_id) { %>?community=<%- community.community_id %><% } %>">Find more opportunities</a>
+            <a href="/search<% if (community) { %>?community=<%- community.community_id %><% } %>">Find more opportunities</a>
         </div>
     </div>

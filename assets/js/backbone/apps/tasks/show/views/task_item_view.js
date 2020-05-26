@@ -38,7 +38,7 @@ var TaskItemView = BaseView.extend({
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
     'click .task-complete'            : 'taskComplete', 
-    'click #update-application'        : 'updateApplication',  
+    'click #update-application'       : 'updateApplication',  
   },
 
   modalOptions: {
@@ -525,12 +525,7 @@ var TaskItemView = BaseView.extend({
         this.completeProfile(location, window.cache.currentUser.agency);
       }
       else if(window.cache.currentUser && (!_.isEmpty(detail)|| !_.isEmpty(lateral))){
-        Backbone.history.navigate('/apply/task/' + this.model.attributes.id , { 
-          trigger: true,
-          communityId: this.model.attributes.community.community_id,
-          communityName: this.model.attributes.community_name,
-          title: this.model.attributes.title,
-        });
+        Backbone.history.navigate('/apply/task/' + this.model.attributes.id , { trigger: true });
       }
       else {
         this.renderApplyModal(e, location);
