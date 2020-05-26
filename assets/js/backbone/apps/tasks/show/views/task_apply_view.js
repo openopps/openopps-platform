@@ -124,7 +124,7 @@ var TaskApplyView = BaseView.extend({
             resumeId: selectedResume ? selectedResume.split('|')[0] : null,
           },
         }).done( function (data) {      
-          Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
+          this.renderNext();   
         }.bind(this));
       }
     }
@@ -137,13 +137,14 @@ var TaskApplyView = BaseView.extend({
     if (window.cache.currentUser ) {
       $.ajax({
         url: '/api/volunteer/' + id,
+        type: 'PUT', 
         data: {
           taskId: this.options.data.taskId,
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
-      }).done( function (data) {   
-        this.renderNext(data);      
+      }).done( function (data) {    
+        Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
     }
   },
@@ -209,7 +210,7 @@ var TaskApplyView = BaseView.extend({
     $('#apply-resume-section').html(resumeTemplate);  
   },
 
-  renderNext: function (data) {
+  renderNext: function () {
     this.getTaskCommunityInfo();
     this.data = {
       community: this.task.community,
