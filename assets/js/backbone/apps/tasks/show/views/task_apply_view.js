@@ -95,16 +95,8 @@ var TaskApplyView = BaseView.extend({
   },
 
   downloadResume: function (event) {
-    $('#search-results-loading').show();
     event.preventDefault && event.preventDefault();
-    try {
-      downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'), () => {
-        $('#search-results-loading').hide();
-      });
-    } catch (err) {
-      window.open($(event.currentTarget).data('althref'), '_blank');
-      $('#search-results-loading').hide();
-    }
+    downloadFile(event.currentTarget.href, { 'Authorization': 'Bearer ' + this.key }, $(event.currentTarget).data('docname'));
   },
 
   submitVolunteer: function () {
@@ -124,7 +116,7 @@ var TaskApplyView = BaseView.extend({
             resumeId: selectedResume ? selectedResume.split('|')[0] : null,
           },
         }).done( function (data) {      
-          Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
+          this.renderNext();   
         }.bind(this));
       }
     }
@@ -137,13 +129,14 @@ var TaskApplyView = BaseView.extend({
     if (window.cache.currentUser ) {
       $.ajax({
         url: '/api/volunteer/' + id,
+        type: 'PUT', 
         data: {
           taskId: this.options.data.taskId,
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
-      }).done( function (data) {   
-        this.renderNext(data);      
+      }).done( function (data) {    
+        Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
       }.bind(this));
     }
   },
@@ -209,7 +202,7 @@ var TaskApplyView = BaseView.extend({
     $('#apply-resume-section').html(resumeTemplate);  
   },
 
-  renderNext: function (data) {
+  renderNext: function () {
     this.getTaskCommunityInfo();
     this.data = {
       community: this.task.community,
