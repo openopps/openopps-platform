@@ -38,7 +38,7 @@ var TaskItemView = BaseView.extend({
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
     'click .task-complete'            : 'taskComplete', 
-    'click #update-application'        : 'updateApplication',  
+    'click #update-application'       : 'updateApplication',  
   },
 
   modalOptions: {

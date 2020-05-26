@@ -8,6 +8,7 @@ var UIConfig = require('../../../../config/ui.json');
 
 var TaskApplyTemplate = require('../templates/task_apply_template.html');
 var TaskResumeTemplate = require('../templates/task_apply_resume_template.html');
+var TaskApplyNextTempalte = require('../templates/task_apply_next_template.html');
 
 
 var TaskApplyView = BaseView.extend({
@@ -22,7 +23,7 @@ var TaskApplyView = BaseView.extend({
     'click #cancel'                   : 'cancel',  
     'click #upload-resume'            : 'upload',
     'click #refresh-resumes'          : 'refresh' ,
-    'click .download-resume'        : 'downloadResume',
+    'click .download-resume'          : 'downloadResume',
   },
 
   initialize: function (options) {
@@ -31,6 +32,7 @@ var TaskApplyView = BaseView.extend({
     this.edit= this.params.get('edit');
     this.resumes=[];
     this.volunteer={};
+    this.task={};
     this.render();
     $('#search-results-loading').hide();
   },
@@ -66,6 +68,19 @@ var TaskApplyView = BaseView.extend({
     });
   },
 
+  getTaskCommunityInfo: function () {
+    var taskId = this.options.data.taskId;
+    $.ajax({
+      url: '/api/task/' + taskId + '?' + $.param({
+        taskId: taskId,
+      }),
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.task = data;
+      }.bind(this),
+    });
+  },
   
   getResumes: function () {   
     $.ajax({
@@ -127,10 +142,9 @@ var TaskApplyView = BaseView.extend({
           statementOfInterest:statement,
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
         },
-        type: 'PUT',
-      }).done( function (data){      
-        Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
-      });
+      }).done( function (data) {   
+        this.renderNext(data);      
+      }.bind(this));
     }
   },
 
@@ -183,15 +197,28 @@ var TaskApplyView = BaseView.extend({
       $('#apply-resume>.field-validation-error').hide();   
     }
    
-  }, 
-  renderResumes: function (){ 
+  },
+
+  renderResumes: function () { 
     this.data = { 
       resumes: this.resumes,
       urls: window.cache.currentUser.urls,
       resumeId:this.volunteer.resumeId,
     }; 
     var resumeTemplate = _.template(TaskResumeTemplate)(this.data);
-    $('#apply-resume-section').html(resumeTemplate); 
+    $('#apply-resume-section').html(resumeTemplate);  
+  },
+
+  renderNext: function (data) {
+    this.getTaskCommunityInfo();
+    this.data = {
+      community: this.task.community,
+      opportunity: this.task,
+    };
+    var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
+    $('#apply-next-section').append(nextTemplate); 
+    $('#apply-section').hide();      
+    $('#apply-help-section').hide();
   },
 
   upload: function (){
