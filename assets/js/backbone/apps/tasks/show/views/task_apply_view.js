@@ -125,7 +125,8 @@ var TaskApplyView = BaseView.extend({
             resumeType: $('input[name=resumes]:checked').data('format'),
           },
         }).done( function (data) {      
-          this.renderNext();   
+          this.renderNext('submitt');
+          window.scrollTo(0, 0);   
         }.bind(this));
       }
     }
@@ -146,7 +147,8 @@ var TaskApplyView = BaseView.extend({
           resumeType: $('input[name=resumes]:checked').data('format'),
         },
       }).done( function (data) {    
-        Backbone.history.navigate('/tasks/' + data.taskId , { trigger: true });
+        this.renderNext('updat'); 
+        window.scrollTo(0, 0);
       }.bind(this));
     }
   },
@@ -212,11 +214,12 @@ var TaskApplyView = BaseView.extend({
     $('#apply-resume-section').html(resumeTemplate);  
   },
 
-  renderNext: function () {
+  renderNext: function (applyTypeText) {
     this.getTaskCommunityInfo();
     this.data = {
       community: this.task.community,
       opportunity: this.task,
+      applyTypeText: applyTypeText,
     };
     var nextTemplate = _.template(TaskApplyNextTempalte)(this.data);
     $('#apply-next-section').append(nextTemplate); 
