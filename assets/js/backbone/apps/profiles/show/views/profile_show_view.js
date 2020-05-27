@@ -176,6 +176,7 @@ var ProfileShowView = Backbone.View.extend({
     var lateral=_.findWhere(this.task.tags, {type: 'task-time-required',name:'Lateral'});
     
     if(!_.isEmpty(detail) ||!_.isEmpty(lateral)){
+      $('#bureau-office-sect').hide();
       this.renderApplicantSection();
     }
    
