@@ -6,10 +6,10 @@
     </div>
     <div class="usajobs-alert__body">
     <h3 class="usa-alert-heading">
-        Congratulations! Your application has been submitted.
+        Congratulations! Your application has been <%- applyTypeText %>ed.
     </h3>
     <p class="usa-alert-text">
-        Thanks for submitting your application to <% if (community) {%><%- community.community_name %> <%} else {%> <%- opportunity.title %><%}%>.
+        Thanks for <%- applyTypeText %>ing your application to <% if (community) {%><%- community.community_name %> <%} else {%> <%- opportunity.title %><%}%>.
     </p>
     </div>
     </div>
