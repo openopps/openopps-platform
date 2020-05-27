@@ -14,7 +14,7 @@
       <i class="far fa-star"></i>
     </a> -->
     <div class="people-search-result__body">
-      <span href="/profile/<%= person.id %>" class="people-search-result__name<% if (!person.title && ((!person.agency || !person.career) && !person.skills) { %> just-name<% } %>">
+      <span href="/profile/<%= person.id %>" class="people-search-result__name<% if (!person.title && (!person.agency || !person.career) && !person.skills) { %> just-name<% } %>">
         <% if (person.givenName && person.lastName) { %>
           <%= person.givenName %> <%= person.lastName %>
         <% } else { %>
