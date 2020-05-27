@@ -169,17 +169,19 @@ async function getVolunteer (volunteerId,taskId) {
 async function updateVolunteer (tokenset, attributes, done) {  
   return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (vol) => {  
     if (attributes.resumeId != vol.resumeId) {
-      var document = {
-        documentId: vol.resumeId,
-        grantAccess: {
-          Key: crypto.decrypt(vol.grantAccess, vol.iv),
-          Nonce: vol.nonce,
-        },
-      };
-      await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
-        log.error(err);
-        return done({ message: 'An unexpected error occured trying to update your application.'});
-      });
+      if (vol.grantAccess && vol.iv) {
+        var document = {
+          documentId: vol.resumeId,
+          grantAccess: {
+            Key: crypto.decrypt(vol.grantAccess, vol.iv),
+            Nonce: vol.nonce,
+          },
+        };
+        await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
+          log.error(err);
+          return done({ message: 'An unexpected error occured trying to update your application.'});
+        });
+      }
       if (attributes.resumeId) {
         var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
         var encryptedKey = crypto.encrypt(grantKey.Key);
