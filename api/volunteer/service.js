@@ -145,7 +145,7 @@ async function getVolunteerResumeAccess (tokenset, id) {
   return new Promise((resolve, reject) => {
     dao.Volunteer.findOne('id = ?', id).then(volunteer => {
       var document = {
-        documentId: vol.resumeId,
+        documentId: volunteer.resumeId,
         grantAccess: {
           Key: crypto.decrypt(volunteer.grantAccess, volunteer.iv),
           Nonce: volunteer.nonce,
