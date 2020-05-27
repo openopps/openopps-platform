@@ -136,7 +136,27 @@ async function getResumes (user) {
     Profile.getDocuments(user.tokenset, 'secure_resume').then(documents => {
       resolve(documents);
     }).catch((err) => {
-      // record error getting USAJOBS profile
+      reject(err);
+    });
+  });
+}
+
+async function getVolunteerResumeAccess (tokenset, id) {
+  return new Promise((resolve, reject) => {
+    dao.Volunteer.findOne('id = ?', id).then(volunteer => {
+      var document = {
+        documentId: vol.resumeId,
+        grantAccess: {
+          Key: crypto.decrypt(volunteer.grantAccess, volunteer.iv),
+          Nonce: volunteer.nonce,
+        },
+      };
+      Profile.getDocumentAccess(tokenset, document, volunteer.taskId).then(documentAccess => {
+        resolve(documentAccess);
+      }).catch((err) => {
+        reject(err);
+      });
+    }).catch(err => {
       reject(err);
     });
   });
@@ -208,5 +228,6 @@ module.exports = {
   selectVolunteer: selectVolunteer,
   getResumes: getResumes,
   getVolunteer: getVolunteer,
-  updateVolunteer:updateVolunteer,
+  updateVolunteer: updateVolunteer,
+  getVolunteerResumeAccess: getVolunteerResumeAccess,
 };
