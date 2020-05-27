@@ -328,10 +328,9 @@
       }
     }
 
-    .comment-form-container {
-      position: relative;
+    .comment-form-container, .reply-form-container {
 
-      div.comment-input {
+     div.comment-edit-input, div.comment-input, .reply-input {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -347,8 +346,8 @@
         margin: 0.2em 0;
         padding: 1rem 0.7em;
         float: left;
-        width: calc(100% - 15rem);
-        max-width: calc(100% - 15rem);
+        width: calc(100% - 15.1rem);
+        max-width: calc(100% - 15.1rem);
 
         @include media($M-down) {
           width: 100%;
@@ -359,15 +358,23 @@
           content: attr(data-text);
           color: #999;
         }
+
+        .reply-to {
+          text-decoration: none;
+
+          &:visited {
+            color: $color-primary;
+          }
+        }
       }
 
-      .comment-submit {
+    .comment-edit, .comment-submit, .reply-submit {
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
         margin: 0.3rem 0 0 0;
         padding: 1.3rem 2rem 1.4rem 2rem;
         float: left;
-        width: 15rem;
+        width: 15.1rem;
 
         @include media($M-down) {
           border-bottom-left-radius: $size-base;
@@ -382,12 +389,40 @@
         content: "";
         display: table;
       }
+      .edit-esc-comment {  
+        margin-right :60px;
+        float:left;
+        @include media($M) {
+          margin-left: 0.85rem;
+        }   
+      }
+  }
+
+    #previous-comments {
+      text-decoration: none;
+      
+      &:visited {
+        color: $color-primary;
+      }
+    }
+
+    #refresh-comments {
+      text-decoration: none;
+      display: block;
+      float: right;
+      
+      &:visited {
+        color: $color-primary;
+      }
+
+      .fa-redo-alt {
+        margin-right: $size-base;
+      }
     }
 
     #comment-list {
       list-style: none;
       padding: 0;
-
 
       .project-people {
         border-radius: 50%;
@@ -430,12 +465,28 @@
 
       .user-username {
         font-weight: bold;
+
+        .comment-user-link:visited {
+          color: $color-primary;
+        }
       }
 
       .comment-metadata {
         font-size: $small-font-size;
         padding-top: 3px;
         color: $color-gray;
+
+        a:visited {
+          color: $color-primary;
+        }
+
+        .delete-comment {
+          color: $color-secondary;
+  
+          &:visited {
+            color:$color-secondary;
+          }
+        }
       }
 
       .comment-item {
@@ -444,14 +495,38 @@
         padding-top: 5px;
       }
 
+      .comment-replies {
+        .replies-list {
+          padding: 0;
+        }
+
+        .previous-replies {
+          text-decoration: none;
+          display: block;
+          margin-top: $size-S;
+
+          &:visited {
+            color: $color-primary;
+          }
+
+          .fa-reply {
+            margin-right: $size-base;
+            -webkit-transform:rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            transform: rotate(180deg);
+          }
+        }
+      }
+
       .usajobs-open-opps-opportunity-requestor__figure-body {
         float: left;
         vertical-align: top;
         margin: 0;
       }
 
-      .comment-inner {
-        padding: 5px;
+      .comment-inner {       
         // display: table-cell;
         // width: 100%;
         vertical-align: top;
@@ -505,20 +580,6 @@
         padding-top: 0.8rem;
         padding-bottom: 0.8rem;
         padding-left: $size-default;
-      }
-
-      a.delete-comment {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin-top: 5px;
-        background-color: $color-gray-light;
-        border-radius: 50%;
-        color: #fff;
-        width: 3rem;
-        height: 3rem;
-        line-height: 3rem;
-        padding: 1px 9px;
       }
 
       #comment-form-target {

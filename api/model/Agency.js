@@ -13,17 +13,13 @@ module.exports.toList = function (agency) {
 
 module.exports.fetchAgency = function (agencyId) {
   return new Promise(async (resolve, reject) => {
-    // TODO: load agency
     db.query('select * from agency where agency_id = $1', [agencyId]).then(results => {
       var agency = results.rows[0];
-      console.log('Located agency: ', agency);
       if (agency.parent_code + '00' == agency.code) {
-        // TODO: If agency is agency wide parent then look for my actual parent and its agency wide record
         db.query('select parent_code from agency where code = $1', [agency.parent_code]).then(result => {
           if (result.rows[0] && result.rows[0].parent_code) {
             db.query('select agency_id from agency where code = $1', [result.rows[0].parent_code + '00']).then(result => {
               if(result.rows[0]) {
-                console.log('Parent id located: ', result.rows[0]);
                 this.fetchAgency(result.rows[0].agency_id).then(parent => {
                   agency.parent = parent;
                   resolve(agency);
@@ -38,7 +34,6 @@ module.exports.fetchAgency = function (agencyId) {
           }
         }).catch(reject);
       } else {
-        // TODO: Look for agency wide parent (code = parent_code + '00')
         db.query('select agency_id from agency where code = $1', [agency.parent_code + '00']).then(result => {
           if(result.rows[0]) {
             console.log('Parent id located: ', result.rows[0]);
@@ -51,6 +46,22 @@ module.exports.fetchAgency = function (agencyId) {
             resolve(agency);
           }
         });
+      }
+    }).catch(reject);
+  });
+};
+
+module.exports.fetchDepartment = function (code) {
+  return new Promise(async (resolve, reject) => {
+    db.query('select * from agency where code = $1', [code]).then(results => {
+      var department = results.rows[0];
+      if (department.parent_code) {
+        this.fetchDepartment(department.parent_code).then(parent => {
+          department.parent = parent;
+          resolve(department);
+        }).catch(reject);
+      } else {
+        resolve(department);
       }
     }).catch(reject);
   });

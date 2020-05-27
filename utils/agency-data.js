@@ -9,21 +9,21 @@ const queries = {
   findRecord: 'SELECT * FROM agency WHERE code = $1',
   findRecordByName: 'SELECT * FROM agency WHERE code = \'\' and lower(name) LIKE ',
   updateRecord: 'UPDATE agency ' +
-      'SET code = $1, parent_code = $2, name = $3, is_disabled = $4, updated_at = $5 ' +
-      'WHERE agency_id = $6',
+      'SET code = $1, parent_code = $2, name = $3, abbr = $4, is_disabled = $5, updated_at = $6 ' +
+      'WHERE agency_id = $7',
   insertRecord: 'INSERT INTO agency ' +
-      '(code, parent_code, name, is_disabled, created_at, updated_at) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6)',
+      '(code, parent_code, name, abbr, is_disabled, created_at, updated_at) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6, $7)',
 };
 
 async function updateRecord (record, newValues) {
-  await db.none(queries.updateRecord, [newValues.Code, newValues.ParentCode, newValues.Value, newValues.IsDisabled, newValues.LastModified, record.agency_id]).catch(err => {
+  await db.none(queries.updateRecord, [newValues.Code, newValues.ParentCode, newValues.Value, (newValues.Acronym || ''), newValues.IsDisabled, newValues.LastModified, record.agency_id]).catch(err => {
     console.log('Error updating record for id ' + record.id, err);
   });
 }
 
 async function insertRecord (newRecord) {
-  await db.none(queries.insertRecord, [newRecord.Code, newRecord.ParentCode, newRecord.Value, newRecord.IsDisabled, newRecord.LastModified, newRecord.LastModified]).catch(err => {
+  await db.none(queries.insertRecord, [newRecord.Code, newRecord.ParentCode, newRecord.Value, (newRecord.Acronym || ''), newRecord.IsDisabled, newRecord.LastModified, newRecord.LastModified]).catch(err => {
     console.log('Error creating record for code' + newRecord.Code, err);
   });
 }

@@ -39,6 +39,9 @@
   <h4>Location</h4>
   <div>
     <% if (madlibTags.location) { %>
+      <% if (data.allowVirtual) { %>
+        Virtual, In-Person<br/>
+      <% } %>
       <% _.each(madlibTags.location, function (s, i) { %>
         <% if (i > 0) { %>, <% } %><%- s.name %>
       <% }) %>

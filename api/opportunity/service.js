@@ -690,6 +690,7 @@ async function copyOpportunity (attributes, user, done) {
     requirement: results.requirement,
     restrictedTo: results.restrictedTo,
     isDetailReimbursable: results.isDetailReimbursable,
+    allowVirtual:results.allowVirtual,
   };
   if(await isStudent(results.userId,results.id)) {
     var cycleId = await getCurrentCycle(results.communityId, results.cycleId);

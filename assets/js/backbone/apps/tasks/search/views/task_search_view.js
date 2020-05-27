@@ -34,6 +34,7 @@ var TaskListView = Backbone.View.extend({
     'click #search-pills-remove-all'          : 'removeAllFilters',
     'click .task-link'                        : 'loadTask',
     'keypress #search'                        : 'searchOnEnter',
+    'change #sort-results'                    : 'sortStatus',
   },
 
   initialize: function (options) {
@@ -90,6 +91,7 @@ var TaskListView = Backbone.View.extend({
         $('.openopps-system-alert.community-' + this.filters.community.id).hide();
       }
     });
+    initializeLocationSearch.bind(this)('#location');
     this.filter();
     initializeKeywordSearch.bind(this)('#search', [{ type: 'skills', limit: 5 }]);
     this.$('.usajobs-open-opps-search__box').show();
@@ -139,19 +141,12 @@ var TaskListView = Backbone.View.extend({
           this.filters.locationType = [];
           if($('#virtual').is(':checked')) {
             this.filters.locationType.push('virtual');
-          }
-          if($('#in-person').is(':checked')) {
-            this.filters.locationType.push('in person');
-          }
+          } 
         }
         this.filters.page = 1;
         this.filter();
       }.bind(this));
-    }.bind(this));
-    if(!_.contains(this.filters.locationType, 'in person')) {
-      $('#location').siblings('.select2-container').hide();
-    }
-    
+    }.bind(this));    
   },
 
   initializeCareerSelect2: function () {
@@ -170,6 +165,14 @@ var TaskListView = Backbone.View.extend({
       this.filters.page = 1;
       this.filter();
     }.bind(this));
+  },
+
+  sortStatus: function (e) {
+    var target = $(e.currentTarget)[0];
+    this.filters.sort = target.value;
+    this.filters.page = 1;
+    this.filter();
+    window.scrollTo(0, 0);
   },
 
   initializeCommunitySelect2: function () {
@@ -372,12 +375,14 @@ var TaskListView = Backbone.View.extend({
     $('#task-list').html('');
     this.taskFilteredCount = searchResults.totalHits;
     this.appliedFilterCount = getAppliedFiltersCount(this.filters, this.agency);
-    this.tagTypes = { career: this.careers, community: this.communities ,payPlan:this.payPlans };
+    this.tagTypes = { career: this.careers, community: this.communities, payPlan: this.payPlans };
     this.renderFilters();
 
     if (searchResults.totalHits === 0 || this.filters.state.length == 0 ) {
       this.renderNoResults();
+      $('#task-search-sort').hide();
     } else {
+      $('#task-search-sort').show();
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
       var pageSize = 20;
       this.renderPage(searchResults, page, pageSize);
@@ -396,7 +401,7 @@ var TaskListView = Backbone.View.extend({
     var compiledTemplate = _.template(NoListItem)(settings);
     $('#task-list').append(compiledTemplate);
     $('#task-page').hide();      
-    $('#results-count').hide();
+    $('.task-search-controls #results-count').hide();
   },
 
   renderPage: function (searchResults, page, pageSize) {
@@ -412,13 +417,13 @@ var TaskListView = Backbone.View.extend({
 
   renderResultsCount: function (start, stop, pageSize, numResults, pagedNumResults) {
     if (numResults <= pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
+      $('.task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + numResults + ' of ' + numResults + ' opportunities');
     } else if (pagedNumResults < pageSize) {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
+      $('task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + (start + pagedNumResults) + ' of ' + numResults + ' opportunities');
     } else {
-      $('#results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
+      $('.task-search-controls #results-count').text('Viewing ' +  (start + 1) + ' - ' + stop + ' of ' + numResults + ' opportunities');
     }
-    $('#results-count').show();
+    $('.task-search-controls #results-count').show();
   },
 
   renderItem: function (searchResult) {
@@ -531,6 +536,7 @@ var TaskListView = Backbone.View.extend({
     this.filters.page = 1;
     this.filter();
   },
+  
   searchOnEnter : function (event){
     if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
       this.search();
@@ -602,12 +608,9 @@ var TaskListView = Backbone.View.extend({
     }
   },
 
-  locationFilter: function (event) {
-    if(!$('#in-person').is(':checked')) {
-      $('#location').siblings('.select2-container').hide();
-      $('#location').select2('data', null);
-    } else {
-      $('#location').siblings('.select2-container').show();
+  locationFilter: function (event) {    
+    if (this.$('#location').val().trim() != '') {
+      addLocation.bind(this)($('#location').val());
     }
     this.filters.location = _.map($('#location').select2('data'), function (item) {
       return _.pick(item, 'type', 'name', 'id');
@@ -615,9 +618,6 @@ var TaskListView = Backbone.View.extend({
     this.filters.locationType = [];
     if($('#virtual').is(':checked')) {
       this.filters.locationType.push('virtual');
-    }
-    if($('#in-person').is(':checked')) {
-      this.filters.locationType.push('in person');
     }
     this.filters.page = 1;
     this.filter();
@@ -723,7 +723,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (_.contains(['location', 'skill', 'series', 'agency'], key)) {
+          } else if (_.contains(['location', 'skill', 'series', 'agency', 'department'], key)) {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {
