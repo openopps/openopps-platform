@@ -51,3 +51,21 @@ global.downloadFile = function (url, headers, filename, callback) {
 
   xhr.send();
 };
+
+global.getBuilderResume = function (url, headers, callback) {
+  $.ajax({
+    url: url,
+    method: 'GET',
+    beforeSend: function (xhr) {
+      $.each(headers, function (key, value) {
+        xhr.setRequestHeader(key, value);
+      });
+    },
+    success: function (data) {
+      callback(false, data);
+    },
+    error: function () {
+      callback(true);
+    },
+  });
+};

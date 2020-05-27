@@ -176,7 +176,6 @@ var ProfileShowView = Backbone.View.extend({
     var lateral=_.findWhere(this.task.tags, {type: 'task-time-required',name:'Lateral'});
     
     if(!_.isEmpty(detail) ||!_.isEmpty(lateral)){
-      this.getDocument();
       this.renderApplicantSection();
     }
    
@@ -203,7 +202,7 @@ var ProfileShowView = Backbone.View.extend({
     });
   },
 
-  getDocument: function () {
+  getDocumentAccess: function (callback) {
     var taskId = this.params.get('tid');
     var volunteerId= this.params.get('vid');    
     $.ajax({
@@ -213,8 +212,11 @@ var ProfileShowView = Backbone.View.extend({
       type: 'GET',
       async: false,
       success: function (data) {
-           
+        callback(data);
       }.bind(this),
+      error: function () {
+        showWhoopsPage();
+      },
     });
   },
 
@@ -233,11 +235,39 @@ var ProfileShowView = Backbone.View.extend({
   },
 
   renderApplicantSection:function (){ 
-    this.data={
+    this.data = {
       statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
+      resumeType: this.applicant[0].resumeType,
     };
     var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
     $('#applicant-detail-lateral').html(profileApplicationTemplate);
+    if (this.applicant[0].resumeType == 'builder') {
+      this.getDocumentAccess(function (documentAccess) {
+        this.getBuilderResume(documentAccess, function (error, data) {
+          if (error) {
+            showWhoopsPage();
+          } else {
+            // render builder resume template with returned data
+          }
+        });
+      }.bind(this));
+    }
+  },
+
+  getBuilderResume: function (documentAccess, callback) {
+    $.ajax({
+      url: documentAccess.url,
+      method: 'GET',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + documentAccess.key);
+      },
+      success: function (data) {
+        callback(false, data);
+      },
+      error: function () {
+        callback(true);
+      },
+    });
   },
   
   readMore: function (e) {
