@@ -8,7 +8,7 @@
     <ul class="resume-card-buttons">   
       <% _.each(resumes, function (resume) { %>     
         <li class="resume-card-button">
-          <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>"<% if (resume.CandidateDocumentID == resumeId) { %><%= "checked" %><% } %>>                       
+          <input type="radio" value="<%- resume.CandidateDocumentID + '|' + resume.CandidateFileName + '.' + resume.FileFormat %>" name="resumes" id="<%- resume.CandidateDocumentID %>" data-format="<%- resume.FileFormat %>" <% if (resume.CandidateDocumentID == resumeId) { %><%= "checked" %><% } %>>                       
           <label for="<%- resume.CandidateDocumentID %>">
             <div class="usajobs-grid-full">
               <div class="usa-width-one-twelfth radio-button"></div>

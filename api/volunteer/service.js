@@ -136,7 +136,27 @@ async function getResumes (user) {
     Profile.getDocuments(user.tokenset, 'secure_resume').then(documents => {
       resolve(documents);
     }).catch((err) => {
-      // record error getting USAJOBS profile
+      reject(err);
+    });
+  });
+}
+
+async function getVolunteerResumeAccess (tokenset, id) {
+  return new Promise((resolve, reject) => {
+    dao.Volunteer.findOne('id = ?', id).then(volunteer => {
+      var document = {
+        documentId: vol.resumeId,
+        grantAccess: {
+          Key: crypto.decrypt(volunteer.grantAccess, volunteer.iv),
+          Nonce: volunteer.nonce,
+        },
+      };
+      Profile.getDocumentAccess(tokenset, document, volunteer.taskId).then(documentAccess => {
+        resolve(documentAccess);
+      }).catch((err) => {
+        reject(err);
+      });
+    }).catch(err => {
       reject(err);
     });
   });
@@ -149,17 +169,19 @@ async function getVolunteer (volunteerId,taskId) {
 async function updateVolunteer (tokenset, attributes, done) {  
   return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (vol) => {  
     if (attributes.resumeId != vol.resumeId) {
-      var document = {
-        documentId: vol.resumeId,
-        grantAccess: {
-          Key: crypto.decrypt(vol.grantAccess, vol.iv),
-          Nonce: vol.nonce,
-        },
-      };
-      await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
-        log.error(err);
-        return done({ message: 'An unexpected error occured trying to update your application.'});
-      });
+      if (vol.grantAccess && vol.iv) {
+        var document = {
+          documentId: vol.resumeId,
+          grantAccess: {
+            Key: crypto.decrypt(vol.grantAccess, vol.iv),
+            Nonce: vol.nonce,
+          },
+        };
+        await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
+          log.error(err);
+          return done({ message: 'An unexpected error occured trying to update your application.'});
+        });
+      }
       if (attributes.resumeId) {
         var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
         var encryptedKey = crypto.encrypt(grantKey.Key);
@@ -208,5 +230,6 @@ module.exports = {
   selectVolunteer: selectVolunteer,
   getResumes: getResumes,
   getVolunteer: getVolunteer,
-  updateVolunteer:updateVolunteer,
+  updateVolunteer: updateVolunteer,
+  getVolunteerResumeAccess: getVolunteerResumeAccess,
 };
