@@ -205,7 +205,7 @@ module.exports.getDocumentAccess = async (tokenset, document, applicationId) => 
       if(err || res.statusCode !== 200) {
         reject({ message: util.format('Error getting document token for document %s.', document.documentId) });
       } else {
-        resolve();
+        resolve(res.body);
       }
     });
   });

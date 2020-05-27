@@ -27,7 +27,7 @@ var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_of
 var ProfileAlertMessageTemplate = require('../templates/profile_alert_message_template.html');
 var ProfileBadgePreviewTemplate = require('../templates/profile_badge_preview_template.html');
 var ProfileBadgeDetailsTemplate = require('../templates/profile_badge_details_template.html');
-
+var ProfileApplicationTemplate = require('../templates/profile_application_template.html');
 
 var ProfileShowView = Backbone.View.extend({
   events: {
@@ -51,6 +51,7 @@ var ProfileShowView = Backbone.View.extend({
     'click .applicant-select'       : 'selectApplicant',
     'click .applicant-no-select'    : 'selectApplicant',
     'click .change-selection'       : 'removeSelections',
+    'click .read-more'              : 'readMore',
   },
 
   initialize: function (options) {
@@ -65,6 +66,7 @@ var ProfileShowView = Backbone.View.extend({
     this.userData ={};
     this.params = new URLSearchParams(window.location.search);
     this.applicant =[];
+    this.task={};
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -152,10 +154,12 @@ var ProfileShowView = Backbone.View.extend({
     }
     if(data.taskId && data.volunteerId){
       this.getApplicantData();
+      this.getTaskTagsInfo();
+    
       data.applicant= this.applicant;
     }
  
-    this.userData= data; 
+    this.userData= data;  
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
@@ -168,6 +172,13 @@ var ProfileShowView = Backbone.View.extend({
     this.dataBureauOffice = data.bureauOffice;
     this.renderBureauOffices();
     this.renderBadges(data);
+    var detail= _.findWhere(this.task.tags, {type: 'task-time-required',name:'Detail'});
+    var lateral=_.findWhere(this.task.tags, {type: 'task-time-required',name:'Lateral'});
+    
+    if(!_.isEmpty(detail) ||!_.isEmpty(lateral)){
+      this.getDocument();
+      this.renderApplicantSection();
+    }
    
     if (data.user.id !== data.data.id) {
       if (data.data.hiringPath != 'student') {
@@ -178,6 +189,33 @@ var ProfileShowView = Backbone.View.extend({
     }
 
     return this;
+  },
+
+  getTaskTagsInfo: function () {
+    var taskId = this.params.get('tid');
+    $.ajax({
+      url: '/api/task/' + taskId ,
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.task = data;    
+      }.bind(this),
+    });
+  },
+
+  getDocument: function () {
+    var taskId = this.params.get('tid');
+    var volunteerId= this.params.get('vid');    
+    $.ajax({
+      url: '/api/volunteer/'+ volunteerId +'/resume'+'?' + $.param({
+        taskId:taskId,
+      }),  
+      type: 'GET',
+      async: false,
+      success: function (data) {
+           
+      }.bind(this),
+    });
   },
 
   filterCreated: function (item) {
@@ -192,6 +230,25 @@ var ProfileShowView = Backbone.View.extend({
   renderBadges: function (data){
     var badgesPreviewTemplate = _.template(ProfileBadgePreviewTemplate)(data);   
     $('#profile_badge_preview').html(badgesPreviewTemplate);
+  },
+
+  renderApplicantSection:function (){ 
+    this.data={
+      statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
+    };
+    var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
+    $('#applicant-detail-lateral').html(profileApplicationTemplate);
+  },
+  
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('statement-of-interest')) {
+      $('.statement-of-interest').removeClass('read-less');
+      $('a.statement-of-interest.read-more').hide();
+      $('div.statement-of-interest').addClass('show');
+    }
   },
 
   renderOpportunities: function (id) {
