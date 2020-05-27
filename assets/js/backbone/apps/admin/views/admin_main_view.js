@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 
 var AdminUserView = require('./admin_user_view');
+var AdminUserDetailsView = require('./admin_user_details_view');
 var AdminCommunityCycleView = require('./admin_community_cycle_view');
 var AdminCommunityApplicantView = require('./admin_community_applicant_view');
 var AdminCommunityApplicantSubmittedView = require('./admin_community_applicant_submitted_view');
@@ -91,6 +92,10 @@ var AdminMainView = Backbone.View.extend({
           this.initializeAdminUserView(target, this.options[target + 'Id']);
           this.adminUserView.render();
           break;
+        case 'user-details': {
+          this.initializeAdminUserDetailsView(this.options[target + 'Id']);
+          break;
+        }
         case 'cycles':
           this.initializeAdminCommunityCycleView(target, this.options[target + 'Id']);
           this.adminCommunityCycleView.render();
@@ -194,8 +199,6 @@ var AdminMainView = Backbone.View.extend({
     });
   },
 
- 
-
   initializeAdminCommunityEditView: function (targetId) {
     if (this.adminCommunityEditView) {
       this.adminCommunityEditView.cleanup();
@@ -216,6 +219,16 @@ var AdminMainView = Backbone.View.extend({
       target: target,
       targetId: targetId,
     });
+  },
+
+  initializeAdminUserDetailsView: function (targetId) {
+    this.adminUserDetailsView && this.adminUserDetailsView.cleanup();
+
+    this.adminUserDetailsView = new AdminUserDetailsView({
+      el: '#admin-user-details',
+      userId: targetId,
+    });
+    this.adminUserDetailsView.render();
   },
 
   initializeAdminAgenciesView: function (agencyId, replace) {

@@ -91,8 +91,16 @@ global.addLocation = function (location) {
  * Example: initializeKeywordSearch.bind(this)('#keyword-search')
  * 
  * @param {string} element the id of the autocomplete field
+ * @param {Object[]=} limits list of filter types with maximum number that can be selected
+ * @param {string} limits[].type filter type to apply a limit to
+ * @param {number} limits[].limit maximum number of filters that can be selected
  */
-global.initializeKeywordSearch = function (element) {
+global.initializeKeywordSearch = function (element, limits) {
+  var overrideTypes = {
+    'career fields': 'career',
+    'skills': 'skill',
+    'agencies': 'agency',
+  };
   $(element).keywordAC({
     source: function (request, response) {
       $.ajax({
@@ -100,6 +108,13 @@ global.initializeKeywordSearch = function (element) {
         dataType: 'json',
         data: { term: request.term.trim() },
         success: function (data) {
+          if(limits) {
+            limits.forEach(limit => {
+              if([].concat(this.filters[overrideTypes[limit.type] || limit.type]).length >= limit.limit) {
+                data[limit.type] = [];
+              }
+            });
+          }
           response(parseKeywordAutocompleteResults(request.term, data, this.filters));
         }.bind(this),
       });
@@ -107,13 +122,8 @@ global.initializeKeywordSearch = function (element) {
     minLength: 2,
     select: function (event, ui) {
       event.preventDefault();
-      if (ui.item.type == 'career fields') {
-        this.filters['career'] = _.union(this.filters['career'], [ui.item.name]);
-      } else if (ui.item.type == 'agencies') {
-        this.filters['agency'] = _.union(this.filters['agency'], [ui.item.name]);
-      } else {
-        this.filters[ui.item.type] = _.union(this.filters[ui.item.type], [ui.item.name]);
-      }
+      ui.item.type = overrideTypes[ui.item.type] || ui.item.type;
+      this.filters[ui.item.type] = _.uniq(_.union(this.filters[ui.item.type], [_.pick(ui.item, 'type', 'name', 'id')]), (item) => { return item.id; });
       this.filters.page = 1;
       this.filter();
       $(element).val('');

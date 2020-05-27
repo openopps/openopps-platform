@@ -33,6 +33,7 @@ var TaskListView = Backbone.View.extend({
     'click .usajobs-search-pills__item'       : 'removeFilter',
     'click #search-pills-remove-all'          : 'removeAllFilters',
     'click .task-link'                        : 'loadTask',
+    'keypress #search'                        : 'searchOnEnter',
   },
 
   initialize: function (options) {
@@ -90,7 +91,7 @@ var TaskListView = Backbone.View.extend({
       }
     });
     this.filter();
-    this.initializeKeywordSearch();
+    initializeKeywordSearch.bind(this)('#search', [{ type: 'skills', limit: 5 }]);
     this.$('.usajobs-open-opps-search__box').show();
     return this;
   },
@@ -112,35 +113,7 @@ var TaskListView = Backbone.View.extend({
     } else {
       $('[class*="openopps-system-alert community-"]').show();
     }
-  },
-
-  initializeKeywordSearch: function () {
-    $('#search').autocomplete({
-      source: function (request, response) {
-        $.ajax({
-          url: '/api/ac/tag',
-          dataType: 'json',
-          data: {
-            type: 'keywords',
-            q: request.term.trim(),
-          },
-          success: function (data) {
-            response(_.reject(data, function (item) {
-              return _.findWhere(this.filters.keywords, _.pick(item, 'type', 'name', 'id'));
-            }.bind(this)));
-            $('#search-results-loading').hide();
-          }.bind(this),
-        });
-      }.bind(this),
-      minLength: 3,
-      select: function (event, ui) {
-        event.preventDefault();
-        this.filters['keywords'] = _.union(this.filters['keywords'], [_.pick(ui.item, 'type', 'name', 'id')]);
-        this.filters.page = 1;
-        this.filter();
-        $('#search').val('');
-      }.bind(this),
-    });
+    initializeKeywordSearch.bind(this)('#search', [{ type: 'skills', limit: 5 }]);
   },
 
   initializeSelect2: function () {
@@ -406,7 +379,7 @@ var TaskListView = Backbone.View.extend({
       this.renderNoResults();
     } else {
       $('#search-tab-bar-filter-count').text(this.appliedFilterCount);
-      var pageSize = 10;
+      var pageSize = 20;
       this.renderPage(searchResults, page, pageSize);
       this.renderPagination({
         page: page,
@@ -557,6 +530,11 @@ var TaskListView = Backbone.View.extend({
     }
     this.filters.page = 1;
     this.filter();
+  },
+  searchOnEnter : function (event){
+    if((event.keyCode==13 || event.keyCode==10) &&!event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey){
+      this.search();
+    }
   },
 
   toggleStateFilters: function (event) {
@@ -745,7 +723,7 @@ var TaskListView = Backbone.View.extend({
             return { type: key, name: this.filterLookup[key][value], id: value };
           } else if (key == 'payPlan') {        
             return { type: key, name: this.filterLookup[key][value].name, id: value };
-          } else if (key == 'location' || key == 'skill' || key == 'series') {
+          } else if (_.contains(['location', 'skill', 'series', 'agency'], key)) {
             var parts = value.split('|');
             return { type: key, name: parts[0], id: parts[1] };
           } else {

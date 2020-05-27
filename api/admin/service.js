@@ -83,6 +83,8 @@ function getUserListOrderByClause (sortValue) {
       return 'users."isAdmin" desc';
     case 'isAgencyAdmin':
       return 'users."isAgencyAdmin" desc';
+    case 'isApprover':
+      return 'users.is_Approver desc';
     case 'is_manager':
       return 'users.is_manager desc';
     case 'agency':
@@ -467,6 +469,13 @@ module.exports.getUsers = async function (page, filter, sort) {
   result.users = (await db.query(usersBySortQuery, [page])).rows;
   result.count = result.users.length > 0 ? +result.users[0].full_count : 0;
   result = await this.getUserTaskMetrics (result);
+  return result;
+};
+
+module.exports.getUserDetails = async function (userId) {
+  var result = {};
+  var userDetailsQuery = fs.readFileSync(__dirname + '/sql/getUserDetails.sql', 'utf8').toString();
+  result.user = (await db.query(userDetailsQuery, [userId])).rows[0];
   return result;
 };
 

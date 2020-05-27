@@ -30,6 +30,7 @@ Admin.ShowController = BaseController.extend({
       subAction: options.subAction,
       agencyId: options.agencyId,
       communityId: options.communityId,
+      userId: options.userId,
       el: this.el,
     }).render();
   },

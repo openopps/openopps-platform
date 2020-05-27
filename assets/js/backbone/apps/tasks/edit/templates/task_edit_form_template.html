@@ -70,9 +70,9 @@
                   </button>
                 </li>
                 <li>
-                  <button type="button" class="opportunity-options__button opportunity-people" id="5pluspeople" value="5+">
+                  <button type="button" class="opportunity-options__button opportunity-people" id="6pluspeople" value="6+">
                     <span class="opportunity-options__icon">
-                      5+
+                      6+
                     </span>
                     <span class="opportunity-options__text">people</span>
                   </button>
@@ -181,20 +181,20 @@
               </fieldset> 
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Length of the detail</legend>
-                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-length-type" >  
-                <p class="label-brief">What is the length of the detail?</p>
-                <span class="field-validation-error" style="display:none;">Please select any choice.</span>
-                <ul class="usa-unstyled-list" id="detail-length">
-                  <li>
-                    <input id="up-to-90" name="detail-length" type="radio" value="Up to 90 days"  <% if (data.detailLength=='Up to 90 days') { %><%= "checked" %><% } %>>
-                    <label for="up-to-90">Up to 90 days</label>
-                  </li>
-                  <li>
-                    <input id="more-than-90" name="detail-length" type="radio" value="More than 90 days" <% if (data.detailLength == 'More than 90 days' ) { %><%= "checked" %><% } %>>
-                    <label for="more-than-90">More than 90 days</label>
-                  </li>
-                </ul>
-              </div> 
+                <div class="form-group required-input usa-fieldset-inputs detail-section" id="detail-length-type">  
+                  <p class="label-brief">What is the length of the detail?</p>
+                  <span class="field-validation-error" style="display:none;">Please select any choice.</span>
+                  <ul class="usa-unstyled-list" id="detail-length">
+                    <li>
+                      <input id="up-to-120" name="detail-length" type="radio" value="Less than 120 days" <% if (data.detailLength == 'Less than 120 days') { %><%= "checked" %><% } %>>
+                      <label for="up-to-120">Less than 120 days</label>
+                    </li>
+                    <li>
+                      <input id="more-than-120" name="detail-length" type="radio" value="120 days or greater" <% if (data.detailLength == '120 days or greater') { %><%= "checked" %><% } %>>
+                      <label for="more-than-120">120 days or greater</label>
+                    </li>
+                  </ul>
+                </div>
               </fieldset>    
               <fieldset class="usajobs-fieldset">
                 <legend class="usa-sr-only">Hours need</legend>       
@@ -350,77 +350,63 @@
               <span class="show-markdown-details"></span>
               <div class="markdown-edit markdown-edit-details"></div>
             </div>
-            <ul class="expandorama">
-              <li>
-                <label for="opportunity-skills" class="expandorama-button expandorama-button-skills" aria-controls="skills">
-                  <!-- <i class="fas fa-minus-circle"></i> -->
-                  <h3>
-                    <span class="icon"><span class="sr-only">Open/Close drawer</span></span>
-                    What you'll learn <span class="usa-input-optional"></span>
-                  </h3>
-                </label>
-                <div class="required-input expandorama-content" id="skills">
+            <ul class="opportunity-drawers">
+              <li class="opportunity-drawer">
+                <button class="opportunity-drawer-button opportunity-drawer-button-skills" aria-controls="skills">
+                  What you'll learn <span class="usa-input-optional"></span>
+                </button>
+                <div id="skills" class="opportunity-drawer-content">
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
                   <p>List the types of skills the participant will learn and other benefits.</p>
                   <span class="show-markdown-skills"></span>
+                  <label for="opportunity-skills" class="sr-only">What you'll learn</label>
                   <div class="markdown-edit markdown-edit-skills"></div>
                 </div>
-              </li>        
-              <li>
-                <label for="opportunity-team" class="expandorama-button expandorama-button-team" aria-controls="team">
-                  <h3>
-                    <span class="icon"><span class="sr-only">Open/Close drawer</span></span>
-                    Who we are <span class="usa-input-optional"></span>
-                  </h3>
-                </label>
-                <div class="required-input expandorama-content" id="team">
+              </li>
+              <li class="opportunity-drawer">
+                <button class="opportunity-drawer-button opportunity-drawer-button-team" aria-controls="team">
+                  Who we are <span class="usa-input-optional"></span>
+                </button>
+                <div id="team" class="opportunity-drawer-content">
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
                   <p>Briefly describe your team, department, or agency.</p>
                   <span class="show-markdown-team"></span>
+                  <label for="opportunity-team" class="sr-only">Who we are</label>
                   <div class="markdown-edit markdown-edit-team"></div>
                 </div>
               </li>
-
-              <li id="requirement-area" style="display:none;">
-                <label for="opportunity-requirement" class="expandorama-button expandorama-button-requirement" aria-controls="requirement">
-                  <h3>
-                    <span class="icon"><span class="sr-only">Open/Close drawer</span></span>
-                    Requirements <span class="usa-input-optional"></span>
-                  </h3>
-                </label>
-                <div class="required-input expandorama-content" id="requirement">
+              <li class="opportunity-drawer" id="requirement-area" style="display:none">
+                <button class="opportunity-drawer-button opportunity-drawer-button-requirement" aria-controls="requirement">
+                  Requirements <span class="usa-input-optional"></span>
+                </button>
+                <div id="requirement" class="opportunity-drawer-content">
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
                   <p>List any required certifications, training, or qualifications the participant must have to participate.</p>
                   <span class="show-markdown-requirement"></span>
+                  <label for="opportunity-requirement" class="sr-only">Requirements</label>
                   <div class="markdown-edit markdown-edit-requirement"></div>
                 </div>
               </li>
-
-              <li id="apply-participant-area" style="display:none;">
-                <label for="opportunity-apply" class="expandorama-button expandorama-button-apply" aria-controls="apply-participant">
-                  <h3>
-                    <span class="icon"><span class="sr-only">Open/Close drawer</span></span>
-                    How to apply <span class="usa-input-optional"></span>
-                  </h3>
-                </label>
-                <div class="required-input expandorama-content" id="apply-participant">
+              <li class="opportunity-drawer" id="apply-participant-area" style="display:none">
+                <button class="opportunity-drawer-button opportunity-drawer-button-apply" aria-controls="apply-participant">
+                  How to apply <span class="usa-input-optional"></span>
+                </button>
+                <div id="apply-participant" class="opportunity-drawer-content">
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
                   <p>Please provide any additional steps a participant must take to apply.</p>
                   <span class="show-markdown-apply"></span>
+                  <label for="opportunity-apply" class="sr-only">How to apply</label>
                   <div class="markdown-edit markdown-edit-apply"></div>
                 </div>
               </li>
-              
-              <li>
-                <label for="task_tag_keywords" class="expandorama-button expandorama-button-keywords" aria-controls="keywords">
-                  <h3>
-                    <span class="icon"><span class="sr-only">Open/Close drawer</span></span>
-                    Related keyword <span class="usa-input-optional"></span>
-                  </h3>
-                </label>
-                <div class="required-input expandorama-content" id="keywords">
+              <li class="opportunity-drawer">
+                <button class="opportunity-drawer-button opportunity-drawer-button-keywords" aria-controls="keywords">
+                  Related keyword <span class="usa-input-optional"></span>
+                </button>
+                <div id="keywords" class="opportunity-drawer-content">
                   <span class="field-validation-error error-html" style="display:none;">The special characters '<' or '>' are not allowed.</span>
                   <p>List the keywords to help describe an opportunity.</p>
+                  <label for="opportunity-team" class="sr-only">Related keyword</label>
                   <input type="hidden" id="task_tag_keywords" name="task_tag_keywords" class="fullwidth" />
                 </div>
               </li>

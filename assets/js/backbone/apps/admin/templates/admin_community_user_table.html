@@ -74,7 +74,7 @@
           <a class="link-backbone" href="/profile/<%- u.id %>"><%- u.name %></a>
         </td>
         <td class="admin-table-username">
-          <% if (u.government_uri) { %><a class="link-backbone" href="/profile/<%- u.id %>"><%- u.government_uri %></a><% } else { %> <% } %>
+          <% if (u.government_uri) { %><a href="mailto:<%- u.government_uri %>"><%- u.government_uri %></a><% } else { %> <% } %>
         </td>
         <% if (community.referenceId=='dos') { %>
           <td><%- (u.bureau || {}).name %></td>

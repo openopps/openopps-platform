@@ -100,8 +100,11 @@ var TaskItemView = BaseView.extend({
     this.data.vol = vol;
     this.data.model.userId = this.data.model.owner.id;
     this.data.model.owner.initials = getInitials(this.data.model.owner.name);
-    var compiledTemplate = _.template(TaskShowTemplate)(this.data);
-
+    this.data.saveSelected=this.params.has('saveSelected');
+    this.data.selectedName= this.params.get('selectedName');
+    this.data.saveNotSelected=this.params.has('saveNotSelected');
+    
+    var compiledTemplate = _.template(TaskShowTemplate)(this.data); 
     this.$el.html(compiledTemplate);
     
     // $('#search-results-loading').hide();
@@ -110,10 +113,11 @@ var TaskItemView = BaseView.extend({
       this.updatePill('in progress', true);
     }
     $('time.timeago').timeago();
-    this.updateTaskEmail();
+    this.updateTaskEmail();  
     this.model.trigger('task:show:render:done');
     this.initializeProgress();
-
+    this.getEmailApplicants();
+    this.getSelectedApplicantsEmail();
     if (window.cache.currentUser && this.params.get('action') == 'apply' && !this.model.attributes.volunteer) {
       $('#apply').click();
 
@@ -181,6 +185,21 @@ var TaskItemView = BaseView.extend({
 
     this.$('#email').attr('href', link);
   },
+
+  getEmailApplicants : function (){  
+    var applicants= _.where(this.data.model.volunteers, { selected: null });
+    var applicantUsernames = applicants.map(applicant => { return applicant.governmentUri || applicant.username; });
+    var link = 'mailto:' + encodeURIComponent(applicantUsernames) ; 
+    this.$('#applicant-email').attr('href', link);
+  },
+
+  getSelectedApplicantsEmail: function (){
+    var selectedApplicants= _.where(this.data.model.volunteers, { selected: true });  
+    var selectedUsernames = selectedApplicants.map(applicant => { return applicant.governmentUri || applicant.username; });
+    var link = 'mailto:' + encodeURIComponent(selectedUsernames) ; 
+    this.$('#selected-email').attr('href', link);
+  },
+
 
   toggleAccordion: function (e) {
     var element = $(e.currentTarget);
