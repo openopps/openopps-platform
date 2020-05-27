@@ -1,4 +1,5 @@
 const _ = require ('lodash');
+const util = require('util');
 const crypto = require('crypto-wrapper');
 const log = require('log')('app:volunteer:service');
 const db = require('../../db');
@@ -152,7 +153,9 @@ async function getVolunteerResumeAccess (tokenset, id) {
         },
       };
       Profile.getDocumentAccess(tokenset, document, volunteer.taskId).then(documentAccess => {
-        resolve(documentAccess);
+        var baseURL = [openopps.auth.documentAccessURL, document.documentId].join('/');
+        var params = util.format('k=%s&n=%s&e=%s', documentAccess.Key, documentAccess.Nonce, documentAccess.Expire);
+        resolve([baseURL, params].join('?'));
       }).catch((err) => {
         reject(err);
       });

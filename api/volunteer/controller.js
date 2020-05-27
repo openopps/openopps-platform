@@ -46,7 +46,7 @@ router.get('/api/volunteer/:id/resume', auth, auth.checkToken, async (ctx, next)
     ctx.status = 200;
     ctx.body = {
       key: ctx.state.user.tokenset.access_token,
-      documentAccess: result,
+      url: result,
     };
   }).catch(err => {
     ctx.status = 400;
