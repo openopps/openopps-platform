@@ -35,6 +35,7 @@ function generatePasswordReset (user) {
 
 async function register (ctx, attributes, done) {
   attributes.username = attributes.username.toLowerCase().trim();
+  attributes.agency_id = attributes.tags[0];
   if((await dao.User.find('lower(username) = ?', attributes.username)).length > 0) {
     done({ message: 'The email address provided is not a valid government email address or is already in use.' });
   } else {
