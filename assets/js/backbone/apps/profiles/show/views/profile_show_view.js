@@ -52,6 +52,7 @@ var ProfileShowView = Backbone.View.extend({
     'click .applicant-no-select'    : 'selectApplicant',
     'click .change-selection'       : 'removeSelections',
     'click .read-more'              : 'readMore',
+    'click .download-resume'        : 'getDownloadResume',
   },
 
   initialize: function (options) {
@@ -252,12 +253,29 @@ var ProfileShowView = Backbone.View.extend({
           }
         }.bind(this));
       }.bind(this));
-    } else {
+    } else {     
       var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
       $('#applicant-detail-lateral').html(profileApplicationTemplate);
     }
   },
 
+  getDownloadResume: function (){
+    this.getDocumentAccess(function (documentAccess) {
+      this.downloadResume(documentAccess);
+    }.bind(this));
+  }, 
+
+  downloadResume: function (documentAccess) {   
+    $('#search-results-loading').show();  
+    try {
+      downloadFile(documentAccess.url, { 'Authorization': 'Bearer ' + documentAccess.key }, this.model.get('name') + '-resume.pdf', () => {
+        $('#search-results-loading').hide();
+      });
+    } catch (err) {
+    //  window.open($(event.currentTarget).data('althref'), '_blank');
+      $('#search-results-loading').hide();
+    }
+  },
   getBuilderResume: function (documentAccess, callback) {
     $.ajax({
       url: documentAccess.url,
@@ -963,8 +981,7 @@ var ProfileShowView = Backbone.View.extend({
           volunteerId: volunteerId,
           select: select,
         },
-        success: function (data) { 
-         
+        success: function (data) {        
           if(data.selected=='true') {  
             Backbone.history.navigate('/tasks/' + data.taskId + '?saveSelected&selectedName='+data.assignedVolunteer.name, { trigger: true }); 
           }
