@@ -9,6 +9,7 @@
     <!-- <p><a href="#" class="statement-of-interest read-more">Read more</a></p> -->
     <br>
     <h3>Resume</h3>
+    <% if(resumeType=='builder') { %>
     <div class="builder-resume">
       <div class="usajobs-grid-full">
         <div class="usa-width-one-whole builder-resume__header">
@@ -170,5 +171,8 @@
         <% } %>
       </div>
     </div>
+    <% } else { %>
+      <a href="javascript:void(0)" class="download-resume">View</a> 
+      <% } %>
   </div>
 </div>
