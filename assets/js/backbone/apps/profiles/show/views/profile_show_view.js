@@ -240,18 +240,21 @@ var ProfileShowView = Backbone.View.extend({
       statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
       resumeType: this.applicant[0].resumeType,
     };
-    var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
-    $('#applicant-detail-lateral').html(profileApplicationTemplate);
     if (this.applicant[0].resumeType == 'builder') {
       this.getDocumentAccess(function (documentAccess) {
         this.getBuilderResume(documentAccess, function (error, data) {
           if (error) {
             showWhoopsPage();
           } else {
-            // render builder resume template with returned data
+            _.extend(this.data, data);
+            var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
+            $('#applicant-detail-lateral').html(profileApplicationTemplate);
           }
-        });
+        }.bind(this));
       }.bind(this));
+    } else {
+      var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
+      $('#applicant-detail-lateral').html(profileApplicationTemplate);
     }
   },
 
