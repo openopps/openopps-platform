@@ -178,6 +178,7 @@ var ProfileShowView = Backbone.View.extend({
     
     if((!_.isEmpty(detail) ||!_.isEmpty(lateral)) && this.applicant[0].statementOfInterest){
       $('#bureau-office-sect').hide();
+      $('.usajobs-opop-profile-opportunity__body').hide();
       this.renderApplicantSection();
     }
    
