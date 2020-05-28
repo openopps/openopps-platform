@@ -176,18 +176,20 @@ var ProfileShowView = Backbone.View.extend({
     var detail= _.findWhere(this.task.tags, {type: 'task-time-required',name:'Detail'});
     var lateral=_.findWhere(this.task.tags, {type: 'task-time-required',name:'Lateral'});
     
-    if(!_.isEmpty(detail) ||!_.isEmpty(lateral)){
+    if((!_.isEmpty(detail) ||!_.isEmpty(lateral)) && this.applicant[0].statementOfInterest){
       $('#bureau-office-sect').hide();
       this.renderApplicantSection();
     }
    
-    if (data.user.id !== data.data.id && _.isEmpty(detail) && _.isEmpty(lateral)) {
-      if (data.data.hiringPath != 'student') {
-        this.renderOpportunities(data.data.id);
-      } else {
-        this.renderInternshipOpportunities(data.data.id);
+    if ((_.isEmpty(detail) && _.isEmpty(lateral)) || !this.applicant[0].statementOfInterest) {
+      if (data.user.id !== data.data.id) {
+        if (data.data.hiringPath != 'student') {
+          this.renderOpportunities(data.data.id);
+        } else {
+          this.renderInternshipOpportunities(data.data.id);
+        }
       }
-    }
+    }   
 
     return this;
   },
