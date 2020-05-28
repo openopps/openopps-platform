@@ -181,7 +181,7 @@ var ProfileShowView = Backbone.View.extend({
       this.renderApplicantSection();
     }
    
-    if (data.user.id !== data.data.id) {
+    if (data.user.id !== data.data.id && _.isEmpty(detail) && _.isEmpty(lateral)) {
       if (data.data.hiringPath != 'student') {
         this.renderOpportunities(data.data.id);
       } else {
