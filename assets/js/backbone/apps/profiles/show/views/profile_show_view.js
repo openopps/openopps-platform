@@ -239,6 +239,7 @@ var ProfileShowView = Backbone.View.extend({
     this.data = {
       statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
       resumeType: this.applicant[0].resumeType,
+      formatPhoneNumber: formatPhoneNumber,
     };
     if (this.applicant[0].resumeType == 'builder') {
       this.getDocumentAccess(function (documentAccess) {
@@ -267,7 +268,7 @@ var ProfileShowView = Backbone.View.extend({
       },
       success: function (data) {
         callback(false, data);
-      },
+      }.bind(this),
       error: function () {
         callback(true);
       },
