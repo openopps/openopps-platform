@@ -1,174 +1,178 @@
 <div class="usajobs-opop-skill__body">
   <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
     <h2>Application</h2>
+    <br>
     <h3>Statement of Interest</h3>
-    <div class="statement-of-interest read-less">
+    <div class="statement-of-interest">
       <%= statementOfInterestHtml %>
     </div>
-    <p><a href="#" class="statement-of-interest read-more">Read more</a></p>
+    <!-- <p><a href="#" class="statement-of-interest read-more">Read more</a></p> -->
+    <br>
     <h3>Resume</h3>
     <% if(resumeType=='builder') { %>
-    <div class="builder-resume">
-      <!-- <div class="usajobs-grid-full">
-        <div class="usa-width-one-whole builder-resume__header">
-          <h4 class="builder-resume__title">Firstname Lastname</h4>
-          <p>Bonaire, GA 31005 United States</p>
-          <p>Mobile: 478-555-1212</p>
-          <p>Email: firstname.lastname@example.com</p>
+      <div class="builder-resume">
+        <div class="usajobs-grid-full">
+          <div class="usa-width-one-whole builder-resume__header">
+            <h4 class="builder-resume__title"><%- Contact.GivenName %> <%- Contact.LastName %></h4>
+            <p><%- Contact.CityName %>, <%- Contact.AddressCountrySubdivision %> <%- Contact.AddressPostalCode %> <%- Contact.AddressCountry %></p>
+            <% _.each(Contact.PhoneNumbers, function(PhoneNumber) { %>
+              <p><%- PhoneNumber.PhoneType %>: <%= formatPhoneNumber(PhoneNumber.DialNumber) %></p>
+            <% }); %>
+            <p>Email: <%- Contact.GovernmentURI %></p>
+          </div>
         </div>
-      </div> -->
-      <div class="builder-resume__body">
-        <% if (WorkExperiences.length > 0) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Work Experience:</h4>
+        <div class="builder-resume__body">
+          <% if (Resume.WorkExperiences.length > 0) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Work Experience:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <% _.each(Resume.WorkExperiences, function(workExperience) { %>
+                  <div class="builder-resume__work-experience">
+                    <p><strong><%- workExperience.EmployerName %></strong></p>
+                    <p><%- workExperience.LineOne %></p>
+                    <% if (workExperience.LineTwo) { %>
+                      <p><%- workExperience.LineTwo %></p>
+                    <% } %>
+                    <p><%- workExperience.CityName %>, <%- workExperience.CountrySubdivisionAbbreviation %> <%- workExperience.PostalCode %></p>
+                    <br>
+                    <p><strong><%- moment(workExperience.StartDate).format('MM/YYYY') %> - <% if (workExperience.EndDate) { %><%- moment(workExperience.EndDate).format('MM/YYYY') %><% } else { %>Present<% } %></strong></p>
+                    <p><%- workExperience.Salary %> <%- workExperience.CurrencyCode %> <%- workExperience.SalaryRateValue %></p>
+                    <p><strong>Hours per week:</strong> <%- workExperience.AvgHoursPerWeek %></p>
+                    <% if (workExperience.IsFederalPosition) { %>
+                      <p><strong>Series:</strong> <%- workExperience.PayPlanCode %></p>
+                      <p><strong>Pay plan:</strong> <%- workExperience.PayPlanName %></p>
+                      <p><strong>Grade:</strong> <%- workExperience.Grade %></p>
+                    <% } %>
+                    <p><strong><%- workExperience.FormalTitle %></strong> <% workExperience.IsFederalPosition ? '(This is a federal job)' : '' %></p>
+                    <p><strong>Duties, accomplishments, and related skills:</strong></p>
+                    <p><%- workExperience.Duties %></p>
+                    <% if (workExperience.ContactSupervisor == 'Y') { %>
+                      <p><strong>Supervisor:</strong> <%- workExperience.SupervisorName %> <%- workExperience.SupervisorPhone %></p>
+                      <p><strong>Okay to contact this supervisor:</strong> <%- workExperience.ContactSupervisor == 'Y' ? 'Yes' : 'No' %></p>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
             </div>
-            <div class="usa-width-three-fourths">
-              <% _.each(WorkExperiences, function(workExperience) { %>
-                <div class="builder-resume__work-experience">
-                  <p><strong><%- workExperience.EmployerName %></strong></p>
-                  <p><%- workExperience.LineOne %></p>
-                  <% if (workExperience.LineTwo) { %>
-                    <p><%- workExperience.LineTwo %></p>
-                  <% } %>
-                  <p><%- workExperience.CityName %>, <%- workExperience.CountrySubdivisionAbbreviation %> <%- workExperience.PostalCode %></p>
-                  <br>
-                  <p><strong><%- moment(workExperience.StartDate).format('MM/YYYY') %> - <%- moment(workExperience.EndDate).format('MM/YYYY') %></strong></p>
-                  <p><%- workExperience.Salary %> <%- workExperience.CurrencyCode %> <%- workExperience.SalaryRateValue %></p>
-                  <p><strong>Hours per week:</strong> <%- workExperience.AvgHoursPerWeek %></p>
-                  <% if (workExperience.IsFederalPosition) { %>
-                    <p><strong>Series:</strong> <%- workExperience.PayPlanCode %></p>
-                    <p><strong>Pay plan:</strong> <%- workExperience.PayPlanName %></p>
-                    <p><strong>Grade:</strong> <%- workExperience.Grade %></p>
-                  <% } %>
-                  <p><strong><%- workExperience.FormalTitle %></strong> <% workExperience.IsFederalPosition ? '(This is a federal job)' : '' %></p>
-                  <p><strong>Duties, accomplishments, and related skills:</strong></p>
-                  <p><%- workExperience.Duties %></p>
-                  <% if (workExperience.ContactSupervisor == 'Y') { %>
-                    <p><strong>Supervisor:</strong> <%- workExperience.SupervisorName %> <%- workExperience.SupervisorPhone %></p>
-                    <p><strong>Okay to contact this supervisor:</strong> <%- workExperience.ContactSupervisor == 'Y' ? 'Yes' : 'No' %></p>
-                  <% } %>
-                </div>
-              <% }) %>
+          <% } %>
+          <% if (Resume.Educations.length > 0) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Education:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <% _.each(Resume.Educations, function(education) { %>
+                  <div class="builder-resume__education">
+                    <p><strong><%- education.SchoolName %></strong> <%- education.CityName %>, <%- education.CountrySubdivisionAbbreviation %> <%- education.CountryName %></p>
+                    <p><%- education.DegreeLevel %>&nbsp;&nbsp;<% if(education.CompletionMonth && education.CompletionYear) { %><%- education.CompletionMonth %>/<%- education.CompletionYear %><% } %></p>
+                    <% if (education.GPA && education.GPAMax) { %>
+                      <p><strong>GPA:</strong> <%- education.GPA %> of a maximum <%- education.GPAMax %></p>
+                    <% } %>
+                    <% if (education.TotalCreditsEarned) { %>
+                      <p><strong>Credits Earned:</strong> <%- education.TotalCreditsEarned %> <%- education.CreditSystemValue %></p>
+                    <% } %>
+                    <% if (education.Major) { %>
+                      <p><strong>Major:</strong> <%- education.Major %></p>
+                    <% } %>
+                    <% if (education.Minor) { %>
+                      <p><strong>Minor:</strong> <%- education.Minor %></p>
+                    <% } %>
+                    <% if (education.HonorsValue) { %>
+                      <p><strong>Honors:</strong> <%- education.HonorsValue %></p>
+                    <% } %>
+                    <% if (education.CourseWorkValue) { %>
+                      <p><strong>Relevant Coursework, Licenses and Certifications:</strong></p>
+                      <p><%- education.CourseWorkValue %></p>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
             </div>
-          </div>
-        <% } %>
-        <% if (Educations.length > 0) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Education:</h4>
+          <% } %>
+          <% if (Resume.JobRelatedTraining) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Job Related Training:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <p><%- Resume.JobRelatedTraining %></p>
+              </div>
             </div>
-            <div class="usa-width-three-fourths">
-              <% _.each(Educations, function(education) { %>
-                <div class="builder-resume__education">
-                  <p><strong><%- education.SchoolName %></strong> <%- education.CityName %>, <%- education.CountrySubdivisionAbbreviation %> <%- education.CountryName %></p>
-                  <p><%- education.DegreeLevel %>&nbsp;&nbsp;<% if(education.CompletionMonth && education.CompletionYear) { %><%- education.CompletionMonth %>/<%- education.CompletionYear %><% } %></p>
-                  <% if (education.GPA && education.GPAMax) { %>
-                    <p><strong>GPA:</strong> <%- education.GPA %> of a maximum <%- education.GPAMax %></p>
-                  <% } %>
-                  <% if (education.TotalCreditsEarned) { %>
-                    <p><strong>Credits Earned:</strong> <%- education.TotalCreditsEarned %> <%- education.CreditSystemValue %></p>
-                  <% } %>
-                  <% if (education.Major) { %>
-                    <p><strong>Major:</strong> <%- education.Major %></p>
-                  <% } %>
-                  <% if (education.Minor) { %>
-                    <p><strong>Minor:</strong> <%- education.Minor %></p>
-                  <% } %>
-                  <% if (education.HonorsValue) { %>
-                    <p><strong>Honors:</strong> <%- education.HonorsValue %></p>
-                  <% } %>
-                  <% if (education.CourseWorkValue) { %>
-                    <p><strong>Relevant Coursework, Licenses and Certifications:</strong></p>
-                    <p><%- education.CourseWorkValue %></p>
-                  <% } %>
-                </div>
-              <% }) %>
+          <% } %>
+          <% if (Resume.LanguageSkills.length > 0) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Language Skills:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <% _.each(Resume.LanguageSkills, function(language) { %>
+                  <div class="builder-resume__language">
+                    <p><strong>Language:</strong> <%- language.Language %></p>
+                    <p class="builder-resume__language-inset"><strong>Spoken:</strong> <%- language.SpeakingDisplay %></p>
+                    <p class="builder-resume__language-inset"><strong>Written:</strong> <%- language.WritingDisplay %></p>
+                    <p class="builder-resume__language-inset"><strong>Read:</strong> <%- language.ReadingDisplay %></p>
+                  </div>
+                <% }) %>
+              </div>
             </div>
-          </div>
-        <% } %>
-        <% if (JobRelatedTraining) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Job Related Training:</h4>
+          <% } %>
+          <% if (Resume.Affiliations.length > 0) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Affiliations:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <% _.each(Resume.Affiliations, function(affiliation) { %>
+                  <p><%- affiliation.OrganizationName %> &mdash; <%- affiliation.Role %></p>
+                <% }) %>
+              </div>
             </div>
-            <div class="usa-width-three-fourths">
-              <p><%- JobRelatedTraining %></p>
+          <% } %>
+          <% if (Resume.References.length > 0) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>References:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <% _.each(Resume.References, function(reference) { %>
+                  <div class="builder-resume__reference">
+                    <p><strong>Name:</strong> <%- reference.ReferenceName %><% if (reference.ReferenceTypeValue === 'Professional') { %> (*)<% } %></p>
+                    <p class="builder-resume__reference-inset"><strong>Employer:</strong> <%- reference.ReferenceEmployer %></p>
+                    <p class="builder-resume__reference-inset"><strong>Title:</strong> <%- reference.ReferenceTitle %></p>
+                    <p class="builder-resume__reference-inset"><strong>Phone:</strong> <%= formatPhoneNumber(reference.ReferencePhone) %></p>
+                    <p class="builder-resume__reference-inset"><strong>Email:</strong> <%- reference.ReferenceEmail %></p>
+                  </div>
+                <% }) %>
+                <p>(*) Indicates professional reference</p>
+              </div>
             </div>
-          </div>
-        <% } %>
-        <% if (LanguageSkills.length > 0) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Language Skills:</h4>
+          <% } %>          
+          <% if (Resume.ProfessionalPublication) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Professional Publications:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <p><%- Resume.ProfessionalPublication %></p>
+              </div>
             </div>
-            <div class="usa-width-three-fourths">
-              <% _.each(LanguageSkills, function(language) { %>
-                <div class="builder-resume__language">
-                  <p><strong>Language:</strong> <%- language.Language %></p>
-                  <p class="builder-resume__language-inset"><strong>Spoken:</strong> <%- language.SpeakingDisplay %></p>
-                  <p class="builder-resume__language-inset"><strong>Written:</strong> <%- language.WritingDisplay %></p>
-                  <p class="builder-resume__language-inset"><strong>Read:</strong> <%- language.ReadingDisplay %></p>
-                </div>
-              <% }) %>
+          <% } %>
+          <% if (Resume.AdditionalInformation) { %>
+            <div class="builder-resume__section usajobs-grid-full">
+              <div class="usa-width-one-fourth">
+                <h4>Additional Information:</h4>
+              </div>
+              <div class="usa-width-three-fourths">
+                <p><%- Resume.AdditionalInformation %></p>
+              </div>
             </div>
-          </div>
-        <% } %>
-        <% if (Affiliations.length > 0) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Affiliations:</h4>
-            </div>
-            <div class="usa-width-three-fourths">
-              <% _.each(Affiliations, function(affiliation) { %>
-                <p><%- affiliation.OrganizationName %> &mdash; <%- affiliation.Role %></p>
-              <% }) %>
-            </div>
-          </div>
-        <% } %>
-        <% if (References.length > 0) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>References:</h4>
-            </div>
-            <div class="usa-width-three-fourths">
-              <% _.each(References, function(reference) { %>
-                <div class="builder-resume__reference">
-                  <p><strong>Name:</strong> <%- reference.ReferenceName %><% if (reference.ReferenceTypeValue === 'Professional') { %> (*)<% } %></p>
-                  <p class="builder-resume__reference-inset"><strong>Employer:</strong> <%- reference.ReferenceEmployer %></p>
-                  <p class="builder-resume__reference-inset"><strong>Title:</strong> <%- reference.ReferenceTitle %></p>
-                  <p class="builder-resume__reference-inset"><strong>Phone:</strong> <%- reference.ReferencePhone %></p>
-                  <p class="builder-resume__reference-inset"><strong>Email:</strong> <%- reference.ReferenceEmail %></p>
-                </div>
-              <% }) %>
-              <p>(*) Indicates professional reference</p>
-            </div>
-          </div>
-        <% } %>          
-        <% if (ProfessionalPublication) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Professional Publications:</h4>
-            </div>
-            <div class="usa-width-three-fourths">
-              <p><%- ProfessionalPublication %></p>
-            </div>
-          </div>
-        <% } %>
-        <% if (AdditionalInformation) { %>
-          <div class="builder-resume__section usajobs-grid-full">
-            <div class="usa-width-one-fourth">
-              <h4>Additional Information:</h4>
-            </div>
-            <div class="usa-width-three-fourths">
-              <p>AdditionalInformation</p>
-            </div>
-          </div>
-        <% } %>
+          <% } %>
+        </div>
       </div>
-    </div>
     <% } else { %>
       <a href="javascript:void(0)" class="download-resume">View</a> 
-      <% } %>
+    <% } %>
   </div>
 </div>

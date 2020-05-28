@@ -240,6 +240,7 @@ var ProfileShowView = Backbone.View.extend({
     this.data = {
       statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
       resumeType: this.applicant[0].resumeType,
+      formatPhoneNumber: formatPhoneNumber,
     };
     if (this.applicant[0].resumeType == 'builder') {
       this.getDocumentAccess(function (documentAccess) {
@@ -266,13 +267,13 @@ var ProfileShowView = Backbone.View.extend({
   }, 
 
   downloadResume: function (documentAccess) {   
-    $('#search-results-loading').show();  
+    $('#search-results-loading').show();
     try {
-      downloadFile(documentAccess.url, { 'Authorization': 'Bearer ' + documentAccess.key }, this.model.get('name') + '-resume.pdf', () => {
+      var filename = this.model.get('name') + '-resume.' + this.applicant[0].resumeType;
+      downloadFile(documentAccess.url, { 'Authorization': 'Bearer ' + documentAccess.key }, filename, function () {
         $('#search-results-loading').hide();
       });
     } catch (err) {
-    //  window.open($(event.currentTarget).data('althref'), '_blank');
       $('#search-results-loading').hide();
     }
   },
@@ -285,7 +286,7 @@ var ProfileShowView = Backbone.View.extend({
       },
       success: function (data) {
         callback(false, data);
-      },
+      }.bind(this),
       error: function () {
         callback(true);
       },
