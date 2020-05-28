@@ -934,4 +934,35 @@ form [type=submit] {
   margin-bottom: 0;
 }
 
+.builder-resume {
+  border-top: 1px solid $color-gray-light;
 
+  &__header {
+    text-align: center;
+    border-bottom: 1px solid $color-gray-light;
+    padding: 0.5rem 0;
+
+    h4, p {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  &__section {
+    border-bottom: 1px solid $color-gray-light;
+    padding: 0.5rem 0;
+
+    p {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  &__work-experience, &__education, &__language, &__reference {
+    margin-bottom: 1.5rem;
+
+    p.builder-resume__language-inset, p.builder-resume__reference-inset {
+      margin-left: 2rem;
+    }
+  }
+}
