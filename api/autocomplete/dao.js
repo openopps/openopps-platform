@@ -19,6 +19,11 @@ const agencyAutocompleteQuery = `select agency_id as id, name, abbr from (
 	union select 5 + ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower("name") like ? and parent_code is not null
 ) a order by row_number limit 5`;
 
+const departmentAutocompleteQuery = `select agency_id as id, name, abbr from (
+	select ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower(abbr) like ? and length(code) = 2 AND is_disabled = FALSE
+	union select 5 + ROW_NUMBER() over (order by agency_id), agency_id, name, abbr from agency where lower("name") like ? and length(code) = 2 AND is_disabled = FALSE
+) a order by row_number limit 5`;
+
 const tagAutocompleteQuery = 'select id, name from tagentity where type = ? and lower(name) like ? limit 5';
 
 const options = {
@@ -45,6 +50,7 @@ module.exports = function (db) {
       country:countryQuery,
       state: stateQuery,
       agencyAutocomplete: agencyAutocompleteQuery,
+      departmentAutocomplete: departmentAutocompleteQuery,
       tagAutocomplete: tagAutocompleteQuery,
     },
     options: options,

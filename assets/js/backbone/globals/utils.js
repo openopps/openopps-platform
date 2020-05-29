@@ -42,6 +42,23 @@ global.setSelectHeight = function (ele) {
   $(ele).height(newHeight);
 };
 
+global.placeCaretAtEnd = function (ele) {
+  ele.focus();
+  if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
+    var range = document.createRange();
+    range.selectNodeContents(ele);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != 'undefined') {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(ele);
+    textRange.collapse(false);
+    textRange.select();
+  }
+};
+
 /**
  * Takes a select element and wraps the text
  * 

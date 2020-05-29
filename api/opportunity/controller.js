@@ -93,14 +93,6 @@ router.get('/api/task/:id', async (ctx, next) => {
   ctx.body = task;
 });
 
-router.get('/api/comment/findAllBytaskId/:id', async (ctx, next) => {
-  if (ctx.isAuthenticated()) {
-    ctx.body = await service.commentsByTaskId(ctx.params.id);
-  } else {
-    ctx.body = { 'comments': [] };
-  }
-});
-
 router.post('/api/task', auth, async (ctx, next) => {
   ctx.request.body.userId = ctx.state.user.id;
   ctx.request.body.updatedBy = ctx.state.user.id;

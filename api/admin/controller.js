@@ -37,7 +37,7 @@ router.get('/api/admin/taskmetrics', auth.isAdminOrApprover, async (ctx, next) =
 });
 
 router.get('/api/admin/users', auth.isAdmin, async (ctx, next) => {
-  ctx.body = await service.getUsers(ctx.query.page, ctx.query.filter, ctx.query.sort);
+  ctx.body = await service.getUsers(ctx.query.page, ctx.query.filter, ctx.query.filterPermissions, ctx.query.sort);
 });
 
 router.get('/api/admin/user/:id', auth.isAdmin, async (ctx, next) => {
@@ -57,7 +57,7 @@ router.get('/api/admin/settings', auth.isAdminOrApprover, async (ctx, next) => {
     ctx.body = settings;
   }).catch(err => {
     ctx.status = 400;
-  })
+  });
 });
 
 router.put('/api/admin/setting', auth.isAdmin, async (ctx, next) => {

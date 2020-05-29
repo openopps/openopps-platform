@@ -1,4 +1,5 @@
 const elasticClient = require('./index');
+const log = require('log')('elastic:service');
 const dao = require('./dao');
 const _ = require('lodash');
 const fs = require('fs');
@@ -24,6 +25,9 @@ service.remapOpportunities = async function () {
       index: 'task',
       type: 'task',
       body: JSON.parse(fs.readFileSync('./elastic/task_mapping.json')).task,
+    }).catch(async err => {
+      log.error('Error updating mapping. %o', err);
+      await elasticClient.indices.delete({ index: 'task' });
     });
   }
 
@@ -242,6 +246,34 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
       }});
     },
   };
+  switch (query.sort) {
+    case 'relevance':
+    case undefined:
+      request.body.sort.unshift('_score');
+      break;
+    case 'title':
+      request.body.sort.unshift('title.keyword');
+      break;
+    case 'agency':
+      request.body.sort.unshift('agency.name');
+      break;  
+    case 'posted-date':
+      // already the base sort for Elastic
+      break;
+    case 'posted-by':
+      request.body.sort.unshift('ownerName');
+      break;
+    case 'status':
+      request.body.sort.unshift('state');
+      break;
+    case 'location': 
+      request.body.sort.unshift('locations.name');
+      break;
+    default:
+      request.body.sort.unshift(query.sort);
+      break;
+  }
+
   var filter_must = request.body.query.bool.filter.bool.must;
   var filter_must_not = request.body.query.bool.filter.bool.must_not;
   var should_match = request.body.query.bool.should;
@@ -321,8 +353,12 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
     }
   } else {
     request.addTerms(query.state, 'state', 'open');
+    if(query.locationType) { 
+      query.location = asArray(query.location || []).concat(query.locationType);
+    }
     request.addTerms(query.location, 'locations.name');
     request.addTerms(query.agency, 'agency.name');
+    request.addTerms(query.department, 'department.name');
   }
   request.addTerms(query.community, 'community.id');
   request.addTerms(query.isInternship, 'isInternship');
@@ -330,7 +366,6 @@ service.convertQueryStringToOpportunitiesSearchRequest = function (ctx, index){
   request.addTerms(query.career, 'careers.id');
   request.addTerms(query.series, 'series.code');
   request.addTerms(query.time, 'timeRequired');
-  request.addTerms(query.locationType, 'locationType');
   request.addTerms(query.language, 'languages.name');
   request.addTerms(query.payPlan, 'payPlan.id');
   request.addTerms(query.detailSelection, 'detailSelection');
@@ -381,6 +416,7 @@ function convertSearchResultsToResultModel (searchResult) {
     office: source.office,
     payPlan:source.payPlan,
     agency : source.agency,
+    ownerName:source.ownerName,
   };
   removeEmpty(model);
   return model;
