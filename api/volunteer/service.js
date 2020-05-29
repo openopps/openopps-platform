@@ -1,14 +1,24 @@
 const _ = require ('lodash');
+const util = require('util');
+const crypto = require('crypto-wrapper');
 const log = require('log')('app:volunteer:service');
 const db = require('../../db');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
+const Profile = require('../auth/profile');
 
-async function addVolunteer (attributes, done) {
+async function addVolunteer (tokenset, attributes, done) {
   var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', attributes.taskId, attributes.userId);
   if (volunteer.length == 0) {
     attributes.createdAt = new Date();
     attributes.updatedAt = new Date();
+    if (attributes.resumeId) {
+      var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
+      var encryptedKey = crypto.encrypt(grantKey.Key);
+      attributes.grantAccess = encryptedKey.data;
+      attributes.iv = encryptedKey.iv;
+      attributes.nonce = grantKey.Nonce;
+    }
     await dao.Volunteer.insert(attributes).then(async (volunteer) => {
       return done(null, volunteer);
     }).catch(err => {
@@ -122,6 +132,80 @@ async function sendAddedVolunteerNotification (user, volunteer, action) {
   }
 }
 
+async function getResumes (user) {
+  return new Promise((resolve, reject) => {
+    Profile.getDocuments(user.tokenset, 'secure_resume').then(documents => {
+      resolve(documents);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}
+
+async function getVolunteerResumeAccess (tokenset, id) {
+  return new Promise((resolve, reject) => {
+    dao.Volunteer.findOne('id = ?', id).then(volunteer => {
+      var document = {
+        documentId: volunteer.resumeId,
+        grantAccess: {
+          Key: crypto.decrypt(volunteer.grantAccess, volunteer.iv),
+          Nonce: volunteer.nonce,
+        },
+      };
+      Profile.getDocumentAccess(tokenset, document, volunteer.taskId).then(documentAccess => {
+        var baseURL = [openopps.auth.documentAccessURL, document.documentId].join('/');
+        var params = util.format('k=%s&n=%s&e=%s', documentAccess.Key, documentAccess.Nonce, documentAccess.Expire);
+        resolve([baseURL, params].join('?'));
+      }).catch((err) => {
+        reject(err);
+      });
+    }).catch(err => {
+      reject(err);
+    });
+  });
+}
+
+async function getVolunteer (volunteerId,taskId) {
+  return (await dao.Volunteer.find('id = ? and "taskId" = ?',volunteerId,taskId).catch(() => { return []; }));
+}
+
+async function updateVolunteer (tokenset, attributes, done) {  
+  return await dao.Volunteer.findOne('id = ?', attributes.id).then(async (vol) => {  
+    if (attributes.resumeId != vol.resumeId) {
+      if (vol.grantAccess && vol.iv) {
+        var document = {
+          documentId: vol.resumeId,
+          grantAccess: {
+            Key: crypto.decrypt(vol.grantAccess, vol.iv),
+            Nonce: vol.nonce,
+          },
+        };
+        await Profile.revokeDocumentAccess(tokenset, document, vol.taskId).catch((err) => {
+          log.error(err);
+          return done({ message: 'An unexpected error occured trying to update your application.'});
+        });
+      }
+      if (attributes.resumeId) {
+        var grantKey = await Profile.grantDocumentAccess(tokenset, attributes.resumeId, attributes.taskId);
+        var encryptedKey = crypto.encrypt(grantKey.Key);
+        attributes.grantAccess = encryptedKey.data;
+        attributes.iv = encryptedKey.iv;
+        attributes.nonce = grantKey.Nonce;
+      }
+    }
+    return await dao.Volunteer.update(attributes).then(async (volunteer) => {      
+      return done(null, volunteer);
+    }).catch((err) => {
+      log.error(err);
+      return done({ message: 'An unexpected error occured trying to update your application.'});
+    });
+  }).catch((err) => {
+    log.error(err);
+    return done({ message: 'An unexpected error occured trying to update your application.'});
+  });
+}
+
+
 async function sendDeletedVolunteerNotification (notificationInfo, action) {
   var data = {
     action: action,
@@ -134,7 +218,7 @@ async function sendDeletedVolunteerNotification (notificationInfo, action) {
   data.model.community = await dao.Community.findOne('community_id = (select community_id from task where id = ?)', notificationInfo.id).catch(() => { return null; });
   if(!notificationInfo.bounced) {
     notification.createNotification(data);
-  }
+  } 
 }
 
 module.exports = {
@@ -147,4 +231,8 @@ module.exports = {
   sendAddedVolunteerNotification: sendAddedVolunteerNotification,
   sendDeletedVolunteerNotification: sendDeletedVolunteerNotification,
   selectVolunteer: selectVolunteer,
+  getResumes: getResumes,
+  getVolunteer: getVolunteer,
+  updateVolunteer: updateVolunteer,
+  getVolunteerResumeAccess: getVolunteerResumeAccess,
 };

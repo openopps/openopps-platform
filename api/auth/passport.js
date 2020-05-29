@@ -65,12 +65,14 @@ passport.serializeUser(function (user, done) {
   done(null, {
     id: user.id,
     tokenset: user.tokenset,
+    urls: user.urls,
   });
 });
 
 passport.deserializeUser(async function (userObj, done) {
   var user = await fetchUser(userObj.id);
   user.tokenset = userObj.tokenset;
+  user.urls = userObj.urls;
   done(null, user);
 });
 

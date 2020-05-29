@@ -27,7 +27,7 @@ var ProfileBureauOfficePreviewTemplate = require('../templates/profile_bureau_of
 var ProfileAlertMessageTemplate = require('../templates/profile_alert_message_template.html');
 var ProfileBadgePreviewTemplate = require('../templates/profile_badge_preview_template.html');
 var ProfileBadgeDetailsTemplate = require('../templates/profile_badge_details_template.html');
-
+var ProfileApplicationTemplate = require('../templates/profile_application_template.html');
 
 var ProfileShowView = Backbone.View.extend({
   events: {
@@ -51,6 +51,8 @@ var ProfileShowView = Backbone.View.extend({
     'click .applicant-select'       : 'selectApplicant',
     'click .applicant-no-select'    : 'selectApplicant',
     'click .change-selection'       : 'removeSelections',
+    'click .read-more'              : 'readMore',
+    'click .download-resume'        : 'getDownloadResume',
   },
 
   initialize: function (options) {
@@ -65,6 +67,7 @@ var ProfileShowView = Backbone.View.extend({
     this.userData ={};
     this.params = new URLSearchParams(window.location.search);
     this.applicant =[];
+    this.task={};
 
     this.initializeAction();
     this.initializeErrorHandling();
@@ -152,10 +155,12 @@ var ProfileShowView = Backbone.View.extend({
     }
     if(data.taskId && data.volunteerId){
       this.getApplicantData();
+      this.getTaskTagsInfo();
+    
       data.applicant= this.applicant;
     }
  
-    this.userData= data; 
+    this.userData= data;  
     var template = _.template(ProfileShowTemplate)(data);
     $('#search-results-loading').hide();
     this.$el.html(template);
@@ -168,16 +173,56 @@ var ProfileShowView = Backbone.View.extend({
     this.dataBureauOffice = data.bureauOffice;
     this.renderBureauOffices();
     this.renderBadges(data);
-   
-    if (data.user.id !== data.data.id) {
-      if (data.data.hiringPath != 'student') {
-        this.renderOpportunities(data.data.id);
-      } else {
-        this.renderInternshipOpportunities(data.data.id);
-      }
+    var detail= _.findWhere(this.task.tags, {type: 'task-time-required',name:'Detail'});
+    var lateral=_.findWhere(this.task.tags, {type: 'task-time-required',name:'Lateral'});
+    
+    if((!_.isEmpty(detail) ||!_.isEmpty(lateral)) && this.applicant[0].statementOfInterest){
+      $('#bureau-office-sect').hide();
+      $('.usajobs-opop-profile-opportunity__body').hide();
+      this.renderApplicantSection();
     }
+   
+    if ((_.isEmpty(detail) && _.isEmpty(lateral)) || !this.applicant[0].statementOfInterest) {
+      if (data.user.id !== data.data.id) {
+        if (data.data.hiringPath != 'student') {
+          this.renderOpportunities(data.data.id);
+        } else {
+          this.renderInternshipOpportunities(data.data.id);
+        }
+      }
+    }   
 
     return this;
+  },
+
+  getTaskTagsInfo: function () {
+    var taskId = this.params.get('tid');
+    $.ajax({
+      url: '/api/task/' + taskId ,
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        this.task = data;    
+      }.bind(this),
+    });
+  },
+
+  getDocumentAccess: function (callback) {
+    var taskId = this.params.get('tid');
+    var volunteerId= this.params.get('vid');    
+    $.ajax({
+      url: '/api/volunteer/'+ volunteerId +'/resume'+'?' + $.param({
+        taskId:taskId,
+      }),  
+      type: 'GET',
+      async: false,
+      success: function (data) {
+        callback(data);
+      }.bind(this),
+      error: function () {
+        showWhoopsPage();
+      },
+    });
   },
 
   filterCreated: function (item) {
@@ -192,6 +237,74 @@ var ProfileShowView = Backbone.View.extend({
   renderBadges: function (data){
     var badgesPreviewTemplate = _.template(ProfileBadgePreviewTemplate)(data);   
     $('#profile_badge_preview').html(badgesPreviewTemplate);
+  },
+
+  renderApplicantSection:function (){ 
+    this.data = {
+      statementOfInterestHtml: marked(this.applicant[0].statementOfInterest),
+      resumeType: this.applicant[0].resumeType,
+      formatPhoneNumber: formatPhoneNumber,
+    };
+    if (this.applicant[0].resumeType == 'builder') {
+      this.getDocumentAccess(function (documentAccess) {
+        this.getBuilderResume(documentAccess, function (error, data) {
+          if (error) {
+            showWhoopsPage();
+          } else {
+            _.extend(this.data, data);
+            var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
+            $('#applicant-detail-lateral').html(profileApplicationTemplate);
+          }
+        }.bind(this));
+      }.bind(this));
+    } else {     
+      var profileApplicationTemplate = _.template(ProfileApplicationTemplate)(this.data);   
+      $('#applicant-detail-lateral').html(profileApplicationTemplate);
+    }
+  },
+
+  getDownloadResume: function (){
+    this.getDocumentAccess(function (documentAccess) {
+      this.downloadResume(documentAccess);
+    }.bind(this));
+  }, 
+
+  downloadResume: function (documentAccess) {   
+    $('#search-results-loading').show();
+    try {
+      var filename = this.model.get('name') + '-resume.' + this.applicant[0].resumeType;
+      downloadFile(documentAccess.url, { 'Authorization': 'Bearer ' + documentAccess.key }, filename, function () {
+        $('#search-results-loading').hide();
+      });
+    } catch (err) {
+      $('#search-results-loading').hide();
+    }
+  },
+  getBuilderResume: function (documentAccess, callback) {
+    $.ajax({
+      url: documentAccess.url,
+      method: 'GET',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + documentAccess.key);
+      },
+      success: function (data) {
+        callback(false, data);
+      }.bind(this),
+      error: function () {
+        callback(true);
+      },
+    });
+  },
+  
+  readMore: function (e) {
+    if (e.preventDefault) e.preventDefault();
+    var t = $(e.currentTarget);
+    
+    if (t.hasClass('statement-of-interest')) {
+      $('.statement-of-interest').removeClass('read-less');
+      $('a.statement-of-interest.read-more').hide();
+      $('div.statement-of-interest').addClass('show');
+    }
   },
 
   renderOpportunities: function (id) {
@@ -872,8 +985,7 @@ var ProfileShowView = Backbone.View.extend({
           volunteerId: volunteerId,
           select: select,
         },
-        success: function (data) { 
-         
+        success: function (data) {        
           if(data.selected=='true') {  
             Backbone.history.navigate('/tasks/' + data.taskId + '?saveSelected&selectedName='+data.assignedVolunteer.name, { trigger: true }); 
           }

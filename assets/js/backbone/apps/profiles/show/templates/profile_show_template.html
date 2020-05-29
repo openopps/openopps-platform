@@ -146,7 +146,7 @@
 
    
  <% if (dos) { %>
-  <div class="usajobs-opop-skill__body">
+  <div class="usajobs-opop-skill__body" id="bureau-office-sect">
     <div class="usajobs-open-opps-opportunity usajobs-open-opps-profile">
       <div class="usajobs-grid-full">
         <% if (data.isOwner || data.canEditProfile) { %>
@@ -222,10 +222,10 @@
           </div>
         </div>
       <% } %>
+      <div id="applicant-detail-lateral"></div>
     </main>
    <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
-    <% if (taskId && volunteerId) { %>
-     
+    <% if (taskId && volunteerId) { %>    
     <div id="applicant-section">
       <% if (_.where(applicant, { selected: true }).length == 1 ) { %>
         <aside class="usajobs-rightrail" id="rightrail">
@@ -261,7 +261,7 @@
       <% } %>
    </div>  
 
-    <% } %>
+    <% } %>   
        <div id="profile_badge_preview"></div>   
     <% } else if (data.hiringPath == 'student') { %>
       <aside class="usajobs-rightrail" id="rightrail">

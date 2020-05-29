@@ -12,7 +12,7 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
   if (await service.canAddVolunteer(ctx.request.body, ctx.state.user)) {
     var attributes = ctx.request.body;
     attributes.userId = ctx.state.user.id;
-    await service.addVolunteer(attributes, function (err, volunteer) {
+    await service.addVolunteer(ctx.state.user.tokenset, attributes, function (err, volunteer) {
       if (err) {
         return ctx.body = err;
       }
@@ -27,6 +27,53 @@ router.post('/api/volunteer', auth, async (ctx, next) => {
     ctx.status = 401;
     return ctx.body = null;
   }
+});
+
+router.get('/api/volunteer/user/resumes', auth, auth.checkToken, async (ctx, next) => {
+  await service.getResumes(ctx.state.user).then(resumes => {
+    ctx.status = 200;
+    ctx.body = {
+      key: ctx.state.user.tokenset.access_token,
+      resumes: resumes,
+    };
+  }).catch(err => {
+    ctx.status = 404;
+  });
+});
+
+router.get('/api/volunteer/:id/resume', auth, auth.checkToken, async (ctx, next) => {
+  await service.getVolunteerResumeAccess(ctx.state.user.tokenset, ctx.params.id, ctx.query.taskId).then(result => {
+    ctx.status = 200;
+    ctx.body = {
+      key: ctx.state.user.tokenset.access_token,
+      url: result,
+    };
+  }).catch(err => {
+    ctx.status = 400;
+  }); 
+});
+
+router.get('/api/volunteer/:id', auth, async (ctx, next) => {
+  await service.getVolunteer(ctx.params.id,ctx.query.taskId).then(result => {
+    ctx.body = result[0];
+  }).catch(err => {
+    ctx.status = 400;
+  }); 
+});
+
+router.put('/api/volunteer/:id', auth, async (ctx, next) => {
+  var attributes = ctx.request.body;
+  attributes.id= ctx.params.id;
+  attributes.updatedAt = new Date();
+  await service.updateVolunteer(ctx.state.user.tokenset, attributes, async (errors, result) => {    
+    if (errors) {
+      ctx.status = 400;
+      ctx.body = errors;
+    } else {     
+      ctx.status = 200;
+      ctx.body = result;
+    }
+  }); 
 });
 
 router.post('/api/volunteer/delete', auth, async (ctx, next) => {

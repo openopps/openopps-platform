@@ -9,6 +9,7 @@ const policy = {
   'connect-src': [
     'self',
     '*.usajobs.gov',
+    '*.usajobs.local',
   ],
   'img-src': [
     'self',

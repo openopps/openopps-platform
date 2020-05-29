@@ -37,7 +37,8 @@ var TaskItemView = BaseView.extend({
     'click .project-people__confirm'  : 'confirmParticipant',
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
-    'click .task-complete'            : 'taskComplete',
+    'click .task-complete'            : 'taskComplete', 
+    'click #update-application'       : 'updateApplication',  
   },
 
   modalOptions: {
@@ -517,18 +518,32 @@ var TaskItemView = BaseView.extend({
       //window.cache.userEvents.trigger('user:request:login');
     } else {
       var location = _.filter([window.cache.currentUser.cityName, window.cache.currentUser.countrySubdivision.value, window.cache.currentUser.country.value], _.identity);
+      var detail= _.findWhere(this.model.attributes.tags, {type: 'task-time-required',name:'Detail'});
+      var lateral=_.findWhere(this.model.attributes.tags, {type: 'task-time-required',name:'Lateral'});
+    
       if(location.length == 0 || !window.cache.currentUser.agency) {
         this.completeProfile(location, window.cache.currentUser.agency);
-      } else {
+      }
+      else if(window.cache.currentUser && (!_.isEmpty(detail)|| !_.isEmpty(lateral))){
+        Backbone.history.navigate('/apply/task/' + this.model.attributes.id , { trigger: true });
+      }
+      else {
         this.renderApplyModal(e, location);
       }
     }
   },
 
+  updateApplication: function (){   
+    var applicant= _.filter(this.data.model.volunteers,function (v){
+      return v.userId == window.cache.currentUser.id;
+    });
+    Backbone.history.navigate('/apply/task/' + this.model.attributes.id +'?edit=' + applicant[0].id , { trigger: true });
+  },
+
   renderApplyModal: function (e, location) {
     var skill = _.find(window.cache.currentUser.tags, function (tag) {
       return tag.type == 'skill';
-    });
+    }); 
     var options = _.extend(_.clone(this.modalOptions), {
       modalTitle: 'Do you want to participate?',
       modalBody: _.template(ParticipateCheckList)({e, skill}),
