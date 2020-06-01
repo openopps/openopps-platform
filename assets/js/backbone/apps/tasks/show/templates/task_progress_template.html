@@ -86,6 +86,12 @@
     <% } %>
 
     <% if (model.volunteers) { %>
+      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+      <% var noOfApplicants = _.where(model.volunteers, { selected: null }).length ; %>
+      <% if (!_.isEmpty(lateral) && (!model.canEditTask)) { %>
+        <h3>Number of applicants</h3>
+        <i class="fas fa-user"></i> <%- noOfApplicants %> applied
+        <% } else { %>  
       <h3>Selected applicants</h3>
       <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>
         <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>
@@ -178,7 +184,7 @@
           <div class="usa-accordion-content project-people__wrapper" aria-hidden="<%- !accordion.open %>">           
         <% } else { %>
           <div>
-            <h3>Applicants</h3>
+            <h3>Applicants</h3>          
           <% if (_.where(model.volunteers, { selected: null }).length > 0 ) { %> 
             <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>        
             <a  href="#" id="applicant-email"><i class="fas fa-envelope"></i>Email all applicants</a>
@@ -267,8 +273,7 @@
             <% }); %>
           <% } %>
         <% } %>
-      </div>
-         
+      </div>      
     <a href="javascript:void(0);" id="nextstep" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { selected: true }).length < 1) { %>disabled<% } %>"><span class="box-icon-text">Next step</span></a>    
      <div id="nextStepText"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>Do not click <strong>Next step</strong> until you have made your final selections. After you click <strong>Next step</strong>, we'll send out emails to your applicants.</div>    
     <a href="javascript:void(0);" id="complete" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { taskComplete: true }).length < 1 ) { %>disabled<% } %>"><span class="box-icon-text">Complete opportunity</span></a> 
@@ -277,5 +282,6 @@
   <% if (model.canEditTask && model.state != 'completed' && model.state != 'canceled') { %>
     <a class="usajobs-open-opps-opportunity__cancel" href="javascript:void();" id="task-cancel">Cancel this opportunity</a>
   <% } %>
+   <% } %> 
   </div>
 
