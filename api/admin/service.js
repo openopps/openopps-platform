@@ -63,6 +63,8 @@ function getOrderByClause (sortValue) {
       return 'lower(tasks.title)';
     case 'creator':
       return 'lower(tasks.owner->>\'last_name\'), lower(tasks.owner->>\'given_name\')';
+    case 'community':
+      return 'lower(tasks.community_name) nulls first';
     case 'agency':
       return 'lower(tasks.agency->>\'name\')';
     case 'bureau':
