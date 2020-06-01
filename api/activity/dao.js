@@ -23,7 +23,10 @@ const taskByTypeQuery = 'select tag.name, tag.id, count(*) ' +
   'from tagentity tag ' +
   'join tagentity_tasks__task_tags task_tags on task_tags.tagentity_tasks = tag.id ' +
   'join task on task.id = task_tags.task_tags ' +
-  'where type = ? and (task.state = \'open\' or (task.state = \'in progress\' and task.accepting_applicants)) ' +
+  'left join community on community.community_id = task.community_id ' +
+  'where type = ? ' +
+    'and (task.state = \'open\' or (task.state = \'in progress\' and task.accepting_applicants)) ' +
+    'and (community.target_audience = 1 or community.target_audience is null) ' +
   'group by tag.name, tag.id ' +
   'order by count(*) desc ' +
   'limit ?';
