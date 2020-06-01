@@ -232,9 +232,9 @@
           <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
             <h2>Selected <span class="fa fa-check"></span></h2>
           <p>
-           This applicant has been marked as selected. You can change your selection at any time.
+            This applicant has been marked as selected. Click the button below to change the applicant status to not-selected.
           </p> 
-          <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-selected" >Change selection</a>                
+          <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-selected"  data-behavior="not-select">Don't select</a>                
           </div>    
         </aside>           
         <% } else if (_.where(applicant, { selected: false }).length == 1 ) { %>
@@ -242,9 +242,9 @@
             <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
               <h2>Not-selected <span class="fa fa-times"></span></h2>
             <p>
-             This applicant has been marked as not-selected. You can change your selection at any time.
+              This applicant has been marked as not-selected. Click the button below to change the applicant status to selected.
             </p> 
-            <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-not-selected" >Change selection</a>                        
+            <a href="javascript:void(0);" class="usa-button change-selection" id="change-selection-not-selected" data-behavior="select">Select</a>                        
             </div>    
           </aside>  
         <% } else { %>
