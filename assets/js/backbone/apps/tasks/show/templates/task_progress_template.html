@@ -70,11 +70,11 @@
             <h3>Thanks for applying</h3>
             <div>We’ll email you with next steps. You can also check your profile for status updates.</div>
             <a href="javascript:void(0);" id="apply-cancel">Cancel your application</a>
-            <% var detail= _.findWhere(model.tags, {type: 'task-time-required',name:'Detail'});%>
-            <% var lateral=_.findWhere(model.tags, {type: 'task-time-required',name:'Lateral'});%>
-            <% if((!_.isEmpty(detail)|| !_.isEmpty(lateral)) && model.acceptingApplicants){ %>
+            <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+            <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+            <% if ((!_.isEmpty(detail) || !_.isEmpty(lateral)) && model.acceptingApplicants) { %>
               <a href="javascript:void(0);" id="update-application" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update Application</span></a>
-             <% } %>
+            <% } %>
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
@@ -109,12 +109,20 @@
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                      
                     <% if (model.canEditTask) { %>
-                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>                           
-                      <% } else { %> 
-                        <a href="/profile/<%- v.userId %>">View application</a>     
+                      <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+                      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+                      <% if (_.isEmpty(detail) && _.isEmpty(lateral)) { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View profile</a>     
+                        <% } %>
+                      <% } else { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% } %>
                       <% } %>
                     <% } %> 
                     <% if (model.canEditTask) { %>
@@ -138,8 +146,14 @@
           <% } else { %>
             <p class="project-people__assign-instruction">
               <% if (model.volunteers.length > 0) { %>
-                <% if (model.canEditTask) { %>            
-                  Click <strong> View application </strong> to review and select a participant.
+                <% if (model.canEditTask) { %>
+                  <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+                  <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+                  <% if (_.isEmpty(detail) && _.isEmpty(lateral)) { %>
+                    Click <strong>View profile</strong> to review and select a participant.
+                  <% } else { %>
+                    Click <strong>View application</strong> to review and select a participant.
+                  <% } %>
                 <% } else { %>
                   None selected.
                 <% } %>
@@ -188,10 +202,14 @@
                     </div>  
                     <div class="usajobs-open-opps-opportunity-requestor__body">
                       <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
-                      <% if (model.canEditTask) { %>                                                     
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>
+                      <% if (model.canEditTask) { %>
+                        <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+                        <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+                        <% if (_.isEmpty(detail) && _.isEmpty(lateral)) { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>
+                        <% } else { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>
+                        <% } %>
                       <% } %>
                     </div>              
                   </div>
@@ -226,13 +244,21 @@
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
                     <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
-                    <% if (model.canEditTask) { %>                                                     
-                      <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>                           
-                      <% } else { %> 
-                        <a href="/profile/<%- v.userId %>">View application</a>     
+                    <% if (model.canEditTask) { %>
+                      <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+                      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+                      <% if (_.isEmpty(detail) && _.isEmpty(lateral)) { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View profile</a>     
+                        <% } %>
+                      <% } else { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% } %>
                       <% } %>
                     <% } %>
                   </div> 
