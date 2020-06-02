@@ -87,11 +87,10 @@
 
     <% if (model.volunteers) { %>
       <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
-      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
-      <% var noOfApplicants = _.where(model.volunteers, { selected: null }).length ; %>
+      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>  
       <% if (!_.isEmpty(lateral) && (!model.canEditTask)) { %>
         <h3>Number of applicants</h3>
-        <i class="fas fa-user"></i> <%- noOfApplicants %> applied
+        <i class="fas fa-user"></i> <%- model.volunteers.length %> applied
         <% } else { %>  
       <h3>Selected applicants</h3>
       <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>
