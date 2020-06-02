@@ -95,6 +95,7 @@ var HomeView = Backbone.View.extend({
         target: 'task',
         handle: 'volTask',  // used in css id
         data: _.sortBy(_.filter(data.tasks.volunteered, this.filterArchived), 'updatedAt').reverse(),
+        myProfile: true,
         getStatus: this.getStatus,
       });
       this.volView.render();

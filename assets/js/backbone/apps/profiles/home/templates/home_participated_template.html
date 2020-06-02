@@ -32,6 +32,9 @@
             <tr class="usajobs-grid open-opps-row header">
               <th scope="col">Status</th>
               <th scope="col">Opportunity</th>
+              <% if (myProfile) { %>
+                <th scope="col">Certificate of completion</th>
+              <% } %>
               <th scope="col">Last updated</th>
             </tr>
             </thead>
@@ -43,12 +46,19 @@
                       <%= getStatus(data[i]).charAt(0).toUpperCase() + getStatus(data[i]).slice(1) %>
                     </span>
                   </td>
-                  <td class="open-opps-title">
+                  <td class="open-opps-title<% if (myProfile) { %>-60<% } %>">
                     <% if ( '' === data[ i ].title && 'draft' === data[ i ].state ) {
                       data[ i ].title = 'Untitled draft';
                     } %>
                     <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
                   </td>
+                  <% if (myProfile) { %>
+                    <td>
+                      <% if (getStatus(data[i]).match(/complete/i)) { %>
+                        <a href="/certificate/<%- data[i].id %>" aria-details="View certificate of completion for <%- data[i].title %>" target="_blank">View certificate <i class="fas fa-external-link-alt"></i></a>
+                      <% } %>
+                    </td>
+                  <% } %>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>
                     <%- updated.toLocaleDateString() %>
