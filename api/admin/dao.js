@@ -177,8 +177,7 @@ const communityTaskVolunteerPerUserQuery = 'select count(*) as participated from
   'where task.community_id = ? and volunteer."userId" = ? ';
 
 const ownerListQuery = 'select midas_user.id, midas_user.name ' +
-'from midas_user inner join tagentity_users__user_tags tags on midas_user.id = tags.user_tags ' +
-'inner join agency on agency.agency_id = midas_user.agency_id ' +
+'from midas_user inner join agency on agency.agency_id = midas_user.agency_id ' +
 'where midas_user.disabled = false and agency.agency_id = ? ';
 
 
