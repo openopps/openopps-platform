@@ -15,6 +15,11 @@ router.get('/api/ac/user', async (ctx, next) => {
   ctx.body = await service.userByName(ctx.query.q);
 });
 
+router.get('/api/ac/user/nameOrEmail', async (ctx, next) => {
+  log.info('ctx.query', ctx.query);
+  ctx.body = await service.userByNameOrEmail(ctx.query.q);
+});
+
 router.get('/api/ac/keyword', async (ctx, next) => {
   await service.keywordAutocomplete(ctx.query.term).then(results => {
     ctx.body = _.pickBy({

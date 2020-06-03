@@ -24,7 +24,6 @@ Admin.ShowController = BaseController.extend({
   // Initialize the admin view
   initialize: function (options) {
     this.options = options; 
-
     this.adminMainView = new AdminMainView({
       action: options.action,
       subAction: options.subAction,
@@ -32,6 +31,7 @@ Admin.ShowController = BaseController.extend({
       communityId: options.communityId,
       userId: options.userId,
       el: this.el,
+      community:{},
     }).render();
   },
 
@@ -220,23 +220,24 @@ Admin.ShowController = BaseController.extend({
     var taskId = $(event.currentTarget).data('task-id');
     var title = $( event.currentTarget ).data('task-title'); 
       
-    if(this.adminMainView.options.communityId){
+    if(this.adminMainView.options.communityId){    
+      this.getCommunity();    
       $.ajax({
         url: '/api/admin/community/changeOwner/' + taskId,
-      }).done(function (data) {
-        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title });
+      }).done(function (data) {                 
+        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title ,isClosedGroup:this.adminMainView.community.isClosedGroup});
       }.bind(this));
     }
     else{
       $.ajax({
         url: '/api/admin/changeOwner/' + taskId,
       }).done(function (data) {
-        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title });
+        this.displayChangeOwnerModal(event, { users: data, taskId: taskId, title: title, isClosedGroup:true });
       }.bind(this));
     }
   },
 
-  displayChangeOwnerModal: function (event, data) {
+  displayChangeOwnerModal: function (event, data) {   
     this.target = $(event.currentTarget).parent(); 
     if (this.modalComponent) { this.modalComponent.cleanup(); }
     var modalContent = _.template(ChangeOwnerTemplate)(data);
@@ -267,7 +268,7 @@ Admin.ShowController = BaseController.extend({
                 taskId: $('#task-change-owner').data('taskid'),
                 userId: $('#task-change-owner').select2('data').id,
               },
-            }).done(function (data) {
+            }).done(function (data) {             
               var newAuthor = '<a href="/profile/' + data.id + '">' + data.name + '</a>';
               this.target.siblings('.metrics-table__author').html(newAuthor);
               this.target = undefined;
@@ -283,9 +284,57 @@ Admin.ShowController = BaseController.extend({
         $('#task-change-owner').select2('destroy');
       },
     }).render();
-    setTimeout(function () {
-      this.initializeChangeOwnerOptions();
-    }.bind(this), 100);
+    if(!_.isEmpty(this.adminMainView.community) && !this.adminMainView.community.isClosedGroup){ 
+      setTimeout(function () {
+        this.initializeCommunityChangeOwnerOptions();
+      }.bind(this), 100);
+    }
+    else{
+      setTimeout(function () {
+        this.initializeChangeOwnerOptions();
+      }.bind(this), 100);
+    }
+  },
+
+  getCommunity: function () {
+    $.ajax({
+      url: '/api/admin/community/' + this.adminMainView.options.communityId,
+      type: 'GET',
+      dataType: 'json',
+      async:false,
+      success: function (community) {       
+        this.adminMainView.community= community;      
+      }.bind(this),    
+    });
+  },
+
+  initializeCommunityChangeOwnerOptions: function () {
+    $('#task-change-owner').select2({
+      placeholder: 'Search for a user',
+      minimumInputLength: 3,
+      ajax: {
+        url: '/api/ac/user/nameOrEmail',
+        dataType: 'json',
+        data: function (term) {
+          return { q: term };
+        },
+        results: function (data) {
+          return { results: data };
+        },
+      },
+      dropdownCssClass: 'select2-drop-modal',
+      formatResult: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatSelection: function (obj, container, query) {
+        return (obj.unmatched ? obj[obj.field] : _.escape(obj[obj.field]));
+      },
+      formatNoMatches: 'No user found by that name',
+    });
+    $('#task-change-owner').on('change', function (e) {
+      validate({ currentTarget: $('#task-change-owner') });
+    }.bind(this));
+    $('#task-change-owner').focus();
   },
 
   initializeChangeOwnerOptions: function () {

@@ -29,6 +29,18 @@ module.exports.userByName =  async function (name) {
     return tag;
   });
 };
+module.exports.userByNameOrEmail =  async function (name) {
+  var splitName = '%' + name.replace(/\s+/g, '%') + '%';
+  var result = await dao.User.query(
+    dao.query.userByNameOrEmail, name ? splitName : null
+  );
+  return result.map(tag => {
+    tag.field = 'value';
+    tag.value = [tag.name, (openopps.auth.loginGov.enabled ? (tag.governmentUri || tag.username): tag.username)].join(' - ');
+    
+    return tag;
+  });
+};
 
 module.exports.keywordAutocomplete = async function (term) {
   var searchString = term ? '%' + term.toLowerCase() + '%' : '';
