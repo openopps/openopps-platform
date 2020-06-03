@@ -62,7 +62,7 @@ async function getCompletedInternship (userId) {
 function getCertificateDetails (userId, taskId) {
   return new Promise((resolve, reject) => {
     pg.query({
-      text: `SELECT task.title, task."completedAt", midas_user."name", creator.name AS creator
+      text: `SELECT task.title, volunteer."updatedAt" as "completedAt", midas_user."name", creator.name AS creator
         FROM volunteer
         JOIN task ON task.id = volunteer."taskId"
         JOIN midas_user ON midas_user.id = volunteer."userId"

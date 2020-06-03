@@ -566,3 +566,531 @@
     }
   }
 }
+
+.certificate-page {
+  background: $color-white;
+}
+
+.completion-certificate {
+  display: flex;
+  background: $color-white;
+  padding: 10px;
+  justify-content: center;
+  align-content: flex-start;
+  flex-direction: column;
+
+  .border {
+    border: 3px solid #009688;
+    order: 1;
+    flex-grow: 1;
+    position: relative;
+    padding: 20px;
+
+    @include media($M) {
+      border-width: 4.6px;
+      padding: 23px;
+    }
+
+    @include media($ML) {
+      border-width: 6.3px;
+      padding: 27px;
+    }
+
+    @include media($L) {
+      border-width: 8px;
+      padding: 30px;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      width: 32px;
+      height: 32px;
+      border: solid $color-secondary;
+      border-width: 9px 0 0 9px;
+
+      @include media($M) {
+        top: -9px;
+        left: -9px;
+        width: 45px;
+        height: 45px;
+        border-width: 14px 0 0 14px;
+      }
+  
+      @include media($ML) {
+        top: -12px;
+        left: -12px;
+        width: 59px;
+        height: 59px;
+        border-width: 19px 0 0 19px;
+      }
+  
+      @include media($L) {
+        top: -16px;
+        left: -16px;
+        width: 72px;
+        height: 72px;
+        border-width: 24px 0 0 24px;
+      }
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      right: -6px;
+      width: 32px;
+      height: 32px;
+      border: solid $color-secondary;
+      border-width: 0 9px 9px 0;
+
+      @include media($M) {
+        bottom: -9px;
+        right: -9px;
+        width: 45px;
+        height: 45px;
+        border-width: 0 14px 14px 0;
+      }
+  
+      @include media($ML) {
+        bottom: -12px;
+        right: -12px;
+        width: 59px;
+        height: 59px;
+        border-width: 0 19px 19px 0;
+      }
+  
+      @include media($L) {
+        bottom: -16px;
+        right: -16px;
+        width: 72px;
+        height: 72px;
+        border-width: 0 24px 24px 0;
+      }
+      
+    }
+
+    h2 {
+      color: $color-black;
+      font-family: Merriweather;
+      font-size: 2.1rem;
+      font-style: italic;
+      letter-spacing: -0.5px;
+      line-height: 1;
+      margin-top: 0;
+      text-transform: uppercase;
+      text-align: center;
+
+      @include media($M) {
+        font-size: 3.4rem;
+        letter-spacing: 0;
+        margin-top: 0.5rem;
+      }
+  
+      @include media($ML) {
+        font-size: 4.7rem;
+        letter-spacing: 0.5px;
+        margin-top: 1rem;
+      }
+  
+      @include media($L) {
+        font-size: 6rem;
+        letter-spacing: 1px;
+        margin-top: 1.5rem;
+      }
+    }
+
+    h3 {
+      color: $color-black;
+      font-family: Merriweather;
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-top: 0;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      text-align: center;
+
+      @include media($M) {
+        font-size: 1.9rem;
+        margin-top: 1.8rem;
+        margin-bottom: 1.6rem;
+      }
+  
+      @include media($ML) {
+        font-size: 2.6rem;
+        margin-top: 3.7rem;
+        margin-bottom: 3.4rem;
+      }
+  
+      @include media($L) {
+        font-size: 3.2rem;
+        margin-top: 5.5rem;
+        margin-bottom: 5rem;
+      }
+
+      &.completing {
+        margin-top: 0;
+        margin-bottom: 1rem;
+
+        @include media($M) {
+          margin-top: 1.6rem;
+          margin-bottom: 2.3rem;
+        }
+    
+        @include media($ML) {
+          margin-top: 3.4rem;
+          margin-bottom: 3.7rem;
+        }
+    
+        @include media($L) {
+          margin-top: 5rem;
+        }
+      }
+    }
+
+    .fill-in-text {
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: bold;
+      line-height: 1.5;
+
+      @include media($M) {
+        font-size: 2.4rem;
+      }
+  
+      @include media($ML) {
+        font-size: 3.4rem;
+      }
+  
+      @include media($L) {
+        font-size: 4.4rem;
+      }
+
+      &-block {
+        border-bottom: 1px solid $color-black;
+        text-align: center;
+        margin: 0 2rem;
+
+        @include media($M) {
+          margin: 0 5.3rem;
+        }
+
+        @include media($ML) {
+          margin: 0 8.7rem;
+        }
+
+        @include media($L) {
+          margin: 0 12rem;
+        }
+          
+        &.opportunity-title {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-height: 4rem;
+          overflow-y: hidden;
+
+          @include media($M) {
+            min-height: 6.3rem;
+          }
+      
+          @include media($ML) {
+            min-height: 8.6rem;
+          }
+      
+          @include media($L) {
+            min-height: 11rem;
+          }
+        }
+      }
+
+      .two-line-text {
+        line-height: 1.2;
+        font-size: 1.1rem;
+        height: 4rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @include media($M) {
+          font-size: 1.7rem;
+          height: 6.3rem;
+        }
+    
+        @include media($ML) {
+          font-size: 2.1rem;
+          height: 8.6rem;
+        }
+    
+        @include media($L) {
+          font-size: 3rem;
+          height: 11rem;
+        }
+      }
+    }
+
+    p {
+      font-family: Merriweather;
+      font-size: 1.1rem;
+      line-height: 1;
+      margin: 0.5rem 0 0 0;
+      text-align: center;
+
+      @include media($M) {
+        font-size: 1.6rem;
+        margin: 1.2rem 0 0 0;
+      }
+  
+      @include media($ML) {
+        font-size: 2.1rem;
+        margin: 1.9rem 0 0 0;
+      }
+  
+      @include media($L) {
+        font-size: 2.5rem;
+        margin: 2.4rem 0 0 0;
+      }
+
+      &.platform-name {
+        margin-top: 1rem;
+        text-transform: uppercase;
+
+        @include media($M) {
+          margin-top: 1.3rem;
+        }
+    
+        @include media($ML) {
+          margin-top: 1.7rem;
+        }
+    
+        @include media($L) {
+          margin-top: 2rem;
+        }
+      }
+    }
+
+    .certificate-footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 2rem 0 0 0;
+
+      @include media($M) {
+        margin: 3.3rem 0 0.3rem 0;
+      }
+
+      @include media($ML) {
+        margin: 4.7rem 0 0.6rem 0;
+      }
+
+      @include media($L) {
+        margin: 6rem 0 1rem 0;
+      }
+
+      .opportunity-creator-block {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-start;
+
+        .fill-in-text {
+          font-family: 'Monotype Corsiva', 'Apple Chancery', monospace;
+          font-size: 1.4rem;
+          font-weight: bold;
+          line-height: 1.5;
+
+          @include media($M) {
+            font-size: 2.2rem;
+          }
+      
+          @include media($ML) {
+            font-size: 2.9rem;
+          }
+      
+          @include media($L) {
+            font-size: 3.6rem;
+          }
+    
+          &-block {
+            border-bottom: 1px solid $color-black;
+            text-align: center;
+            margin: 0;
+          }
+        }
+
+        p {
+          font-family: Merriweather;
+          font-size: 0.7rem;
+          line-height: 1;
+          margin: 0.5rem 0 0 0;
+          text-align: center;
+          text-transform: uppercase;
+
+          @include media($M) {
+            font-size: 1rem;
+          }
+      
+          @include media($ML) {
+            font-size: 1.33rem;
+          }
+      
+          @include media($L) {
+            font-size: 1.7rem;
+          }
+        }
+      }
+
+      .open-opportunities-logo {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 2;
+        justify-content: flex-end;
+        align-self: center;
+
+        img {
+          width: 13rem;
+          height: auto;
+
+          @include media($M) {
+            width: 22rem;
+          }
+      
+          @include media($ML) {
+            width: 31rem;
+          }
+      
+          @include media($L) {
+            width: 40rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media print {
+  .usajobs-site-header, .navigation, #footer {
+    display: none;
+  }
+
+  @page {
+    width: 11in;
+    height: 8.5in;
+    margin: 0;
+  }
+
+  body {
+    margin: 0.5in;
+  }
+
+  .completion-certificate {
+    padding: 7.5px;
+    margin: 0.325in;
+  
+    .border {
+      padding: 22.5px 35px;
+      border-width: 6px;
+  
+      &::before {
+        top: -12px;
+        left: -12px;
+        width: 54px;
+        height: 54px;
+        border-width: 18px 0 0 18px;
+      }
+  
+      &::after {
+        bottom: -12px;
+        right: -12px;
+        width: 54px;
+        height: 54px;
+        border-width: 0 18px 18px 0;
+      }
+  
+      h2 {
+        font-size: 4.5rem;
+        font-style: italic;
+        // margin-top: 1.125rem;
+        margin-top: 1.995rem;
+      }
+  
+      h3 {
+        font-size: 2.4rem;
+        // margin-top: 4.125rem;
+        // margin-bottom: 3.75rem;
+        margin-top: 5.5rem;
+        margin-bottom: 5rem;
+
+        &.completing {
+          // margin-top: 3.75rem;
+          // margin-bottom: 0.75rem;
+          margin-top: 5rem;
+          margin-bottom: 1rem;
+        }
+      }
+  
+      .fill-in-text {
+        font-size: 3.3rem;     
+  
+        &-block {
+          // margin: 0 8.25rem;
+          margin: 0 12rem;
+          border-bottom: none;
+
+          &.name {
+            border-bottom: 1px solid $color-black;
+          }
+          
+          &.opportunity-title {
+          // min-height: 8.25rem;
+          max-height: 14.63rem;
+          }
+        }
+
+        .two-line-text {
+          font-size: 3rem;
+          height: 13rem;
+          border-bottom: 1px solid $color-black;
+        }
+      }
+  
+      p {
+        font-size: 2rem;
+        // margin: 1.5rem 0 0 0;
+        margin: 2.4rem 0 0 0;
+  
+        &.platform-name {
+          // margin-top: 1.5rem;
+          margin-top: 2rem;
+        }
+      }
+  
+      .certificate-footer {
+        // margin: 4.25rem 0 0.75rem 0;
+        margin: 5.5rem 0 1rem 0;
+  
+        .opportunity-creator-block {
+  
+          .fill-in-text {
+            font-size: 2.7rem;
+          }
+  
+          p {
+            font-size: 1.275rem;
+            margin: 0.375rem 0 0 0;
+            // margin: 0.5rem;
+          }
+        }
+  
+        .open-opportunities-logo {
+
+          img {
+            width: 30rem;
+          }
+        }
+      }
+    }
+  }
+}

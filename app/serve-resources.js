@@ -41,6 +41,7 @@ module.exports = (app) => {
       await getCertificateDetails(ctx.state.user.id, ctx.path.match(/^\/certificate\/(\d*)$/)[1]).then(async certificateData => {
         certificateData.layout = 'certificate/layout';
         certificateData.cssHash = md5File.sync(path.join(__dirname, '../dist', 'styles', 'main.css')),
+        certificateData.moment = require('moment');
         await ctx.render('certificate/index', certificateData);
       }).catch(async error => {
         // Not found
