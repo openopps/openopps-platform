@@ -17,3 +17,11 @@
   normal,
   $file-formats: eot woff2 woff ttf
 );
+
+@include font-face (
+  'Source Sans Pro',
+  '#{$font-path}/sourcesanspro-black-webfont',
+  900,
+  italic,
+  $file-formats: eot woff2 woff ttf
+);

@@ -53,7 +53,7 @@
                     <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-id="<%- data[i].id %>"><%- data[i].title %></a>
                   </td>
                   <% if (myProfile) { %>
-                    <td>
+                    <td class="open-opps-title<% if (myProfile) { %>-50<% } %>">
                       <% if (getStatus(data[i]).match(/complete/i)) { %>
                         <a href="/certificate/<%- data[i].id %>" aria-details="View certificate of completion for <%- data[i].title %>" target="_blank">View certificate <i class="fas fa-external-link-alt"></i></a>
                       <% } %>
