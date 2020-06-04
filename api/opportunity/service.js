@@ -7,6 +7,7 @@ const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const badgeService = require('../badge/service')(notification);
 const communityService = require('../community/service');
+const coOwnerService = require('../co-owner/service');
 const Badge =  require('../model/Badge');
 const json2csv = require('json2csv');
 const moment = require('moment');
@@ -68,6 +69,7 @@ async function findById (id, user) {
       task.cycle.phase = await dao.Phase.findOne('phase_id = ?', task.cycle.phaseId).catch(() => { return null; });
     }
   }
+  task.coOwners = await coOwnerService.getCoOwners(task.id).catch(() => { return []; });
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
   return task;
 }

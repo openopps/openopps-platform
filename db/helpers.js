@@ -28,3 +28,23 @@ module.exports.update = (tableName, conditions = {}, data = {}) => {
 
   return { text, values };
 };
+
+module.exports.insert = (tableName, data) => {
+  if(!_.isArray(data)) {
+    data = [data];
+  }
+  const dKeys = Object.keys(data[0]);
+  const dataTuples = dKeys.map(k => `${k}`);
+  const columnNames = dataTuples.join(', ');
+
+  var text = `INSERT INTO ${tableName} ${columnNames} VALUES `;
+
+  const values = [];
+  data.forEach(item => {
+    values.push(`(${Object.values(item).join(', ')})`);
+  });
+
+  text += values.join(', ');
+
+  return text;
+};

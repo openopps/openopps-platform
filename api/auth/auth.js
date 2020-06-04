@@ -36,6 +36,8 @@ async function baseAuth (ctx, next) {
 
 module.exports = baseAuth;
 
+module.exports.forbidden = forbidden;
+
 module.exports.isAdmin = async (ctx, next) => {
   await baseAuth(ctx, async () => {
     ctx.state.user.isAdmin ? await next() : await forbidden(ctx);

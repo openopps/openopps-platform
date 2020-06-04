@@ -801,6 +801,12 @@
   }
 }
 
+#co-owner-form {
+  button {
+    float: right;
+  }
+}
+
 .usajobs-rightrail {
 
   .usajobs-apply-resume-info {
@@ -859,6 +865,73 @@
     &-drawers {
       margin-left: -$size-default;
       margin-right: -$size-default;
+    }
+  }
+
+  .usajobs-open-opps-opportunity-co-owner {
+    text-align: center;
+    width: 9rem;
+    margin-bottom: $size-M;
+    flex-grow: 1;
+    flex-shrink: 1;
+    display: inline-block;
+    padding-top: 8px;
+
+    .add-icon-label {
+      line-height: 1;
+      margin: $size-base auto 0 auto;
+      max-width: 90px;
+    }
+
+    .add-icon {
+      svg {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-top: 1.8rem;
+      }
+    }
+  }
+
+  .project-people__wrapper.co-owner__wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    .usajobs-open-opps-opportunity-requestor__figure-body {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .usajobs-open-opps-opportunity-add_co-owner {
+    background-color: #aeb0b5;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+    display: inline-block;
+    width: 65px;
+    height: 65px;
+    line-height: 65px;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+
+    .inner-circle {
+      background-color: #fff;
+      -webkit-font-smoothing: antialiased;
+      padding: 0;
+      display: inline-block;
+      width: 61px;
+      height: 61px;
+      line-height: 61px;
+      margin: 2px;
+      border-radius: 50%;
+      color: #aeb0b5;
+      text-decoration: none;
+      text-align: center;
+
+      &:hover {
+        color: #aeb0b5;
+        text-decoration: none;
+      }
     }
   }
 

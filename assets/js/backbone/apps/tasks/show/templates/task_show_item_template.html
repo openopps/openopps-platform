@@ -49,6 +49,16 @@
     <% if (fromSearch && history.length > 1) { %>
       <div class="back-link" role="navigation" aria-label="Back to results"><a href="javascript:history.back()"><i class="fas fa-chevron-left"></i> Back to results</a></div>
     <% } %>
+    <div id="co-owner-form" class="usajobs-content-well" style="display: none;">
+      <div class="back-link" id="co-owner-back" role="navigation" aria-label="Back to opportunity"><a href="#back-to-opportunity"><i class="fas fa-chevron-left"></i> Back to opportunity</a></div>
+      <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <h2>Add co-owner</h2>
+        <p>To add a co-owner, type the user's name or email address below and select it. You can add more than one.</p>
+        <input type="text" placeholder="Start typing name or email address" />
+        <button class="usa-button usa-button-primary" data-state="add" id="add-co-owner">Add</button>
+        <button class="usa-button usa-button-secondary" data-state="cancel" id="cancel-co-owner">Cancel</button>
+      </div>
+    </div>
     <main class="main-content usajobs-content-well" id="main-content" aria-label="Opportunity">
       <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
         <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
