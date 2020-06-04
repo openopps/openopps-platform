@@ -6,6 +6,48 @@
 <% } %>
 
 <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+  <% if(window.cache.currentUser.isAdmin || model.isOwner) { %>
+    <div class="project-people__wrapper co-owner__wrapper">
+      <h3>Co-owners</h3>
+      <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(model.owner.id) %>" data-userid="<%- model.owner.id %>">
+          <% if (model.owner.photoId) { %>
+            <img src="/api/document/image/<%- model.owner.photoId %>" alt="Profile picture of <%- model.owner.name %>">
+          <% } else { %>
+            <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(model.owner.name) %></div>
+          <% } %>            
+        </div>
+        <div class="usajobs-open-opps-opportunity-requestor__body">
+          <div class="usajobs-open-opps-opportunity-requestor__name"><%- model.owner.name %></div>
+          <div><strong>Primary</strong></div>
+        </div>
+      </div>
+      <% _.each(model.coOwners, function (coOwner) { %>          
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.userId) %>" data-userid="<%- coOwner.userId %>">
+            <% if (coOwner.photoId) { %>
+              <img src="/api/document/image/<%- coOwner.photoId %>" alt="Profile picture of <%- coOwner.name %>">
+            <% } else { %>
+              <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(coOwner.name) %></div>
+            <% } %>            
+          </div>
+          <div class="usajobs-open-opps-opportunity-requestor__body">
+            <div class="usajobs-open-opps-opportunity-requestor__name"><%- coOwner.name %></div>
+            <a href="javascript:void(0);">Make primary</a>
+          </div> 
+        </div>         
+      <% }); %>
+      <div class="usajobs-open-opps-opportunity-co-owner">
+        <div class="usajobs-open-opps-opportunity-add_co-owner">
+          <a href="#add-co-owner" class="inner-circle add_co-owner">
+            <span class="add-icon"><i class="fas fa-plus"></i></span>
+            <span class="usajobs-assistive-text">Add co-owner</span>
+          </a>
+        </div>
+        <label class="add-icon-label">Add co-owner</label>
+      </div>
+    </div>
+  <% } %>
   <h3>Progress</h3>
   <div class="usajobs-open-opps-opportunity-progress__container">
     <div class="usajobs-open-opps-opportunity-progress__step">

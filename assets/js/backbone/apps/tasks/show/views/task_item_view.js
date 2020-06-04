@@ -38,7 +38,9 @@ var TaskItemView = BaseView.extend({
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
     'click .task-complete'            : 'taskComplete', 
-    'click #update-application'       : 'updateApplication',  
+    'click #update-application'       : 'updateApplication',
+    'click .add_co-owner'             : 'addCoOwner',
+    'click #co-owner-back'            : 'backToOpp',
   },
 
   modalOptions: {
@@ -627,6 +629,20 @@ var TaskItemView = BaseView.extend({
       }
       this.modalComponent.cleanup();
     }.bind(this));
+  },
+
+  addCoOwner: function (event) {
+    event.preventDefault && event.preventDefault();
+    $('#co-owner-form').show();
+    $('#main-content').hide();
+    $('#rightrail').hide();
+  },
+
+  backToOpp: function (event) {
+    event.preventDefault && event.preventDefault();
+    $('#co-owner-form').hide();
+    $('#main-content').show();
+    $('#rightrail').show();
   },
 
   cleanup: function () {
