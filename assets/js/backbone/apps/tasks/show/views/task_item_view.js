@@ -634,6 +634,7 @@ var TaskItemView = BaseView.extend({
   addCoOwner: function (event) {
     event.preventDefault && event.preventDefault();
     $('#co-owner-form').show();
+    $('#back-results').hide();
     $('#main-content').hide();
     $('#rightrail').hide();
   },
@@ -641,6 +642,7 @@ var TaskItemView = BaseView.extend({
   backToOpp: function (event) {
     event.preventDefault && event.preventDefault();
     $('#co-owner-form').hide();
+    $('#back-results').show();
     $('#main-content').show();
     $('#rightrail').show();
   },
