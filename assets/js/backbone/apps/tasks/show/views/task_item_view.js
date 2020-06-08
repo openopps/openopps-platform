@@ -40,6 +40,7 @@ var TaskItemView = BaseView.extend({
     'click .task-complete'            : 'taskComplete', 
     'click #update-application'       : 'updateApplication',
     'click .add_co-owner'             : 'addCoOwner',
+    'click .remove_co-owner'          : 'removeCoOwner',
     'click #co-owner-back'            : 'backToOpp',
   },
 
@@ -637,6 +638,39 @@ var TaskItemView = BaseView.extend({
     $('#back-results').hide();
     $('#main-content').hide();
     $('#rightrail').hide();
+  },
+
+  removeCoOwner: function (event) {
+    event.preventDefault && event.preventDefault();
+    var coOwnerId = $(event.currentTarget).data('coownerid');
+    var coOwnerName = $(event.currentTarget).data('coownername');
+    var removeModal = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Remove co-owner',
+      modalBody: 'Are you sure you want to remove <strong>' + coOwnerName + '</strong> as a co-owner of your opportunity?',
+      primary: {
+        text: 'Remove',
+        action: function () {
+          $.ajax({
+            url: '/api/co-owner/' + coOwnerId,
+            type: 'DELETE',
+          }).done( function (data) {
+            removeModal.cleanup();
+            $('#co-owner-' + coOwnerId).remove();
+          });
+        }.bind(this),
+        
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          removeModal.cleanup();    
+        }.bind(this),
+      },
+    });
+    removeModal.render();
   },
 
   backToOpp: function (event) {

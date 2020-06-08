@@ -27,8 +27,8 @@ router.post('/api/co-owner', auth, service.canManageCoOwners, async (ctx, next) 
   });
 });
 
-router.delete('/api/co-owner', auth, service.canManageCoOwners, async (ctx, next) => {
-  await service.deleteCoOwner(ctx.state.user.id, ctx.request.body.coOwnerId).then(() => {
+router.delete('/api/co-owner/:coOwnerId', auth, service.canManageCoOwners, async (ctx, next) => {
+  await service.deleteCoOwner(ctx.state.user.id, ctx.params.coOwnerId).then(() => {
     ctx.status = 200;
   }).catch(err => {
     log.error(err);

@@ -23,10 +23,10 @@
         </div>
       </div>
       <% _.each(model.coOwners, function (coOwner) { %>          
-        <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.userId) %>" data-userid="<%- coOwner.userId %>">
-            <% if (coOwner.photoId) { %>
-              <img src="/api/document/image/<%- coOwner.photoId %>" alt="Profile picture of <%- coOwner.name %>">
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body" id="co-owner-<%- coOwner.co_owner_id %>">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.user_id) %>" data-userid="<%- coOwner.user_id %>">
+            <% if (coOwner.photo_id) { %>
+              <img src="/api/document/image/<%- coOwner.photo_id %>" alt="Profile picture of <%- coOwner.name %>">
             <% } else { %>
               <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(coOwner.name) %></div>
             <% } %>            
@@ -34,7 +34,10 @@
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <div class="usajobs-open-opps-opportunity-requestor__name"><%- coOwner.name %></div>
             <a href="javascript:void(0);">Make primary</a>
-          </div> 
+          </div>
+          <button class="remove_co-owner" data-coownerId="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>" data-behavior="remove">
+            <span class="usajobs-assistive-text">Remove <%- coOwner.name %> as co-owner</span>
+          </button>
         </div>         
       <% }); %>
       <div class="usajobs-open-opps-opportunity-co-owner">

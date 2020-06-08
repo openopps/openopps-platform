@@ -898,6 +898,30 @@
 
     .usajobs-open-opps-opportunity-requestor__figure-body {
       margin-bottom: 1rem;
+      position: relative;
+
+      .remove_co-owner {
+        position: absolute;
+        top: 0.4rem;
+        right: 0.4rem;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        width: 2.6rem;
+        height: 2.6rem;
+        line-height: 2.6rem;
+        border-radius: 50%;
+        color: #fff;
+        background-color: $color-secondary;
+        text-decoration: none;
+        vertical-align: initial;
+    
+    
+        &:after {
+          margin-top: 0;
+          content: url(../img/icons/close/times.svg);
+        }
+      }
     }
   }
 
