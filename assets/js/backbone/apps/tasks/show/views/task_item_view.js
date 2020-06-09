@@ -44,8 +44,10 @@ var TaskItemView = BaseView.extend({
     'click .add_co-owner'             : 'addCoOwner',
     'click .remove_co-owner'          : 'removeCoOwner',
     'click #co-owner-back'            : 'backToOpp',
+    'click .make-primary'             : 'makePrimary',
+    'click .usajobs-alert__close'     : 'closeAlert',
     'click #add-co-owner'             : 'saveCoOwner',
-    'click #cancel-co-owner'          :'backToOpp',
+    'click #cancel-co-owner'          : 'backToOpp',
    
   },
 
@@ -647,6 +649,26 @@ var TaskItemView = BaseView.extend({
     $('#rightrail').hide();
   },
 
+  makePrimary: function (event) {
+    event.preventDefault && event.preventDefault();
+    $.ajax({
+      url: '/api/co-owner/primary',
+      method: 'POST',
+      data: {
+        taskId: this.model.id,
+        coOwnerId: $(event.currentTarget).data('coownerid'),
+      },
+      success: function () {
+        window.location.reload();
+      },
+      error: function (err) {
+        $('#error-message .usa-alert-heading').text('Error changing primary co-owner');
+        $('#error-message .usa-alert-text').text(err.responseJSON.message);
+        $('#error-message').show();
+      },
+    });
+  },
+  
   removeCoOwner: function (event) {
     var self=this;
     event.preventDefault && event.preventDefault();
@@ -692,6 +714,10 @@ var TaskItemView = BaseView.extend({
     $('#rightrail').show();
   },
 
+  closeAlert: function (event) {
+    $(event.currentTarget).parent().hide();
+  },
+  
   initializeChangeCoOwnerOptions: function () {
     var data=  this.tagFactory.createTagDropDown({
       type: 'user',
@@ -723,8 +749,8 @@ var TaskItemView = BaseView.extend({
     var coOwners = _.map(this.data.model.coOwners, function (item) {
       return item.user_id;
     });
-    if(this.data.model.coOwners.length>0){
-      selectedIds=_.difference(selectedIds,coOwners);
+    if(this.data.model.coOwners.length > 0){
+      selectedIds = _.difference(selectedIds,coOwners);
     }
        
     if(_.isEmpty($('#tag-co-owner').select2('data'))){
@@ -735,25 +761,30 @@ var TaskItemView = BaseView.extend({
         $('#main-content').hide();
         $('#rightrail').hide();
       }
-    }
-    else{
-      var data=
-      {
-        taskId: this.model.attributes.id,
-        users: JSON.stringify(selectedIds),    
-      };
-      $.ajax({
-        url: '/api/co-owner' ,
-        type: 'POST',
-        async: false,
-        data: data,   
-        success: function (data) {
-          $('#co-owner-form').hide();
-          $('#main-content').show();
-          $('#rightrail').show();
-          Backbone.history.loadUrl(Backbone.history.getFragment());
-        }.bind(this),
-      });   
+    } else {
+      if (selectedIds.length > 0) {
+        var data = {
+          taskId: this.model.attributes.id,
+          users: JSON.stringify(selectedIds),    
+        };
+        $.ajax({
+          url: '/api/co-owner' ,
+          type: 'POST',
+          async: false,
+          data: data,   
+          success: function (data) {
+            $('#co-owner-form').hide();
+            $('#main-content').show();
+            $('#rightrail').show();
+            Backbone.history.loadUrl(Backbone.history.getFragment());
+          }.bind(this),
+        });
+      } else {
+        $('#co-owner-form').hide();
+        $('#main-content').show();
+        $('#rightrail').show();
+        Backbone.history.loadUrl(Backbone.history.getFragment());
+      }
     }
   
   },
