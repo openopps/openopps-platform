@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const User = require('../model/User');
 const Audit = require('../model/Audit');
+const fs = require('fs');
 
 async function findOne (id) {
   return await dao.User.findOne('id = ?', id).catch(err => {
@@ -49,7 +50,7 @@ async function populateBadgeDescriptions (user) {
 async function getActivities (id) {
   return {
     tasks: {
-      created: dao.clean.activity(await dao.Task.find('"userId" = ?', id)),
+      created: (await dao.Task.db.query(fs.readFileSync(__dirname + '/sql/getOpportunityCreated.sql', 'utf8'), [id])).rows,
       volunteered: (await dao.Task.db.query(dao.query.participated, id)).rows,
     },
   };
