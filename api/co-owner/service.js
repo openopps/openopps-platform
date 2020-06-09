@@ -11,15 +11,23 @@ module.exports = {};
  * @param {Number} taskId id of opportunity co-owner(s) are being added to
  * @param {Array<Number>} coOwners list of user ids of co-owners being added
  */
-module.exports.addCoOwners = function (userId, taskId, coOwners) {
+module.exports.addCoOwners = function (ctx,userId, taskId, coOwners) { 
+  coOwners= JSON.parse(coOwners);
   return new Promise((resolve, reject) => {
-    var entries = [].concat(coOwners).map(id => { return { task_id: taskId, user_id: id, created_by: userId }; });
-    db.insert('co_owners', entries).then(() => {
-      // TODO: audit co-owner additions
+    var entries = [].concat(coOwners).map(id => {
+      return { task_id: taskId, user_id: id, created_by: userId };
+    });
+    db.insert('co_owner', entries).then(() => {    
+      // var audit = module.exports.createAuditLog('CO_OWNER_ADDED', ctx, {      
+      //   createdUser: userId,
+      //   taskId:taskId,
+               
+      // });  
       resolve();
     }).catch(reject);
   });
 };
+
 
 /**
  * Permission middleware check
@@ -118,3 +126,11 @@ module.exports.getCoOwners = function (taskId) {
     }).catch(reject);
   });
 };
+
+
+// module.exports.createAuditLog = async function (type, ctx, auditData) {
+//   var audit = Audit.createAudit(type, ctx, auditData); 
+//   db.insert('audit_log', audit).then(() => {      
+//     resolve();
+//   }).catch(reject);
+// };

@@ -144,6 +144,15 @@ module.exports = {
     severity: 'info',
     data: ['communityId', 'userId', 'action'],
   },
+  //CoOwner Events
+
+  'CO_OWNER_ADDED': {
+    action: 'CO_OWNER_ADDED',
+    description: 'A new co_owner is added.',
+    severity: 'info',
+    data: ['createdUser','taskId'],
+  },
+
   // Data export events
   'DATA_EXPORTED': {
     action: 'DATA_EXPORTED',
