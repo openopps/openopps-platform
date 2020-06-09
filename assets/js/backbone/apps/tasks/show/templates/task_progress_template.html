@@ -22,9 +22,9 @@
           <div><strong>Primary</strong></div>
         </div>
       </div>
-      <% _.each(model.coOwners, function (coOwner) { %>          
+      <% _.each(model.coOwners, function (coOwner) { %>     
         <div class="usajobs-open-opps-opportunity-requestor__figure-body">
-          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.userId) %>" data-userid="<%- coOwner.userId %>">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.user_id) %>" data-userid="<%- coOwner.user_id %>">
             <% if (coOwner.photoId) { %>
               <img src="/api/document/image/<%- coOwner.photoId %>" alt="Profile picture of <%- coOwner.name %>">
             <% } else { %>
@@ -33,7 +33,7 @@
           </div>
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <div class="usajobs-open-opps-opportunity-requestor__name"><%- coOwner.name %></div>
-            <a href="javascript:void(0);">Make primary</a>
+            <a href="#make-primary" class="make-primary" data-coownerid="<%- coOwner.co_owner_id %>">Make primary</a>
           </div> 
         </div>         
       <% }); %>

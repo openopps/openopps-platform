@@ -41,6 +41,8 @@ var TaskItemView = BaseView.extend({
     'click #update-application'       : 'updateApplication',
     'click .add_co-owner'             : 'addCoOwner',
     'click #co-owner-back'            : 'backToOpp',
+    'click .make-primary'             : 'makePrimary',
+    'click .usajobs-alert__close'     : 'closeAlert',
   },
 
   modalOptions: {
@@ -639,12 +641,36 @@ var TaskItemView = BaseView.extend({
     $('#rightrail').hide();
   },
 
+  makePrimary: function (event) {
+    event.preventDefault && event.preventDefault();
+    $.ajax({
+      url: '/api/co-owner/primary',
+      method: 'POST',
+      data: {
+        taskId: this.model.id,
+        coOwnerId: $(event.currentTarget).data('coownerid'),
+      },
+      success: function () {
+        window.location.reload();
+      },
+      error: function (err) {
+        $('#error-message .usa-alert-heading').text('Error changing primary co-owner');
+        $('#error-message .usa-alert-text').text(err.responseJSON.message);
+        $('#error-message').show();
+      },
+    });
+  },
+
   backToOpp: function (event) {
     event.preventDefault && event.preventDefault();
     $('#co-owner-form').hide();
     $('#back-results').show();
     $('#main-content').show();
     $('#rightrail').show();
+  },
+
+  closeAlert: function (event) {
+    $(event.currentTarget).parent().hide();
   },
 
   cleanup: function () {

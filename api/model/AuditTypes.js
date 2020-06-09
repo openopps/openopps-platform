@@ -212,4 +212,11 @@ module.exports = {
     severity: 'info',
     data: ['cycleId', 'phaseId', 'results'],
   },
+  // CO-Owner events
+  'PRIMARY_CO_OWNER_CHANGED': {
+    action: 'PRIMARY_CO_OWNER_CHANGED',
+    description: 'The primary co-owner for an opportunity has been changed.',
+    severity: 'info',
+    data: ['taskId', 'previousPrimary', 'newPrimary'],
+  }
 };

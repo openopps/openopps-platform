@@ -2,6 +2,7 @@ const setup = require('../app/openopps-setup');
 const { Pool } = require('pg');
 const pool = new Pool(setup.dbConfig);
 const { update, insert } = require('./helpers');
+const _ = require('lodash');
 
 const client = {};
 
@@ -45,8 +46,8 @@ client.update = async (entity, conditions, fields) => {
 client.insert = (entity, values) => {
   if (!entity)
     throw new Error('no entity table specified');
-  if (_.isEmpty(fields))
-    throw new Error('no fields specified');
+  if (_.isEmpty(values))
+    throw new Error('no values specified');
 
   const text = insert(entity, values);
 
@@ -55,6 +56,29 @@ client.insert = (entity, values) => {
   } catch (err) {
     log.error(err);
     throw err;
+  }
+};
+
+/**
+ * @param {Array} queries array of queries to be run.
+ *  Each value can be text or parameterized query { text, values }
+ */
+client.transaction = async queries => {
+  const start = Date.now();
+  var transaction = await pool.connect();
+  try {
+    await transaction.query('BEGIN');
+    for (var i = 0; i < queries.length; i++) {
+      await transaction.query(queries[i]);
+    }
+    await transaction.query('COMMIT');
+    const duration = Date.now() - start;
+    console.log('executed transaction', { queries, duration });
+  } catch (error) {
+    await transaction.query('ROLLBACK');
+    throw error;
+  } finally {
+    transaction.release();
   }
 };
 
