@@ -6,7 +6,7 @@
 <% } %>
 
 <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-  <% if(window.cache.currentUser.isAdmin || model.isOwner) { %>
+  <% if((window.cache.currentUser && window.cache.currentUser.isAdmin) || model.isOwner) { %>
     <div class="project-people__wrapper co-owner__wrapper">
       <h3>Co-owners</h3>
       <div class="usajobs-open-opps-opportunity-requestor__figure-body">

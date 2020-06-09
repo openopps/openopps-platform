@@ -749,8 +749,8 @@ var TaskItemView = BaseView.extend({
     var coOwners = _.map(this.data.model.coOwners, function (item) {
       return item.user_id;
     });
-    if(this.data.model.coOwners.length>0){
-      selectedIds=_.difference(selectedIds,coOwners);
+    if(this.data.model.coOwners.length > 0){
+      selectedIds = _.difference(selectedIds,coOwners);
     }
        
     if(_.isEmpty($('#tag-co-owner').select2('data'))){
@@ -761,25 +761,30 @@ var TaskItemView = BaseView.extend({
         $('#main-content').hide();
         $('#rightrail').hide();
       }
-    }
-    else{
-      var data=
-      {
-        taskId: this.model.attributes.id,
-        users: JSON.stringify(selectedIds),    
-      };
-      $.ajax({
-        url: '/api/co-owner' ,
-        type: 'POST',
-        async: false,
-        data: data,   
-        success: function (data) {
-          $('#co-owner-form').hide();
-          $('#main-content').show();
-          $('#rightrail').show();
-          Backbone.history.loadUrl(Backbone.history.getFragment());
-        }.bind(this),
-      });   
+    } else {
+      if (selectedIds.length > 0) {
+        var data = {
+          taskId: this.model.attributes.id,
+          users: JSON.stringify(selectedIds),    
+        };
+        $.ajax({
+          url: '/api/co-owner' ,
+          type: 'POST',
+          async: false,
+          data: data,   
+          success: function (data) {
+            $('#co-owner-form').hide();
+            $('#main-content').show();
+            $('#rightrail').show();
+            Backbone.history.loadUrl(Backbone.history.getFragment());
+          }.bind(this),
+        });
+      } else {
+        $('#co-owner-form').hide();
+        $('#main-content').show();
+        $('#rightrail').show();
+        Backbone.history.loadUrl(Backbone.history.getFragment());
+      }
     }
   
   },

@@ -11,18 +11,19 @@ module.exports = {};
  * @param {Number} taskId id of opportunity co-owner(s) are being added to
  * @param {Array<Number>} coOwners list of user ids of co-owners being added
  */
-module.exports.addCoOwners = function (ctx,userId, taskId, coOwners) { 
+module.exports.addCoOwners = function (ctx, taskId, coOwners) { 
   coOwners= JSON.parse(coOwners);
   return new Promise((resolve, reject) => {
     var entries = [].concat(coOwners).map(id => {
-      return { task_id: taskId, user_id: id, created_by: userId };
+      return { task_id: taskId, user_id: id, created_by: ctx.state.user.id };
     });
-    db.insert('co_owner', entries).then(() => {    
-      // var audit = module.exports.createAuditLog('CO_OWNER_ADDED', ctx, {      
-      //   createdUser: userId,
-      //   taskId:taskId,
-               
-      // });  
+    db.insert('co_owner', entries).then(() => {
+      entries.forEach(entry => {
+        this.createAuditLog('CO_OWNER_ADDED', ctx, {
+          coOwner: entry.user_id,
+          taskId: entry.task_id
+        });
+      });
       resolve();
     }).catch(reject);
   });
@@ -98,13 +99,18 @@ module.exports.createAuditLog = function (type, ctx, auditData) {
  * @param {Number} userId id of user removing the co-owner
  * @param {Number} coOwnerId primary key of co-owner record being removed
  */
-module.exports.deleteCoOwner = function (userId, coOwnerId) {
+module.exports.deleteCoOwner = function (ctx, coOwnerId) {
   return new Promise((resolve, reject) => {
     db.query({
-      text: 'DELETE FROM co_owner WHERE co_owner_id = $1',
+      text: 'DELETE FROM co_owner WHERE co_owner_id = $1 RETURNING *',
       values: [coOwnerId],
-    }).then(() => {
-      // TODO: Audit co-owner removal
+    }).then(results => {
+      results.rows.forEach(row => {
+        this.createAuditLog('CO_OWNER_DELETED', ctx, {
+          coOwner: row.user_id,
+          taskId: row.task_id
+        });
+      });
       resolve();
     }).catch(reject);
   });
@@ -126,11 +132,3 @@ module.exports.getCoOwners = function (taskId) {
     }).catch(reject);
   });
 };
-
-
-// module.exports.createAuditLog = async function (type, ctx, auditData) {
-//   var audit = Audit.createAudit(type, ctx, auditData); 
-//   db.insert('audit_log', audit).then(() => {      
-//     resolve();
-//   }).catch(reject);
-// };

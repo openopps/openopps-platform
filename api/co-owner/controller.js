@@ -19,7 +19,7 @@ router.get('/api/co-owner/:taskId', auth, async (ctx, next) => {
 });
 
 router.post('/api/co-owner', auth, service.canManageCoOwners, async (ctx, next) => {
-  await service.addCoOwners(ctx,ctx.state.user.id, ctx.request.body.taskId, ctx.request.body.users).then(() => {
+  await service.addCoOwners(ctx, ctx.request.body.taskId, ctx.request.body.users).then(() => {
     ctx.status = 200;
   }).catch(err => {
     log.error(err);
@@ -29,7 +29,7 @@ router.post('/api/co-owner', auth, service.canManageCoOwners, async (ctx, next) 
 });
 
 router.delete('/api/co-owner/:coOwnerId', auth, service.canManageCoOwners, async (ctx, next) => {
-  await service.deleteCoOwner(ctx.state.user.id, ctx.params.coOwnerId).then(() => {
+  await service.deleteCoOwner(ctx, ctx.params.coOwnerId).then(() => {
     ctx.status = 200;
   }).catch(err => {
     log.error(err);
