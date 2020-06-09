@@ -37,7 +37,7 @@ module.exports.insert = (tableName, data) => {
   const dataTuples = dKeys.map(k => `${k}`);
   const columnNames = dataTuples.join(', ');
 
-  var text = `INSERT INTO ${tableName} ${columnNames} VALUES `;
+  var text = `INSERT INTO ${tableName} (${columnNames}) VALUES `;
 
   const values = [];
   data.forEach(item => {
