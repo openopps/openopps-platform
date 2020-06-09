@@ -6,7 +6,7 @@
 <% } %>
 
 <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
-  <% if(window.cache.currentUser.isAdmin || model.isOwner) { %>
+  <% if((window.cache.currentUser && window.cache.currentUser.isAdmin) || model.isOwner) { %>
     <div class="project-people__wrapper co-owner__wrapper">
       <h3>Co-owners</h3>
       <div class="usajobs-open-opps-opportunity-requestor__figure-body">
@@ -18,7 +18,7 @@
           <% } %>            
         </div>
         <div class="usajobs-open-opps-opportunity-requestor__body">
-          <div class="usajobs-open-opps-opportunity-requestor__name"><%- model.owner.name %></div>
+          <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- model.owner.id %>"><%- model.owner.name %></a>
           <div><strong>Primary</strong></div>
         </div>
       </div>
@@ -32,9 +32,9 @@
             <% } %>            
           </div>
           <div class="usajobs-open-opps-opportunity-requestor__body">
-            <div class="usajobs-open-opps-opportunity-requestor__name"><%- coOwner.name %></div>
-            <a href="javascript:void(0);">Make primary</a>
-          </div>
+            <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- coOwner.user_id %>"><%- coOwner.name %></a>
+            <a href="#make-primary" class="make-primary" data-coownerid="<%- coOwner.co_owner_id %>">Make primary</a>
+          </div> 
           <button class="remove_co-owner" data-coownerId="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>" data-behavior="remove">
             <span class="usajobs-assistive-text">Remove <%- coOwner.name %> as co-owner</span>
           </button>
