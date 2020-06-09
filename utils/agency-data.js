@@ -86,5 +86,13 @@ module.exports = {
 };
 
 if(process.argv[2] == 'import') {
+  const cfenv = require('cfenv');
+  var appEnv = cfenv.getAppEnv();
+  var envVars = appEnv.getServiceCreds('env-openopps');
+  var psqlConnection = appEnv.getServiceCreds('psql-openopps');
+  if (envVars) _.extend(process.env, envVars);
+  if(!process.env.DATABASE_URL && psqlConnection) {
+    process.env.DATABASE_URL = psqlConnection.uri
+  }
   module.exports.import((process.argv[3] || '').match(/^[Tt]rue$/));
 }
