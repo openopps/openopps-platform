@@ -25,8 +25,8 @@
       <% _.each(model.coOwners, function (coOwner) { %>          
         <div class="usajobs-open-opps-opportunity-requestor__figure-body" id="co-owner-<%- coOwner.co_owner_id %>">
           <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.user_id) %>" data-userid="<%- coOwner.user_id %>">
-            <% if (coOwner.photo_id) { %>
-              <img src="/api/document/image/<%- coOwner.photo_id %>" alt="Profile picture of <%- coOwner.name %>">
+            <% if (coOwner.photoId) { %>
+              <img src="/api/document/image/<%- coOwner.photoId %>" alt="Profile picture of <%- coOwner.name %>">
             <% } else { %>
               <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(coOwner.name) %></div>
             <% } %>            

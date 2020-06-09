@@ -2,6 +2,7 @@ const setup = require('../app/openopps-setup');
 const { Pool } = require('pg');
 const pool = new Pool(setup.dbConfig);
 const { update, insert } = require('./helpers');
+const _ = require('lodash');
 
 const client = {};
 
@@ -45,7 +46,7 @@ client.update = async (entity, conditions, fields) => {
 client.insert = (entity, values) => {
   if (!entity)
     throw new Error('no entity table specified');
-  if (_.isEmpty(fields))
+  if (_.isEmpty(values))
     throw new Error('no fields specified');
 
   const text = insert(entity, values);
