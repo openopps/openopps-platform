@@ -22,8 +22,8 @@ const taskStateQuery = `with task_type as (
   sum(case when state = 'canceled' then 1 else 0 end) as "canceled",
   sum(case when task_type.name = 'One time' or task_type.name is null then 1 else 0 end) as "oneTime", 
   sum(case when task_type.name = 'Ongoing' then 1 else 0 end) as "onGoing", 
-  sum(case when task_type.name = 'Part Time Detail' then 1 else 0 end) as "partTime", 
-  sum(case when task_type.name = 'Full Time Detail' then 1 else 0 end) as "fullTime"
+  sum(case when task.detail_selection = 'Part-time' then 1 else 0 end) as "partTime", 
+  sum(case when task.detail_selection = 'Full-time' then 1 else 0 end) as "fullTime"
   from task
   left join community on task.community_id = community.community_id
   left join task_type on task_type.id = task.id
@@ -51,8 +51,8 @@ const agencyTaskStateQuery = `with task_type as (
   sum(case when state = 'canceled' then 1 else 0 end) as "canceled",
   sum(case when task_type.name = 'One time' or task_type.name is null then 1 else 0 end) as "oneTime", 
   sum(case when task_type.name = 'Ongoing' then 1 else 0 end) as "onGoing", 
-  sum(case when task_type.name = 'Part Time Detail' then 1 else 0 end) as "partTime", 
-  sum(case when task_type.name = 'Full Time Detail' then 1 else 0 end) as "fullTime"
+  sum(case when task.detail_selection = 'Part-time' then 1 else 0 end) as "partTime", 
+  sum(case when task.detail_selection = 'Full-time' then 1 else 0 end) as "fullTime"
   from task
   left join community on task.community_id = community.community_id
   left join task_type on task_type.id = task.id
