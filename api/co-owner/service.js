@@ -21,7 +21,7 @@ module.exports.addCoOwners = function (ctx, taskId, coOwners) {
       entries.forEach(entry => {
         this.createAuditLog('CO_OWNER_ADDED', ctx, {
           coOwner: entry.user_id,
-          taskId: entry.task_id
+          taskId: entry.task_id,
         });
       });
       resolve();
@@ -108,7 +108,7 @@ module.exports.deleteCoOwner = function (ctx, coOwnerId) {
       results.rows.forEach(row => {
         this.createAuditLog('CO_OWNER_DELETED', ctx, {
           coOwner: row.user_id,
-          taskId: row.task_id
+          taskId: row.task_id,
         });
       });
       resolve();
@@ -130,5 +130,25 @@ module.exports.getCoOwners = function (taskId) {
     }).then(results => {
       resolve(results.rows);
     }).catch(reject);
+  });
+};
+
+/**
+ * @param {Number} taskId id of opportunity
+ * @param {Number} userId id of user
+ * 
+ * Checks is the specified user is co-owner for the specified opportunity
+ */
+module.exports.hasCoOwnerPermissions = function (taskId, userId) {
+  return new Promise(resolve => {
+    db.query({
+      text: 'SELECT * FROM co_owner where task_id = $1 and user_id = $2',
+      values: [taskId, userId],
+    }).then(results => {
+      resolve(results.rows.length > 0);
+    }).catch(err => {
+      log.error(err);
+      resolve(false);
+    });
   });
 };
