@@ -748,9 +748,9 @@ var TaskItemView = BaseView.extend({
     });
     var coOwners = _.map(this.data.model.coOwners, function (item) {
       return item.user_id;
-    });
-    if(this.data.model.coOwners.length > 0){
-      selectedIds = _.difference(selectedIds,coOwners);
+    }).concat(this.data.model.owner.id);
+    if(this.data.model.coOwners.length > 0) {
+      selectedIds = _.difference(selectedIds, coOwners);
     }
        
     if(_.isEmpty($('#tag-co-owner').select2('data'))){
