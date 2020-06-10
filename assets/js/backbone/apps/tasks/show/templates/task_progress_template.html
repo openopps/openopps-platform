@@ -33,7 +33,7 @@
           </div>
           <div class="usajobs-open-opps-opportunity-requestor__body">
             <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- coOwner.user_id %>"><%- coOwner.name %></a>
-            <a href="#make-primary" class="make-primary" data-coownerid="<%- coOwner.co_owner_id %>">Make primary</a>
+            <a href="#make-primary" class="make-primary" data-coownerid="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>">Make primary</a>
           </div> 
           <button class="remove_co-owner" data-coownerId="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>" data-behavior="remove">
             <span class="usajobs-assistive-text">Remove <%- coOwner.name %> as co-owner</span>

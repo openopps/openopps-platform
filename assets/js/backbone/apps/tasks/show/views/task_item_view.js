@@ -651,26 +651,45 @@ var TaskItemView = BaseView.extend({
 
   makePrimary: function (event) {
     event.preventDefault && event.preventDefault();
-    $.ajax({
-      url: '/api/co-owner/primary',
-      method: 'POST',
-      data: {
-        taskId: this.model.id,
-        coOwnerId: $(event.currentTarget).data('coownerid'),
+    var coOwnerName = $(event.currentTarget).data('coownername');
+    var removeModal = new ModalComponent({
+      id: 'confirm-primary',
+      modalTitle: 'Change primary owner',
+      modalBody: 'Are you sure you want to change the primary owner of this opportunity to <strong>' + coOwnerName + '</strong>?',
+      primary: {
+        text: 'Confirm',
+        action: function () {
+          $.ajax({
+            url: '/api/co-owner/primary',
+            method: 'POST',
+            data: {
+              taskId: this.model.id,
+              coOwnerId: $(event.currentTarget).data('coownerid'),
+            },
+            success: function () {
+              removeModal.cleanup();
+              window.location.reload();
+            },
+            error: function (err) {
+              removeModal.cleanup();
+              $('#error-message .usa-alert-heading').text('Error changing primary co-owner');
+              $('#error-message .usa-alert-text').text(err.responseJSON.message);
+              $('#error-message').show();
+            },
+          });
+        }.bind(this),
       },
-      success: function () {
-        window.location.reload();
-      },
-      error: function (err) {
-        $('#error-message .usa-alert-heading').text('Error changing primary co-owner');
-        $('#error-message .usa-alert-text').text(err.responseJSON.message);
-        $('#error-message').show();
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          removeModal.cleanup();    
+        }.bind(self),
       },
     });
+    removeModal.render();
   },
   
   removeCoOwner: function (event) {
-    var self=this;
     event.preventDefault && event.preventDefault();
     var coOwnerId = $(event.currentTarget).data('coownerid');
     var coOwnerName = $(event.currentTarget).data('coownername');
@@ -689,18 +708,17 @@ var TaskItemView = BaseView.extend({
           }).done( function (data) {
             removeModal.cleanup();
             $('#co-owner-' + coOwnerId).remove();        
-            self.data.model.coOwners=_.reject(self.data.model.coOwners,function (item){
-              return item.co_owner_id==coOwnerId;
+            this.data.model.coOwners = _.reject(this.data.model.coOwners, function (item) {
+              return item.co_owner_id == coOwnerId;
             });          
           });
-        }.bind(self),
-        
+        }.bind(this),
       },
       secondary: {
         text: 'Cancel',
         action: function () {          
           removeModal.cleanup();    
-        }.bind(self),
+        }.bind(this),
       },
     });
     removeModal.render();
