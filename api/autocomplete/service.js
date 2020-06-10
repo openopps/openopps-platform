@@ -32,7 +32,7 @@ module.exports.userByName =  async function (name) {
 module.exports.userByNameOrEmail =  async function (name) {
   var splitName = '%' + name.replace(/\s+/g, '%') + '%';
   var result = await dao.User.query(
-    dao.query.userByNameOrEmail, name ? splitName : null
+    dao.query.userByNameOrEmail, [name ? splitName.toLowerCase() : null]
   );
   return result.map(tag => {
     tag.field = 'value';
