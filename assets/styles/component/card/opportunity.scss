@@ -914,12 +914,18 @@
         color: #fff;
         background-color: $color-secondary;
         text-decoration: none;
-        vertical-align: initial;
-    
+        vertical-align: initial;    
     
         &:after {
           margin-top: 0;
           content: url(../img/icons/close/times.svg);
+          position: relative;
+          display: inline-block;
+          width: 1.2rem;
+          height: 1.2rem;
+          background-size: 12px 12px;
+          content: url(../img/icons/close/times.svg);
+          color: #fff;
         }
       }
     }
