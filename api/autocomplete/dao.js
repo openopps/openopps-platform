@@ -7,7 +7,7 @@ const userByName = 'select midas_user.id, midas_user.name, midas_user.title, mid
   'from midas_user where disabled = false and hiring_path in (\'fed\', \'contractor\') and LOWER(name) like ?';
 
 const userByNameOrEmail = 'select midas_user.id, midas_user.name, midas_user.title, midas_user.username, midas_user.government_uri ' +
-'from midas_user where disabled = false and hiring_path in (\'fed\', \'contractor\') and (lower(username) like ? or lower(government_uri) like ? or lower(name) like ? )';
+'from midas_user where disabled = false and hiring_path in (\'fed\', \'contractor\') and (lower(username) like $1 or lower(government_uri) like $1 or lower(name) like $1 )';
 
 const agencyQuery = 'select * from agency where is_disabled = false and parent_code is not null and (lower(name) like ? or lower(abbr) like ?)';
 
