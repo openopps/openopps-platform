@@ -6,6 +6,7 @@ const db = require('../../db');
 const dao = require('./dao')(db);
 const notification = require('../notification/service');
 const Profile = require('../auth/profile');
+const coOwnerService = require('../co-owner/service');
 
 async function addVolunteer (tokenset, attributes, done) {
   var volunteer = await dao.Volunteer.find('"taskId" = ? and "userId" = ?', attributes.taskId, attributes.userId);
@@ -105,7 +106,7 @@ async function canAddVolunteer (attributes, user) {
 
 async function canManageVolunteers (id, user) {
   var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
-  return task && (task.userId === user.id || user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, task.userId)));
+  return task && (task.userId === user.id || user.isAdmin || (user.isAgencyAdmin && await checkAgency(user, task.userId)) ||await coOwnerService.hasCoOwnerPermissions(task.id,user.id));
 }
 
 async function checkAgency (user, ownerId) {

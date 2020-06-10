@@ -251,16 +251,23 @@
                       <% } %>                    
                     </div>  
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                     
+                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div> 
+                                        
                       <% if (!_.isEmpty(detail) || !_.isEmpty(lateral)) { %>
                         <% if (model.canEditTask) { %>
-                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>
-                        <% } %>
+                          <% if (model.state != 'completed' && state.value != 'canceled') { %>
+                            <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                          <% } else { %> 
+                            <a href="/profile/<%- v.userId %>">View application</a>     
+                          <% } %>
+                        <% } %> 
                       <% } else { %>
                         <% if (model.canEditTask) { %>
-                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>
-                        <% } else { %> 
-                          <a href="/profile/<%- v.userId %>">View profile</a>     
+                          <% if (model.state != 'completed' && state.value != 'canceled') { %>
+                            <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                           
+                          <% } else { %> 
+                            <a href="/profile/<%- v.userId %>">View profile</a>     
+                          <% } %>
                         <% } %>
                       <% } %>
                     </div>              
@@ -324,7 +331,7 @@
     <a href="javascript:void(0);" id="complete" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { taskComplete: true }).length < 1 ) { %>disabled<% } %>"><span class="box-icon-text">Complete opportunity</span></a> 
   <% } %>
 
-  <% if (model.canEditTask && model.state != 'completed' && model.state != 'canceled') { %>
+  <% if (model.canEditTask && model.canCancel && model.state != 'completed' && model.state != 'canceled') { %>
     <a class="usajobs-open-opps-opportunity__cancel" href="javascript:void();" id="task-cancel">Cancel this opportunity</a>
   <% } %>
    <% } %> 

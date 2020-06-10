@@ -71,6 +71,11 @@ async function findById (id, user) {
   }
   task.coOwners = await coOwnerService.getCoOwners(task.id).catch(() => { return []; });
   task.volunteers = user ? (await dao.Task.db.query(dao.query.volunteer, task.id)).rows : undefined;
+  if(user){
+    task.isCoOwner= await coOwnerService.hasCoOwnerPermissions(task.id,user.id).catch(() => { return []; });
+    task.canCancel = await canCancelOpportunity(user, id, 'canceled');
+  }
+ 
   return task;
 }
 
@@ -199,7 +204,8 @@ async function getSavedOpportunities (user) {
   return (await db.query(dao.query.savedTask, user.id)).rows;
 }
 
-async function canUpdateOpportunity (user, id) {
+
+async function canUpdateOpportunity (user,id,state) {
   var task = await dao.Task.findOne('id = ?', id).catch(() => { return null; });
   if (!task) {
     return false;
@@ -207,9 +213,16 @@ async function canUpdateOpportunity (user, id) {
     || (user.isAgencyAdmin && await checkAgency(user, task.userId))
     || await isCommunityAdmin(user, task)) {
     return true;
+    
+  } else if (state != 'canceled' && await coOwnerService.hasCoOwnerPermissions(id, user.id)) { 
+    return true;
   } else {
     return false;
   }
+}
+
+async function canCancelOpportunity (user, id,canceled) {
+  return await canUpdateOpportunity(user, id, canceled);
 }
 
 async function canAdministerTask (user, id) {
@@ -873,6 +886,7 @@ module.exports = {
   copyOpportunity: copyOpportunity,
   canceledInternship:canceledInternship, 
   canUpdateInternship:canUpdateInternship,
+  canCancelOpportunity:canCancelOpportunity,
   checkCommunityAdmin:checkCommunityAdmin,
   deleteTask: deleteTask,
   volunteersCompleted: volunteersCompleted,
@@ -892,7 +906,7 @@ module.exports = {
   getSavedOpportunities: getSavedOpportunities,
   saveOpportunity: saveOpportunity,
   getVanityURL: getVanityURL,
-  
+   
 };
 
 
