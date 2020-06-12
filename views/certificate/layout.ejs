@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" class="flexbox certificate-page">
+  <head>
+    <title><%=typeof title == 'undefined' ? 'Open Opportunities' : title%></title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94043649-2"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-94043649-2'); </script>
+    <script defer src="/js/fontawesome-all.js"></script>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF token -->
+    <meta name="csrf-token" content="">
+    <link rel="stylesheet" href="/styles/main.css?v=<%- cssHash %>">
+    <style type="text/css" media="print">
+      @page { size: landscape; }
+    </style>
+  </head>
+
+  <body>
+    <%- body %>
+  </body>
+  <script type="text/javascript">
+    window.onload = function (event) {
+      window.print();
+    };
+  </script>
+</html>

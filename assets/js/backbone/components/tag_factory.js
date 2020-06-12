@@ -85,6 +85,9 @@ var TagFactory = BaseComponent.extend({
       case 'language':
         url = '/api/ac/languages';
         break;
+      case 'user':
+        url= '/api/ac/user/nameOrEmail';
+        break;
       default:
         url = '/api/ac/tag';
         break;
@@ -106,9 +109,10 @@ var TagFactory = BaseComponent.extend({
       tokenSeparators: options.tokenSeparators || [],
       multiple: options.multiple,
       maximumSelectionSize: options.maximumSelectionSize,
+    
       formatResult: function (obj, container, query) {
         //allow the createSearchChoice to contain HTML
-        return (obj.unmatched ? obj.name : _.escape(obj.name));
+        return options.type=='user'? (obj.unmatched ? obj.value : _.escape(obj.value)):(obj.unmatched ? obj.name : _.escape(obj.name));
       },
 
       formatSelection: function (obj, container, query) {
@@ -125,6 +129,7 @@ var TagFactory = BaseComponent.extend({
           };
         },
         results: function (data) {
+        
           return { results: data };
         },
       },

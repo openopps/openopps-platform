@@ -212,4 +212,23 @@ module.exports = {
     severity: 'info',
     data: ['cycleId', 'phaseId', 'results'],
   },
+  // CO-Owner events
+  'PRIMARY_CO_OWNER_CHANGED': {
+    action: 'PRIMARY_CO_OWNER_CHANGED',
+    description: 'The primary co-owner for an opportunity has been changed.',
+    severity: 'info',
+    data: ['taskId', 'previousPrimary', 'newPrimary'],
+  },
+  'CO_OWNER_ADDED': {
+    action: 'CO_OWNER_ADDED',
+    description: 'A new co_owner has been added to an opportunity.',
+    severity: 'info',
+    data: ['coOwner','taskId'],
+  },
+  'CO_OWNER_DELETED': {
+    action: 'CO_OWNER_DELETED',
+    description: 'A co_owner has been removed from an opportunity.',
+    severity: 'info',
+    data: ['coOwner','taskId'],
+  },
 };

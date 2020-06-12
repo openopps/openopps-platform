@@ -867,11 +867,11 @@ var TaskEditFormView = Backbone.View.extend({
     var modelData = {
       id           : this.model.get('id'),
       communityId  : $('#federal-programs').val(),
-      title        : this.$('#task-title').val(),
-      description  : this.$('#opportunity-introduction').val(),
-      details      : this.$('#opportunity-details').val(),
-      outcome      : this.$('#opportunity-skills').val(),
-      about        : this.$('#opportunity-team').val(),
+      title        : this.$('#task-title').val().trim(),
+      description  : this.$('#opportunity-introduction').val().trim(),
+      details      : this.$('#opportunity-details').val().trim(),
+      outcome      : this.$('#opportunity-skills').val().trim(),
+      about        : this.$('#opportunity-team').val().trim(),
       submittedAt  : this.$('#js-edit-date-submitted').val() || null,
       publishedAt  : this.$('#publishedAt').val() || null,
       assignedAt   : this.$('#assignedAt').val() || null,
@@ -882,40 +882,40 @@ var TaskEditFormView = Backbone.View.extend({
       allowVirtual : $('#allow-virtual').prop('checked'),
     };
 
-    if( this.$('.time-options-time-required.selected').val() == 'Detail'){
-      modelData.applyAdditional=this.$('#opportunity-apply').val();
-      modelData.requirement  =this.$('#opportunity-requirement').val();
-      modelData.grade         =this.$('#grade').val();
-      modelData.isDetailReimbursable= $("input[name='detail-group']:checked").val();
+    if (this.$('.time-options-time-required.selected').val() == 'Detail') {
+      modelData.applyAdditional = this.$('#opportunity-apply').val().trim();
+      modelData.requirement = this.$('#opportunity-requirement').val().trim();
+      modelData.grade = this.$('#grade').val().trim();
+      modelData.isDetailReimbursable = $("input[name='detail-group']:checked").val();
       modelData.payLevelId = $('#time-options-pay-scale').val();
-      modelData.payPlan = $('#time-options-pay-scale').select2('data')?$('#time-options-pay-scale').select2('data').text: null;
-      modelData.reimbursable= $("input[name='detail-group']:checked").val() =='true' ? 'Yes' :'No';
+      modelData.payPlan = $('#time-options-pay-scale').select2('data') ? $('#time-options-pay-scale').select2('data').text : null;
+      modelData.reimbursable = $("input[name='detail-group']:checked").val() == 'true' ? 'Yes' : 'No';
       modelData.detailSelection = $("input[name='detail-time-group']:checked").val();
       modelData.detailLength = $("input[name='detail-length']:checked").val();
-    }
-    else if(this.$('.time-options-time-required.selected').val() == 'Lateral'){
-      modelData.applyAdditional=this.$('#opportunity-apply').val();
-      modelData.requirement  =this.$('#opportunity-requirement').val();
-      modelData.grade      = this.$('#grade').val();  
+    } 
+    else if (this.$('.time-options-time-required.selected').val() == 'Lateral') {
+      modelData.applyAdditional = this.$('#opportunity-apply').val().trim();
+      modelData.requirement = this.$('#opportunity-requirement').val().trim();
+      modelData.grade = this.$('#grade').val().trim();  
       modelData.payLevelId = $('#time-options-pay-scale').val();
-      modelData.payPlan = $('#time-options-pay-scale').select2('data')?$('#time-options-pay-scale').select2('data').text: null;
-      modelData.isDetailReimbursable= null;
-      modelData.detailLength ='';
-      modelData.detailSelection='';
-    }
-    else{
-      modelData.applyAdditional= '';
-      modelData.requirement  ='';
-      modelData.grade         ='';
-      modelData.isDetailReimbursable= null;
-      modelData.payLevelId =null;
-      modelData.detailLength ='';
-      modelData.detailSelection='';
+      modelData.payPlan = $('#time-options-pay-scale').select2('data') ? $('#time-options-pay-scale').select2('data').text : null;
+      modelData.isDetailReimbursable = null;
+      modelData.detailLength = '';
+      modelData.detailSelection = '';
+    } 
+    else {
+      modelData.applyAdditional = '';
+      modelData.requirement = '';
+      modelData.grade = '';
+      modelData.isDetailReimbursable = null;
+      modelData.payLevelId = null;
+      modelData.detailLength = '';
+      modelData.detailSelection= '';
     }
     if (this.agency) {
-      modelData.restrictedTo = $('input[name=task-restrict-agency]:checked').val() ? $('input[name=task-restrict-agency]:checked').val(): null;
+      modelData.restrictedTo = $('input[name=task-restrict-agency]:checked').val() ? $('input[name=task-restrict-agency]:checked').val() : null;
     }
-    var completedBy    = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null;
+    var completedBy = this.$('.time-options-time-required.selected').val() == 'One time' ?  TaskFormViewHelper.getCompletedByDate() : null;
     if (completedBy) {
       var timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
       completedBy = new Date(completedBy);

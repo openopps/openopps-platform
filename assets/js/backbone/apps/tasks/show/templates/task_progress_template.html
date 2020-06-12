@@ -6,6 +6,51 @@
 <% } %>
 
 <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+  <% if((window.cache.currentUser && window.cache.currentUser.isAdmin) || model.isOwner) { %>
+    <div class="project-people__wrapper co-owner__wrapper">
+      <h3>Co-owners</h3>
+      <div class="usajobs-open-opps-opportunity-requestor__figure-body">
+        <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(model.owner.id) %>" data-userid="<%- model.owner.id %>">
+          <% if (model.owner.photoId) { %>
+            <img src="/api/document/image/<%- model.owner.photoId %>" alt="Profile picture of <%- model.owner.name %>">
+          <% } else { %>
+            <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(model.owner.name) %></div>
+          <% } %>            
+        </div>
+        <div class="usajobs-open-opps-opportunity-requestor__body">
+          <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- model.owner.id %>"><%- model.owner.name %></a>
+          <div><strong>Primary</strong></div>
+        </div>
+      </div>
+      <% _.each(model.coOwners, function (coOwner) { %>          
+        <div class="usajobs-open-opps-opportunity-requestor__figure-body" id="co-owner-<%- coOwner.co_owner_id %>">
+          <div class="usajobs-open-opps-opportunity-requestor__figure <%- getInitialsColor(coOwner.user_id) %>" data-userid="<%- coOwner.user_id %>">
+            <% if (coOwner.photoId) { %>
+              <img src="/api/document/image/<%- coOwner.photoId %>" alt="Profile picture of <%- coOwner.name %>">
+            <% } else { %>
+              <div class="usajobs-open-opps-opportunity-requestor__initials"><%- getInitials(coOwner.name) %></div>
+            <% } %>            
+          </div>
+          <div class="usajobs-open-opps-opportunity-requestor__body">
+            <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- coOwner.user_id %>"><%- coOwner.name %></a>
+            <a href="#make-primary" class="make-primary" data-coownerid="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>">Make primary</a>
+          </div> 
+          <button class="remove_co-owner" data-coownerId="<%- coOwner.co_owner_id %>" data-coownername="<%- coOwner.name %>" data-behavior="remove">
+            <span class="usajobs-assistive-text">Remove <%- coOwner.name %> as co-owner</span>
+          </button>
+        </div>         
+      <% }); %>
+      <div class="usajobs-open-opps-opportunity-co-owner">
+        <div class="usajobs-open-opps-opportunity-add_co-owner">
+          <a href="#add-co-owner" class="inner-circle add_co-owner">
+            <span class="add-icon"><i class="fas fa-plus"></i></span>
+            <span class="usajobs-assistive-text">Add co-owner</span>
+          </a>
+        </div>
+        <label class="add-icon-label">Add co-owner</label>
+      </div>
+    </div>
+  <% } %>
   <h3>Progress</h3>
   <div class="usajobs-open-opps-opportunity-progress__container">
     <div class="usajobs-open-opps-opportunity-progress__step">
@@ -70,11 +115,11 @@
             <h3>Thanks for applying</h3>
             <div>We’ll email you with next steps. You can also check your profile for status updates.</div>
             <a href="javascript:void(0);" id="apply-cancel">Cancel your application</a>
-            <% var detail= _.findWhere(model.tags, {type: 'task-time-required',name:'Detail'});%>
-            <% var lateral=_.findWhere(model.tags, {type: 'task-time-required',name:'Lateral'});%>
-            <% if((!_.isEmpty(detail)|| !_.isEmpty(lateral)) && model.acceptingApplicants){ %>
+            <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+            <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>
+            <% if ((!_.isEmpty(detail) || !_.isEmpty(lateral)) && model.acceptingApplicants) { %>
               <a href="javascript:void(0);" id="update-application" class="usa-button-big usa-button-primary"><span class="box-icon-text">Update Application</span></a>
-             <% } %>
+            <% } %>
           </div>
         <% } %>
       <% } else if (!_.contains(['draft', 'submitted', 'not open', 'complete'], state.value) && model.acceptingApplicants) { %>
@@ -86,6 +131,12 @@
     <% } %>
 
     <% if (model.volunteers) { %>
+      <% var detail = _.findWhere(model.tags, {type: 'task-time-required', name:'Detail'}); %>
+      <% var lateral = _.findWhere(model.tags, {type: 'task-time-required', name:'Lateral'}); %>  
+      <% if (!_.isEmpty(lateral) && (!model.canEditTask)) { %>
+        <h3>Number of applicants</h3>
+        <i class="fas fa-user"></i> <%- model.volunteers.length %> applied
+        <% } else { %>  
       <h3>Selected applicants</h3>
       <% if (_.where(model.volunteers, { selected: true }).length > 0) { %>
         <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>
@@ -107,16 +158,25 @@
                     <% } %>                 
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
-                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                      
-                    <% if (model.canEditTask) { %>
+                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>           
+                    <% if ((!_.isEmpty(detail)) || (!_.isEmpty(lateral))) { %>
+                      <% if (model.canEditTask) { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% } %>
+                      <% } %>                 
+                    <% } else { %>
                       <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>                           
-                      <% } else { %> 
-                        <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% if (model.canEditTask) { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                             
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View profile</a>     
+                        <% } %>
                       <% } %>
-                    <% } %> 
+                    <% } %>
+                   
                     <% if (model.canEditTask) { %>
                       <% if (state.value == 'in progress') { %>
                         <% if (v.taskComplete) { %>
@@ -138,8 +198,12 @@
           <% } else { %>
             <p class="project-people__assign-instruction">
               <% if (model.volunteers.length > 0) { %>
-                <% if (model.canEditTask) { %>            
-                  Click <strong> View application </strong> to review and select a participant.
+                <% if (model.canEditTask) { %>                
+                  <% if (!_.isEmpty(detail) || !_.isEmpty(lateral)) { %>
+                    Click <strong>View application</strong> to review and select a participant.               
+                  <% } else { %>
+                    Click <strong>View profile</strong> to review and select a participant.
+                  <% } %>
                 <% } else { %>
                   None selected.
                 <% } %>
@@ -164,7 +228,7 @@
           <div class="usa-accordion-content project-people__wrapper" aria-hidden="<%- !accordion.open %>">           
         <% } else { %>
           <div>
-            <h3>Applicants</h3>
+            <h3>Applicants</h3>          
           <% if (_.where(model.volunteers, { selected: null }).length > 0 ) { %> 
             <% if (window.cache.currentUser.isAdmin || (user.id==model.userId)) { %>        
             <a  href="#" id="applicant-email"><i class="fas fa-envelope"></i>Email all applicants</a>
@@ -187,11 +251,24 @@
                       <% } %>                    
                     </div>  
                     <div class="usajobs-open-opps-opportunity-requestor__body">
-                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
-                      <% if (model.canEditTask) { %>                                                     
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>
+                      <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div> 
+                                        
+                      <% if (!_.isEmpty(detail) || !_.isEmpty(lateral)) { %>
+                        <% if (model.canEditTask) { %>
+                          <% if (model.state != 'completed' && state.value != 'canceled') { %>
+                            <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                          <% } else { %> 
+                            <a href="/profile/<%- v.userId %>">View application</a>     
+                          <% } %>
+                        <% } %> 
+                      <% } else { %>
+                        <% if (model.canEditTask) { %>
+                          <% if (model.state != 'completed' && state.value != 'canceled') { %>
+                            <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                           
+                          <% } else { %> 
+                            <a href="/profile/<%- v.userId %>">View profile</a>     
+                          <% } %>
+                        <% } %>
                       <% } %>
                     </div>              
                   </div>
@@ -225,31 +302,37 @@
                     <% } %>            
                   </div>
                   <div class="usajobs-open-opps-opportunity-requestor__body">
-                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>
-                    <% if (model.canEditTask) { %>                                                     
+                    <div class="usajobs-open-opps-opportunity-requestor__name"><%- v.name %></div>                                 
+                    <% if ((!_.isEmpty(detail)) || (!_.isEmpty(lateral))) { %>
+                      <% if (model.canEditTask) { %>
+                        <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View application</a>                           
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% } %>
+                      <% } %>                 
+                    <% } else { %>
                       <% if (!v.taskComplete && model.state != 'completed' && state.value != 'canceled') { %>
-                        <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">
-                          View application
-                        </a>                           
-                      <% } else { %> 
-                        <a href="/profile/<%- v.userId %>">View application</a>     
+                        <% if (model.canEditTask) { %>
+                          <a href="/profile/<%- v.userId %>?vid=<%-v.id %>&tid=<%-v.taskId %>">View profile</a>                             
+                        <% } else { %> 
+                          <a href="/profile/<%- v.userId %>">View profile</a>     
+                        <% } %>
                       <% } %>
                     <% } %>
                   </div> 
-                </div>
-              
+                </div>         
             <% }); %>
           <% } %>
         <% } %>
-      </div>
-         
+      </div>      
     <a href="javascript:void(0);" id="nextstep" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { selected: true }).length < 1) { %>disabled<% } %>"><span class="box-icon-text">Next step</span></a>    
      <div id="nextStepText"><i class="fas fa-exclamation-triangle usajobs-profile-help__warning-icon warning"></i>Do not click <strong>Next step</strong> until you have made your final selections. After you click <strong>Next step</strong>, we'll send out emails to your applicants.</div>    
     <a href="javascript:void(0);" id="complete" class="usa-button-big usa-button-primary <% if (_.where(model.volunteers, { taskComplete: true }).length < 1 ) { %>disabled<% } %>"><span class="box-icon-text">Complete opportunity</span></a> 
   <% } %>
 
-  <% if (model.canEditTask && model.state != 'completed' && model.state != 'canceled') { %>
+  <% if (model.canEditTask && model.canCancel && model.state != 'completed' && model.state != 'canceled') { %>
     <a class="usajobs-open-opps-opportunity__cancel" href="javascript:void();" id="task-cancel">Cancel this opportunity</a>
   <% } %>
+   <% } %> 
   </div>
-

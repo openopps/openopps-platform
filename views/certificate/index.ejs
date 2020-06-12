@@ -1,0 +1,28 @@
+<div class="completion-certificate">
+  <div class="border">
+    <h2>Certificate of Completion</h2>
+    <h3>This Certificate Is Presented To</h3>
+    <div class="fill-in-text-block name">
+      <div class="fill-in-text"><%= name %></div>
+    </div>
+    <h3 class="completing">For Completing</h3>
+    <div class="fill-in-text-block opportunity-title">
+      <div class="fill-in-text">
+        <div class="two-line-text"><%= title %></div>
+      </div>
+    </div>
+    <p class="platform-name">ON OPEN OPPORTUNITIES</p>
+    <p><%- moment(completedAt).format('MMMM Do, YYYY [&bullet;] h:mm:ss a') %></p>
+    <div class="certificate-footer">
+      <div class="opportunity-creator-block">
+        <div class="fill-in-text-block">
+          <div class="fill-in-text"><%= creator %></div>
+        </div>
+        <p>Opportunity Creator</p>
+      </div>
+      <div class="open-opportunities-logo">
+        <img src="/img/logo/svg/openopps_logo.svg" alt="Open Opportunities logo">
+      </div>
+    </div>
+  </div>
+</div>

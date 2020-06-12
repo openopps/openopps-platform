@@ -24,4 +24,5 @@ module.exports = (app) => {
   app.use(loadFeature('opportunity'));
   app.use(loadFeature('user'));
   app.use(loadFeature('volunteer'));
+  app.use(loadFeature('co-owner'));
 };

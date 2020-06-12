@@ -16,11 +16,12 @@
           <option value="title" <% if (sort == 'title') { %>selected<% } %>>Title</option>
           <option value="creator" <% if (sort == 'creator') { %>selected<% } %>>Creator</option>
           <% if (referenceId == 'dos') { %>
-          <option value="bureau" <% if (sort == 'bureau') { %>selected<% } %>>Bureau</option>
-          <option value="office" <% if (sort == 'office') { %>selected<% } %>>Office/post</option>
+            <option value="bureau" <% if (sort == 'bureau') { %>selected<% } %>>Bureau</option>
+            <option value="office" <% if (sort == 'office') { %>selected<% } %>>Office/post</option>
           <% } %>
           <% if (target == 'sitewide') { %>
-          <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
+            <option value="community" <% if (sort == 'community') { %>selected<% } %>>Community</option>
+            <option value="agency" <% if (sort == 'agency') { %>selected<% } %>>Agency</option>
           <% } %>
           <% if (target == 'community') { %>
             <% if (referenceId !== 'dos') { %>

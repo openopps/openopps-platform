@@ -36,6 +36,17 @@ module.exports = (app) => {
       // JSON request for better-body parser are in request.fields
       ctx.request.body = ctx.request.body || ctx.request.fields;
       await next();
+    } else if (ctx.path.match('^/certificate/(\\d)*')) {
+      const getCertificateDetails = require('../api/user/service').getCertificateDetails;
+      await getCertificateDetails(ctx.state.user.id, ctx.path.match(/^\/certificate\/(\d*)$/)[1]).then(async certificateData => {
+        certificateData.layout = 'certificate/layout';
+        certificateData.cssHash = md5File.sync(path.join(__dirname, '../dist', 'styles', 'main.css')),
+        certificateData.moment = require('moment');
+        await ctx.render('certificate/index', certificateData);
+      }).catch(async error => {
+        // Not found
+        await ctx.render('main/index', data);
+      });
     } else {
       await ctx.render('main/index', data);
     }

@@ -1,10 +1,12 @@
 const db = require('../../db');
 const dao = require('./dao')(db);
+const pg = require('../../db/client');
 const log = require('log')('app:user:service');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const User = require('../model/User');
 const Audit = require('../model/Audit');
+const fs = require('fs');
 
 async function findOne (id) {
   return await dao.User.findOne('id = ?', id).catch(err => {
@@ -48,7 +50,7 @@ async function populateBadgeDescriptions (user) {
 async function getActivities (id) {
   return {
     tasks: {
-      created: dao.clean.activity(await dao.Task.find('"userId" = ?', id)),
+      created: (await dao.Task.db.query(fs.readFileSync(__dirname + '/sql/getOpportunityCreated.sql', 'utf8'), [id])).rows,
       volunteered: (await dao.Task.db.query(dao.query.participated, id)).rows,
     },
   };
@@ -56,6 +58,22 @@ async function getActivities (id) {
 
 async function getCompletedInternship (userId) {
   return (await dao.Application.find('internship_completed_at is not null and user_id = ?', userId).catch(() => { return []; })).length;
+}
+
+function getCertificateDetails (userId, taskId) {
+  return new Promise((resolve, reject) => {
+    pg.query({
+      text: `SELECT task.title, volunteer."updatedAt" as "completedAt", midas_user."name", creator.name AS creator
+        FROM volunteer
+        JOIN task ON task.id = volunteer."taskId"
+        JOIN midas_user ON midas_user.id = volunteer."userId"
+        JOIN midas_user creator ON creator.id = task."userId"
+        WHERE volunteer."userId" = $1 AND volunteer."taskId" = $2`,
+      values: [userId, taskId],
+    }).then(results => {
+      resolve(results.rows[0]);
+    }).catch(reject);
+  });
 }
 
 async function getInternshipsActivities (userId) {
@@ -303,6 +321,7 @@ module.exports = {
   populateBadgeDescriptions: populateBadgeDescriptions,
   getActivities: getActivities,
   getCompletedInternship: getCompletedInternship,
+  getCertificateDetails: getCertificateDetails,
   getInternshipsActivities: getInternshipsActivities,
   getApplicant:getApplicant,
   updateProfile: updateProfile,

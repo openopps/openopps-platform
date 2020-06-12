@@ -56,6 +56,13 @@
                       data[ i ].title = 'Untitled draft';
                     } %>
                     <a href="/<%- target %>s/<%- data[i].id %>" class="activity-link" data-opportunity-id="<%- data[i].id %>"><%- data[i].title %></a>
+                    <% if (data[i].co_owners) { %>
+                      <br>
+                      Co-owner(s): 
+                      <% _.each(data[i].co_owners, function (co_owner) { %>
+                        <a class="usajobs-open-opps-opportunity-requestor__name" href="/profile/<%- co_owner.id %>"><%- co_owner.name %></a><%- (co_owner == data[i].co_owners[data[i].co_owners.length-1]) ? '' : ', ' %>
+                      <% }); %>
+                    <% } %>
                   </td>
                   <td>
                     <% var updated = new Date(data[i].updatedAt); %>

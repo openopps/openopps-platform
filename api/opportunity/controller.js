@@ -87,7 +87,7 @@ router.get('/api/task/:id', async (ctx, next) => {
   if (typeof ctx.state.user !== 'undefined' && ctx.state.user.id === task.userId) {
     task.isOwner = true;
   }
-  if (task.isOwner || (ctx.state.user && await service.canUpdateOpportunity(ctx.state.user, ctx.params.id))) {
+  if (task.isOwner || (ctx.state.user && await service.canUpdateOpportunity(ctx.state.user, ctx.params.id,task.state))) {
     task.canEditTask = true;
   }
   ctx.body = task;
