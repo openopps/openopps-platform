@@ -108,6 +108,7 @@ var TaskApplyView = BaseView.extend({
   },
 
   submitVolunteer: function () {
+    $('#search-results-loading').show();
     var statement= $('#statement').val();
     var selectedResume = $('input[name=resumes]:checked').val(); 
     if(!this.validateFields()){
@@ -125,6 +126,7 @@ var TaskApplyView = BaseView.extend({
             resumeType: $('input[name=resumes]:checked').data('format'),
           },
         }).done( function (data) {      
+          $('#search-results-loading').hide();
           this.renderNext('submitt');
           window.scrollTo(0, 0);   
         }.bind(this));
@@ -133,6 +135,7 @@ var TaskApplyView = BaseView.extend({
   },
 
   updateVolunteer: function (e) {
+    $('#search-results-loading').show();
     var statement= $('#statement').val();
     var selectedResume = $('input[name=resumes]:checked').val();
     var id= this.edit;
@@ -146,7 +149,8 @@ var TaskApplyView = BaseView.extend({
           resumeId: selectedResume ? selectedResume.split('|')[0] : null,
           resumeType: $('input[name=resumes]:checked').data('format'),
         },
-      }).done( function (data) {    
+      }).done( function (data) {  
+        $('#search-results-loading').hide();  
         this.renderNext('updat'); 
         window.scrollTo(0, 0);
       }.bind(this));
