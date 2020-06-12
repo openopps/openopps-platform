@@ -711,7 +711,7 @@ var TaskItemView = BaseView.extend({
             this.data.model.coOwners = _.reject(this.data.model.coOwners, function (item) {
               return item.co_owner_id == coOwnerId;
             });          
-          });
+          }.bind(this));
         }.bind(this),
       },
       secondary: {
