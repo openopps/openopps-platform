@@ -17,6 +17,7 @@ module.exports = {
     },
     profileURL: process.env.PROFILE_URL,
     profileDocumentURL: process.env.PROFILE_DOCUMENT_URL,
+    documentAccessURL: process.env.DOCUMENT_ACCESS_URL,
     documentSecret: process.env.DOCUMENT_SECRET,
   },
 };

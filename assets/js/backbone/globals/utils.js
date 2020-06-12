@@ -201,3 +201,12 @@ global.renderSystemAlerts = function (page, callback) {
     },
   });
 };
+
+global.formatPhoneNumber = function (number) {
+  var phoneNumber = number.toString();
+  if (phoneNumber.match(/(\d{3})(\d{3})(\d{4})/)) {
+    return phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  } else {
+    return phoneNumber;
+  }
+};

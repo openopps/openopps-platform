@@ -1,0 +1,28 @@
+
+<div class="usa-alert usajobs-alert usajobs-alert--success" role="alert" data-object="alert">
+    <div class="usajobs-alert__figure">
+        <div class="usajobs-alert__icon">
+        </div>
+    </div>
+    <div class="usajobs-alert__body">
+    <h3 class="usa-alert-heading">
+        Congratulations! Your application has been <%- applyTypeText %>ed.
+    </h3>
+    <p class="usa-alert-text">
+        Thanks for <%- applyTypeText %>ing your application to <% if (community) {%><%- community.community_name %> <%} else {%> <%- opportunity.title %><%}%>.
+    </p>
+    </div>
+    </div>
+    <div class="usajobs-open-opps-opportunity usajobs-open-opps-section usajobs-open-opps-profile">
+        <div class="usajobs-grid-full usajobs-open-opps-opportunity-item__header">
+            <h2>What happens next?</h2>
+            <p>The person who created the opportunity will:</p>
+            <h5>1. Review your profile and application.</h5>
+            <p>They will review your profile, application or resume (if you applied to a detail) to make sure you're a good fit for the opportunity.</p>
+            <h5>2. Contact you for additional information.</h5>
+            <p>They may call or email you with additional questions about your skills, background or interests.</p> 
+            <h5>3. Send you an email.</h5>
+            <p>You'll get an email letting you know if you're selected or not. If you're selected, the email will include all of the details you'll need to get started.</p> 
+            <a href="/search<% if (community) { %>?community=<%- community.community_id %><% } %>">Find more opportunities</a>
+        </div>
+    </div>
