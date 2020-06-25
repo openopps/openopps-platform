@@ -30,6 +30,7 @@ var HomeActivityView = Backbone.View.extend({
       sort: this.options.sort || 'updatedAt',
       data: this.options.data,
       getStatus: this.options.getStatus,
+      myProfile: this.options.myProfile || false,
       count: {},
     };
 

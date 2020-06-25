@@ -11,6 +11,8 @@ var TimeAgo = require('../../../../../vendor/jquery.timeago');
 var BaseView = require('../../../../base/base_view');
 var UIConfig = require('../../../../config/ui.json');
 var ModalComponent = require('../../../../components/modal');
+var TagFactory = require('../../../../components/tag_factory');
+		
 
 var TaskShowTemplate = require('../templates/task_show_item_template.html');
 var ProgressTemplate = require('../templates/task_progress_template.html');
@@ -38,7 +40,15 @@ var TaskItemView = BaseView.extend({
     'click .project-people__remove'   : 'removeParticipant',
     'click .usa-accordion-button'     : 'toggleAccordion',
     'click .task-complete'            : 'taskComplete', 
-    'click #update-application'       : 'updateApplication',  
+    'click #update-application'       : 'updateApplication',
+    'click .add_co-owner'             : 'addCoOwner',
+    'click .remove_co-owner'          : 'removeCoOwner',
+    'click #co-owner-back'            : 'backToOpp',
+    'click .make-primary'             : 'makePrimary',
+    'click .usajobs-alert__close'     : 'closeAlert',
+    'click #add-co-owner'             : 'saveCoOwner',
+    'click #cancel-co-owner'          : 'backToOpp',
+   
   },
 
   modalOptions: {
@@ -53,6 +63,7 @@ var TaskItemView = BaseView.extend({
 
   initialize: function (options) {
     this.options = options;
+    this.tagFactory = new TagFactory();
     this.params = new URLSearchParams(window.location.search);
     this.render();
     $('#search-results-loading').hide();
@@ -627,6 +638,173 @@ var TaskItemView = BaseView.extend({
       }
       this.modalComponent.cleanup();
     }.bind(this));
+  },
+
+  addCoOwner: function (event) {
+    event.preventDefault && event.preventDefault();
+    this.initializeChangeCoOwnerOptions();  
+    $('#co-owner-form').show();
+    $('#back-results').hide();
+    $('#main-content').hide();
+    $('#rightrail').hide();
+  },
+
+  makePrimary: function (event) {
+    event.preventDefault && event.preventDefault();
+    var coOwnerName = $(event.currentTarget).data('coownername');
+    var removeModal = new ModalComponent({
+      id: 'confirm-primary',
+      modalTitle: 'Change primary owner',
+      modalBody: 'Are you sure you want to change the primary owner of this opportunity to <strong>' + coOwnerName + '</strong>?',
+      primary: {
+        text: 'Confirm',
+        action: function () {
+          $.ajax({
+            url: '/api/co-owner/primary',
+            method: 'POST',
+            data: {
+              taskId: this.model.id,
+              coOwnerId: $(event.currentTarget).data('coownerid'),
+            },
+            success: function () {
+              removeModal.cleanup();
+              window.location.reload();
+            },
+            error: function (err) {
+              removeModal.cleanup();
+              $('#error-message .usa-alert-heading').text('Error changing primary co-owner');
+              $('#error-message .usa-alert-text').text(err.responseJSON.message);
+              $('#error-message').show();
+            },
+          });
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          removeModal.cleanup();    
+        }.bind(self),
+      },
+    });
+    removeModal.render();
+  },
+  
+  removeCoOwner: function (event) {
+    event.preventDefault && event.preventDefault();
+    var coOwnerId = $(event.currentTarget).data('coownerid');
+    var coOwnerName = $(event.currentTarget).data('coownername');
+    var removeModal = new ModalComponent({
+      id: 'confirm-deletion',
+      alert: 'error',
+      action: 'delete',
+      modalTitle: 'Remove co-owner',
+      modalBody: 'Are you sure you want to remove <strong>' + coOwnerName + '</strong> as a co-owner of your opportunity?',
+      primary: {
+        text: 'Remove',
+        action: function () {
+          $.ajax({
+            url: '/api/co-owner/' + coOwnerId,
+            type: 'DELETE',
+          }).done( function (data) {
+            removeModal.cleanup();
+            $('#co-owner-' + coOwnerId).remove();        
+            this.data.model.coOwners = _.reject(this.data.model.coOwners, function (item) {
+              return item.co_owner_id == coOwnerId;
+            });          
+          }.bind(this));
+        }.bind(this),
+      },
+      secondary: {
+        text: 'Cancel',
+        action: function () {          
+          removeModal.cleanup();    
+        }.bind(this),
+      },
+    });
+    removeModal.render();
+  },
+
+  backToOpp: function (event) {
+    event.preventDefault && event.preventDefault();
+    $('#co-owner-form').hide();
+    $('#back-results').show();
+    $('#main-content').show();
+    $('#rightrail').show();
+  },
+
+  closeAlert: function (event) {
+    $(event.currentTarget).parent().hide();
+  },
+  
+  initializeChangeCoOwnerOptions: function () {
+    var data=  this.tagFactory.createTagDropDown({
+      type: 'user',
+      placeholder: 'Start typing to select a user or email',
+      selector: '#tag-co-owner',
+      width: '100%',
+      tokenSeparators: [','], 
+      allowCreate : false,           
+    });
+  
+    return data;  
+  },
+  
+  validateFields: function () {
+    return _.reduce(this.$el.find('.validate'), function (abort, child) {
+      return validate({ currentTarget: child }) || abort;
+    }, false);
+  },
+
+  validateField: function (e) {
+    return validate(e);
+  },
+
+  saveCoOwner : function (e){ 
+    e.preventDefault && e.preventDefault();
+    var selectedIds = _.map($('#tag-co-owner').select2('data'), function (item) {
+      return item.id;
+    });
+    var coOwners = _.map(this.data.model.coOwners, function (item) {
+      return item.user_id;
+    }).concat(this.data.model.owner.id);
+    if(this.data.model.coOwners.length > 0) {
+      selectedIds = _.difference(selectedIds, coOwners);
+    }
+       
+    if(_.isEmpty($('#tag-co-owner').select2('data'))){
+      $('#tag-co-owner').addClass('validate');
+      if(this.validateFields()) {    
+        $('.usa-input-error').get(0).scrollIntoView();
+        $('#co-owner-form').show();
+        $('#main-content').hide();
+        $('#rightrail').hide();
+      }
+    } else {
+      if (selectedIds.length > 0) {
+        var data = {
+          taskId: this.model.attributes.id,
+          users: JSON.stringify(selectedIds),    
+        };
+        $.ajax({
+          url: '/api/co-owner' ,
+          type: 'POST',
+          async: false,
+          data: data,   
+          success: function (data) {
+            $('#co-owner-form').hide();
+            $('#main-content').show();
+            $('#rightrail').show();
+            Backbone.history.loadUrl(Backbone.history.getFragment());
+          }.bind(this),
+        });
+      } else {
+        $('#co-owner-form').hide();
+        $('#main-content').show();
+        $('#rightrail').show();
+        Backbone.history.loadUrl(Backbone.history.getFragment());
+      }
+    }
+  
   },
 
   cleanup: function () {

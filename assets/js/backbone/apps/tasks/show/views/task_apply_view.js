@@ -50,6 +50,7 @@ var TaskApplyView = BaseView.extend({
     this.renderResumes();
     this.$el.localize();
     $('#search-results-loading').hide();
+    return this;
   },
 
   loadApplicant : function (){

@@ -34,13 +34,15 @@
       <h3>How to apply</h3>
      <p><%= data.applyAdditionalHtml %></p>
     <% } %>
-
-    <div class="related-keywords">
-      <h3>Related keywords</h3>
-      <div class="keywords">
-        <% _.each(madlibTags['keywords'], function (t) { %>
-          <a class="keyword-label" href="javascript:void(0)"><%= t.name %></a>
-        <% }) %>
+    
+    <% if (madlibTags['keywords']) { %>
+      <div class="related-keywords">
+        <h3>Related keywords</h3>
+        <div class="keywords">
+          <% _.each(madlibTags['keywords'], function (t) { %>
+            <a class="keyword-label" href="javascript:void(0)"><%= t.name %></a>
+          <% }) %>
+        </div>
       </div>
-    </div>
+    <% } %>
   </div>

@@ -56,21 +56,6 @@
             <% }); %>
         </select>
 
-        <h4 class="usajobs-search-filters__title skill">Skill</h4>
-        <input type="hidden" aria-label="skill" id="skill" title="Skill" />
-
-        <h4 class="usajobs-search-filters__title career">Career field</h4>
-        <label for="career" class="usa-sr-only">Select a career field</label>
-        <select id="career" class="dropdown">
-            <option value=""></option>
-            <% _.each(tagTypes['career'], function (t) { %>
-                <option value="<%- t.id %>" <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
-            <% }); %>
-        </select>
-
-        <h4 class="usajobs-search-filters__title">Series</h4>
-        <input type="hidden" aria-label="series" id="series" title="Series" />
-
         <h4 class="usajobs-search-filters__title time">Commitment</h4>
         <% if([].concat(filters.time).length == 3) { %>
           <a class="usajobs-search-filters__select-toggle timefilters-toggle" href="javascript:void(0);" data-behavior="deselect">Deselect all</a>
@@ -124,6 +109,22 @@
             </div>
           </div>
         </div>
+
+        <h4 class="usajobs-search-filters__title skill">Skill</h4>
+        <input type="hidden" aria-label="skill" id="skill" title="Skill" />
+
+        <h4 class="usajobs-search-filters__title career">Career field</h4>
+        <label for="career" class="usa-sr-only">Select a career field</label>
+        <select id="career" class="dropdown">
+            <option value=""></option>
+            <% _.each(tagTypes['career'], function (t) { %>
+                <option value="<%- t.id %>" <% if (filters.career && t.id == filters.career.id) { %>selected<% } %>><%- t.name %></option>
+            <% }); %>
+        </select>
+
+        <h4 class="usajobs-search-filters__title">Series</h4>
+        <input type="hidden" aria-label="series" id="series" title="Series" />
+
         <h4 class="usajobs-search-filters__title location">Location</h4>
         <ul id="locationFilters" class="usa-unstyled-list">
             <li>

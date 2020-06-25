@@ -11,17 +11,19 @@
     </div>
   </div>
   <% if (data.hiringPath == 'fed' || data.hiringPath == 'contractor') { %>
-    <div class="fileinput-button" <% if (!(data.isOwner || data.canEditProfile)) { %>style="display:none;"<% } %>>
-      <span><%- data.photoId ? 'Update photo' : 'Upload photo' %>
-        <label class="sr-only" for="fileupload">Upload photo</label>
-        <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- data.photoId ? 'Update photo' : 'Upload photo' %>" />
-      </span>
-    </div>
-    <div class="fileinput-button">
-      <% if (data.photoId) { %>
-        <a href=# id="photo-remove">Remove</a>
-      <% } %>
-    </div>
+    <% if (data.isOwner || data.canEditProfile) { %>
+      <div class="fileinput-button">
+        <span><%- data.photoId ? 'Update photo' : 'Upload photo' %>
+          <label class="sr-only" for="fileupload">Upload photo</label>
+          <input id="fileupload" type="file" name="files[]" accept="image/*" title="<%- data.photoId ? 'Update photo' : 'Upload photo' %>" />
+        </span>
+      </div>
+      <div class="fileinput-button">
+        <% if (data.photoId) { %>
+          <a href=# id="photo-remove">Remove</a>
+        <% } %>
+      </div>
+    <% } %>
     <div id="file-upload-progress-container" style="display: none;" class="progress progress-striped active">
       <div id="file-upload-progress" class="progress-bar" style="width: 0"></div>
     </div>
