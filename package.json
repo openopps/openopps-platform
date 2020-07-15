@@ -65,7 +65,7 @@
     "koa-redis": "^3.1.2",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "marked": "^0.3.12",
     "md5-file": "^3.2.3",
     "merge-stream": "^2.0.0",
