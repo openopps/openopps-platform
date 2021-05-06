@@ -91,7 +91,7 @@
     "request": "^2.87.0",
     "select2": "3.5.2-browserify",
     "stringify": "^5.2.0",
-    "underscore": "^1.8.3",
+    "underscore": "^1.12.1",
     "url-search-params-polyfill": "^5.0.0",
     "uswds": "^1.4.5",
     "uuid": "^3.2.1",
